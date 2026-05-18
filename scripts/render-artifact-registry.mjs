@@ -439,7 +439,7 @@ const artifacts = [
 
 const registry = {
   _meta: {
-    generatedAt: new Date().toISOString(),
+    generatedAt: 'deterministic',
     generatedBy: 'npm run docs:artifacts',
     policy: 'Use this registry to locate existing ownership before adding new files or product surfaces.',
   },

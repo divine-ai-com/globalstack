@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T14:24:10.117Z",
+    "generatedAt": "deterministic",
     "generatedBy": "npm run docs:artifacts",
     "policy": "Use this registry to locate existing ownership before adding new files or product surfaces."
   },
