@@ -1,0 +1,48 @@
+services:
+  globalstack-azure:
+    image: ${GLOBALSTACK_AZURE_IMAGE:-globalstack/azure-emulator:local}
+    build:
+      context: ..
+      dockerfile: templates/emulator/Dockerfile
+    container_name: globalstack-azure
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:?GLOBALSTACK_AUTH_TOKEN must already be exported in the host shell}
+      GLOBALSTACK_ARM_HOST: 0.0.0.0
+      GLOBALSTACK_ARM_PORT: 4566
+      GLOBALSTACK_AZURE_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID:-00000000-0000-0000-0000-000000000000}
+      GLOBALSTACK_AZURE_TENANT_ID: ${ARM_TENANT_ID:-00000000-0000-0000-0000-000000000000}
+      GLOBALSTACK_AZURE_CLIENT_ID: ${ARM_CLIENT_ID:-11111111-1111-1111-1111-111111111111}
+      GLOBALSTACK_AZURE_CLIENT_SECRET: ${ARM_CLIENT_SECRET:-globalstack}
+      DEBUG: ${DEBUG:-1}
+    volumes:
+      - ./volume:/var/lib/globalstack
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4566/_globalstack/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  runner:
+    image: ${GLOBALSTACK_RUNNER_IMAGE:-globalstack/azure-opentofu-hcl:local}
+    build:
+      context: ../dist/platform-images/azure-opentofu-hcl
+      dockerfile: Dockerfile
+    network_mode: "service:globalstack-azure"
+    depends_on:
+      globalstack-azure:
+        condition: service_healthy
+    environment:
+      PROVIDER: ${PROVIDER:-}
+      CLOUD_PROVIDER: ${CLOUD_PROVIDER:-}
+      ENVIRONMENT_SUFFIX: ${ENVIRONMENT_SUFFIX:-dev}
+      AZURE_LOCATION: ${AZURE_LOCATION:-eastus}
+      AZURE_ENDPOINT_URL: http://localhost:4566
+      ARM_ENDPOINT: http://localhost:4566
+      ARM_RESOURCE_MANAGER_ENDPOINT: http://localhost:4566/
+      GLOBALSTACK_AZURE_HOST: localhost
+      PIPELINE_STAGE_SCOPE: ${PIPELINE_STAGE_SCOPE:-local-only}
+    volumes:
+      - ${LOCAL_TASK_PATH:-../dist/platform-images/azure-opentofu-hcl/sample-task}:/workspace/task:ro

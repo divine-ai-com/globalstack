@@ -1,0 +1,24 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PLATFORM_ID=azure-pulumi-ts
+ENV AZURE_LOCATION=eastus
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl git jq unzip gnupg lsb-release python3 python3-pip python3-venv build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
+RUN curl -fsSL https://get.pulumi.com | sh
+ENV PATH="/root/.pulumi/bin:${PATH}"
+
+COPY common/globalstack-azure.sh /opt/globalstack/globalstack-azure.sh
+COPY common/entrypoint.sh /entrypoint.sh
+COPY stages /opt/globalstack/stages
+RUN chmod +x /entrypoint.sh /opt/globalstack/globalstack-azure.sh /opt/globalstack/stages/*/*.sh
+
+WORKDIR /workspace
+ENTRYPOINT ["/entrypoint.sh"]
