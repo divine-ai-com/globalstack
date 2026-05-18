@@ -363,6 +363,68 @@ test('ARM facade enforces storage account resource group and name validation', a
   });
 });
 
+test('ARM facade models Service Bus namespace async shape and entity naming rules', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-sb-validation?api-version=2021-04-01', { location: 'eastus' });
+
+    const invalidNamespace = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/1bad?api-version=2021-11-01',
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    assert.equal(invalidNamespace.status, 400);
+    assert.equal(invalidNamespace.body.error.code, 'BadRequest');
+
+    const namespace = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    assert.equal(namespace.status, 201);
+    assert.ok(namespace.headers['azure-asyncoperation']);
+    assert.equal(namespace.body.properties.provisioningState, 'Creating');
+    assert.equal(namespace.body.properties.status, 'Creating');
+
+    await httpJson(port, 'GET', namespace.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+    const ready = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+    );
+    assert.equal(ready.status, 200);
+    assert.equal(ready.body.properties.provisioningState, 'Succeeded');
+
+    const topic = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(topic.status, 201);
+    assert.equal(topic.body.globalstack.capabilityId, 'service-bus-topics');
+
+    const invalidSubscription = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events/subscriptions/bad_?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(invalidSubscription.status, 400);
+    assert.equal(invalidSubscription.body.error.code, 'BadRequest');
+
+    const subscription = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events/subscriptions/processor?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(subscription.status, 201);
+    assert.equal(subscription.body.globalstack.capabilityId, 'service-bus-topics');
+  });
+});
+
 test('ARM facade uses Azure-shaped not-found responses for captured lifecycle gaps', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-notfound?api-version=2021-04-01', { location: 'eastus' });

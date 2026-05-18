@@ -102,6 +102,7 @@ flowchart TD
 - `scripts/capture-real-azure-operation.mjs`
 - `scripts/classify-azure-captures.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
+- `scripts/e2e-azure-service-bus-parity.mjs`
 - `scripts/e2e-azure-storage-hardening.mjs`
 - `scripts/e2e-azure-storage-normalizer.mjs`
 - `scripts/e2e-azure-storage-parity.mjs`
@@ -152,6 +153,7 @@ flowchart TD
 - `npm run docs:scope`
 - `npm run docs:test`
 - `npm run e2e:service-bus`
+- `npm run e2e:service-bus-parity`
 - `npm run e2e:storage`
 - `npm run e2e:storage-hardening`
 - `npm run e2e:storage-normalizer`

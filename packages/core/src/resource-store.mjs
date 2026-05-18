@@ -25,6 +25,12 @@ function lifecycleStateFor(resource) {
   return resource?.globalstack?.lifecycleState ?? null;
 }
 
+function asyncLifecycleSequence(type) {
+  if (type === 'Microsoft.Storage/storageAccounts') return ['Creating', 'ResolvingDns', 'Succeeded'];
+  if (type === 'Microsoft.ServiceBus/namespaces') return ['Creating', 'Activating', 'Succeeded'];
+  return null;
+}
+
 export class ResourceStore {
   constructor({ subscriptionId = '00000000-0000-0000-0000-000000000000' } = {}) {
     this.subscriptionId = subscriptionId;
@@ -96,7 +102,7 @@ export class ResourceStore {
     const type = `${providerNamespace}/${typeParts.filter((_, index) => index % 2 === 0).join('/')}`;
     const name = typeParts.filter((_, index) => index % 2 === 1).join('/');
     const supportLevel = capability.primaryModes.join('+');
-    const isNewStorageAccount = type === 'Microsoft.Storage/storageAccounts' && !existing;
+    const lifecycleSequence = !existing ? asyncLifecycleSequence(type) : null;
     const resource = {
       id,
       name,
@@ -108,7 +114,10 @@ export class ResourceStore {
       properties: {
         ...(existing?.properties ?? {}),
         ...(body.properties ?? {}),
-        provisioningState: isNewStorageAccount ? 'Creating' : 'Succeeded',
+        provisioningState: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded',
+        ...(type === 'Microsoft.ServiceBus/namespaces'
+          ? { status: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded' }
+          : {}),
       },
       apiVersion,
       globalstack: {
@@ -119,15 +128,15 @@ export class ResourceStore {
         realAzureApiComplete: false,
         cloudValidated: capability.cloudValidated,
         knownGaps: capability.knownGaps,
-        ...(isNewStorageAccount
-          ? { lifecycleState: { provisioningSequence: ['Creating', 'ResolvingDns', 'Succeeded'], readCount: 0 } }
+        ...(lifecycleSequence
+          ? { lifecycleState: { provisioningSequence: lifecycleSequence, readCount: 0 } }
           : existing?.globalstack?.lifecycleState
             ? { lifecycleState: existing.globalstack.lifecycleState }
             : {}),
       },
     };
     this.resources.set(key, resource);
-    return { resource: deepClone(resource), created: !existing, asyncAccepted: type === 'Microsoft.Storage/storageAccounts' && !existing };
+    return { resource: deepClone(resource), created: !existing, asyncAccepted: Boolean(lifecycleSequence) };
   }
 
   getResource({ subscriptionId, resourceGroupName, providerNamespace, typePath }) {
@@ -138,6 +147,9 @@ export class ResourceStore {
     if (lifecycleState?.provisioningSequence) {
       const index = Math.min(lifecycleState.readCount, lifecycleState.provisioningSequence.length - 1);
       resource.properties.provisioningState = lifecycleState.provisioningSequence[index];
+      if (resource.type === 'Microsoft.ServiceBus/namespaces') {
+        resource.properties.status = lifecycleState.provisioningSequence[index];
+      }
       lifecycleState.readCount += 1;
     }
     return deepClone(resource);
@@ -154,6 +166,9 @@ export class ResourceStore {
       const lifecycleState = lifecycleStateFor(resource);
       if (lifecycleState?.provisioningSequence) {
         resource.properties.provisioningState = lifecycleState.provisioningSequence.at(-1);
+        if (resource.type === 'Microsoft.ServiceBus/namespaces') {
+          resource.properties.status = lifecycleState.provisioningSequence.at(-1);
+        }
         lifecycleState.readCount = lifecycleState.provisioningSequence.length - 1;
       }
     }

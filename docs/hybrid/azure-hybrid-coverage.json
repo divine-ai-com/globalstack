@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T10:11:12.668Z",
+    "generatedAt": "2026-05-18T15:11:16.722Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -475,7 +475,8 @@
       "azureEquivalent": "Service Bus topics / Event Grid topics",
       "resourceTypes": [
         "Microsoft.ServiceBus/namespaces",
-        "Microsoft.ServiceBus/namespaces/topics"
+        "Microsoft.ServiceBus/namespaces/topics",
+        "Microsoft.ServiceBus/namespaces/topics/subscriptions"
       ],
       "primaryModes": [
         "official-emulator",

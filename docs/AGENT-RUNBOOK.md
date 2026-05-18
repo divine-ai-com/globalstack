@@ -68,6 +68,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:storage-parity
 
 Expected result is `dist/e2e/azure-storage-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers auth rejection, missing `api-version`, missing resource groups, invalid storage names/SKUs, async storage readiness, child resource lifecycle, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Service Bus parity pack after changing Service Bus ARM behavior, official emulator wiring, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-bus-parity
+```
+
+Expected result is `dist/e2e/azure-service-bus-parity/results.json` with `ok == true`, zero control-plane failures, the official Service Bus emulator matrix passing, and all eight platform runners passing. This suite covers captured namespace validation, official naming-rule rejection, async namespace readiness, topic/queue/subscription lifecycle, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

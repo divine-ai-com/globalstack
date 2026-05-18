@@ -12,8 +12,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ## Progress
 
-- Candidate calls: 248
-- Candidate create/update calls: 62
+- Candidate calls: 252
+- Candidate create/update calls: 63
 - Real Azure fixtures with verified cleanup: 448
 
 ## Tier 1
@@ -384,6 +384,26 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 ### service-bus-topics / Microsoft.ServiceBus/namespaces/topics / Delete
 
 - [x] `not-found`: captured HTTP 404; cleanup verified
+
+### service-bus-topics / Microsoft.ServiceBus/namespaces/topics/subscriptions / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+- [ ] `invalid-sku`: pending
+
+### service-bus-topics / Microsoft.ServiceBus/namespaces/topics/subscriptions / Get
+
+- [ ] `not-found`: pending
+
+### service-bus-topics / Microsoft.ServiceBus/namespaces/topics/subscriptions / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### service-bus-topics / Microsoft.ServiceBus/namespaces/topics/subscriptions / Delete
+
+- [ ] `not-found`: pending
 
 ### event-grid / Microsoft.EventGrid/topics / CreateOrUpdate
 

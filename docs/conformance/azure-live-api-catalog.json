@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T10:11:12.823Z",
+    "generatedAt": "2026-05-18T15:17:25.468Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
-    "callCount": 248,
-    "createOrUpdateCallCount": 62,
+    "callCount": 252,
+    "createOrUpdateCallCount": 63,
     "capabilityCount": 30,
     "tier1CapabilityCount": 15,
     "tier2CapabilityCount": 15,
@@ -2450,6 +2450,146 @@
       "operation": "Delete",
       "method": "DELETE",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "service-bus-topics",
+      "tier": 1,
+      "awsAnalogue": "SNS",
+      "azureEquivalent": "Service Bus topics / Event Grid topics",
+      "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "provider-default-required",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics-subscriptions.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}/subscriptions/{subscriptionsName}",
+      "requestBodyTemplate": {
+        "location": "{location}",
+        "sku": {
+          "name": "Standard",
+          "tier": "Standard"
+        },
+        "properties": {}
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "location": "globalstack-invalid-location",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "service-bus-topics",
+      "tier": 1,
+      "awsAnalogue": "SNS",
+      "azureEquivalent": "Service Bus topics / Event Grid topics",
+      "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "provider-default-required",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics-subscriptions.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}/subscriptions/{subscriptionsName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "service-bus-topics",
+      "tier": 1,
+      "awsAnalogue": "SNS",
+      "azureEquivalent": "Service Bus topics / Event Grid topics",
+      "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "provider-default-required",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics-subscriptions.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}/subscriptions",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "service-bus-topics",
+      "tier": 1,
+      "awsAnalogue": "SNS",
+      "azureEquivalent": "Service Bus topics / Event Grid topics",
+      "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "provider-default-required",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics-subscriptions.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}/subscriptions/{subscriptionsName}",
       "requestBodyTemplate": null,
       "varianceCases": []
     },

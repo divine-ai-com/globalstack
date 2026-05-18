@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T10:11:14.082Z",
+    "generatedAt": "2026-05-18T15:17:25.869Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -176,7 +176,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "8 candidate catalog calls",
+                "12 candidate catalog calls",
                 "110 provider operations matched"
               ],
               "gaps": [

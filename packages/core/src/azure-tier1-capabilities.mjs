@@ -265,7 +265,7 @@ export const tier1Capabilities = [
     tier: 1,
     awsAnalogue: 'SNS',
     azureEquivalent: 'Service Bus topics / Event Grid topics',
-    resourceTypes: ['Microsoft.ServiceBus/namespaces', 'Microsoft.ServiceBus/namespaces/topics'],
+    resourceTypes: ['Microsoft.ServiceBus/namespaces', 'Microsoft.ServiceBus/namespaces/topics', 'Microsoft.ServiceBus/namespaces/topics/subscriptions'],
     primaryModes: [supportLevels.OFFICIAL_EMULATOR, supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['service-bus-emulator', 'globalstack-event-router'],
     implementedOperations: ['Namespaces.CreateOrUpdate', 'Topics.Create', 'Subscriptions.Create', 'Messages.PublishLocal'],

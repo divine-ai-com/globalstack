@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-18T10:11:13.930Z
+Generated: 2026-05-18T15:17:25.717Z
 
 ## Dimensions
 
@@ -31,7 +31,7 @@ Generated: 2026-05-18T10:11:13.930Z
 | key-vault-keys | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 105 |
 | postgresql-flexible-server | 1 | in-progress | 0 | 5 | 5 | 8 | 16 | 89 |
 | cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 296 |
-| service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 8 | 16 | 110 |
+| service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 12 | 16 | 110 |
 | event-grid | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 35 |
 | container-registry | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 118 |
 | aks-metadata | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 453 |
@@ -228,11 +228,11 @@ Generated: 2026-05-18T10:11:13.930Z
 - AWS analogue: SNS
 - Azure equivalent: Service Bus topics / Event Grid topics
 - Current status: in-progress
-- Resource types: Microsoft.ServiceBus/namespaces, Microsoft.ServiceBus/namespaces/topics
+- Resource types: Microsoft.ServiceBus/namespaces, Microsoft.ServiceBus/namespaces/topics, Microsoft.ServiceBus/namespaces/topics/subscriptions
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>110 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 12 candidate catalog calls<br>110 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 16 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |

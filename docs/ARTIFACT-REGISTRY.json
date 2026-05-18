@@ -95,6 +95,15 @@
       "group": "governance"
     },
     {
+      "path": "docs/coverage/service-bus-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "service-bus",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Service Bus ARM, official emulator, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
       "path": "docs/ARTIFACT-REGISTRY.md",
       "kind": "generated-doc",
       "owner": "scripts/render-artifact-registry.mjs",
@@ -284,6 +293,15 @@
       "group": "generators"
     },
     {
+      "path": "scripts/e2e-azure-service-bus-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "service-bus",
+      "command": "npm run e2e:service-bus-parity",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Service Bus ARM parity matrix, official emulator E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
       "path": "fixtures/azure-captures/",
       "kind": "real-azure-evidence",
       "owner": "conformance",
@@ -413,7 +431,7 @@
       "path": "dist/e2e/",
       "kind": "generated-test-output",
       "owner": "e2e scripts",
-      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus",
+      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity",
       "editPolicy": "regenerate",
       "purpose": "Storage and Service Bus E2E result reports.",
       "group": "runtime"
@@ -445,6 +463,7 @@
     "docs:scope",
     "docs:test",
     "e2e:service-bus",
+    "e2e:service-bus-parity",
     "e2e:storage",
     "e2e:storage-hardening",
     "e2e:storage-normalizer",

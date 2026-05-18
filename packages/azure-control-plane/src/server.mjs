@@ -798,9 +798,13 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       'Microsoft.Storage/storageAccounts/tableServices/tables',
     ]);
     const createdStatus = storageCreatedOkTypes.has(resourceType) ? 200 : 201;
+    const asyncBodyTypes = new Set([
+      'Microsoft.ServiceBus/namespaces',
+    ]);
     return {
-      status: result.asyncAccepted ? 202 : result.created ? createdStatus : 200,
-      body: result.asyncAccepted ? undefined : result.resource,
+      status: result.asyncAccepted && !asyncBodyTypes.has(resourceType) ? 202 : result.created ? createdStatus : 200,
+      body: result.asyncAccepted && !asyncBodyTypes.has(resourceType) ? undefined : result.resource,
+      asyncOperation: result.asyncAccepted,
     };
   }
 
@@ -850,7 +854,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
         continue;
       }
       const result = putProviderResource(operation);
-      if (result.status === 202) {
+      if (result.status === 202 || result.asyncOperation) {
         for (let attempt = 0; attempt < 6; attempt += 1) {
           const ready = store.getResource(operation.providerRoute);
           if (ready?.properties?.provisioningState === 'Succeeded') break;
@@ -1088,7 +1092,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           const result = putProviderResource({ providerRoute, apiVersion, body });
           const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
           const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
-          return sendJson(res, result.status, result.body, result.status === 202 ? {
+          return sendJson(res, result.status, result.body, result.asyncOperation ? {
             'azure-asyncoperation': operationUrl,
             location: operationUrl,
             'retry-after': '0',
@@ -1141,6 +1145,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             if (notFound.body === undefined && notFound.status === 204) return sendJson(res, 204);
             return sendError(res, notFound.status, notFound.code, notFound.message);
           }
+          if (resourceType === 'Microsoft.ServiceBus/namespaces') return sendJson(res, 202);
           if (resourceType === 'Microsoft.Storage/storageAccounts') return sendJson(res, 200);
           if (resourceType.startsWith('Microsoft.Storage/storageAccounts/')) {
             const storageDeleteNoContentTypes = new Set([

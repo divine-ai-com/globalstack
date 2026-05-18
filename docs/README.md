@@ -20,6 +20,7 @@ Use this file as the routing table for the repo. If you are not sure which docum
 | Understand what is safe to claim | `CONFORMANCE-MODEL.md` | `SERVICE-SCOPE.md` | Azure captures, lifecycle captures, and conformance tests |
 | Check current Tier 1/Tier 2 service scope | `SERVICE-SCOPE.md` | `docs/hybrid/README.md` | `packages/core/src/azure-tier1-capabilities.mjs` |
 | Harden Azure Storage coverage | `docs/coverage/storage-hardening.md` | `docs/coverage/storage-parity-pack.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Storage captures, parity pack, Azurite E2E, and real Azure capture backlog |
+| Harden Azure Service Bus coverage | `docs/coverage/service-bus-parity-pack.md` | `docs/hybrid/README.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Service Bus captures, official emulator E2E, parity pack, and real Azure capture backlog |
 | Change emulator behavior | `CONFORMANCE-MODEL.md` | `AGENT-RUNBOOK.md`, `ARCHITECTURE.md` | Capture fixtures and replay tests |
 | Add or update provider validation | `CONFORMANCE-MODEL.md` | `docs/conformance/provider-validation-implementation-checklist.md` | `fixtures/azure-captures/` |
 | Add a real Azure capture | `AGENT-RUNBOOK.md` | `CONFORMANCE-MODEL.md` | `fixtures/azure-captures/` and cleanup proof |

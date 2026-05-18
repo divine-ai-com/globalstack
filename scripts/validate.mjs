@@ -23,6 +23,7 @@ const storageHardeningResultsPath = join(distRoot, 'e2e', 'azure-storage-hardeni
 const storageNormalizerResultsPath = join(distRoot, 'e2e', 'azure-storage-normalizer', 'results.json');
 const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', 'results.json');
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
+const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -588,6 +589,47 @@ if (!serviceBusE2eText) {
   }
   if (!serviceBusE2e.caveat?.includes('Official-emulator evidence only')) {
     errors.push('Azure Service Bus emulator E2E must preserve the official-emulator evidence caveat');
+  }
+}
+
+const serviceBusParityText = await readFile(serviceBusParityResultsPath, 'utf8').catch(() => '');
+if (!serviceBusParityText) {
+  errors.push('missing Azure Service Bus parity E2E results; run npm run e2e:service-bus-parity');
+} else {
+  const serviceBusParity = JSON.parse(serviceBusParityText);
+  if (serviceBusParity.ok !== true) {
+    errors.push('Azure Service Bus parity E2E did not pass');
+  }
+  if (serviceBusParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Service Bus parity control-plane matrix has failures');
+  }
+  if ((serviceBusParity.controlPlane?.total ?? 0) < 30) {
+    errors.push('Azure Service Bus parity control-plane matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'namespace create requires an existing resource group',
+    'namespace invalid sku is rejected',
+    'namespace invalid name is rejected by official naming rules',
+    'valid namespace create returns async Azure shape',
+    'namespace get reaches Succeeded',
+    'topic create succeeds',
+    'subscription create succeeds',
+    'queue create succeeds',
+    'child create after namespace delete reports missing parent',
+  ]) {
+    if (!serviceBusParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Service Bus parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (serviceBusParity.officialEmulator?.skipped === true || serviceBusParity.officialEmulator?.ok !== true) {
+    errors.push('Azure Service Bus parity E2E must include the official emulator matrix during validation');
+  }
+  if (serviceBusParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Service Bus parity E2E must include the platform matrix during validation');
+  }
+  if (serviceBusParity.platformMatrix?.ok !== true || serviceBusParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Service Bus parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

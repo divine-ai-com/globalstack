@@ -136,6 +136,13 @@ const artifacts = [
     purpose: 'Storage ARM parity pack scope, command, outputs, and claim boundary.',
   }),
   artifact({
+    path: 'docs/coverage/service-bus-parity-pack.md',
+    kind: 'handwritten-doc',
+    owner: 'service-bus',
+    editPolicy: 'edit directly',
+    purpose: 'Service Bus ARM, official emulator, platform parity pack scope, outputs, and claim boundary.',
+  }),
+  artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
     kind: 'generated-doc',
     owner: 'scripts/render-artifact-registry.mjs',
@@ -298,6 +305,14 @@ const artifacts = [
     editPolicy: 'edit directly with Docker cleanup',
     purpose: 'Official Azure Service Bus emulator health plus queue/topic data-plane coverage.',
   }),
+  artifact({
+    path: 'scripts/e2e-azure-service-bus-parity.mjs',
+    kind: 'e2e-tool',
+    owner: 'service-bus',
+    command: 'npm run e2e:service-bus-parity',
+    editPolicy: 'edit directly with Docker cleanup',
+    purpose: 'Service Bus ARM parity matrix, official emulator E2E, and all-platform lifecycle coverage.',
+  }),
 
   artifact({
     path: 'fixtures/azure-captures/',
@@ -417,7 +432,7 @@ const artifacts = [
     path: 'dist/e2e/',
     kind: 'generated-test-output',
     owner: 'e2e scripts',
-    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus',
+    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity',
     editPolicy: 'regenerate',
     purpose: 'Storage and Service Bus E2E result reports.',
   }),
@@ -431,7 +446,7 @@ const artifacts = [
   }),
 ].map(item => ({
   ...item,
-  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md'].includes(item.path)
+  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md', 'docs/coverage/service-bus-parity-pack.md'].includes(item.path)
     ? 'governance'
     : item.path.startsWith('packages/') || item.path.startsWith('src/')
       ? 'source'

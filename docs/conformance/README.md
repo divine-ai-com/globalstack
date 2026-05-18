@@ -9,8 +9,8 @@ No call in this file is considered Azure-correct until the exact request shape, 
 - Capabilities: 30
 - Tier 1 capabilities: 15
 - Tier 2 capabilities: 15
-- Candidate calls: 248
-- Create/update calls with parameter variance cases: 62
+- Candidate calls: 252
+- Create/update calls with parameter variance cases: 63
 
 ## Validation Policy
 
@@ -122,6 +122,10 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | Get | GET | 2021-11-01 | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | ListByResourceGroup | GET | 2021-11-01 | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | Delete | DELETE | 2021-11-01 | 0 |
+| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | CreateOrUpdate | PUT | provider-default-required | 5 |
+| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | Get | GET | provider-default-required | 0 |
+| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | ListByResourceGroup | GET | provider-default-required | 0 |
+| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | Delete | DELETE | provider-default-required | 0 |
 | event-grid | EventBridge | Microsoft.EventGrid/topics | CreateOrUpdate | PUT | 2022-06-15 | 4 |
 | event-grid | EventBridge | Microsoft.EventGrid/topics | Get | GET | 2022-06-15 | 0 |
 | event-grid | EventBridge | Microsoft.EventGrid/topics | ListByResourceGroup | GET | 2022-06-15 | 0 |

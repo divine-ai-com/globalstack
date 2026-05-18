@@ -128,6 +128,7 @@ function valuesFor(call, varianceId) {
     tablesName: `table${suffix}`.slice(0, 40),
     namespacesName: `ns-${suffix}`.slice(0, 40),
     topicsName: `topic-${suffix}`.slice(0, 40),
+    subscriptionsName: `sub-${suffix}`.slice(0, 40),
     eventSubscriptionsName: `sub-${suffix}`.slice(0, 40),
     registriesName: `acr${suffix}`.replace(/[^a-zA-Z0-9]/g, '').slice(0, 40),
     managedClustersName: `aks-${suffix}`.slice(0, 40),
@@ -274,6 +275,25 @@ function responseErrorCode(response) {
   return response.body?.error?.code ?? response.body?.code ?? null;
 }
 
+async function seedLocalParents(baseUrl, call, variance, replacements) {
+  if (
+    call.resourceType !== 'Microsoft.ServiceBus/namespaces/topics/subscriptions'
+    || variance.id !== 'valid-minimal'
+  ) {
+    return;
+  }
+
+  const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}?api-version=2021-11-01`;
+  const namespaceResponse = await httpJson(baseUrl, 'PUT', namespacePath, {
+    location,
+    sku: { name: 'Standard', tier: 'Standard' },
+    properties: {},
+  });
+  if (namespaceResponse.status < 200 || namespaceResponse.status >= 300) return;
+  const topicPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}/topics/${replacements.topicsName}?api-version=2021-11-01`;
+  await httpJson(baseUrl, 'PUT', topicPath, { properties: {} });
+}
+
 async function classifyLocal(call, variance, response) {
   const expectations = await loadLocalExpectationMap();
   const expectation = expectations.get(fixtureIdFor(call, variance));
@@ -289,6 +309,7 @@ async function runLocalCase(baseUrl, call, variance) {
   const replacements = valuesFor(call, variance.id);
   const resourceGroupPath = `/subscriptions/${subscriptionId}/resourcegroups/${replacements.resourceGroupName}?api-version=2021-04-01`;
   await httpJson(baseUrl, 'PUT', resourceGroupPath, { location, tags: { purpose: 'globalstack-conformance' } });
+  await seedLocalParents(baseUrl, call, variance, replacements);
 
   const body = interpolate(variance.body, replacements);
   const path = requestPath(call, replacements, { omitApiVersion: variance.omitApiVersion });

@@ -54,6 +54,7 @@ const putMissingParentResourceTypes = new Map([
   ['Microsoft.NetApp/netAppAccounts/capacityPools/volumes', 'ParentResourceNotFound'],
   ['Microsoft.ServiceBus/namespaces/queues', 'ParentResourceNotFound'],
   ['Microsoft.ServiceBus/namespaces/topics', 'ParentResourceNotFound'],
+  ['Microsoft.ServiceBus/namespaces/topics/subscriptions', 'ParentResourceNotFound'],
   ['Microsoft.Storage/storageAccounts/blobServices/containers', 'ParentResourceNotFound'],
   ['Microsoft.Storage/storageAccounts/fileServices/shares', 'ParentResourceNotFound'],
   ['Microsoft.Storage/storageAccounts/queueServices/queues', 'ParentResourceNotFound'],
@@ -186,6 +187,68 @@ function invalidStorageAccountName(name) {
     'AccountNameInvalid',
     `The storage account named ${name} is invalid. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.`,
   );
+}
+
+function invalidServiceBusName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'BadRequest',
+    `The Service Bus resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
+function serviceBusNameFromTypePath(typePath, marker) {
+  const parts = String(typePath ?? '').split('/');
+  const index = parts.indexOf(marker);
+  return index >= 0 ? parts[index + 1] ?? '' : '';
+}
+
+function validateServiceBusName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.ServiceBus/namespaces') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'namespaces');
+    if (!/^[A-Za-z][A-Za-z0-9-]{4,48}[A-Za-z0-9]$/.test(name)) {
+      return invalidServiceBusName(
+        resourceType,
+        name,
+        'Namespace names must be 6 through 50 characters, use alphanumerics and hyphens, start with a letter, and end with a letter or number.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.ServiceBus/namespaces/queues') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'queues');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9._/-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidServiceBusName(
+        resourceType,
+        name,
+        'Queue names must be 1 through 260 characters, use alphanumerics, periods, hyphens, underscores, and slashes, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.ServiceBus/namespaces/topics') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'topics');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9._/-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidServiceBusName(
+        resourceType,
+        name,
+        'Topic names must be 1 through 260 characters, use alphanumerics, periods, hyphens, underscores, and slashes, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.ServiceBus/namespaces/topics/subscriptions') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'subscriptions');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,48}[A-Za-z0-9])?$/.test(name)) {
+      return invalidServiceBusName(
+        resourceType,
+        name,
+        'Subscription names must be 1 through 50 characters, use alphanumerics, periods, hyphens, and underscores, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  return null;
 }
 
 export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null }) {
@@ -495,6 +558,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       'ValidateResourceInfoFailedWithInvalidSkuName',
       "Sku name 'GlobalStack_InvalidSku_For_Conformance' is invalid",
     );
+  }
+
+  if (resourceType.startsWith('Microsoft.ServiceBus/')) {
+    const serviceBusNameValidation = validateServiceBusName(resourceType, providerRoute);
+    if (serviceBusNameValidation) return serviceBusNameValidation;
   }
 
   return null;
