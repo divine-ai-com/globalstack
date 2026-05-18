@@ -1,0 +1,2771 @@
+{
+  "_meta": {
+    "generatedAt": "2026-05-18T10:11:12.668Z",
+    "source": "globalstack-hybrid-registry",
+    "tiers": [
+      1,
+      2
+    ],
+    "capabilityCount": 30,
+    "tier1CapabilityCount": 15,
+    "tier2CapabilityCount": 15,
+    "officialEmulatorCount": 13,
+    "claimPolicy": "No service is considered fully supported unless implemented, contractTested, cloudValidated, and knownGaps is empty.",
+    "strictSurfacePolicy": "Unknown Azure resource types and incomplete ARM requests must fail closed rather than returning fabricated success."
+  },
+  "officialEmulators": [
+    {
+      "id": "azurite",
+      "label": "Azurite",
+      "covers": [
+        "blob-storage",
+        "queue-storage",
+        "table-storage"
+      ],
+      "image": "mcr.microsoft.com/azure-storage/azurite",
+      "ports": [
+        "10000:10000",
+        "10001:10001",
+        "10002:10002"
+      ],
+      "notes": "Official Microsoft storage emulator for Blob, Queue, and Table data planes."
+    },
+    {
+      "id": "cosmos-db-emulator",
+      "label": "Azure Cosmos DB Emulator",
+      "covers": [
+        "cosmos-nosql"
+      ],
+      "image": "mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview",
+      "ports": [
+        "8081:8081",
+        "1234:1234"
+      ],
+      "notes": "Official local Cosmos DB development emulator. Use for data-plane app tests, not production parity claims."
+    },
+    {
+      "id": "service-bus-emulator",
+      "label": "Azure Service Bus Emulator",
+      "covers": [
+        "service-bus-queues",
+        "service-bus-topics"
+      ],
+      "image": "mcr.microsoft.com/azure-messaging/servicebus-emulator:latest",
+      "ports": [
+        "5672:5672"
+      ],
+      "notes": "Official container emulator. Requires a SQL Server sidecar and static config for entities."
+    },
+    {
+      "id": "event-hubs-emulator",
+      "label": "Azure Event Hubs Emulator",
+      "covers": [
+        "event-hubs"
+      ],
+      "image": "mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest",
+      "ports": [
+        "5672:5672",
+        "9092:9092"
+      ],
+      "notes": "Official container emulator. Use for streaming/Kafka/AMQP scenarios, not Event Grid parity."
+    },
+    {
+      "id": "functions-core-tools",
+      "label": "Azure Functions Core Tools",
+      "covers": [
+        "azure-functions-runtime"
+      ],
+      "image": null,
+      "ports": [
+        "7071:7071"
+      ],
+      "notes": "Official local Functions runtime. GlobalStack models Function App resources and wires local settings."
+    },
+    {
+      "id": "app-configuration-emulator",
+      "label": "Azure App Configuration Emulator",
+      "covers": [
+        "app-configuration"
+      ],
+      "image": "mcr.microsoft.com/azure-app-configuration/app-configuration-emulator:1.0.2",
+      "ports": [
+        "8483:8483"
+      ],
+      "notes": "Official local emulator for key/value and feature configuration workflows."
+    },
+    {
+      "id": "signalr-emulator",
+      "label": "Azure SignalR Local Emulator",
+      "covers": [
+        "signalr-serverless"
+      ],
+      "image": null,
+      "ports": [
+        "8999:8999"
+      ],
+      "notes": "Official dotnet tool for serverless SignalR scenarios only."
+    },
+    {
+      "id": "local-postgres",
+      "label": "Local PostgreSQL",
+      "covers": [
+        "postgresql-data-plane"
+      ],
+      "image": "postgres:16-alpine",
+      "ports": [
+        "5432:5432"
+      ],
+      "notes": "Not an Azure emulator. Used behind an Azure Database for PostgreSQL control-plane facade."
+    },
+    {
+      "id": "local-mysql",
+      "label": "Local MySQL",
+      "covers": [
+        "mysql-data-plane"
+      ],
+      "image": "mysql:8",
+      "ports": [
+        "3306:3306"
+      ],
+      "notes": "Not an Azure emulator. Used behind an Azure Database for MySQL control-plane facade."
+    },
+    {
+      "id": "local-redis",
+      "label": "Local Redis",
+      "covers": [
+        "redis-data-plane"
+      ],
+      "image": "redis:7-alpine",
+      "ports": [
+        "6379:6379"
+      ],
+      "notes": "Not an Azure emulator. Used behind an Azure Cache for Redis control-plane facade."
+    },
+    {
+      "id": "local-file-share",
+      "label": "Local File Share",
+      "covers": [
+        "azure-files-data-plane"
+      ],
+      "image": null,
+      "ports": [],
+      "notes": "Not an Azure emulator. Used for Azure Files metadata and POSIX-like local file persistence only."
+    },
+    {
+      "id": "local-analytics-store",
+      "label": "Local Analytics Store",
+      "covers": [
+        "synapse-redshift-analogue-data-plane"
+      ],
+      "image": null,
+      "ports": [],
+      "notes": "Not an Azure emulator. Used for lightweight warehouse metadata and future DuckDB/PostgreSQL-backed query smoke tests."
+    },
+    {
+      "id": "local-oci-registry",
+      "label": "Local OCI Registry",
+      "covers": [
+        "container-registry-data-plane"
+      ],
+      "image": "registry:2",
+      "ports": [
+        "5000:5000"
+      ],
+      "notes": "Not an Azure emulator. Used behind an Azure Container Registry metadata facade."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "blob-storage",
+      "tier": 1,
+      "awsAnalogue": "S3",
+      "azureEquivalent": "Azure Blob Storage / Storage Account",
+      "resourceTypes": [
+        "Microsoft.Storage/storageAccounts",
+        "Microsoft.Storage/storageAccounts/blobServices/containers"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "azurite"
+      ],
+      "implementedOperations": [
+        "ResourceGroups.CreateOrUpdate",
+        "ResourceGroups.Get",
+        "ResourceGroups.Delete",
+        "StorageAccounts.CreateOrUpdate",
+        "StorageAccounts.Get",
+        "StorageAccounts.Delete",
+        "BlobContainers.Create",
+        "BlobContainers.Get",
+        "BlobContainers.Delete"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "SAS edge cases",
+        "RBAC-denied writes",
+        "immutability policy validation",
+        "lifecycle policy defaults"
+      ],
+      "knownGaps": [
+        "No full Azure Storage RBAC parity in MVP.",
+        "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+        "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "azure-functions",
+      "tier": 1,
+      "awsAnalogue": "Lambda",
+      "azureEquivalent": "Azure Functions / Function Apps",
+      "resourceTypes": [
+        "Microsoft.Web/sites",
+        "Microsoft.Web/serverfarms"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "functions-core-tools",
+        "azurite"
+      ],
+      "implementedOperations": [
+        "FunctionApps.CreateOrUpdate",
+        "FunctionApps.Get",
+        "FunctionApps.Delete"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "deployment package errors",
+        "trigger sync failures",
+        "managed identity token failures"
+      ],
+      "knownGaps": [
+        "No hosted scale controller parity in MVP.",
+        "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+        "Managed identity starts as a local token facade with explain traces."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "api-management",
+      "tier": 1,
+      "awsAnalogue": "API Gateway",
+      "azureEquivalent": "Azure API Management",
+      "resourceTypes": [
+        "Microsoft.ApiManagement/service",
+        "Microsoft.ApiManagement/service/apis"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-http-router"
+      ],
+      "implementedOperations": [
+        "ApiManagementService.CreateOrUpdate",
+        "Apis.CreateOrUpdate",
+        "Apis.Get"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "policy validation",
+        "product/subscription failures",
+        "custom domain and certificate errors"
+      ],
+      "knownGaps": [
+        "MVP supports route/backend metadata and simple local proxying only.",
+        "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "identity-rbac",
+      "tier": 1,
+      "awsAnalogue": "IAM/STS",
+      "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
+      "resourceTypes": [
+        "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "Microsoft.Authorization/roleAssignments",
+        "Microsoft.Authorization/roleDefinitions"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-local-token-service"
+      ],
+      "implementedOperations": [
+        "RoleAssignments.Create",
+        "RoleAssignments.Get",
+        "ManagedIdentities.CreateOrUpdate",
+        "Token.IssueLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "RBAC deny matrix",
+        "managed identity token resource validation",
+        "role definition validation"
+      ],
+      "knownGaps": [
+        "MVP uses permissive local tokens and records authorization decisions.",
+        "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "key-vault-secrets",
+      "tier": 1,
+      "awsAnalogue": "Secrets Manager",
+      "azureEquivalent": "Key Vault secrets",
+      "resourceTypes": [
+        "Microsoft.KeyVault/vaults",
+        "Microsoft.KeyVault/vaults/secrets"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-secret-store"
+      ],
+      "implementedOperations": [
+        "Vaults.CreateOrUpdate",
+        "Secrets.Set",
+        "Secrets.Get",
+        "Secrets.ListVersions"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "soft-delete conflicts",
+        "purge protection behavior",
+        "RBAC denied reads"
+      ],
+      "knownGaps": [
+        "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+        "Secret versions are local metadata until cloud validated."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "key-vault-keys",
+      "tier": 1,
+      "awsAnalogue": "KMS",
+      "azureEquivalent": "Key Vault keys / Managed HSM",
+      "resourceTypes": [
+        "Microsoft.KeyVault/vaults",
+        "Microsoft.KeyVault/vaults/keys"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "node-crypto"
+      ],
+      "implementedOperations": [
+        "Keys.Create",
+        "Keys.Get",
+        "Keys.EncryptLocal",
+        "Keys.DecryptLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "crypto parameter errors",
+        "key import restrictions",
+        "HSM-specific behavior"
+      ],
+      "knownGaps": [
+        "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "postgresql-flexible-server",
+      "tier": 1,
+      "awsAnalogue": "RDS PostgreSQL",
+      "azureEquivalent": "Azure Database for PostgreSQL Flexible Server",
+      "resourceTypes": [
+        "Microsoft.DBforPostgreSQL/flexibleServers",
+        "Microsoft.DBforPostgreSQL/flexibleServers/databases"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-postgres"
+      ],
+      "implementedOperations": [
+        "FlexibleServers.Create",
+        "FlexibleServers.Get",
+        "Databases.Create"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "firewall default behavior",
+        "server parameter validation",
+        "backup/HA errors"
+      ],
+      "knownGaps": [
+        "Local PostgreSQL covers SQL data plane only.",
+        "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceTypes": [
+        "Microsoft.DocumentDB/databaseAccounts",
+        "Microsoft.Storage/storageAccounts/tableServices/tables"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "cosmos-db-emulator",
+        "azurite"
+      ],
+      "implementedOperations": [
+        "DatabaseAccounts.CreateOrUpdate",
+        "Tables.Create",
+        "Items.CrudLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "partition key validation",
+        "index policy defaults",
+        "consistency behavior"
+      ],
+      "knownGaps": [
+        "No exact DynamoDB equivalence.",
+        "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "service-bus-topics",
+      "tier": 1,
+      "awsAnalogue": "SNS",
+      "azureEquivalent": "Service Bus topics / Event Grid topics",
+      "resourceTypes": [
+        "Microsoft.ServiceBus/namespaces",
+        "Microsoft.ServiceBus/namespaces/topics"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "service-bus-emulator",
+        "globalstack-event-router"
+      ],
+      "implementedOperations": [
+        "Namespaces.CreateOrUpdate",
+        "Topics.Create",
+        "Subscriptions.Create",
+        "Messages.PublishLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "topic filter behavior",
+        "dead-letter failures",
+        "delivery retry windows"
+      ],
+      "knownGaps": [
+        "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+        "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "event-grid",
+      "tier": 1,
+      "awsAnalogue": "EventBridge",
+      "azureEquivalent": "Event Grid",
+      "resourceTypes": [
+        "Microsoft.EventGrid/topics",
+        "Microsoft.EventGrid/eventSubscriptions"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-event-router"
+      ],
+      "implementedOperations": [
+        "Topics.Create",
+        "EventSubscriptions.Create",
+        "Events.PublishLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "advanced filtering",
+        "partner events",
+        "delivery retry windows",
+        "dead-letter destination failures"
+      ],
+      "knownGaps": [
+        "No official Event Grid emulator is available in the MVP path.",
+        "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "container-registry",
+      "tier": 1,
+      "awsAnalogue": "ECR",
+      "azureEquivalent": "Azure Container Registry",
+      "resourceTypes": [
+        "Microsoft.ContainerRegistry/registries"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-oci-registry"
+      ],
+      "implementedOperations": [
+        "Registries.CreateOrUpdate",
+        "Registries.Get",
+        "Oci.PushPullLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "repository auth errors",
+        "webhook defaults",
+        "geo-replication validation"
+      ],
+      "knownGaps": [
+        "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "aks-metadata",
+      "tier": 1,
+      "awsAnalogue": "EKS",
+      "azureEquivalent": "Azure Kubernetes Service",
+      "resourceTypes": [
+        "Microsoft.ContainerService/managedClusters"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "kind-or-k3d-future"
+      ],
+      "implementedOperations": [
+        "ManagedClusters.CreateMetadata",
+        "ManagedClusters.Get"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "node pool validation",
+        "CNI validation",
+        "identity integration errors"
+      ],
+      "knownGaps": [
+        "MVP is metadata-only for AKS.",
+        "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "monitor-logs",
+      "tier": 1,
+      "awsAnalogue": "CloudWatch Logs",
+      "azureEquivalent": "Log Analytics / Azure Monitor Logs",
+      "resourceTypes": [
+        "Microsoft.OperationalInsights/workspaces",
+        "Microsoft.Insights/diagnosticSettings"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "globalstack-log-store"
+      ],
+      "implementedOperations": [
+        "Workspaces.CreateOrUpdate",
+        "Logs.IngestLocal",
+        "Logs.QueryBasic"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "KQL error shape",
+        "diagnostic settings validation",
+        "retention policy defaults"
+      ],
+      "knownGaps": [
+        "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "monitor-metrics-alerts",
+      "tier": 1,
+      "awsAnalogue": "CloudWatch Metrics/Alarms",
+      "azureEquivalent": "Azure Monitor metrics and alerts",
+      "resourceTypes": [
+        "Microsoft.Insights/metricAlerts",
+        "Microsoft.Insights/actionGroups"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-metric-store"
+      ],
+      "implementedOperations": [
+        "MetricAlerts.CreateOrUpdate",
+        "Metrics.PutLocal",
+        "Metrics.ListLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "alert evaluator semantics",
+        "dimension validation",
+        "action group failures"
+      ],
+      "knownGaps": [
+        "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "virtual-network",
+      "tier": 1,
+      "awsAnalogue": "VPC",
+      "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
+      "resourceTypes": [
+        "Microsoft.Network/virtualNetworks",
+        "Microsoft.Network/privateEndpoints",
+        "Microsoft.Network/privateDnsZones"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-network-model"
+      ],
+      "implementedOperations": [
+        "VirtualNetworks.CreateOrUpdate",
+        "Subnets.CreateOrUpdate",
+        "PrivateDnsZones.CreateOrUpdate"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "CIDR validation",
+        "private endpoint state transitions",
+        "route/NSG conflicts"
+      ],
+      "knownGaps": [
+        "MVP models ARM dependencies only.",
+        "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "mysql-flexible-server",
+      "tier": 2,
+      "awsAnalogue": "RDS MySQL",
+      "azureEquivalent": "Azure Database for MySQL Flexible Server",
+      "resourceTypes": [
+        "Microsoft.DBforMySQL/flexibleServers",
+        "Microsoft.DBforMySQL/flexibleServers/databases"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-mysql"
+      ],
+      "implementedOperations": [
+        "FlexibleServers.Create",
+        "FlexibleServers.Get",
+        "Databases.Create"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "server parameter validation",
+        "backup/HA errors",
+        "firewall default behavior"
+      ],
+      "knownGaps": [
+        "Local MySQL covers SQL data plane only.",
+        "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "queue-storage",
+      "tier": 2,
+      "awsAnalogue": "SQS",
+      "azureEquivalent": "Azure Queue Storage / Service Bus queues",
+      "resourceTypes": [
+        "Microsoft.Storage/storageAccounts/queueServices/queues",
+        "Microsoft.ServiceBus/namespaces/queues"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "azurite",
+        "service-bus-emulator"
+      ],
+      "implementedOperations": [
+        "Queues.Create",
+        "Queues.Get",
+        "Messages.SendLocal",
+        "Messages.ReceiveLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "visibility timeout edge cases",
+        "poison message handling",
+        "RBAC denied queue operations"
+      ],
+      "knownGaps": [
+        "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+        "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "redis-cache",
+      "tier": 2,
+      "awsAnalogue": "ElastiCache Redis",
+      "azureEquivalent": "Azure Cache for Redis",
+      "resourceTypes": [
+        "Microsoft.Cache/redis",
+        "Microsoft.Cache/redisEnterprise"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-redis"
+      ],
+      "implementedOperations": [
+        "Redis.CreateOrUpdate",
+        "Redis.Get",
+        "Redis.SetLocal",
+        "Redis.GetLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "SKU validation",
+        "TLS/auth failures",
+        "clustering and persistence defaults"
+      ],
+      "knownGaps": [
+        "Local Redis covers Redis protocol behavior only.",
+        "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "logic-workflows",
+      "tier": 2,
+      "awsAnalogue": "Step Functions",
+      "azureEquivalent": "Azure Logic Apps / Durable Functions",
+      "resourceTypes": [
+        "Microsoft.Logic/workflows",
+        "Microsoft.Web/sites"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-workflow-runner",
+        "functions-core-tools"
+      ],
+      "implementedOperations": [
+        "Workflows.CreateOrUpdate",
+        "Workflows.Get",
+        "Executions.StartLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "connector validation",
+        "retry/backoff semantics",
+        "durable orchestration history behavior"
+      ],
+      "knownGaps": [
+        "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+        "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceTypes": [
+        "Microsoft.Network/dnsZones",
+        "Microsoft.Network/privateDnsZones"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-dns-registry"
+      ],
+      "implementedOperations": [
+        "DnsZones.CreateOrUpdate",
+        "RecordSets.CreateOrUpdate",
+        "PrivateDnsZones.CreateOrUpdate"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "record validation",
+        "zone delegation behavior",
+        "private zone link conflicts"
+      ],
+      "knownGaps": [
+        "MVP stores DNS metadata and can emit local resolver hints only.",
+        "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "load-balancing",
+      "tier": 2,
+      "awsAnalogue": "ALB/NLB",
+      "azureEquivalent": "Azure Application Gateway / Load Balancer",
+      "resourceTypes": [
+        "Microsoft.Network/applicationGateways",
+        "Microsoft.Network/loadBalancers"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-http-router"
+      ],
+      "implementedOperations": [
+        "ApplicationGateways.CreateOrUpdate",
+        "LoadBalancers.CreateOrUpdate",
+        "Routes.ProxyLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "probe state transitions",
+        "listener validation",
+        "frontend IP conflict behavior"
+      ],
+      "knownGaps": [
+        "MVP supports metadata and simple HTTP routing only.",
+        "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "front-door-cdn",
+      "tier": 2,
+      "awsAnalogue": "CloudFront",
+      "azureEquivalent": "Azure Front Door / Azure CDN",
+      "resourceTypes": [
+        "Microsoft.Cdn/profiles",
+        "Microsoft.Cdn/profiles/afdEndpoints",
+        "Microsoft.Cdn/profiles/endpoints"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-edge-router"
+      ],
+      "implementedOperations": [
+        "Profiles.CreateOrUpdate",
+        "Endpoints.CreateOrUpdate",
+        "Routes.CreateOrUpdate"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "custom domain validation",
+        "cache rule behavior",
+        "origin health failures"
+      ],
+      "knownGaps": [
+        "MVP records edge routing intent and can proxy basic local origins.",
+        "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "waf-policy",
+      "tier": 2,
+      "awsAnalogue": "WAF",
+      "azureEquivalent": "Azure Web Application Firewall policy",
+      "resourceTypes": [
+        "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+        "Microsoft.Cdn/profiles/securityPolicies"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-waf-metadata"
+      ],
+      "implementedOperations": [
+        "WafPolicies.CreateOrUpdate",
+        "WafPolicies.Get",
+        "Rules.ValidateBasic"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "managed rule defaults",
+        "exclusion validation",
+        "block/log action behavior"
+      ],
+      "knownGaps": [
+        "MVP validates and stores WAF policy metadata only.",
+        "No full managed rule engine, OWASP ruleset behavior, bot protection, or request blocking parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "activity-log-audit",
+      "tier": 2,
+      "awsAnalogue": "CloudTrail",
+      "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
+      "resourceTypes": [
+        "Microsoft.Insights/diagnosticSettings",
+        "Microsoft.EventGrid/systemTopics"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-audit-log"
+      ],
+      "implementedOperations": [
+        "ActivityLog.RecordLocal",
+        "DiagnosticSettings.CreateOrUpdate",
+        "Events.ListLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "activity log schema",
+        "diagnostic setting fanout failures",
+        "retention behavior"
+      ],
+      "knownGaps": [
+        "MVP records local ARM calls and selected data-plane traces only.",
+        "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "azure-files",
+      "tier": 2,
+      "awsAnalogue": "EFS",
+      "azureEquivalent": "Azure Files / Azure NetApp Files",
+      "resourceTypes": [
+        "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-file-share"
+      ],
+      "implementedOperations": [
+        "FileShares.Create",
+        "FileShares.Get",
+        "Files.PutLocal",
+        "Files.GetLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "SMB/NFS auth behavior",
+        "quota validation",
+        "snapshot/backup behavior"
+      ],
+      "knownGaps": [
+        "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+        "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "event-hubs-streams",
+      "tier": 2,
+      "awsAnalogue": "Kinesis Data Streams",
+      "azureEquivalent": "Azure Event Hubs",
+      "resourceTypes": [
+        "Microsoft.EventHub/namespaces",
+        "Microsoft.EventHub/namespaces/eventhubs"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "event-hubs-emulator"
+      ],
+      "implementedOperations": [
+        "Namespaces.CreateOrUpdate",
+        "EventHubs.CreateOrUpdate",
+        "Events.PublishLocal",
+        "Events.ReadLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "partition assignment",
+        "consumer group checkpoints",
+        "retention and throughput errors"
+      ],
+      "knownGaps": [
+        "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+        "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "synapse-warehouse",
+      "tier": 2,
+      "awsAnalogue": "Redshift",
+      "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
+      "resourceTypes": [
+        "Microsoft.Synapse/workspaces",
+        "Microsoft.Synapse/workspaces/sqlPools"
+      ],
+      "primaryModes": [
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "local-analytics-store"
+      ],
+      "implementedOperations": [
+        "Workspaces.CreateOrUpdate",
+        "SqlPools.CreateOrUpdate",
+        "Queries.RunLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "SQL pool SKU validation",
+        "workspace managed resource group behavior",
+        "query error shape"
+      ],
+      "knownGaps": [
+        "MVP stores Synapse metadata and may run simple local analytical queries only.",
+        "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "app-configuration-parameters",
+      "tier": 2,
+      "awsAnalogue": "SSM Parameter Store",
+      "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
+      "resourceTypes": [
+        "Microsoft.AppConfiguration/configurationStores",
+        "Microsoft.KeyVault/vaults/secrets"
+      ],
+      "primaryModes": [
+        "official-emulator",
+        "globalstack-facade"
+      ],
+      "backingEngines": [
+        "app-configuration-emulator",
+        "globalstack-secret-store"
+      ],
+      "implementedOperations": [
+        "ConfigurationStores.CreateOrUpdate",
+        "KeyValues.SetLocal",
+        "KeyValues.GetLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "feature flag schema",
+        "label filtering",
+        "Key Vault reference errors"
+      ],
+      "knownGaps": [
+        "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+        "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+      ],
+      "implementationKind": "official-emulator-backed-local",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "database-migration-service",
+      "tier": 2,
+      "awsAnalogue": "DMS",
+      "azureEquivalent": "Azure Database Migration Service",
+      "resourceTypes": [
+        "Microsoft.DataMigration/services",
+        "Microsoft.DataMigration/services/projects"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-migration-plan-store"
+      ],
+      "implementedOperations": [
+        "Services.CreateOrUpdate",
+        "Projects.CreateOrUpdate",
+        "MigrationPlans.ValidateLocal"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "source/target validation",
+        "migration task state machine",
+        "network/auth failures"
+      ],
+      "knownGaps": [
+        "MVP stores migration intent and validates basic source/target metadata only.",
+        "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    },
+    {
+      "id": "service-discovery",
+      "tier": 2,
+      "awsAnalogue": "Service Discovery / Cloud Map",
+      "azureEquivalent": "Azure Private DNS / Container Apps service discovery",
+      "resourceTypes": [
+        "Microsoft.Network/privateDnsZones",
+        "Microsoft.App/managedEnvironments",
+        "Microsoft.App/containerApps"
+      ],
+      "primaryModes": [
+        "globalstack-facade",
+        "real-azure-capture-required"
+      ],
+      "backingEngines": [
+        "globalstack-service-registry",
+        "globalstack-dns-registry"
+      ],
+      "implementedOperations": [
+        "Services.RegisterLocal",
+        "Services.ResolveLocal",
+        "PrivateDnsZones.CreateOrUpdate"
+      ],
+      "contractTested": false,
+      "cloudValidated": false,
+      "realAzureCaptureRequired": [
+        "Container Apps DNS behavior",
+        "private DNS link conflicts",
+        "service revision routing"
+      ],
+      "knownGaps": [
+        "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+        "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+      ],
+      "implementationKind": "metadata-only-control-plane",
+      "realAzureApiComplete": false
+    }
+  ],
+  "operations": {
+    "blob-storage": {
+      "ResourceGroups.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "ResourceGroups.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "ResourceGroups.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "StorageAccounts.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "StorageAccounts.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "StorageAccounts.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "BlobContainers.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "BlobContainers.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "BlobContainers.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      }
+    },
+    "azure-functions": {
+      "FunctionApps.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "FunctionApps.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "FunctionApps.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      }
+    },
+    "api-management": {
+      "ApiManagementService.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Apis.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Apis.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      }
+    },
+    "identity-rbac": {
+      "RoleAssignments.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleAssignments.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "ManagedIdentities.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "Token.IssueLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      }
+    },
+    "key-vault-secrets": {
+      "Vaults.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      },
+      "Secrets.Set": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      },
+      "Secrets.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      },
+      "Secrets.ListVersions": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      }
+    },
+    "key-vault-keys": {
+      "Keys.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      },
+      "Keys.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      },
+      "Keys.EncryptLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      },
+      "Keys.DecryptLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      }
+    },
+    "postgresql-flexible-server": {
+      "FlexibleServers.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "FlexibleServers.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "Databases.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      }
+    },
+    "cosmos-nosql-table": {
+      "DatabaseAccounts.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "Tables.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "Items.CrudLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      }
+    },
+    "service-bus-topics": {
+      "Namespaces.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Topics.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Subscriptions.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Messages.PublishLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      }
+    },
+    "event-grid": {
+      "Topics.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "EventSubscriptions.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "Events.PublishLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      }
+    },
+    "container-registry": {
+      "Registries.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+        ]
+      },
+      "Registries.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+        ]
+      },
+      "Oci.PushPullLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+        ]
+      }
+    },
+    "aks-metadata": {
+      "ManagedClusters.CreateMetadata": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS.",
+          "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+        ]
+      },
+      "ManagedClusters.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS.",
+          "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+        ]
+      }
+    },
+    "monitor-logs": {
+      "Workspaces.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Logs.IngestLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Logs.QueryBasic": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      }
+    },
+    "monitor-metrics-alerts": {
+      "MetricAlerts.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "Metrics.PutLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "Metrics.ListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      }
+    },
+    "virtual-network": {
+      "VirtualNetworks.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "Subnets.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      }
+    },
+    "mysql-flexible-server": {
+      "FlexibleServers.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "FlexibleServers.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "Databases.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      }
+    },
+    "queue-storage": {
+      "Queues.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Queues.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Messages.SendLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Messages.ReceiveLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      }
+    },
+    "redis-cache": {
+      "Redis.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "Redis.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "Redis.SetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "Redis.GetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      }
+    },
+    "logic-workflows": {
+      "Workflows.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Workflows.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Executions.StartLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      }
+    },
+    "dns-zones": {
+      "DnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+        ]
+      },
+      "RecordSets.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+        ]
+      }
+    },
+    "load-balancing": {
+      "ApplicationGateways.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "LoadBalancers.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "Routes.ProxyLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+        ]
+      }
+    },
+    "front-door-cdn": {
+      "Profiles.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Endpoints.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Routes.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      }
+    },
+    "waf-policy": {
+      "WafPolicies.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-waf-metadata"
+        ],
+        "knownGaps": [
+          "MVP validates and stores WAF policy metadata only.",
+          "No full managed rule engine, OWASP ruleset behavior, bot protection, or request blocking parity in MVP."
+        ]
+      },
+      "WafPolicies.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-waf-metadata"
+        ],
+        "knownGaps": [
+          "MVP validates and stores WAF policy metadata only.",
+          "No full managed rule engine, OWASP ruleset behavior, bot protection, or request blocking parity in MVP."
+        ]
+      },
+      "Rules.ValidateBasic": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-waf-metadata"
+        ],
+        "knownGaps": [
+          "MVP validates and stores WAF policy metadata only.",
+          "No full managed rule engine, OWASP ruleset behavior, bot protection, or request blocking parity in MVP."
+        ]
+      }
+    },
+    "activity-log-audit": {
+      "ActivityLog.RecordLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "DiagnosticSettings.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "Events.ListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      }
+    },
+    "azure-files": {
+      "FileShares.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "FileShares.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "Files.PutLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "Files.GetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      }
+    },
+    "event-hubs-streams": {
+      "Namespaces.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "EventHubs.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "Events.PublishLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "Events.ReadLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      }
+    },
+    "synapse-warehouse": {
+      "Workspaces.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "SqlPools.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "Queries.RunLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      }
+    },
+    "app-configuration-parameters": {
+      "ConfigurationStores.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "KeyValues.SetLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "KeyValues.GetLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      }
+    },
+    "database-migration-service": {
+      "Services.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Projects.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "MigrationPlans.ValidateLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      }
+    },
+    "service-discovery": {
+      "Services.RegisterLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "Services.ResolveLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      }
+    }
+  }
+}

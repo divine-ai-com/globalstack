@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-05-16T06:21:44.419Z",
+  "dryRun": false,
+  "register": true,
+  "allowValidMinimal": true,
+  "namespaces": [
+    "Microsoft.Cache"
+  ],
+  "registration": [
+    {
+      "namespace": "Microsoft.Cache",
+      "before": "Registered",
+      "after": "Registered",
+      "registered": false,
+      "registerExitCode": 0
+    }
+  ],
+  "candidateCount": 2,
+  "candidates": [
+    {
+      "namespace": "Microsoft.Cache",
+      "fixtureId": "redis-cache.microsoft-cache-redis.createOrUpdate.valid-minimal",
+      "capabilityId": "redis-cache",
+      "resourceType": "Microsoft.Cache/redis",
+      "operation": "CreateOrUpdate",
+      "varianceId": "valid-minimal",
+      "previousStatus": 409,
+      "previousErrorCode": "MissingSubscriptionRegistration"
+    },
+    {
+      "namespace": "Microsoft.Cache",
+      "fixtureId": "redis-cache.microsoft-cache-redisenterprise.createOrUpdate.valid-minimal",
+      "capabilityId": "redis-cache",
+      "resourceType": "Microsoft.Cache/redisEnterprise",
+      "operation": "CreateOrUpdate",
+      "varianceId": "valid-minimal",
+      "previousStatus": 400,
+      "previousErrorCode": "NoRegisteredProviderFound"
+    }
+  ],
+  "reruns": [
+    {
+      "namespace": "Microsoft.Cache",
+      "fixtureId": "redis-cache.microsoft-cache-redis.createOrUpdate.valid-minimal",
+      "capabilityId": "redis-cache",
+      "resourceType": "Microsoft.Cache/redis",
+      "operation": "CreateOrUpdate",
+      "varianceId": "valid-minimal",
+      "previousStatus": 409,
+      "previousErrorCode": "MissingSubscriptionRegistration",
+      "command": "node scripts/run-azure-api-conformance.mjs --target=azure --capability=redis-cache --resource-type=Microsoft.Cache/redis --operation=CreateOrUpdate --case=valid-minimal",
+      "exitCode": 0,
+      "stdout": "Azure API conformance azure: passed (1 cases).",
+      "stderr": "",
+      "leftoverConformanceResourceGroups": []
+    },
+    {
+      "namespace": "Microsoft.Cache",
+      "fixtureId": "redis-cache.microsoft-cache-redisenterprise.createOrUpdate.valid-minimal",
+      "capabilityId": "redis-cache",
+      "resourceType": "Microsoft.Cache/redisEnterprise",
+      "operation": "CreateOrUpdate",
+      "varianceId": "valid-minimal",
+      "previousStatus": 400,
+      "previousErrorCode": "NoRegisteredProviderFound",
+      "command": "node scripts/run-azure-api-conformance.mjs --target=azure --capability=redis-cache --resource-type=Microsoft.Cache/redisEnterprise --operation=CreateOrUpdate --case=valid-minimal",
+      "exitCode": 0,
+      "stdout": "Azure API conformance azure: passed (1 cases).",
+      "stderr": "",
+      "leftoverConformanceResourceGroups": []
+    }
+  ],
+  "failedCount": 0,
+  "leftoverCount": 0,
+  "skippedCount": 0
+}

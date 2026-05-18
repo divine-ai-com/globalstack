@@ -1,0 +1,121 @@
+# Agent Runbook
+
+Use this when changing the repo. It is written for future agents that need to move quickly without blurring support claims.
+
+## Before Editing
+
+1. Read `docs/START-HERE.md`.
+2. Read `docs/CONFORMANCE-MODEL.md`.
+3. Check the generated scope in `docs/SERVICE-SCOPE.md`.
+4. Confirm the work stays under `/home/ubuntu/globalstack`.
+
+## Normal Regeneration
+
+```bash
+npm run fetch:azure-coverage
+npm run render
+npm run hybrid:render
+npm run conformance:catalog
+npm run conformance:classify
+npm run conformance:expectations
+npm run lifecycle:expectations
+npm run conformance:checklist
+npm run docs:nav
+```
+
+## Normal Validation
+
+```bash
+npm run smoke
+npm run providers:gaps
+```
+
+After any command that starts Docker-based emulators:
+
+```bash
+sudo -n docker ps -a --format '{{.Names}} {{.Image}} {{.Status}}' | rg 'globalstack-azure|globalstack-azurite-e2e|azurite' || true
+```
+
+Run the Bicep reference platform lifecycle:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run smoke:bicep-runner
+```
+
+Expected result is runner exit code `0`, `reports/deployment-response.json` with `properties.provisioningState == "Succeeded"`, and `reports/lifecycle-report.json` ending at `destroy` with `status == "PASS"`.
+
+Run the complete platform runner lifecycle matrix:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+```
+
+Expected result is `8/8` platforms passing in `dist/platform-lifecycle-smoke-results.json`. Every platform should end at `destroy` with `finalStatus == "PASS"` and `provisioningState == "Succeeded"`. Terraform and OpenTofu run native AzAPI provider apply/destroy through the selected provider endpoint. Pulumi TypeScript, Pulumi Python, and Pulumi YAML run native Pulumi Azure Native up/destroy through runner-transparent GlobalStack routing. Ansible runs native `azure.azcollection` modules through the same routing. ARM JSON validates and deploys the shared ARM contract directly.
+
+Platform tasks can pin their backend in `metadata.json`:
+
+```json
+{ "provider": "GlobalStack" }
+```
+
+Metadata takes precedence over `PROVIDER` / `CLOUD_PROVIDER`. Use `provider=GlobalStack` for local smoke. Use `provider=Azure` only when real Azure credentials, a real `ARM_SUBSCRIPTION_ID`, cleanup checks, and cost controls are in place.
+
+After any real Azure capture:
+
+```bash
+az group list --query "[?starts_with(name, 'rg-gs-life-') || starts_with(name, 'rg-gs-conf-') || tags.purpose == 'globalstack-conformance' || tags.purpose == 'globalstack-lifecycle'].{name:name,provisioningState:properties.provisioningState,location:location,tags:tags}" --output json
+```
+
+The expected result is `[]`.
+
+## Adding A Capability
+
+1. Add the capability to `packages/core/src/azure-tier1-capabilities.mjs`.
+2. Include AWS analogue, Azure equivalent, resource types, backing engines, known gaps, and `realAzureCaptureRequired`.
+3. Regenerate the API catalog.
+4. Add local route support only if the behavior can fail closed or has captured validation.
+5. Add tests before claiming support.
+6. Regenerate `docs/SERVICE-SCOPE.md`.
+
+## Adding A Captured Validation
+
+1. Capture the exact Azure request and response.
+2. Verify cleanup.
+3. Classify the capture.
+4. Add or update provider validation only for the exact behavior captured.
+5. Render local expectations.
+6. Add or update replay tests.
+7. Run `npm run smoke`.
+
+## Real Azure Capture Gates
+
+Generic capture:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CAPTURE=1 npm run capture:azure -- <fixture-id> <request-json>
+```
+
+Conformance capture:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<capability-id> --case=<case-id>
+```
+
+Storage lifecycle capture:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run lifecycle:capture:storage
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run lifecycle:capture:storage -- --wait-ready=true
+```
+
+Do not run broad real Azure capture waves without a cleanup plan, subscription awareness, and an explicit reason.
+
+## Common Mistakes To Avoid
+
+- Treating any third-party emulator coverage as proof that behavior is implemented here.
+- Treating an official emulator data-plane pass as proof of ARM management-plane parity.
+- Treating a `provider-accepted` capture as full success-state validation.
+- Turning `capture-infrastructure-gap` into local emulator behavior.
+- Making local tests pass by accepting invalid Azure request shapes.
+- Forgetting that parent-missing and parent-not-ready are different Azure states.
+- Leaving generated duplicate fixtures that double-count evidence.
