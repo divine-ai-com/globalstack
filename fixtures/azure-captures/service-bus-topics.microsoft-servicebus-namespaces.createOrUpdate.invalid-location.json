@@ -1,0 +1,52 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T13:59:16.252Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b0f35552af/providers/Microsoft.ServiceBus/namespaces/ns-b0f35552af?api-version=2021-11-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e36eaf7d-e40b-4c0a-998f-7dd67d8b5f0d",
+      "x-ms-request-id": "e36eaf7d-e40b-4c0a-998f-7dd67d8b5f0d",
+      "x-ms-routing-request-id": "EASTUS:20260516T135913Z:e36eaf7d-e40b-4c0a-998f-7dd67d8b5f0d"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b0f35552af",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

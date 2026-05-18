@@ -1,0 +1,70 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T14:48:20.264Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-69777c0fd2/providers/Microsoft.AppConfiguration/configurationStores/cfg69777c0fd2?api-version=2023-03-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "free"
+      },
+      "properties": {
+        "disableLocalAuth": false
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.AppConfiguration/locations/eastus/operationsStatus/Y29uZmlndXJhdGlvblN0b3Jlcw.RO9v8pMHeBEsJXyfw6vv1dqMZ5Sh12ex5rCXbEyxHE4?api-version=2023-03-01&redacted=true",
+      "content-type": "application/json; charset=utf-8",
+      "retry-after": "10",
+      "x-ms-correlation-request-id": "c07d38ab-6c66-4554-b6c8-3c6c5da52425",
+      "x-ms-request-id": "f8852863-913c-4dc9-ada0-b427af5f98aa",
+      "x-ms-routing-request-id": "EASTUS:20260516T144718Z:c07d38ab-6c66-4554-b6c8-3c6c5da52425"
+    },
+    "body": {
+      "type": "Microsoft.AppConfiguration/configurationStores",
+      "location": "eastus",
+      "properties": {
+        "provisioningState": "Creating",
+        "creationDate": "2026-05-16T14:47:18.8172593+00:00",
+        "endpoint": null,
+        "encryption": null,
+        "privateEndpointConnections": null,
+        "disableLocalAuth": null,
+        "softDeleteRetentionInDays": null,
+        "enablePurgeProtection": null
+      },
+      "sku": {
+        "name": "free"
+      },
+      "systemData": null,
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-69777c0fd2/providers/Microsoft.AppConfiguration/configurationStores/cfg69777c0fd2",
+      "name": "cfg69777c0fd2",
+      "tags": {}
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-69777c0fd2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

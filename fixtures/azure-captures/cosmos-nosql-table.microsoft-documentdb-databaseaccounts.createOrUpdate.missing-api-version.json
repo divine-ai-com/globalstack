@@ -1,0 +1,48 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T14:28:40.265Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0e5c9dacf0/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-0e5c9dacf0",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0c9a4a82-7cfc-46d8-af50-0e9098587cbb",
+      "x-ms-request-id": "0c9a4a82-7cfc-46d8-af50-0e9098587cbb",
+      "x-ms-routing-request-id": "EASTUS:20260516T142838Z:0c9a4a82-7cfc-46d8-af50-0e9098587cbb"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0e5c9dacf0",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

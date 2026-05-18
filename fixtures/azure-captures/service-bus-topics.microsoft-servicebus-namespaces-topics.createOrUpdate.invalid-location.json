@@ -1,0 +1,52 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:00:03.004Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7f1b90913f/providers/Microsoft.ServiceBus/namespaces/ns-7f1b90913f/topics/topic-7f1b90913f?api-version=2021-11-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2ecb68ab-c819-47fd-b6dd-69b40bc4f7af",
+      "x-ms-request-id": "2ecb68ab-c819-47fd-b6dd-69b40bc4f7af",
+      "x-ms-routing-request-id": "EASTUS:20260516T140001Z:2ecb68ab-c819-47fd-b6dd-69b40bc4f7af"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7f1b90913f/providers/Microsoft.ServiceBus/namespaces/ns-7f1b90913f' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7f1b90913f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

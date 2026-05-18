@@ -1,0 +1,53 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:39:57.833Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces/eventhubs",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4fa660edce/providers/Microsoft.EventHub/namespaces/ns-4fa660edce/eventhubs/hub-4fa660edce?api-version=2024-01-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1ccefc7c-fae2-4eb1-94cf-67a9ad2504ab",
+      "x-ms-request-id": "1ccefc7c-fae2-4eb1-94cf-67a9ad2504ab",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T143956Z:1ccefc7c-fae2-4eb1-94cf-67a9ad2504ab"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/eventhubs', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4fa660edce/providers/Microsoft.EventHub/namespaces/ns-4fa660edce' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4fa660edce",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:48:39.611Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b78abb4fd6/providers/Microsoft.AppConfiguration/configurationStores/cfgb78abb4fd6?api-version=2023-03-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "free"
+      },
+      "properties": {
+        "disableLocalAuth": false
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "298385d2-8f2b-49d6-9008-093886ae99fb",
+      "x-ms-request-id": "298385d2-8f2b-49d6-9008-093886ae99fb",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T144831Z:298385d2-8f2b-49d6-9008-093886ae99fb"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b78abb4fd6",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

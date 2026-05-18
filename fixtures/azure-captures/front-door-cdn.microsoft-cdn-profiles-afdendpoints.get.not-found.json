@@ -1,0 +1,45 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.get.not-found",
+  "capturedAt": "2026-05-16T04:37:52.570Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-00ca21b7a2/providers/Microsoft.Cdn/profiles/cdn-00ca21b7a2/afdEndpoints/afd-00ca21b7a2?api-version=2024-02-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8225bf43-2a45-4b30-a3e3-7508b6d2db3e",
+      "x-ms-request-id": "8225bf43-2a45-4b30-a3e3-7508b6d2db3e",
+      "x-ms-routing-request-id": "EASTUS:20260516T043745Z:8225bf43-2a45-4b30-a3e3-7508b6d2db3e"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Cdn/profiles/cdn-00ca21b7a2/afdendpoints/afd-00ca21b7a2' under resource group 'rg-gs-conf-00ca21b7a2' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-00ca21b7a2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

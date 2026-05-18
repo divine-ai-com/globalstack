@@ -1,0 +1,53 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:39:24.213Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-67b1da9bb2/providers/Microsoft.EventHub/namespaces/ns-67b1da9bb2?api-version=2024-01-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2d1ed22e-6ad2-452a-929c-46949b64b480",
+      "x-ms-request-id": "2d1ed22e-6ad2-452a-929c-46949b64b480",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T143917Z:2d1ed22e-6ad2-452a-929c-46949b64b480"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-67b1da9bb2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

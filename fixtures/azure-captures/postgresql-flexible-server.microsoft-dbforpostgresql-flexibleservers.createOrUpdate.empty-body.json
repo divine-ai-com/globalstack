@@ -1,0 +1,45 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T16:37:20.005Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9bb5cc5dc6/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-9bb5cc5dc6?api-version=2023-06-01-preview",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "3fb479a1-8082-441c-ac6c-2d8333b8e2a1",
+      "x-ms-request-id": "3fb479a1-8082-441c-ac6c-2d8333b8e2a1",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T163713Z:3fb479a1-8082-441c-ac6c-2d8333b8e2a1"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9bb5cc5dc6",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

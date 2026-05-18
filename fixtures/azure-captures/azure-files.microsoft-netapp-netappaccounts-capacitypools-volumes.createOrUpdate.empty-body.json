@@ -1,0 +1,45 @@
+{
+  "id": "azure-files.microsoft-netapp-netappaccounts-capacitypools-volumes.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T14:54:49.097Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-files",
+  "tier": 2,
+  "resourceType": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-06ef55a794/providers/Microsoft.NetApp/netAppAccounts/netapp-06ef55a794/capacityPools/pool-06ef55a794/volumes/volume-06ef55a794?api-version=2023-11-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "bbe481ea-61b4-4b57-8451-bdfd56148b76",
+      "x-ms-request-id": "bbe481ea-61b4-4b57-8451-bdfd56148b76",
+      "x-ms-routing-request-id": "EASTUS:20260516T145447Z:bbe481ea-61b4-4b57-8451-bdfd56148b76"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-06ef55a794",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

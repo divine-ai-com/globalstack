@@ -1,0 +1,45 @@
+{
+  "id": "aks-metadata.microsoft-containerservice-managedclusters.get.not-found",
+  "capturedAt": "2026-05-16T04:33:33.033Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "aks-metadata",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2ea704d9b7/providers/Microsoft.ContainerService/managedClusters/aks-2ea704d9b7?api-version=2024-02-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "3cf1f11f-c28c-4206-a195-b72b10306661",
+      "x-ms-request-id": "3cf1f11f-c28c-4206-a195-b72b10306661",
+      "x-ms-routing-request-id": "EASTUS:20260516T043326Z:3cf1f11f-c28c-4206-a195-b72b10306661"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.ContainerService/managedClusters/aks-2ea704d9b7' under resource group 'rg-gs-conf-2ea704d9b7' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-2ea704d9b7",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

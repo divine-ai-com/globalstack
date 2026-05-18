@@ -1,0 +1,48 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T20:21:29.624Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f558167126/providers/Microsoft.Network/privateDnsZones/f558167126.internal?api-version=2020-06-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "72000715-977b-4953-bf36-ea49969bfe94",
+      "x-ms-request-id": "72000715-977b-4953-bf36-ea49969bfe94",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T202128Z:72000715-977b-4953-bf36-ea49969bfe94"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f558167126",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

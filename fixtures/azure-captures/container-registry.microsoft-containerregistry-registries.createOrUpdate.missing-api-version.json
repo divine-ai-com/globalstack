@@ -1,0 +1,48 @@
+{
+  "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T16:09:27.929Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "container-registry",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerRegistry/registries",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0f93f7dff1/providers/Microsoft.ContainerRegistry/registries/acr0f93f7dff1",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6602406c-65a9-46e7-9631-ad0a1db3000b",
+      "x-ms-request-id": "6602406c-65a9-46e7-9631-ad0a1db3000b",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T160926Z:6602406c-65a9-46e7-9631-ad0a1db3000b"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0f93f7dff1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

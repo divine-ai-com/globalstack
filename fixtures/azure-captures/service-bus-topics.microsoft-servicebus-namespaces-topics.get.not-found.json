@@ -1,0 +1,45 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.get.not-found",
+  "capturedAt": "2026-05-16T04:31:54.681Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ef4efa7ef9/providers/Microsoft.ServiceBus/namespaces/ns-ef4efa7ef9/topics/topic-ef4efa7ef9?api-version=2021-11-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5133b72b-4b67-410b-b000-6dc4478381ce",
+      "x-ms-request-id": "5133b72b-4b67-410b-b000-6dc4478381ce",
+      "x-ms-routing-request-id": "EASTUS:20260516T043153Z:5133b72b-4b67-410b-b000-6dc4478381ce"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ef4efa7ef9/providers/Microsoft.ServiceBus/namespaces/ns-ef4efa7ef9' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ef4efa7ef9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

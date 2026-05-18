@@ -1,0 +1,45 @@
+{
+  "id": "container-registry.microsoft-containerregistry-registries.get.not-found",
+  "capturedAt": "2026-05-16T04:33:21.903Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "container-registry",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerRegistry/registries",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b463a2280d/providers/Microsoft.ContainerRegistry/registries/acrb463a2280d?api-version=2023-07-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a93298fe-2df0-4493-a1e4-4e39a612c5a2",
+      "x-ms-request-id": "a93298fe-2df0-4493-a1e4-4e39a612c5a2",
+      "x-ms-routing-request-id": "EASTUS:20260516T043314Z:a93298fe-2df0-4493-a1e4-4e39a612c5a2"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.ContainerRegistry/registries/acrb463a2280d' under resource group 'rg-gs-conf-b463a2280d' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b463a2280d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:41:55.487Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleAssignments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6d2826189a/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "16993f17-db68-4a27-9db6-4fdd683b8276",
+      "x-ms-request-id": "d4d21845-02eb-4583-aa67-e6edbdb47041",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T154053Z:16993f17-db68-4a27-9db6-4fdd683b8276"
+    },
+    "body": {
+      "error": {
+        "code": "MalformedRoleAssignmentRequest",
+        "message": "PASRP RoleAssignment request is malformed"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6d2826189a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

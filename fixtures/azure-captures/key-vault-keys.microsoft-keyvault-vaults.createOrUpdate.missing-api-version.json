@@ -1,0 +1,55 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:18:08.771Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e84ffcfe74/providers/Microsoft.KeyVault/vaults/kv-e84ffcfe74",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "tenantId": "{tenantId}",
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "accessPolicies": []
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "3e212875-f128-4825-afc1-945c39082622",
+      "x-ms-request-id": "3e212875-f128-4825-afc1-945c39082622",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T151807Z:3e212875-f128-4825-afc1-945c39082622"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e84ffcfe74",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

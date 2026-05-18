@@ -1,0 +1,45 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T16:12:46.799Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-409c46f2b4/providers/Microsoft.Cdn/profiles/cdn-409c46f2b4?api-version=2024-02-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "75864688-0fbc-4d5c-bae9-0343ab9c749a",
+      "x-ms-request-id": "75864688-0fbc-4d5c-bae9-0343ab9c749a",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T161245Z:75864688-0fbc-4d5c-bae9-0343ab9c749a"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-409c46f2b4",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

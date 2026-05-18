@@ -1,0 +1,53 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T14:39:52.090Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces/eventhubs",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-537a9d0b8a/providers/Microsoft.EventHub/namespaces/ns-537a9d0b8a/eventhubs/hub-537a9d0b8a",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "284d9b34-f7a1-48a8-8b51-9f4befb33f0c",
+      "x-ms-request-id": "284d9b34-f7a1-48a8-8b51-9f4befb33f0c",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T143944Z:284d9b34-f7a1-48a8-8b51-9f4befb33f0c"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-537a9d0b8a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

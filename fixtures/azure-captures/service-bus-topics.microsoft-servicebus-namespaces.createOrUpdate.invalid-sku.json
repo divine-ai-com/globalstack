@@ -1,0 +1,51 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T13:59:33.721Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0e5400c7a1/providers/Microsoft.ServiceBus/namespaces/ns-0e5400c7a1?api-version=2021-11-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "85f4b1e7-feaa-4acb-a6fd-67a912bc4a88",
+      "x-ms-request-id": "85f4b1e7-feaa-4acb-a6fd-67a912bc4a88",
+      "x-ms-routing-request-id": "EASTUS:20260516T135932Z:85f4b1e7-feaa-4acb-a6fd-67a912bc4a88"
+    },
+    "body": {
+      "error": {
+        "code": "ValidateResourceInfoFailedWithInvalidSkuName",
+        "message": "Sku name 'GlobalStack_InvalidSku_For_Conformance' is invalid"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0e5400c7a1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

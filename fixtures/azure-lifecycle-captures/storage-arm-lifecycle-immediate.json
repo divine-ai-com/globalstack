@@ -1,0 +1,672 @@
+{
+  "id": "storage-arm-lifecycle-immediate",
+  "capturedAt": "2026-05-16T09:47:54.216Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "location": "eastus",
+  "resourceGroupName": "rg-gs-life-647b06dcfd",
+  "storageAccountName": "gslife647b06dcfd",
+  "cleanup": {
+    "attempted": true,
+    "status": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "steps": [
+    {
+      "id": "resource-group.create",
+      "description": "Create ephemeral lifecycle resource group.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-life-647b06dcfd?api-version=2021-04-01",
+      "body": {
+        "location": "eastus",
+        "tags": {
+          "purpose": "globalstack-lifecycle",
+          "ttl": "ephemeral"
+        }
+      },
+      "response": {
+        "status": 201,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "x-ms-correlation-request-id": "389f994e-d281-4d56-8c82-907b9e95e3c8",
+          "x-ms-request-id": "389f994e-d281-4d56-8c82-907b9e95e3c8",
+          "x-ms-routing-request-id": "SOUTHINDIA:20260516T094723Z:389f994e-d281-4d56-8c82-907b9e95e3c8"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-647b06dcfd",
+          "name": "rg-gs-life-647b06dcfd",
+          "type": "Microsoft.Resources/resourceGroups",
+          "location": "eastus",
+          "tags": {
+            "purpose": "globalstack-lifecycle",
+            "ttl": "ephemeral"
+          },
+          "properties": {
+            "provisioningState": "Succeeded"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.create",
+      "description": "Create storage account parent.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+      "body": {
+        "location": "eastus",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "allowBlobPublicAccess": false
+        }
+      },
+      "response": {
+        "status": 202,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "location": "https://management.azure.com/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/providers/Microsoft.Storage/locations/eastus/asyncoperations/7df72d21-1e68-41ae-bcbd-52ff5889f538?monitor=true&api-version=2023-01-01&t=639145216498777515&c=MIIHlDCCBnygAwIBAgIQcyzofG45BJ3kcmojGUTNPTANBgkqhkiG9w0BAQsFADA2MTQwMgYDVQQDEytDQ01FIEcxIFRMUyBSU0EgMjA0OCBTSEEyNTYgMjA0OSBXVVMyIENBIDAxMB4XDTI2MDQwOTAzNTYxNVoXDTI2MTAwNDA5NTYxNVowQDE-MDwGA1UEAxM1YXN5bmNvcGVyYXRpb25zaWduaW5nY2VydGlmaWNhdGUubWFuYWdlbWVudC5henVyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCylTdveId_fRZKb4c5-b6XRtq1MlgavUk9VSsvq-MKaNFseSyQ8yqTwT9OK0C_fsbruj5pXgS5NS8dKnBuhTD8eTuk8hAW2llcTIxVYp3wwJ5yFuq_HxoIz2l6AVXYGgsfGlZK94DOlk6A9562HvK17TWNc2ayOIo-mC9MmkCxZ_rXYVrMKIRg_isDORfT3kCxrzuBy6lE2eZ0X658RGu0gmFy_lQ6JVYwUw-cHa5DpkWyehsimxoADtZSa2P1J8nOuiW0EdXZHQ1tI2F7s-Lv2YmiEiafCFqoj36c1MDcox2dg6RjjYeO0yaFZ253xVVWE0NfxG0O8-tilXOIliudAgMBAAGjggSSMIIEjjCBnQYDVR0gBIGVMIGSMAwGCisGAQQBgjd7AQEwZgYKKwYBBAGCN3sCAjBYMFYGCCsGAQUFBwICMEoeSAAzADMAZQAwADEAOQAyADEALQA0AGQANgA0AC0ANABmADgAYwAtAGEAMAA1ADUALQA1AGIAZABhAGYAZgBkADUAZQAzADMAZDAMBgorBgEEAYI3ewMCMAwGCisGAQQBgjd7BAIwDAYDVR0TAQH_BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDgYDVR0PAQH_BAQDAgWgMB0GA1UdDgQWBBSJoobI6tkACyvCkJOPNhRxifdDjzAfBgNVHSMEGDAWgBSs43L6A7Jznj2VyO-HW67dG6HtaDCCAbIGA1UdHwSCAakwggGlMGmgZ6BlhmNodHRwOi8vcHJpbWFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvd2VzdHVzMi9jcmxzL2NjbWV3ZXN0dXMycGtpL2NjbWV3ZXN0dXMyaWNhMDEvMTAvY3VycmVudC5jcmwwa6BpoGeGZWh0dHA6Ly9zZWNvbmRhcnktY2RuLnBraS5jb3JlLndpbmRvd3MubmV0L3dlc3R1czIvY3Jscy9jY21ld2VzdHVzMnBraS9jY21ld2VzdHVzMmljYTAxLzEwL2N1cnJlbnQuY3JsMFqgWKBWhlRodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vd2VzdHVzMi9jcmxzL2NjbWV3ZXN0dXMycGtpL2NjbWV3ZXN0dXMyaWNhMDEvMTAvY3VycmVudC5jcmwwb6BtoGuGaWh0dHA6Ly9jY21ld2VzdHVzMnBraS53ZXN0dXMyLnBraS5jb3JlLndpbmRvd3MubmV0L2NlcnRpZmljYXRlQXV0aG9yaXRpZXMvY2NtZXdlc3R1czJpY2EwMS8xMC9jdXJyZW50LmNybDCCAbcGCCsGAQUFBwEBBIIBqTCCAaUwbAYIKwYBBQUHMAKGYGh0dHA6Ly9wcmltYXJ5LWNkbi5wa2kuY29yZS53aW5kb3dzLm5ldC93ZXN0dXMyL2NhY2VydHMvY2NtZXdlc3R1czJwa2kvY2NtZXdlc3R1czJpY2EwMS9jZXJ0LmNlcjBuBggrBgEFBQcwAoZiaHR0cDovL3NlY29uZGFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvd2VzdHVzMi9jYWNlcnRzL2NjbWV3ZXN0dXMycGtpL2NjbWV3ZXN0dXMyaWNhMDEvY2VydC5jZXIwXQYIKwYBBQUHMAKGUWh0dHA6Ly9jcmwubWljcm9zb2Z0LmNvbS93ZXN0dXMyL2NhY2VydHMvY2NtZXdlc3R1czJwa2kvY2NtZXdlc3R1czJpY2EwMS9jZXJ0LmNlcjBmBggrBgEFBQcwAoZaaHR0cDovL2NjbWV3ZXN0dXMycGtpLndlc3R1czIucGtpLmNvcmUud2luZG93cy5uZXQvY2VydGlmaWNhdGVBdXRob3JpdGllcy9jY21ld2VzdHVzMmljYTAxMA0GCSqGSIb3DQEBCwUAA4IBAQCsdBlY42g0q2nn0d8lpeH6ahq9WkMaeCf3qNTS_xUQ0gvNnEcqOXmZcwM26wmfAcEMpcilenOA_A6eqjBdjBqp2vpyFFS0nnkq9bDB4lvA9N6DIDwjW-tMamhtahcdVukmPJxLxNR2WRMoncYWVJ4Ibd626NUs9bKYjY_xjimNlidbPhEdfHhfe9sOzqNBDXdE0RhSANcHzI21dTSl8knc8FmpSKBy5i5O40W0mH0D99zxFen2WaqrKuTsH649bfsGfS1eoLfl-AmSxXXw9dXn_R6fwSAPp5zgdjbthr0iwfVH7vkBBpXnJxuB17_gPoP-s52UjySEzroAMbZl815H&s=U23JLNLXo_IJW8veX3SOYtOiHkWtpQNwEdjV28BXrsHjW9IJSy4SnLWk5hK9BAEk3efbkyzAEuP9EAMLueSYhqnLyitShp2npAAXqINSiJr90lnl4q_ybVaqzMwZGGip0DpTqsC07iro4iwpgBkHFh07E7Xga3pbMOgfzKTCl7adddmJscYSGkbc6VJy6toV392h-j6dZqaMHx5dEC4L3Prnv3kO8VGGj-1MhYD9jLqH2laaLFOVyMMwYKYGnpLv_E9odwBYoRxpnnr5S1jCK9rCHxHo-kE2t0A55PxJHlZ0KRSMsN1uaQpGkNsvmt-L2HUAPRLnNlnu7AWCgmWqwQ&h=iMcRjaz93hKXKAHPaWjJMAxowWCmRAiDh_wnKC_6nK4",
+          "retry-after": "17",
+          "x-ms-correlation-request-id": "a214b084-05ae-4954-abfe-ecdb32d72536",
+          "x-ms-request-id": "7df72d21-1e68-41ae-bcbd-52ff5889f538",
+          "x-ms-routing-request-id": "SOUTHINDIA:20260516T094729Z:a214b084-05ae-4954-abfe-ecdb32d72536"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "storage-account.get-after-create",
+      "description": "Read storage account after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "4bd4aa57-79d7-4e55-a0be-7c16cd15d822",
+          "x-ms-request-id": "cebdcdbe-f295-4db9-8de5-abffd9dab514",
+          "x-ms-routing-request-id": "EASTUS:20260516T094730Z:4bd4aa57-79d7-4e55-a0be-7c16cd15d822"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd",
+          "name": "gslife647b06dcfd",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": false,
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": false,
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": true,
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:47:27.4805518Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:47:27.4805518Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "ResolvingDns",
+            "creationTime": "2026-05-16T09:47:27.0745664Z",
+            "primaryEndpoints": {
+              "dfs": "https://gslife647b06dcfd.dfs.core.windows.net/",
+              "web": "https://gslife647b06dcfd.z13.web.core.windows.net/",
+              "blob": "https://gslife647b06dcfd.blob.core.windows.net/",
+              "queue": "https://gslife647b06dcfd.queue.core.windows.net/",
+              "table": "https://gslife647b06dcfd.table.core.windows.net/",
+              "file": "https://gslife647b06dcfd.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.create",
+      "description": "Create Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+      "body": {
+        "properties": {
+          "publicAccess": "None"
+        }
+      },
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "677268de-31d9-48e9-83d2-1fcb9fe18c3f",
+          "x-ms-request-id": "3c8fab74-cf44-444c-84f4-8f08b7dd5bc9",
+          "x-ms-routing-request-id": "EASTUS:20260516T094730Z:677268de-31d9-48e9-83d2-1fcb9fe18c3f"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "a8ec1eda-1baa-4145-a342-90ec8098361c",
+          "x-ms-request-id": "d41d8343-bf4f-43ca-81f9-f05acc6b29f8",
+          "x-ms-routing-request-id": "EASTUS:20260516T094730Z:a8ec1eda-1baa-4145-a342-90ec8098361c"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "5b6606ee-ab11-44f9-8b1f-7291de719d70",
+          "x-ms-request-id": "9bed7926-749a-4fdc-8ae6-a1869a17a1b7",
+          "x-ms-routing-request-id": "EASTUS:20260516T094730Z:5b6606ee-ab11-44f9-8b1f-7291de719d70"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.create",
+      "description": "Create Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+      "body": {
+        "properties": {}
+      },
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "1d287827-69e4-4257-aa89-d7e0c610bf60",
+          "x-ms-request-id": "6b644d15-88ae-477d-acf9-85333f5a29b4",
+          "x-ms-routing-request-id": "EASTUS:20260516T094731Z:1d287827-69e4-4257-aa89-d7e0c610bf60"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "288bef55-c915-4ab8-9440-7eaa04f6b1a8",
+          "x-ms-request-id": "843667a7-8a15-4aae-9585-4a3fcb7b1ba4",
+          "x-ms-routing-request-id": "EASTUS:20260516T094731Z:288bef55-c915-4ab8-9440-7eaa04f6b1a8"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "3b5511f3-5d03-461a-8871-dd61feacd2a6",
+          "x-ms-request-id": "189dd3ad-16dd-45ca-b12b-701d54706eda",
+          "x-ms-routing-request-id": "EASTUS:20260516T094731Z:3b5511f3-5d03-461a-8871-dd61feacd2a6"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.create",
+      "description": "Create Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+      "body": {
+        "properties": {
+          "shareQuota": 1
+        }
+      },
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "42469e97-ed27-4ed5-a8de-9012c35457d0",
+          "x-ms-request-id": "5320ad35-2998-425c-8c2b-426f09b098ac",
+          "x-ms-routing-request-id": "EASTUS:20260516T094732Z:42469e97-ed27-4ed5-a8de-9012c35457d0"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "0d4c31c9-5d34-47c2-abcb-870dc8a92025",
+          "x-ms-request-id": "e5bd1ba9-a45e-4b67-943a-ff567e1f7075",
+          "x-ms-routing-request-id": "EASTUS:20260516T094732Z:0d4c31c9-5d34-47c2-abcb-870dc8a92025"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "a2ed5430-a2fe-4dec-87a4-34b267dd310b",
+          "x-ms-request-id": "e1d56c19-ea18-4198-b37e-1b842537f2b9",
+          "x-ms-routing-request-id": "EASTUS:20260516T094733Z:a2ed5430-a2fe-4dec-87a4-34b267dd310b"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "table.create",
+      "description": "Create Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+      "body": {
+        "properties": {}
+      },
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "33bed1f4-ffc6-459e-aee7-2aac8d7cd13d",
+          "x-ms-request-id": "0da0b96b-0976-4134-88da-344f75761579",
+          "x-ms-routing-request-id": "EASTUS:20260516T094733Z:33bed1f4-ffc6-459e-aee7-2aac8d7cd13d"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "table.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "080dbcb9-57ec-48aa-a44d-73815884e1ca",
+          "x-ms-request-id": "083ce828-b545-41f3-b9a3-365cd234a2f2",
+          "x-ms-routing-request-id": "EASTUS:20260516T094734Z:080dbcb9-57ec-48aa-a44d-73815884e1ca"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "table.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "2b2a5fd4-87fb-4503-8c53-a71cef0449bf",
+          "x-ms-request-id": "cdfaaa1d-3571-4491-90c6-0c315420f747",
+          "x-ms-routing-request-id": "EASTUS:20260516T094734Z:2b2a5fd4-87fb-4503-8c53-a71cef0449bf"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "744cd48d-377e-448a-9e43-02eac8987806",
+          "x-ms-request-id": "5294f0f7-8401-42c8-aaab-825f02ce6f29",
+          "x-ms-routing-request-id": "EASTUS:20260516T094734Z:744cd48d-377e-448a-9e43-02eac8987806"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "f5e7a2ba-5b00-4e3c-8949-bb9a86d044d6",
+          "x-ms-request-id": "d7f4b0b6-ea23-40c2-8c53-f44309365ad1",
+          "x-ms-routing-request-id": "EASTUS:20260516T094735Z:f5e7a2ba-5b00-4e3c-8949-bb9a86d044d6"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "e97ac6dd-b29c-4895-9462-cadebcd6cddc",
+          "x-ms-request-id": "289947c5-dd8c-4259-86f7-ff9891a0678e",
+          "x-ms-routing-request-id": "EASTUS:20260516T094736Z:e97ac6dd-b29c-4895-9462-cadebcd6cddc"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "ce598dbf-e321-472e-b3a9-5b530b400d97",
+          "x-ms-request-id": "73448904-631f-4ad0-9dff-e8e1853a32b6",
+          "x-ms-routing-request-id": "EASTUS:20260516T094736Z:ce598dbf-e321-472e-b3a9-5b530b400d97"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "8a46eb06-3c30-4df5-a2d1-c4f6b8cf303e",
+          "x-ms-request-id": "e6b0a080-6a3b-4ed6-b95e-fa67a5ac8536",
+          "x-ms-routing-request-id": "EASTUS:20260516T094736Z:8a46eb06-3c30-4df5-a2d1-c4f6b8cf303e"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "99d68aca-34f1-4eac-93a7-f802f034d357",
+          "x-ms-request-id": "af2c358a-c864-4032-b3db-d76c0288e79f",
+          "x-ms-routing-request-id": "EASTUS:20260516T094737Z:99d68aca-34f1-4eac-93a7-f802f034d357"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "table.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "29320d7e-77b3-4e32-826e-571a67dc8976",
+          "x-ms-request-id": "5f4fd7d7-8f5d-444b-a989-d27857322b24",
+          "x-ms-routing-request-id": "EASTUS:20260516T094737Z:29320d7e-77b3-4e32-826e-571a67dc8976"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "table.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 409,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "eb9fa199-ddb5-4355-afc8-5860fc1d78a1",
+          "x-ms-request-id": "de5f8910-32e9-4e98-a122-785b6317eaed",
+          "x-ms-routing-request-id": "EASTUS:20260516T094738Z:eb9fa199-ddb5-4355-afc8-5860fc1d78a1"
+        },
+        "body": {
+          "error": {
+            "code": "StorageAccountIsNotProvisioned",
+            "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.delete",
+      "description": "Delete storage account parent.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "84c1bcb4-880d-441f-9765-22cbc0521e64",
+          "x-ms-request-id": "c18d7f7d-f1e6-43a4-9c15-7cefc852791d",
+          "x-ms-routing-request-id": "EASTUS:20260516T094747Z:84c1bcb4-880d-441f-9765-22cbc0521e64"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "storage-account.get-after-delete",
+      "description": "Read storage account after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "x-ms-correlation-request-id": "1eaa4178-969c-4797-a08c-144949b94390",
+          "x-ms-request-id": "1eaa4178-969c-4797-a08c-144949b94390",
+          "x-ms-routing-request-id": "EASTUS:20260516T094748Z:1eaa4178-969c-4797-a08c-144949b94390"
+        },
+        "body": {
+          "error": {
+            "code": "ResourceNotFound",
+            "message": "The Resource 'Microsoft.Storage/storageAccounts/gslife647b06dcfd' under resource group 'rg-gs-life-647b06dcfd' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+          }
+        }
+      }
+    }
+  ],
+  "globalstack": {
+    "validationDepth": "live-lifecycle",
+    "cloudValidated": false,
+    "caveat": "Sequence fixture validates observed Azure lifecycle responses for this run; local parity still requires normalized replay tests."
+  }
+}

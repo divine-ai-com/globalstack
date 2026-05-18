@@ -1,0 +1,48 @@
+{
+  "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T16:28:07.457Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-discovery",
+  "tier": 2,
+  "resourceType": "Microsoft.App/managedEnvironments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ec793feea2/providers/Microsoft.App/managedEnvironments/env-ec793feea2",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a3f5ee2e-01fe-494a-942c-26f34a996ca6",
+      "x-ms-request-id": "a3f5ee2e-01fe-494a-942c-26f34a996ca6",
+      "x-ms-routing-request-id": "EASTUS:20260516T162800Z:a3f5ee2e-01fe-494a-942c-26f34a996ca6"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ec793feea2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

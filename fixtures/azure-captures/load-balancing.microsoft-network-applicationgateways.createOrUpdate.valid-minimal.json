@@ -1,0 +1,49 @@
+{
+  "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T16:32:04.720Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/applicationGateways",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-332538aa88/providers/Microsoft.Network/applicationGateways/agw-332538aa88?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b71fb920-f5b8-4389-8d58-4ace01de357f",
+      "x-ms-request-id": "6f69417b-c510-4278-9ff6-96abe4340b0e",
+      "x-ms-routing-request-id": "EASTUS:20260516T163158Z:b71fb920-f5b8-4389-8d58-4ace01de357f"
+    },
+    "body": {
+      "error": {
+        "code": "SubnetIsRequired",
+        "message": "Subnet reference is required for ipconfiguration Application gateway subnet is required.",
+        "details": []
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-332538aa88",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

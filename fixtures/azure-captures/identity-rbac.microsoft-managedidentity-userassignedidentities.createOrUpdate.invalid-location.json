@@ -1,0 +1,48 @@
+{
+  "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:40:21.800Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2cc3c3ba28/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-2cc3c3ba28?api-version=2023-01-31",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "fb6683f3-f4a2-4d79-a8f9-ec165afb793f",
+      "x-ms-request-id": "fb6683f3-f4a2-4d79-a8f9-ec165afb793f",
+      "x-ms-routing-request-id": "EASTUS:20260516T154015Z:fb6683f3-f4a2-4d79-a8f9-ec165afb793f"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-2cc3c3ba28",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

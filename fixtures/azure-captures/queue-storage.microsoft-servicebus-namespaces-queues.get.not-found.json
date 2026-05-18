@@ -1,0 +1,45 @@
+{
+  "id": "queue-storage.microsoft-servicebus-namespaces-queues.get.not-found",
+  "capturedAt": "2026-05-16T04:35:18.341Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ce77a18355/providers/Microsoft.ServiceBus/namespaces/ns-ce77a18355/queues/qce77a18355?api-version=2021-11-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "db412ffa-0d3f-4f4a-86e4-76a99d916877",
+      "x-ms-request-id": "db412ffa-0d3f-4f4a-86e4-76a99d916877",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T043511Z:db412ffa-0d3f-4f4a-86e4-76a99d916877"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'namespaces/queues', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ce77a18355/providers/Microsoft.ServiceBus/namespaces/ns-ce77a18355' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ce77a18355",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

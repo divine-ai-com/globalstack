@@ -1,0 +1,45 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T20:16:01.039Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/actionGroups",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-21dda6b1b6/providers/Microsoft.Insights/actionGroups/ag-21dda6b1b6?api-version=2023-01-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "304c892f-1477-4e9d-9d2a-09980ae3d6d5",
+      "x-ms-request-id": "304c892f-1477-4e9d-9d2a-09980ae3d6d5",
+      "x-ms-routing-request-id": "EASTUS:20260516T201554Z:304c892f-1477-4e9d-9d2a-09980ae3d6d5"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-21dda6b1b6",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

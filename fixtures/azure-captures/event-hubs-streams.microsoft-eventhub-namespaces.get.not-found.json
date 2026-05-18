@@ -1,0 +1,45 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces.get.not-found",
+  "capturedAt": "2026-05-16T04:40:01.319Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0df8783372/providers/Microsoft.EventHub/namespaces/ns-0df8783372?api-version=2024-01-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7fc539c8-51d1-4403-b0ef-ad113c61f136",
+      "x-ms-request-id": "7fc539c8-51d1-4403-b0ef-ad113c61f136",
+      "x-ms-routing-request-id": "EASTUS:20260516T043959Z:7fc539c8-51d1-4403-b0ef-ad113c61f136"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.EventHub/namespaces/ns-0df8783372' under resource group 'rg-gs-conf-0df8783372' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0df8783372",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

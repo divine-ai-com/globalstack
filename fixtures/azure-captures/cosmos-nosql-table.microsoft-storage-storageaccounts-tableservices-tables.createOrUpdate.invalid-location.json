@@ -1,0 +1,48 @@
+{
+  "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:29:22.555Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4449df133e/providers/Microsoft.Storage/storageAccounts/gs4449df133e/tableServices/default/tables/table4449df133e?api-version=2023-01-01",
+    "body": {
+      "properties": {},
+      "location": "globalstack-invalid-location"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2fb1288f-e7a2-4cfc-a70b-3ecaafdbf150",
+      "x-ms-request-id": "2fb1288f-e7a2-4cfc-a70b-3ecaafdbf150",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T142921Z:2fb1288f-e7a2-4cfc-a70b-3ecaafdbf150"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/tableServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4449df133e/providers/Microsoft.Storage/storageAccounts/gs4449df133e' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4449df133e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

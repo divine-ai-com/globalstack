@@ -1,0 +1,61 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T14:48:55.123Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-eb6b1b302d/providers/Microsoft.AppConfiguration/configurationStores/cfgeb6b1b302d?api-version=2023-03-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "disableLocalAuth": false
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "85a721fe-8e87-4359-ad3e-c18547fc830e",
+      "x-ms-request-id": "ba98618b-3b4f-43ed-95f7-595dfd70c0d7",
+      "x-ms-routing-request-id": "EASTUS:20260516T144848Z:85a721fe-8e87-4359-ad3e-c18547fc830e"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidProperty",
+        "message": "The property 'Sku' is not valid.",
+        "additionalInfo": [
+          {
+            "type": "ActivityId",
+            "info": {
+              "activityId": "ba98618b-3b4f-43ed-95f7-595dfd70c0d7"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-eb6b1b302d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

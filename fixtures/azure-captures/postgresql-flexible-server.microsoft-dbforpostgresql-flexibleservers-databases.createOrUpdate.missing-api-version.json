@@ -1,0 +1,55 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T16:37:54.420Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-16bd44b9f7/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-16bd44b9f7/databases/db16bd44b9f7",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "16"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1c027d63-1327-48eb-a5e9-6e4fcd205100",
+      "x-ms-request-id": "1c027d63-1327-48eb-a5e9-6e4fcd205100",
+      "x-ms-routing-request-id": "EASTUS:20260516T163747Z:1c027d63-1327-48eb-a5e9-6e4fcd205100"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-16bd44b9f7",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

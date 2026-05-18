@@ -1,0 +1,45 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roleassignments.get.not-found",
+  "capturedAt": "2026-05-16T04:30:21.125Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleAssignments",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6fd5586a1a/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "23d3172c-b0a8-4d80-b062-0072f4cc8adb",
+      "x-ms-request-id": "a747550d-d0bc-4cd1-85c0-9096ee4c642b",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T043014Z:23d3172c-b0a8-4d80-b062-0072f4cc8adb"
+    },
+    "body": {
+      "error": {
+        "code": "RoleAssignmentNotFound",
+        "message": "The role assignment '11111111-1111-4111-8111-111111111111' is not found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6fd5586a1a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

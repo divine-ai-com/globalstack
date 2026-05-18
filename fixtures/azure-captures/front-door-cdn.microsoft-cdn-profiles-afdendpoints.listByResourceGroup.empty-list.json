@@ -1,0 +1,45 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:50:37.210Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4dc7310926/providers/Microsoft.Cdn/profiles/cdn-4dc7310926/afdEndpoints?api-version=2024-02-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "f1543ecd-b6f0-4dda-9400-9e07efc3e00c",
+      "x-ms-request-id": "f1543ecd-b6f0-4dda-9400-9e07efc3e00c",
+      "x-ms-routing-request-id": "EASTUS:20260516T045029Z:f1543ecd-b6f0-4dda-9400-9e07efc3e00c"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'profiles/afdendpoints', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4dc7310926/providers/Microsoft.Cdn/profiles/cdn-4dc7310926' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4dc7310926",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

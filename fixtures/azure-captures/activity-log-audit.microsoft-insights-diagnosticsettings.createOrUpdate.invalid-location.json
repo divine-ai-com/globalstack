@@ -1,0 +1,46 @@
+{
+  "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:50:13.024Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.Insights/diagnosticSettings",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7ea9270adf/providers/Microsoft.Insights/diagnosticSettings/diag-7ea9270adf?api-version=2021-05-01-preview",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "dc9f7ca6-5d54-408d-a433-e1dab94fca43",
+      "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
+      "x-ms-routing-request-id": "EASTUS:20260516T155006Z:dc9f7ca6-5d54-408d-a433-e1dab94fca43"
+    },
+    "body": {
+      "code": "ResourceTypeNotSupported",
+      "message": "The resource type '/' does not support diagnostic settings."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7ea9270adf",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

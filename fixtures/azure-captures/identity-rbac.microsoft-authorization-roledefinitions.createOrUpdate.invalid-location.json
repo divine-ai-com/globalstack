@@ -1,0 +1,48 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:42:21.675Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleDefinitions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1e68a19f01/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c21fa13c-cd8d-444b-9b02-65863b125a6d",
+      "x-ms-request-id": "ab77f28e-a3cf-4d9c-a2e8-81d1e4ae9884",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T154221Z:c21fa13c-cd8d-444b-9b02-65863b125a6d"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'permissions' not found in JSON. Path 'properties', line 1, position 58.'"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1e68a19f01",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

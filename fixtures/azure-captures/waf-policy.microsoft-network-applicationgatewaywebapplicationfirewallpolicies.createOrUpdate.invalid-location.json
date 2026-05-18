@@ -1,0 +1,56 @@
+{
+  "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:45:48.132Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6c270b8420/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-6c270b8420?api-version=2023-09-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {
+        "policySettings": {
+          "enabledState": "Enabled",
+          "mode": "Prevention"
+        },
+        "managedRules": {
+          "managedRuleSets": []
+        }
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "61d509ce-0cfc-49b3-a4c6-269b3e150864",
+      "x-ms-request-id": "61d509ce-0cfc-49b3-a4c6-269b3e150864",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T154541Z:61d509ce-0cfc-49b3-a4c6-269b3e150864"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6c270b8420",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

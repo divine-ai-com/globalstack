@@ -1,0 +1,87 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T14:39:08.123Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f39a5a644e/providers/Microsoft.EventHub/namespaces/ns-f39a5a644e?api-version=2024-01-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.EventHub/locations/eastus/namespaceOperationResults/d38c9e9c-a95a-4735-a2b5-ff5128923c1b?api-version=2024-01-01&redacted=true",
+      "content-type": "application/json; charset=utf-8",
+      "location": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.EventHub/locations/eastus/namespaceOperationResults/d38c9e9c-a95a-4735-a2b5-ff5128923c1b?api-version=2024-01-01&redacted=true",
+      "x-ms-correlation-request-id": "bdcaa03d-4391-454c-b1bc-dee44ffac91b",
+      "x-ms-request-id": "bdcaa03d-4391-454c-b1bc-dee44ffac91b",
+      "x-ms-routing-request-id": "EASTUS:20260516T143302Z:bdcaa03d-4391-454c-b1bc-dee44ffac91b"
+    },
+    "body": {
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f39a5a644e/providers/Microsoft.EventHub/namespaces/ns-f39a5a644e",
+      "name": "ns-f39a5a644e",
+      "type": "Microsoft.EventHub/Namespaces",
+      "location": "eastus",
+      "tags": {},
+      "properties": {
+        "errors": [],
+        "geoDataReplication": {
+          "maxReplicationLagDurationInSeconds": 0,
+          "locations": [
+            {
+              "locationName": "eastus",
+              "roleType": "Primary",
+              "replicaState": "InBuild"
+            }
+          ]
+        },
+        "minimumTlsVersion": "1.2",
+        "publicNetworkAccess": "Enabled",
+        "disableLocalAuth": false,
+        "zoneRedundant": true,
+        "isAutoInflateEnabled": false,
+        "maximumThroughputUnits": 0,
+        "kafkaEnabled": true,
+        "provisioningState": "Creating",
+        "status": "Creating",
+        "createdAt": "2026-05-16T14:33:02.3053205Z",
+        "updatedAt": "2026-05-16T14:33:02Z",
+        "metricId": "<subscription-id>:ns-f39a5a644e",
+        "serviceBusEndpoint": "https://ns-f39a5a644e.servicebus.windows.net:443/"
+      },
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f39a5a644e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

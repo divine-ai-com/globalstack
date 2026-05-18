@@ -1,0 +1,48 @@
+{
+  "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T14:25:03.064Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/eventSubscriptions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f83eadafd9/providers/Microsoft.EventGrid/eventSubscriptions/sub-f83eadafd9",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9b31fa41-afdc-4c68-a327-5448def03415",
+      "x-ms-request-id": "9b31fa41-afdc-4c68-a327-5448def03415",
+      "x-ms-routing-request-id": "EASTUS:20260516T142501Z:9b31fa41-afdc-4c68-a327-5448def03415"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f83eadafd9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

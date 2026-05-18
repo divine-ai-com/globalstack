@@ -1,0 +1,66 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T19:54:59.782Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e441f45146/providers/Microsoft.Synapse/workspaces/ws-e441f45146?api-version=2021-06-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1737ca78-cdbf-4a02-ae96-bf1416d2af19",
+      "x-ms-request-id": "3d1dd8f3-ac4a-4f33-89f2-1bb73bb4ca87",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T195453Z:1737ca78-cdbf-4a02-ae96-bf1416d2af19"
+    },
+    "body": {
+      "error": {
+        "code": "ValidationFailed",
+        "message": "Workspace request validation failed, check error details for more information",
+        "details": [
+          {
+            "code": "SystemAssignedManagedIdentityNotSpecified",
+            "message": "Workspace creation request should have an identity section with Type = SystemAssigned"
+          },
+          {
+            "code": "UserAssignedOnlyManagedIdentity",
+            "message": "Workspace cannot be created with only UserAssigned identity. Specify Identity Type to be either 'SystemAssigned' or 'SystemAssigned,UserAssigned'"
+          },
+          {
+            "code": "DefaultDataLakeStorageNotSpecified",
+            "message": "Default data lake storage section not specified. Please specify defaultDataLakeStorage section with accountUrl and fileSystem under properties"
+          },
+          {
+            "code": "CustomerSubscriptionNotRegisteredWithSqlRp",
+            "message": "Customer subscription <subscription-id> needs to be registered with Microsoft.Sql resource provider. For steps to register, go to https://go.microsoft.com/fwlink/?linkid=2150550"
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e441f45146",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

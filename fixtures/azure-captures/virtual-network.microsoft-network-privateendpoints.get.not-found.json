@@ -1,0 +1,45 @@
+{
+  "id": "virtual-network.microsoft-network-privateendpoints.get.not-found",
+  "capturedAt": "2026-05-16T04:34:34.988Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/privateEndpoints",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d45a97f9cc/providers/Microsoft.Network/privateEndpoints/pe-d45a97f9cc?api-version=2023-09-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c79e031f-15a2-4029-9696-afb723240819",
+      "x-ms-request-id": "c79e031f-15a2-4029-9696-afb723240819",
+      "x-ms-routing-request-id": "EASTUS:20260516T043428Z:c79e031f-15a2-4029-9696-afb723240819"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Network/privateEndpoints/pe-d45a97f9cc' under resource group 'rg-gs-conf-d45a97f9cc' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d45a97f9cc",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "event-grid.microsoft-eventgrid-eventsubscriptions.get.not-found",
+  "capturedAt": "2026-05-16T04:33:10.737Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/eventSubscriptions",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ec230192cc/providers/Microsoft.EventGrid/eventSubscriptions/sub-ec230192cc?api-version=2022-06-15",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "85ef16e9-143b-4ff3-82eb-913617b46c53",
+      "x-ms-request-id": "40027618-000e-fc00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260516T043304Z:85ef16e9-143b-4ff3-82eb-913617b46c53"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "Event subscription doesn't exist."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ec230192cc",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

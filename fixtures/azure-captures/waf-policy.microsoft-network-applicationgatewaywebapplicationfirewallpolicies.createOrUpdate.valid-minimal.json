@@ -1,0 +1,62 @@
+{
+  "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:45:28.602Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f6cf77d66b/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-f6cf77d66b?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "policySettings": {
+          "enabledState": "Enabled",
+          "mode": "Prevention"
+        },
+        "managedRules": {
+          "managedRuleSets": []
+        }
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2705bfb9-a43c-4caf-a83a-39ca76684dcd",
+      "x-ms-request-id": "5aecdff9-0845-415c-bb76-ae34f879c740",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T154527Z:2705bfb9-a43c-4caf-a83a-39ca76684dcd"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestFormat",
+        "message": "Cannot parse the request.",
+        "details": [
+          {
+            "code": "InvalidJson",
+            "message": "Could not find member 'enabledState' on object of type 'ApplicationGatewayWebApplicationFirewallPolicySettings'. Path 'properties.policySettings.enabledState', line 1, position 68."
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f6cf77d66b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

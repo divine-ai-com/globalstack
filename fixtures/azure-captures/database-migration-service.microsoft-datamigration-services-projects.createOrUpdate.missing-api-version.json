@@ -1,0 +1,48 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T20:04:49.218Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services/projects",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b9706b9b87/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-b9706b9b87",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "d36b9964-9341-48b2-acff-644373751525",
+      "x-ms-request-id": "d36b9964-9341-48b2-acff-644373751525",
+      "x-ms-routing-request-id": "EASTUS:20260516T200343Z:d36b9964-9341-48b2-acff-644373751525"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b9706b9b87",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

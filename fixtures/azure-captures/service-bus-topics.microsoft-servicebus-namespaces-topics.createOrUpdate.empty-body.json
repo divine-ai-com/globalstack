@@ -1,0 +1,45 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T14:00:09.200Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ab8ae68945/providers/Microsoft.ServiceBus/namespaces/ns-ab8ae68945/topics/topic-ab8ae68945?api-version=2021-11-01",
+    "body": {}
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "bd63f342-6a92-43c9-b92a-5cbf03237d6f",
+      "x-ms-request-id": "bd63f342-6a92-43c9-b92a-5cbf03237d6f",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T140008Z:bd63f342-6a92-43c9-b92a-5cbf03237d6f"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ab8ae68945/providers/Microsoft.ServiceBus/namespaces/ns-ab8ae68945' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ab8ae68945",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

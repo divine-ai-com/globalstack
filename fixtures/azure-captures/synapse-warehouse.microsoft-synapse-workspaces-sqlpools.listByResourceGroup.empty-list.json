@@ -1,0 +1,45 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:52:36.831Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5d6a0d8578/providers/Microsoft.Synapse/workspaces/ws-5d6a0d8578/sqlPools?api-version=2021-06-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b9c2baa6-65bd-4358-8d39-c2d22f7261f2",
+      "x-ms-request-id": "b9c2baa6-65bd-4358-8d39-c2d22f7261f2",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T045227Z:b9c2baa6-65bd-4358-8d39-c2d22f7261f2"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'workspaces/sqlPools', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5d6a0d8578/providers/Microsoft.Synapse/workspaces/ws-5d6a0d8578' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5d6a0d8578",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

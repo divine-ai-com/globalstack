@@ -1,0 +1,45 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults-keys.delete.not-found",
+  "capturedAt": "2026-05-16T04:55:33.162Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults/keys",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6b231aebaa/providers/Microsoft.KeyVault/vaults/kv-6b231aebaa/keys/key-6b231aebaa?api-version=2023-07-01",
+    "body": null
+  },
+  "response": {
+    "status": 405,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "3f2802b3-7a45-4759-9fee-fb1c2d829c42",
+      "x-ms-request-id": "3f2802b3-7a45-4759-9fee-fb1c2d829c42",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T045526Z:3f2802b3-7a45-4759-9fee-fb1c2d829c42"
+    },
+    "body": {
+      "error": {
+        "code": "DeleteNotSupported",
+        "message": "The resource type does not support delete operation."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6b231aebaa",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

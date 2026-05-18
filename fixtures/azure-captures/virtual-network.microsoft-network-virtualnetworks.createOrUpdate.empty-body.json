@@ -1,0 +1,45 @@
+{
+  "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T20:11:51.039Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/virtualNetworks",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bab0735538/providers/Microsoft.Network/virtualNetworks/vnet-bab0735538?api-version=2023-09-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "83de19a5-4c5a-48a1-a4ca-173efe2ea1d6",
+      "x-ms-request-id": "83de19a5-4c5a-48a1-a4ca-173efe2ea1d6",
+      "x-ms-routing-request-id": "EASTUS:20260516T201149Z:83de19a5-4c5a-48a1-a4ca-173efe2ea1d6"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-bab0735538",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

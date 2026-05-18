@@ -1,0 +1,48 @@
+{
+  "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:50:24.183Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.EventGrid/systemTopics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fc542cbe5f/providers/Microsoft.EventGrid/systemTopics/system-fc542cbe5f?api-version=2022-06-15",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e6688dbe-1e47-401d-b559-2fa61a3c84c3",
+      "x-ms-request-id": "e6688dbe-1e47-401d-b559-2fa61a3c84c3",
+      "x-ms-routing-request-id": "EASTUS:20260516T155022Z:e6688dbe-1e47-401d-b559-2fa61a3c84c3"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequest",
+        "message": "Required property 'topicType' not found in JSON. Path 'properties', line 1, position 36."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fc542cbe5f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

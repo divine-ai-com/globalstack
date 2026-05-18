@@ -1,0 +1,593 @@
+{
+  "generatedBy": "npm run storage:expectations",
+  "source": "fixtures/azure-storage-data-plane-captures",
+  "expectationCount": 32,
+  "fixtureSummaries": [
+    {
+      "id": "storage-data-plane-blob-queue-wave-1",
+      "capturedAt": "2026-05-16T13:11:15.656Z",
+      "caseCount": 32,
+      "mismatchCount": 4,
+      "cleanupVerified": true
+    }
+  ],
+  "expectations": [
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-invalid-container-uppercase",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-invalid-container-uppercase",
+      "description": "Create container with uppercase name.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-invalid-container-too-short",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-invalid-container-too-short",
+      "description": "Create container with two-character name.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-invalid-container-leading-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-invalid-container-leading-dash",
+      "description": "Create container with leading dash.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-invalid-container-trailing-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-invalid-container-trailing-dash",
+      "description": "Create container with trailing dash.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-invalid-container-consecutive-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-invalid-container-consecutive-dash",
+      "description": "Create container with consecutive dash.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-create-container",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-create-container",
+      "description": "Create valid container.",
+      "service": "blob",
+      "expected": {
+        "status": 201,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-duplicate-container-create",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-duplicate-container-create",
+      "description": "Create duplicate container.",
+      "service": "blob",
+      "expected": {
+        "status": 409,
+        "errorCode": "ContainerAlreadyExists"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 409,
+        "errorCode": "ContainerAlreadyExists",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-missing-blob",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-missing-blob",
+      "description": "Read missing blob.",
+      "service": "blob",
+      "expected": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 404,
+        "errorCode": "BlobNotFound",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-missing-container",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-missing-container",
+      "description": "Put blob into missing container.",
+      "service": "blob",
+      "expected": {
+        "status": 404,
+        "errorCode": "ContainerNotFound"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 404,
+        "errorCode": "ContainerNotFound",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-missing-blob-type-header",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-missing-blob-type-header",
+      "description": "Put blob without x-ms-blob-type.",
+      "service": "blob",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingRequiredHeader"
+      },
+      "localSupportState": "azurite-status-match-error-code-gap",
+      "azurite": {
+        "status": 400,
+        "errorCode": null,
+        "matchesStatus": true,
+        "matchesErrorCode": false
+      },
+      "globalstackNormalization": {
+        "status": "implemented",
+        "sourceFixture": "fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json",
+        "azureStatus": 400,
+        "azureErrorCode": "MissingRequiredHeader",
+        "azuriteStatus": 400,
+        "azuriteErrorCode": null
+      }
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-put-block-blob",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-put-block-blob",
+      "description": "Put valid block blob.",
+      "service": "blob",
+      "expected": {
+        "status": 201,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-get-without-authorization",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-get-without-authorization",
+      "description": "Read blob without Authorization header.",
+      "service": "blob",
+      "expected": {
+        "status": 401,
+        "errorCode": "NoAuthenticationInformation"
+      },
+      "localSupportState": "azurite-behavior-gap",
+      "azurite": {
+        "status": 403,
+        "errorCode": "AuthorizationFailure",
+        "matchesStatus": false,
+        "matchesErrorCode": false
+      },
+      "globalstackNormalization": {
+        "status": "implemented",
+        "sourceFixture": "fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json",
+        "azureStatus": 401,
+        "azureErrorCode": "NoAuthenticationInformation",
+        "azuriteStatus": 403,
+        "azuriteErrorCode": "AuthorizationFailure"
+      }
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-get-payload",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-get-payload",
+      "description": "Read valid blob.",
+      "service": "blob",
+      "expected": {
+        "status": 200,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-list-containers",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-list-containers",
+      "description": "List containers.",
+      "service": "blob",
+      "expected": {
+        "status": 200,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-delete-blob",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-delete-blob",
+      "description": "Delete blob.",
+      "service": "blob",
+      "expected": {
+        "status": 202,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-get-after-delete",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-get-after-delete",
+      "description": "Read blob after delete.",
+      "service": "blob",
+      "expected": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 404,
+        "errorCode": "BlobNotFound",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-delete-container",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-delete-container",
+      "description": "Delete container.",
+      "service": "blob",
+      "expected": {
+        "status": 202,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.blob-get-container-after-delete",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "blob-get-container-after-delete",
+      "description": "Read container after delete.",
+      "service": "blob",
+      "expected": {
+        "status": 404,
+        "errorCode": "ContainerNotFound"
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-invalid-uppercase",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-invalid-uppercase",
+      "description": "Create queue with uppercase name.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-invalid-too-short",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-invalid-too-short",
+      "description": "Create queue with two-character name.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-invalid-leading-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-invalid-leading-dash",
+      "description": "Create queue with leading dash.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-invalid-trailing-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-invalid-trailing-dash",
+      "description": "Create queue with trailing dash.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-invalid-consecutive-dash",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-invalid-consecutive-dash",
+      "description": "Create queue with consecutive dash.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-create",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-create",
+      "description": "Create valid queue.",
+      "service": "queue",
+      "expected": {
+        "status": 201,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-duplicate-create",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-duplicate-create",
+      "description": "Create duplicate queue.",
+      "service": "queue",
+      "expected": {
+        "status": 204,
+        "errorCode": null
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 204,
+        "errorCode": null,
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-missing-metadata",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-missing-metadata",
+      "description": "Read metadata for missing queue.",
+      "service": "queue",
+      "expected": {
+        "status": 404,
+        "errorCode": "QueueNotFound"
+      },
+      "localSupportState": "azurite-matches-azure",
+      "azurite": {
+        "status": 404,
+        "errorCode": "QueueNotFound",
+        "matchesStatus": true,
+        "matchesErrorCode": true
+      },
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-malformed-message",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-malformed-message",
+      "description": "Put malformed queue message XML.",
+      "service": "queue",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidXmlDocument"
+      },
+      "localSupportState": "azurite-status-match-error-code-gap",
+      "azurite": {
+        "status": 400,
+        "errorCode": null,
+        "matchesStatus": true,
+        "matchesErrorCode": false
+      },
+      "globalstackNormalization": {
+        "status": "implemented",
+        "sourceFixture": "fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json",
+        "azureStatus": 400,
+        "azureErrorCode": "InvalidXmlDocument",
+        "azuriteStatus": 400,
+        "azuriteErrorCode": null
+      }
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-put-message",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-put-message",
+      "description": "Put valid queue message.",
+      "service": "queue",
+      "expected": {
+        "status": 201,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-peek-message",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-peek-message",
+      "description": "Peek queue message.",
+      "service": "queue",
+      "expected": {
+        "status": 200,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-list",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-list",
+      "description": "List queues.",
+      "service": "queue",
+      "expected": {
+        "status": 200,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-delete",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-delete",
+      "description": "Delete queue.",
+      "service": "queue",
+      "expected": {
+        "status": 204,
+        "errorCode": null
+      },
+      "localSupportState": "azure-only-no-local-comparison",
+      "azurite": null,
+      "globalstackNormalization": null
+    },
+    {
+      "id": "storage-data-plane-blob-queue-wave-1.queue-peek-after-delete",
+      "fixtureId": "storage-data-plane-blob-queue-wave-1",
+      "caseId": "queue-peek-after-delete",
+      "description": "Peek queue after delete.",
+      "service": "queue",
+      "expected": {
+        "status": 200,
+        "errorCode": null
+      },
+      "localSupportState": "azurite-behavior-gap",
+      "azurite": {
+        "status": 404,
+        "errorCode": "QueueNotFound",
+        "matchesStatus": false,
+        "matchesErrorCode": false
+      },
+      "globalstackNormalization": {
+        "status": "needs-repeat-capture",
+        "sourceFixture": "fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json",
+        "azureStatus": 200,
+        "azureErrorCode": null,
+        "azuriteStatus": 404,
+        "azuriteErrorCode": "QueueNotFound"
+      }
+    }
+  ],
+  "caveat": "These are real Azure data-plane expectations. They are not all locally replayable until GlobalStack has a data-plane proxy/facade in front of official emulators."
+}

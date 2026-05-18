@@ -1,0 +1,56 @@
+{
+  "id": "redis-cache.microsoft-cache-redis.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T19:59:50.529Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "redis-cache",
+  "tier": 2,
+  "resourceType": "Microsoft.Cache/redis",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d56e8ffd2d/providers/Microsoft.Cache/redis/redis-d56e8ffd2d?api-version=2023-08-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Basic",
+        "family": "C",
+        "capacity": 0
+      },
+      "properties": {
+        "enableNonSslPort": true
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7ce6572c-d636-4dfa-80e4-8c8240455db7",
+      "x-ms-request-id": "0c5e8f76-fd3b-4cc6-9d4d-252ca59bda7c",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T195944Z:7ce6572c-d636-4dfa-80e4-8c8240455db7"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestBody",
+        "message": "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=0c5e8f76-fd3b-4cc6-9d4d-252ca59bda7c",
+        "target": null
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d56e8ffd2d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

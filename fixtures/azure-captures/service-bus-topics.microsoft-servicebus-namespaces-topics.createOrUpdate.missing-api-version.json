@@ -1,0 +1,52 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T13:59:57.436Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-025f2e9d8b/providers/Microsoft.ServiceBus/namespaces/ns-025f2e9d8b/topics/topic-025f2e9d8b",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "ef267101-7f69-465e-85b9-08043c0bb322",
+      "x-ms-request-id": "ef267101-7f69-465e-85b9-08043c0bb322",
+      "x-ms-routing-request-id": "EASTUS:20260516T135949Z:ef267101-7f69-465e-85b9-08043c0bb322"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-025f2e9d8b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

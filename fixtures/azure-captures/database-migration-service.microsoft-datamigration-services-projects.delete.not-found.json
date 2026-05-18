@@ -1,0 +1,39 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services-projects.delete.not-found",
+  "capturedAt": "2026-05-16T05:04:33.481Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services/projects",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1d83f25ec6/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-1d83f25ec6?api-version=2022-03-30-preview",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "746568d3-5b2a-4f69-94e9-136d53ccd057",
+      "x-ms-request-id": "746568d3-5b2a-4f69-94e9-136d53ccd057",
+      "x-ms-routing-request-id": "EASTUS:20260516T050427Z:746568d3-5b2a-4f69-94e9-136d53ccd057"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1d83f25ec6",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

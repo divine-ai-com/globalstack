@@ -1,0 +1,45 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers-databases.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T19:58:22.221Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ea49e4afa9/providers/Microsoft.DBforMySQL/flexibleServers/db-ea49e4afa9/databases/dbea49e4afa9?api-version=2023-12-30",
+    "body": {}
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b71264da-b0b1-4830-84a9-2e3ff451fd06",
+      "x-ms-request-id": "b71264da-b0b1-4830-84a9-2e3ff451fd06",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260516T195815Z:b71264da-b0b1-4830-84a9-2e3ff451fd06"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforMySQL/flexibleServers/db-ea49e4afa9' under resource group 'rg-gs-conf-ea49e4afa9' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ea49e4afa9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

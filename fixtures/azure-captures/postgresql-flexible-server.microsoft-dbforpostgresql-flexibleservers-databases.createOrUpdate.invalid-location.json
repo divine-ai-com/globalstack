@@ -1,0 +1,55 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T16:38:05.056Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-50d4a3de6b/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-50d4a3de6b/databases/db50d4a3de6b?api-version=2023-06-01-preview",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "16"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8198daf6-f558-4e4b-b6f1-d5ca225ace51",
+      "x-ms-request-id": "8198daf6-f558-4e4b-b6f1-d5ca225ace51",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T163758Z:8198daf6-f558-4e4b-b6f1-d5ca225ace51"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforPostgreSQL/flexibleServers/db-50d4a3de6b' under resource group 'rg-gs-conf-50d4a3de6b' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-50d4a3de6b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

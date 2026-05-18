@@ -1,0 +1,55 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T19:56:53.807Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-14ad4432ce/providers/Microsoft.DBforMySQL/flexibleServers/db-14ad4432ce?api-version=2023-12-30",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "8.0.21"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "ddf4b765-5e44-4021-b5e5-d0626c4f7094",
+      "x-ms-request-id": "e3a1e68a-896e-4582-8dc2-a480c5f4270f",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260516T195652Z:ddf4b765-5e44-4021-b5e5-d0626c4f7094"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidAdminLoginPassword",
+        "message": "The AdministratorLoginPassword cannot be empty or null."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-14ad4432ce",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

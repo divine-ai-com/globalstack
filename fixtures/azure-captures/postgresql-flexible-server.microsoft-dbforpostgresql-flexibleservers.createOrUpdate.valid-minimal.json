@@ -1,0 +1,55 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T16:36:55.729Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-470a547f98/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-470a547f98?api-version=2023-06-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "16"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6894e752-cc7b-4560-9141-c3ac892573fd",
+      "x-ms-request-id": "6328b215-b337-47a9-95b6-aa6347c6110a",
+      "x-ms-routing-request-id": "EASTUS:20260516T163649Z:6894e752-cc7b-4560-9141-c3ac892573fd"
+    },
+    "body": {
+      "error": {
+        "code": "MissingRequiredParameter",
+        "message": "Parameter 'AdministratorLoginPassword' must be specified. This parameter cannot be NULL or empty."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-470a547f98",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

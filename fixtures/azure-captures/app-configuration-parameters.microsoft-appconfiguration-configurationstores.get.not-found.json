@@ -1,0 +1,45 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.get.not-found",
+  "capturedAt": "2026-05-16T04:40:32.351Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2bbfbd28ba/providers/Microsoft.AppConfiguration/configurationStores/cfg2bbfbd28ba?api-version=2023-03-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0700d714-1296-4021-b3af-b0da2b3eb54e",
+      "x-ms-request-id": "0700d714-1296-4021-b3af-b0da2b3eb54e",
+      "x-ms-routing-request-id": "EASTUS:20260516T044025Z:0700d714-1296-4021-b3af-b0da2b3eb54e"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.AppConfiguration/configurationStores/cfg2bbfbd28ba' under resource group 'rg-gs-conf-2bbfbd28ba' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-2bbfbd28ba",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

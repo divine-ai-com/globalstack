@@ -1,0 +1,55 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers-databases.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T19:57:52.771Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d806e9bce6/providers/Microsoft.DBforMySQL/flexibleServers/db-d806e9bce6/databases/dbd806e9bce6?api-version=2023-12-30",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "8.0.21"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2275a287-b77d-4fee-bf03-71d03f9aa68a",
+      "x-ms-request-id": "2275a287-b77d-4fee-bf03-71d03f9aa68a",
+      "x-ms-routing-request-id": "EASTUS:20260516T195746Z:2275a287-b77d-4fee-bf03-71d03f9aa68a"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforMySQL/flexibleServers/db-d806e9bce6' under resource group 'rg-gs-conf-d806e9bce6' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d806e9bce6",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "logic-workflows.microsoft-logic-workflows.delete.not-found",
+  "capturedAt": "2026-05-16T04:59:59.742Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "logic-workflows",
+  "tier": 2,
+  "resourceType": "Microsoft.Logic/workflows",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9ac49872b4/providers/Microsoft.Logic/workflows/workflow-9ac49872b4?api-version=2019-05-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "abc78f01-24b7-4640-8bb6-e83b34cb6b55",
+      "x-ms-request-id": "abc78f01-24b7-4640-8bb6-e83b34cb6b55",
+      "x-ms-routing-request-id": "EASTUS:20260516T045958Z:abc78f01-24b7-4640-8bb6-e83b34cb6b55"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9ac49872b4",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

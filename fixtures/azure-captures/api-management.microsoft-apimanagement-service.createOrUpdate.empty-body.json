@@ -1,0 +1,45 @@
+{
+  "id": "api-management.microsoft-apimanagement-service.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:53:57.485Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-40c77c6426/providers/Microsoft.ApiManagement/service/apim-40c77c6426?api-version=2023-05-01-preview",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "97898167-3d33-4d7a-9b7b-83deb4f79ec7",
+      "x-ms-request-id": "97898167-3d33-4d7a-9b7b-83deb4f79ec7",
+      "x-ms-routing-request-id": "EASTUS:20260516T155356Z:97898167-3d33-4d7a-9b7b-83deb4f79ec7"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-40c77c6426",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

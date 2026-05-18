@@ -1,0 +1,45 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults-keys.get.not-found",
+  "capturedAt": "2026-05-16T04:31:04.511Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults/keys",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6b231aebaa/providers/Microsoft.KeyVault/vaults/kv-6b231aebaa/keys/key-6b231aebaa?api-version=2023-07-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "36f0db90-52a2-4f47-8f0e-a397bd60f9f6",
+      "x-ms-request-id": "36f0db90-52a2-4f47-8f0e-a397bd60f9f6",
+      "x-ms-routing-request-id": "EASTUS:20260516T043103Z:36f0db90-52a2-4f47-8f0e-a397bd60f9f6"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'vaults/keys', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6b231aebaa/providers/Microsoft.KeyVault/vaults/kv-6b231aebaa' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6b231aebaa",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

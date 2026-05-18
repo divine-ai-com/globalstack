@@ -1,0 +1,54 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T16:37:31.714Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d31ddcf17d/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-d31ddcf17d?api-version=2023-06-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "16"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6f6b68cf-66bf-44d5-9319-f91b2cd5aa5b",
+      "x-ms-request-id": "55c6da1d-93aa-4617-a777-e1bf0a12d5c5",
+      "x-ms-routing-request-id": "EASTUS:20260516T163724Z:6f6b68cf-66bf-44d5-9319-f91b2cd5aa5b"
+    },
+    "body": {
+      "error": {
+        "code": "MissingRequiredParameter",
+        "message": "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d31ddcf17d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

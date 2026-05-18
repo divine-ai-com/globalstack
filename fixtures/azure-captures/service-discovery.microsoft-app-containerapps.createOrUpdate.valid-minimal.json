@@ -1,0 +1,48 @@
+{
+  "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T16:28:38.690Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-discovery",
+  "tier": 2,
+  "resourceType": "Microsoft.App/containerApps",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c1e30a6aa7/providers/Microsoft.App/containerApps/app-c1e30a6aa7?api-version=2023-05-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2a5175b2-17f8-4aa5-bde4-cd272dfacbda",
+      "x-ms-request-id": "2a5175b2-17f8-4aa5-bde4-cd272dfacbda",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T162832Z:2a5175b2-17f8-4aa5-bde4-cd272dfacbda"
+    },
+    "body": {
+      "error": {
+        "code": "ContainerAppCreateMustContainContainer",
+        "message": "Error creating container app 'app-c1e30a6aa7'. Must specify atleast one container to create a container app."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c1e30a6aa7",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

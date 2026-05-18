@@ -1,0 +1,45 @@
+{
+  "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.get.not-found",
+  "capturedAt": "2026-05-16T04:30:10.659Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1c3d5e58c2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-1c3d5e58c2?api-version=2023-01-31",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a44c06a1-02c1-49f5-897f-8c4aa08453ab",
+      "x-ms-request-id": "a44c06a1-02c1-49f5-897f-8c4aa08453ab",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T043009Z:a44c06a1-02c1-49f5-897f-8c4aa08453ab"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/id-1c3d5e58c2' under resource group 'rg-gs-conf-1c3d5e58c2' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1c3d5e58c2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

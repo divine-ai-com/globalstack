@@ -1,0 +1,49 @@
+{
+  "id": "blob-storage.microsoft-storage-storageaccounts-blobservices-containers.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:08:33.022Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "blob-storage",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts/blobServices/containers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2bbb2e28f7/providers/Microsoft.Storage/storageAccounts/gs2bbb2e28f7/blobServices/default/containers/c2bbb2e28f7?api-version=2023-01-01",
+    "body": {
+      "properties": {
+        "publicAccess": "None"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a0703fe9-86ae-44f6-89b8-5c8dcc89975a",
+      "x-ms-request-id": "a0703fe9-86ae-44f6-89b8-5c8dcc89975a",
+      "x-ms-routing-request-id": "EASTUS:20260516T150831Z:a0703fe9-86ae-44f6-89b8-5c8dcc89975a"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/blobServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2bbb2e28f7/providers/Microsoft.Storage/storageAccounts/gs2bbb2e28f7' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-2bbb2e28f7",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

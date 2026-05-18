@@ -1,0 +1,45 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.get.not-found",
+  "capturedAt": "2026-05-16T04:38:03.211Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/endpoints",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5be785a908/providers/Microsoft.Cdn/profiles/cdn-5be785a908/endpoints/endpoint-5be785a908?api-version=2024-02-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e9c57e6d-f9bb-4a71-be2f-0c910d741274",
+      "x-ms-request-id": "e9c57e6d-f9bb-4a71-be2f-0c910d741274",
+      "x-ms-routing-request-id": "EASTUS:20260516T043756Z:e9c57e6d-f9bb-4a71-be2f-0c910d741274"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Cdn/profiles/cdn-5be785a908/endpoints/endpoint-5be785a908' under resource group 'rg-gs-conf-5be785a908' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5be785a908",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

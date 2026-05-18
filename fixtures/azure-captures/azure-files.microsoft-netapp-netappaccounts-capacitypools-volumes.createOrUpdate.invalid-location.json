@@ -1,0 +1,48 @@
+{
+  "id": "azure-files.microsoft-netapp-netappaccounts-capacitypools-volumes.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T14:54:44.847Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-files",
+  "tier": 2,
+  "resourceType": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c6b960aa19/providers/Microsoft.NetApp/netAppAccounts/netapp-c6b960aa19/capacityPools/pool-c6b960aa19/volumes/volume-c6b960aa19?api-version=2023-11-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "52cfee0d-1fd9-4b92-9de4-dff9ede4a15d",
+      "x-ms-request-id": "52cfee0d-1fd9-4b92-9de4-dff9ede4a15d",
+      "x-ms-routing-request-id": "EASTUS:20260516T145438Z:52cfee0d-1fd9-4b92-9de4-dff9ede4a15d"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c6b960aa19",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

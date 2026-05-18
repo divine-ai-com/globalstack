@@ -1,0 +1,45 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T20:19:09.156Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8501ed2b1d/providers/Microsoft.Network/dnsZones/8501ed2b1d.example.test?api-version=2018-05-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "99667c4a-fd04-4044-8e04-03dfe569eb35",
+      "x-ms-request-id": "99667c4a-fd04-4044-8e04-03dfe569eb35",
+      "x-ms-routing-request-id": "EASTUS:20260516T201908Z:99667c4a-fd04-4044-8e04-03dfe569eb35"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8501ed2b1d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

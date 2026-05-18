@@ -1,0 +1,45 @@
+{
+  "id": "azure-functions.microsoft-web-serverfarms.get.not-found",
+  "capturedAt": "2026-05-16T04:29:49.091Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/serverfarms",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e4eb22e39e/providers/Microsoft.Web/serverfarms/plan-e4eb22e39e?api-version=2023-12-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6591a64d-52cf-488d-b239-a8f9bba8ca20",
+      "x-ms-request-id": "6591a64d-52cf-488d-b239-a8f9bba8ca20",
+      "x-ms-routing-request-id": "EASTUS:20260516T042942Z:6591a64d-52cf-488d-b239-a8f9bba8ca20"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Web/serverFarms/plan-e4eb22e39e' under resource group 'rg-gs-conf-e4eb22e39e' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e4eb22e39e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

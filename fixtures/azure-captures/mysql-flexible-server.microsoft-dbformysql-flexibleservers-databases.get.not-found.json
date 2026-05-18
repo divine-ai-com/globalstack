@@ -1,0 +1,45 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers-databases.get.not-found",
+  "capturedAt": "2026-05-16T04:34:57.088Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers/databases",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6599c6915e/providers/Microsoft.DBforMySQL/flexibleServers/db-6599c6915e/databases/db6599c6915e?api-version=2023-12-30",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1474d424-512c-48f8-9fc4-590e7fc56834",
+      "x-ms-request-id": "1474d424-512c-48f8-9fc4-590e7fc56834",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T043450Z:1474d424-512c-48f8-9fc4-590e7fc56834"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforMySQL/flexibleServers/db-6599c6915e' under resource group 'rg-gs-conf-6599c6915e' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6599c6915e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

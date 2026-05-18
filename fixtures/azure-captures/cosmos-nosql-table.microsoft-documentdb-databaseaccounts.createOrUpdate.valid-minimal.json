@@ -1,0 +1,46 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T14:28:34.615Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54686b3093/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-54686b3093?api-version=2024-05-15",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924",
+      "x-ms-request-id": "cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924",
+      "x-ms-routing-request-id": "EASTUS:20260516T142833Z:cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924"
+    },
+    "body": {
+      "code": "BadRequest",
+      "message": "Value '' for Database account offer type is invalid\r\nActivityId: c809ac9c-98d5-4302-b781-6daf54fdead9, Microsoft.Azure.Documents.Common/2.14.0"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-54686b3093",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

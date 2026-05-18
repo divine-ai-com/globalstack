@@ -1,0 +1,45 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.get.not-found",
+  "capturedAt": "2026-05-16T04:40:06.306Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces/eventhubs",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-20f647bc5f/providers/Microsoft.EventHub/namespaces/ns-20f647bc5f/eventhubs/hub-20f647bc5f?api-version=2024-01-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "d2a249ee-9d4f-4eda-b92b-09b8dd1b49d7",
+      "x-ms-request-id": "d2a249ee-9d4f-4eda-b92b-09b8dd1b49d7",
+      "x-ms-routing-request-id": "EASTUS:20260516T044005Z:d2a249ee-9d4f-4eda-b92b-09b8dd1b49d7"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'read' on resource(s) of type 'namespaces/eventhubs', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-20f647bc5f/providers/Microsoft.EventHub/namespaces/ns-20f647bc5f' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-20f647bc5f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

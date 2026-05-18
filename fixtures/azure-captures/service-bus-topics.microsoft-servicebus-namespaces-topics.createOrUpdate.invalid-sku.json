@@ -1,0 +1,51 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T14:00:19.282Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e55c3465d0/providers/Microsoft.ServiceBus/namespaces/ns-e55c3465d0/topics/topic-e55c3465d0?api-version=2021-11-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a547dbf1-8cbd-440a-b06d-d62714350e86",
+      "x-ms-request-id": "a547dbf1-8cbd-440a-b06d-d62714350e86",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T140011Z:a547dbf1-8cbd-440a-b06d-d62714350e86"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e55c3465d0/providers/Microsoft.ServiceBus/namespaces/ns-e55c3465d0' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e55c3465d0",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "api-management.microsoft-apimanagement-service.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:53:41.082Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5bd1933a8d/providers/Microsoft.ApiManagement/service/apim-5bd1933a8d",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4470c2e4-fe8f-40d3-b22f-eb2e8992b1ab",
+      "x-ms-request-id": "4470c2e4-fe8f-40d3-b22f-eb2e8992b1ab",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T155339Z:4470c2e4-fe8f-40d3-b22f-eb2e8992b1ab"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5bd1933a8d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

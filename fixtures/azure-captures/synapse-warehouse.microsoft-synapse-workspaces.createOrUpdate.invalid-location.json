@@ -1,0 +1,48 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T19:55:21.720Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c696ae1258/providers/Microsoft.Synapse/workspaces/ws-c696ae1258?api-version=2021-06-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "38bd2f06-630d-40c0-9080-e0c1cab8775a",
+      "x-ms-request-id": "38bd2f06-630d-40c0-9080-e0c1cab8775a",
+      "x-ms-routing-request-id": "EASTUS:20260516T195514Z:38bd2f06-630d-40c0-9080-e0c1cab8775a"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c696ae1258",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

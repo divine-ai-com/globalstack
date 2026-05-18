@@ -1,0 +1,51 @@
+{
+  "id": "api-management.microsoft-apimanagement-service.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:53:35.708Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8155ca1626/providers/Microsoft.ApiManagement/service/apim-8155ca1626?api-version=2023-05-01-preview",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "667649c1-9f76-4681-9c9f-e942c846beea",
+      "x-ms-request-id": "667649c1-9f76-4681-9c9f-e942c846beea",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T155334Z:667649c1-9f76-4681-9c9f-e942c846beea"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidParameters",
+        "subCode": null,
+        "message": "Invalid parameter: Value cannot be null.\r\nParameter name: skuproperties",
+        "details": null,
+        "innerError": null
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8155ca1626",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

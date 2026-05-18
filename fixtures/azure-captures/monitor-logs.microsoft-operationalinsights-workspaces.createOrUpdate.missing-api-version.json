@@ -1,0 +1,53 @@
+{
+  "id": "monitor-logs.microsoft-operationalinsights-workspaces.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T20:07:55.413Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-logs",
+  "tier": 1,
+  "resourceType": "Microsoft.OperationalInsights/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e9cdbfce1d/providers/Microsoft.OperationalInsights/workspaces/ws-e9cdbfce1d",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "retentionInDays": 30
+      },
+      "sku": {
+        "name": "PerGB2018"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5029bdf3-00df-499e-9b0f-7a9776153081",
+      "x-ms-request-id": "5029bdf3-00df-499e-9b0f-7a9776153081",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260516T200754Z:5029bdf3-00df-499e-9b0f-7a9776153081"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e9cdbfce1d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

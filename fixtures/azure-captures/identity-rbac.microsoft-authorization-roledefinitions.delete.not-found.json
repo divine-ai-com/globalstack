@@ -1,0 +1,39 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roledefinitions.delete.not-found",
+  "capturedAt": "2026-05-16T04:54:56.647Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleDefinitions",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8bf3c62d68/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "2cc99a8a-0de5-41a6-bd62-dbcc30494e43",
+      "x-ms-request-id": "54e63841-2370-46fb-9a73-6dbd2d0cd542",
+      "x-ms-routing-request-id": "EASTUS:20260516T045450Z:2cc99a8a-0de5-41a6-bd62-dbcc30494e43"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8bf3c62d68",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

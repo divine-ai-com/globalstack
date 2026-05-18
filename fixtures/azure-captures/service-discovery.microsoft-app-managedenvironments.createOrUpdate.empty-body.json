@@ -1,0 +1,45 @@
+{
+  "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T16:28:26.387Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-discovery",
+  "tier": 2,
+  "resourceType": "Microsoft.App/managedEnvironments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-746e5c1f7b/providers/Microsoft.App/managedEnvironments/env-746e5c1f7b?api-version=2023-05-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a66cedcf-088a-4a5c-ba25-6992eee1cd2f",
+      "x-ms-request-id": "a66cedcf-088a-4a5c-ba25-6992eee1cd2f",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T162820Z:a66cedcf-088a-4a5c-ba25-6992eee1cd2f"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-746e5c1f7b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

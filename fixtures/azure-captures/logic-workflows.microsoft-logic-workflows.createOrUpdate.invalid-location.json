@@ -1,0 +1,48 @@
+{
+  "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T16:01:43.959Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "logic-workflows",
+  "tier": 2,
+  "resourceType": "Microsoft.Logic/workflows",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d031115367/providers/Microsoft.Logic/workflows/workflow-d031115367?api-version=2019-05-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "04929667-e992-476e-b188-02ee4004fbee",
+      "x-ms-request-id": "04929667-e992-476e-b188-02ee4004fbee",
+      "x-ms-routing-request-id": "EASTUS:20260516T160142Z:04929667-e992-476e-b188-02ee4004fbee"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d031115367",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

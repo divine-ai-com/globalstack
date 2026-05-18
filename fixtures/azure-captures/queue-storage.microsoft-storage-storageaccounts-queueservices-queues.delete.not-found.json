@@ -1,0 +1,45 @@
+{
+  "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.delete.not-found",
+  "capturedAt": "2026-05-16T04:59:21.831Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c6f68ba2db/providers/Microsoft.Storage/storageAccounts/gsc6f68ba2db/queueServices/default/queues/qc6f68ba2db?api-version=2023-01-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0478df9c-8979-4d82-9d6c-16cf8213a79e",
+      "x-ms-request-id": "0478df9c-8979-4d82-9d6c-16cf8213a79e",
+      "x-ms-routing-request-id": "EASTUS:20260516T045920Z:0478df9c-8979-4d82-9d6c-16cf8213a79e"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'delete' on resource(s) of type 'storageAccounts/queueServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c6f68ba2db/providers/Microsoft.Storage/storageAccounts/gsc6f68ba2db' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c6f68ba2db",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

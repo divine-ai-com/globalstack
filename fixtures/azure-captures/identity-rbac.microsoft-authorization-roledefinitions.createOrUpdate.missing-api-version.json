@@ -1,0 +1,48 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:42:17.536Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleDefinitions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-74642aafb0/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9d172e3b-ba1f-4eae-a204-5b396b504015",
+      "x-ms-request-id": "9d172e3b-ba1f-4eae-a204-5b396b504015",
+      "x-ms-routing-request-id": "EASTUS:20260516T154210Z:9d172e3b-ba1f-4eae-a204-5b396b504015"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-74642aafb0",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:50:46.381Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.EventGrid/systemTopics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-773e5ff2e0/providers/Microsoft.EventGrid/systemTopics/system-773e5ff2e0?api-version=2022-06-15",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "38767fc4-44bb-42d4-b81a-82e6756a907d",
+      "x-ms-request-id": "38767fc4-44bb-42d4-b81a-82e6756a907d",
+      "x-ms-routing-request-id": "EASTUS:20260516T155039Z:38767fc4-44bb-42d4-b81a-82e6756a907d"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-773e5ff2e0",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

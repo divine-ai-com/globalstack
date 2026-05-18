@@ -1,0 +1,48 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T20:04:59.823Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services/projects",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3c472fab31/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-3c472fab31?api-version=2022-03-30-preview",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "52c6b243-8b75-4bb0-a934-5d58ebd60a19",
+      "x-ms-request-id": "52c6b243-8b75-4bb0-a934-5d58ebd60a19",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T200453Z:52c6b243-8b75-4bb0-a934-5d58ebd60a19"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3c472fab31",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

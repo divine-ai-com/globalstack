@@ -1,0 +1,43 @@
+{
+  "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:50:18.521Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.Insights/diagnosticSettings",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8cad42be38/providers/Microsoft.Insights/diagnosticSettings/diag-8cad42be38?api-version=2021-05-01-preview",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b4f3859f-dc97-45ad-bb9a-d47047c4adc5",
+      "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
+      "x-ms-routing-request-id": "EASTUS:20260516T155017Z:b4f3859f-dc97-45ad-bb9a-d47047c4adc5"
+    },
+    "body": {
+      "code": "BadRequest",
+      "message": "Missing 'properties'"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8cad42be38",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

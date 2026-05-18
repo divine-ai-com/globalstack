@@ -1,0 +1,48 @@
+{
+  "id": "monitor-logs.microsoft-insights-diagnosticsettings.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T20:10:39.126Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-logs",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/diagnosticSettings",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e334855d62/providers/Microsoft.Insights/diagnosticSettings/diag-e334855d62",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8363fcc0-2a24-4fff-85f8-c514312d6f71",
+      "x-ms-request-id": "8363fcc0-2a24-4fff-85f8-c514312d6f71",
+      "x-ms-routing-request-id": "EASTUS:20260516T201037Z:8363fcc0-2a24-4fff-85f8-c514312d6f71"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e334855d62",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

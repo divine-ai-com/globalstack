@@ -1,0 +1,48 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T16:12:41.107Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b1bcd94c4b/providers/Microsoft.Cdn/profiles/cdn-b1bcd94c4b?api-version=2024-02-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "fb879f73-a7d8-42e7-8dc3-390dd02c1ea7",
+      "x-ms-request-id": "fb879f73-a7d8-42e7-8dc3-390dd02c1ea7",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T161235Z:fb879f73-a7d8-42e7-8dc3-390dd02c1ea7"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b1bcd94c4b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

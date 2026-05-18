@@ -1,0 +1,39 @@
+{
+  "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.delete.not-found",
+  "capturedAt": "2026-05-16T04:54:31.870Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1c3d5e58c2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-1c3d5e58c2?api-version=2023-01-31",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "c0008457-a9d5-4f6f-91db-aaa0bfcd1bf8",
+      "x-ms-request-id": "c0008457-a9d5-4f6f-91db-aaa0bfcd1bf8",
+      "x-ms-routing-request-id": "EASTUS:20260516T045425Z:c0008457-a9d5-4f6f-91db-aaa0bfcd1bf8"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1c3d5e58c2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

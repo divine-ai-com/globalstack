@@ -1,0 +1,48 @@
+{
+  "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:54:07.651Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service/apis",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7e33c2445b/providers/Microsoft.ApiManagement/service/apim-7e33c2445b/apis/api-7e33c2445b?api-version=2023-05-01-preview",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5901c721-e1be-4dc9-9733-1762a1b86002",
+      "x-ms-request-id": "5901c721-e1be-4dc9-9733-1762a1b86002",
+      "x-ms-routing-request-id": "EASTUS:20260516T155401Z:5901c721-e1be-4dc9-9733-1762a1b86002"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.ApiManagement/service/apim-7e33c2445b' under resource group 'rg-gs-conf-7e33c2445b' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7e33c2445b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

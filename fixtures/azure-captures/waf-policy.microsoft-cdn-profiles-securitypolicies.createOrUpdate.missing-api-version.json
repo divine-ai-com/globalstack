@@ -1,0 +1,48 @@
+{
+  "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:46:23.194Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-47ea97dbab/providers/Microsoft.Cdn/profiles/cdn-47ea97dbab/securityPolicies/security-47ea97dbab",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80",
+      "x-ms-request-id": "27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80",
+      "x-ms-routing-request-id": "EASTUS:20260516T154615Z:27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-47ea97dbab",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

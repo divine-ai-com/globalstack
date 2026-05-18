@@ -1,0 +1,45 @@
+{
+  "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:13:28.425Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3e96af3c9b/providers/Microsoft.Storage/storageAccounts/gs3e96af3c9b/queueServices/default/queues/q3e96af3c9b?api-version=2023-01-01",
+    "body": {}
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "844dfb5f-21e8-464f-8f0a-a189f05892c3",
+      "x-ms-request-id": "844dfb5f-21e8-464f-8f0a-a189f05892c3",
+      "x-ms-routing-request-id": "EASTUS:20260516T151321Z:844dfb5f-21e8-464f-8f0a-a189f05892c3"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/queueServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3e96af3c9b/providers/Microsoft.Storage/storageAccounts/gs3e96af3c9b' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3e96af3c9b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

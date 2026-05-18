@@ -1,0 +1,45 @@
+{
+  "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T05:59:11.721Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-675c1b3eb3/providers/Microsoft.Storage/storageAccounts/gs675c1b3eb3/tableServices/default/tables?api-version=2023-01-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "f16bfb64-1c4c-4d37-9213-a26adf272650",
+      "x-ms-request-id": "f16bfb64-1c4c-4d37-9213-a26adf272650",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260516T055911Z:f16bfb64-1c4c-4d37-9213-a26adf272650"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '00000000-0000-0000-0000-000000000000' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-675c1b3eb3",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}
