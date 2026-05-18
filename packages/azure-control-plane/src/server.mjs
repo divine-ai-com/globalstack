@@ -809,6 +809,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
     ]);
     const createdStatus = storageCreatedOkTypes.has(resourceType) ? 200 : 201;
     const asyncBodyTypes = new Set([
+      'Microsoft.ApiManagement/service',
       'Microsoft.ServiceBus/namespaces',
     ]);
     return {

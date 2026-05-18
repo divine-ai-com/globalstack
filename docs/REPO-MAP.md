@@ -78,6 +78,7 @@ flowchart TD
 - `packages/core/src/resource-store.mjs`
 - `packages/azure-control-plane/src/provider-validation.mjs`
 - `packages/azure-control-plane/src/server.mjs`
+- `packages/azure-data-plane/src/api-management-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
@@ -102,6 +103,7 @@ flowchart TD
 - `scripts/capture-azure-storage-lifecycle.mjs`
 - `scripts/capture-real-azure-operation.mjs`
 - `scripts/classify-azure-captures.mjs`
+- `scripts/e2e-azure-api-management-parity.mjs`
 - `scripts/e2e-azure-event-grid-parity.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-service-bus-parity.mjs`
@@ -154,6 +156,7 @@ flowchart TD
 - `npm run docs:nav`
 - `npm run docs:scope`
 - `npm run docs:test`
+- `npm run e2e:api-management-parity`
 - `npm run e2e:event-grid-parity`
 - `npm run e2e:service-bus`
 - `npm run e2e:service-bus-parity`

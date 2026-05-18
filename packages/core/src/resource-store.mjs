@@ -30,7 +30,12 @@ function lifecycleStateFor(resource) {
 function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Storage/storageAccounts') return ['Creating', 'ResolvingDns', 'Succeeded'];
   if (type === 'Microsoft.ServiceBus/namespaces') return ['Creating', 'Activating', 'Succeeded'];
+  if (type === 'Microsoft.ApiManagement/service') return ['Creating', 'Activating', 'Succeeded'];
   return null;
+}
+
+function apiManagementGatewayUrl(name) {
+  return `https://${name}.azure-api.net`;
 }
 
 function eventGridTopicHostname(name, location) {
@@ -132,6 +137,12 @@ export class ResourceStore {
         ...(body.properties ?? {}),
         ...(type === 'Microsoft.EventGrid/topics'
           ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
+          : {}),
+        ...(type === 'Microsoft.ApiManagement/service'
+          ? {
+              gatewayUrl: existing?.properties?.gatewayUrl ?? apiManagementGatewayUrl(name),
+              developerPortalUrl: existing?.properties?.developerPortalUrl ?? `${apiManagementGatewayUrl(name)}/developer`,
+            }
           : {}),
         provisioningState: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded',
         ...(type === 'Microsoft.ServiceBus/namespaces'

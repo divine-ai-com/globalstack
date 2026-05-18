@@ -205,6 +205,14 @@ function invalidEventGridName(resourceType, name, rule) {
   );
 }
 
+function invalidApiManagementName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'ValidationError',
+    `The API Management resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function serviceBusNameFromTypePath(typePath, marker) {
   const parts = String(typePath ?? '').split('/');
   const index = parts.indexOf(marker);
@@ -274,6 +282,70 @@ function validateEventGridName(resourceType, providerRoute) {
   return null;
 }
 
+function validateApiManagementName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.ApiManagement/service') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'service');
+    if (!/^[A-Za-z](?:[A-Za-z0-9-]{0,48}[A-Za-z0-9])?$/.test(name)) {
+      return invalidApiManagementName(
+        resourceType,
+        name,
+        'Service names must be 1 through 50 characters, use alphanumerics and hyphens, start with a letter, and end with a letter or number.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'apis');
+    if (!name || name.length > 256 || /[*#&+:<>?]/.test(name)) {
+      return invalidApiManagementName(
+        resourceType,
+        name,
+        'API identifiers must be 1 through 256 characters and cannot contain *, #, &, +, :, <, >, or ?.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateApiManagementPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.ApiManagement/service') {
+    if (!body.sku || !body.sku.name) {
+      return envelopedError(
+        400,
+        'InvalidParameters',
+        'Invalid parameter: Value cannot be null.\r\nParameter name: skuproperties',
+      );
+    }
+    if (!body.properties?.publisherEmail || !body.properties?.publisherName) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'API Management service properties.publisherEmail and properties.publisherName are required for local APIM service creation.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+    if (!body.properties?.path) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'API Management API properties.path is required.',
+      );
+    }
+    if (body.properties.protocols && !Array.isArray(body.properties.protocols)) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'API Management API properties.protocols must be an array when provided.',
+      );
+    }
+  }
+
+  return null;
+}
+
 export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null }) {
   if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
     if (method === 'PUT' && (!body.properties || emptyObject(body))) {
@@ -330,6 +402,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const eventGridNameValidation = validateEventGridName(resourceType, providerRoute);
   if (eventGridNameValidation) return eventGridNameValidation;
 
+  const apiManagementNameValidation = validateApiManagementName(resourceType, providerRoute);
+  if (apiManagementNameValidation) return apiManagementNameValidation;
+
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
       400,
@@ -352,13 +427,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     );
   }
 
-  if (resourceType === 'Microsoft.ApiManagement/service') {
-    return envelopedError(
-      400,
-      'InvalidParameters',
-      'Invalid parameter: Value cannot be null.\r\nParameter name: skuproperties',
-    );
-  }
+  const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
+  if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
 
   if (resourceType === 'Microsoft.Web/serverfarms') {
     if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {

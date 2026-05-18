@@ -84,6 +84,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:event-grid-parity
 
 Expected result is `dist/e2e/azure-event-grid-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers topic validation, topic lifecycle, topic `listKeys`, Event Grid publish URL shape, invalid publish auth/body/schema rejection, local event capture, top-level event subscription captured rejection, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the API Management parity pack after changing APIM ARM behavior, local gateway routing, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:api-management-parity
+```
+
+Expected result is `dist/e2e/azure-api-management-parity/results.json` with `ok == true`, zero control/gateway-plane failures, and all eight platform runners passing. This suite covers captured APIM service validation, async service readiness, service/API lifecycle, gateway route rejection, subscription-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

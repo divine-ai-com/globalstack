@@ -25,6 +25,7 @@ const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', '
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
+const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -671,6 +672,47 @@ if (!eventGridParityText) {
   }
   if (eventGridParity.platformMatrix?.ok !== true || eventGridParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Event Grid parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const apiManagementParityText = await readFile(apiManagementParityResultsPath, 'utf8').catch(() => '');
+if (!apiManagementParityText) {
+  errors.push('missing Azure API Management parity E2E results; run npm run e2e:api-management-parity');
+} else {
+  const apiManagementParity = JSON.parse(apiManagementParityText);
+  if (apiManagementParity.ok !== true) {
+    errors.push('Azure API Management parity E2E did not pass');
+  }
+  if (apiManagementParity.controlAndGatewayPlane?.failedCount !== 0) {
+    errors.push('Azure API Management parity control/gateway matrix has failures');
+  }
+  if ((apiManagementParity.controlAndGatewayPlane?.total ?? 0) < 30) {
+    errors.push('Azure API Management parity control/gateway matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'service create requires an existing resource group',
+    'service missing sku preserves captured rejection',
+    'valid service create returns async Azure shape',
+    'service get reaches Succeeded',
+    'api create with missing parent preserves captured ResourceNotFound',
+    'api missing path is rejected',
+    'api create succeeds with documented path shape',
+    'gateway unknown api path is rejected',
+    'gateway subscription-required api rejects missing key',
+    'gateway routes configured api locally',
+    'ARM template deployment can create service and api',
+    'api create after service delete reports missing parent',
+  ]) {
+    if (!apiManagementParity.controlAndGatewayPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure API Management parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (apiManagementParity.platformMatrix?.skipped === true) {
+    errors.push('Azure API Management parity E2E must include the platform matrix during validation');
+  }
+  if (apiManagementParity.platformMatrix?.ok !== true || apiManagementParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure API Management parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 
