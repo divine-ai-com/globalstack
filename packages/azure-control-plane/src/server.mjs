@@ -392,6 +392,16 @@ function storageAccountParentRoute(providerRoute) {
   };
 }
 
+function eventGridTopicListKeysRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.EventGrid') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'topics' || parts[2].toLowerCase() !== 'listkeys') return null;
+  return {
+    ...providerRoute,
+    typePath: `topics/${parts[1]}`,
+  };
+}
+
 function parseSubscriptionDeploymentRoute(pathname) {
   const raw = segments(pathname);
   const lower = raw.map(segment => segment.toLowerCase());
@@ -1076,6 +1086,18 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
               message: 'GlobalStack rejects incomplete ARM-shaped requests instead of inventing a successful response.',
             },
           ]);
+        }
+
+        const eventGridListKeysRoute = eventGridTopicListKeysRoute(providerRoute);
+        if (eventGridListKeysRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const keys = store.listEventGridTopicKeys(eventGridListKeysRoute);
+          if (!keys) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${eventGridListKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, keys);
         }
 
         if (!capability) {

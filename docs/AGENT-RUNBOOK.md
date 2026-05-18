@@ -76,6 +76,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-bus-parity
 
 Expected result is `dist/e2e/azure-service-bus-parity/results.json` with `ok == true`, zero control-plane failures, the official Service Bus emulator matrix passing, and all eight platform runners passing. This suite covers captured namespace validation, official naming-rule rejection, async namespace readiness, topic/queue/subscription lifecycle, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Event Grid parity pack after changing Event Grid ARM behavior, local event routing, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:event-grid-parity
+```
+
+Expected result is `dist/e2e/azure-event-grid-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers topic validation, topic lifecycle, topic `listKeys`, Event Grid publish URL shape, invalid publish auth/body/schema rejection, local event capture, top-level event subscription captured rejection, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

@@ -24,6 +24,7 @@ const storageNormalizerResultsPath = join(distRoot, 'e2e', 'azure-storage-normal
 const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', 'results.json');
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
+const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -630,6 +631,46 @@ if (!serviceBusParityText) {
   }
   if (serviceBusParity.platformMatrix?.ok !== true || serviceBusParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Service Bus parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const eventGridParityText = await readFile(eventGridParityResultsPath, 'utf8').catch(() => '');
+if (!eventGridParityText) {
+  errors.push('missing Azure Event Grid parity E2E results; run npm run e2e:event-grid-parity');
+} else {
+  const eventGridParity = JSON.parse(eventGridParityText);
+  if (eventGridParity.ok !== true) {
+    errors.push('Azure Event Grid parity E2E did not pass');
+  }
+  if (eventGridParity.controlAndDataPlane?.failedCount !== 0) {
+    errors.push('Azure Event Grid parity control/data-plane matrix has failures');
+  }
+  if ((eventGridParity.controlAndDataPlane?.total ?? 0) < 25) {
+    errors.push('Azure Event Grid parity control/data-plane matrix should exercise at least 25 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'topic create requires an existing resource group',
+    'topic invalid location is rejected',
+    'topic invalid name is rejected by Azure naming rules',
+    'valid topic create succeeds with endpoint metadata',
+    'topic listKeys returns shared access keys',
+    'publish with missing key is rejected',
+    'publish invalid EventGridEvent schema is rejected',
+    'publish EventGridEvent succeeds',
+    'publish customEvent succeeds',
+    'top-level event subscription create preserves captured rejection',
+    'publish after topic delete is rejected',
+  ]) {
+    if (!eventGridParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Event Grid parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (eventGridParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Event Grid parity E2E must include the platform matrix during validation');
+  }
+  if (eventGridParity.platformMatrix?.ok !== true || eventGridParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Event Grid parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

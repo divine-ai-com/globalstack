@@ -104,6 +104,15 @@
       "group": "governance"
     },
     {
+      "path": "docs/coverage/event-grid-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "event-grid",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Event Grid ARM, local event router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
       "path": "docs/ARTIFACT-REGISTRY.md",
       "kind": "generated-doc",
       "owner": "scripts/render-artifact-registry.mjs",
@@ -154,7 +163,7 @@
       "owner": "data-plane",
       "command": null,
       "editPolicy": "edit directly with emulator E2Es",
-      "purpose": "Official emulator compose, Azurite client, and storage normalization proxy.",
+      "purpose": "Official emulator compose, Azurite client, storage normalization proxy, and local Event Grid router.",
       "group": "source"
     },
     {
@@ -302,6 +311,15 @@
       "group": "generators"
     },
     {
+      "path": "scripts/e2e-azure-event-grid-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "event-grid",
+      "command": "npm run e2e:event-grid-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Event Grid ARM parity matrix, local publish router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
       "path": "fixtures/azure-captures/",
       "kind": "real-azure-evidence",
       "owner": "conformance",
@@ -431,9 +449,9 @@
       "path": "dist/e2e/",
       "kind": "generated-test-output",
       "owner": "e2e scripts",
-      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity",
+      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity",
       "editPolicy": "regenerate",
-      "purpose": "Storage and Service Bus E2E result reports.",
+      "purpose": "Storage, Service Bus, and Event Grid E2E result reports.",
       "group": "runtime"
     },
     {
@@ -462,6 +480,7 @@
     "docs:nav",
     "docs:scope",
     "docs:test",
+    "e2e:event-grid-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",
     "e2e:storage",

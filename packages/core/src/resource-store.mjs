@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -29,6 +31,20 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Storage/storageAccounts') return ['Creating', 'ResolvingDns', 'Succeeded'];
   if (type === 'Microsoft.ServiceBus/namespaces') return ['Creating', 'Activating', 'Succeeded'];
   return null;
+}
+
+function eventGridTopicHostname(name, location) {
+  return `${name}.${location ?? 'global'}-1.eventgrid.azure.net`;
+}
+
+function eventGridTopicEndpoint(name, location) {
+  return `https://${eventGridTopicHostname(name, location)}/api/events`;
+}
+
+function eventGridTopicKey(id, slot) {
+  return createHash('sha256')
+    .update(`globalstack:event-grid:${slot}:${id.toLowerCase()}`)
+    .digest('base64url');
 }
 
 export class ResourceStore {
@@ -114,6 +130,9 @@ export class ResourceStore {
       properties: {
         ...(existing?.properties ?? {}),
         ...(body.properties ?? {}),
+        ...(type === 'Microsoft.EventGrid/topics'
+          ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
+          : {}),
         provisioningState: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded',
         ...(type === 'Microsoft.ServiceBus/namespaces'
           ? { status: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded' }
@@ -201,6 +220,15 @@ export class ResourceStore {
           && resource.type.toLowerCase() === resourceType.toLowerCase();
       })
       .map(deepClone);
+  }
+
+  listEventGridTopicKeys(route) {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.EventGrid/topics') return null;
+    return {
+      key1: eventGridTopicKey(resource.id, 'key1'),
+      key2: eventGridTopicKey(resource.id, 'key2'),
+    };
   }
 
   exportSnapshot() {

@@ -197,6 +197,14 @@ function invalidServiceBusName(resourceType, name, rule) {
   );
 }
 
+function invalidEventGridName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'BadRequest',
+    `The Event Grid resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function serviceBusNameFromTypePath(typePath, marker) {
   const parts = String(typePath ?? '').split('/');
   const index = parts.indexOf(marker);
@@ -244,6 +252,21 @@ function validateServiceBusName(resourceType, providerRoute) {
         resourceType,
         name,
         'Subscription names must be 1 through 50 characters, use alphanumerics, periods, hyphens, and underscores, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateEventGridName(resourceType, providerRoute) {
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, resourceType.endsWith('/topics') ? 'topics' : 'eventSubscriptions');
+  if (resourceType === 'Microsoft.EventGrid/topics') {
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{1,48}[A-Za-z0-9])?$/.test(name)) {
+      return invalidEventGridName(
+        resourceType,
+        name,
+        'Topic names must be 3 through 50 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
       );
     }
   }
@@ -303,6 +326,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     if (!body.location) return locationRequired();
     if (body.location === 'globalstack-invalid-location') return invalidResourceLocation(body.location);
   }
+
+  const eventGridNameValidation = validateEventGridName(resourceType, providerRoute);
+  if (eventGridNameValidation) return eventGridNameValidation;
 
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
