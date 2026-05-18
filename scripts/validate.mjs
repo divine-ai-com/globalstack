@@ -26,6 +26,7 @@ const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'res
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
+const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -713,6 +714,49 @@ if (!apiManagementParityText) {
   }
   if (apiManagementParity.platformMatrix?.ok !== true || apiManagementParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure API Management parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const azureFunctionsParityText = await readFile(azureFunctionsParityResultsPath, 'utf8').catch(() => '');
+if (!azureFunctionsParityText) {
+  errors.push('missing Azure Functions parity E2E results; run npm run e2e:azure-functions-parity');
+} else {
+  const azureFunctionsParity = JSON.parse(azureFunctionsParityText);
+  if (azureFunctionsParity.ok !== true) {
+    errors.push('Azure Functions parity E2E did not pass');
+  }
+  if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
+    errors.push('Azure Functions parity control/data-plane matrix has failures');
+  }
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 35) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'server farm create requires an existing resource group',
+    'server farm minimal body preserves captured quota rejection',
+    'valid server farm create returns async Azure shape',
+    'server farm get reaches Succeeded',
+    'function app create with missing server farm preserves captured NotFound',
+    'function app missing serverFarmId is rejected',
+    'valid function app create returns async Azure shape',
+    'function app get reaches Succeeded and registers local host',
+    'function route rejects disallowed method',
+    'secured function rejects missing key',
+    'anonymous HTTP trigger succeeds',
+    'secured HTTP trigger accepts x-functions-key header',
+    'ARM template deployment can create server farm and function app',
+    'function app create after server farm delete reports missing parent',
+  ]) {
+    if (!azureFunctionsParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Functions parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (azureFunctionsParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Functions parity E2E must include the platform matrix during validation');
+  }
+  if (azureFunctionsParity.platformMatrix?.ok !== true || azureFunctionsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Functions parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

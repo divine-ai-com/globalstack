@@ -31,6 +31,8 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Storage/storageAccounts') return ['Creating', 'ResolvingDns', 'Succeeded'];
   if (type === 'Microsoft.ServiceBus/namespaces') return ['Creating', 'Activating', 'Succeeded'];
   if (type === 'Microsoft.ApiManagement/service') return ['Creating', 'Activating', 'Succeeded'];
+  if (type === 'Microsoft.Web/serverfarms') return ['Creating', 'Ready', 'Succeeded'];
+  if (type === 'Microsoft.Web/sites') return ['Creating', 'Starting', 'Succeeded'];
   return null;
 }
 
@@ -50,6 +52,10 @@ function eventGridTopicKey(id, slot) {
   return createHash('sha256')
     .update(`globalstack:event-grid:${slot}:${id.toLowerCase()}`)
     .digest('base64url');
+}
+
+function functionAppHostName(name) {
+  return `${name}.azurewebsites.net`;
 }
 
 export class ResourceStore {
@@ -144,6 +150,14 @@ export class ResourceStore {
               developerPortalUrl: existing?.properties?.developerPortalUrl ?? `${apiManagementGatewayUrl(name)}/developer`,
             }
           : {}),
+        ...(type === 'Microsoft.Web/sites'
+          ? {
+              defaultHostName: existing?.properties?.defaultHostName ?? functionAppHostName(name),
+              hostNames: existing?.properties?.hostNames ?? [functionAppHostName(name)],
+              state: lifecycleSequence ? 'Starting' : 'Running',
+              enabled: body.properties?.enabled ?? existing?.properties?.enabled ?? true,
+            }
+          : {}),
         provisioningState: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded',
         ...(type === 'Microsoft.ServiceBus/namespaces'
           ? { status: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded' }
@@ -180,6 +194,9 @@ export class ResourceStore {
       if (resource.type === 'Microsoft.ServiceBus/namespaces') {
         resource.properties.status = lifecycleState.provisioningSequence[index];
       }
+      if (resource.type === 'Microsoft.Web/sites') {
+        resource.properties.state = index >= lifecycleState.provisioningSequence.length - 1 ? 'Running' : 'Starting';
+      }
       lifecycleState.readCount += 1;
     }
     return deepClone(resource);
@@ -198,6 +215,9 @@ export class ResourceStore {
         resource.properties.provisioningState = lifecycleState.provisioningSequence.at(-1);
         if (resource.type === 'Microsoft.ServiceBus/namespaces') {
           resource.properties.status = lifecycleState.provisioningSequence.at(-1);
+        }
+        if (resource.type === 'Microsoft.Web/sites') {
+          resource.properties.state = 'Running';
         }
         lifecycleState.readCount = lifecycleState.provisioningSequence.length - 1;
       }

@@ -157,6 +157,13 @@ const artifacts = [
     purpose: 'API Management ARM, local gateway router, platform parity pack scope, outputs, and claim boundary.',
   }),
   artifact({
+    path: 'docs/coverage/azure-functions-parity-pack.md',
+    kind: 'handwritten-doc',
+    owner: 'azure-functions',
+    editPolicy: 'edit directly',
+    purpose: 'Azure Functions ARM, local HTTP-trigger router, platform parity pack scope, outputs, and claim boundary.',
+  }),
+  artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
     kind: 'generated-doc',
     owner: 'scripts/render-artifact-registry.mjs',
@@ -343,6 +350,14 @@ const artifacts = [
     editPolicy: 'edit directly with validation',
     purpose: 'API Management ARM parity matrix, local gateway router E2E, and all-platform lifecycle coverage.',
   }),
+  artifact({
+    path: 'scripts/e2e-azure-functions-parity.mjs',
+    kind: 'e2e-tool',
+    owner: 'azure-functions',
+    command: 'npm run e2e:azure-functions-parity',
+    editPolicy: 'edit directly with validation',
+    purpose: 'Azure Functions ARM parity matrix, local HTTP-trigger router E2E, and all-platform lifecycle coverage.',
+  }),
 
   artifact({
     path: 'fixtures/azure-captures/',
@@ -462,9 +477,9 @@ const artifacts = [
     path: 'dist/e2e/',
     kind: 'generated-test-output',
     owner: 'e2e scripts',
-    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity',
+    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:azure-functions-parity',
     editPolicy: 'regenerate',
-    purpose: 'Storage, Service Bus, Event Grid, and API Management E2E result reports.',
+    purpose: 'Storage, Service Bus, Event Grid, API Management, and Azure Functions E2E result reports.',
   }),
   artifact({
     path: 'dist/deploy-smoke/',
@@ -476,7 +491,7 @@ const artifacts = [
   }),
 ].map(item => ({
   ...item,
-  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md', 'docs/coverage/service-bus-parity-pack.md', 'docs/coverage/event-grid-parity-pack.md', 'docs/coverage/api-management-parity-pack.md'].includes(item.path)
+  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md', 'docs/coverage/service-bus-parity-pack.md', 'docs/coverage/event-grid-parity-pack.md', 'docs/coverage/api-management-parity-pack.md', 'docs/coverage/azure-functions-parity-pack.md'].includes(item.path)
     ? 'governance'
     : item.path.startsWith('packages/') || item.path.startsWith('src/')
       ? 'source'

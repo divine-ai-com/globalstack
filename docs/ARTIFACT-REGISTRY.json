@@ -122,6 +122,15 @@
       "group": "governance"
     },
     {
+      "path": "docs/coverage/azure-functions-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "azure-functions",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Azure Functions ARM, local HTTP-trigger router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
       "path": "docs/ARTIFACT-REGISTRY.md",
       "kind": "generated-doc",
       "owner": "scripts/render-artifact-registry.mjs",
@@ -338,6 +347,15 @@
       "group": "generators"
     },
     {
+      "path": "scripts/e2e-azure-functions-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "azure-functions",
+      "command": "npm run e2e:azure-functions-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Azure Functions ARM parity matrix, local HTTP-trigger router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
       "path": "fixtures/azure-captures/",
       "kind": "real-azure-evidence",
       "owner": "conformance",
@@ -467,9 +485,9 @@
       "path": "dist/e2e/",
       "kind": "generated-test-output",
       "owner": "e2e scripts",
-      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity",
+      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:azure-functions-parity",
       "editPolicy": "regenerate",
-      "purpose": "Storage, Service Bus, Event Grid, and API Management E2E result reports.",
+      "purpose": "Storage, Service Bus, Event Grid, API Management, and Azure Functions E2E result reports.",
       "group": "runtime"
     },
     {
@@ -499,6 +517,7 @@
     "docs:scope",
     "docs:test",
     "e2e:api-management-parity",
+    "e2e:azure-functions-parity",
     "e2e:event-grid-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",

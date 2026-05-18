@@ -92,6 +92,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:api-management-parity
 
 Expected result is `dist/e2e/azure-api-management-parity/results.json` with `ok == true`, zero control/gateway-plane failures, and all eight platform runners passing. This suite covers captured APIM service validation, async service readiness, service/API lifecycle, gateway route rejection, subscription-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Functions parity pack after changing Microsoft.Web server farm or Function App ARM behavior, local HTTP-trigger routing, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-functions-parity
+```
+
+Expected result is `dist/e2e/azure-functions-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured server farm validation, async server farm and Function App readiness, missing-plan rejection, local HTTP-trigger route rejection, function-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

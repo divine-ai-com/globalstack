@@ -213,6 +213,14 @@ function invalidApiManagementName(resourceType, name, rule) {
   );
 }
 
+function invalidAppServiceName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'ValidationError',
+    `The App Service resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function serviceBusNameFromTypePath(typePath, marker) {
   const parts = String(typePath ?? '').split('/');
   const index = parts.indexOf(marker);
@@ -308,6 +316,32 @@ function validateApiManagementName(resourceType, providerRoute) {
   return null;
 }
 
+function validateAppServiceName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.Web/serverfarms') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'serverfarms');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/.test(name)) {
+      return invalidAppServiceName(
+        resourceType,
+        name,
+        'Server farm names must be 1 through 40 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Web/sites') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'sites');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,58}[A-Za-z0-9])?$/.test(name)) {
+      return invalidAppServiceName(
+        resourceType,
+        name,
+        'Function App names must be 2 through 60 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  return null;
+}
+
 function validateApiManagementPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ApiManagement/service') {
     if (!body.sku || !body.sku.name) {
@@ -346,7 +380,61 @@ function validateApiManagementPayload(resourceType, body) {
   return null;
 }
 
-export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null }) {
+function isFunctionAppKind(kind) {
+  return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
+}
+
+function validateFunctionAppPayload(resourceType, body, options = {}) {
+  if (resourceType === 'Microsoft.Web/serverfarms') {
+    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
+      return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
+    }
+    const localSupportedConsumptionPlan =
+      isFunctionAppKind(body.kind)
+      && body.sku?.name === 'Y1'
+      && body.sku?.tier === 'Dynamic'
+      && typeof body.properties?.reserved === 'boolean';
+    if (!localSupportedConsumptionPlan) {
+      return appServiceError(
+        401,
+        'Unauthorized',
+        'Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Web/sites') {
+    if (!isFunctionAppKind(body.kind)) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function App resources require kind to include functionapp.',
+      );
+    }
+    if (!body.properties?.serverFarmId) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function App resources require properties.serverFarmId.',
+      );
+    }
+    if (Object.hasOwn(body.properties, 'httpsOnly') && typeof body.properties.httpsOnly !== 'boolean') {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function App properties.httpsOnly must be a boolean when provided.',
+      );
+    }
+    if (!options.referencesExistingServerFarm) {
+      const planName = body.properties.serverFarmId.split('/').filter(Boolean).at(-1) ?? 'plan-local';
+      return appServiceError(404, 'NotFound', `Cannot find serverFarm with name ${planName}.`);
+    }
+  }
+
+  return null;
+}
+
+export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null, referencesExistingServerFarm = false }) {
   if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
     if (method === 'PUT' && (!body.properties || emptyObject(body))) {
       return topLevelError(400, 'BadRequest', "Missing 'properties'");
@@ -405,6 +493,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const apiManagementNameValidation = validateApiManagementName(resourceType, providerRoute);
   if (apiManagementNameValidation) return apiManagementNameValidation;
 
+  const appServiceNameValidation = validateAppServiceName(resourceType, providerRoute);
+  if (appServiceNameValidation) return appServiceNameValidation;
+
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
       400,
@@ -430,21 +521,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
   if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
 
-  if (resourceType === 'Microsoft.Web/serverfarms') {
-    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
-      return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
-    }
-    return appServiceError(
-      401,
-      'Unauthorized',
-      'Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.',
-    );
-  }
-
-  if (resourceType === 'Microsoft.Web/sites' && body.properties?.serverFarmId) {
-    const planName = body.properties.serverFarmId.split('/').filter(Boolean).at(-1) ?? 'plan-local';
-    return appServiceError(404, 'NotFound', `Cannot find serverFarm with name ${planName}.`);
-  }
+  const functionAppPayloadValidation = validateFunctionAppPayload(resourceType, body, { referencesExistingServerFarm });
+  if (functionAppPayloadValidation) return functionAppPayloadValidation;
 
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(

@@ -402,6 +402,39 @@ function eventGridTopicListKeysRoute(providerRoute) {
   };
 }
 
+function serverFarmRouteFromId(serverFarmId) {
+  const raw = String(serverFarmId ?? '').split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
+  const lower = raw.map(segment => segment.toLowerCase());
+  const subscriptionIndex = lower.indexOf('subscriptions');
+  const resourceGroupIndex = lower.indexOf('resourcegroups');
+  const providersIndex = lower.indexOf('providers');
+  const serverFarmsIndex = lower.indexOf('serverfarms');
+  if (
+    subscriptionIndex < 0
+    || resourceGroupIndex < 0
+    || providersIndex < 0
+    || serverFarmsIndex < 0
+    || lower[providersIndex + 1] !== 'microsoft.web'
+    || !raw[subscriptionIndex + 1]
+    || !raw[resourceGroupIndex + 1]
+    || !raw[serverFarmsIndex + 1]
+  ) {
+    return null;
+  }
+  return {
+    subscriptionId: raw[subscriptionIndex + 1],
+    resourceGroupName: raw[resourceGroupIndex + 1],
+    providerNamespace: 'Microsoft.Web',
+    typePath: `serverfarms/${raw[serverFarmsIndex + 1]}`,
+  };
+}
+
+function siteReferencesExistingServerFarm(store, resourceType, body) {
+  if (resourceType !== 'Microsoft.Web/sites' || !body.properties?.serverFarmId) return false;
+  const route = serverFarmRouteFromId(body.properties.serverFarmId);
+  return Boolean(route && store.getResource(route));
+}
+
 function parseSubscriptionDeploymentRoute(pathname) {
   const raw = segments(pathname);
   const lower = raw.map(segment => segment.toLowerCase());
@@ -779,8 +812,9 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
       'Microsoft.Synapse/workspaces/sqlPools',
     ]);
+    const referencesExistingServerFarm = siteReferencesExistingServerFarm(store, resourceType, body);
     const validationBeforeParent = validationBeforeParentTypes.has(resourceType)
-      ? capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute })
+      ? capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm })
       : null;
     if (validationBeforeParent) return validationBeforeParent;
 
@@ -794,7 +828,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       return storageAccountNotProvisioned();
     }
 
-    const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute });
+    const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
     if (validation) return validation;
 
     const result = store.putResource({
@@ -810,6 +844,8 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
     const createdStatus = storageCreatedOkTypes.has(resourceType) ? 200 : 201;
     const asyncBodyTypes = new Set([
       'Microsoft.ApiManagement/service',
+      'Microsoft.Web/serverfarms',
+      'Microsoft.Web/sites',
       'Microsoft.ServiceBus/namespaces',
     ]);
     return {
