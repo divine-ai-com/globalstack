@@ -58,6 +58,24 @@ function functionAppHostName(name) {
   return `${name}.azurewebsites.net`;
 }
 
+function keyVaultUri(name) {
+  return `https://${name}.vault.azure.net/`;
+}
+
+function keyVaultChildVaultName(name) {
+  return String(name ?? '').split('/')[0] ?? '';
+}
+
+function keyVaultSecretUri(name) {
+  const [vaultName, secretName] = String(name ?? '').split('/');
+  return `${keyVaultUri(vaultName)}secrets/${secretName}`;
+}
+
+function keyVaultKeyUri(name) {
+  const [vaultName, keyName] = String(name ?? '').split('/');
+  return `${keyVaultUri(vaultName)}keys/${keyName}`;
+}
+
 export class ResourceStore {
   constructor({ subscriptionId = '00000000-0000-0000-0000-000000000000' } = {}) {
     this.subscriptionId = subscriptionId;
@@ -156,6 +174,25 @@ export class ResourceStore {
               hostNames: existing?.properties?.hostNames ?? [functionAppHostName(name)],
               state: lifecycleSequence ? 'Starting' : 'Running',
               enabled: body.properties?.enabled ?? existing?.properties?.enabled ?? true,
+            }
+          : {}),
+        ...(type === 'Microsoft.KeyVault/vaults'
+          ? {
+              vaultUri: existing?.properties?.vaultUri ?? keyVaultUri(name),
+            }
+          : {}),
+        ...(type === 'Microsoft.KeyVault/vaults/secrets'
+          ? {
+              secretUri: existing?.properties?.secretUri ?? keyVaultSecretUri(name),
+              secretUriWithVersion: existing?.properties?.secretUriWithVersion ?? `${keyVaultSecretUri(name)}/globalstack-version`,
+              vaultName: keyVaultChildVaultName(name),
+            }
+          : {}),
+        ...(type === 'Microsoft.KeyVault/vaults/keys'
+          ? {
+              keyUri: existing?.properties?.keyUri ?? keyVaultKeyUri(name),
+              keyUriWithVersion: existing?.properties?.keyUriWithVersion ?? `${keyVaultKeyUri(name)}/globalstack-version`,
+              vaultName: keyVaultChildVaultName(name),
             }
           : {}),
         provisioningState: lifecycleSequence ? lifecycleSequence[0] : 'Succeeded',

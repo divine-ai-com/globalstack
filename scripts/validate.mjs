@@ -27,6 +27,7 @@ const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-par
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
+const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -757,6 +758,52 @@ if (!azureFunctionsParityText) {
   }
   if (azureFunctionsParity.platformMatrix?.ok !== true || azureFunctionsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Functions parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const keyVaultParityText = await readFile(keyVaultParityResultsPath, 'utf8').catch(() => '');
+if (!keyVaultParityText) {
+  errors.push('missing Azure Key Vault parity E2E results; run npm run e2e:key-vault-parity');
+} else {
+  const keyVaultParity = JSON.parse(keyVaultParityText);
+  if (keyVaultParity.ok !== true) {
+    errors.push('Azure Key Vault parity E2E did not pass');
+  }
+  if (keyVaultParity.controlAndDataPlane?.failedCount !== 0) {
+    errors.push('Azure Key Vault parity control/data-plane matrix has failures');
+  }
+  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 50) {
+    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 50 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'vault create requires an existing resource group',
+    'vault invalid name is rejected',
+    'valid vault create succeeds with vaultUri metadata',
+    'secret create with missing vault preserves captured ParentResourceNotFound',
+    'key create with missing vault preserves captured ParentResourceNotFound',
+    'valid secret ARM create succeeds',
+    'secret ARM delete preserves captured DeleteNotSupported',
+    'valid key ARM create succeeds',
+    'key ARM delete preserves captured DeleteNotSupported',
+    'data-plane request without token is rejected',
+    'data-plane secret set succeeds',
+    'data-plane secret get after delete is not found',
+    'data-plane key create succeeds',
+    'data-plane key encrypt succeeds',
+    'data-plane key decrypt succeeds',
+    'ARM template deployment can create vault secret and key',
+    'secret create after vault delete reports missing parent',
+  ]) {
+    if (!keyVaultParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Key Vault parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (keyVaultParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Key Vault parity E2E must include the platform matrix during validation');
+  }
+  if (keyVaultParity.platformMatrix?.ok !== true || keyVaultParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Key Vault parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

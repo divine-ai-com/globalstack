@@ -100,6 +100,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-functions-parity
 
 Expected result is `dist/e2e/azure-functions-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured server farm validation, async server farm and Function App readiness, missing-plan rejection, local HTTP-trigger route rejection, function-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:key-vault-parity
+```
+
+Expected result is `dist/e2e/azure-key-vault-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured vault validation, missing-parent key/secret rejection, ARM child delete boundaries, local secret set/get/list/delete, local RSA key create/get/encrypt/decrypt/delete, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

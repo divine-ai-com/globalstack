@@ -221,6 +221,14 @@ function invalidAppServiceName(resourceType, name, rule) {
   );
 }
 
+function invalidKeyVaultName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'BadParameter',
+    `The Key Vault resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function serviceBusNameFromTypePath(typePath, marker) {
   const parts = String(typePath ?? '').split('/');
   const index = parts.indexOf(marker);
@@ -342,6 +350,43 @@ function validateAppServiceName(resourceType, providerRoute) {
   return null;
 }
 
+function validateKeyVaultName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.KeyVault/vaults') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'vaults');
+    if (!/^[A-Za-z](?:[A-Za-z0-9-]{1,22}[A-Za-z0-9])?$/.test(name) || name.includes('--')) {
+      return invalidKeyVaultName(
+        resourceType,
+        name,
+        'Vault names must be 3 through 24 characters, use alphanumerics and hyphens, start with a letter, end with a letter or number, and not contain consecutive hyphens.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.KeyVault/vaults/keys') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'keys');
+    if (!/^[A-Za-z0-9-]{1,127}$/.test(name)) {
+      return invalidKeyVaultName(
+        resourceType,
+        name,
+        'Key names must be 1 through 127 characters and use alphanumerics and hyphens.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.KeyVault/vaults/secrets') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'secrets');
+    if (!/^[A-Za-z0-9-]{1,127}$/.test(name)) {
+      return invalidKeyVaultName(
+        resourceType,
+        name,
+        'Secret names must be 1 through 127 characters and use alphanumerics and hyphens.',
+      );
+    }
+  }
+
+  return null;
+}
+
 function validateApiManagementPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ApiManagement/service') {
     if (!body.sku || !body.sku.name) {
@@ -373,6 +418,76 @@ function validateApiManagementPayload(resourceType, body) {
         400,
         'ValidationError',
         'API Management API properties.protocols must be an array when provided.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateKeyVaultPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.KeyVault/vaults') {
+    if (!body.properties?.tenantId) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault properties.tenantId is required.',
+      );
+    }
+    if (body.properties?.sku?.family !== 'A' || !['standard', 'premium'].includes(String(body.properties?.sku?.name ?? '').toLowerCase())) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault properties.sku must specify family A and name standard or premium.',
+      );
+    }
+    if (!Array.isArray(body.properties?.accessPolicies)) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault properties.accessPolicies must be an array.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.KeyVault/vaults/secrets') {
+    if (typeof body.properties?.value !== 'string' || body.properties.value.length === 0) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault secret properties.value must be a non-empty string.',
+      );
+    }
+    if (Object.hasOwn(body.properties, 'contentType') && typeof body.properties.contentType !== 'string') {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault secret properties.contentType must be a string when provided.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.KeyVault/vaults/keys') {
+    const supportedKeyTypes = new Set(['RSA', 'RSA-HSM', 'EC', 'EC-HSM']);
+    if (!supportedKeyTypes.has(body.properties?.kty)) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault key properties.kty must be one of RSA, RSA-HSM, EC, or EC-HSM.',
+      );
+    }
+    if (body.properties?.keyOps && !Array.isArray(body.properties.keyOps)) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault key properties.keyOps must be an array when provided.',
+      );
+    }
+    if (body.properties?.keySize !== undefined && (!Number.isInteger(body.properties.keySize) || body.properties.keySize < 2048)) {
+      return envelopedError(
+        400,
+        'BadParameter',
+        'Key Vault RSA key properties.keySize must be an integer greater than or equal to 2048 when provided.',
       );
     }
   }
@@ -496,6 +611,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const appServiceNameValidation = validateAppServiceName(resourceType, providerRoute);
   if (appServiceNameValidation) return appServiceNameValidation;
 
+  const keyVaultNameValidation = validateKeyVaultName(resourceType, providerRoute);
+  if (keyVaultNameValidation) return keyVaultNameValidation;
+
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
       400,
@@ -523,6 +641,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const functionAppPayloadValidation = validateFunctionAppPayload(resourceType, body, { referencesExistingServerFarm });
   if (functionAppPayloadValidation) return functionAppPayloadValidation;
+
+  const keyVaultPayloadValidation = validateKeyVaultPayload(resourceType, body);
+  if (keyVaultPayloadValidation) return keyVaultPayloadValidation;
 
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(
