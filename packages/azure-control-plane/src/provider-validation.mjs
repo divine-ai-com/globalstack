@@ -180,6 +180,14 @@ function invalidRequestContent(requiredProperty) {
   );
 }
 
+function invalidStorageAccountName(name) {
+  return envelopedError(
+    400,
+    'AccountNameInvalid',
+    `The storage account named ${name} is invalid. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.`,
+  );
+}
+
 export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null }) {
   if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
     if (method === 'PUT' && (!body.properties || emptyObject(body))) {
@@ -471,6 +479,13 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     );
   }
 
+  if (resourceType === 'Microsoft.Storage/storageAccounts') {
+    const accountName = providerRoute?.typePath?.split('/')?.[1] ?? '';
+    if (!/^[a-z0-9]{3,24}$/.test(accountName)) {
+      return invalidStorageAccountName(accountName);
+    }
+  }
+
   if (
     ['Microsoft.EventHub/namespaces', 'Microsoft.ServiceBus/namespaces'].includes(resourceType)
     && body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance'
@@ -511,6 +526,9 @@ export function storagePostDeleteNotFound(resourceType) {
   }
   if (resourceType === 'Microsoft.Storage/storageAccounts/fileServices/shares') {
     return envelopedError(404, 'ShareNotFound', 'The specified share does not exist.');
+  }
+  if (resourceType === 'Microsoft.Storage/storageAccounts/tableServices/tables') {
+    return envelopedError(404, 'TableNotFound', 'The specified table does not exist.');
   }
   return null;
 }

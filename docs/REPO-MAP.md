@@ -104,6 +104,7 @@ flowchart TD
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-storage-hardening.mjs`
 - `scripts/e2e-azure-storage-normalizer.mjs`
+- `scripts/e2e-azure-storage-parity.mjs`
 - `scripts/e2e-azure-storage.mjs`
 - `scripts/fetch-localstack-azure-coverage.mjs`
 - `scripts/generate-azure-smoke-prompts.mjs`
@@ -154,6 +155,7 @@ flowchart TD
 - `npm run e2e:storage`
 - `npm run e2e:storage-hardening`
 - `npm run e2e:storage-normalizer`
+- `npm run e2e:storage-parity`
 - `npm run fetch:azure-coverage`
 - `npm run hybrid:emulator`
 - `npm run hybrid:render`

@@ -340,6 +340,29 @@ test('ARM facade fails closed for unsupported provider resources and incomplete 
   });
 });
 
+test('ARM facade enforces storage account resource group and name validation', async () => {
+  await withServer(async (port) => {
+    const missingResourceGroup = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-missing/providers/Microsoft.Storage/storageAccounts/gsmissingrg?api-version=2023-01-01',
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(missingResourceGroup.status, 404);
+    assert.equal(missingResourceGroup.body.error.code, 'ResourceGroupNotFound');
+
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-storage-validation?api-version=2021-04-01', { location: 'eastus' });
+    const invalidName = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-storage-validation/providers/Microsoft.Storage/storageAccounts/Bad_Name?api-version=2023-01-01',
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(invalidName.status, 400);
+    assert.equal(invalidName.body.error.code, 'AccountNameInvalid');
+  });
+});
+
 test('ARM facade uses Azure-shaped not-found responses for captured lifecycle gaps', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-notfound?api-version=2021-04-01', { location: 'eastus' });

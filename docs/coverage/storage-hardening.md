@@ -30,6 +30,14 @@ This document splits evidence into:
 
 ## Implemented Hardening Checks
 
+The storage control-plane parity pack is:
+
+```bash
+npm run e2e:storage-parity
+```
+
+It exercises auth, missing API version, missing resource group, invalid storage names/SKUs, async readiness, child lifecycle, post-delete errors, and the full eight-platform deployment matrix. See `docs/coverage/storage-parity-pack.md`.
+
 The executable local hardening check is:
 
 ```bash

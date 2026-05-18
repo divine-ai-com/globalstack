@@ -21,6 +21,7 @@ const localConformanceResultsPath = join(distRoot, 'conformance', 'azure-api-con
 const storageE2eResultsPath = join(distRoot, 'e2e', 'azure-storage', 'results.json');
 const storageHardeningResultsPath = join(distRoot, 'e2e', 'azure-storage-hardening', 'results.json');
 const storageNormalizerResultsPath = join(distRoot, 'e2e', 'azure-storage-normalizer', 'results.json');
+const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', 'results.json');
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
@@ -524,6 +525,44 @@ if (!storageNormalizerText) {
   }
   if (!storageNormalizer.caveat?.includes('Queue peek-after-delete is deliberately unnormalized')) {
     errors.push('Azure Storage normalizer E2E must preserve the repeat-capture caveat');
+  }
+}
+
+const storageParityText = await readFile(storageParityResultsPath, 'utf8').catch(() => '');
+if (!storageParityText) {
+  errors.push('missing Azure Storage parity E2E results; run npm run e2e:storage-parity');
+} else {
+  const storageParity = JSON.parse(storageParityText);
+  if (storageParity.ok !== true) {
+    errors.push('Azure Storage parity E2E did not pass');
+  }
+  if (storageParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Storage parity control-plane matrix has failures');
+  }
+  if ((storageParity.controlPlane?.total ?? 0) < 30) {
+    errors.push('Azure Storage parity control-plane matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'storage account create requires an existing resource group',
+    'invalid storage account name is rejected',
+    'invalid storage account sku is rejected',
+    'valid storage account create is async accepted',
+    'child create before storage readiness is rejected',
+    'blob container get after delete is Azure-shaped 404',
+    'queue get after delete is Azure-shaped 404',
+    'file share get after delete is Azure-shaped 404',
+    'table get after delete is Azure-shaped 404',
+  ]) {
+    if (!storageParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Storage parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (storageParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Storage parity E2E must include the platform matrix during validation');
+  }
+  if (storageParity.platformMatrix?.ok !== true || storageParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Storage parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

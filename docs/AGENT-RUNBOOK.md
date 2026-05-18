@@ -60,6 +60,14 @@ Platform tasks can pin their backend in `metadata.json`:
 
 Metadata takes precedence over `PROVIDER` / `CLOUD_PROVIDER`. Use `provider=GlobalStack` for local smoke. Use `provider=Azure` only when real Azure credentials, a real `ARM_SUBSCRIPTION_ID`, cleanup checks, and cost controls are in place.
 
+Run the storage parity pack after changing storage ARM behavior or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:storage-parity
+```
+
+Expected result is `dist/e2e/azure-storage-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers auth rejection, missing `api-version`, missing resource groups, invalid storage names/SKUs, async storage readiness, child resource lifecycle, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

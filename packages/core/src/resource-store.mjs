@@ -96,6 +96,7 @@ export class ResourceStore {
     const type = `${providerNamespace}/${typeParts.filter((_, index) => index % 2 === 0).join('/')}`;
     const name = typeParts.filter((_, index) => index % 2 === 1).join('/');
     const supportLevel = capability.primaryModes.join('+');
+    const isNewStorageAccount = type === 'Microsoft.Storage/storageAccounts' && !existing;
     const resource = {
       id,
       name,
@@ -107,7 +108,7 @@ export class ResourceStore {
       properties: {
         ...(existing?.properties ?? {}),
         ...(body.properties ?? {}),
-        provisioningState: 'Succeeded',
+        provisioningState: isNewStorageAccount ? 'Creating' : 'Succeeded',
       },
       apiVersion,
       globalstack: {
@@ -118,7 +119,7 @@ export class ResourceStore {
         realAzureApiComplete: false,
         cloudValidated: capability.cloudValidated,
         knownGaps: capability.knownGaps,
-        ...(type === 'Microsoft.Storage/storageAccounts' && !existing
+        ...(isNewStorageAccount
           ? { lifecycleState: { provisioningSequence: ['Creating', 'ResolvingDns', 'Succeeded'], readCount: 0 } }
           : existing?.globalstack?.lifecycleState
             ? { lifecycleState: existing.globalstack.lifecycleState }

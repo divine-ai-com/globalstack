@@ -10,6 +10,8 @@ import { AzuriteClient } from '../packages/azure-data-plane/src/azurite-client.m
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const outRoot = join(root, 'dist', 'e2e', 'azure-storage');
 const containerName = 'globalstack-azurite-e2e';
+const subscriptionId = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000';
+const accessToken = process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN ?? 'globalstack-local-token';
 
 function run(command, args, opts = {}) {
   return new Promise((resolve) => {
@@ -106,7 +108,7 @@ function httpJson(port, method, path, body) {
   return fetch(url, {
     method,
     headers: {
-      authorization: 'Bearer globalstack-local-test',
+      authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     },
     body: body === undefined ? undefined : JSON.stringify(body),
@@ -129,7 +131,7 @@ async function waitForStorageAccountReady(port, resourceGroup, storageAccount, a
     latest = await httpJson(
       port,
       'GET',
-      `/subscriptions/sub-e2e/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}?api-version=2023-01-01`,
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}?api-version=2023-01-01`,
     );
     if (latest.status === 200 && latest.body?.properties?.provisioningState === 'Succeeded') return latest;
     await new Promise(resolve => setTimeout(resolve, 50));
@@ -202,7 +204,7 @@ try {
     const blobName = 'feature-batch.json';
     const blobPayload = JSON.stringify({ workflow: 'mlops-feature-intake', suffix });
 
-    const rg = await httpJson(armPort, 'PUT', `/subscriptions/sub-e2e/resourcegroups/${resourceGroup}?api-version=2021-04-01`, {
+    const rg = await httpJson(armPort, 'PUT', `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroup}?api-version=2021-04-01`, {
       location: 'eastus',
       tags: { purpose: 'globalstack-e2e', ttl: 'ephemeral' },
     });
@@ -212,7 +214,7 @@ try {
     const sa = await httpJson(
       armPort,
       'PUT',
-      `/subscriptions/sub-e2e/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}?api-version=2023-01-01`,
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}?api-version=2023-01-01`,
       {
         location: 'eastus',
         sku: { name: 'Standard_LRS' },
@@ -230,7 +232,7 @@ try {
     const armContainer = await httpJson(
       armPort,
       'PUT',
-      `/subscriptions/sub-e2e/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}/blobServices/default/containers/${blobContainer}?api-version=2023-01-01`,
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccount}/blobServices/default/containers/${blobContainer}?api-version=2023-01-01`,
       { properties: { publicAccess: 'None' } },
     );
     assert.equal(armContainer.status, 201);

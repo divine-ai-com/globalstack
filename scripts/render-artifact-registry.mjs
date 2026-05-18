@@ -129,6 +129,13 @@ const artifacts = [
     purpose: 'Platform runner lifecycle contract, checklist, smoke command, and support boundary.',
   }),
   artifact({
+    path: 'docs/coverage/storage-parity-pack.md',
+    kind: 'handwritten-doc',
+    owner: 'storage',
+    editPolicy: 'edit directly',
+    purpose: 'Storage ARM parity pack scope, command, outputs, and claim boundary.',
+  }),
+  artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
     kind: 'generated-doc',
     owner: 'scripts/render-artifact-registry.mjs',
@@ -279,7 +286,7 @@ const artifacts = [
     path: 'scripts/e2e-azure-storage*.mjs',
     kind: 'e2e-tools',
     owner: 'storage',
-    command: 'npm run e2e:storage / npm run e2e:storage-hardening / npm run e2e:storage-normalizer',
+    command: 'npm run e2e:storage / npm run e2e:storage-hardening / npm run e2e:storage-normalizer / npm run e2e:storage-parity',
     editPolicy: 'edit directly with Docker cleanup',
     purpose: 'Azurite and GlobalStack storage proxy end-to-end coverage.',
   }),
@@ -410,7 +417,7 @@ const artifacts = [
     path: 'dist/e2e/',
     kind: 'generated-test-output',
     owner: 'e2e scripts',
-    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:service-bus',
+    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus',
     editPolicy: 'regenerate',
     purpose: 'Storage and Service Bus E2E result reports.',
   }),
@@ -424,7 +431,7 @@ const artifacts = [
   }),
 ].map(item => ({
   ...item,
-  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md'].includes(item.path)
+  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md'].includes(item.path)
     ? 'governance'
     : item.path.startsWith('packages/') || item.path.startsWith('src/')
       ? 'source'

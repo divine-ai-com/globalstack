@@ -749,6 +749,19 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       };
     }
 
+    if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+      return {
+        status: 404,
+        body: {
+          error: {
+            code: 'ResourceGroupNotFound',
+            message: `Resource group '${providerRoute.resourceGroupName}' could not be found.`,
+            details: [],
+          },
+        },
+      };
+    }
+
     const validationBeforeParentTypes = new Set([
       'Microsoft.Cdn/profiles/afdEndpoints',
       'Microsoft.Cdn/profiles/endpoints',

@@ -3,6 +3,8 @@ import { request } from 'node:http';
 import { test } from 'node:test';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 
+const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
+
 function httpJson(port, method, path, body) {
   return new Promise((resolve, reject) => {
     const payload = body === undefined || body === null ? undefined : JSON.stringify(body);
@@ -12,7 +14,7 @@ function httpJson(port, method, path, body) {
       path,
       method,
       headers: {
-        authorization: 'Bearer lifecycle-test-token',
+        authorization: 'Bearer globalstack-local-token',
         'content-type': 'application/json',
         ...(payload ? { 'content-length': Buffer.byteLength(payload) } : {}),
       },
@@ -51,12 +53,12 @@ async function withServer(fn) {
 
 test('storage account child lifecycle requires parent and supports create/get/list/delete', async () => {
   await withServer(async (port) => {
-    await httpJson(port, 'PUT', '/subscriptions/sub-life/resourceGroups/rg-life?api-version=2021-04-01', { location: 'eastus' });
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-life?api-version=2021-04-01`, { location: 'eastus' });
 
     const childBeforeParent = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
       { properties: { publicAccess: 'None' } },
     );
     assert.equal(childBeforeParent.status, 404);
@@ -65,7 +67,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const parent = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore?api-version=2023-01-01`,
       { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2', properties: { allowBlobPublicAccess: false } },
     );
     assert.equal(parent.status, 202);
@@ -73,7 +75,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const childBeforeParentReady = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
       { properties: { publicAccess: 'None' } },
     );
     assert.equal(childBeforeParentReady.status, 409);
@@ -84,7 +86,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
       parentReads.push(await httpJson(
         port,
         'GET',
-        '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore?api-version=2023-01-01',
+        `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore?api-version=2023-01-01`,
       ));
     }
     assert.equal(parentReads.at(-1).body.properties.provisioningState, 'Succeeded');
@@ -92,7 +94,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const child = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
       { properties: { publicAccess: 'None' } },
     );
     assert.equal(child.status, 201);
@@ -101,7 +103,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const idempotent = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
       { properties: { publicAccess: 'None', metadata: { owner: 'tests' } } },
     );
     assert.equal(idempotent.status, 200);
@@ -110,7 +112,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const get = await httpJson(
       port,
       'GET',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
     );
     assert.equal(get.status, 200);
     assert.equal(get.body.name, 'lifestore/default/raw');
@@ -118,7 +120,7 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const list = await httpJson(
       port,
       'GET',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers?api-version=2023-01-01`,
     );
     assert.equal(list.status, 200);
     assert.equal(list.body.value.length, 1);
@@ -127,14 +129,14 @@ test('storage account child lifecycle requires parent and supports create/get/li
     const del = await httpJson(
       port,
       'DELETE',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
     );
     assert.equal(del.status, 200);
 
     const getAfterDelete = await httpJson(
       port,
       'GET',
-      '/subscriptions/sub-life/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01',
+      `${subscriptionPath}/resourceGroups/rg-life/providers/Microsoft.Storage/storageAccounts/lifestore/blobServices/default/containers/raw?api-version=2023-01-01`,
     );
     assert.equal(getAfterDelete.status, 404);
     assert.equal(getAfterDelete.body.error.code, 'ContainerNotFound');
@@ -143,11 +145,11 @@ test('storage account child lifecycle requires parent and supports create/get/li
 
 test('event hubs namespace lifecycle supports child list and delete', async () => {
   await withServer(async (port) => {
-    await httpJson(port, 'PUT', '/subscriptions/sub-life/resourceGroups/rg-events?api-version=2021-04-01', { location: 'eastus' });
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-events?api-version=2021-04-01`, { location: 'eastus' });
     const ns = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub?api-version=2024-01-01',
+      `${subscriptionPath}/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub?api-version=2024-01-01`,
       { location: 'eastus', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} },
     );
     assert.equal(ns.status, 201);
@@ -155,7 +157,7 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
     const hub = await httpJson(
       port,
       'PUT',
-      '/subscriptions/sub-life/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs/telemetry?api-version=2024-01-01',
+      `${subscriptionPath}/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs/telemetry?api-version=2024-01-01`,
       { properties: { partitionCount: 2, messageRetentionInDays: 1 } },
     );
     assert.equal(hub.status, 201);
@@ -163,7 +165,7 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
     const list = await httpJson(
       port,
       'GET',
-      '/subscriptions/sub-life/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs?api-version=2024-01-01',
+      `${subscriptionPath}/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs?api-version=2024-01-01`,
     );
     assert.equal(list.status, 200);
     assert.equal(list.body.value.length, 1);
@@ -171,13 +173,13 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
     const del = await httpJson(
       port,
       'DELETE',
-      '/subscriptions/sub-life/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs/telemetry?api-version=2024-01-01',
+      `${subscriptionPath}/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs/telemetry?api-version=2024-01-01`,
     );
     assert.equal(del.status, 200);
     const listAfterDelete = await httpJson(
       port,
       'GET',
-      '/subscriptions/sub-life/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs?api-version=2024-01-01',
+      `${subscriptionPath}/resourceGroups/rg-events/providers/Microsoft.EventHub/namespaces/lifehub/eventhubs?api-version=2024-01-01`,
     );
     assert.equal(listAfterDelete.status, 200);
     assert.equal(listAfterDelete.body.value.length, 0);
