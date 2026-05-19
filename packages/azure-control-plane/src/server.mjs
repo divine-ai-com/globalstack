@@ -1195,6 +1195,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           && (
             (resourceType.startsWith('Microsoft.Network/virtualNetworks/') && resourceType !== 'Microsoft.Network/virtualNetworks/subnets')
             || resourceType.startsWith('Microsoft.Network/privateEndpoints/')
+            || resourceType.startsWith('Microsoft.Network/dnsZones/')
             || resourceType.startsWith('Microsoft.Network/privateDnsZones/')
           )
           && !exactCapabilityForResourceType(resourceType)

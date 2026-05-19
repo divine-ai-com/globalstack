@@ -574,6 +574,7 @@
     "e2e:api-management-parity",
     "e2e:azure-functions-parity",
     "e2e:container-registry-parity",
+    "e2e:dns-zones-parity",
     "e2e:event-grid-parity",
     "e2e:identity-rbac-parity",
     "e2e:key-vault-parity",

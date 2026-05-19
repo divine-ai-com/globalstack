@@ -132,6 +132,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:virtual-network-parity
 
 Expected result is `dist/e2e/azure-virtual-network-parity/results.json` with `ok == true`, zero control-plane failures, at least 55 Azure Network cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, VNet lifecycle, subnet lifecycle, Private Endpoint lifecycle, Private DNS zone async lifecycle, parameter rejection, unsupported Network child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure DNS Zones parity pack after changing public DNS zones, Private DNS zones, record-set validation, Private DNS virtual network links, unsupported DNS route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:dns-zones-parity
+```
+
+Expected result is `dist/e2e/azure-dns-zones-parity/results.json` with `ok == true`, zero control-plane failures, at least 55 Azure DNS cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, public/private DNS zone lifecycle, public/private record-set lifecycle across supported record types, record parameter rejection, Private DNS virtual network link metadata, unsupported DNS child route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash

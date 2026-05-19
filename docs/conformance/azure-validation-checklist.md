@@ -12,8 +12,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ## Progress
 
-- Candidate calls: 252
-- Candidate create/update calls: 63
+- Candidate calls: 328
+- Candidate create/update calls: 82
 - Real Azure fixtures with verified cleanup: 448
 
 ## Tier 1
@@ -792,6 +792,196 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `not-found`: captured HTTP 204; cleanup verified
 
+### dns-zones / Microsoft.Network/dnsZones/A / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/A / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/A / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/A / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/AAAA / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/AAAA / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/AAAA / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/AAAA / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CAA / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CAA / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CAA / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CAA / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CNAME / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CNAME / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CNAME / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/CNAME / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/MX / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/MX / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/MX / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/MX / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/NS / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/NS / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/NS / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/NS / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/PTR / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/PTR / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/PTR / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/PTR / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SOA / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SOA / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SOA / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SOA / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SRV / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SRV / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SRV / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/SRV / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/TXT / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/TXT / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/TXT / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/dnsZones/TXT / Delete
+
+- [ ] `not-found`: pending
+
 ### dns-zones / Microsoft.Network/privateDnsZones / CreateOrUpdate
 
 - [x] `valid-minimal`: captured HTTP 202; cleanup verified
@@ -810,6 +1000,177 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 ### dns-zones / Microsoft.Network/privateDnsZones / Delete
 
 - [x] `not-found`: captured HTTP 204; cleanup verified
+
+### dns-zones / Microsoft.Network/privateDnsZones/A / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/A / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/A / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/A / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/AAAA / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/AAAA / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/AAAA / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/AAAA / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/CNAME / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/CNAME / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/CNAME / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/CNAME / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/MX / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/MX / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/MX / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/MX / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/PTR / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/PTR / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/PTR / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/PTR / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SOA / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SOA / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SOA / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SOA / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SRV / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SRV / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SRV / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/SRV / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/TXT / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/TXT / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/TXT / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/TXT / Delete
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/virtualNetworkLinks / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/virtualNetworkLinks / Get
+
+- [ ] `not-found`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/virtualNetworkLinks / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### dns-zones / Microsoft.Network/privateDnsZones/virtualNetworkLinks / Delete
+
+- [ ] `not-found`: pending
 
 ### load-balancing / Microsoft.Network/applicationGateways / CreateOrUpdate
 

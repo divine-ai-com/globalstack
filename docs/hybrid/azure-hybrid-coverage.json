@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T10:43:50.117Z",
+    "generatedAt": "2026-05-19T11:25:50.001Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -942,7 +942,26 @@
       "azureEquivalent": "Azure DNS / Private DNS Zones",
       "resourceTypes": [
         "Microsoft.Network/dnsZones",
-        "Microsoft.Network/privateDnsZones"
+        "Microsoft.Network/dnsZones/A",
+        "Microsoft.Network/dnsZones/AAAA",
+        "Microsoft.Network/dnsZones/CAA",
+        "Microsoft.Network/dnsZones/CNAME",
+        "Microsoft.Network/dnsZones/MX",
+        "Microsoft.Network/dnsZones/NS",
+        "Microsoft.Network/dnsZones/PTR",
+        "Microsoft.Network/dnsZones/SOA",
+        "Microsoft.Network/dnsZones/SRV",
+        "Microsoft.Network/dnsZones/TXT",
+        "Microsoft.Network/privateDnsZones",
+        "Microsoft.Network/privateDnsZones/A",
+        "Microsoft.Network/privateDnsZones/AAAA",
+        "Microsoft.Network/privateDnsZones/CNAME",
+        "Microsoft.Network/privateDnsZones/MX",
+        "Microsoft.Network/privateDnsZones/PTR",
+        "Microsoft.Network/privateDnsZones/SOA",
+        "Microsoft.Network/privateDnsZones/SRV",
+        "Microsoft.Network/privateDnsZones/TXT",
+        "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
       ],
       "primaryModes": [
         "globalstack-facade",
@@ -953,8 +972,22 @@
       ],
       "implementedOperations": [
         "DnsZones.CreateOrUpdate",
+        "DnsZones.Get",
+        "DnsZones.List",
+        "DnsZones.Delete",
         "RecordSets.CreateOrUpdate",
-        "PrivateDnsZones.CreateOrUpdate"
+        "RecordSets.Get",
+        "RecordSets.List",
+        "RecordSets.Delete",
+        "PrivateDnsZones.CreateOrUpdate",
+        "PrivateDnsZones.Get",
+        "PrivateDnsZones.List",
+        "PrivateDnsZones.Delete",
+        "PrivateDnsVirtualNetworkLinks.CreateOrUpdate",
+        "PrivateDnsVirtualNetworkLinks.Get",
+        "PrivateDnsVirtualNetworkLinks.List",
+        "PrivateDnsVirtualNetworkLinks.Delete",
+        "DnsRoutes.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -965,7 +998,7 @@
       ],
       "knownGaps": [
         "MVP stores DNS metadata and can emit local resolver hints only.",
-        "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+        "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -3512,7 +3545,49 @@
         ],
         "knownGaps": [
           "MVP stores DNS metadata and can emit local resolver hints only.",
-          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "DnsZones.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "DnsZones.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "DnsZones.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
         ]
       },
       "RecordSets.CreateOrUpdate": {
@@ -3526,7 +3601,49 @@
         ],
         "knownGaps": [
           "MVP stores DNS metadata and can emit local resolver hints only.",
-          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "RecordSets.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "RecordSets.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "RecordSets.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
         ]
       },
       "PrivateDnsZones.CreateOrUpdate": {
@@ -3540,7 +3657,119 @@
         ],
         "knownGaps": [
           "MVP stores DNS metadata and can emit local resolver hints only.",
-          "No authoritative DNS serving, delegation, health checks, failover routing, or resolver policy parity in MVP."
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsVirtualNetworkLinks.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsVirtualNetworkLinks.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsVirtualNetworkLinks.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "PrivateDnsVirtualNetworkLinks.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
+        ]
+      },
+      "DnsRoutes.RejectUnsupportedRoutes": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "MVP stores DNS metadata and can emit local resolver hints only.",
+          "No authoritative DNS serving, delegation, health checks, failover routing, resolver policy, DNSSEC, or traffic routing parity in MVP."
         ]
       }
     },

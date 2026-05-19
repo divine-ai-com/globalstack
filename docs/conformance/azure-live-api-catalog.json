@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T15:17:25.468Z",
+    "generatedAt": "2026-05-19T11:25:50.158Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
-    "callCount": 252,
-    "createOrUpdateCallCount": 63,
+    "callCount": 328,
+    "createOrUpdateCallCount": 82,
     "capabilityCount": 30,
     "tier1CapabilityCount": 15,
     "tier2CapabilityCount": 15,
@@ -5022,6 +5022,1396 @@
       "tier": 2,
       "awsAnalogue": "Route 53",
       "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/A",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-a.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/A/{AName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "ARecords": [
+            {
+              "ipv4Address": "10.10.1.10"
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/A",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-a.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/A/{AName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/A",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-a.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/A",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/A",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-a.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/A/{AName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/AAAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-aaaa.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "AAAARecords": [
+            {
+              "ipv6Address": "2001:db8::10"
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/AAAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-aaaa.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/AAAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-aaaa.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/AAAA",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/AAAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-aaaa.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-caa.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CAA/{CAAName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "CAARecords": [
+            {
+              "flags": 0,
+              "tag": "issue",
+              "value": "example.com"
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CAARecords": [
+                {
+                  "flags": 0,
+                  "tag": "issue",
+                  "value": "example.com"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CAARecords": [
+                {
+                  "flags": 0,
+                  "tag": "issue",
+                  "value": "example.com"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CAARecords": [
+                {
+                  "flags": 0,
+                  "tag": "issue",
+                  "value": "example.com"
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-caa.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CAA/{CAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-caa.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CAA",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CAA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-caa.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CAA/{CAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CNAME",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-cname.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "CNAMERecord": {
+            "cname": "target.example.test."
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CNAME",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-cname.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CNAME",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-cname.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CNAME",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/CNAME",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-cname.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/MX",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-mx.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "MXRecords": [
+            {
+              "preference": 10,
+              "exchange": "mail.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/MX",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-mx.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/MX",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-mx.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/MX",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/MX",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-mx.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/NS",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ns.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/NS/{NSName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "NSRecords": [
+            {
+              "nsdname": "ns1.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "NSRecords": [
+                {
+                  "nsdname": "ns1.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "NSRecords": [
+                {
+                  "nsdname": "ns1.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "NSRecords": [
+                {
+                  "nsdname": "ns1.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/NS",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ns.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/NS/{NSName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/NS",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ns.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/NS",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/NS",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ns.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/NS/{NSName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/PTR",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ptr.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "PTRRecords": [
+            {
+              "ptrdname": "host.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/PTR",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ptr.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/PTR",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ptr.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/PTR",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/PTR",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-ptr.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SOA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-soa.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 3600,
+          "SOARecord": {
+            "host": "ns1.example.test.",
+            "email": "azuredns-hostmaster.microsoft.com",
+            "serialNumber": 1,
+            "refreshTime": 3600,
+            "retryTime": 300,
+            "expireTime": 2419200,
+            "minimumTTL": 300
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SOA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-soa.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SOA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-soa.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SOA",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SOA",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-soa.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SRV",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-srv.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "SRVRecords": [
+            {
+              "priority": 1,
+              "weight": 5,
+              "port": 443,
+              "target": "service.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SRV",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-srv.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SRV",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-srv.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SRV",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/SRV",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-srv.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/TXT",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-txt.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "TXTRecords": [
+            {
+              "value": [
+                "globalstack=parity"
+              ]
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/TXT",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-txt.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/TXT",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-txt.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/TXT",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/dnsZones/TXT",
+      "apiVersion": "2018-05-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-dnszones-txt.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{dnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
       "resourceType": "Microsoft.Network/privateDnsZones",
       "apiVersion": "2020-06-01",
       "source": "globalstack-capability-registry",
@@ -5124,6 +6514,1248 @@
       "operation": "Delete",
       "method": "DELETE",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/A",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-a.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/A/{AName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "ARecords": [
+            {
+              "ipv4Address": "10.10.1.10"
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "10.10.1.10"
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/A",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-a.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/A/{AName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/A",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-a.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/A",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/A",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-a.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/A/{AName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-aaaa.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "AAAARecords": [
+            {
+              "ipv6Address": "2001:db8::10"
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "2001:db8::10"
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-aaaa.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-aaaa.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/AAAA",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-aaaa.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/AAAA/{AAAAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-cname.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "CNAMERecord": {
+            "cname": "target.example.test."
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {
+                "cname": "target.example.test."
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-cname.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-cname.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/CNAME",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-cname.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/CNAME/{CNAMEName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/MX",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-mx.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "MXRecords": [
+            {
+              "preference": 10,
+              "exchange": "mail.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": "mail.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/MX",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-mx.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/MX",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-mx.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/MX",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/MX",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-mx.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/MX/{MXName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-ptr.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "PTRRecords": [
+            {
+              "ptrdname": "host.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": "host.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-ptr.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-ptr.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/PTR",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-ptr.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/PTR/{PTRName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-soa.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 3600,
+          "SOARecord": {
+            "host": "ns1.example.test.",
+            "email": "azuredns-hostmaster.microsoft.com",
+            "serialNumber": 1,
+            "refreshTime": 3600,
+            "retryTime": 300,
+            "expireTime": 2419200,
+            "minimumTTL": 300
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200,
+                "minimumTTL": 300
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-soa.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-soa.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SOA",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-soa.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SOA/{SOAName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-srv.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "SRVRecords": [
+            {
+              "priority": 1,
+              "weight": 5,
+              "port": 443,
+              "target": "service.example.test."
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": "service.example.test."
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-srv.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-srv.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SRV",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-srv.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/SRV/{SRVName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-txt.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "TTL": 60,
+          "TXTRecords": [
+            {
+              "value": [
+                "globalstack=parity"
+              ]
+            }
+          ]
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": [
+                    "globalstack=parity"
+                  ]
+                }
+              ]
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-txt.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-txt.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/TXT",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-txt.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/TXT/{TXTName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/virtualNetworkLinks/{virtualNetworkLinksName}",
+      "requestBodyTemplate": {
+        "location": "global",
+        "properties": {
+          "registrationEnabled": false,
+          "virtualNetwork": {
+            "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "location": "global",
+            "properties": {
+              "registrationEnabled": false,
+              "virtualNetwork": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "location": "global",
+            "properties": {
+              "registrationEnabled": false,
+              "virtualNetwork": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "location": "globalstack-invalid-location",
+            "properties": {
+              "registrationEnabled": false,
+              "virtualNetwork": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+              }
+            }
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/virtualNetworkLinks/{virtualNetworkLinksName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/virtualNetworkLinks",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "dns-zones",
+      "tier": 2,
+      "awsAnalogue": "Route 53",
+      "azureEquivalent": "Azure DNS / Private DNS Zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZonesName}/virtualNetworkLinks/{virtualNetworkLinksName}",
       "requestBodyTemplate": null,
       "varianceCases": []
     },

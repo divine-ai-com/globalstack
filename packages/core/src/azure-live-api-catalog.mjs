@@ -40,8 +40,27 @@ export const defaultApiVersions = {
   'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies': '2023-09-01',
   'Microsoft.Network/applicationGateways': '2023-09-01',
   'Microsoft.Network/dnsZones': '2018-05-01',
+  'Microsoft.Network/dnsZones/A': '2018-05-01',
+  'Microsoft.Network/dnsZones/AAAA': '2018-05-01',
+  'Microsoft.Network/dnsZones/CAA': '2018-05-01',
+  'Microsoft.Network/dnsZones/CNAME': '2018-05-01',
+  'Microsoft.Network/dnsZones/MX': '2018-05-01',
+  'Microsoft.Network/dnsZones/NS': '2018-05-01',
+  'Microsoft.Network/dnsZones/PTR': '2018-05-01',
+  'Microsoft.Network/dnsZones/SOA': '2018-05-01',
+  'Microsoft.Network/dnsZones/SRV': '2018-05-01',
+  'Microsoft.Network/dnsZones/TXT': '2018-05-01',
   'Microsoft.Network/loadBalancers': '2023-09-01',
   'Microsoft.Network/privateDnsZones': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/A': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/AAAA': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/CNAME': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/MX': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/PTR': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/SOA': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/SRV': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/TXT': '2020-06-01',
+  'Microsoft.Network/privateDnsZones/virtualNetworkLinks': '2020-06-01',
   'Microsoft.Network/privateEndpoints': '2023-09-01',
   'Microsoft.Network/virtualNetworks': '2023-09-01',
   'Microsoft.OperationalInsights/workspaces': '2022-10-01',
@@ -105,6 +124,27 @@ function baseCollectionUrl(resourceType) {
 
 function bodyFor(resourceType) {
   const lower = resourceType.toLowerCase();
+  if (lower.endsWith('/dnszones/a') || lower.endsWith('/privatednszones/a')) return { properties: { TTL: 60, ARecords: [{ ipv4Address: '10.10.1.10' }] } };
+  if (lower.endsWith('/dnszones/aaaa') || lower.endsWith('/privatednszones/aaaa')) return { properties: { TTL: 60, AAAARecords: [{ ipv6Address: '2001:db8::10' }] } };
+  if (lower.endsWith('/dnszones/caa')) return { properties: { TTL: 60, CAARecords: [{ flags: 0, tag: 'issue', value: 'example.com' }] } };
+  if (lower.endsWith('/dnszones/cname') || lower.endsWith('/privatednszones/cname')) return { properties: { TTL: 60, CNAMERecord: { cname: 'target.example.test.' } } };
+  if (lower.endsWith('/dnszones/mx') || lower.endsWith('/privatednszones/mx')) return { properties: { TTL: 60, MXRecords: [{ preference: 10, exchange: 'mail.example.test.' }] } };
+  if (lower.endsWith('/dnszones/ns')) return { properties: { TTL: 60, NSRecords: [{ nsdname: 'ns1.example.test.' }] } };
+  if (lower.endsWith('/dnszones/ptr') || lower.endsWith('/privatednszones/ptr')) return { properties: { TTL: 60, PTRRecords: [{ ptrdname: 'host.example.test.' }] } };
+  if (lower.endsWith('/dnszones/soa') || lower.endsWith('/privatednszones/soa')) return { properties: { TTL: 3600, SOARecord: { host: 'ns1.example.test.', email: 'azuredns-hostmaster.microsoft.com', serialNumber: 1, refreshTime: 3600, retryTime: 300, expireTime: 2419200, minimumTTL: 300 } } };
+  if (lower.endsWith('/dnszones/srv') || lower.endsWith('/privatednszones/srv')) return { properties: { TTL: 60, SRVRecords: [{ priority: 1, weight: 5, port: 443, target: 'service.example.test.' }] } };
+  if (lower.endsWith('/dnszones/txt') || lower.endsWith('/privatednszones/txt')) return { properties: { TTL: 60, TXTRecords: [{ value: ['globalstack=parity'] }] } };
+  if (lower.endsWith('/privatednszones/virtualnetworklinks')) {
+    return {
+      location: 'global',
+      properties: {
+        registrationEnabled: false,
+        virtualNetwork: {
+          id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}',
+        },
+      },
+    };
+  }
   if (lower === 'microsoft.storage/storageaccounts') {
     return { location: '{location}', sku: { name: 'Standard_LRS' }, kind: 'StorageV2', properties: { allowBlobPublicAccess: false } };
   }

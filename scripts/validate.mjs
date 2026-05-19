@@ -31,6 +31,7 @@ const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
 const monitorMetricsAlertsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-metrics-alerts-parity', 'results.json');
 const virtualNetworkParityResultsPath = join(distRoot, 'e2e', 'azure-virtual-network-parity', 'results.json');
+const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1085,6 +1086,104 @@ if (!virtualNetworkParityText) {
   }
   if (virtualNetworkParity.platformMatrix?.ok !== true || virtualNetworkParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Virtual Network parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const dnsZonesParityText = await readFile(dnsZonesParityResultsPath, 'utf8').catch(() => '');
+if (!dnsZonesParityText) {
+  errors.push('missing Azure DNS Zones parity E2E results; run npm run e2e:dns-zones-parity');
+} else {
+  const dnsZonesParity = JSON.parse(dnsZonesParityText);
+  if (dnsZonesParity.ok !== true) {
+    errors.push('Azure DNS Zones parity E2E did not pass');
+  }
+  if (dnsZonesParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure DNS Zones parity control-plane matrix has failures');
+  }
+  if ((dnsZonesParity.controlPlane?.total ?? 0) < 55) {
+    errors.push('Azure DNS Zones parity control-plane matrix should exercise at least 55 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'public dns zone create requires an existing resource group',
+    'private dns zone create requires an existing resource group',
+    'public dns record create with missing zone reports parent not found',
+    'private dns vnet link create with missing zone reports parent not found',
+    'public dns zone collection list is empty before create',
+    'private dns zone collection list is empty before create',
+    'public dns zone delete missing returns no content',
+    'private dns zone delete missing returns no content',
+    'public dns zone empty body is rejected',
+    'public dns zone invalid location is rejected',
+    'public dns zone non-global location is rejected',
+    'public dns zone invalid name is rejected',
+    'private dns zone invalid name is rejected',
+    'public dns zone create succeeds',
+    'private dns zone create is accepted asynchronously',
+    'private dns zone operation status succeeds',
+    'public dns zone get succeeds',
+    'private dns zone get succeeds',
+    'public dns record empty body is rejected',
+    'public dns record missing ttl is rejected',
+    'public dns record invalid ttl is rejected',
+    'public dns A record invalid IPv4 is rejected',
+    'public dns AAAA record invalid IPv6 is rejected',
+    'public dns CNAME record missing cname is rejected',
+    'public dns TXT record empty value is rejected',
+    'public dns MX record missing exchange is rejected',
+    'public dns record invalid relative name is rejected',
+    'public dns unsupported record type route fails closed',
+    'public dns A record create succeeds',
+    'public dns AAAA record create succeeds',
+    'public dns CAA record create succeeds',
+    'public dns CNAME record create succeeds',
+    'public dns MX record create succeeds',
+    'public dns NS record create succeeds',
+    'public dns PTR record create succeeds',
+    'public dns SOA record create succeeds',
+    'public dns SRV record create succeeds',
+    'public dns TXT record create succeeds',
+    'private dns A record create succeeds',
+    'private dns AAAA record create succeeds',
+    'private dns CNAME record create succeeds',
+    'private dns MX record create succeeds',
+    'private dns PTR record create succeeds',
+    'private dns SOA record create succeeds',
+    'private dns SRV record create succeeds',
+    'private dns TXT record create succeeds',
+    'public dns A record get succeeds',
+    'public dns A record update preserves metadata',
+    'public dns A record list includes created resource',
+    'private dns A record list includes created resource',
+    'virtual network create succeeds for private dns link',
+    'private dns vnet link missing virtual network id is rejected',
+    'private dns vnet link invalid registration flag is rejected',
+    'private dns vnet link create succeeds',
+    'private dns vnet link get succeeds',
+    'private dns vnet link list includes created resource',
+    'private dns unsupported resolver policy route fails closed',
+    'ARM template deployment can create dns resources',
+    'public dns A record delete succeeds',
+    'public dns A record get after delete is not found',
+    'public dns A record delete after delete returns no content',
+    'private dns vnet link delete succeeds',
+    'private dns vnet link get after delete is not found',
+    'public dns zone get after delete is not found',
+    'private dns zone get after delete is not found',
+  ]) {
+    if (!dnsZonesParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure DNS Zones parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (dnsZonesParity.platformMatrix?.skipped === true) {
+    errors.push('Azure DNS Zones parity E2E must include the platform matrix during validation');
+  }
+  if (dnsZonesParity.platformMatrix?.ok !== true || dnsZonesParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure DNS Zones parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

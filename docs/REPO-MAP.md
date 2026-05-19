@@ -109,6 +109,7 @@ flowchart TD
 - `scripts/e2e-azure-aks-metadata-parity.mjs`
 - `scripts/e2e-azure-api-management-parity.mjs`
 - `scripts/e2e-azure-container-registry-parity.mjs`
+- `scripts/e2e-azure-dns-zones-parity.mjs`
 - `scripts/e2e-azure-event-grid-parity.mjs`
 - `scripts/e2e-azure-functions-parity.mjs`
 - `scripts/e2e-azure-identity-rbac-parity.mjs`
@@ -171,6 +172,7 @@ flowchart TD
 - `npm run e2e:api-management-parity`
 - `npm run e2e:azure-functions-parity`
 - `npm run e2e:container-registry-parity`
+- `npm run e2e:dns-zones-parity`
 - `npm run e2e:event-grid-parity`
 - `npm run e2e:identity-rbac-parity`
 - `npm run e2e:key-vault-parity`

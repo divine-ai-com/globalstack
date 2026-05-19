@@ -139,10 +139,21 @@ function valuesFor(call, varianceId) {
     virtualNetworksName: `vnet-${suffix}`.slice(0, 40),
     privateEndpointsName: `pe-${suffix}`.slice(0, 40),
     privateDnsZonesName: `${suffix}.internal`,
+    virtualNetworkLinksName: `link-${suffix}`.slice(0, 40),
     redisName: `redis-${suffix}`.slice(0, 40),
     redisEnterpriseName: `redisent-${suffix}`.slice(0, 40),
     workflowsName: `workflow-${suffix}`.slice(0, 40),
     dnsZonesName: `${suffix}.example.test`,
+    AName: `a-${suffix}`.slice(0, 40),
+    AAAAName: `aaaa-${suffix}`.slice(0, 40),
+    CAAName: `caa-${suffix}`.slice(0, 40),
+    CNAMEName: `cname-${suffix}`.slice(0, 40),
+    MXName: `mx-${suffix}`.slice(0, 40),
+    NSName: `ns-${suffix}`.slice(0, 40),
+    PTRName: `ptr-${suffix}`.slice(0, 40),
+    SOAName: '@',
+    SRVName: `_service._tcp.${suffix}`.slice(0, 60),
+    TXTName: `txt-${suffix}`.slice(0, 40),
     applicationGatewaysName: `agw-${suffix}`.slice(0, 40),
     loadBalancersName: `lb-${suffix}`.slice(0, 40),
     profilesName: `cdn-${suffix}`.slice(0, 40),
@@ -276,12 +287,19 @@ function responseErrorCode(response) {
 }
 
 async function seedLocalParents(baseUrl, call, variance, replacements) {
-  if (
-    call.resourceType !== 'Microsoft.ServiceBus/namespaces/topics/subscriptions'
-    || variance.id !== 'valid-minimal'
-  ) {
+  if (call.resourceType.startsWith('Microsoft.Network/dnsZones/')) {
+    const zonePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/dnsZones/${replacements.dnsZonesName}?api-version=2018-05-01`;
+    await httpJson(baseUrl, 'PUT', zonePath, { location: 'global', properties: {} });
     return;
   }
+
+  if (call.resourceType.startsWith('Microsoft.Network/privateDnsZones/')) {
+    const zonePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/privateDnsZones/${replacements.privateDnsZonesName}?api-version=2020-06-01`;
+    await httpJson(baseUrl, 'PUT', zonePath, { location: 'global', properties: {} });
+    return;
+  }
+
+  if (call.resourceType !== 'Microsoft.ServiceBus/namespaces/topics/subscriptions' || variance.id !== 'valid-minimal') return;
 
   const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}?api-version=2021-11-01`;
   const namespaceResponse = await httpJson(baseUrl, 'PUT', namespacePath, {

@@ -80,6 +80,22 @@ function aksNodeResourceGroup(resourceGroupName, name, location) {
   return `MC_${resourceGroupName}_${name}_${location}`;
 }
 
+function dnsNameServers(name) {
+  const digest = createHash('sha256')
+    .update(`globalstack:dns:${name}`)
+    .digest('hex');
+  return [0, 1, 2, 3].map(index => `ns${index + 1}-${digest.slice(index * 4, index * 4 + 4)}.azure-dns-${index + 1}.com.`);
+}
+
+function dnsRecordFqdn(typePath) {
+  const parts = String(typePath ?? '').split('/');
+  const zoneName = parts[1];
+  const recordName = parts[3];
+  if (!zoneName || !recordName) return undefined;
+  const fqdn = recordName === '@' ? zoneName : `${recordName}.${zoneName}`;
+  return fqdn.endsWith('.') ? fqdn : `${fqdn}.`;
+}
+
 function keyVaultChildVaultName(name) {
   return String(name ?? '').split('/')[0] ?? '';
 }
@@ -219,6 +235,18 @@ export class ResourceStore {
                 provisioningState: 'Succeeded',
                 powerState: { code: 'Running' },
               })),
+          }
+          : {}),
+        ...(type === 'Microsoft.Network/dnsZones'
+          ? {
+              nameServers: existing?.properties?.nameServers ?? dnsNameServers(name),
+              numberOfRecordSets: existing?.properties?.numberOfRecordSets ?? 2,
+            }
+          : {}),
+        ...((type.startsWith('Microsoft.Network/dnsZones/') || type.startsWith('Microsoft.Network/privateDnsZones/'))
+          && !type.endsWith('/virtualNetworkLinks')
+          ? {
+              fqdn: existing?.properties?.fqdn ?? dnsRecordFqdn(typePath),
             }
           : {}),
         ...(type === 'Microsoft.KeyVault/vaults/secrets'

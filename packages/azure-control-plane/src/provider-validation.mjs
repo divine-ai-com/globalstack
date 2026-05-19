@@ -1,3 +1,5 @@
+import { isIP } from 'node:net';
+
 const locationValidatedResourceTypes = new Set([
   'Microsoft.ApiManagement/service',
   'Microsoft.App/containerApps',
@@ -27,6 +29,7 @@ const locationValidatedResourceTypes = new Set([
   'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies',
   'Microsoft.Network/applicationGateways',
   'Microsoft.Network/dnsZones',
+  'Microsoft.Network/privateDnsZones/virtualNetworkLinks',
   'Microsoft.Network/loadBalancers',
   'Microsoft.Network/privateDnsZones',
   'Microsoft.Network/privateEndpoints',
@@ -52,6 +55,25 @@ const putMissingParentResourceTypes = new Map([
   ['Microsoft.KeyVault/vaults/keys', 'ParentResourceNotFound'],
   ['Microsoft.KeyVault/vaults/secrets', 'ParentResourceNotFound'],
   ['Microsoft.NetApp/netAppAccounts/capacityPools/volumes', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/A', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/AAAA', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/CAA', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/CNAME', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/MX', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/NS', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/PTR', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/SOA', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/SRV', 'ParentResourceNotFound'],
+  ['Microsoft.Network/dnsZones/TXT', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/A', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/AAAA', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/CNAME', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/MX', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/PTR', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/SOA', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/SRV', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/TXT', 'ParentResourceNotFound'],
+  ['Microsoft.Network/privateDnsZones/virtualNetworkLinks', 'ParentResourceNotFound'],
   ['Microsoft.ServiceBus/namespaces/queues', 'ParentResourceNotFound'],
   ['Microsoft.ServiceBus/namespaces/topics', 'ParentResourceNotFound'],
   ['Microsoft.ServiceBus/namespaces/topics/subscriptions', 'ParentResourceNotFound'],
@@ -105,8 +127,27 @@ const acceptedDeleteNotFoundResourceTypes = new Set([
   'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies',
   'Microsoft.Network/applicationGateways',
   'Microsoft.Network/dnsZones',
+  'Microsoft.Network/dnsZones/A',
+  'Microsoft.Network/dnsZones/AAAA',
+  'Microsoft.Network/dnsZones/CAA',
+  'Microsoft.Network/dnsZones/CNAME',
+  'Microsoft.Network/dnsZones/MX',
+  'Microsoft.Network/dnsZones/NS',
+  'Microsoft.Network/dnsZones/PTR',
+  'Microsoft.Network/dnsZones/SOA',
+  'Microsoft.Network/dnsZones/SRV',
+  'Microsoft.Network/dnsZones/TXT',
   'Microsoft.Network/loadBalancers',
   'Microsoft.Network/privateDnsZones',
+  'Microsoft.Network/privateDnsZones/A',
+  'Microsoft.Network/privateDnsZones/AAAA',
+  'Microsoft.Network/privateDnsZones/CNAME',
+  'Microsoft.Network/privateDnsZones/MX',
+  'Microsoft.Network/privateDnsZones/PTR',
+  'Microsoft.Network/privateDnsZones/SOA',
+  'Microsoft.Network/privateDnsZones/SRV',
+  'Microsoft.Network/privateDnsZones/TXT',
+  'Microsoft.Network/privateDnsZones/virtualNetworkLinks',
   'Microsoft.Network/privateEndpoints',
   'Microsoft.Network/virtualNetworks',
   'Microsoft.OperationalInsights/workspaces',
@@ -882,6 +923,178 @@ function validateVirtualNetworkPayload(resourceType, body, providerRoute = null)
   return null;
 }
 
+function dnsNameFromTypePath(providerRoute, collection) {
+  const parts = providerRoute?.typePath?.split('/') ?? [];
+  const index = parts.findIndex(part => part.toLowerCase() === collection.toLowerCase());
+  return index >= 0 ? parts[index + 1] ?? '' : '';
+}
+
+function isValidZoneName(name) {
+  return /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*$/.test(name) && name.includes('.');
+}
+
+function isValidRelativeRecordName(name) {
+  if (name === '@') return true;
+  return /^(?!-)[A-Za-z0-9_*.-]{1,253}(?<!-)$/.test(name) && !String(name).includes('..');
+}
+
+function dnsProperty(properties, ...names) {
+  for (const name of names) {
+    if (Object.hasOwn(properties ?? {}, name)) return properties[name];
+  }
+  return undefined;
+}
+
+function ttlValue(properties) {
+  return dnsProperty(properties, 'TTL', 'ttl');
+}
+
+function validateRecordArray({ properties, arrayNames, code, message, predicate }) {
+  const records = dnsProperty(properties, ...arrayNames);
+  if (!Array.isArray(records) || records.length === 0) return envelopedError(400, code, message);
+  if (predicate && records.some(record => !predicate(record))) return envelopedError(400, code, message);
+  return null;
+}
+
+function validateDnsRecordSet(resourceType, body, providerRoute) {
+  const properties = body.properties ?? {};
+  if (emptyObject(body) || emptyObject(properties)) {
+    return envelopedError(400, 'BadRequest', 'DNS record set properties are required.');
+  }
+  const ttl = ttlValue(properties);
+  if (!Number.isInteger(ttl) || ttl < 0 || ttl > 2147483647) {
+    return envelopedError(400, 'InvalidTtl', 'DNS record set TTL must be an integer between 0 and 2147483647.');
+  }
+
+  const parts = providerRoute?.typePath?.split('/') ?? [];
+  const recordType = parts.at(-2);
+  const recordName = parts.at(-1);
+  if (!isValidRelativeRecordName(recordName)) {
+    return envelopedError(400, 'InvalidRecordSetName', `The DNS record set name '${recordName}' is invalid.`);
+  }
+
+  switch (recordType) {
+    case 'A':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['ARecords', 'aRecords'],
+        code: 'InvalidARecord',
+        message: 'A record sets require at least one valid IPv4 address.',
+        predicate: record => isIP(record?.ipv4Address) === 4,
+      });
+    case 'AAAA':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['AAAARecords', 'aaaaRecords'],
+        code: 'InvalidAaaaRecord',
+        message: 'AAAA record sets require at least one valid IPv6 address.',
+        predicate: record => isIP(record?.ipv6Address) === 6,
+      });
+    case 'CAA':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['CAARecords', 'caaRecords'],
+        code: 'InvalidCaaRecord',
+        message: 'CAA record sets require flags, tag, and value.',
+        predicate: record => Number.isInteger(record?.flags) && typeof record?.tag === 'string' && record.tag !== '' && typeof record?.value === 'string' && record.value !== '',
+      });
+    case 'CNAME': {
+      const record = dnsProperty(properties, 'CNAMERecord', 'cnameRecord');
+      if (!record || typeof record.cname !== 'string' || record.cname.trim() === '') {
+        return envelopedError(400, 'InvalidCnameRecord', 'CNAME record sets require properties.CNAMERecord.cname.');
+      }
+      return null;
+    }
+    case 'MX':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['MXRecords', 'mxRecords'],
+        code: 'InvalidMxRecord',
+        message: 'MX record sets require preference and exchange values.',
+        predicate: record => Number.isInteger(record?.preference) && typeof record?.exchange === 'string' && record.exchange !== '',
+      });
+    case 'NS':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['NSRecords', 'nsRecords'],
+        code: 'InvalidNsRecord',
+        message: 'NS record sets require nsdname values.',
+        predicate: record => typeof record?.nsdname === 'string' && record.nsdname !== '',
+      });
+    case 'PTR':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['PTRRecords', 'ptrRecords'],
+        code: 'InvalidPtrRecord',
+        message: 'PTR record sets require ptrdname values.',
+        predicate: record => typeof record?.ptrdname === 'string' && record.ptrdname !== '',
+      });
+    case 'SOA': {
+      const record = dnsProperty(properties, 'SOARecord', 'soaRecord');
+      const integerFields = ['serialNumber', 'refreshTime', 'retryTime', 'expireTime', 'minimumTTL'];
+      if (
+        !record
+        || typeof record.host !== 'string'
+        || record.host === ''
+        || typeof record.email !== 'string'
+        || record.email === ''
+        || integerFields.some(field => !Number.isInteger(record[field]))
+      ) {
+        return envelopedError(400, 'InvalidSoaRecord', 'SOA record sets require host, email, serialNumber, refreshTime, retryTime, expireTime, and minimumTTL.');
+      }
+      return null;
+    }
+    case 'SRV':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['SRVRecords', 'srvRecords'],
+        code: 'InvalidSrvRecord',
+        message: 'SRV record sets require priority, weight, port, and target values.',
+        predicate: record => Number.isInteger(record?.priority) && Number.isInteger(record?.weight) && Number.isInteger(record?.port) && typeof record?.target === 'string' && record.target !== '',
+      });
+    case 'TXT':
+      return validateRecordArray({
+        properties,
+        arrayNames: ['TXTRecords', 'txtRecords'],
+        code: 'InvalidTxtRecord',
+        message: 'TXT record sets require at least one text value.',
+        predicate: record => Array.isArray(record?.value) && record.value.length > 0 && record.value.every(item => typeof item === 'string' && item !== ''),
+      });
+    default:
+      return envelopedError(501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure DNS record type ${resourceType}.`);
+  }
+}
+
+function validateDnsPayload(resourceType, body, providerRoute = null) {
+  if (resourceType === 'Microsoft.Network/dnsZones') {
+    const name = dnsNameFromTypePath(providerRoute, 'dnsZones');
+    if (!isValidZoneName(name)) return envelopedError(400, 'InvalidDomainName', `The DNS zone name '${name}' is invalid.`);
+    if (body.location && body.location !== 'global') return envelopedError(400, 'InvalidResourceLocation', "DNS zones must use location 'global'.");
+  }
+
+  if (resourceType === 'Microsoft.Network/privateDnsZones') {
+    const name = dnsNameFromTypePath(providerRoute, 'privateDnsZones');
+    if (!isValidZoneName(name)) return envelopedError(400, 'InvalidDomainName', `The private DNS zone name '${name}' is invalid.`);
+    if (body.location && body.location !== 'global') return envelopedError(400, 'InvalidResourceLocation', "Private DNS zones must use location 'global'.");
+  }
+
+  if (resourceType.startsWith('Microsoft.Network/dnsZones/') || resourceType.startsWith('Microsoft.Network/privateDnsZones/')) {
+    if (resourceType === 'Microsoft.Network/privateDnsZones/virtualNetworkLinks') {
+      if (body.location && body.location !== 'global') return envelopedError(400, 'InvalidResourceLocation', "Private DNS virtual network links must use location 'global'.");
+      if (typeof body.properties?.virtualNetwork?.id !== 'string' || body.properties.virtualNetwork.id.trim() === '') {
+        return envelopedError(400, 'VirtualNetworkLinkReferenceMissing', 'Private DNS virtual network links require properties.virtualNetwork.id.');
+      }
+      if (Object.hasOwn(body.properties ?? {}, 'registrationEnabled') && typeof body.properties.registrationEnabled !== 'boolean') {
+        return envelopedError(400, 'InvalidRequestFormat', 'Private DNS virtual network link properties.registrationEnabled must be a boolean.');
+      }
+      return null;
+    }
+    return validateDnsRecordSet(resourceType, body, providerRoute);
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1052,6 +1265,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const virtualNetworkPayloadValidation = validateVirtualNetworkPayload(resourceType, body, providerRoute);
   if (virtualNetworkPayloadValidation) return virtualNetworkPayloadValidation;
+
+  const dnsPayloadValidation = validateDnsPayload(resourceType, body, providerRoute);
+  if (dnsPayloadValidation) return dnsPayloadValidation;
 
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(

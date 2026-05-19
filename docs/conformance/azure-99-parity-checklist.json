@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T10:43:50.353Z",
+    "generatedAt": "2026-05-19T11:25:50.390Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -2298,11 +2298,30 @@
       "azureEquivalent": "Azure DNS / Private DNS Zones",
       "resourceTypes": [
         "Microsoft.Network/dnsZones",
-        "Microsoft.Network/privateDnsZones"
+        "Microsoft.Network/dnsZones/A",
+        "Microsoft.Network/dnsZones/AAAA",
+        "Microsoft.Network/dnsZones/CAA",
+        "Microsoft.Network/dnsZones/CNAME",
+        "Microsoft.Network/dnsZones/MX",
+        "Microsoft.Network/dnsZones/NS",
+        "Microsoft.Network/dnsZones/PTR",
+        "Microsoft.Network/dnsZones/SOA",
+        "Microsoft.Network/dnsZones/SRV",
+        "Microsoft.Network/dnsZones/TXT",
+        "Microsoft.Network/privateDnsZones",
+        "Microsoft.Network/privateDnsZones/A",
+        "Microsoft.Network/privateDnsZones/AAAA",
+        "Microsoft.Network/privateDnsZones/CNAME",
+        "Microsoft.Network/privateDnsZones/MX",
+        "Microsoft.Network/privateDnsZones/PTR",
+        "Microsoft.Network/privateDnsZones/SOA",
+        "Microsoft.Network/privateDnsZones/SRV",
+        "Microsoft.Network/privateDnsZones/TXT",
+        "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
       ],
       "currentStatus": "in-progress",
       "evidence": {
-        "candidateCallCount": 8,
+        "candidateCallCount": 84,
         "providerOperationCount": 81,
         "liveCaptureCount": 14,
         "validationDepthCounts": {
@@ -2322,7 +2341,7 @@
         "liveApiSurfaceInventory": {
           "status": "partial",
           "evidence": [
-            "8 candidate catalog calls",
+            "84 candidate catalog calls",
             "81 provider operations matched"
           ],
           "gaps": [
@@ -2399,7 +2418,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "3 registry operations declared",
+            "17 registry operations declared",
             "backing engines: globalstack-dns-registry"
           ],
           "gaps": [

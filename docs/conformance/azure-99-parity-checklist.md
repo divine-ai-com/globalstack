@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T10:43:50.353Z
+Generated: 2026-05-19T11:25:50.390Z
 
 ## Dimensions
 
@@ -42,7 +42,7 @@ Generated: 2026-05-19T10:43:50.353Z
 | queue-storage | 2 | in-progress | 0 | 8 | 2 | 8 | 14 | 22 |
 | redis-cache | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 73 |
 | logic-workflows | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 425 |
-| dns-zones | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 81 |
+| dns-zones | 2 | in-progress | 0 | 5 | 5 | 84 | 14 | 81 |
 | load-balancing | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 67 |
 | front-door-cdn | 2 | in-progress | 0 | 5 | 5 | 12 | 21 | 133 |
 | waf-policy | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 9 |
@@ -459,11 +459,11 @@ Generated: 2026-05-19T10:43:50.353Z
 - AWS analogue: Route 53
 - Azure equivalent: Azure DNS / Private DNS Zones
 - Current status: in-progress
-- Resource types: Microsoft.Network/dnsZones, Microsoft.Network/privateDnsZones
+- Resource types: Microsoft.Network/dnsZones, Microsoft.Network/dnsZones/A, Microsoft.Network/dnsZones/AAAA, Microsoft.Network/dnsZones/CAA, Microsoft.Network/dnsZones/CNAME, Microsoft.Network/dnsZones/MX, Microsoft.Network/dnsZones/NS, Microsoft.Network/dnsZones/PTR, Microsoft.Network/dnsZones/SOA, Microsoft.Network/dnsZones/SRV, Microsoft.Network/dnsZones/TXT, Microsoft.Network/privateDnsZones, Microsoft.Network/privateDnsZones/A, Microsoft.Network/privateDnsZones/AAAA, Microsoft.Network/privateDnsZones/CNAME, Microsoft.Network/privateDnsZones/MX, Microsoft.Network/privateDnsZones/PTR, Microsoft.Network/privateDnsZones/SOA, Microsoft.Network/privateDnsZones/SRV, Microsoft.Network/privateDnsZones/TXT, Microsoft.Network/privateDnsZones/virtualNetworkLinks
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>81 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 84 candidate catalog calls<br>81 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-validation=4, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2, capture-infrastructure-gap=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -472,7 +472,7 @@ Generated: 2026-05-19T10:43:50.353Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 3 registry operations declared<br>backing engines: globalstack-dns-registry | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 17 registry operations declared<br>backing engines: globalstack-dns-registry | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## load-balancing
 
