@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T22:07:34.430Z
+Generated: 2026-05-19T22:11:04.274Z
 
 ## Dimensions
 
@@ -23,36 +23,36 @@ Generated: 2026-05-19T22:07:34.430Z
 
 | Service | Tier | Current Status | Complete | Partial | Not Started | Candidate Calls | Live Captures | Provider Ops |
 |---|---:|---|---:|---:|---:|---:|---:|---:|
-| blob-storage | 1 | in-progress | 0 | 8 | 2 | 8 | 15 | 232 |
-| azure-functions | 1 | in-progress | 0 | 5 | 5 | 8 | 15 | 418 |
-| api-management | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 511 |
-| identity-rbac | 1 | in-progress | 0 | 6 | 4 | 12 | 21 | 15 |
-| key-vault-secrets | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 96 |
-| key-vault-keys | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 105 |
-| postgresql-flexible-server | 1 | in-progress | 0 | 5 | 5 | 8 | 16 | 89 |
-| cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 16 | 14 | 366 |
-| service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 12 | 16 | 116 |
-| event-grid | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 35 |
-| container-registry | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 118 |
-| aks-metadata | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 453 |
-| monitor-logs | 1 | in-progress | 0 | 5 | 5 | 8 | 15 | 1013 |
-| monitor-metrics-alerts | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 12 |
-| virtual-network | 1 | in-progress | 0 | 5 | 5 | 12 | 21 | 110 |
-| mysql-flexible-server | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 67 |
-| queue-storage | 2 | in-progress | 0 | 8 | 2 | 8 | 14 | 22 |
-| redis-cache | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 73 |
-| logic-workflows | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 425 |
-| dns-zones | 2 | in-progress | 0 | 5 | 5 | 84 | 14 | 136 |
-| load-balancing | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 67 |
-| front-door-cdn | 2 | in-progress | 0 | 5 | 5 | 12 | 21 | 133 |
-| waf-policy | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 9 |
-| activity-log-audit | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 15 |
-| azure-files | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 70 |
-| event-hubs-streams | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 93 |
-| synapse-warehouse | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 244 |
-| app-configuration-parameters | 2 | in-progress | 0 | 5 | 5 | 8 | 15 | 57 |
-| database-migration-service | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 34 |
-| service-discovery | 2 | in-progress | 0 | 5 | 5 | 12 | 21 | 131 |
+| blob-storage | 1 | in-progress | 0 | 9 | 1 | 8 | 15 | 232 |
+| azure-functions | 1 | in-progress | 0 | 6 | 4 | 8 | 15 | 418 |
+| api-management | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 511 |
+| identity-rbac | 1 | in-progress | 0 | 7 | 3 | 12 | 21 | 15 |
+| key-vault-secrets | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 96 |
+| key-vault-keys | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 105 |
+| postgresql-flexible-server | 1 | in-progress | 0 | 6 | 4 | 8 | 16 | 89 |
+| cosmos-nosql-table | 1 | in-progress | 0 | 7 | 3 | 16 | 14 | 366 |
+| service-bus-topics | 1 | in-progress | 0 | 6 | 4 | 12 | 16 | 116 |
+| event-grid | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 35 |
+| container-registry | 1 | in-progress | 0 | 6 | 4 | 4 | 7 | 118 |
+| aks-metadata | 1 | in-progress | 0 | 6 | 4 | 4 | 7 | 453 |
+| monitor-logs | 1 | in-progress | 0 | 6 | 4 | 8 | 15 | 1013 |
+| monitor-metrics-alerts | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 12 |
+| virtual-network | 1 | in-progress | 0 | 6 | 4 | 12 | 21 | 110 |
+| mysql-flexible-server | 2 | in-progress | 0 | 6 | 4 | 8 | 16 | 67 |
+| queue-storage | 2 | in-progress | 0 | 9 | 1 | 8 | 14 | 22 |
+| redis-cache | 2 | in-progress | 0 | 6 | 4 | 8 | 16 | 73 |
+| logic-workflows | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 425 |
+| dns-zones | 2 | in-progress | 0 | 6 | 4 | 84 | 14 | 136 |
+| load-balancing | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 67 |
+| front-door-cdn | 2 | in-progress | 0 | 6 | 4 | 12 | 21 | 133 |
+| waf-policy | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 9 |
+| activity-log-audit | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 15 |
+| azure-files | 2 | in-progress | 0 | 7 | 3 | 8 | 14 | 70 |
+| event-hubs-streams | 2 | in-progress | 0 | 6 | 4 | 8 | 16 | 93 |
+| synapse-warehouse | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 244 |
+| app-configuration-parameters | 2 | in-progress | 0 | 6 | 4 | 8 | 15 | 57 |
+| database-migration-service | 2 | in-progress | 0 | 6 | 4 | 8 | 14 | 34 |
+| service-discovery | 2 | in-progress | 0 | 6 | 4 | 12 | 21 | 131 |
 
 ## blob-storage
 
@@ -70,7 +70,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | partial | 2 storage lifecycle capture files | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:storage-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | partial | 32 Blob/Queue data-plane expectations | Expand Blob/Queue captures and local normalization beyond Wave 1. |
 | Repeat captures for ambiguous behavior | partial | queue-peek-after-delete is explicitly marked needs-repeat-capture | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 12 registry operations declared<br>backing engines: azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -91,7 +91,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=7, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:azure-functions-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started | official emulator path declared: functions-core-tools, azurite | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 12 registry operations declared<br>backing engines: functions-core-tools, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -112,7 +112,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, provider-accepted=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:api-management-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 11 registry operations declared<br>backing engines: globalstack-http-router | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -133,7 +133,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=10, arm-surface=3, provider-accepted=7, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | partial | identity-rbac capability exists in Tier 1 registry | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:identity-rbac-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 14 registry operations declared<br>backing engines: globalstack-local-token-service | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -154,7 +154,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=6, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:key-vault-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: globalstack-secret-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -175,7 +175,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=6, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:key-vault-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: node-crypto | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -196,7 +196,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=4, provider-accepted=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: local-postgres | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -217,7 +217,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=3, arm-surface=2, provider-accepted=2, provider-routing-or-parent-validation=4, capture-infrastructure-gap=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | partial | 2 storage lifecycle capture files | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:cosmos-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started | official emulator path declared: cosmos-db-emulator, azurite | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 16 registry operations declared<br>backing engines: cosmos-db-emulator, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -238,7 +238,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:service-bus-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started | official emulator path declared: service-bus-emulator, globalstack-event-router | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 13 registry operations declared<br>backing engines: service-bus-emulator, globalstack-event-router | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -259,7 +259,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:event-grid-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 8 registry operations declared<br>backing engines: globalstack-event-router | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -280,7 +280,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:container-registry-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: local-oci-registry | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -301,7 +301,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:aks-metadata-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: kind-or-k3d-future | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -322,7 +322,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=8, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:monitor-logs-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: globalstack-log-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -343,7 +343,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:monitor-metrics-alerts-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: globalstack-metric-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -364,7 +364,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=8, arm-surface=3, provider-accepted=6, provider-routing-or-parent-validation=3, capture-infrastructure-gap=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:virtual-network-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 17 registry operations declared<br>backing engines: globalstack-network-model | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -385,7 +385,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=4, provider-accepted=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:mysql-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: local-mysql | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -406,7 +406,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=12, arm-surface=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | partial | 2 storage lifecycle capture files | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:storage-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | partial | 32 Blob/Queue data-plane expectations | Expand Blob/Queue captures and local normalization beyond Wave 1. |
 | Repeat captures for ambiguous behavior | partial | queue-peek-after-delete is explicitly marked needs-repeat-capture | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 7 registry operations declared<br>backing engines: azurite, service-bus-emulator | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -427,7 +427,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=6, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=2, subscription-or-provider-readiness=2, capture-infrastructure-gap=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:redis-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 7 registry operations declared<br>backing engines: local-redis | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -448,7 +448,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:logic-workflows-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 6 registry operations declared<br>backing engines: globalstack-workflow-runner, functions-core-tools | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -469,7 +469,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=4, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2, capture-infrastructure-gap=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:dns-zones-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 17 registry operations declared<br>backing engines: globalstack-dns-registry | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -490,7 +490,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:load-balancing-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 10 registry operations declared<br>backing engines: globalstack-http-router | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -511,7 +511,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=7, arm-surface=3, provider-routing-or-parent-validation=7, provider-accepted=4 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:front-door-cdn-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 14 registry operations declared<br>backing engines: globalstack-edge-router | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -532,7 +532,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, provider-accepted=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:waf-policy-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 10 registry operations declared<br>backing engines: globalstack-waf-metadata | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -553,7 +553,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=9, arm-surface=2, provider-accepted=2, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:activity-log-audit-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: globalstack-audit-log | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -574,7 +574,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=2, arm-surface=2, provider-routing-or-parent-validation=9, provider-accepted=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | partial | 2 storage lifecycle capture files | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:azure-files-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: local-file-share | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -595,7 +595,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:event-hubs-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started | official emulator path declared: event-hubs-emulator | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 11 registry operations declared<br>backing engines: event-hubs-emulator | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -616,7 +616,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=5, arm-surface=2, provider-routing-or-parent-validation=4, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:synapse-warehouse-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 10 registry operations declared<br>backing engines: local-analytics-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -637,7 +637,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=4, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=6 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:app-configuration-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started | official emulator path declared: app-configuration-emulator, globalstack-secret-store | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 7 registry operations declared<br>backing engines: app-configuration-emulator, globalstack-secret-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -658,7 +658,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=5, arm-surface=2, provider-routing-or-parent-validation=4, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:database-migration-service-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 10 registry operations declared<br>backing engines: globalstack-migration-plan-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
@@ -679,7 +679,7 @@ Generated: 2026-05-19T22:07:34.430Z
 | Error-shape fidelity | partial | validation depths: provider-validation=7, arm-surface=3, provider-accepted=7, provider-routing-or-parent-validation=3, capture-infrastructure-gap=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | not-started |  | Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials. |
 | Retry/eventual consistency behavior | not-started |  | Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service. |
-| IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
+| IaC-provider behavior | partial | e2e:service-discovery-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |
 | Data-plane behavior | not-started |  | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
 | Service-specific local facade/emulator integration | partial | 15 registry operations declared<br>backing engines: globalstack-service-registry, globalstack-dns-registry | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |

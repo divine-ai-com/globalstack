@@ -9,9 +9,54 @@ const outJsonPath = join(outRoot, 'azure-99-parity-checklist.json');
 const outMdPath = join(outRoot, 'azure-99-parity-checklist.md');
 const liveCatalogPath = join(outRoot, 'azure-live-api-catalog.json');
 const providerSurfacePath = join(outRoot, 'azure-provider-surface-inventory.json');
+const packageJsonPath = join(root, 'package.json');
 const capturesRoot = join(root, 'fixtures', 'azure-captures');
 const lifecycleRoot = join(root, 'fixtures', 'azure-lifecycle-captures');
 const storageDataPlaneExpectationsPath = join(root, 'fixtures', 'local-expectations', 'azure-storage-data-plane-expectations.json');
+
+const platformRunnerNames = [
+  'Terraform HCL',
+  'OpenTofu HCL',
+  'Pulumi TypeScript',
+  'Pulumi Python',
+  'Pulumi YAML',
+  'Ansible YAML',
+  'Bicep',
+  'ARM JSON',
+];
+
+const iacScriptByCapability = new Map([
+  ['activity-log-audit', 'e2e:activity-log-audit-parity'],
+  ['aks-metadata', 'e2e:aks-metadata-parity'],
+  ['api-management', 'e2e:api-management-parity'],
+  ['app-configuration-parameters', 'e2e:app-configuration-parity'],
+  ['azure-files', 'e2e:azure-files-parity'],
+  ['azure-functions', 'e2e:azure-functions-parity'],
+  ['blob-storage', 'e2e:storage-parity'],
+  ['container-registry', 'e2e:container-registry-parity'],
+  ['cosmos-nosql-table', 'e2e:cosmos-parity'],
+  ['database-migration-service', 'e2e:database-migration-service-parity'],
+  ['dns-zones', 'e2e:dns-zones-parity'],
+  ['event-grid', 'e2e:event-grid-parity'],
+  ['event-hubs-streams', 'e2e:event-hubs-parity'],
+  ['front-door-cdn', 'e2e:front-door-cdn-parity'],
+  ['identity-rbac', 'e2e:identity-rbac-parity'],
+  ['key-vault-keys', 'e2e:key-vault-parity'],
+  ['key-vault-secrets', 'e2e:key-vault-parity'],
+  ['load-balancing', 'e2e:load-balancing-parity'],
+  ['logic-workflows', 'e2e:logic-workflows-parity'],
+  ['monitor-logs', 'e2e:monitor-logs-parity'],
+  ['monitor-metrics-alerts', 'e2e:monitor-metrics-alerts-parity'],
+  ['mysql-flexible-server', 'e2e:mysql-parity'],
+  ['postgresql-flexible-server', 'e2e:postgresql-parity'],
+  ['queue-storage', 'e2e:storage-parity'],
+  ['redis-cache', 'e2e:redis-parity'],
+  ['service-bus-topics', 'e2e:service-bus-parity'],
+  ['service-discovery', 'e2e:service-discovery-parity'],
+  ['synapse-warehouse', 'e2e:synapse-warehouse-parity'],
+  ['virtual-network', 'e2e:virtual-network-parity'],
+  ['waf-policy', 'e2e:waf-policy-parity'],
+]);
 
 const dimensions = [
   {
@@ -111,6 +156,14 @@ function isStorageCapability(id) {
   return ['blob-storage', 'queue-storage', 'cosmos-nosql-table', 'azure-files'].includes(id);
 }
 
+function iacProviderEvidence(capabilityId, packageJson) {
+  const script = iacScriptByCapability.get(capabilityId);
+  const scripts = packageJson?.scripts ?? {};
+  const smoke = scripts.smoke ?? '';
+  if (!script || !scripts[script] || !smoke.includes(`npm run ${script}`)) return null;
+  return { script, platforms: platformRunnerNames };
+}
+
 function markdown(doc) {
   const lines = [
     '# Azure 99% Parity Checklist',
@@ -168,10 +221,12 @@ function markdown(doc) {
 const [
   liveCatalog,
   providerSurface,
+  packageJson,
   storageDataPlaneExpectations,
 ] = await Promise.all([
   loadJson(liveCatalogPath, { calls: [] }),
   loadJson(providerSurfacePath, null),
+  loadJson(packageJsonPath, { scripts: {} }),
   loadJson(storageDataPlaneExpectationsPath, { expectations: [] }),
 ]);
 
@@ -202,6 +257,7 @@ const services = allCapabilities.map(capability => {
   const hasLocalFacade = capability.implementedOperations.length > 0;
   const hasOfficialEmulator = capability.primaryModes.includes('official-emulator');
   const storageDataPlaneRelevant = ['blob-storage', 'queue-storage'].includes(capability.id);
+  const iacEvidence = iacProviderEvidence(capability.id, packageJson);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -256,10 +312,20 @@ const services = allCapabilities.map(capability => {
       gaps: ['Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service.'],
     }),
     iacProviderBehavior: status({
-      partial: false,
+      partial: !!iacEvidence,
       complete: false,
-      evidence: [],
-      gaps: ['Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint.'],
+      evidence: iacEvidence
+        ? [
+          `${iacEvidence.script} is wired into npm run smoke`,
+          `${iacEvidence.platforms.length} platform lifecycle runners: ${iacEvidence.platforms.join(', ')}`,
+        ]
+        : [],
+      gaps: iacEvidence
+        ? [
+          'Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.',
+          'Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity.',
+        ]
+        : ['Wire a dedicated parity pack into npm run smoke with Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible GlobalStack lifecycle coverage.'],
     }),
     dataPlaneBehavior: status({
       partial: storageDataPlaneRelevant && storageDataPlaneExpectationCount > 0,
