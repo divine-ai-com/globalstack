@@ -1181,6 +1181,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           && (
             resourceType.startsWith('Microsoft.Insights/metricAlerts/')
             || resourceType.startsWith('Microsoft.Insights/actionGroups/')
+            || resourceType.startsWith('Microsoft.Insights/diagnosticSettings/')
           )
           && !exactCapabilityForResourceType(resourceType)
         ) {
@@ -1188,6 +1189,23 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             {
               code: 'ExplicitGap',
               message: 'Unsupported Azure Monitor child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
+          providerRoute.providerNamespace === 'Microsoft.EventGrid'
+          && (
+            resourceType.startsWith('Microsoft.EventGrid/systemTopics/')
+            || resourceType.startsWith('Microsoft.EventGrid/topics/')
+            || resourceType.startsWith('Microsoft.EventGrid/eventSubscriptions/')
+          )
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Event Grid child and action routes must fail closed until captured and implemented.',
             },
           ]);
         }

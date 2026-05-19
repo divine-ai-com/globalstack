@@ -219,6 +219,14 @@ export class ResourceStore {
         ...(type === 'Microsoft.EventGrid/topics'
           ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
           : {}),
+        ...(type === 'Microsoft.EventGrid/systemTopics'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              metricResourceId: existing?.properties?.metricResourceId ?? id,
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
         ...(type === 'Microsoft.EventHub/namespaces'
           ? {
               serviceBusEndpoint: existing?.properties?.serviceBusEndpoint ?? eventHubNamespaceEndpoint(name),

@@ -41,6 +41,7 @@ const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity'
 const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
 const frontDoorCdnParityResultsPath = join(distRoot, 'e2e', 'azure-front-door-cdn-parity', 'results.json');
 const wafPolicyParityResultsPath = join(distRoot, 'e2e', 'azure-waf-policy-parity', 'results.json');
+const activityLogAuditParityResultsPath = join(distRoot, 'e2e', 'azure-activity-log-audit-parity', 'results.json');
 const azureFilesParityResultsPath = join(distRoot, 'e2e', 'azure-files-parity', 'results.json');
 const appConfigurationParityResultsPath = join(distRoot, 'e2e', 'azure-app-configuration-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
@@ -1775,6 +1776,60 @@ if (!wafPolicyParityText) {
   }
   if (wafPolicyParity.platformMatrix?.ok !== true || wafPolicyParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure WAF Policy parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const activityLogAuditParityText = await readFile(activityLogAuditParityResultsPath, 'utf8').catch(() => '');
+if (!activityLogAuditParityText) {
+  errors.push('missing Azure Activity Log Audit parity E2E results; run npm run e2e:activity-log-audit-parity');
+} else {
+  const activityLogAuditParity = JSON.parse(activityLogAuditParityText);
+  if (activityLogAuditParity.ok !== true) {
+    errors.push('Azure Activity Log Audit parity E2E did not pass');
+  }
+  if (activityLogAuditParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Activity Log Audit parity control-plane matrix has failures');
+  }
+  if ((activityLogAuditParity.controlPlane?.total ?? 0) < 25) {
+    errors.push('Azure Activity Log Audit parity control-plane matrix should exercise at least 25 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'system topic create requires an existing resource group',
+    'resource group create succeeds',
+    'system topic collection list is empty before create',
+    'system topic delete missing returns no content',
+    'system topic empty body is rejected',
+    'system topic invalid location is rejected',
+    'system topic invalid name is rejected',
+    'system topic missing source is rejected',
+    'system topic missing topic type is rejected',
+    'system topic invalid topic type is rejected',
+    'system topic create succeeds',
+    'system topic get succeeds',
+    'system topic update can change tags',
+    'system topic list includes created resource',
+    'diagnostic setting create preserves captured unsupported root-scope behavior',
+    'diagnostic setting empty body is rejected before captured root-scope behavior',
+    'unsupported system topic event subscription route fails closed',
+    'unsupported system topic regenerate key action fails closed',
+    'unsupported diagnostic setting child route fails closed',
+    'ARM template deployment can create system topic',
+    'system topic get after delete is not found',
+  ]) {
+    if (!activityLogAuditParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Activity Log Audit parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (activityLogAuditParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Activity Log Audit parity E2E must include the platform matrix during validation');
+  }
+  if (activityLogAuditParity.platformMatrix?.ok !== true || activityLogAuditParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Activity Log Audit parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

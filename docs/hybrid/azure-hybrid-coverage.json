@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:13:26.057Z",
+    "generatedAt": "2026-05-19T14:24:55.836Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1184,7 +1184,13 @@
       ],
       "implementedOperations": [
         "ActivityLog.RecordLocal",
-        "DiagnosticSettings.CreateOrUpdate",
+        "DiagnosticSettings.RejectUnsupportedRootScope",
+        "SystemTopics.CreateOrUpdate",
+        "SystemTopics.Get",
+        "SystemTopics.List",
+        "SystemTopics.Update",
+        "SystemTopics.Delete",
+        "SystemTopicRoutes.RejectUnsupportedRoutes",
         "Events.ListLocal"
       ],
       "contractTested": false,
@@ -4778,7 +4784,91 @@
           "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
         ]
       },
-      "DiagnosticSettings.CreateOrUpdate": {
+      "DiagnosticSettings.RejectUnsupportedRootScope": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopics.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopics.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopics.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopics.Update": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopics.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-audit-log"
+        ],
+        "knownGaps": [
+          "MVP records local ARM calls and selected data-plane traces only.",
+          "No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP."
+        ]
+      },
+      "SystemTopicRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

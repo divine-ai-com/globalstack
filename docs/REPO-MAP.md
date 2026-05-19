@@ -106,6 +106,7 @@ flowchart TD
 - `scripts/capture-azure-storage-lifecycle.mjs`
 - `scripts/capture-real-azure-operation.mjs`
 - `scripts/classify-azure-captures.mjs`
+- `scripts/e2e-azure-activity-log-audit-parity.mjs`
 - `scripts/e2e-azure-aks-metadata-parity.mjs`
 - `scripts/e2e-azure-api-management-parity.mjs`
 - `scripts/e2e-azure-app-configuration-parity.mjs`
@@ -179,6 +180,7 @@ flowchart TD
 - `npm run docs:nav`
 - `npm run docs:scope`
 - `npm run docs:test`
+- `npm run e2e:activity-log-audit-parity`
 - `npm run e2e:aks-metadata-parity`
 - `npm run e2e:api-management-parity`
 - `npm run e2e:app-configuration-parity`

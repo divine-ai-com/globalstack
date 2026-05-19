@@ -570,6 +570,7 @@
     "docs:nav",
     "docs:scope",
     "docs:test",
+    "e2e:activity-log-audit-parity",
     "e2e:aks-metadata-parity",
     "e2e:api-management-parity",
     "e2e:app-configuration-parity",

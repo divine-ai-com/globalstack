@@ -221,6 +221,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:waf-policy-parity
 
 Expected result is `dist/e2e/azure-waf-policy-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 WAF cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Application Gateway WAF policy lifecycle, CDN security policy lifecycle, stricter policy settings/managed-rule/association rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Activity Log Audit parity pack after changing Event Grid system-topic behavior, diagnostic-setting rejection behavior, unsupported audit route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:activity-log-audit-parity
+```
+
+Expected result is `dist/e2e/azure-activity-log-audit-parity/results.json` with `ok == true`, zero control-plane failures, at least 25 Activity Log Audit cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Event Grid system-topic lifecycle, stricter source/topicType rejection, captured diagnostic-setting root-scope rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Files parity pack after changing Storage file share behavior, Azure NetApp explicit-gap behavior, unsupported file route handling, or platform deployment routing:
 
 ```bash

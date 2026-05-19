@@ -449,6 +449,17 @@ function validateEventGridName(resourceType, providerRoute) {
     }
   }
 
+  if (resourceType === 'Microsoft.EventGrid/systemTopics') {
+    const systemTopicName = serviceBusNameFromTypePath(providerRoute?.typePath, 'systemTopics');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{1,48}[A-Za-z0-9])?$/.test(systemTopicName)) {
+      return invalidEventGridName(
+        resourceType,
+        systemTopicName,
+        'System topic names must be 3 through 50 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -1052,6 +1063,49 @@ function validateMonitorMetricsPayload(resourceType, body) {
     if (!properties.criteria || !Array.isArray(properties.criteria.allOf) || properties.criteria.allOf.length === 0) {
       return topLevelError(400, 'BadRequest', "Required property 'criteria.allOf' not found in JSON. Path 'properties.criteria'.");
     }
+  }
+
+  return null;
+}
+
+function validateActivityLogAuditPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.EventGrid/systemTopics') return null;
+
+  const properties = body.properties ?? {};
+  if (typeof properties.source !== 'string' || properties.source.trim() === '') {
+    return envelopedError(
+      400,
+      'InvalidRequest',
+      "Required property 'source' not found in JSON. Path 'properties', line 1, position 36.",
+    );
+  }
+  if (typeof properties.topicType !== 'string' || properties.topicType.trim() === '') {
+    return envelopedError(
+      400,
+      'InvalidRequest',
+      "Required property 'topicType' not found in JSON. Path 'properties', line 1, position 36.",
+    );
+  }
+  const supportedTopicTypes = new Set([
+    'Microsoft.Resources.ResourceGroups',
+    'Microsoft.Storage.StorageAccounts',
+    'Microsoft.EventGrid.Topics',
+    'Microsoft.KeyVault.Vaults',
+    'Microsoft.ContainerRegistry.Registries',
+  ]);
+  if (!supportedTopicTypes.has(properties.topicType)) {
+    return envelopedError(
+      400,
+      'InvalidRequest',
+      `The provided topicType '${properties.topicType}' is not supported for local activity-log audit parity.`,
+    );
+  }
+  if (Object.hasOwn(properties, 'identity') && typeof properties.identity !== 'object') {
+    return envelopedError(
+      400,
+      'InvalidRequest',
+      "Property 'identity' must be an object when provided.",
+    );
   }
 
   return null;
@@ -1982,13 +2036,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
-  if (resourceType === 'Microsoft.EventGrid/systemTopics') {
-    return envelopedError(
-      400,
-      'InvalidRequest',
-      "Required property 'topicType' not found in JSON. Path 'properties', line 1, position 36.",
-    );
-  }
+  const activityLogAuditPayloadValidation = validateActivityLogAuditPayload(resourceType, body);
+  if (activityLogAuditPayloadValidation) return activityLogAuditPayloadValidation;
 
   const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
   if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
