@@ -25,7 +25,7 @@ This document splits evidence into:
 | Queue data plane | Azurite | Hardening E2E covers invalid names, duplicate create idempotency, missing queue, malformed message, put/peek/list/delete/post-delete. | Official-emulator evidence only; not full Azure parity. |
 | Blob/Queue real Azure data plane | Real Azure | Wave 1 captured 32 Blob/Queue cases with cleanup verified. | Live evidence exists for captured cases only; mismatches must be normalized before claims change. |
 | Blob/Queue GlobalStack data-plane normalization | Proxy in front of Azurite | Normalizer E2E rewrites three captured Azurite mismatches to real Azure status/error-code behavior. | Implemented only for captured safe mismatches; no broad parity claim. |
-| Table data plane | Azurite | Not yet implemented in repo tests. | Gap. |
+| Table data plane | Azurite | Hardening E2E covers invalid names, duplicate table, entity insert/get/delete, duplicate entity conflict, missing auth, and post-delete rejection. | Official-emulator evidence only; not full Azure parity. |
 | Azure Files data plane | None in Azurite | Not yet implemented in repo tests. | Gap requiring separate emulator strategy or real Azure capture. |
 
 ## Implemented Hardening Checks
@@ -55,6 +55,8 @@ It is now required by:
 npm run smoke
 npm run validate
 ```
+
+The current hardening pack includes Table Storage through Azurite as official-emulator evidence. It verifies table naming rejects, duplicate table creation, entity insert/get/delete, duplicate entity conflict, missing-auth rejection, and post-delete rejection. Table Storage still needs direct real Azure data-plane capture before any stronger parity claim.
 
 ## Live Azure Capture Wave 1
 

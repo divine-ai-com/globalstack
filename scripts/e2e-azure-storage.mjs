@@ -83,9 +83,16 @@ async function startAzurite(docker) {
 
 async function waitForAzurite(timeoutMs = 90000) {
   const started = Date.now();
+  for (const port of [10000, 10001, 10002]) {
+    await waitForAzuritePort(port, Math.max(1000, timeoutMs - (Date.now() - started)));
+  }
+}
+
+async function waitForAzuritePort(port, timeoutMs = 90000) {
+  const started = Date.now();
   while (Date.now() - started < timeoutMs) {
     const connected = await new Promise(resolve => {
-      const socket = net.createConnection({ host: '127.0.0.1', port: 10000 });
+      const socket = net.createConnection({ host: '127.0.0.1', port });
       socket.setTimeout(1000);
       socket.once('connect', () => {
         socket.destroy();
@@ -100,7 +107,7 @@ async function waitForAzurite(timeoutMs = 90000) {
     if (connected) return;
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
-  throw new Error('Azurite did not become reachable on port 10000.');
+  throw new Error(`Azurite did not become reachable on port ${port}.`);
 }
 
 function httpJson(port, method, path, body) {
@@ -201,6 +208,7 @@ try {
     const storageAccount = `gse2e${suffix}`.slice(0, 24);
     const blobContainer = `features-${suffix}`;
     const queueName = `queue${suffix}`.toLowerCase();
+    const tableName = `Features${suffix.replace(/[^A-Za-z0-9]/g, '')}`;
     const blobName = 'feature-batch.json';
     const blobPayload = JSON.stringify({ workflow: 'mlops-feature-intake', suffix });
 
@@ -267,6 +275,23 @@ try {
     assert.ok(peekMessage.body.includes(Buffer.from(messageText).toString('base64')), peekMessage.body);
     record('azurite peek queue message', true, 'Queue message round-tripped');
 
+    const createTable = await azurite.createTable(tableName);
+    assert.ok([201, 204].includes(createTable.status), createTable.body);
+    record('azurite create table', true, `HTTP ${createTable.status}`);
+
+    const insertEntity = await azurite.insertTableEntity(tableName, {
+      PartitionKey: 'mlops',
+      RowKey: `feature-${suffix}`,
+      Workflow: 'feature-intake',
+    });
+    assert.ok([201, 204].includes(insertEntity.status), insertEntity.body);
+    record('azurite insert table entity', true, `HTTP ${insertEntity.status}`);
+
+    const getEntity = await azurite.getTableEntity(tableName, 'mlops', `feature-${suffix}`);
+    assert.equal(getEntity.status, 200, getEntity.body);
+    assert.match(getEntity.body, /"PartitionKey":"mlops"/);
+    record('azurite get table entity', true, 'Table entity round-tripped');
+
     const coverage = await httpJson(armPort, 'GET', '/_globalstack/coverage');
     assert.equal(coverage.status, 200);
     const blobStorage = coverage.body.capabilities.find(item => item.id === 'blob-storage');
@@ -287,7 +312,7 @@ try {
 const report = {
   ok,
   generatedAt: new Date().toISOString(),
-  scope: 'ARM facade + Azurite Blob/Queue data plane',
+  scope: 'ARM facade + Azurite Blob/Queue/Table data plane',
   steps,
 };
 

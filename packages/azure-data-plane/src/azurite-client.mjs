@@ -51,7 +51,18 @@ function sign({ method, url, headers, bodyLength = 0, account = azuriteAccount }
     .digest('base64');
 }
 
-async function azuriteFetch({ method, url, headers = {}, body, account = azuriteAccount, authorize = true }) {
+function signLite({ url, headers, account = azuriteAccount }) {
+  const date = headers['x-ms-date'] ?? headers['Date'] ?? headers.date ?? '';
+  const stringToSign = [
+    date,
+    canonicalizedResource(url, account.name),
+  ].join('\n');
+  return createHmac('sha256', Buffer.from(account.key, 'base64'))
+    .update(stringToSign, 'utf8')
+    .digest('base64');
+}
+
+async function azuriteFetch({ method, url, headers = {}, body, account = azuriteAccount, authorize = true, authScheme = 'SharedKey' }) {
   const bodyBuffer = body === undefined ? Buffer.alloc(0) : Buffer.isBuffer(body) ? body : Buffer.from(String(body));
   const requestHeaders = {
     'x-ms-date': new Date().toUTCString(),
@@ -59,13 +70,21 @@ async function azuriteFetch({ method, url, headers = {}, body, account = azurite
     ...headers,
   };
   if (authorize) {
-    requestHeaders.Authorization = `SharedKey ${account.name}:${sign({
-      method,
-      url,
-      headers: requestHeaders,
-      bodyLength: bodyBuffer.length,
-      account,
-    })}`;
+    if (authScheme === 'SharedKeyLite') {
+      requestHeaders.Authorization = `SharedKeyLite ${account.name}:${signLite({
+        url,
+        headers: requestHeaders,
+        account,
+      })}`;
+    } else {
+      requestHeaders.Authorization = `SharedKey ${account.name}:${sign({
+        method,
+        url,
+        headers: requestHeaders,
+        bodyLength: bodyBuffer.length,
+        account,
+      })}`;
+    }
   }
   if (body !== undefined && !('content-length' in requestHeaders) && !('Content-Length' in requestHeaders)) {
     requestHeaders['content-length'] = String(bodyBuffer.length);
@@ -98,11 +117,13 @@ export class AzuriteClient {
     account = azuriteAccount,
     blobEndpoint = 'http://127.0.0.1:10000',
     queueEndpoint = 'http://127.0.0.1:10001',
+    tableEndpoint = 'http://127.0.0.1:10002',
     pathStyle = true,
   } = {}) {
     this.account = account;
     this.blobEndpoint = blobEndpoint;
     this.queueEndpoint = queueEndpoint;
+    this.tableEndpoint = tableEndpoint;
     this.pathStyle = pathStyle;
   }
 
@@ -115,6 +136,12 @@ export class AzuriteClient {
   queueUrl(queue, suffix = '', query = '') {
     const accountPrefix = this.pathStyle ? `/${this.account.name}` : '';
     return new URL(`${this.queueEndpoint}${accountPrefix}/${encodeURIComponent(queue)}${suffix}${query}`);
+  }
+
+  tableUrl(path = '', query = '') {
+    const accountPrefix = this.pathStyle ? `/${this.account.name}` : '';
+    const suffix = path ? `/${path}` : '';
+    return new URL(`${this.tableEndpoint}${accountPrefix}${suffix}${query}`);
   }
 
   async createContainer(container) {
@@ -262,6 +289,97 @@ export class AzuriteClient {
       method: 'GET',
       url: this.queueUrl(queue, '/messages', '?peekonly=true&numofmessages=1'),
       account: this.account,
+    });
+  }
+
+  async createTable(table) {
+    return azuriteFetch({
+      method: 'POST',
+      url: this.tableUrl('Tables'),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+        'content-type': 'application/json',
+        prefer: 'return-no-content',
+      },
+      body: JSON.stringify({ TableName: table }),
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async listTables() {
+    return azuriteFetch({
+      method: 'GET',
+      url: this.tableUrl('Tables'),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+      },
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async deleteTable(table) {
+    return azuriteFetch({
+      method: 'DELETE',
+      url: this.tableUrl(`Tables('${encodeURIComponent(table)}')`),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+      },
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async insertTableEntity(table, entity) {
+    return azuriteFetch({
+      method: 'POST',
+      url: this.tableUrl(encodeURIComponent(table)),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(entity),
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async getTableEntity(table, partitionKey, rowKey) {
+    return azuriteFetch({
+      method: 'GET',
+      url: this.tableUrl(`${encodeURIComponent(table)}(PartitionKey='${encodeURIComponent(partitionKey)}',RowKey='${encodeURIComponent(rowKey)}')`),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+      },
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async deleteTableEntity(table, partitionKey, rowKey) {
+    return azuriteFetch({
+      method: 'DELETE',
+      url: this.tableUrl(`${encodeURIComponent(table)}(PartitionKey='${encodeURIComponent(partitionKey)}',RowKey='${encodeURIComponent(rowKey)}')`),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+        'if-match': '*',
+      },
+      account: this.account,
+      authScheme: 'SharedKeyLite',
+    });
+  }
+
+  async getTableEntityWithoutAuthorization(table, partitionKey, rowKey) {
+    return azuriteFetch({
+      method: 'GET',
+      url: this.tableUrl(`${encodeURIComponent(table)}(PartitionKey='${encodeURIComponent(partitionKey)}',RowKey='${encodeURIComponent(rowKey)}')`),
+      headers: {
+        accept: 'application/json;odata=nometadata',
+      },
+      account: this.account,
+      authorize: false,
+      authScheme: 'SharedKeyLite',
     });
   }
 }

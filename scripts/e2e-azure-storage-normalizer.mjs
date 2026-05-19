@@ -174,7 +174,7 @@ try {
   await startAzurite(docker);
   await waitForPort(10000);
   await waitForPort(10001);
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
   blobProxy = await listenStorageProxy({
     service: 'blob',

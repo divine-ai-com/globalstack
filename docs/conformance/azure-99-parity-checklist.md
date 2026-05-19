@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T05:53:08.765Z
+Generated: 2026-05-19T06:19:47.000Z
 
 ## Dimensions
 
@@ -73,7 +73,7 @@ Generated: 2026-05-19T05:53:08.765Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | partial | 32 Blob/Queue data-plane expectations | Expand Blob/Queue captures and local normalization beyond Wave 1. |
 | Repeat captures for ambiguous behavior | partial | queue-peek-after-delete is explicitly marked needs-repeat-capture | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 9 registry operations declared<br>backing engines: azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 12 registry operations declared<br>backing engines: azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## azure-functions
 
@@ -220,7 +220,7 @@ Generated: 2026-05-19T05:53:08.765Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | not-started | official emulator path declared: cosmos-db-emulator, azurite | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 3 registry operations declared<br>backing engines: cosmos-db-emulator, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 4 registry operations declared<br>backing engines: cosmos-db-emulator, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## service-bus-topics
 
@@ -409,7 +409,7 @@ Generated: 2026-05-19T05:53:08.765Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | partial | 32 Blob/Queue data-plane expectations | Expand Blob/Queue captures and local normalization beyond Wave 1. |
 | Repeat captures for ambiguous behavior | partial | queue-peek-after-delete is explicitly marked needs-repeat-capture | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 4 registry operations declared<br>backing engines: azurite, service-bus-emulator | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 5 registry operations declared<br>backing engines: azurite, service-bus-emulator | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## redis-cache
 

@@ -472,6 +472,9 @@ if (!storageE2eText) {
     'azurite put blob',
     'azurite get blob',
     'azurite put queue message',
+    'azurite create table',
+    'azurite insert table entity',
+    'azurite get table entity',
     'coverage explicit gaps',
   ];
   for (const step of requiredSteps) {
@@ -497,14 +500,20 @@ if (!storageHardeningText) {
     'queue duplicate create is idempotent',
     'queue malformed message rejected',
     'queue peek after delete rejected',
+    'table duplicate create rejected',
+    'table insert entity',
+    'table duplicate entity insert rejected',
+    'table get without authorization rejected',
+    'table get entity after delete rejected',
+    'table insert after delete rejected',
   ];
   for (const step of requiredHardeningSteps) {
     if (!storageHardening.steps?.some(item => item.name === step && item.ok === true)) {
       errors.push(`Azure Storage hardening E2E missing passing step: ${step}`);
     }
   }
-  if ((storageHardening.steps ?? []).length < 30) {
-    errors.push('Azure Storage hardening E2E should cover at least 30 Blob/Queue behavior checks');
+  if ((storageHardening.steps ?? []).length < 40) {
+    errors.push('Azure Storage hardening E2E should cover at least 40 Blob/Queue/Table behavior checks');
   }
   if (!storageHardening.caveat?.includes('Official-emulator evidence only')) {
     errors.push('Azure Storage hardening E2E must preserve the official-emulator evidence caveat');
@@ -546,8 +555,8 @@ if (!storageParityText) {
   if (storageParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Storage parity control-plane matrix has failures');
   }
-  if ((storageParity.controlPlane?.total ?? 0) < 30) {
-    errors.push('Azure Storage parity control-plane matrix should exercise at least 30 cases');
+  if ((storageParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure Storage parity control-plane matrix should exercise at least 35 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -556,10 +565,15 @@ if (!storageParityText) {
     'invalid storage account sku is rejected',
     'valid storage account create is async accepted',
     'child create before storage readiness is rejected',
+    'invalid blob container name is rejected',
+    'invalid queue name is rejected',
+    'invalid file share name is rejected',
+    'invalid table name is rejected',
     'blob container get after delete is Azure-shaped 404',
     'queue get after delete is Azure-shaped 404',
     'file share get after delete is Azure-shaped 404',
     'table get after delete is Azure-shaped 404',
+    'ARM template deployment can create storage account and child resources',
   ]) {
     if (!storageParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Storage parity E2E missing passing case: ${required}`);

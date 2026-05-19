@@ -189,6 +189,14 @@ function invalidStorageAccountName(name) {
   );
 }
 
+function invalidStorageChildName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The storage child resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function invalidServiceBusName(resourceType, name, rule) {
   return envelopedError(
     400,
@@ -455,6 +463,57 @@ function validateAksName(resourceType, providerRoute) {
       'Cluster names must be 1 through 63 characters, use alphanumerics, hyphens, and underscores, and start and end with an alphanumeric character.',
     );
   }
+  return null;
+}
+
+function validateStorageChildName(resourceType, providerRoute) {
+  const dnsStyle = /^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])?$/;
+  const noConsecutiveHyphen = name => !name.includes('--');
+
+  if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices/containers') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'containers');
+    if (!dnsStyle.test(name) || !noConsecutiveHyphen(name)) {
+      return invalidStorageChildName(
+        resourceType,
+        name,
+        'Container names must be lowercase DNS-style names from 3 through 63 characters, use alphanumerics and hyphens, and not start, end, or repeat hyphens.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Storage/storageAccounts/queueServices/queues') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'queues');
+    if (!dnsStyle.test(name) || !noConsecutiveHyphen(name)) {
+      return invalidStorageChildName(
+        resourceType,
+        name,
+        'Queue names must be lowercase DNS-style names from 3 through 63 characters, use alphanumerics and hyphens, and not start, end, or repeat hyphens.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Storage/storageAccounts/fileServices/shares') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'shares');
+    if (!dnsStyle.test(name) || !noConsecutiveHyphen(name)) {
+      return invalidStorageChildName(
+        resourceType,
+        name,
+        'File share names must be lowercase DNS-style names from 3 through 63 characters, use alphanumerics and hyphens, and not start, end, or repeat hyphens.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Storage/storageAccounts/tableServices/tables') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'tables');
+    if (!/^[A-Za-z][A-Za-z0-9]{2,62}$/.test(name)) {
+      return invalidStorageChildName(
+        resourceType,
+        name,
+        'Table names must be 3 through 63 alphanumeric characters and start with a letter.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -806,6 +865,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const aksNameValidation = validateAksName(resourceType, providerRoute);
   if (aksNameValidation) return aksNameValidation;
+
+  const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
+  if (storageChildNameValidation) return storageChildNameValidation;
 
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(

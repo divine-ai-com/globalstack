@@ -170,11 +170,13 @@ try {
   await startAzurite(docker);
   await waitForPort(10000);
   await waitForPort(10001);
+  await waitForPort(10002);
   await new Promise(resolve => setTimeout(resolve, 1500));
 
   const suffix = Date.now().toString(36).slice(-8);
   const container = `hardening-${suffix}`;
   const queue = `hardening-${suffix}`;
+  const table = `Hardening${suffix.replace(/[^A-Za-z0-9]/g, '')}`;
   const blob = 'payload.json';
   const payload = JSON.stringify({ scenario: 'storage-hardening', suffix });
 
@@ -338,6 +340,96 @@ try {
     return response;
   });
 
+  for (const invalidName of ['1bad', 'ab', 'bad-name']) {
+    await record(`table invalid table name ${invalidName}`, async () => {
+      const response = await client.createTable(invalidName);
+      assertStatus(response, 400, invalidName);
+      return response;
+    });
+  }
+
+  await record('table create', async () => {
+    const response = await client.createTable(table);
+    assertStatus(response, [201, 204], 'create table');
+    return response;
+  });
+
+  await record('table duplicate create rejected', async () => {
+    const response = await client.createTable(table);
+    assertStatus(response, 409, 'duplicate table');
+    return response;
+  });
+
+  await record('table insert entity', async () => {
+    const response = await client.insertTableEntity(table, {
+      PartitionKey: 'robotics',
+      RowKey: `run-${suffix}`,
+      Status: 'ready',
+      Score: 99,
+    });
+    assertStatus(response, [201, 204], 'insert table entity');
+    return response;
+  });
+
+  await record('table duplicate entity insert rejected', async () => {
+    const response = await client.insertTableEntity(table, {
+      PartitionKey: 'robotics',
+      RowKey: `run-${suffix}`,
+      Status: 'duplicate',
+    });
+    assertStatus(response, 409, 'duplicate table entity');
+    return response;
+  });
+
+  await record('table get entity', async () => {
+    const response = await client.getTableEntity(table, 'robotics', `run-${suffix}`);
+    assertStatus(response, 200, 'get table entity');
+    assert.match(response.body, /"PartitionKey":"robotics"/);
+    assert.match(response.body, new RegExp(`"RowKey":"run-${suffix}"`));
+    return response;
+  });
+
+  await record('table get without authorization rejected', async () => {
+    const response = await client.getTableEntityWithoutAuthorization(table, 'robotics', `run-${suffix}`);
+    assertStatus(response, [401, 403], 'get table entity without authorization');
+    return response;
+  });
+
+  await record('table list includes created table', async () => {
+    const response = await client.listTables();
+    assertStatus(response, 200, 'list tables');
+    assert.match(response.body, new RegExp(`"TableName":"${table}"`));
+    return response;
+  });
+
+  await record('table delete entity', async () => {
+    const response = await client.deleteTableEntity(table, 'robotics', `run-${suffix}`);
+    assertStatus(response, 204, 'delete table entity');
+    return response;
+  });
+
+  await record('table get entity after delete rejected', async () => {
+    const response = await client.getTableEntity(table, 'robotics', `run-${suffix}`);
+    assertStatus(response, 404, 'get deleted table entity');
+    return response;
+  });
+
+  await record('table delete', async () => {
+    const response = await client.deleteTable(table);
+    assertStatus(response, 204, 'delete table');
+    return response;
+  });
+
+  await record('table insert after delete rejected', async () => {
+    const response = await client.insertTableEntity(table, {
+      PartitionKey: 'robotics',
+      RowKey: 'post-delete',
+      Status: 'missing-table',
+    });
+    assertStatus(response, 404, 'insert into deleted table');
+    return response;
+  });
+
   ok = true;
 } catch {
   ok = false;
@@ -348,7 +440,7 @@ try {
 const report = {
   ok,
   generatedAt: new Date().toISOString(),
-  scope: 'Azurite Blob/Queue data-plane hardening: names, duplicates, auth, not-found, delete, malformed payloads',
+  scope: 'Azurite Blob/Queue/Table data-plane hardening: names, duplicates, auth, not-found, delete, malformed payloads',
   caveat: 'Official-emulator evidence only. Real Azure capture is still required before cloudValidated can be true.',
   steps,
 };

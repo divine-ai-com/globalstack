@@ -97,6 +97,66 @@ function operationStatusPath(asyncOperationUrl) {
   return `${parsed.pathname}${parsed.search}`;
 }
 
+function deploymentPath(resourceGroup, name, apiVersion = '2022-09-01') {
+  return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${name}?api-version=${apiVersion}`;
+}
+
+function storageDeploymentBody(accountName, containerName, queueName, tableName) {
+  return {
+    properties: {
+      mode: 'Incremental',
+      template: {
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        contentVersion: '1.0.0.0',
+        parameters: {
+          storageAccountName: { type: 'string', defaultValue: accountName },
+          containerName: { type: 'string', defaultValue: containerName },
+          queueName: { type: 'string', defaultValue: queueName },
+          tableName: { type: 'string', defaultValue: tableName },
+        },
+        resources: [
+          {
+            type: 'Microsoft.Storage/storageAccounts',
+            apiVersion: '2023-01-01',
+            name: "[parameters('storageAccountName')]",
+            location: 'eastus',
+            sku: { name: 'Standard_LRS' },
+            kind: 'StorageV2',
+            properties: { allowBlobPublicAccess: false },
+          },
+          {
+            type: 'Microsoft.Storage/storageAccounts/blobServices/containers',
+            apiVersion: '2023-01-01',
+            name: "[concat(parameters('storageAccountName'), '/default/', parameters('containerName'))]",
+            properties: { publicAccess: 'None' },
+            dependsOn: ["[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"],
+          },
+          {
+            type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+            apiVersion: '2023-01-01',
+            name: "[concat(parameters('storageAccountName'), '/default/', parameters('queueName'))]",
+            properties: { metadata: { purpose: 'jobs' } },
+            dependsOn: ["[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"],
+          },
+          {
+            type: 'Microsoft.Storage/storageAccounts/tableServices/tables',
+            apiVersion: '2023-01-01',
+            name: "[concat(parameters('storageAccountName'), '/default/', parameters('tableName'))]",
+            properties: {},
+            dependsOn: ["[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"],
+          },
+        ],
+        outputs: {
+          storageAccountName: { type: 'string', value: "[parameters('storageAccountName')]" },
+          containerName: { type: 'string', value: "[parameters('containerName')]" },
+          queueName: { type: 'string', value: "[parameters('queueName')]" },
+          tableName: { type: 'string', value: "[parameters('tableName')]" },
+        },
+      },
+    },
+  };
+}
+
 async function waitForStorageReady(port, resourceGroup, accountName) {
   const path = providerPath(resourceGroup, 'Microsoft.Storage', `storageAccounts/${accountName}`);
   let latest = null;
@@ -119,6 +179,10 @@ async function runControlPlaneMatrix() {
   const queue = `jobs${suffix}`.replace(/[^a-z0-9]/g, '').slice(0, 63);
   const share = `files-${suffix}`;
   const table = `model${suffix}`.replace(/[^A-Za-z0-9]/g, '').slice(0, 63);
+  const templateAccount = `gstpl${suffix}`.replace(/[^a-z0-9]/g, '').slice(0, 24);
+  const templateContainer = `tpl-${suffix}`;
+  const templateQueue = `tpl${suffix}`.replace(/[^a-z0-9]/g, '').slice(0, 63);
+  const templateTable = `Tpl${suffix.replace(/[^A-Za-z0-9]/g, '')}`.slice(0, 63);
   const base = `storageAccounts/${account}`;
 
   async function record(name, fn) {
@@ -276,6 +340,34 @@ async function runControlPlaneMatrix() {
       return { status: result.status, resourceId: result.body.id };
     });
 
+    const invalidChildCases = [
+      {
+        name: 'invalid blob container name is rejected',
+        typePath: `${base}/blobServices/default/containers/BadContainer`,
+      },
+      {
+        name: 'invalid queue name is rejected',
+        typePath: `${base}/queueServices/default/queues/bad--queue`,
+      },
+      {
+        name: 'invalid file share name is rejected',
+        typePath: `${base}/fileServices/default/shares/ab`,
+      },
+      {
+        name: 'invalid table name is rejected',
+        typePath: `${base}/tableServices/default/tables/1bad`,
+      },
+    ];
+
+    for (const child of invalidChildCases) {
+      await record(child.name, async () => {
+        const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.Storage', child.typePath), { properties: {} });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidResourceName');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+    }
+
     const childCases = [
       {
         name: 'blob container',
@@ -350,6 +442,23 @@ async function runControlPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
     }
+
+    await record('ARM template deployment can create storage account and child resources', async () => {
+      const result = await httpJson(
+        port,
+        'PUT',
+        deploymentPath(resourceGroup, `storage-template-${suffix}`),
+        storageDeploymentBody(templateAccount, templateContainer, templateQueue, templateTable),
+      );
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.provisioningState, 'Succeeded');
+      const steps = result.body.properties.globalstackDeploymentSteps;
+      assert.ok(steps.some(step => step.id.endsWith(`/Microsoft.Storage/storageAccounts/${templateAccount}`) && [200, 201, 202].includes(step.status)));
+      assert.ok(steps.some(step => step.id.endsWith(`/blobServices/default/containers/${templateContainer}`) && [200, 201].includes(step.status)));
+      assert.ok(steps.some(step => step.id.endsWith(`/queueServices/default/queues/${templateQueue}`) && step.status === 200));
+      assert.ok(steps.some(step => step.id.endsWith(`/tableServices/default/tables/${templateTable}`) && step.status === 200));
+      return { status: result.status, steps: steps.length };
+    });
 
     await record('storage account delete succeeds', async () => {
       const result = await httpJson(port, 'DELETE', providerPath(resourceGroup, 'Microsoft.Storage', base));

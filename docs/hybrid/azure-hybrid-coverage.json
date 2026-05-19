@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T05:53:08.515Z",
+    "generatedAt": "2026-05-19T06:19:46.771Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -200,7 +200,10 @@
         "StorageAccounts.Delete",
         "BlobContainers.Create",
         "BlobContainers.Get",
-        "BlobContainers.Delete"
+        "BlobContainers.Delete",
+        "BlobDataPlane.PutGetDeleteLocal",
+        "StorageTables.CreateLocal",
+        "StorageTables.EntitiesCrudLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -452,6 +455,7 @@
       "implementedOperations": [
         "DatabaseAccounts.CreateOrUpdate",
         "Tables.Create",
+        "StorageTables.EntitiesCrudLocal",
         "Items.CrudLocal"
       ],
       "contractTested": false,
@@ -773,7 +777,8 @@
         "Queues.Create",
         "Queues.Get",
         "Messages.SendLocal",
-        "Messages.ReceiveLocal"
+        "Messages.ReceiveLocal",
+        "Messages.DeleteLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1386,6 +1391,51 @@
           "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
           "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
         ]
+      },
+      "BlobDataPlane.PutGetDeleteLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "StorageTables.CreateLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
+      },
+      "StorageTables.EntitiesCrudLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite"
+        ],
+        "knownGaps": [
+          "No full Azure Storage RBAC parity in MVP.",
+          "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+          "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+        ]
       }
     },
     "azure-functions": {
@@ -1713,6 +1763,21 @@
         ]
       },
       "Tables.Create": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "StorageTables.EntitiesCrudLocal": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
@@ -2232,6 +2297,21 @@
         ]
       },
       "Messages.ReceiveLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Messages.DeleteLocal": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
