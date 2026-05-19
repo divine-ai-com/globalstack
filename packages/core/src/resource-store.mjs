@@ -31,6 +31,7 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Storage/storageAccounts') return ['Creating', 'ResolvingDns', 'Succeeded'];
   if (type === 'Microsoft.ServiceBus/namespaces') return ['Creating', 'Activating', 'Succeeded'];
   if (type === 'Microsoft.ApiManagement/service') return ['Creating', 'Activating', 'Succeeded'];
+  if (type === 'Microsoft.Cache/redis') return ['Creating', 'Provisioning', 'Succeeded'];
   if (type === 'Microsoft.Web/serverfarms') return ['Creating', 'Ready', 'Succeeded'];
   if (type === 'Microsoft.Web/sites') return ['Creating', 'Starting', 'Succeeded'];
   if (type === 'Microsoft.ContainerService/managedClusters') return ['Creating', 'Reconciling', 'Succeeded'];
@@ -79,6 +80,10 @@ function mysqlFullyQualifiedDomainName(name) {
 
 function cosmosDocumentEndpoint(name) {
   return `https://${name}.documents.azure.com:443/`;
+}
+
+function redisHostName(name) {
+  return `${name}.redis.cache.windows.net`;
 }
 
 function aksFqdn(name, location, dnsPrefix) {
@@ -251,6 +256,14 @@ export class ResourceStore {
         ...(type === 'Microsoft.DocumentDB/databaseAccounts'
           ? {
               documentEndpoint: existing?.properties?.documentEndpoint ?? cosmosDocumentEndpoint(name),
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cache/redis'
+          ? {
+              hostName: existing?.properties?.hostName ?? redisHostName(name),
+              port: existing?.properties?.port ?? 6379,
+              sslPort: existing?.properties?.sslPort ?? 6380,
               provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
             }
           : {}),

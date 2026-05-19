@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:58:37.884Z",
+    "generatedAt": "2026-05-19T13:07:27.271Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -908,6 +908,9 @@
       "implementedOperations": [
         "Redis.CreateOrUpdate",
         "Redis.Get",
+        "Redis.List",
+        "Redis.Delete",
+        "RedisRoutes.RejectUnsupportedRoutes",
         "Redis.SetLocal",
         "Redis.GetLocal"
       ],
@@ -3825,6 +3828,48 @@
         ]
       },
       "Redis.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "Redis.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "Redis.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-redis"
+        ],
+        "knownGaps": [
+          "Local Redis covers Redis protocol behavior only.",
+          "No Azure Cache clustering, enterprise tier, patching, persistence, firewall, or private endpoint parity in MVP."
+        ]
+      },
+      "RedisRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

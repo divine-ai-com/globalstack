@@ -584,6 +584,7 @@
     "e2e:monitor-metrics-alerts-parity",
     "e2e:mysql-parity",
     "e2e:postgresql-parity",
+    "e2e:redis-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",
     "e2e:storage",

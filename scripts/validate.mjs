@@ -29,6 +29,7 @@ const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-manageme
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
 const cosmosParityResultsPath = join(distRoot, 'e2e', 'azure-cosmos-parity', 'results.json');
 const mysqlParityResultsPath = join(distRoot, 'e2e', 'azure-mysql-parity', 'results.json');
+const redisParityResultsPath = join(distRoot, 'e2e', 'azure-redis-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
@@ -977,6 +978,59 @@ if (!mysqlParityText) {
   }
   if (mysqlParity.platformMatrix?.ok !== true || mysqlParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure MySQL parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const redisParityText = await readFile(redisParityResultsPath, 'utf8').catch(() => '');
+if (!redisParityText) {
+  errors.push('missing Azure Redis parity E2E results; run npm run e2e:redis-parity');
+} else {
+  const redisParity = JSON.parse(redisParityText);
+  if (redisParity.ok !== true) {
+    errors.push('Azure Redis parity E2E did not pass');
+  }
+  if (redisParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Redis parity control-plane matrix has failures');
+  }
+  if ((redisParity.controlPlane?.total ?? 0) < 25) {
+    errors.push('Azure Redis parity control-plane matrix should exercise at least 25 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'redis create requires an existing resource group',
+    'resource group create succeeds',
+    'redis collection list is empty before create',
+    'redis delete missing returns no content',
+    'redis empty body is rejected',
+    'redis invalid location is rejected',
+    'redis invalid name is rejected',
+    'redis invalid sku name is rejected',
+    'redis invalid sku family is rejected',
+    'redis invalid sku capacity is rejected',
+    'redis invalid non-ssl flag is rejected',
+    'redis create returns async Azure shape',
+    'redis get reaches Succeeded with endpoint metadata',
+    'redis update preserves metadata',
+    'redis list includes created resource',
+    'unsupported redis firewall rule route fails closed',
+    'unsupported redis linked server route fails closed',
+    'ARM template deployment can create redis resource',
+    'redis get after delete is not found',
+    'redis delete after delete returns no content',
+  ]) {
+    if (!redisParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Redis parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (redisParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Redis parity E2E must include the platform matrix during validation');
+  }
+  if (redisParity.platformMatrix?.ok !== true || redisParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Redis parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

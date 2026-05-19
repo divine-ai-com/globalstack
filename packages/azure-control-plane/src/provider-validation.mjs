@@ -306,6 +306,14 @@ function invalidCosmosName(resourceType, name, rule) {
   );
 }
 
+function invalidRedisName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The Redis resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -553,6 +561,19 @@ function validateCosmosName(resourceType, providerRoute) {
     }
   }
 
+  return null;
+}
+
+function validateRedisName(resourceType, providerRoute) {
+  if (resourceType !== 'Microsoft.Cache/redis') return null;
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'redis');
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/.test(name)) {
+    return invalidRedisName(
+      resourceType,
+      name,
+      'Redis cache names must be 1 through 63 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+    );
+  }
   return null;
 }
 
@@ -1414,6 +1435,29 @@ function validateCosmosPayload(resourceType, body, providerRoute = null) {
   return null;
 }
 
+function validateRedisPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Cache/redis') return null;
+  const sku = body.sku ?? {};
+  if (!['Basic', 'Standard', 'Premium'].includes(sku.name)) {
+    return envelopedError(
+      400,
+      'InvalidRequestBody',
+      "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=globalstack-redacted",
+    );
+  }
+  const validFamilies = sku.name === 'Premium' ? ['P'] : ['C'];
+  if (!validFamilies.includes(sku.family)) {
+    return envelopedError(400, 'InvalidRequestBody', "The value of the parameter 'properties.sku.family' is invalid.\r\nRequestID=globalstack-redacted");
+  }
+  if (!Number.isInteger(sku.capacity) || sku.capacity < 0 || sku.capacity > 6) {
+    return envelopedError(400, 'InvalidRequestBody', "The value of the parameter 'properties.sku.capacity' is invalid.\r\nRequestID=globalstack-redacted");
+  }
+  if (Object.hasOwn(body.properties ?? {}, 'enableNonSslPort') && typeof body.properties.enableNonSslPort !== 'boolean') {
+    return envelopedError(400, 'InvalidRequestBody', "The value of the parameter 'properties.enableNonSslPort' is invalid.\r\nRequestID=globalstack-redacted");
+  }
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1542,6 +1586,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const cosmosNameValidation = validateCosmosName(resourceType, providerRoute);
   if (cosmosNameValidation) return cosmosNameValidation;
 
+  const redisNameValidation = validateRedisName(resourceType, providerRoute);
+  if (redisNameValidation) return redisNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
@@ -1606,19 +1653,14 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const cosmosPayloadValidation = validateCosmosPayload(resourceType, body, providerRoute);
   if (cosmosPayloadValidation) return cosmosPayloadValidation;
 
+  const redisPayloadValidation = validateRedisPayload(resourceType, body);
+  if (redisPayloadValidation) return redisPayloadValidation;
+
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(
       400,
       'InvalidWorkflow',
       "The workflow 'workflow-local' must have Definition property set.",
-    );
-  }
-
-  if (resourceType === 'Microsoft.Cache/redis') {
-    return envelopedError(
-      400,
-      'InvalidRequestBody',
-      "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=globalstack-redacted",
     );
   }
 

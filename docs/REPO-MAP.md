@@ -120,6 +120,7 @@ flowchart TD
 - `scripts/e2e-azure-monitor-metrics-alerts-parity.mjs`
 - `scripts/e2e-azure-mysql-parity.mjs`
 - `scripts/e2e-azure-postgresql-parity.mjs`
+- `scripts/e2e-azure-redis-parity.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-service-bus-parity.mjs`
 - `scripts/e2e-azure-storage-hardening.mjs`
@@ -186,6 +187,7 @@ flowchart TD
 - `npm run e2e:monitor-metrics-alerts-parity`
 - `npm run e2e:mysql-parity`
 - `npm run e2e:postgresql-parity`
+- `npm run e2e:redis-parity`
 - `npm run e2e:service-bus`
 - `npm run e2e:service-bus-parity`
 - `npm run e2e:storage`
