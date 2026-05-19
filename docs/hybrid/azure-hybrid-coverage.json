@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T09:06:11.025Z",
+    "generatedAt": "2026-05-19T09:34:19.588Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -328,10 +328,20 @@
         "globalstack-local-token-service"
       ],
       "implementedOperations": [
-        "RoleAssignments.Create",
-        "RoleAssignments.Get",
+        "OpenIdConfiguration.GetLocal",
+        "Token.IssueLocal",
+        "Token.RejectInvalidClientLocal",
         "ManagedIdentities.CreateOrUpdate",
-        "Token.IssueLocal"
+        "ManagedIdentities.Get",
+        "ManagedIdentities.List",
+        "ManagedIdentities.Delete",
+        "ManagedIdentities.RejectUnsupportedActions",
+        "RoleAssignments.GetCapturedNotFound",
+        "RoleAssignments.ValidateCreateRequest",
+        "RoleAssignments.DeleteMissing",
+        "RoleDefinitions.GetCapturedNotFound",
+        "RoleDefinitions.ValidateCreateRequest",
+        "RoleDefinitions.DeleteMissing"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1826,7 +1836,7 @@
       }
     },
     "identity-rbac": {
-      "RoleAssignments.Create": {
+      "OpenIdConfiguration.GetLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -1840,7 +1850,21 @@
           "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
         ]
       },
-      "RoleAssignments.Get": {
+      "Token.IssueLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "Token.RejectInvalidClientLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -1868,7 +1892,133 @@
           "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
         ]
       },
-      "Token.IssueLocal": {
+      "ManagedIdentities.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "ManagedIdentities.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "ManagedIdentities.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "ManagedIdentities.RejectUnsupportedActions": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleAssignments.GetCapturedNotFound": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleAssignments.ValidateCreateRequest": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleAssignments.DeleteMissing": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleDefinitions.GetCapturedNotFound": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleDefinitions.ValidateCreateRequest": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-local-token-service"
+        ],
+        "knownGaps": [
+          "MVP uses permissive local tokens and records authorization decisions.",
+          "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+        ]
+      },
+      "RoleDefinitions.DeleteMissing": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

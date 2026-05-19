@@ -111,6 +111,7 @@ flowchart TD
 - `scripts/e2e-azure-container-registry-parity.mjs`
 - `scripts/e2e-azure-event-grid-parity.mjs`
 - `scripts/e2e-azure-functions-parity.mjs`
+- `scripts/e2e-azure-identity-rbac-parity.mjs`
 - `scripts/e2e-azure-key-vault-parity.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-service-bus-parity.mjs`
@@ -168,6 +169,7 @@ flowchart TD
 - `npm run e2e:azure-functions-parity`
 - `npm run e2e:container-registry-parity`
 - `npm run e2e:event-grid-parity`
+- `npm run e2e:identity-rbac-parity`
 - `npm run e2e:key-vault-parity`
 - `npm run e2e:service-bus`
 - `npm run e2e:service-bus-parity`

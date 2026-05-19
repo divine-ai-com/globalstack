@@ -100,6 +100,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-functions-parity
 
 Expected result is `dist/e2e/azure-functions-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 57 Azure Functions cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, captured server farm validation, collection and delete-not-found behavior, async server farm and Function App readiness, missing-plan rejection, unsupported function action fail-closed behavior, local HTTP-trigger route rejection, function-key rejection and wrong-key rejection, ARM-template deployment, post-delete route/list/get errors, and representative IaC deployment lifecycles.
 
+Run the identity/RBAC parity pack after changing local token issuance, Managed Identity ARM behavior, authorization resource validation, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:identity-rbac-parity
+```
+
+Expected result is `dist/e2e/azure-identity-rbac-parity/results.json` with `ok == true`, zero control/token-plane failures, at least 42 identity/RBAC cases, and all eight platform runners passing. This suite covers OpenID/JWKS discovery, local token rejection and issuance, malformed/wrong ARM auth and subscription mismatch, Managed Identity lifecycle, unsupported Managed Identity action fail-closed behavior, captured RBAC create rejection, RBAC not-found/delete-not-found behavior, ARM-template deployment, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash

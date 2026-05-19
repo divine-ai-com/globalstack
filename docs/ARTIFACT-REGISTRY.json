@@ -575,6 +575,7 @@
     "e2e:azure-functions-parity",
     "e2e:container-registry-parity",
     "e2e:event-grid-parity",
+    "e2e:identity-rbac-parity",
     "e2e:key-vault-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",

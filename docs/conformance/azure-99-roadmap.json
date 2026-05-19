@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T09:06:11.589Z",
+    "generatedAt": "2026-05-19T09:34:19.984Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -2174,7 +2174,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "4 registry operations declared",
+                "14 registry operations declared",
                 "backing engines: globalstack-local-token-service"
               ],
               "gaps": [

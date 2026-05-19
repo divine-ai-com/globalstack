@@ -27,6 +27,7 @@ const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-par
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
+const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -830,6 +831,64 @@ if (!azureFunctionsParityText) {
   }
   if (azureFunctionsParity.platformMatrix?.ok !== true || azureFunctionsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Functions parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const identityRbacParityText = await readFile(identityRbacParityResultsPath, 'utf8').catch(() => '');
+if (!identityRbacParityText) {
+  errors.push('missing Azure identity/RBAC parity E2E results; run npm run e2e:identity-rbac-parity');
+} else {
+  const identityRbacParity = JSON.parse(identityRbacParityText);
+  if (identityRbacParity.ok !== true) {
+    errors.push('Azure identity/RBAC parity E2E did not pass');
+  }
+  if (identityRbacParity.controlAndTokenPlane?.failedCount !== 0) {
+    errors.push('Azure identity/RBAC parity control/token-plane matrix has failures');
+  }
+  if ((identityRbacParity.controlAndTokenPlane?.total ?? 0) < 42) {
+    errors.push('Azure identity/RBAC parity control/token-plane matrix should exercise at least 42 cases');
+  }
+  for (const required of [
+    'openid configuration exposes local token endpoint',
+    'token request missing credentials is rejected',
+    'token request with wrong secret is rejected',
+    'token request with unsupported grant is rejected',
+    'token request for unknown tenant is rejected',
+    'token request issues local access token',
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'managed identity create requires an existing resource group',
+    'managed identity collection list is empty before create',
+    'managed identity delete missing returns no content',
+    'managed identity empty body is rejected',
+    'managed identity invalid location is rejected',
+    'managed identity create succeeds',
+    'managed identity get succeeds',
+    'managed identity update preserves metadata',
+    'managed identity unsupported associated resources action fails closed',
+    'role assignment collection list preserves captured not found',
+    'role assignment get preserves captured not found',
+    'role assignment empty body is rejected',
+    'role assignment populated body remains capture-required rejection',
+    'role definition collection list preserves captured not found',
+    'role definition get preserves captured not found',
+    'role definition empty body is rejected',
+    'role definition populated body remains capture-required rejection',
+    'ARM template deployment can create managed identity',
+    'managed identity get after delete is not found',
+    'managed identity delete after delete returns no content',
+  ]) {
+    if (!identityRbacParity.controlAndTokenPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure identity/RBAC parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (identityRbacParity.platformMatrix?.skipped === true) {
+    errors.push('Azure identity/RBAC parity E2E must include the platform matrix during validation');
+  }
+  if (identityRbacParity.platformMatrix?.ok !== true || identityRbacParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure identity/RBAC parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 
