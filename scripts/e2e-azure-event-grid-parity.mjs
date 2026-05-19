@@ -71,6 +71,7 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: {
       ...(options.auth === false ? {} : { authorization: authHeader }),
       'content-type': 'application/json',
+      ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -93,6 +94,44 @@ async function httpJson(port, method, path, body, options = {}) {
 async function httpDataPlaneJson(port, method, path, body, headers = {}) {
   return new Promise((resolve, reject) => {
     const payload = body === undefined ? undefined : JSON.stringify(body);
+    const req = request({
+      host: '127.0.0.1',
+      port,
+      method,
+      path,
+      headers: {
+        'content-type': 'application/json',
+        ...(payload ? { 'content-length': Buffer.byteLength(payload) } : {}),
+        ...headers,
+      },
+    }, (res) => {
+      let text = '';
+      res.on('data', chunk => { text += chunk; });
+      res.on('end', () => {
+        let parsed = null;
+        if (text) {
+          try {
+            parsed = JSON.parse(text);
+          } catch {
+            parsed = text;
+          }
+        }
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: parsed,
+        });
+      });
+    });
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
+}
+
+async function httpDataPlaneRaw(port, method, path, body, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const payload = body === undefined ? undefined : String(body);
     const req = request({
       host: '127.0.0.1',
       port,
@@ -152,6 +191,30 @@ function topicBody(overrides = {}) {
   };
 }
 
+function deploymentBody(topicName) {
+  return {
+    properties: {
+      mode: 'Incremental',
+      template: {
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        contentVersion: '1.0.0.0',
+        resources: [
+          {
+            type: 'Microsoft.EventGrid/topics',
+            apiVersion: '2022-06-15',
+            name: topicName,
+            location: 'eastus',
+            properties: { inputSchema: 'EventGridSchema' },
+          },
+        ],
+        outputs: {
+          topicName: { type: 'string', value: topicName },
+        },
+      },
+    },
+  };
+}
+
 function eventGridEvent(topicId, suffix) {
   return {
     id: `evt-${suffix}`,
@@ -173,6 +236,7 @@ async function runControlPlaneAndDataPlaneMatrix() {
   const resourceGroup = `rg-gs-eg-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-eg-missing-${suffix}`;
   const topic = `egtopic-${suffix}`.slice(0, 50);
+  const templateTopic = `egtemplate-${suffix}`.slice(0, 50);
   const missingTopic = `egmissing-${suffix}`.slice(0, 50);
   const eventSubscription = `sub-${suffix}`.slice(0, 40);
   const topicPath = `topics/${topic}`;
@@ -213,6 +277,43 @@ async function runControlPlaneAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('malformed bearer token is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.EventGrid', topicPath),
+          undefined,
+          { headers: { authorization: 'Bearer' } },
+        );
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('wrong bearer token is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.EventGrid', topicPath),
+          undefined,
+          { headers: { authorization: 'Bearer not-the-globalstack-local-token' } },
+        );
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('subscription mismatch is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          `/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/${resourceGroup}/providers/Microsoft.EventGrid/${topicPath}?api-version=2022-06-15`,
+        );
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'AuthorizationFailed');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('missing api-version is rejected', async () => {
         const result = await httpJson(
           armPort,
@@ -245,6 +346,19 @@ async function runControlPlaneAndDataPlaneMatrix() {
         assert.equal(result.status, 201);
         assert.equal(result.body.name, resourceGroup);
         return { status: result.status, resourceId: result.body.id };
+      });
+
+      await record('topic delete not-found preserves Azure no-content shape', async () => {
+        const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.EventGrid', topicPath));
+        assert.equal(result.status, 204);
+        return { status: result.status };
+      });
+
+      await record('topic list is empty before create', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.EventGrid', 'topics'));
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value.length, 0);
+        return { status: result.status, count: result.body.value.length };
       });
 
       await record('topic empty body is rejected', async () => {
@@ -325,6 +439,13 @@ async function runControlPlaneAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('unsupported topic action fails closed', async () => {
+        const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.EventGrid', `${topicPath}/regenerateKey`), {});
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('topic listKeys returns shared access keys', async () => {
         const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.EventGrid', `${topicPath}/listKeys`), {});
         assert.equal(result.status, 200);
@@ -354,6 +475,46 @@ async function runControlPlaneAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('publish with invalid key is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [eventGridEvent(topicId, suffix)], {
+          host: topicHost,
+          'aeg-sas-key': 'not-a-valid-topic-key',
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish with wrong method is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/api/events?overload=EventGridEvent&api-version=2018-01-01', undefined, {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 405);
+        assert.equal(errorCode(result), 'MethodNotAllowed');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish with wrong path is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/wrong/path?overload=EventGridEvent&api-version=2018-01-01', [eventGridEvent(topicId, suffix)], {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish with non Event Grid host is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [eventGridEvent(topicId, suffix)], {
+          host: 'example.invalid',
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('publish to unknown topic is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [eventGridEvent(topicId, suffix)], {
           host: `${missingTopic}.eastus-1.eventgrid.azure.net`,
@@ -361,6 +522,16 @@ async function runControlPlaneAndDataPlaneMatrix() {
         });
         assert.equal(result.status, 404);
         assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish malformed JSON is rejected', async () => {
+        const result = await httpDataPlaneRaw(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', '{"id":', {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidRequest');
         return { status: result.status, errorCode: errorCode(result) };
       });
 
@@ -374,8 +545,54 @@ async function runControlPlaneAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('publish empty event batch is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [], {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidRequest');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('publish invalid EventGridEvent schema is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [{ id: 'missing-required-fields' }], {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidRequest');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish invalid EventGridEvent time is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=EventGridEvent&api-version=2018-01-01', [{
+          ...eventGridEvent(topicId, suffix),
+          eventTime: 'not-a-date',
+        }], {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidRequest');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish invalid customEvent schema is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=customEvent&api-version=2018-01-01', [{
+          sub: '/robotics/cell/17',
+          type: 'Contoso.Robotics.CellStatusChanged',
+        }], {
+          host: topicHost,
+          'aeg-sas-key': topicKey,
+        });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'InvalidRequest');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('publish unsupported overload is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/events?overload=CloudEvent&api-version=2018-01-01', [eventGridEvent(topicId, suffix)], {
           host: topicHost,
           'aeg-sas-key': topicKey,
         });
@@ -427,6 +644,21 @@ async function runControlPlaneAndDataPlaneMatrix() {
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'InvalidRequest');
         return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('ARM template deployment can create Event Grid topic', async () => {
+        const deploymentName = `eg-deploy-${suffix}`;
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}?api-version=2022-09-01`,
+          deploymentBody(templateTopic),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.properties.provisioningState, 'Succeeded');
+        assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/topics/${templateTopic}`)));
+        assert.equal(result.body.properties.outputs.topicName.value, templateTopic);
+        return { status: result.status, deploymentName };
       });
 
       await record('topic delete succeeds', async () => {

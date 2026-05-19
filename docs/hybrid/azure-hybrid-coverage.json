@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T07:12:26.068Z",
+    "generatedAt": "2026-05-19T07:46:08.314Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -541,9 +541,14 @@
         "globalstack-event-router"
       ],
       "implementedOperations": [
-        "Topics.Create",
-        "EventSubscriptions.Create",
-        "Events.PublishLocal"
+        "Topics.CreateOrUpdate",
+        "Topics.Get",
+        "Topics.List",
+        "Topics.Delete",
+        "Topics.ListKeysLocal",
+        "EventSubscriptions.CreateRejected",
+        "Events.PublishLocal",
+        "Events.ListLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -2075,7 +2080,7 @@
       }
     },
     "event-grid": {
-      "Topics.Create": {
+      "Topics.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -2089,7 +2094,63 @@
           "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
         ]
       },
-      "EventSubscriptions.Create": {
+      "Topics.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "Topics.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "Topics.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "Topics.ListKeysLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "EventSubscriptions.CreateRejected": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -2104,6 +2165,20 @@
         ]
       },
       "Events.PublishLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      },
+      "Events.ListLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

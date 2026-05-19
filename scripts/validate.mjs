@@ -676,21 +676,34 @@ if (!eventGridParityText) {
   if (eventGridParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Event Grid parity control/data-plane matrix has failures');
   }
-  if ((eventGridParity.controlAndDataPlane?.total ?? 0) < 25) {
-    errors.push('Azure Event Grid parity control/data-plane matrix should exercise at least 25 cases');
+  if ((eventGridParity.controlAndDataPlane?.total ?? 0) < 40) {
+    errors.push('Azure Event Grid parity control/data-plane matrix should exercise at least 40 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
     'topic create requires an existing resource group',
+    'topic delete not-found preserves Azure no-content shape',
     'topic invalid location is rejected',
     'topic invalid name is rejected by Azure naming rules',
     'valid topic create succeeds with endpoint metadata',
+    'unsupported topic action fails closed',
     'topic listKeys returns shared access keys',
     'publish with missing key is rejected',
+    'publish with invalid key is rejected',
+    'publish with wrong method is rejected',
+    'publish with wrong path is rejected',
+    'publish malformed JSON is rejected',
+    'publish empty event batch is rejected',
     'publish invalid EventGridEvent schema is rejected',
+    'publish invalid customEvent schema is rejected',
+    'publish unsupported overload is rejected',
     'publish EventGridEvent succeeds',
     'publish customEvent succeeds',
     'top-level event subscription create preserves captured rejection',
+    'ARM template deployment can create Event Grid topic',
     'publish after topic delete is rejected',
   ]) {
     if (!eventGridParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {

@@ -125,6 +125,9 @@ export class EventGridRouter {
       }
 
       const overload = url.searchParams.get('overload') ?? 'EventGridEvent';
+      if (!['EventGridEvent', 'customEvent'].includes(overload)) {
+        return sendError(res, 400, 'InvalidRequest', `The event batch does not match the ${overload} schema.`);
+      }
       const validator = overload === 'customEvent' ? validCustomEvent : validEventGridEvent;
       if (!body.every(validator)) {
         return sendError(res, 400, 'InvalidRequest', `The event batch does not match the ${overload} schema.`);
