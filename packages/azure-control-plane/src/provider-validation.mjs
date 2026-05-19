@@ -1573,19 +1573,19 @@ function validateNamedCollection(items, code, message) {
 function validateApplicationGatewayPayload(resourceType, body) {
   if (resourceType !== 'Microsoft.Network/applicationGateways') return null;
 
+  const gatewayIpConfigurations = arrayProp(body, 'gatewayIPConfigurations');
+  const gatewayIpValidation = validateNamedCollection(gatewayIpConfigurations, 'SubnetIsRequired', 'Application Gateway requires gatewayIPConfigurations.');
+  if (gatewayIpValidation) return gatewayIpValidation;
+  if (gatewayIpConfigurations.some(item => !refId(item.properties?.subnet))) {
+    return envelopedError(400, 'SubnetIsRequired', 'Subnet reference is required for ipconfiguration Application gateway subnet is required.');
+  }
+
   const skuName = body.sku?.name;
   if (!['Standard_v2', 'WAF_v2'].includes(skuName)) {
     return envelopedError(400, 'ApplicationGatewaySkuNotSupported', 'Application Gateway sku.name must be Standard_v2 or WAF_v2 for this local parity surface.');
   }
   if (!['Standard_v2', 'WAF_v2'].includes(body.sku?.tier)) {
     return envelopedError(400, 'ApplicationGatewaySkuTierNotSupported', 'Application Gateway sku.tier must be Standard_v2 or WAF_v2 for this local parity surface.');
-  }
-
-  const gatewayIpConfigurations = arrayProp(body, 'gatewayIPConfigurations');
-  const gatewayIpValidation = validateNamedCollection(gatewayIpConfigurations, 'SubnetIsRequired', 'Application Gateway requires gatewayIPConfigurations.');
-  if (gatewayIpValidation) return gatewayIpValidation;
-  if (gatewayIpConfigurations.some(item => !refId(item.properties?.subnet))) {
-    return envelopedError(400, 'SubnetIsRequired', 'Subnet reference is required for ipconfiguration Application gateway subnet is required.');
   }
 
   const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
@@ -2305,6 +2305,27 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     );
   }
 
+  if (resourceType === 'Microsoft.App/containerApps' && !body.properties?.managedEnvironmentId) {
+    return envelopedError(
+      400,
+      'ContainerAppManagedEnvironmentRequired',
+      'Container App resources require properties.managedEnvironmentId.',
+    );
+  }
+
+  if (resourceType === 'Microsoft.App/containerApps') {
+    const scale = body.properties?.template?.scale;
+    if (scale?.minReplicas !== undefined && (!Number.isInteger(scale.minReplicas) || scale.minReplicas < 0)) {
+      return envelopedError(400, 'InvalidParameterValue', 'Container App scale.minReplicas must be a non-negative integer.');
+    }
+    if (scale?.maxReplicas !== undefined && (!Number.isInteger(scale.maxReplicas) || scale.maxReplicas < 1)) {
+      return envelopedError(400, 'InvalidParameterValue', 'Container App scale.maxReplicas must be a positive integer.');
+    }
+    if (Number.isInteger(scale?.minReplicas) && Number.isInteger(scale?.maxReplicas) && scale.minReplicas > scale.maxReplicas) {
+      return envelopedError(400, 'InvalidParameterValue', 'Container App scale.minReplicas cannot exceed scale.maxReplicas.');
+    }
+  }
+
   if (
     resourceType === 'Microsoft.Storage/storageAccounts'
     && body.sku?.name
@@ -2371,7 +2392,7 @@ export function storagePostDeleteNotFound(resourceType) {
     return envelopedError(404, 'ShareNotFound', 'The specified share does not exist.');
   }
   if (resourceType === 'Microsoft.Storage/storageAccounts/tableServices/tables') {
-    return envelopedError(404, 'TableNotFound', 'The specified table does not exist.');
+    return envelopedError(404, 'ResourceNotFound', 'The Resource was not found.');
   }
   return null;
 }

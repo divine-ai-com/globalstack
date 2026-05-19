@@ -450,6 +450,30 @@ function siteReferencesExistingServerFarm(store, resourceType, body) {
   return Boolean(route && store.getResource(route));
 }
 
+function providerRouteFromResourceId(resourceId) {
+  const raw = String(resourceId ?? '').split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
+  const lower = raw.map(segment => segment.toLowerCase());
+  const subscriptionIndex = lower.indexOf('subscriptions');
+  const resourceGroupIndex = lower.indexOf('resourcegroups');
+  const providersIndex = lower.indexOf('providers');
+  if (
+    subscriptionIndex < 0
+    || resourceGroupIndex < 0
+    || providersIndex < 0
+    || !raw[subscriptionIndex + 1]
+    || !raw[resourceGroupIndex + 1]
+    || !raw[providersIndex + 1]
+  ) {
+    return null;
+  }
+  return {
+    subscriptionId: raw[subscriptionIndex + 1],
+    resourceGroupName: raw[resourceGroupIndex + 1],
+    providerNamespace: raw[providersIndex + 1],
+    typePath: raw.slice(providersIndex + 2).join('/'),
+  };
+}
+
 function parseSubscriptionDeploymentRoute(pathname) {
   const raw = segments(pathname);
   const lower = raw.map(segment => segment.toLowerCase());
@@ -823,8 +847,6 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
     }
 
     const validationBeforeParentTypes = new Set([
-      'Microsoft.Cdn/profiles/afdEndpoints',
-      'Microsoft.Cdn/profiles/endpoints',
       'Microsoft.DataMigration/services/projects',
       'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
       'Microsoft.Synapse/workspaces/sqlPools',
@@ -835,6 +857,13 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       : null;
     if (validationBeforeParent) return validationBeforeParent;
 
+    if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints' || resourceType === 'Microsoft.Cdn/profiles/endpoints') {
+      const parentIndependentValidation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
+      if (['LocationRequired', 'InvalidResourceLocation', 'InvalidResourceName'].includes(parentIndependentValidation?.body?.error?.code)) {
+        return parentIndependentValidation;
+      }
+    }
+
     const putMissingParent = capturedPutMissingParent(resourceType);
     const parent = nearestCapabilityParentRoute(providerRoute);
     if (putMissingParent && (!parent || !store.getResource(parent))) return putMissingParent;
@@ -843,6 +872,22 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
     const storageParentState = storageParent ? store.resourceProvisioningState(storageParent) : null;
     if (storageParent && resourceType !== 'Microsoft.Storage/storageAccounts' && storageParentState && storageParentState !== 'Succeeded') {
       return storageAccountNotProvisioned();
+    }
+
+    if (resourceType === 'Microsoft.App/containerApps' && body.properties?.managedEnvironmentId) {
+      const environmentRoute = providerRouteFromResourceId(body.properties.managedEnvironmentId);
+      if (!environmentRoute || !store.getResource(environmentRoute)) {
+        return {
+          status: 404,
+          body: {
+            error: {
+              code: 'ManagedEnvironmentNotFound',
+              message: `The managed environment '${body.properties.managedEnvironmentId}' was not found.`,
+              details: [],
+            },
+          },
+        };
+      }
     }
 
     const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
@@ -1328,6 +1373,22 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             {
               code: 'ExplicitGap',
               message: 'Unsupported Azure App Configuration child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
+          providerRoute.providerNamespace === 'Microsoft.App'
+          && (
+            resourceType.startsWith('Microsoft.App/managedEnvironments/')
+            || resourceType.startsWith('Microsoft.App/containerApps/')
+          )
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Container Apps child and action routes must fail closed until captured and implemented.',
             },
           ]);
         }

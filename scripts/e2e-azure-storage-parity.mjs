@@ -403,7 +403,7 @@ async function runControlPlaneMatrix() {
         body: { properties: {} },
         createdStatus: 200,
         deleteStatus: 204,
-        notFoundCode: 'TableNotFound',
+        notFoundCode: 'ResourceNotFound',
       },
     ];
 

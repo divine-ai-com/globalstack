@@ -130,6 +130,7 @@ flowchart TD
 - `scripts/e2e-azure-redis-parity.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-service-bus-parity.mjs`
+- `scripts/e2e-azure-service-discovery-parity.mjs`
 - `scripts/e2e-azure-storage-hardening.mjs`
 - `scripts/e2e-azure-storage-normalizer.mjs`
 - `scripts/e2e-azure-storage-parity.mjs`
@@ -206,6 +207,7 @@ flowchart TD
 - `npm run e2e:redis-parity`
 - `npm run e2e:service-bus`
 - `npm run e2e:service-bus-parity`
+- `npm run e2e:service-discovery-parity`
 - `npm run e2e:storage`
 - `npm run e2e:storage-hardening`
 - `npm run e2e:storage-normalizer`

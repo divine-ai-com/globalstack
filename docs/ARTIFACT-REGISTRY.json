@@ -594,6 +594,7 @@
     "e2e:redis-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",
+    "e2e:service-discovery-parity",
     "e2e:storage",
     "e2e:storage-hardening",
     "e2e:storage-normalizer",

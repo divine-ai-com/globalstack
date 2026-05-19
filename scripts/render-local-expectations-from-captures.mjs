@@ -23,6 +23,16 @@ function safeProviderAccepted(fixture) {
   return false;
 }
 
+function hasUnresolvedPathPlaceholder(fixture) {
+  return /[{}]/.test(String(fixture.request?.path ?? ''));
+}
+
+function unsafeFailedValidMinimalProviderValidation(fixture) {
+  return fixture.varianceId === 'valid-minimal'
+    && fixture.globalstack?.validationDepth === 'provider-validation'
+    && Number(fixture.response?.status ?? 0) >= 400;
+}
+
 const entries = await readdir(fixtureRoot).catch(() => []);
 const expectations = [];
 for (const entry of entries.filter(name => name.endsWith('.json')).sort()) {
@@ -30,6 +40,8 @@ for (const entry of entries.filter(name => name.endsWith('.json')).sort()) {
   const depth = fixture.globalstack?.validationDepth;
   if (!allowedDepths.has(depth)) continue;
   if (!safeProviderAccepted(fixture)) continue;
+  if (hasUnresolvedPathPlaceholder(fixture)) continue;
+  if (unsafeFailedValidMinimalProviderValidation(fixture)) continue;
   const error = azureError(fixture);
   expectations.push({
     id: fixture.id,

@@ -5,18 +5,19 @@ Use this file as the routing table for the repo. If you are not sure which docum
 ## Default Reading Order
 
 1. `START-HERE.md`
-2. `CONFORMANCE-MODEL.md`
-3. `ARCHITECTURE.md`
-4. `SERVICE-SCOPE.md`
-5. `AGENT-RUNBOOK.md`
-6. `ARTIFACT-REGISTRY.md`
-7. `REPO-MAP.md`
+2. `CURRENT-MISSION.md`
+3. `CONFORMANCE-MODEL.md`
+4. `ARCHITECTURE.md`
+5. `SERVICE-SCOPE.md`
+6. `AGENT-RUNBOOK.md`
+7. `ARTIFACT-REGISTRY.md`
+8. `REPO-MAP.md`
 
 ## Task Routing
 
 | Task | Read First | Then Read | Source Of Truth |
 |---|---|---|---|
-| Understand the project vision | `START-HERE.md` | `ARCHITECTURE.md` | `START-HERE.md` |
+| Understand the project vision | `START-HERE.md` | `CURRENT-MISSION.md`, `ARCHITECTURE.md` | `CURRENT-MISSION.md` |
 | Understand what is safe to claim | `CONFORMANCE-MODEL.md` | `SERVICE-SCOPE.md` | Azure captures, lifecycle captures, and conformance tests |
 | Check current Tier 1/Tier 2 service scope | `SERVICE-SCOPE.md` | `docs/hybrid/README.md` | `packages/core/src/azure-tier1-capabilities.mjs` |
 | Harden Azure Storage coverage | `docs/coverage/storage-hardening.md` | `docs/coverage/storage-parity-pack.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Storage captures, parity pack, Azurite E2E, and real Azure capture backlog |

@@ -674,14 +674,14 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('private dns zone unsupported record set route fails closed', async () => {
+    await record('private dns zone missing record set is not found', async () => {
       const result = await httpJson(
         armPort,
         'GET',
         providerPath(resourceGroup, 'Microsoft.Network', `privateDnsZones/${privateDnsZoneName}/A/www`, '2020-06-01'),
       );
-      assert.equal(result.status, 501);
-      assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
 

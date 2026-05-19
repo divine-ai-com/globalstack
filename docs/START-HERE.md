@@ -66,12 +66,13 @@ These numbers are evidence for the current test set only. They are not a stateme
 ## First Files To Read
 
 0. `docs/README.md`
-1. `docs/CONFORMANCE-MODEL.md`
-2. `docs/ARCHITECTURE.md`
-3. `docs/SERVICE-SCOPE.md`
-4. `docs/AGENT-RUNBOOK.md`
-5. `docs/ARTIFACT-REGISTRY.md`
-6. `docs/REPO-MAP.md`
+1. `docs/CURRENT-MISSION.md`
+2. `docs/CONFORMANCE-MODEL.md`
+3. `docs/ARCHITECTURE.md`
+4. `docs/SERVICE-SCOPE.md`
+5. `docs/AGENT-RUNBOOK.md`
+6. `docs/ARTIFACT-REGISTRY.md`
+7. `docs/REPO-MAP.md`
 
 ## Fast Sanity Commands
 

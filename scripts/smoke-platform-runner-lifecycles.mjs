@@ -43,10 +43,20 @@ const selected = new Set(
 const platforms = selected.size > 0 ? azurePlatforms.filter(platform => selected.has(platform.id)) : azurePlatforms;
 if (platforms.length === 0) throw new Error(`No platforms selected from: ${[...selected].join(', ')}`);
 
+const docker = await dockerCommand();
+if (docker.command === 'sudo') {
+  await run('sudo', [
+    '-n',
+    'chown',
+    '-R',
+    `${process.getuid()}:${process.getgid()}`,
+    join(root, 'dist', 'platform-images'),
+  ], { stdio: 'ignore' });
+}
+
 const renderCode = await run('node', ['scripts/render-platform-templates.mjs']);
 if (renderCode !== 0) process.exit(renderCode);
 
-const docker = await dockerCommand();
 const results = [];
 
 for (const platform of platforms) {

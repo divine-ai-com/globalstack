@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:43:52.004Z",
+    "generatedAt": "2026-05-19T19:07:32.257Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1432,9 +1432,21 @@
         "globalstack-dns-registry"
       ],
       "implementedOperations": [
+        "PrivateDnsZones.CreateOrUpdate",
+        "PrivateDnsZones.Get",
+        "PrivateDnsZones.List",
+        "PrivateDnsZones.Delete",
+        "ManagedEnvironments.CreateOrUpdate",
+        "ManagedEnvironments.Get",
+        "ManagedEnvironments.List",
+        "ManagedEnvironments.Delete",
+        "ContainerApps.CreateOrUpdate",
+        "ContainerApps.Get",
+        "ContainerApps.List",
+        "ContainerApps.Delete",
+        "ContainerAppRoutes.RejectUnsupportedRoutes",
         "Services.RegisterLocal",
-        "Services.ResolveLocal",
-        "PrivateDnsZones.CreateOrUpdate"
+        "Services.ResolveLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -5587,6 +5599,201 @@
       }
     },
     "service-discovery": {
+      "PrivateDnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "PrivateDnsZones.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ManagedEnvironments.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ManagedEnvironments.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ManagedEnvironments.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ManagedEnvironments.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ContainerApps.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ContainerApps.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ContainerApps.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ContainerApps.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
+      "ContainerAppRoutes.RejectUnsupportedRoutes": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-service-registry",
+          "globalstack-dns-registry"
+        ],
+        "knownGaps": [
+          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+        ]
+      },
       "Services.RegisterLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -5603,21 +5810,6 @@
         ]
       },
       "Services.ResolveLocal": {
-        "implemented": true,
-        "implementationKind": "metadata-only-control-plane",
-        "realAzureApiComplete": false,
-        "contractTested": false,
-        "cloudValidated": false,
-        "backingEngines": [
-          "globalstack-service-registry",
-          "globalstack-dns-registry"
-        ],
-        "knownGaps": [
-          "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
-          "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
-        ]
-      },
-      "PrivateDnsZones.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

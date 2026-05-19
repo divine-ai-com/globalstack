@@ -252,7 +252,7 @@ function caseDefinitions(runSuffix) {
           body: {
             location,
             sku: { name: 'Basic', family: 'C', capacity: 0 },
-            properties: { enableNonSslPort: true },
+            properties: { enableNonSslPort: 'yes' },
           },
           expect: [400],
           expectErrorCodes: ['InvalidRequestBody'],

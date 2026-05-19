@@ -285,6 +285,30 @@ export class ResourceStore {
               updatedAt: nowIso(),
             }
           : {}),
+        ...(type === 'Microsoft.App/managedEnvironments'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              defaultDomain: existing?.properties?.defaultDomain ?? `${name}.globalstack.local`,
+              staticIp: existing?.properties?.staticIp ?? '10.255.0.10',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
+        ...(type === 'Microsoft.App/containerApps'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              latestRevisionName: existing?.properties?.latestRevisionName ?? `${leafName}--0000001`,
+              configuration: {
+                ...(body.properties?.configuration ?? existing?.properties?.configuration ?? {}),
+                ingress: {
+                  ...(body.properties?.configuration?.ingress ?? existing?.properties?.configuration?.ingress ?? {}),
+                  fqdn: body.properties?.configuration?.ingress?.fqdn ?? existing?.properties?.configuration?.ingress?.fqdn ?? `${leafName}.${resourceGroupName}.globalstack.local`,
+                },
+              },
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
         ...(type === 'Microsoft.ApiManagement/service'
           ? {
               gatewayUrl: existing?.properties?.gatewayUrl ?? apiManagementGatewayUrl(name),

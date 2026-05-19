@@ -564,7 +564,7 @@ async function runControlPlaneMatrix() {
     await record('storage table get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', storageTablePath(resourceGroup, storageName, tableName));
       assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'TableNotFound');
+      assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
 

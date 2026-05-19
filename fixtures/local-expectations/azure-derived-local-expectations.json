@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-18T10:11:13.361Z",
+  "generatedAt": "2026-05-19T19:00:37.096Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 420,
+  "expectationCount": 381,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -71,28 +71,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.valid-minimal",
-      "capabilityId": "activity-log-audit",
-      "resourceType": "Microsoft.EventGrid/systemTopics",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequest",
-        "message": "Required property 'topicType' not found in JSON. Path 'properties', line 1, position 36."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fc542cbe5f/providers/Microsoft.EventGrid/systemTopics/system-fc542cbe5f?api-version=2022-06-15",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "activity-log-audit.microsoft-eventgrid-systemtopics.delete.not-found",
@@ -215,28 +193,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.valid-minimal",
-      "capabilityId": "activity-log-audit",
-      "resourceType": "Microsoft.Insights/diagnosticSettings",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "ResourceTypeNotSupported",
-        "message": "The resource type '/' does not support diagnostic settings."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0bf973624b/providers/Microsoft.Insights/diagnosticSettings/diag-0bf973624b?api-version=2021-05-01-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "activity-log-audit.microsoft-insights-diagnosticsettings.delete.not-found",
       "capabilityId": "activity-log-audit",
       "resourceType": "Microsoft.Insights/diagnosticSettings",
@@ -355,28 +311,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.valid-minimal",
-      "capabilityId": "aks-metadata",
-      "resourceType": "Microsoft.ContainerService/managedClusters",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidParameter",
-        "message": "Required parameter servicePrincipalProfile is missing (null)."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-50f1082019/providers/Microsoft.ContainerService/managedClusters/aks-50f1082019?api-version=2024-02-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "aks-metadata.microsoft-containerservice-managedclusters.delete.not-found",
@@ -639,28 +573,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "api-management.microsoft-apimanagement-service.createOrUpdate.valid-minimal",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidParameters",
-        "message": "Invalid parameter: Value cannot be null.\r\nParameter name: skuproperties"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8155ca1626/providers/Microsoft.ApiManagement/service/apim-8155ca1626?api-version=2023-05-01-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "api-management.microsoft-apimanagement-service.delete.not-found",
@@ -1424,32 +1336,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "azure-functions.microsoft-web-serverfarms.createOrUpdate.valid-minimal",
-      "capabilityId": "azure-functions",
-      "resourceType": "Microsoft.Web/serverfarms",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 401,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f28a355c83/providers/Microsoft.Web/serverfarms/plan-f28a355c83?api-version=2023-12-01",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Y1",
-            "tier": "Dynamic"
-          },
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "azure-functions.microsoft-web-serverfarms.delete.not-found",
       "capabilityId": "azure-functions",
       "resourceType": "Microsoft.Web/serverfarms",
@@ -1576,32 +1462,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "azure-functions.microsoft-web-sites.createOrUpdate.valid-minimal",
-      "capabilityId": "azure-functions",
-      "resourceType": "Microsoft.Web/sites",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d119c92a3c/providers/Microsoft.Web/sites/site-d119c92a3c?api-version=2023-12-01",
-        "body": {
-          "location": "{location}",
-          "kind": "functionapp",
-          "properties": {
-            "serverFarmId": "{serverFarmId}",
-            "httpsOnly": true
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "azure-functions.microsoft-web-sites.delete.not-found",
@@ -2030,28 +1890,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.valid-minimal",
-      "capabilityId": "container-registry",
-      "resourceType": "Microsoft.ContainerRegistry/registries",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1b01ae0b33/providers/Microsoft.ContainerRegistry/registries/acr1b01ae0b33?api-version=2023-07-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "container-registry.microsoft-containerregistry-registries.delete.not-found",
       "capabilityId": "container-registry",
       "resourceType": "Microsoft.ContainerRegistry/registries",
@@ -2170,28 +2008,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.valid-minimal",
-      "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.DocumentDB/databaseAccounts",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "BadRequest",
-        "message": "Value '' for Database account offer type is invalid\r\nActivityId: c809ac9c-98d5-4302-b781-6daf54fdead9, Microsoft.Azure.Documents.Common/2.14.0"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54686b3093/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-54686b3093?api-version=2024-05-15",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.delete.not-found",
@@ -2330,271 +2146,6 @@
         "body": {
           "properties": {}
         }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.empty-body",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa252d4c98/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-fa252d4c98?api-version=2022-03-30-preview",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.invalid-location",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3c472fab31/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-3c472fab31?api-version=2022-03-30-preview",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.missing-api-version",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-api-version",
-      "validationDepth": "arm-surface",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingApiVersionParameter",
-        "message": "The api-version query parameter (?api-version=) is required for all requests."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b9706b9b87/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-b9706b9b87",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.valid-minimal",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'services/projects', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6393f85c47/providers/Microsoft.DataMigration/services/{servicesName}' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6393f85c47/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-6393f85c47?api-version=2022-03-30-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.delete.not-found",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "Delete",
-      "varianceId": "not-found",
-      "validationDepth": "provider-accepted",
-      "expected": {
-        "status": 204,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "DELETE",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1d83f25ec6/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-1d83f25ec6?api-version=2022-03-30-preview",
-        "body": null
-      },
-      "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.get.not-found",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "Get",
-      "varianceId": "not-found",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.DataMigration/services/{servicesName}/projects/project-1d83f25ec6' under resource group 'rg-gs-conf-1d83f25ec6' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
-      },
-      "request": {
-        "method": "GET",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1d83f25ec6/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-1d83f25ec6?api-version=2022-03-30-preview",
-        "body": null
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services-projects.listByResourceGroup.empty-list",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services/projects",
-      "operation": "ListByResourceGroup",
-      "varianceId": "empty-list",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'read' on resource(s) of type 'services/projects', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-29c4cee692/providers/Microsoft.DataMigration/services/{servicesName}' could not be found."
-      },
-      "request": {
-        "method": "GET",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-29c4cee692/providers/Microsoft.DataMigration/services/{servicesName}/projects?api-version=2022-03-30-preview",
-        "body": null
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.empty-body",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-25502e20dd/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.invalid-location",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-88658ef4a9/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.missing-api-version",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-api-version",
-      "validationDepth": "arm-surface",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingApiVersionParameter",
-        "message": "The api-version query parameter (?api-version=) is required for all requests."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fdc7988804/providers/Microsoft.DataMigration/services/{servicesName}",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.valid-minimal",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequest",
-        "message": "The URL of the request does not contain a valid resource ID."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7932096c21/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.delete.not-found",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "Delete",
-      "varianceId": "not-found",
-      "validationDepth": "provider-accepted",
-      "expected": {
-        "status": 204,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "DELETE",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-506444053c/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
-        "body": null
-      },
-      "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
-    },
-    {
-      "id": "database-migration-service.microsoft-datamigration-services.get.not-found",
-      "capabilityId": "database-migration-service",
-      "resourceType": "Microsoft.DataMigration/services",
-      "operation": "Get",
-      "varianceId": "not-found",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.DataMigration/services/{servicesName}' under resource group 'rg-gs-conf-506444053c' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
-      },
-      "request": {
-        "method": "GET",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-506444053c/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
-        "body": null
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
@@ -2881,28 +2432,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.valid-minimal",
-      "capabilityId": "event-grid",
-      "resourceType": "Microsoft.EventGrid/eventSubscriptions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequest",
-        "message": "Event Subscription must specify either destination or deliveryWithResourceIdentity's destination during create/update."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-888bbac9d4/providers/Microsoft.EventGrid/eventSubscriptions/sub-888bbac9d4?api-version=2022-06-15",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "event-grid.microsoft-eventgrid-eventsubscriptions.delete.not-found",
@@ -3766,28 +3295,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.valid-minimal",
-      "capabilityId": "front-door-cdn",
-      "resourceType": "Microsoft.Cdn/profiles",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "BadRequest",
-        "message": "SkuIsNullOrEmpty"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3fd0bdc7a1/providers/Microsoft.Cdn/profiles/cdn-3fd0bdc7a1?api-version=2024-02-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "front-door-cdn.microsoft-cdn-profiles.delete.not-found",
       "capabilityId": "front-door-cdn",
       "resourceType": "Microsoft.Cdn/profiles",
@@ -3908,28 +3415,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.valid-minimal",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleAssignments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'roleDefinitionId' not found in JSON. Path 'properties', line 1, position 36.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5be4c77fe7/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "identity-rbac.microsoft-authorization-roleassignments.delete.not-found",
       "capabilityId": "identity-rbac",
       "resourceType": "Microsoft.Authorization/roleAssignments",
@@ -4029,28 +3514,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.valid-minimal",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleDefinitions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'permissions' not found in JSON. Path 'properties', line 1, position 36.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-784cfe1933/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "identity-rbac.microsoft-authorization-roledefinitions.delete.not-found",
@@ -4868,28 +4331,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.valid-minimal",
-      "capabilityId": "load-balancing",
-      "resourceType": "Microsoft.Network/applicationGateways",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "SubnetIsRequired",
-        "message": "Subnet reference is required for ipconfiguration Application gateway subnet is required."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-332538aa88/providers/Microsoft.Network/applicationGateways/agw-332538aa88?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "load-balancing.microsoft-network-applicationgateways.delete.not-found",
       "capabilityId": "load-balancing",
       "resourceType": "Microsoft.Network/applicationGateways",
@@ -5130,28 +4571,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.valid-minimal",
-      "capabilityId": "logic-workflows",
-      "resourceType": "Microsoft.Logic/workflows",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidWorkflow",
-        "message": "The workflow 'workflow-65355b7f98' must have Definition property set."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-65355b7f98/providers/Microsoft.Logic/workflows/workflow-65355b7f98?api-version=2019-05-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "logic-workflows.microsoft-logic-workflows.delete.not-found",
       "capabilityId": "logic-workflows",
       "resourceType": "Microsoft.Logic/workflows",
@@ -5280,32 +4699,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "logic-workflows.microsoft-web-sites.createOrUpdate.valid-minimal",
-      "capabilityId": "logic-workflows",
-      "resourceType": "Microsoft.Web/sites",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": null,
-        "message": null
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8d4ba9ac8c/providers/Microsoft.Web/sites/site-8d4ba9ac8c?api-version=2023-12-01",
-        "body": {
-          "location": "{location}",
-          "kind": "functionapp",
-          "properties": {
-            "serverFarmId": "{serverFarmId}",
-            "httpsOnly": true
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "logic-workflows.microsoft-web-sites.delete.not-found",
       "capabilityId": "logic-workflows",
       "resourceType": "Microsoft.Web/sites",
@@ -5424,28 +4817,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "monitor-logs.microsoft-insights-diagnosticsettings.createOrUpdate.valid-minimal",
-      "capabilityId": "monitor-logs",
-      "resourceType": "Microsoft.Insights/diagnosticSettings",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "ResourceTypeNotSupported",
-        "message": "The resource type '/' does not support diagnostic settings."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54b2eed5c6/providers/Microsoft.Insights/diagnosticSettings/diag-54b2eed5c6?api-version=2021-05-01-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "monitor-logs.microsoft-insights-diagnosticsettings.delete.not-found",
@@ -5698,28 +5069,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.valid-minimal",
-      "capabilityId": "monitor-metrics-alerts",
-      "resourceType": "Microsoft.Insights/actionGroups",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "BadRequest",
-        "message": "'Group Short Name' must not be empty."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-146c05499a/providers/Microsoft.Insights/actionGroups/ag-146c05499a?api-version=2023-01-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.delete.not-found",
       "capabilityId": "monitor-metrics-alerts",
       "resourceType": "Microsoft.Insights/actionGroups",
@@ -5838,28 +5187,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.valid-minimal",
-      "capabilityId": "monitor-metrics-alerts",
-      "resourceType": "Microsoft.Insights/metricAlerts",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "BadRequest",
-        "message": "Required property 'severity' not found in JSON. Path 'properties', line 1, position 36. Activity ID: 3049766b-3963-42ab-a472-313cc4955d50."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8844bc2121/providers/Microsoft.Insights/metricAlerts/alert-8844bc2121?api-version=2018-03-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.delete.not-found",
@@ -6215,35 +5542,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.valid-minimal",
-      "capabilityId": "mysql-flexible-server",
-      "resourceType": "Microsoft.DBforMySQL/flexibleServers",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidAdminLoginPassword",
-        "message": "The AdministratorLoginPassword cannot be empty or null."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-14ad4432ce/providers/Microsoft.DBforMySQL/flexibleServers/db-14ad4432ce?api-version=2023-12-30",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Standard_B1ms",
-            "tier": "Burstable"
-          },
-          "properties": {
-            "administratorLogin": "globalstack",
-            "version": "8.0.21"
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.delete.not-found",
       "capabilityId": "mysql-flexible-server",
       "resourceType": "Microsoft.DBforMySQL/flexibleServers",
@@ -6595,35 +5893,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.valid-minimal",
-      "capabilityId": "postgresql-flexible-server",
-      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingRequiredParameter",
-        "message": "Parameter 'AdministratorLoginPassword' must be specified. This parameter cannot be NULL or empty."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-470a547f98/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-470a547f98?api-version=2023-06-01-preview",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Standard_B1ms",
-            "tier": "Burstable"
-          },
-          "properties": {
-            "administratorLogin": "globalstack",
-            "version": "16"
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.delete.not-found",
@@ -7065,35 +6334,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "redis-cache.microsoft-cache-redis.createOrUpdate.valid-minimal",
-      "capabilityId": "redis-cache",
-      "resourceType": "Microsoft.Cache/redis",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestBody",
-        "message": "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=0c5e8f76-fd3b-4cc6-9d4d-252ca59bda7c"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d56e8ffd2d/providers/Microsoft.Cache/redis/redis-d56e8ffd2d?api-version=2023-08-01",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Basic",
-            "family": "C",
-            "capacity": 0
-          },
-          "properties": {
-            "enableNonSslPort": true
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "redis-cache.microsoft-cache-redis.delete.not-found",
@@ -7663,28 +6903,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.valid-minimal",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.App/containerApps",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "ContainerAppCreateMustContainContainer",
-        "message": "Error creating container app 'app-c1e30a6aa7'. Must specify atleast one container to create a container app."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c1e30a6aa7/providers/Microsoft.App/containerApps/app-c1e30a6aa7?api-version=2023-05-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "service-discovery.microsoft-app-containerapps.delete.not-found",
       "capabilityId": "service-discovery",
       "resourceType": "Microsoft.App/containerApps",
@@ -8168,28 +7386,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.valid-minimal",
-      "capabilityId": "synapse-warehouse",
-      "resourceType": "Microsoft.Synapse/workspaces",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "ValidationFailed",
-        "message": "Workspace request validation failed, check error details for more information"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e441f45146/providers/Microsoft.Synapse/workspaces/ws-e441f45146?api-version=2021-06-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "synapse-warehouse.microsoft-synapse-workspaces.delete.not-found",
       "capabilityId": "synapse-warehouse",
       "resourceType": "Microsoft.Synapse/workspaces",
@@ -8411,28 +7607,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.valid-minimal",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingParameterOnPrivateEndpoint",
-        "message": "Private endpoint /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b567d5ad24/providers/Microsoft.Network/privateEndpoints/pe-b567d5ad24 is missing required parameter 'private link service connection.'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b567d5ad24/providers/Microsoft.Network/privateEndpoints/pe-b567d5ad24?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "virtual-network.microsoft-network-privateendpoints.delete.not-found",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/privateEndpoints",
@@ -8551,28 +7725,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.valid-minimal",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "NoAddressPrefixOrPoolProvided",
-        "message": "Address prefix and ipam pool reference are both empty/null in request payload of resource /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6248ac1406/providers/Microsoft.Network/virtualNetworks/vnet-6248ac1406. Please provide either address prefix or ipam pool reference."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6248ac1406/providers/Microsoft.Network/virtualNetworks/vnet-6248ac1406?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.delete.not-found",
@@ -8851,36 +8003,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.valid-minimal",
-      "capabilityId": "waf-policy",
-      "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestFormat",
-        "message": "Cannot parse the request."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f6cf77d66b/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-f6cf77d66b?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "policySettings": {
-              "enabledState": "Enabled",
-              "mode": "Prevention"
-            },
-            "managedRules": {
-              "managedRuleSets": []
-            }
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.delete.not-found",

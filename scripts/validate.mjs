@@ -27,6 +27,7 @@ const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-par
 const eventHubsParityResultsPath = join(distRoot, 'e2e', 'azure-event-hubs-parity', 'results.json');
 const synapseWarehouseParityResultsPath = join(distRoot, 'e2e', 'azure-synapse-warehouse-parity', 'results.json');
 const databaseMigrationServiceParityResultsPath = join(distRoot, 'e2e', 'azure-database-migration-service-parity', 'results.json');
+const serviceDiscoveryParityResultsPath = join(distRoot, 'e2e', 'azure-service-discovery-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
@@ -878,6 +879,69 @@ if (!databaseMigrationServiceParityText) {
   }
 }
 
+const serviceDiscoveryParityText = await readFile(serviceDiscoveryParityResultsPath, 'utf8').catch(() => '');
+if (!serviceDiscoveryParityText) {
+  errors.push('missing Azure Service Discovery parity E2E results; run npm run e2e:service-discovery-parity');
+} else {
+  const serviceDiscoveryParity = JSON.parse(serviceDiscoveryParityText);
+  if (serviceDiscoveryParity.ok !== true) {
+    errors.push('Azure Service Discovery parity E2E did not pass');
+  }
+  if (serviceDiscoveryParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Service Discovery parity control-plane matrix has failures');
+  }
+  if ((serviceDiscoveryParity.controlPlane?.total ?? 0) < 30) {
+    errors.push('Azure Service Discovery parity control-plane matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'managed environment create requires an existing resource group',
+    'resource group create succeeds',
+    'private dns zone create is accepted asynchronously',
+    'private dns zone operation status succeeds',
+    'private dns zone get succeeds',
+    'managed environment collection list is empty before create',
+    'container app create before managed environment is rejected',
+    'managed environment empty body is rejected',
+    'managed environment invalid location is rejected',
+    'managed environment create succeeds',
+    'managed environment get succeeds',
+    'managed environment list includes created resource',
+    'container app empty body is rejected',
+    'container app invalid location is rejected',
+    'container app missing containers is rejected',
+    'container app missing managed environment id is rejected',
+    'container app invalid scale is rejected',
+    'container app collection list is empty before create',
+    'container app create succeeds',
+    'container app get succeeds',
+    'container app update can change scale',
+    'container app list includes created resource',
+    'unsupported container app revisions route fails closed',
+    'unsupported container app auth config route fails closed',
+    'unsupported managed environment certificate route fails closed',
+    'ARM template deployment can create service discovery resources',
+    'container app delete succeeds',
+    'container app get after delete is not found',
+    'managed environment delete succeeds',
+    'private dns zone delete succeeds',
+  ]) {
+    if (!serviceDiscoveryParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Service Discovery parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (serviceDiscoveryParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Service Discovery parity E2E must include the platform matrix during validation');
+  }
+  if (serviceDiscoveryParity.platformMatrix?.ok !== true || serviceDiscoveryParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Service Discovery parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
 const eventGridParityText = await readFile(eventGridParityResultsPath, 'utf8').catch(() => '');
 if (!eventGridParityText) {
   errors.push('missing Azure Event Grid parity E2E results; run npm run e2e:event-grid-parity');
@@ -1579,7 +1643,7 @@ if (!virtualNetworkParityText) {
     'private dns zone list includes created resource',
     'virtual network unsupported peerings route fails closed',
     'private endpoint unsupported dns zone group route fails closed',
-    'private dns zone unsupported record set route fails closed',
+    'private dns zone missing record set is not found',
     'ARM template deployment can create network resources',
     'private endpoint get after delete is not found',
     'subnet get after delete is not found',

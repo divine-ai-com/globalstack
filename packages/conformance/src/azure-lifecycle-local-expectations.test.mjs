@@ -5,6 +5,8 @@ import { test } from 'node:test';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 
 const expectationsPath = new URL('../../../fixtures/local-expectations/azure-lifecycle-local-expectations.json', import.meta.url);
+const localAccessToken = process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN ?? 'globalstack-local-token';
+const localSubscriptionId = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000';
 
 function httpJson(port, method, path, body) {
   return new Promise((resolve, reject) => {
@@ -15,7 +17,7 @@ function httpJson(port, method, path, body) {
       path,
       method,
       headers: {
-        authorization: 'Bearer lifecycle-expectation-test-token',
+        authorization: `Bearer ${localAccessToken}`,
         'content-type': 'application/json',
         ...(payload ? { 'content-length': Buffer.byteLength(payload) } : {}),
       },
@@ -42,7 +44,7 @@ function httpJson(port, method, path, body) {
 }
 
 function localPath(path) {
-  return path.replaceAll('<subscription-id>', 'sub-life-local');
+  return path.replaceAll('<subscription-id>', localSubscriptionId);
 }
 
 function interpolateBody(body) {

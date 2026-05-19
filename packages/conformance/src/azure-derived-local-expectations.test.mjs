@@ -5,6 +5,9 @@ import { test } from 'node:test';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 
 const expectationsPath = new URL('../../../fixtures/local-expectations/azure-derived-local-expectations.json', import.meta.url);
+const localAccessToken = process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN ?? 'globalstack-local-token';
+const localSubscriptionId = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000';
+const localTenantId = process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
 
 function httpJson(port, method, path, body) {
   return new Promise((resolve, reject) => {
@@ -15,7 +18,7 @@ function httpJson(port, method, path, body) {
       path,
       method,
       headers: {
-        authorization: 'Bearer local-expectation-test-token',
+        authorization: `Bearer ${localAccessToken}`,
         'content-type': 'application/json',
         ...(payload ? { 'content-length': Buffer.byteLength(payload) } : {}),
       },
@@ -47,7 +50,7 @@ function interpolate(value) {
     return value
       .replaceAll('{location}', 'eastus')
       .replaceAll('{tenantId}', '00000000-0000-0000-0000-000000000000')
-      .replaceAll('{serverFarmId}', '/subscriptions/sub-local/resourceGroups/rg-local/providers/Microsoft.Web/serverfarms/plan-local');
+      .replaceAll('{serverFarmId}', `/subscriptions/${localSubscriptionId}/resourceGroups/rg-local/providers/Microsoft.Web/serverfarms/plan-local`);
   }
   if (Array.isArray(value)) return value.map(interpolate);
   if (typeof value === 'object') {
@@ -57,7 +60,7 @@ function interpolate(value) {
 }
 
 function localPath(path) {
-  return path.replaceAll('<subscription-id>', 'sub-local').replaceAll('<tenant-id>', 'tenant-local');
+  return path.replaceAll('<subscription-id>', localSubscriptionId).replaceAll('<tenant-id>', localTenantId);
 }
 
 function resourceGroupFromPath(path) {
@@ -89,7 +92,7 @@ test('local ARM facade matches Azure-derived local expectations', async () => {
       const path = localPath(expectation.request.path);
       const rg = resourceGroupFromPath(path);
       if (rg) {
-        await httpJson(port, 'PUT', `/subscriptions/sub-local/resourceGroups/${rg}?api-version=2021-04-01`, { location: 'eastus' });
+        await httpJson(port, 'PUT', `/subscriptions/${localSubscriptionId}/resourceGroups/${rg}?api-version=2021-04-01`, { location: 'eastus' });
       }
 
       const response = await httpJson(

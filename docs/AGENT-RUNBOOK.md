@@ -5,9 +5,10 @@ Use this when changing the repo. It is written for future agents that need to mo
 ## Before Editing
 
 1. Read `docs/START-HERE.md`.
-2. Read `docs/CONFORMANCE-MODEL.md`.
-3. Check the generated scope in `docs/SERVICE-SCOPE.md`.
-4. Confirm the work stays under `/home/ubuntu/globalstack`.
+2. Read `docs/CURRENT-MISSION.md`.
+3. Read `docs/CONFORMANCE-MODEL.md`.
+4. Check the generated scope in `docs/SERVICE-SCOPE.md`.
+5. Confirm the work stays under `/home/ubuntu/globalstack`.
 
 ## Normal Regeneration
 
@@ -244,6 +245,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:database-migration-service-parity
 ```
 
 Expected result is `dist/e2e/azure-database-migration-service-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 DMS cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, DMS service lifecycle, migration project lifecycle, stricter SKU/public-access/source-target rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
+Run the Azure Service Discovery parity pack after changing Private DNS, Container Apps managed environment, Container App, unsupported service-discovery route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-discovery-parity
+```
+
+Expected result is `dist/e2e/azure-service-discovery-parity/results.json` with `ok == true`, zero control-plane failures, at least 30 Service Discovery cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Private DNS zone lifecycle, Container Apps managed environment lifecycle, Container App lifecycle, managed-environment reference checks, stricter container/scale rejection, unsupported Container Apps child/action routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Files parity pack after changing Storage file share behavior, Azure NetApp explicit-gap behavior, unsupported file route handling, or platform deployment routing:
 

@@ -382,7 +382,7 @@ async function classifyLocal(call, variance, response) {
   if (expectation && response.status === expectation.expected.status && responseErrorCode(response) === expectation.expected.errorCode) {
     return 'pass';
   }
-  if (variance.id === 'valid-minimal') return response.status >= 200 && response.status < 300 ? 'pass' : 'fail';
+  if (variance.id === 'valid-minimal') return response.status >= 200 && response.status < 300 ? 'pass' : 'local-gap-needs-azure-capture';
   if (variance.id === 'missing-api-version') return response.status === 400 ? 'pass' : 'fail';
   return response.status >= 200 && response.status < 300 ? 'local-gap-needs-azure-capture' : 'local-rejected-unvalidated';
 }

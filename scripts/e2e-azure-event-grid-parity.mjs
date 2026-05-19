@@ -441,8 +441,8 @@ async function runControlPlaneAndDataPlaneMatrix() {
 
       await record('unsupported topic action fails closed', async () => {
         const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.EventGrid', `${topicPath}/regenerateKey`), {});
-        assert.equal(result.status, 404);
-        assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+        assert.equal(result.status, 501);
+        assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
         return { status: result.status, errorCode: errorCode(result) };
       });
 
