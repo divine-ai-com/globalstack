@@ -786,24 +786,39 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 35) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 35 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 57) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 57 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
     'server farm create requires an existing resource group',
+    'server farm collection list is empty before create',
+    'server farm delete missing returns no content',
     'server farm minimal body preserves captured quota rejection',
     'valid server farm create returns async Azure shape',
     'server farm get reaches Succeeded',
+    'function app collection list is empty before create',
+    'function app delete missing returns no content',
     'function app create with missing server farm preserves captured NotFound',
     'function app missing serverFarmId is rejected',
     'valid function app create returns async Azure shape',
     'function app get reaches Succeeded and registers local host',
+    'function app unsupported function action fails closed',
     'function route rejects disallowed method',
     'secured function rejects missing key',
+    'secured function rejects wrong query key',
+    'secured function rejects wrong header key',
     'anonymous HTTP trigger succeeds',
+    'anonymous HTTP trigger succeeds without api prefix',
     'secured HTTP trigger accepts x-functions-key header',
+    'inspection route rejects unknown app',
     'ARM template deployment can create server farm and function app',
+    'function app list after delete is empty',
+    'server farm get after delete is not found',
+    'server farm delete after delete returns no content',
     'function app create after server farm delete reports missing parent',
   ]) {
     if (!azureFunctionsParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {

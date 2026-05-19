@@ -71,6 +71,7 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: {
       ...(options.auth === false ? {} : { authorization: authHeader }),
       'content-type': 'application/json',
+      ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -280,6 +281,36 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('malformed bearer token is rejected', async () => {
+        const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, {
+          auth: false,
+          headers: { authorization: 'token globalstack-local-token' },
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('wrong bearer token is rejected', async () => {
+        const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, {
+          headers: { authorization: 'Bearer wrong-globalstack-token' },
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('subscription mismatch is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          '/subscriptions/11111111-1111-1111-1111-111111111111',
+        );
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'AuthorizationFailed');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('missing api-version is rejected', async () => {
         const result = await httpJson(
           armPort,
@@ -312,6 +343,20 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 201);
         assert.equal(result.body.name, resourceGroup);
         return { status: result.status, resourceId: result.body.id };
+      });
+
+      await record('server farm collection list is empty before create', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', 'serverfarms'));
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.value, []);
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('server farm delete missing returns no content', async () => {
+        const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Web', `serverfarms/${missingPlanName}`));
+        assert.equal(result.status, 204);
+        assert.equal(result.body, null);
+        return { status: result.status };
       });
 
       await record('server farm empty body is rejected', async () => {
@@ -401,6 +446,20 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.body.properties.provisioningState, 'Succeeded');
         assert.equal(result.body.globalstack.capabilityId, 'azure-functions');
         return { status: result.status, resourceId: result.body.id };
+      });
+
+      await record('function app collection list is empty before create', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', 'sites'));
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.value, []);
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('function app delete missing returns no content', async () => {
+        const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Web', `sites/missing-${suffix}`));
+        assert.equal(result.status, 204);
+        assert.equal(result.body, null);
+        return { status: result.status };
       });
 
       await record('function app create with missing server farm preserves captured NotFound', async () => {
@@ -546,6 +605,18 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, resourceId: result.body.id };
       });
 
+      await record('function app unsupported function action fails closed', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake/listKeys`),
+          {},
+        );
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('function app list includes created resource', async () => {
         const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', 'sites'));
         assert.equal(result.status, 200);
@@ -581,12 +652,38 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('secured function rejects wrong query key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/score/robot-7?code=wrong-key', { score: 0.92 }, { host: functionHost });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('secured function rejects wrong header key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/api/score/robot-7', { score: 0.92 }, {
+          host: functionHost,
+          'x-functions-key': 'wrong-key',
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('anonymous HTTP trigger succeeds', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', '/api/intake', { documentId: 'doc-001' }, { host: functionHost });
         assert.equal(result.status, 200);
         assert.equal(result.body.appName, appName);
         assert.equal(result.body.functionName, 'intake');
         assert.equal(result.body.body.documentId, 'doc-001');
+        return { status: result.status, route: result.headers['x-globalstack-functions-route'] };
+      });
+
+      await record('anonymous HTTP trigger succeeds without api prefix', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/intake', { documentId: 'doc-002' }, { host: functionHost });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.appName, appName);
+        assert.equal(result.body.functionName, 'intake');
+        assert.equal(result.body.body.documentId, 'doc-002');
         return { status: result.status, route: result.headers['x-globalstack-functions-route'] };
       });
 
@@ -613,6 +710,13 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.equal(result.body.value.length, 2);
         return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('inspection route rejects unknown app', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/_globalstack/functions/apps/missing-${suffix}/functions`);
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('ARM template deployment can create server farm and function app', async () => {
@@ -646,6 +750,13 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('function app list after delete is empty', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', 'sites'));
+        assert.equal(result.status, 200);
+        assert.ok(!result.body.value.some(item => item.name === appName));
+        return { status: result.status, count: result.body.value.length };
+      });
+
       await record('function route after app delete is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', '/api/intake', { documentId: 'doc-002' }, { host: functionHost });
         assert.equal(result.status, 404);
@@ -656,6 +767,20 @@ async function runControlAndDataPlaneMatrix() {
       await record('server farm delete succeeds', async () => {
         const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Web', planPath));
         assert.equal(result.status, 200);
+        return { status: result.status };
+      });
+
+      await record('server farm get after delete is not found', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', planPath));
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('server farm delete after delete returns no content', async () => {
+        const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Web', planPath));
+        assert.equal(result.status, 204);
+        assert.equal(result.body, null);
         return { status: result.status };
       });
 

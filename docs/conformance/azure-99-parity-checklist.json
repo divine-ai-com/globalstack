@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T08:13:04.463Z",
+    "generatedAt": "2026-05-19T09:06:11.370Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -291,7 +291,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "3 registry operations declared",
+            "12 registry operations declared",
             "backing engines: functions-core-tools, azurite"
           ],
           "gaps": [

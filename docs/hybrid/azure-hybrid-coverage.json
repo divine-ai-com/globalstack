@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T08:13:04.173Z",
+    "generatedAt": "2026-05-19T09:06:11.025Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -239,9 +239,18 @@
         "azurite"
       ],
       "implementedOperations": [
+        "ServerFarms.CreateOrUpdate",
+        "ServerFarms.Get",
+        "ServerFarms.List",
+        "ServerFarms.Delete",
         "FunctionApps.CreateOrUpdate",
         "FunctionApps.Get",
-        "FunctionApps.Delete"
+        "FunctionApps.List",
+        "FunctionApps.Delete",
+        "HttpTriggers.RouteLocal",
+        "HttpTriggers.RejectUnknownHost",
+        "HttpTriggers.RejectUnknownRoute",
+        "HttpTriggers.EnforceFunctionKey"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1467,6 +1476,70 @@
       }
     },
     "azure-functions": {
+      "ServerFarms.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "ServerFarms.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "ServerFarms.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "ServerFarms.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
       "FunctionApps.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
@@ -1499,7 +1572,87 @@
           "Managed identity starts as a local token facade with explain traces."
         ]
       },
+      "FunctionApps.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
       "FunctionApps.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "HttpTriggers.RouteLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "HttpTriggers.RejectUnknownHost": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "HttpTriggers.RejectUnknownRoute": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "HttpTriggers.EnforceFunctionKey": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,

@@ -98,7 +98,7 @@ Run the Azure Functions parity pack after changing Microsoft.Web server farm or 
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-functions-parity
 ```
 
-Expected result is `dist/e2e/azure-functions-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured server farm validation, async server farm and Function App readiness, missing-plan rejection, local HTTP-trigger route rejection, function-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-functions-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 57 Azure Functions cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, captured server farm validation, collection and delete-not-found behavior, async server farm and Function App readiness, missing-plan rejection, unsupported function action fail-closed behavior, local HTTP-trigger route rejection, function-key rejection and wrong-key rejection, ARM-template deployment, post-delete route/list/get errors, and representative IaC deployment lifecycles.
 
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 

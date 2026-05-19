@@ -19,7 +19,7 @@ By default it runs two layers:
 
 | Layer | Scope | Required Result |
 |---|---|---|
-| Azure Functions ARM and HTTP-trigger matrix | Auth rejection, missing `api-version`, missing resource group, captured server farm validation, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
+| Azure Functions ARM and HTTP-trigger matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured server farm validation, server farm and Function App collection/delete-not-found behavior, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, unsupported function action fail-closed behavior, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:azure-functions-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
@@ -29,8 +29,12 @@ Use `npm run e2e:azure-functions-parity -- --skip-platforms` only for tight loca
 The Azure Functions matrix covers these deployment states:
 
 - A request without a bearer token fails with `401 InvalidAuthenticationToken`.
+- Malformed and wrong bearer tokens fail with `401 InvalidAuthenticationToken`.
+- Requests scoped to a different subscription fail with `403 AuthorizationFailed`.
 - A provider request without `api-version` fails with `400 MissingApiVersionParameter`.
 - Creating a server farm in a missing resource group fails with `404 ResourceGroupNotFound`.
+- Empty server farm and Function App collection lists return `200` with an empty `value` array before create.
+- Deleting missing server farms and Function Apps returns `204`, matching the local captured delete-not-found policy.
 - Empty server farm and Function App bodies fail with captured `400 LocationRequired`.
 - Invalid server farm and Function App locations fail with captured `400 InvalidResourceLocation`.
 - Invalid server farm SKU preserves the captured `400 BadRequest` response.
@@ -40,8 +44,12 @@ The Azure Functions matrix covers these deployment states:
 - Function Apps require `kind` to include `functionapp`, `properties.serverFarmId`, and a server farm that already exists in the local ARM store.
 - Function App names and server farm names are rejected when they violate the local Azure-shaped naming rules.
 - Function App updates preserve generated host metadata like `<app>.azurewebsites.net`.
-- The local Functions router rejects unknown apps, unknown routes, disallowed methods, and missing function keys.
+- Unsupported Function App child actions fail closed instead of returning invented success.
+- The local Functions router rejects unknown apps, unknown routes, disallowed methods, missing function keys, and wrong function keys.
 - Anonymous HTTP triggers and function-key protected HTTP triggers route to local inspection responses for integration-test smoke.
+- HTTP trigger routing accepts the default `/api/<route>` prefix and direct `<route>` form used by the local Functions host.
+- Function App routes are removed after app deletion, and inspection rejects unknown apps.
+- Server farm get/delete-after-delete and Function App list-after-delete behavior are covered.
 - An ARM-template deployment can create the server farm and Function App together through the GlobalStack ARM deployment endpoint.
 
 ## Claim Boundary
