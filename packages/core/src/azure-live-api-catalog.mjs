@@ -169,6 +169,9 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.documentdb/databaseaccounts')) return { location: '{location}', kind: 'GlobalDocumentDB', properties: { databaseAccountOfferType: 'Standard', locations: [{ locationName: '{location}', failoverPriority: 0, isZoneRedundant: false }], consistencyPolicy: { defaultConsistencyLevel: 'Session' } } };
   if (lower.includes('microsoft.cache/redis')) return { location: '{location}', sku: { name: 'Basic', family: 'C', capacity: 0 }, properties: { enableNonSslPort: true } };
   if (lower === 'microsoft.logic/workflows') return { location: '{location}', properties: { state: 'Enabled', definition: { '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#', contentVersion: '1.0.0.0', triggers: { manual: { type: 'Request', kind: 'Http', inputs: { schema: {} } } }, actions: {}, outputs: {} }, parameters: {} } };
+  if (lower === 'microsoft.cdn/profiles') return { location: '{location}', sku: { name: 'Standard_AzureFrontDoor' }, properties: {} };
+  if (lower === 'microsoft.cdn/profiles/afdendpoints') return { location: '{location}', properties: { enabledState: 'Enabled' } };
+  if (lower === 'microsoft.cdn/profiles/endpoints') return { location: '{location}', properties: { origins: [{ name: 'origin1', properties: { hostName: 'example.org', httpPort: 80, httpsPort: 443 } }], isHttpAllowed: true, isHttpsAllowed: true } };
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
   if (lower === 'microsoft.network/applicationgateways') {
     return {

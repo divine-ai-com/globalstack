@@ -1254,6 +1254,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `invalid-sku`: pending
 
 ### front-door-cdn / Microsoft.Cdn/profiles / Get
 

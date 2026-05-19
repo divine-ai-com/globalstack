@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:17:50.629Z",
+    "generatedAt": "2026-05-19T13:29:27.712Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -3843,7 +3843,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "3 registry operations declared",
+                "14 registry operations declared",
                 "backing engines: globalstack-edge-router"
               ],
               "gaps": [

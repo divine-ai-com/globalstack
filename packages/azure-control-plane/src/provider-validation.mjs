@@ -322,6 +322,14 @@ function invalidLogicWorkflowName(resourceType, name, rule) {
   );
 }
 
+function invalidCdnName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The CDN or Front Door resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -595,6 +603,43 @@ function validateLogicWorkflowName(resourceType, providerRoute) {
       'Workflow names must be 1 through 80 characters, use alphanumerics, underscore, period, or hyphen, and start and end with an alphanumeric character.',
     );
   }
+  return null;
+}
+
+function validateCdnName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.Cdn/profiles') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'profiles');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'Profile names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'afdEndpoints');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,44}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'Front Door endpoint names must be 1 through 46 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/endpoints') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'endpoints');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,48}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'CDN endpoint names must be 1 through 50 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -1502,6 +1547,59 @@ function validateLogicWorkflowPayload(resourceType, body) {
   return null;
 }
 
+function validateCdnPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.Cdn/profiles') {
+    const skuName = body.sku?.name;
+    const validSkus = [
+      'Standard_AzureFrontDoor',
+      'Premium_AzureFrontDoor',
+      'Standard_Microsoft',
+      'Standard_Verizon',
+      'Premium_Verizon',
+      'Standard_Akamai',
+    ];
+    if (!skuName) return envelopedError(400, 'BadRequest', 'SkuIsNullOrEmpty');
+    if (!validSkus.includes(skuName)) {
+      return envelopedError(400, 'BadRequest', `The CDN profile sku '${skuName}' is invalid for this local parity surface.`);
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints') {
+    const enabledState = body.properties?.enabledState;
+    if (enabledState && !['Enabled', 'Disabled'].includes(enabledState)) {
+      return envelopedError(400, 'BadRequest', `The Front Door endpoint enabledState '${enabledState}' is invalid.`);
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/endpoints') {
+    const origins = body.properties?.origins;
+    if (!Array.isArray(origins) || origins.length === 0) {
+      return envelopedError(400, 'BadRequest', 'CDN endpoints require at least one origin.');
+    }
+    for (const origin of origins) {
+      if (!isNonEmptyString(origin?.name) || !isNonEmptyString(origin?.properties?.hostName)) {
+        return envelopedError(400, 'BadRequest', 'CDN endpoint origins require name and properties.hostName.');
+      }
+      const httpPort = origin.properties.httpPort;
+      const httpsPort = origin.properties.httpsPort;
+      if ((httpPort !== undefined && (!Number.isInteger(httpPort) || httpPort < 1 || httpPort > 65535))
+        || (httpsPort !== undefined && (!Number.isInteger(httpsPort) || httpsPort < 1 || httpsPort > 65535))) {
+        return envelopedError(400, 'BadRequest', 'CDN endpoint origin ports must be between 1 and 65535.');
+      }
+    }
+    const isHttpAllowed = body.properties?.isHttpAllowed;
+    const isHttpsAllowed = body.properties?.isHttpsAllowed;
+    if (isHttpAllowed !== undefined && typeof isHttpAllowed !== 'boolean') {
+      return envelopedError(400, 'BadRequest', 'CDN endpoint properties.isHttpAllowed must be a boolean.');
+    }
+    if (isHttpsAllowed !== undefined && typeof isHttpsAllowed !== 'boolean') {
+      return envelopedError(400, 'BadRequest', 'CDN endpoint properties.isHttpsAllowed must be a boolean.');
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1636,6 +1734,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const logicWorkflowNameValidation = validateLogicWorkflowName(resourceType, providerRoute);
   if (logicWorkflowNameValidation) return logicWorkflowNameValidation;
 
+  const cdnNameValidation = validateCdnName(resourceType, providerRoute);
+  if (cdnNameValidation) return cdnNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
@@ -1706,6 +1807,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const logicWorkflowPayloadValidation = validateLogicWorkflowPayload(resourceType, body);
   if (logicWorkflowPayloadValidation) return logicWorkflowPayloadValidation;
 
+  const cdnPayloadValidation = validateCdnPayload(resourceType, body);
+  if (cdnPayloadValidation) return cdnPayloadValidation;
+
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(
       400,
@@ -1724,10 +1828,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       'BadRequest',
       "Required property 'severity' not found in JSON. Path 'properties', line 1, position 36. Activity ID: globalstack-redacted.",
     );
-  }
-
-  if (resourceType === 'Microsoft.Cdn/profiles') {
-    return envelopedError(400, 'BadRequest', 'SkuIsNullOrEmpty');
   }
 
   if (resourceType === 'Microsoft.App/containerApps' && !body.properties?.template?.containers?.length) {

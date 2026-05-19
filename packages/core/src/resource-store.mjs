@@ -198,6 +198,7 @@ export class ResourceStore {
     const typeParts = typePath.split('/');
     const type = `${providerNamespace}/${typeParts.filter((_, index) => index % 2 === 0).join('/')}`;
     const name = typeParts.filter((_, index) => index % 2 === 1).join('/');
+    const leafName = typeParts.at(-1);
     const supportLevel = capability.primaryModes.join('+');
     const lifecycleSequence = !existing ? asyncLifecycleSequence(type) : null;
     const resource = {
@@ -271,6 +272,27 @@ export class ResourceStore {
           ? {
               state: body.properties?.state ?? existing?.properties?.state ?? 'Enabled',
               accessEndpoint: existing?.properties?.accessEndpoint ?? `https://logic.azure.com/workflows/${name}`,
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              resourceState: existing?.properties?.resourceState ?? 'Active',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles/afdEndpoints'
+          ? {
+              hostName: existing?.properties?.hostName ?? `${leafName}.azurefd.net`,
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
+              enabledState: body.properties?.enabledState ?? existing?.properties?.enabledState ?? 'Enabled',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles/endpoints'
+          ? {
+              hostName: existing?.properties?.hostName ?? `${leafName}.azureedge.net`,
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              resourceState: existing?.properties?.resourceState ?? 'Running',
             }
           : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'

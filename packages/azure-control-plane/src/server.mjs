@@ -1283,6 +1283,23 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           ]);
         }
 
+        if (
+          providerRoute.providerNamespace === 'Microsoft.Cdn'
+          && (
+            resourceType.startsWith('Microsoft.Cdn/profiles/')
+            || resourceType.startsWith('Microsoft.Cdn/operationResults')
+            || resourceType.startsWith('Microsoft.Cdn/operationStatus')
+          )
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure CDN and Front Door child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });

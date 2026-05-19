@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:17:49.980Z",
+    "generatedAt": "2026-05-19T13:29:26.833Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1096,7 +1096,18 @@
       ],
       "implementedOperations": [
         "Profiles.CreateOrUpdate",
-        "Endpoints.CreateOrUpdate",
+        "Profiles.Get",
+        "Profiles.List",
+        "Profiles.Delete",
+        "AfdEndpoints.CreateOrUpdate",
+        "AfdEndpoints.Get",
+        "AfdEndpoints.List",
+        "AfdEndpoints.Delete",
+        "CdnEndpoints.CreateOrUpdate",
+        "CdnEndpoints.Get",
+        "CdnEndpoints.List",
+        "CdnEndpoints.Delete",
+        "CdnRoutes.RejectUnsupportedRoutes",
         "Routes.CreateOrUpdate"
       ],
       "contractTested": false,
@@ -4404,7 +4415,161 @@
           "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
         ]
       },
-      "Endpoints.CreateOrUpdate": {
+      "Profiles.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Profiles.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Profiles.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdEndpoints.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdEndpoints.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdEndpoints.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdEndpoints.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "CdnEndpoints.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "CdnEndpoints.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "CdnEndpoints.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "CdnEndpoints.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "CdnRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:17:50.166Z",
+    "generatedAt": "2026-05-19T13:29:27.086Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -9060,6 +9060,9 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profilesName}",
       "requestBodyTemplate": {
         "location": "{location}",
+        "sku": {
+          "name": "Standard_AzureFrontDoor"
+        },
         "properties": {}
       },
       "varianceCases": [
@@ -9068,6 +9071,9 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
+            "sku": {
+              "name": "Standard_AzureFrontDoor"
+            },
             "properties": {}
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
@@ -9080,6 +9086,9 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
+            "sku": {
+              "name": "Standard_AzureFrontDoor"
+            },
             "properties": {}
           },
           "expectedAzure": "ARM error for missing api-version.",
@@ -9091,6 +9100,9 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
+            "sku": {
+              "name": "Standard_AzureFrontDoor"
+            },
             "properties": {}
           },
           "expectedAzure": "Provider-specific location validation error.",
@@ -9102,6 +9114,20 @@
           "description": "Create/update with an empty JSON body.",
           "body": {},
           "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -9170,7 +9196,9 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profilesName}/afdEndpoints/{afdEndpointsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "enabledState": "Enabled"
+        }
       },
       "varianceCases": [
         {
@@ -9178,7 +9206,9 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "enabledState": "Enabled"
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -9190,7 +9220,9 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "enabledState": "Enabled"
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -9201,7 +9233,9 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "enabledState": "Enabled"
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -9280,7 +9314,20 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profilesName}/endpoints/{endpointsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "origins": [
+            {
+              "name": "origin1",
+              "properties": {
+                "hostName": "example.org",
+                "httpPort": 80,
+                "httpsPort": 443
+              }
+            }
+          ],
+          "isHttpAllowed": true,
+          "isHttpsAllowed": true
+        }
       },
       "varianceCases": [
         {
@@ -9288,7 +9335,20 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "origins": [
+                {
+                  "name": "origin1",
+                  "properties": {
+                    "hostName": "example.org",
+                    "httpPort": 80,
+                    "httpsPort": 443
+                  }
+                }
+              ],
+              "isHttpAllowed": true,
+              "isHttpsAllowed": true
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -9300,7 +9360,20 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "origins": [
+                {
+                  "name": "origin1",
+                  "properties": {
+                    "hostName": "example.org",
+                    "httpPort": 80,
+                    "httpsPort": 443
+                  }
+                }
+              ],
+              "isHttpAllowed": true,
+              "isHttpsAllowed": true
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -9311,7 +9384,20 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "origins": [
+                {
+                  "name": "origin1",
+                  "properties": {
+                    "hostName": "example.org",
+                    "httpPort": 80,
+                    "httpsPort": 443
+                  }
+                }
+              ],
+              "isHttpAllowed": true,
+              "isHttpsAllowed": true
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",

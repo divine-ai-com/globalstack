@@ -307,7 +307,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | Get | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | Delete | DELETE | 2023-09-01 | 0 |
-| front-door-cdn | CloudFront | Microsoft.Cdn/profiles | CreateOrUpdate | PUT | 2024-02-01 | 4 |
+| front-door-cdn | CloudFront | Microsoft.Cdn/profiles | CreateOrUpdate | PUT | 2024-02-01 | 5 |
 | front-door-cdn | CloudFront | Microsoft.Cdn/profiles | Get | GET | 2024-02-01 | 0 |
 | front-door-cdn | CloudFront | Microsoft.Cdn/profiles | ListByResourceGroup | GET | 2024-02-01 | 0 |
 | front-door-cdn | CloudFront | Microsoft.Cdn/profiles | Delete | DELETE | 2024-02-01 | 0 |

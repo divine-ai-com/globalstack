@@ -577,6 +577,7 @@
     "e2e:cosmos-parity",
     "e2e:dns-zones-parity",
     "e2e:event-grid-parity",
+    "e2e:front-door-cdn-parity",
     "e2e:identity-rbac-parity",
     "e2e:key-vault-parity",
     "e2e:load-balancing-parity",

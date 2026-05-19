@@ -38,6 +38,7 @@ const monitorMetricsAlertsParityResultsPath = join(distRoot, 'e2e', 'azure-monit
 const virtualNetworkParityResultsPath = join(distRoot, 'e2e', 'azure-virtual-network-parity', 'results.json');
 const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity', 'results.json');
 const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
+const frontDoorCdnParityResultsPath = join(distRoot, 'e2e', 'azure-front-door-cdn-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1567,6 +1568,77 @@ if (!loadBalancingParityText) {
   }
   if (loadBalancingParity.platformMatrix?.ok !== true || loadBalancingParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Load Balancing parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const frontDoorCdnParityText = await readFile(frontDoorCdnParityResultsPath, 'utf8').catch(() => '');
+if (!frontDoorCdnParityText) {
+  errors.push('missing Azure Front Door/CDN parity E2E results; run npm run e2e:front-door-cdn-parity');
+} else {
+  const frontDoorCdnParity = JSON.parse(frontDoorCdnParityText);
+  if (frontDoorCdnParity.ok !== true) {
+    errors.push('Azure Front Door/CDN parity E2E did not pass');
+  }
+  if (frontDoorCdnParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Front Door/CDN parity control-plane matrix has failures');
+  }
+  if ((frontDoorCdnParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure Front Door/CDN parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'profile create requires an existing resource group',
+    'afd endpoint create requires an existing resource group',
+    'resource group create succeeds',
+    'profile collection list is empty before create',
+    'profile delete missing returns no content',
+    'afd endpoint create requires an existing profile',
+    'profile empty body is rejected',
+    'profile invalid location is rejected',
+    'profile invalid name is rejected',
+    'profile missing sku is rejected',
+    'profile invalid sku is rejected',
+    'profile create succeeds',
+    'profile get succeeds',
+    'afd endpoint collection list is empty before create',
+    'cdn endpoint collection list is empty before create',
+    'afd endpoint invalid location is rejected',
+    'afd endpoint invalid name is rejected',
+    'afd endpoint invalid enabledState is rejected',
+    'cdn endpoint invalid location is rejected',
+    'cdn endpoint invalid name is rejected',
+    'cdn endpoint missing origins is rejected',
+    'cdn endpoint invalid origin host is rejected',
+    'cdn endpoint invalid origin port is rejected',
+    'cdn endpoint invalid http flag is rejected',
+    'afd endpoint create succeeds',
+    'cdn endpoint create succeeds',
+    'afd endpoint get succeeds',
+    'cdn endpoint get succeeds',
+    'afd endpoint update can disable endpoint',
+    'profile list includes created resource',
+    'afd endpoint list includes created resource',
+    'cdn endpoint list includes created resource',
+    'unsupported cdn rules route fails closed',
+    'unsupported cdn purge action route fails closed',
+    'ARM template deployment can create front door and cdn endpoints',
+    'afd endpoint get after delete is not found',
+    'cdn endpoint delete after delete returns no content',
+    'profile get after delete is not found',
+  ]) {
+    if (!frontDoorCdnParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Front Door/CDN parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (frontDoorCdnParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Front Door/CDN parity E2E must include the platform matrix during validation');
+  }
+  if (frontDoorCdnParity.platformMatrix?.ok !== true || frontDoorCdnParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Front Door/CDN parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

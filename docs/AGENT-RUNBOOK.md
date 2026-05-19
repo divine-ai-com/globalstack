@@ -197,6 +197,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:load-balancing-parity
 
 Expected result is `dist/e2e/azure-load-balancing-parity/results.json` with `ok == true`, zero control-plane failures, at least 45 Azure load-balancing cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Application Gateway and Load Balancer lifecycle, frontend/listener/backend/probe parameter rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Front Door/CDN parity pack after changing Microsoft.Cdn profile, Front Door endpoint, CDN endpoint, unsupported CDN route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:front-door-cdn-parity
+```
+
+Expected result is `dist/e2e/azure-front-door-cdn-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 Front Door/CDN cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, CDN profile lifecycle, Front Door and CDN endpoint lifecycle, stricter SKU/origin/flag rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash
