@@ -213,6 +213,7 @@ export class ResourceStore {
       tags: body.tags ?? existing?.tags ?? {},
       sku: body.sku,
       kind: body.kind,
+      identity: body.identity ?? existing?.identity,
       properties: {
         ...(existing?.properties ?? {}),
         ...(body.properties ?? {}),
@@ -245,6 +246,27 @@ export class ResourceStore {
                 { length: body.properties?.partitionCount ?? existing?.properties?.partitionCount ?? 1 },
                 (_, index) => String(index),
               ),
+            }
+          : {}),
+        ...(type === 'Microsoft.Synapse/workspaces'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              connectivityEndpoints: existing?.properties?.connectivityEndpoints ?? {
+                web: `https://web.azuresynapse.net?workspace=%2fsubscriptions%2f${subscriptionId}%2fresourceGroups%2f${resourceGroupName}%2fproviders%2fMicrosoft.Synapse%2fworkspaces%2f${name}`,
+                dev: `https://${name}.dev.azuresynapse.net`,
+                sql: `${name}.sql.azuresynapse.net`,
+                sqlOnDemand: `${name}-ondemand.sql.azuresynapse.net`,
+              },
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
+        ...(type === 'Microsoft.Synapse/workspaces/sqlPools'
+          ? {
+              status: existing?.properties?.status ?? 'Online',
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
             }
           : {}),
         ...(type === 'Microsoft.ApiManagement/service'

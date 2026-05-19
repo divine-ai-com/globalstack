@@ -1372,6 +1372,20 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           ]);
         }
 
+        if (
+          providerRoute.providerNamespace === 'Microsoft.Synapse'
+          && resourceType.startsWith('Microsoft.Synapse/workspaces/')
+          && resourceType !== 'Microsoft.Synapse/workspaces/sqlPools'
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Synapse workspace child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });

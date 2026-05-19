@@ -25,6 +25,7 @@ const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', '
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
 const eventHubsParityResultsPath = join(distRoot, 'e2e', 'azure-event-hubs-parity', 'results.json');
+const synapseWarehouseParityResultsPath = join(distRoot, 'e2e', 'azure-synapse-warehouse-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
@@ -742,6 +743,72 @@ if (!eventHubsParityText) {
   }
   if (eventHubsParity.platformMatrix?.ok !== true || eventHubsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Event Hubs parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const synapseWarehouseParityText = await readFile(synapseWarehouseParityResultsPath, 'utf8').catch(() => '');
+if (!synapseWarehouseParityText) {
+  errors.push('missing Azure Synapse Warehouse parity E2E results; run npm run e2e:synapse-warehouse-parity');
+} else {
+  const synapseWarehouseParity = JSON.parse(synapseWarehouseParityText);
+  if (synapseWarehouseParity.ok !== true) {
+    errors.push('Azure Synapse Warehouse parity E2E did not pass');
+  }
+  if (synapseWarehouseParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Synapse Warehouse parity control-plane matrix has failures');
+  }
+  if ((synapseWarehouseParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure Synapse Warehouse parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'workspace create requires an existing resource group',
+    'resource group create succeeds',
+    'workspace collection list is empty before create',
+    'workspace delete missing returns no content',
+    'sql pool create before workspace reports missing parent',
+    'sql pool list before workspace reports missing parent',
+    'workspace empty body is rejected',
+    'workspace invalid location is rejected',
+    'workspace invalid name is rejected',
+    'workspace captured minimal body is rejected with validation details',
+    'workspace missing system identity is rejected',
+    'workspace missing data lake storage is rejected',
+    'workspace create succeeds',
+    'workspace get succeeds',
+    'workspace update can change tags',
+    'workspace list includes created resource',
+    'sql pool invalid name is rejected',
+    'sql pool missing sku is rejected',
+    'sql pool invalid sku is rejected',
+    'sql pool invalid create mode is rejected',
+    'sql pool invalid max size is rejected',
+    'sql pool collection list is empty before create',
+    'sql pool delete missing returns no content',
+    'sql pool create succeeds',
+    'sql pool get succeeds',
+    'sql pool update can change sku',
+    'sql pool list includes created resource',
+    'unsupported workspace firewall rule route fails closed',
+    'unsupported workspace administrator route fails closed',
+    'unsupported sql pool pause action fails closed',
+    'ARM template deployment can create workspace and sql pool',
+    'sql pool get after delete is not found',
+    'workspace get after delete is not found',
+  ]) {
+    if (!synapseWarehouseParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Synapse Warehouse parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (synapseWarehouseParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Synapse Warehouse parity E2E must include the platform matrix during validation');
+  }
+  if (synapseWarehouseParity.platformMatrix?.ok !== true || synapseWarehouseParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Synapse Warehouse parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

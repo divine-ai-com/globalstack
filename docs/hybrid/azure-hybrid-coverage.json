@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:24:55.836Z",
+    "generatedAt": "2026-05-19T14:34:46.382Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1307,7 +1307,14 @@
       ],
       "implementedOperations": [
         "Workspaces.CreateOrUpdate",
+        "Workspaces.Get",
+        "Workspaces.List",
+        "Workspaces.Delete",
         "SqlPools.CreateOrUpdate",
+        "SqlPools.Get",
+        "SqlPools.List",
+        "SqlPools.Delete",
+        "SynapseRoutes.RejectUnsupportedRoutes",
         "Queries.RunLocal"
       ],
       "contractTested": false,
@@ -5196,7 +5203,105 @@
           "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
         ]
       },
+      "Workspaces.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "Workspaces.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "Workspaces.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
       "SqlPools.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "SqlPools.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "SqlPools.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "SqlPools.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-analytics-store"
+        ],
+        "knownGaps": [
+          "MVP stores Synapse metadata and may run simple local analytical queries only.",
+          "No distributed warehouse, MPP optimizer, workspace networking, data lake integration, or pause/resume parity in MVP."
+        ]
+      },
+      "SynapseRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

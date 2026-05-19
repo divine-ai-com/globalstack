@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:24:57.053Z",
+    "generatedAt": "2026-05-19T14:34:46.924Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -4680,7 +4680,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "3 registry operations declared",
+                "10 registry operations declared",
                 "backing engines: local-analytics-store"
               ],
               "gaps": [

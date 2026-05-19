@@ -133,6 +133,7 @@ flowchart TD
 - `scripts/e2e-azure-storage-normalizer.mjs`
 - `scripts/e2e-azure-storage-parity.mjs`
 - `scripts/e2e-azure-storage.mjs`
+- `scripts/e2e-azure-synapse-warehouse-parity.mjs`
 - `scripts/e2e-azure-virtual-network-parity.mjs`
 - `scripts/e2e-azure-waf-policy-parity.mjs`
 - `scripts/fetch-localstack-azure-coverage.mjs`
@@ -207,6 +208,7 @@ flowchart TD
 - `npm run e2e:storage-hardening`
 - `npm run e2e:storage-normalizer`
 - `npm run e2e:storage-parity`
+- `npm run e2e:synapse-warehouse-parity`
 - `npm run e2e:virtual-network-parity`
 - `npm run e2e:waf-policy-parity`
 - `npm run fetch:azure-coverage`

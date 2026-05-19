@@ -229,6 +229,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:activity-log-audit-parity
 
 Expected result is `dist/e2e/azure-activity-log-audit-parity/results.json` with `ok == true`, zero control-plane failures, at least 25 Activity Log Audit cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Event Grid system-topic lifecycle, stricter source/topicType rejection, captured diagnostic-setting root-scope rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Synapse Warehouse parity pack after changing Synapse workspace behavior, dedicated SQL pool behavior, unsupported Synapse route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:synapse-warehouse-parity
+```
+
+Expected result is `dist/e2e/azure-synapse-warehouse-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 Synapse cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, dedicated SQL pool lifecycle, stricter workspace identity/data-lake and SQL pool SKU/createMode rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Files parity pack after changing Storage file share behavior, Azure NetApp explicit-gap behavior, unsupported file route handling, or platform deployment routing:
 
 ```bash

@@ -354,6 +354,14 @@ function invalidAppConfigurationName(resourceType, name, rule) {
   );
 }
 
+function invalidSynapseName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The Synapse resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -482,6 +490,32 @@ function validateEventHubName(resourceType, providerRoute) {
         resourceType,
         name,
         'Event hub names must be 1 through 256 characters, use alphanumerics, periods, hyphens, and underscores, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateSynapseName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.Synapse/workspaces') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'workspaces');
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,48}[a-zA-Z0-9]$/.test(name)) {
+      return invalidSynapseName(
+        resourceType,
+        name,
+        'Workspace names must be 2 through 50 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Synapse/workspaces/sqlPools') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'sqlPools');
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,58}[a-zA-Z0-9]$/.test(name)) {
+      return invalidSynapseName(
+        resourceType,
+        name,
+        'SQL pool names must be 2 through 60 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
       );
     }
   }
@@ -1106,6 +1140,78 @@ function validateActivityLogAuditPayload(resourceType, body) {
       'InvalidRequest',
       "Property 'identity' must be an object when provided.",
     );
+  }
+
+  return null;
+}
+
+function synapseWorkspaceValidationFailed(details) {
+  return envelopedError(
+    400,
+    'ValidationFailed',
+    'Workspace request validation failed, check error details for more information',
+    details,
+  );
+}
+
+function validateSynapsePayload(resourceType, body) {
+  if (resourceType === 'Microsoft.Synapse/workspaces') {
+    if (body.location && emptyObject(body.properties)) {
+      return synapseWorkspaceValidationFailed([
+        {
+          code: 'SystemAssignedManagedIdentityNotSpecified',
+          message: 'Workspace creation request should have an identity section with Type = SystemAssigned',
+        },
+        {
+          code: 'UserAssignedOnlyManagedIdentity',
+          message: "Workspace cannot be created with only UserAssigned identity. Specify Identity Type to be either 'SystemAssigned' or 'SystemAssigned,UserAssigned'",
+        },
+        {
+          code: 'DefaultDataLakeStorageNotSpecified',
+          message: 'Default data lake storage section not specified. Please specify defaultDataLakeStorage section with accountUrl and fileSystem under properties',
+        },
+        {
+          code: 'CustomerSubscriptionNotRegisteredWithSqlRp',
+          message: 'Customer subscription <subscription-id> needs to be registered with Microsoft.Sql resource provider. For steps to register, go to https://go.microsoft.com/fwlink/?linkid=2150550',
+        },
+      ]);
+    }
+    if (!String(body.identity?.type ?? '').split(',').map(value => value.trim()).includes('SystemAssigned')) {
+      return synapseWorkspaceValidationFailed([
+        {
+          code: 'SystemAssignedManagedIdentityNotSpecified',
+          message: 'Workspace creation request should have an identity section with Type = SystemAssigned',
+        },
+      ]);
+    }
+    if (
+      typeof body.properties?.defaultDataLakeStorage?.accountUrl !== 'string'
+      || typeof body.properties?.defaultDataLakeStorage?.filesystem !== 'string'
+      || body.properties.defaultDataLakeStorage.accountUrl.trim() === ''
+      || body.properties.defaultDataLakeStorage.filesystem.trim() === ''
+    ) {
+      return synapseWorkspaceValidationFailed([
+        {
+          code: 'DefaultDataLakeStorageNotSpecified',
+          message: 'Default data lake storage section not specified. Please specify defaultDataLakeStorage section with accountUrl and fileSystem under properties',
+        },
+      ]);
+    }
+  }
+
+  if (resourceType === 'Microsoft.Synapse/workspaces/sqlPools') {
+    if (body.sku?.name === undefined && !emptyObject(body.properties)) {
+      return envelopedError(400, 'InvalidSku', 'SQL pool sku.name is required.');
+    }
+    if (body.sku?.name !== undefined && !/^DW[0-9]+c$/i.test(String(body.sku.name))) {
+      return envelopedError(400, 'InvalidSku', `SQL pool sku.name '${body.sku.name}' is invalid.`);
+    }
+    if (Object.hasOwn(body.properties ?? {}, 'createMode') && !['Default', 'Recovery', 'PointInTimeRestore'].includes(body.properties.createMode)) {
+      return envelopedError(400, 'InvalidParameterValue', `SQL pool createMode '${body.properties.createMode}' is invalid.`);
+    }
+    if (Object.hasOwn(body.properties ?? {}, 'maxSizeBytes') && (!Number.isInteger(body.properties.maxSizeBytes) || body.properties.maxSizeBytes <= 0)) {
+      return envelopedError(400, 'InvalidParameterValue', 'SQL pool maxSizeBytes must be a positive integer when provided.');
+    }
   }
 
   return null;
@@ -2036,8 +2142,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
-  const activityLogAuditPayloadValidation = validateActivityLogAuditPayload(resourceType, body);
-  if (activityLogAuditPayloadValidation) return activityLogAuditPayloadValidation;
+  const synapseNameValidation = validateSynapseName(resourceType, providerRoute);
+  if (synapseNameValidation) return synapseNameValidation;
 
   const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
   if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
@@ -2099,6 +2205,12 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const azureFilesPayloadValidation = validateAzureFilesPayload(resourceType, body);
   if (azureFilesPayloadValidation) return azureFilesPayloadValidation;
 
+  const activityLogAuditPayloadValidation = validateActivityLogAuditPayload(resourceType, body);
+  if (activityLogAuditPayloadValidation) return activityLogAuditPayloadValidation;
+
+  const synapsePayloadValidation = validateSynapsePayload(resourceType, body);
+  if (synapsePayloadValidation) return synapsePayloadValidation;
+
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(
       400,
@@ -2124,32 +2236,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       400,
       'ContainerAppCreateMustContainContainer',
       "Error creating container app 'app-local'. Must specify atleast one container to create a container app.",
-    );
-  }
-
-  if (resourceType === 'Microsoft.Synapse/workspaces' && body.location && emptyObject(body.properties)) {
-    return envelopedError(
-      400,
-      'ValidationFailed',
-      'Workspace request validation failed, check error details for more information',
-      [
-        {
-          code: 'SystemAssignedManagedIdentityNotSpecified',
-          message: 'Workspace creation request should have an identity section with Type = SystemAssigned',
-        },
-        {
-          code: 'UserAssignedOnlyManagedIdentity',
-          message: "Workspace cannot be created with only UserAssigned identity. Specify Identity Type to be either 'SystemAssigned' or 'SystemAssigned,UserAssigned'",
-        },
-        {
-          code: 'DefaultDataLakeStorageNotSpecified',
-          message: 'Default data lake storage section not specified. Please specify defaultDataLakeStorage section with accountUrl and fileSystem under properties',
-        },
-        {
-          code: 'CustomerSubscriptionNotRegisteredWithSqlRp',
-          message: 'Customer subscription <subscription-id> needs to be registered with Microsoft.Sql resource provider. For steps to register, go to https://go.microsoft.com/fwlink/?linkid=2150550',
-        },
-      ],
     );
   }
 
