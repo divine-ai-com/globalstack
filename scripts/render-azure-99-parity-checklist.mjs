@@ -195,6 +195,16 @@ function iacProviderEvidence(capabilityId, packageJson) {
   return { script, platforms: platformRunnerNames };
 }
 
+function scriptPathFromCommand(command) {
+  return command?.match(/\bnode\s+(scripts\/[^\s]+\.mjs)\b/)?.[1] ?? null;
+}
+
+function scriptSource(script, packageJson, scriptSources) {
+  const command = packageJson?.scripts?.[script];
+  const relativePath = scriptPathFromCommand(command);
+  return relativePath ? scriptSources.get(relativePath) : null;
+}
+
 function scriptEvidence(script, packageJson) {
   const scripts = packageJson?.scripts ?? {};
   const smoke = scripts.smoke ?? '';
@@ -205,6 +215,25 @@ function scriptEvidence(script, packageJson) {
 function dataPlaneEvidence(capabilityId, packageJson) {
   const evidence = dataPlaneEvidenceByCapability.get(capabilityId);
   if (!evidence || !scriptEvidence(evidence.script, packageJson)) return null;
+  return evidence;
+}
+
+function identityEvidence(capabilityId, packageJson, scriptSources) {
+  const script = iacScriptByCapability.get(capabilityId);
+  if (!scriptEvidence(script, packageJson)) return null;
+  const source = scriptSource(script, packageJson, scriptSources);
+  if (!source?.includes('InvalidAuthenticationToken')) return null;
+
+  const evidence = [
+    `${script} is wired into npm run smoke`,
+    'ARM InvalidAuthenticationToken rejection is asserted by the service parity pack',
+  ];
+  if (source.includes('AuthorizationFailed')) {
+    evidence.push('subscription-scope AuthorizationFailed rejection is asserted by the service parity pack');
+  }
+  if (capabilityId === 'identity-rbac') {
+    evidence.push('local token facade, OpenID discovery, Managed Identity, role assignment, and role definition rejection paths are covered by the identity/RBAC parity pack');
+  }
   return evidence;
 }
 
@@ -286,6 +315,11 @@ const lifecycleFiles = (await readdir(lifecycleRoot).catch(() => [])).filter(nam
 const lifecycleCaptureCount = lifecycleFiles.length;
 const storageDataPlaneExpectationCount = storageDataPlaneExpectations.expectations?.length ?? 0;
 const providerByCapability = new Map((providerSurface?.capabilities ?? []).map(item => [item.capabilityId, item]));
+const scriptPaths = [...new Set(Object.values(packageJson.scripts ?? {}).map(scriptPathFromCommand).filter(Boolean))];
+const scriptSources = new Map(await Promise.all(scriptPaths.map(async relativePath => [
+  relativePath,
+  await readFile(join(root, relativePath), 'utf8').catch(() => ''),
+])));
 
 const services = allCapabilities.map(capability => {
   const calls = (liveCatalog.calls ?? []).filter(call => call.capabilityId === capability.id);
@@ -303,6 +337,7 @@ const services = allCapabilities.map(capability => {
   const storageDataPlaneRelevant = ['blob-storage', 'queue-storage'].includes(capability.id);
   const iacEvidence = iacProviderEvidence(capability.id, packageJson);
   const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
+  const identityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -345,10 +380,16 @@ const services = allCapabilities.map(capability => {
       gaps: ['Promote captured status/error/body/header assertions into local replay tests for every service-specific case.'],
     }),
     identityRbacBehavior: status({
-      partial: capability.id === 'identity-rbac',
+      partial: !!identityEvidenceItems,
       complete: false,
-      evidence: capability.id === 'identity-rbac' ? ['identity-rbac capability exists in Tier 1 registry'] : [],
-      gaps: ['Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials.'],
+      evidence: identityEvidenceItems ?? [],
+      gaps: identityEvidenceItems
+        ? [
+          'Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.',
+          'Implement service-specific data-plane RBAC denials and propagation timing where applicable.',
+          'Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured.',
+        ]
+        : ['Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials.'],
     }),
     retryEventualConsistency: status({
       partial: isStorageCapability(capability.id) && lifecycleCaptureCount > 0,

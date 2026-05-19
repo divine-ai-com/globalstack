@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T22:12:41.205Z",
+    "generatedAt": "2026-05-19T22:14:05.379Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -82,8 +82,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 9,
-        "notStarted": 1
+        "partial": 10,
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -130,10 +130,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:storage-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -209,8 +214,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -256,10 +261,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:azure-functions-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -333,8 +344,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -380,10 +391,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:api-management-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -507,10 +524,15 @@
         "identityRbacBehavior": {
           "status": "partial",
           "evidence": [
-            "identity-rbac capability exists in Tier 1 registry"
+            "e2e:identity-rbac-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack",
+            "local token facade, OpenID discovery, Managed Identity, role assignment, and role definition rejection paths are covered by the identity/RBAC parity pack"
           ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -581,8 +603,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -628,10 +650,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:key-vault-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -705,8 +732,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -752,10 +779,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:key-vault-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -829,8 +861,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -876,10 +908,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:postgresql-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -953,8 +991,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1001,10 +1039,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:cosmos-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1078,8 +1122,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1125,10 +1169,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:service-bus-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1202,8 +1252,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1249,10 +1299,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:event-grid-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1325,8 +1381,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1372,10 +1428,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:container-registry-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1448,8 +1509,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1495,10 +1556,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:aks-metadata-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1569,8 +1635,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1616,10 +1682,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:monitor-logs-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1690,8 +1762,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1737,10 +1809,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1813,8 +1891,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1860,10 +1938,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:virtual-network-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -1934,8 +2018,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1981,10 +2065,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:mysql-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2053,8 +2143,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 9,
-        "notStarted": 1
+        "partial": 10,
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2101,10 +2191,15 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:storage-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2182,8 +2277,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2229,10 +2324,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:redis-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2303,8 +2404,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2350,10 +2451,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:logic-workflows-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2444,8 +2551,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2491,10 +2598,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:dns-zones-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2565,8 +2678,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2612,10 +2725,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:load-balancing-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2687,8 +2806,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2734,10 +2853,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:front-door-cdn-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2808,8 +2933,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2855,10 +2980,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:waf-policy-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -2929,8 +3060,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2976,10 +3107,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:activity-log-audit-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3050,8 +3187,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3098,10 +3235,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:azure-files-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3174,8 +3317,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3221,10 +3364,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:event-hubs-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3295,8 +3444,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3342,10 +3491,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:synapse-warehouse-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3416,8 +3571,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3463,10 +3618,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:app-configuration-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3537,8 +3698,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3584,10 +3745,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:database-migration-service-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {
@@ -3660,8 +3827,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3707,10 +3874,16 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:service-discovery-parity is wired into npm run smoke",
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+          ],
           "gaps": [
-            "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
           ]
         },
         "retryEventualConsistency": {

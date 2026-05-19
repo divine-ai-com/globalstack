@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T22:12:41.434Z",
+    "generatedAt": "2026-05-19T22:14:05.551Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -22,11 +22,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.332,
-          "priority": 126,
+          "score": 0.3762,
+          "priority": 116,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -161,11 +161,17 @@
               "serviceId": "cosmos-nosql-table",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:cosmos-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -238,11 +244,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 122,
+          "score": 0.391,
+          "priority": 113,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -379,11 +385,17 @@
               "serviceId": "service-bus-topics",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:service-bus-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -454,11 +466,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 121,
+          "score": 0.391,
+          "priority": 112,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -594,11 +606,17 @@
               "serviceId": "event-grid",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-grid-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -669,11 +687,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 119,
+          "score": 0.3393,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -807,11 +825,17 @@
               "serviceId": "event-hubs-streams",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-hubs-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -882,11 +906,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 119,
+          "score": 0.3393,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -1020,11 +1044,17 @@
               "serviceId": "app-configuration-parameters",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:app-configuration-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -1095,11 +1125,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.332,
-          "priority": 111,
+          "score": 0.3762,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -1233,11 +1263,17 @@
               "serviceId": "azure-files",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:azure-files-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -1310,11 +1346,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 9,
-            "notStarted": 1
+            "partial": 10,
+            "notStarted": 0
           },
-          "score": 0.4057,
-          "priority": 107,
+          "score": 0.45,
+          "priority": 98,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -1451,11 +1487,16 @@
               "serviceId": "blob-storage",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:storage-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -1530,11 +1571,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 9,
-            "notStarted": 1
+            "partial": 10,
+            "notStarted": 0
           },
-          "score": 0.4057,
-          "priority": 93,
+          "score": 0.45,
+          "priority": 84,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -1671,11 +1712,16 @@
               "serviceId": "queue-storage",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:storage-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -1898,10 +1944,15 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "identity-rbac capability exists in Tier 1 registry"
+                "e2e:identity-rbac-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack",
+                "local token facade, OpenID discovery, Managed Identity, role assignment, and role definition rejection paths are covered by the identity/RBAC parity pack"
               ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -1972,11 +2023,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 119,
+          "score": 0.391,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2112,11 +2163,16 @@
               "serviceId": "key-vault-keys",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:key-vault-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -2187,11 +2243,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 118,
+          "score": 0.391,
+          "priority": 109,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2327,11 +2383,16 @@
               "serviceId": "key-vault-secrets",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:key-vault-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -2402,11 +2463,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 116,
+          "score": 0.3393,
+          "priority": 107,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2539,11 +2600,17 @@
               "serviceId": "waf-policy",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:waf-policy-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -2614,11 +2681,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 116,
+          "score": 0.3393,
+          "priority": 107,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2751,11 +2818,17 @@
               "serviceId": "activity-log-audit",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:activity-log-audit-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -2834,11 +2907,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 129,
+          "score": 0.3393,
+          "priority": 120,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2971,11 +3044,16 @@
               "serviceId": "aks-metadata",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:aks-metadata-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -3046,11 +3124,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 120,
+          "score": 0.391,
+          "priority": 111,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3186,11 +3264,17 @@
               "serviceId": "api-management",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:api-management-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -3261,11 +3345,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 119,
+          "score": 0.391,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3401,11 +3485,17 @@
               "serviceId": "azure-functions",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:azure-functions-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -3476,11 +3566,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 117,
+          "score": 0.3393,
+          "priority": 108,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3613,11 +3703,17 @@
               "serviceId": "logic-workflows",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:logic-workflows-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -3688,11 +3784,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3467,
-          "priority": 116,
+          "score": 0.391,
+          "priority": 107,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3829,11 +3925,16 @@
               "serviceId": "container-registry",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:container-registry-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -3904,11 +4005,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 114,
+          "score": 0.3393,
+          "priority": 105,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4041,11 +4142,17 @@
               "serviceId": "front-door-cdn",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:front-door-cdn-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -4116,11 +4223,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 114,
+          "score": 0.3393,
+          "priority": 105,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4253,11 +4360,17 @@
               "serviceId": "service-discovery",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:service-discovery-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -4328,11 +4441,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 113,
+          "score": 0.3393,
+          "priority": 104,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4465,11 +4578,17 @@
               "serviceId": "load-balancing",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:load-balancing-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -4548,11 +4667,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 122,
+          "score": 0.3393,
+          "priority": 113,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4686,11 +4805,17 @@
               "serviceId": "postgresql-flexible-server",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:postgresql-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -4761,11 +4886,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 112,
+          "score": 0.3393,
+          "priority": 103,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4898,11 +5023,17 @@
               "serviceId": "synapse-warehouse",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:synapse-warehouse-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -4973,11 +5104,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 110,
+          "score": 0.3393,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5111,11 +5242,17 @@
               "serviceId": "mysql-flexible-server",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:mysql-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -5186,11 +5323,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 110,
+          "score": 0.3393,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5324,11 +5461,17 @@
               "serviceId": "redis-cache",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:redis-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -5399,11 +5542,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 110,
+          "score": 0.3393,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5536,11 +5679,17 @@
               "serviceId": "database-migration-service",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:database-migration-service-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -5619,11 +5768,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 129,
+          "score": 0.3393,
+          "priority": 120,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5756,11 +5905,17 @@
               "serviceId": "monitor-logs",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:monitor-logs-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -5831,11 +5986,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 120,
+          "score": 0.3393,
+          "priority": 111,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5968,11 +6123,17 @@
               "serviceId": "virtual-network",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:virtual-network-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -6043,11 +6204,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 119,
+          "score": 0.3393,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6180,11 +6341,17 @@
               "serviceId": "monitor-metrics-alerts",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -6255,11 +6422,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 6,
-            "notStarted": 4
+            "partial": 7,
+            "notStarted": 3
           },
-          "score": 0.2951,
-          "priority": 108,
+          "score": 0.3393,
+          "priority": 99,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6392,11 +6559,17 @@
               "serviceId": "dns-zones",
               "dimensionId": "identityRbacBehavior",
               "dimension": "Identity/RBAC behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:dns-zones-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
               "gaps": [
-                "Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials."
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -6469,12 +6642,12 @@
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "aks-metadata",
       "tier": 1,
-      "score": 0.2951,
-      "priority": 129,
+      "score": 0.3393,
+      "priority": 120,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6488,12 +6661,12 @@
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-logs",
       "tier": 1,
-      "score": 0.2951,
-      "priority": 129,
+      "score": 0.3393,
+      "priority": 120,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6504,158 +6677,6 @@
     },
     {
       "rank": 3,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "cosmos-nosql-table",
-      "tier": 1,
-      "score": 0.332,
-      "priority": 126,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 4,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "service-bus-topics",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 122,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 5,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "postgresql-flexible-server",
-      "tier": 1,
-      "score": 0.2951,
-      "priority": 122,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 6,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "event-grid",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 121,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 7,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "api-management",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 120,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 8,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "virtual-network",
-      "tier": 1,
-      "score": 0.2951,
-      "priority": 120,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 9,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "event-hubs-streams",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 10,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "app-configuration-parameters",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 11,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "identity-rbac",
       "tier": 1,
@@ -6674,111 +6695,16 @@
       ]
     },
     {
-      "rank": 12,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-keys",
+      "rank": 4,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "cosmos-nosql-table",
       "tier": 1,
-      "score": 0.3467,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 13,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "azure-functions",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 14,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-metrics-alerts",
-      "tier": 1,
-      "score": 0.2951,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 15,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-secrets",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 118,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 16,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "logic-workflows",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 117,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 17,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "waf-policy",
-      "tier": 2,
-      "score": 0.2951,
+      "score": 0.3762,
       "priority": 116,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6788,92 +6714,16 @@
       ]
     },
     {
-      "rank": 18,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "activity-log-audit",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 116,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 19,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "container-registry",
+      "rank": 5,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "service-bus-topics",
       "tier": 1,
-      "score": 0.3467,
-      "priority": 116,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 20,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "front-door-cdn",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 114,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 21,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "service-discovery",
-      "tier": 2,
-      "score": 0.2951,
-      "priority": 114,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 6,
-        "notStarted": 4
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 22,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "load-balancing",
-      "tier": 2,
-      "score": 0.2951,
+      "score": 0.391,
       "priority": 113,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6883,16 +6733,35 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 6,
       "waveId": "wave-4-data-platforms",
-      "serviceId": "synapse-warehouse",
-      "tier": 2,
-      "score": 0.2951,
+      "serviceId": "postgresql-flexible-server",
+      "tier": 1,
+      "score": 0.3393,
+      "priority": 113,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 7,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-grid",
+      "tier": 1,
+      "score": 0.391,
       "priority": 112,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6902,11 +6771,30 @@
       ]
     },
     {
-      "rank": 24,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "azure-files",
-      "tier": 2,
-      "score": 0.332,
+      "rank": 8,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "api-management",
+      "tier": 1,
+      "score": 0.391,
+      "priority": 111,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 9,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "virtual-network",
+      "tier": 1,
+      "score": 0.3393,
       "priority": 111,
       "dimensionCounts": {
         "complete": 0,
@@ -6921,16 +6809,301 @@
       ]
     },
     {
+      "rank": 10,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-hubs-streams",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 11,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "app-configuration-parameters",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 12,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-keys",
+      "tier": 1,
+      "score": 0.391,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 13,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "azure-functions",
+      "tier": 1,
+      "score": 0.391,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 14,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-metrics-alerts",
+      "tier": 1,
+      "score": 0.3393,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 15,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-secrets",
+      "tier": 1,
+      "score": 0.391,
+      "priority": 109,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 16,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "logic-workflows",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 108,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 17,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "waf-policy",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 107,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 18,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "activity-log-audit",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 107,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 19,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "container-registry",
+      "tier": 1,
+      "score": 0.391,
+      "priority": 107,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 20,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "front-door-cdn",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 105,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 21,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "service-discovery",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 105,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 104,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 23,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "synapse-warehouse",
+      "tier": 2,
+      "score": 0.3393,
+      "priority": 103,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 7,
+        "notStarted": 3
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 24,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "azure-files",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 101,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
       "rank": 25,
       "waveId": "wave-4-data-platforms",
       "serviceId": "mysql-flexible-server",
       "tier": 2,
-      "score": 0.2951,
-      "priority": 110,
+      "score": 0.3393,
+      "priority": 101,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6944,12 +7117,12 @@
       "waveId": "wave-4-data-platforms",
       "serviceId": "redis-cache",
       "tier": 2,
-      "score": 0.2951,
-      "priority": 110,
+      "score": 0.3393,
+      "priority": 101,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6963,12 +7136,12 @@
       "waveId": "wave-4-data-platforms",
       "serviceId": "database-migration-service",
       "tier": 2,
-      "score": 0.2951,
-      "priority": 110,
+      "score": 0.3393,
+      "priority": 101,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6982,12 +7155,12 @@
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "dns-zones",
       "tier": 2,
-      "score": 0.2951,
-      "priority": 108,
+      "score": 0.3393,
+      "priority": 99,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7001,12 +7174,12 @@
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "blob-storage",
       "tier": 1,
-      "score": 0.4057,
-      "priority": 107,
+      "score": 0.45,
+      "priority": 98,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 9,
-        "notStarted": 1
+        "partial": 10,
+        "notStarted": 0
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7020,12 +7193,12 @@
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "queue-storage",
       "tier": 2,
-      "score": 0.4057,
-      "priority": 93,
+      "score": 0.45,
+      "priority": 84,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 9,
-        "notStarted": 1
+        "partial": 10,
+        "notStarted": 0
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7037,8 +7210,8 @@
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 196,
-      "start": 104
+      "complete": 225,
+      "start": 75
     },
     "byDimension": {
       "iacProviderBehavior": 30,
