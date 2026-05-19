@@ -249,8 +249,10 @@ async function runControlAndDataPlaneMatrix() {
   const missingVaultName = `missing-${suffix}`.slice(0, 24);
   const secretName = `secret-${suffix}`.slice(0, 80);
   const keyName = `key-${suffix}`.slice(0, 80);
+  const encryptOnlyKeyName = `encrypt-only-${suffix}`.slice(0, 80);
   let vaultHost = null;
   let cipherText = null;
+  let firstSecretVersion = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -576,10 +578,24 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('data-plane malformed bearer token is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: 'Bearer' });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('data-plane missing api-version is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}`, undefined, { host: vaultHost, authorization: authHeader });
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'ApiVersionParameterRequired');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane unsupported api-version is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}?api-version=7.0`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'UnsupportedApiVersion');
         return { status: result.status, errorCode: errorCode(result) };
       });
 
@@ -597,6 +613,26 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('data-plane secret invalid contentType is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
+          value: 'bad-content-type',
+          contentType: { invalid: true },
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane secret invalid tags shape is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
+          value: 'bad-tags',
+          tags: ['not-an-object'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('data-plane secret set succeeds', async () => {
         const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
           value: 'data-plane-secret',
@@ -606,14 +642,42 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.equal(result.body.value, 'data-plane-secret');
         assert.ok(result.body.id.includes(`/secrets/${secretName}/`));
+        firstSecretVersion = result.body.id.split('/').at(-1);
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane secret second version set succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
+          value: 'data-plane-secret-v2',
+          contentType: 'text/plain',
+          tags: { source: 'parity', generation: 'second' },
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, 'data-plane-secret-v2');
+        assert.notEqual(result.body.id.split('/').at(-1), firstSecretVersion);
         return { status: result.status, id: result.body.id };
       });
 
       await record('data-plane secret get succeeds', async () => {
         const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
         assert.equal(result.status, 200);
-        assert.equal(result.body.value, 'data-plane-secret');
+        assert.equal(result.body.value, 'data-plane-secret-v2');
         return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane secret get explicit first version succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}/${firstSecretVersion}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, 'data-plane-secret');
+        assert.ok(result.body.id.endsWith(`/${firstSecretVersion}`));
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane secret missing version is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}/00000000000000000000000000000000?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'SecretNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('data-plane secret list includes created secret', async () => {
@@ -623,8 +687,48 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
+      await record('data-plane secret versions list includes both versions', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}/versions?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.value.length >= 2);
+        assert.ok(result.body.value.some(item => item.id.endsWith(`/${firstSecretVersion}`)));
+        return { status: result.status, count: result.body.value.length };
+      });
+
       await record('data-plane key create invalid kty is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/create?api-version=7.4`, { kty: 'oct' }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane key create invalid key_ops is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/create?api-version=7.4`, {
+          kty: 'RSA',
+          key_ops: ['teleport'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane key create invalid key_size is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/create?api-version=7.4`, {
+          kty: 'RSA',
+          key_size: 1024,
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('key invalid keyOps value is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.KeyVault', keyPath),
+          keyArmBody({ properties: { keyOps: ['teleport'] } }),
+        );
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'BadParameter');
         return { status: result.status, errorCode: errorCode(result) };
@@ -647,6 +751,34 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.equal(result.body.key.kty, 'RSA');
         return { status: result.status, kid: result.body.key.kid };
+      });
+
+      await record('data-plane key list includes created key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/keys?api-version=7.4', undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.value.some(item => item.key.kid.includes(`/keys/${keyName}/`)));
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('data-plane encrypt-only key create succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${encryptOnlyKeyName}/create?api-version=7.4`, {
+          kty: 'RSA',
+          key_size: 2048,
+          key_ops: ['encrypt'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.key.key_ops, ['encrypt']);
+        return { status: result.status, kid: result.body.key.kid };
+      });
+
+      await record('data-plane encrypt-only key rejects decrypt operation', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${encryptOnlyKeyName}/decrypt?api-version=7.4`, {
+          alg: 'RSA-OAEP',
+          value: Buffer.from('payload').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'Forbidden');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('data-plane key encrypt requires supported algorithm', async () => {
@@ -678,6 +810,23 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.equal(Buffer.from(result.body.value, 'base64url').toString('utf8'), 'payload');
         return { status: result.status, kid: result.body.kid };
+      });
+
+      await record('data-plane key decrypt invalid ciphertext is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/decrypt?api-version=7.4`, {
+          alg: 'RSA-OAEP',
+          value: Buffer.from('not-valid-ciphertext').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane unsupported secret action fails closed', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/secrets/${secretName}/recover?api-version=7.4`, {}, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 405);
+        assert.equal(errorCode(result), 'MethodNotAllowed');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('inspection route exposes local keys', async () => {

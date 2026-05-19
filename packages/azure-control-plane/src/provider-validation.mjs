@@ -729,6 +729,16 @@ function validateKeyVaultPayload(resourceType, body) {
         'Key Vault key properties.keyOps must be an array when provided.',
       );
     }
+    if (Array.isArray(body.properties?.keyOps)) {
+      const supportedOps = new Set(['encrypt', 'decrypt', 'sign', 'verify', 'wrapKey', 'unwrapKey']);
+      if (body.properties.keyOps.some(op => !supportedOps.has(op))) {
+        return envelopedError(
+          400,
+          'BadParameter',
+          'Key Vault key properties.keyOps contains an unsupported operation.',
+        );
+      }
+    }
     if (body.properties?.keySize !== undefined && (!Number.isInteger(body.properties.keySize) || body.properties.keySize < 2048)) {
       return envelopedError(
         400,

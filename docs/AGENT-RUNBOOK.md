@@ -106,7 +106,7 @@ Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key,
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:key-vault-parity
 ```
 
-Expected result is `dist/e2e/azure-key-vault-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured vault validation, missing-parent key/secret rejection, ARM child delete boundaries, local secret set/get/list/delete, local RSA key create/get/encrypt/decrypt/delete, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-key-vault-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured vault validation, missing-parent key/secret rejection, ARM child delete boundaries, malformed auth and API-version rejects, local secret set/get/version-list/delete, local RSA key create/get/list/encrypt/decrypt/delete with `key_ops` enforcement, fail-closed unsupported secret actions, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Container Registry parity pack after changing ACR registry ARM behavior, local registry data-plane routing, or platform deployment routing:
 

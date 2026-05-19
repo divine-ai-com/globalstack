@@ -788,8 +788,8 @@ if (!keyVaultParityText) {
   if (keyVaultParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Key Vault parity control/data-plane matrix has failures');
   }
-  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 50) {
-    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 50 cases');
+  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 65) {
+    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 65 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -803,11 +803,23 @@ if (!keyVaultParityText) {
     'valid key ARM create succeeds',
     'key ARM delete preserves captured DeleteNotSupported',
     'data-plane request without token is rejected',
+    'data-plane malformed bearer token is rejected',
+    'data-plane unsupported api-version is rejected',
+    'data-plane secret invalid contentType is rejected',
     'data-plane secret set succeeds',
+    'data-plane secret second version set succeeds',
+    'data-plane secret get explicit first version succeeds',
+    'data-plane secret versions list includes both versions',
+    'data-plane key create invalid key_ops is rejected',
+    'key invalid keyOps value is rejected',
     'data-plane secret get after delete is not found',
     'data-plane key create succeeds',
+    'data-plane key list includes created key',
+    'data-plane encrypt-only key rejects decrypt operation',
     'data-plane key encrypt succeeds',
     'data-plane key decrypt succeeds',
+    'data-plane key decrypt invalid ciphertext is rejected',
+    'data-plane unsupported secret action fails closed',
     'ARM template deployment can create vault secret and key',
     'secret create after vault delete reports missing parent',
   ]) {

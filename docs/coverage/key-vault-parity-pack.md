@@ -19,7 +19,7 @@ By default it runs two layers:
 
 | Layer | Scope | Required Result |
 |---|---|---|
-| Key Vault ARM and data-plane matrix | Auth rejection, missing `api-version`, missing resource group, captured vault validation, missing-parent key/secret rejection, ARM vault/secret/key create/update/list/delete boundaries, local secret data plane, local RSA key create/get/encrypt/decrypt/delete, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
+| Key Vault ARM and data-plane matrix | Auth rejection, malformed bearer rejection, missing/unsupported `api-version`, missing resource group, captured vault validation, missing-parent key/secret rejection, ARM vault/secret/key create/update/list/delete boundaries, local secret version data plane, local RSA key create/get/list/encrypt/decrypt/delete with `key_ops` enforcement, fail-closed unsupported actions, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:key-vault-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
@@ -39,8 +39,9 @@ The Key Vault matrix covers these deployment states:
 - ARM secret resources require `properties.value`, and ARM key resources require `properties.kty` plus valid key options.
 - ARM child delete for keys and secrets preserves captured `405 DeleteNotSupported`; data-plane delete is tested separately.
 - The local data plane requires bearer auth and `api-version=7.4` or `7.5`.
-- Local data-plane secrets support set, get, list, delete, and post-delete `SecretNotFound`.
-- Local data-plane RSA keys support create, get, encrypt, decrypt, delete, and post-delete `KeyNotFound`.
+- Local data-plane secrets support set, latest get, explicit version get, version list, invalid value/content type/tags rejection, delete, and post-delete `SecretNotFound`.
+- Local data-plane RSA keys support create, get, list, `key_ops` enforcement, encrypt, decrypt, bad ciphertext rejection, delete, and post-delete `KeyNotFound`.
+- Unsupported local secret actions fail closed instead of returning success for unimplemented soft-delete/recover/purge behavior.
 - An ARM-template deployment can create the vault, one secret, and one key together through the GlobalStack ARM deployment endpoint.
 
 ## Claim Boundary

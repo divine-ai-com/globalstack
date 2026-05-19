@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T06:19:46.771Z",
+    "generatedAt": "2026-05-19T06:37:48.184Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -350,7 +350,9 @@
         "Vaults.CreateOrUpdate",
         "Secrets.Set",
         "Secrets.Get",
-        "Secrets.ListVersions"
+        "Secrets.GetVersion",
+        "Secrets.ListVersions",
+        "Secrets.DeleteLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -385,8 +387,10 @@
       "implementedOperations": [
         "Keys.Create",
         "Keys.Get",
+        "Keys.ListLocal",
         "Keys.EncryptLocal",
-        "Keys.DecryptLocal"
+        "Keys.DecryptLocal",
+        "Keys.DeleteLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1633,7 +1637,35 @@
           "Secret versions are local metadata until cloud validated."
         ]
       },
+      "Secrets.GetVersion": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      },
       "Secrets.ListVersions": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.",
+          "Secret versions are local metadata until cloud validated."
+        ]
+      },
+      "Secrets.DeleteLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -1675,6 +1707,19 @@
           "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
         ]
       },
+      "Keys.ListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      },
       "Keys.EncryptLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -1689,6 +1734,19 @@
         ]
       },
       "Keys.DecryptLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "node-crypto"
+        ],
+        "knownGaps": [
+          "No Managed HSM, FIPS boundary, attestation, import/export rule parity, or exact crypto error parity in MVP."
+        ]
+      },
+      "Keys.DeleteLocal": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

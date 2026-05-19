@@ -1,4 +1,4 @@
-import { createHash, generateKeyPairSync, privateDecrypt, publicEncrypt } from 'node:crypto';
+import { createHash, generateKeyPairSync, privateDecrypt, publicEncrypt, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 
@@ -69,6 +69,10 @@ function bufferToBase64Url(value) {
   return Buffer.from(value).toString('base64url');
 }
 
+function isObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
 function publicJwk(publicKey, kid, keyOps) {
   const jwk = publicKey.export({ format: 'jwk' });
   return {
@@ -102,11 +106,13 @@ export class KeyVaultRouter {
   setSecret({ vaultName, secretName, value, contentType, tags = {} }) {
     const vault = this.vaults.get(String(vaultName).toLowerCase());
     if (!vault) throw new Error(`Key Vault ${vaultName} is not registered in the local router.`);
-    const version = versionId(`${vault.vaultName}:secret:${secretName}:${Date.now()}`);
+    const version = versionId(`${vault.vaultName}:secret:${secretName}:${Date.now()}:${randomUUID()}`);
     const id = `${vault.vaultUri.replace(/\/$/, '')}/secrets/${secretName}/${version}`;
-    vault.secrets.set(String(secretName).toLowerCase(), {
+    const existing = vault.secrets.get(String(secretName).toLowerCase());
+    const record = {
       id,
       name: secretName,
+      version,
       value,
       contentType: contentType ?? null,
       tags,
@@ -115,6 +121,12 @@ export class KeyVaultRouter {
         created: Math.floor(Date.now() / 1000),
         updated: Math.floor(Date.now() / 1000),
       },
+    };
+    const versions = existing?.versions ?? new Map();
+    versions.set(version, record);
+    vault.secrets.set(String(secretName).toLowerCase(), {
+      ...record,
+      versions,
     });
   }
 
@@ -191,6 +203,12 @@ export class KeyVaultRouter {
           if (body?.__invalidJson || typeof body?.value !== 'string' || body.value.length === 0) {
             return sendError(res, 400, 'BadParameter', 'Secret value must be a non-empty string.');
           }
+          if (Object.hasOwn(body, 'contentType') && typeof body.contentType !== 'string') {
+            return sendError(res, 400, 'BadParameter', 'Secret contentType must be a string when provided.');
+          }
+          if (Object.hasOwn(body, 'tags') && !isObject(body.tags)) {
+            return sendError(res, 400, 'BadParameter', 'Secret tags must be an object when provided.');
+          }
           this.setSecret({
             vaultName: vault.vaultName,
             secretName: name,
@@ -210,13 +228,25 @@ export class KeyVaultRouter {
 
         const secret = vault.secrets.get(name.toLowerCase());
         if (!secret) return sendError(res, 404, 'SecretNotFound', `A secret with name '${name}' was not found.`);
-        if (method === 'GET') {
+        if (method === 'GET' && action === 'versions') {
           return sendJson(res, 200, {
-            value: secret.value,
-            id: secret.id,
-            contentType: secret.contentType,
-            attributes: secret.attributes,
-            tags: secret.tags,
+            value: [...secret.versions.values()].map(version => ({
+              id: version.id,
+              contentType: version.contentType,
+              attributes: version.attributes,
+              tags: version.tags,
+            })),
+          });
+        }
+        if (method === 'GET') {
+          const selected = action ? secret.versions.get(action) : secret;
+          if (!selected) return sendError(res, 404, 'SecretNotFound', `A secret version '${action}' with name '${name}' was not found.`);
+          return sendJson(res, 200, {
+            value: selected.value,
+            id: selected.id,
+            contentType: selected.contentType,
+            attributes: selected.attributes,
+            tags: selected.tags,
           });
         }
         if (method === 'DELETE') {
@@ -252,6 +282,11 @@ export class KeyVaultRouter {
           }
           const keyOps = body.key_ops ?? ['encrypt', 'decrypt'];
           if (!Array.isArray(keyOps)) return sendError(res, 400, 'BadParameter', 'key_ops must be an array when provided.');
+          const supportedOps = new Set(['encrypt', 'decrypt', 'sign', 'verify', 'wrapKey', 'unwrapKey']);
+          if (keyOps.some(op => !supportedOps.has(op))) return sendError(res, 400, 'BadParameter', 'key_ops contains an unsupported operation.');
+          if (body.key_size !== undefined && (!Number.isInteger(body.key_size) || body.key_size < 2048)) {
+            return sendError(res, 400, 'BadParameter', 'RSA key_size must be an integer greater than or equal to 2048 when provided.');
+          }
           this.createKey({
             vaultName: vault.vaultName,
             keyName: name,
@@ -281,6 +316,7 @@ export class KeyVaultRouter {
 
         if (method === 'POST' && action === 'encrypt') {
           const body = await readBody(req);
+          if (!key.keyOps.includes('encrypt')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to encrypt.`);
           if (body?.alg !== 'RSA-OAEP' || typeof body?.value !== 'string') {
             return sendError(res, 400, 'BadParameter', 'Encrypt requires alg RSA-OAEP and base64url value.');
           }
@@ -290,11 +326,16 @@ export class KeyVaultRouter {
 
         if (method === 'POST' && action === 'decrypt') {
           const body = await readBody(req);
+          if (!key.keyOps.includes('decrypt')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to decrypt.`);
           if (body?.alg !== 'RSA-OAEP' || typeof body?.value !== 'string') {
             return sendError(res, 400, 'BadParameter', 'Decrypt requires alg RSA-OAEP and base64url value.');
           }
-          const decrypted = privateDecrypt({ key: key.privateKey, oaepHash: 'sha1' }, base64UrlToBuffer(body.value));
-          return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(decrypted) });
+          try {
+            const decrypted = privateDecrypt({ key: key.privateKey, oaepHash: 'sha1' }, base64UrlToBuffer(body.value));
+            return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(decrypted) });
+          } catch {
+            return sendError(res, 400, 'BadParameter', 'Decrypt value is not valid ciphertext for this key.');
+          }
         }
 
         if (method === 'DELETE' && !action) {
