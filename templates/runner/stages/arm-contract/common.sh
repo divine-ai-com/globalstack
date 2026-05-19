@@ -374,8 +374,7 @@ pulumi_install_dependencies() {
       python3 -m pip install --break-system-packages -r "${PLATFORM_WORK_DIR}/requirements.txt" >"${REPORT_DIR}/pulumi-install-stdout.log" 2>"${REPORT_DIR}/pulumi-install-stderr.log"
       ;;
     azure-pulumi-yaml)
-      : >"${REPORT_DIR}/pulumi-install-stdout.log"
-      : >"${REPORT_DIR}/pulumi-install-stderr.log"
+      pulumi plugin install resource azure-native "${PULUMI_AZURE_NATIVE_PROVIDER_VERSION:-3.18.0}" >"${REPORT_DIR}/pulumi-install-stdout.log" 2>"${REPORT_DIR}/pulumi-install-stderr.log"
       ;;
     *)
       echo "No Pulumi dependency installer registered for ${PLATFORM_ID}" >&2

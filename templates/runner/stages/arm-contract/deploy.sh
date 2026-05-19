@@ -43,11 +43,16 @@ if is_native_pulumi_platform; then
     write_stage_report deploy FAIL "local Azure token request did not return an access_token"
     exit 1
   fi
+  if [ "${PLATFORM_ID}" = "azure-pulumi-yaml" ]; then
+    setup_native_pulumi_auth
+  fi
   if ! pulumi_install_dependencies; then
     write_stage_report deploy FAIL "Pulumi dependency installation failed; see pulumi install stderr/stdout reports"
     exit 1
   fi
-  setup_native_pulumi_auth
+  if [ "${PLATFORM_ID}" != "azure-pulumi-yaml" ]; then
+    setup_native_pulumi_auth
+  fi
   if ! pulumi_login_local >"${PLATFORM_NATIVE_STDOUT}" 2>"${PLATFORM_NATIVE_STDERR}"; then
     write_stage_report deploy FAIL "pulumi login failed; see native stderr/stdout reports"
     exit 1

@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PLATFORM_ID=azure-pulumi-yaml
 ENV AZURE_LOCATION=eastus
+ENV PULUMI_AZURE_NATIVE_PROVIDER_VERSION=3.18.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git jq unzip gnupg lsb-release python3 python3-pip python3-venv build-essential \
