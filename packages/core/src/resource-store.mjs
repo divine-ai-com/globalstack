@@ -52,6 +52,10 @@ function eventGridTopicEndpoint(name, location) {
   return `https://${eventGridTopicHostname(name, location)}/api/events`;
 }
 
+function eventHubNamespaceEndpoint(name) {
+  return `https://${name}.servicebus.windows.net:443/`;
+}
+
 function eventGridTopicKey(id, slot) {
   return createHash('sha256')
     .update(`globalstack:event-grid:${slot}:${id.toLowerCase()}`)
@@ -214,6 +218,26 @@ export class ResourceStore {
         ...(body.properties ?? {}),
         ...(type === 'Microsoft.EventGrid/topics'
           ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
+          : {}),
+        ...(type === 'Microsoft.EventHub/namespaces'
+          ? {
+              serviceBusEndpoint: existing?.properties?.serviceBusEndpoint ?? eventHubNamespaceEndpoint(name),
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              status: lifecycleSequence ? 'Creating' : existing?.properties?.status ?? 'Active',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
+        ...(type === 'Microsoft.EventHub/namespaces/eventhubs'
+          ? {
+              status: existing?.properties?.status ?? 'Active',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+              partitionIds: existing?.properties?.partitionIds ?? Array.from(
+                { length: body.properties?.partitionCount ?? existing?.properties?.partitionCount ?? 1 },
+                (_, index) => String(index),
+              ),
+            }
           : {}),
         ...(type === 'Microsoft.ApiManagement/service'
           ? {

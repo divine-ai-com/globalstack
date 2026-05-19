@@ -1446,7 +1446,6 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
-- [x] `invalid-sku`: captured HTTP 404; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces/eventhubs / Get
 

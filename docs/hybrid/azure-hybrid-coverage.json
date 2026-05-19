@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:52:50.947Z",
+    "generatedAt": "2026-05-19T14:04:04.228Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1254,7 +1254,14 @@
       ],
       "implementedOperations": [
         "Namespaces.CreateOrUpdate",
+        "Namespaces.Get",
+        "Namespaces.List",
+        "Namespaces.Delete",
         "EventHubs.CreateOrUpdate",
+        "EventHubs.Get",
+        "EventHubs.List",
+        "EventHubs.Delete",
+        "EventHubRoutes.RejectUnsupportedRoutes",
         "Events.PublishLocal",
         "Events.ReadLocal"
       ],
@@ -4868,7 +4875,105 @@
           "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
         ]
       },
+      "Namespaces.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "Namespaces.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "Namespaces.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
       "EventHubs.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "EventHubs.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "EventHubs.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "EventHubs.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "event-hubs-emulator"
+        ],
+        "knownGaps": [
+          "Event Hubs is the closest Azure equivalent for Kinesis streams.",
+          "No exact shard model, enhanced fan-out, retention, throughput unit, or checkpoint store parity in MVP."
+        ]
+      },
+      "EventHubRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,

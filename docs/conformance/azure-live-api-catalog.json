@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:52:51.218Z",
+    "generatedAt": "2026-05-19T14:04:04.453Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -10417,26 +10417,20 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespacesName}/eventhubs/{eventhubsName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "sku": {
-          "name": "Standard",
-          "tier": "Standard",
-          "capacity": 1
-        },
-        "properties": {}
+        "properties": {
+          "partitionCount": 2,
+          "messageRetentionInDays": 1
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard",
-              "capacity": 1
-            },
-            "properties": {}
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": 1
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -10447,13 +10441,10 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard",
-              "capacity": 1
-            },
-            "properties": {}
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": 1
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -10463,13 +10454,11 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard",
-              "capacity": 1
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": 1
             },
-            "properties": {}
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -10480,20 +10469,6 @@
           "description": "Create/update with an empty JSON body.",
           "body": {},
           "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
-          "id": "invalid-sku",
-          "description": "Create/update with an intentionally invalid SKU.",
-          "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "GlobalStack_InvalidSku_For_Conformance"
-            },
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

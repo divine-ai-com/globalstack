@@ -258,6 +258,14 @@ function invalidEventGridName(resourceType, name, rule) {
   );
 }
 
+function invalidEventHubName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'BadRequest',
+    `The Event Hubs resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function invalidApiManagementName(resourceType, name, rule) {
   return envelopedError(
     400,
@@ -437,6 +445,32 @@ function validateEventGridName(resourceType, providerRoute) {
         resourceType,
         name,
         'Topic names must be 3 through 50 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateEventHubName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.EventHub/namespaces') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'namespaces');
+    if (!/^[A-Za-z][A-Za-z0-9-]{4,48}[A-Za-z0-9]$/.test(name)) {
+      return invalidEventHubName(
+        resourceType,
+        name,
+        'Namespace names must be 6 through 50 characters, use alphanumerics and hyphens, start with a letter, and end with a letter or number.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.EventHub/namespaces/eventhubs') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'eventhubs');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,254}[A-Za-z0-9])?$/.test(name)) {
+      return invalidEventHubName(
+        resourceType,
+        name,
+        'Event hub names must be 1 through 256 characters, use alphanumerics, periods, hyphens, and underscores, and start and end with an alphanumeric character.',
       );
     }
   }
@@ -1753,6 +1787,35 @@ function validateAppConfigurationPayload(resourceType, body) {
   return null;
 }
 
+function validateEventHubPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.EventHub/namespaces') {
+    const skuName = body.sku?.name;
+    if (skuName && !['Basic', 'Standard', 'Premium'].includes(skuName)) {
+      return envelopedError(
+        400,
+        'ValidateResourceInfoFailedWithInvalidSkuName',
+        `Sku name '${skuName}' is invalid`,
+      );
+    }
+    if (Object.hasOwn(body.sku ?? {}, 'capacity') && (!Number.isInteger(body.sku.capacity) || body.sku.capacity < 1 || body.sku.capacity > 20)) {
+      return envelopedError(400, 'BadRequest', 'Event Hubs namespace sku.capacity must be an integer from 1 through 20.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.EventHub/namespaces/eventhubs') {
+    const partitionCount = body.properties?.partitionCount;
+    if (Object.hasOwn(body.properties ?? {}, 'partitionCount') && (!Number.isInteger(partitionCount) || partitionCount < 1 || partitionCount > 32)) {
+      return envelopedError(400, 'BadRequest', 'Event hub partitionCount must be an integer from 1 through 32.');
+    }
+    const retention = body.properties?.messageRetentionInDays;
+    if (Object.hasOwn(body.properties ?? {}, 'messageRetentionInDays') && (!Number.isInteger(retention) || retention < 1 || retention > 7)) {
+      return envelopedError(400, 'BadRequest', 'Event hub messageRetentionInDays must be an integer from 1 through 7.');
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1863,6 +1926,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const eventGridNameValidation = validateEventGridName(resourceType, providerRoute);
   if (eventGridNameValidation) return eventGridNameValidation;
 
+  const eventHubNameValidation = validateEventHubName(resourceType, providerRoute);
+  if (eventHubNameValidation) return eventHubNameValidation;
+
   const apiManagementNameValidation = validateApiManagementName(resourceType, providerRoute);
   if (apiManagementNameValidation) return apiManagementNameValidation;
 
@@ -1960,6 +2026,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const appConfigurationPayloadValidation = validateAppConfigurationPayload(resourceType, body);
   if (appConfigurationPayloadValidation) return appConfigurationPayloadValidation;
+
+  const eventHubPayloadValidation = validateEventHubPayload(resourceType, body);
+  if (eventHubPayloadValidation) return eventHubPayloadValidation;
 
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(

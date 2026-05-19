@@ -1314,6 +1314,20 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           ]);
         }
 
+        if (
+          providerRoute.providerNamespace === 'Microsoft.EventHub'
+          && resourceType.startsWith('Microsoft.EventHub/namespaces/')
+          && resourceType !== 'Microsoft.EventHub/namespaces/eventhubs'
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Event Hubs child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:52:51.568Z",
+    "generatedAt": "2026-05-19T14:04:04.811Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -3122,7 +3122,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "4 registry operations declared",
+            "11 registry operations declared",
             "backing engines: event-hubs-emulator"
           ],
           "gaps": [

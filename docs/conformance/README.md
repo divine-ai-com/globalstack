@@ -347,7 +347,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Delete | DELETE | 2024-01-01 | 0 |
-| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 5 |
+| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 4 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Delete | DELETE | 2024-01-01 | 0 |

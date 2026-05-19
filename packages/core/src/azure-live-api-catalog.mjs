@@ -158,8 +158,8 @@ function bodyFor(resourceType) {
     return { location: '{location}', properties: { tenantId: '{tenantId}', sku: { family: 'A', name: 'standard' }, accessPolicies: [] } };
   }
   if (lower.includes('microsoft.servicebus/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard' }, properties: {} };
-  if (lower.includes('microsoft.eventhub/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} };
   if (lower.includes('microsoft.eventhub/namespaces/eventhubs')) return { properties: { partitionCount: 2, messageRetentionInDays: 1 } };
+  if (lower.includes('microsoft.eventhub/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} };
   if (lower.includes('microsoft.dbformysql/flexibleservers/databases')) return { properties: { charset: 'utf8mb4', collation: 'utf8mb4_0900_ai_ci' } };
   if (lower.includes('microsoft.dbformysql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', administratorLoginPassword: 'Globalstack1!', version: '8.0.21' } };
   if (lower.includes('microsoft.dbforpostgresql/flexibleservers/databases')) return { properties: { charset: 'UTF8', collation: 'en_US.utf8' } };

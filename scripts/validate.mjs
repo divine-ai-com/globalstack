@@ -24,6 +24,7 @@ const storageNormalizerResultsPath = join(distRoot, 'e2e', 'azure-storage-normal
 const storageParityResultsPath = join(distRoot, 'e2e', 'azure-storage-parity', 'results.json');
 const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'results.json');
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
+const eventHubsParityResultsPath = join(distRoot, 'e2e', 'azure-event-hubs-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
@@ -676,6 +677,69 @@ if (!serviceBusParityText) {
   }
   if (serviceBusParity.platformMatrix?.ok !== true || serviceBusParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Service Bus parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const eventHubsParityText = await readFile(eventHubsParityResultsPath, 'utf8').catch(() => '');
+if (!eventHubsParityText) {
+  errors.push('missing Azure Event Hubs parity E2E results; run npm run e2e:event-hubs-parity');
+} else {
+  const eventHubsParity = JSON.parse(eventHubsParityText);
+  if (eventHubsParity.ok !== true) {
+    errors.push('Azure Event Hubs parity E2E did not pass');
+  }
+  if (eventHubsParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Event Hubs parity control-plane matrix has failures');
+  }
+  if ((eventHubsParity.controlPlane?.total ?? 0) < 30) {
+    errors.push('Azure Event Hubs parity control-plane matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'namespace create requires an existing resource group',
+    'resource group create succeeds',
+    'namespace collection list is empty before create',
+    'namespace delete missing returns no content',
+    'event hub create before namespace reports missing parent',
+    'event hub list before namespace reports missing parent',
+    'namespace empty body is rejected',
+    'namespace invalid location is rejected',
+    'namespace invalid name is rejected',
+    'namespace invalid sku is rejected',
+    'namespace invalid capacity is rejected',
+    'namespace create succeeds',
+    'namespace get succeeds',
+    'namespace update preserves endpoint and tags',
+    'namespace list includes created resource',
+    'event hub invalid name is rejected',
+    'event hub invalid partition count is rejected',
+    'event hub invalid retention is rejected',
+    'event hub collection list is empty before create',
+    'event hub delete missing returns no content',
+    'event hub create succeeds',
+    'event hub get succeeds',
+    'event hub update can change retention',
+    'event hub list includes created resource',
+    'unsupported namespace authorization rule action fails closed',
+    'unsupported event hub consumer group route fails closed',
+    'unsupported event hub authorization rule route fails closed',
+    'ARM template deployment can create namespace and event hub',
+    'event hub get after delete is not found',
+    'namespace get after delete is not found',
+  ]) {
+    if (!eventHubsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Event Hubs parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (eventHubsParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Event Hubs parity E2E must include the platform matrix during validation');
+  }
+  if (eventHubsParity.platformMatrix?.ok !== true || eventHubsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Event Hubs parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 
