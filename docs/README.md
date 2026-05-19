@@ -26,6 +26,7 @@ Use this file as the routing table for the repo. If you are not sure which docum
 | Harden Azure Functions coverage | `docs/coverage/azure-functions-parity-pack.md` | `docs/hybrid/README.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Azure Functions captures, parity pack, local HTTP-trigger router, and real Azure capture backlog |
 | Harden Azure Key Vault coverage | `docs/coverage/key-vault-parity-pack.md` | `docs/hybrid/README.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Key Vault captures, parity pack, local secret/key data-plane router, and real Azure capture backlog |
 | Harden Azure Container Registry coverage | `docs/coverage/container-registry-parity-pack.md` | `docs/hybrid/README.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | Container Registry captures, parity pack, local ACR/Docker Registry router, and real Azure capture backlog |
+| Harden Azure Kubernetes Service coverage | `docs/coverage/aks-metadata-parity-pack.md` | `docs/hybrid/README.md`, `CONFORMANCE-MODEL.md`, `AGENT-RUNBOOK.md` | AKS captures, metadata parity pack, kubeconfig action metadata, and real Azure capture backlog |
 | Change emulator behavior | `CONFORMANCE-MODEL.md` | `AGENT-RUNBOOK.md`, `ARCHITECTURE.md` | Capture fixtures and replay tests |
 | Add or update provider validation | `CONFORMANCE-MODEL.md` | `docs/conformance/provider-validation-implementation-checklist.md` | `fixtures/azure-captures/` |
 | Add a real Azure capture | `AGENT-RUNBOOK.md` | `CONFORMANCE-MODEL.md` | `fixtures/azure-captures/` and cleanup proof |

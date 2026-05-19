@@ -325,13 +325,20 @@ export const tier1Capabilities = [
     resourceTypes: ['Microsoft.ContainerService/managedClusters'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['kind-or-k3d-future'],
-    implementedOperations: ['ManagedClusters.CreateMetadata', 'ManagedClusters.Get'],
+    implementedOperations: [
+      'ManagedClusters.CreateOrUpdateMetadata',
+      'ManagedClusters.Get',
+      'ManagedClusters.ListByResourceGroup',
+      'ManagedClusters.Delete',
+      'ManagedClusters.ListClusterUserCredentialLocal',
+      'ManagedClusters.ListClusterAdminCredentialLocal',
+    ],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['node pool validation', 'CNI validation', 'identity integration errors'],
     knownGaps: [
-      'MVP is metadata-only for AKS.',
-      'No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity.',
+      'MVP is metadata-only for AKS and returns local kubeconfig metadata only.',
+      'No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity.',
     ],
   },
   {

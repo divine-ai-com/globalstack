@@ -402,6 +402,21 @@ function eventGridTopicListKeysRoute(providerRoute) {
   };
 }
 
+function aksCredentialActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  const action = parts[2]?.toLowerCase();
+  if (parts.length !== 3 || parts[0] !== 'managedClusters') return null;
+  if (!['listclusterusercredential', 'listclusteradmincredential'].includes(action)) return null;
+  return {
+    route: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+    role: action === 'listclusteradmincredential' ? 'admin' : 'user',
+  };
+}
+
 function serverFarmRouteFromId(serverFarmId) {
   const raw = String(serverFarmId ?? '').split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
   const lower = raw.map(segment => segment.toLowerCase());
@@ -1135,6 +1150,19 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${eventGridListKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
           return sendJson(res, 200, keys);
+        }
+
+        const aksCredentialRoute = aksCredentialActionRoute(providerRoute);
+        if (aksCredentialRoute) {
+          if (method !== 'POST') return sendError(res, 405, 'MethodNotAllowed', 'AKS credential actions support POST.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const credentials = store.listAksCredentials(aksCredentialRoute.route, aksCredentialRoute.role);
+          if (!credentials) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksCredentialRoute.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, credentials);
         }
 
         if (!capability) {

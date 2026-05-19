@@ -29,6 +29,7 @@ const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-manageme
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
+const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -850,6 +851,51 @@ if (!containerRegistryParityText) {
   }
   if (containerRegistryParity.platformMatrix?.ok !== true || containerRegistryParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Container Registry parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const aksMetadataParityText = await readFile(aksMetadataParityResultsPath, 'utf8').catch(() => '');
+if (!aksMetadataParityText) {
+  errors.push('missing Azure AKS metadata parity E2E results; run npm run e2e:aks-metadata-parity');
+} else {
+  const aksMetadataParity = JSON.parse(aksMetadataParityText);
+  if (aksMetadataParity.ok !== true) {
+    errors.push('Azure AKS metadata parity E2E did not pass');
+  }
+  if (aksMetadataParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure AKS metadata parity control-plane matrix has failures');
+  }
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'cluster create requires an existing resource group',
+    'cluster minimal body preserves captured servicePrincipalProfile validation',
+    'cluster invalid name is rejected',
+    'cluster invalid dnsPrefix is rejected',
+    'cluster missing agentPoolProfiles is rejected',
+    'cluster invalid agent pool name is rejected',
+    'valid cluster create returns async Azure shape',
+    'cluster first get is Creating',
+    'cluster async operation reaches Succeeded',
+    'cluster get reaches Succeeded with AKS metadata',
+    'credential action rejects wrong method',
+    'user credential action returns kubeconfig metadata',
+    'admin credential action returns kubeconfig metadata',
+    'unsupported AKS action fails closed',
+    'ARM template deployment can create AKS metadata cluster',
+    'credential action after delete is rejected',
+  ]) {
+    if (!aksMetadataParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure AKS metadata parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (aksMetadataParity.platformMatrix?.skipped === true) {
+    errors.push('Azure AKS metadata parity E2E must include the platform matrix during validation');
+  }
+  if (aksMetadataParity.platformMatrix?.ok !== true || aksMetadataParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure AKS metadata parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

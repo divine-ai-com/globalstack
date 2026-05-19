@@ -33,6 +33,7 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.ApiManagement/service') return ['Creating', 'Activating', 'Succeeded'];
   if (type === 'Microsoft.Web/serverfarms') return ['Creating', 'Ready', 'Succeeded'];
   if (type === 'Microsoft.Web/sites') return ['Creating', 'Starting', 'Succeeded'];
+  if (type === 'Microsoft.ContainerService/managedClusters') return ['Creating', 'Reconciling', 'Succeeded'];
   return null;
 }
 
@@ -64,6 +65,18 @@ function keyVaultUri(name) {
 
 function containerRegistryLoginServer(name) {
   return `${name}.azurecr.io`;
+}
+
+function aksFqdn(name, location, dnsPrefix) {
+  const digest = createHash('sha256')
+    .update(`globalstack:aks:${name}:${location}:${dnsPrefix}`)
+    .digest('hex')
+    .slice(0, 8);
+  return `${dnsPrefix}-${digest}.hcp.${location}.azmk8s.io`;
+}
+
+function aksNodeResourceGroup(resourceGroupName, name, location) {
+  return `MC_${resourceGroupName}_${name}_${location}`;
 }
 
 function keyVaultChildVaultName(name) {
@@ -193,6 +206,20 @@ export class ResourceStore {
               publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
             }
           : {}),
+        ...(type === 'Microsoft.ContainerService/managedClusters'
+          ? {
+              fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),
+              nodeResourceGroup: body.properties?.nodeResourceGroup ?? existing?.properties?.nodeResourceGroup ?? aksNodeResourceGroup(resourceGroupName, name, body.location ?? existing?.location ?? 'global'),
+              currentKubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.currentKubernetesVersion ?? '1.29.2',
+              kubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.kubernetesVersion ?? '1.29.2',
+              powerState: { code: 'Running' },
+              agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool => ({
+                ...pool,
+                provisioningState: 'Succeeded',
+                powerState: { code: 'Running' },
+              })),
+            }
+          : {}),
         ...(type === 'Microsoft.KeyVault/vaults/secrets'
           ? {
               secretUri: existing?.properties?.secretUri ?? keyVaultSecretUri(name),
@@ -308,6 +335,41 @@ export class ResourceStore {
     return {
       key1: eventGridTopicKey(resource.id, 'key1'),
       key2: eventGridTopicKey(resource.id, 'key2'),
+    };
+  }
+
+  listAksCredentials(route, role = 'user') {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
+    const clusterName = resource.name;
+    const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
+    const kubeconfig = [
+      'apiVersion: v1',
+      'kind: Config',
+      'clusters:',
+      `- name: ${clusterName}`,
+      '  cluster:',
+      `    server: https://${resource.properties.fqdn}`,
+      '    certificate-authority-data: Z2xvYmFsc3RhY2stbG9jYWwtYWtzLWNh',
+      'contexts:',
+      `- name: ${userName}`,
+      '  context:',
+      `    cluster: ${clusterName}`,
+      `    user: ${userName}`,
+      `current-context: ${userName}`,
+      'users:',
+      `- name: ${userName}`,
+      '  user:',
+      `    token: globalstack-aks-${role}-token`,
+      '',
+    ].join('\n');
+    return {
+      kubeconfigs: [
+        {
+          name: userName,
+          value: Buffer.from(kubeconfig).toString('base64'),
+        },
+      ],
     };
   }
 

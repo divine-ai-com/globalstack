@@ -237,6 +237,14 @@ function invalidContainerRegistryName(resourceType, name, rule) {
   );
 }
 
+function invalidAksName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The AKS managed cluster resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -249,6 +257,19 @@ function containerRegistryValidationError() {
       type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
       title: 'One or more validation errors occurred.',
       status: 400,
+    },
+  };
+}
+
+function aksMissingServicePrincipalProfile() {
+  return {
+    status: 400,
+    body: {
+      code: 'InvalidParameter',
+      details: null,
+      message: 'Required parameter servicePrincipalProfile is missing (null).',
+      subcode: '',
+      target: 'servicePrincipalProfile',
     },
   };
 }
@@ -424,6 +445,19 @@ function validateContainerRegistryName(resourceType, providerRoute) {
   return null;
 }
 
+function validateAksName(resourceType, providerRoute) {
+  if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'managedClusters');
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9])?$/.test(name)) {
+    return invalidAksName(
+      resourceType,
+      name,
+      'Cluster names must be 1 through 63 characters, use alphanumerics, hyphens, and underscores, and start and end with an alphanumeric character.',
+    );
+  }
+  return null;
+}
+
 function validateApiManagementPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ApiManagement/service') {
     if (!body.sku || !body.sku.name) {
@@ -487,6 +521,92 @@ function validateContainerRegistryPayload(resourceType, body) {
       400,
       'InvalidRequestBody',
       'Container Registry properties.publicNetworkAccess must be Enabled or Disabled when provided.',
+    );
+  }
+  return null;
+}
+
+function validateAksPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
+  const properties = body.properties ?? {};
+  if (!properties.servicePrincipalProfile) return aksMissingServicePrincipalProfile();
+  if (typeof properties.servicePrincipalProfile.clientId !== 'string' || properties.servicePrincipalProfile.clientId.trim() === '') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS properties.servicePrincipalProfile.clientId must be provided for this local metadata surface.',
+    );
+  }
+  if (typeof properties.dnsPrefix !== 'string' || properties.dnsPrefix.trim() === '') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS properties.dnsPrefix is required.',
+    );
+  }
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,52}[A-Za-z0-9])?$/.test(properties.dnsPrefix)) {
+    return envelopedError(
+      400,
+      'InvalidDnsPrefix',
+      'AKS properties.dnsPrefix must be 1 through 54 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+    );
+  }
+  if (!Array.isArray(properties.agentPoolProfiles) || properties.agentPoolProfiles.length === 0) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS properties.agentPoolProfiles must include at least one node pool.',
+    );
+  }
+  for (const pool of properties.agentPoolProfiles) {
+    if (!/^[a-z][a-z0-9]{0,11}$/.test(pool?.name ?? '')) {
+      return envelopedError(
+        400,
+        'InvalidAgentPoolName',
+        'AKS agent pool names must start with a lowercase letter, use lowercase alphanumerics only, and be 1 through 12 characters.',
+      );
+    }
+    if (!Number.isInteger(pool.count) || pool.count < 1 || pool.count > 100) {
+      return envelopedError(
+        400,
+        'InvalidAgentPoolCount',
+        'AKS agent pool count must be an integer between 1 and 100.',
+      );
+    }
+    if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool vmSize is required.',
+      );
+    }
+    if (pool.mode && !['System', 'User'].includes(pool.mode)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool mode must be System or User when provided.',
+      );
+    }
+    if (pool.osType && !['Linux', 'Windows'].includes(pool.osType)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool osType must be Linux or Windows when provided.',
+      );
+    }
+  }
+  if (properties.kubernetesVersion && !/^\d+\.\d+(?:\.\d+)?$/.test(properties.kubernetesVersion)) {
+    return envelopedError(
+      400,
+      'InvalidKubernetesVersion',
+      'AKS properties.kubernetesVersion must use a semantic version such as 1.29.2.',
+    );
+  }
+  if (body.identity?.type && !['SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'].includes(body.identity.type)) {
+    return envelopedError(
+      400,
+      'InvalidIdentityType',
+      'AKS identity.type must be SystemAssigned, UserAssigned, SystemAssigned, UserAssigned, or None when provided.',
     );
   }
   return null;
@@ -684,6 +804,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const containerRegistryNameValidation = validateContainerRegistryName(resourceType, providerRoute);
   if (containerRegistryNameValidation) return containerRegistryNameValidation;
 
+  const aksNameValidation = validateAksName(resourceType, providerRoute);
+  if (aksNameValidation) return aksNameValidation;
+
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
       400,
@@ -712,6 +835,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const containerRegistryPayloadValidation = validateContainerRegistryPayload(resourceType, body);
   if (containerRegistryPayloadValidation) return containerRegistryPayloadValidation;
 
+  const aksPayloadValidation = validateAksPayload(resourceType, body);
+  if (aksPayloadValidation) return aksPayloadValidation;
+
   const functionAppPayloadValidation = validateFunctionAppPayload(resourceType, body, { referencesExistingServerFarm });
   if (functionAppPayloadValidation) return functionAppPayloadValidation;
 
@@ -724,19 +850,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       'InvalidWorkflow',
       "The workflow 'workflow-local' must have Definition property set.",
     );
-  }
-
-  if (resourceType === 'Microsoft.ContainerService/managedClusters') {
-    return {
-      status: 400,
-      body: {
-        code: 'InvalidParameter',
-        details: null,
-        message: 'Required parameter servicePrincipalProfile is missing (null).',
-        subcode: '',
-        target: 'servicePrincipalProfile',
-      },
-    };
   }
 
   if (resourceType === 'Microsoft.Cache/redis') {

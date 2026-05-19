@@ -116,6 +116,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:container-registry-parity
 
 Expected result is `dist/e2e/azure-container-registry-parity/results.json` with `ok == true`, zero control/data-plane failures, and all eight platform runners passing. This suite covers captured missing-SKU validation, registry naming and SKU rejection, registry lifecycle, local ACR token/challenge behavior, Docker Registry manifest push/get/delete, ACR catalog and tag listing, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Kubernetes Service metadata parity pack after changing AKS managed cluster ARM behavior, credential action metadata, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity
+```
+
+Expected result is `dist/e2e/azure-aks-metadata-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers captured servicePrincipalProfile validation, cluster naming and node-pool rejection, async managed-cluster metadata lifecycle, local kubeconfig action metadata, unsupported action fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 After any real Azure capture:
 
 ```bash

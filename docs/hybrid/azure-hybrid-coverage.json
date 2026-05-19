@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T05:30:21.029Z",
+    "generatedAt": "2026-05-19T05:53:08.515Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -594,8 +594,12 @@
         "kind-or-k3d-future"
       ],
       "implementedOperations": [
-        "ManagedClusters.CreateMetadata",
-        "ManagedClusters.Get"
+        "ManagedClusters.CreateOrUpdateMetadata",
+        "ManagedClusters.Get",
+        "ManagedClusters.ListByResourceGroup",
+        "ManagedClusters.Delete",
+        "ManagedClusters.ListClusterUserCredentialLocal",
+        "ManagedClusters.ListClusterAdminCredentialLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -605,8 +609,8 @@
         "identity integration errors"
       ],
       "knownGaps": [
-        "MVP is metadata-only for AKS.",
-        "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+        "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+        "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -1926,7 +1930,7 @@
       }
     },
     "aks-metadata": {
-      "ManagedClusters.CreateMetadata": {
+      "ManagedClusters.CreateOrUpdateMetadata": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -1936,8 +1940,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS.",
-          "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
         ]
       },
       "ManagedClusters.Get": {
@@ -1950,8 +1954,64 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS.",
-          "No managed cluster lifecycle, node pools, CNI, addons, load balancer, or kube API provisioning parity."
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+        ]
+      },
+      "ManagedClusters.ListByResourceGroup": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+        ]
+      },
+      "ManagedClusters.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+        ]
+      },
+      "ManagedClusters.ListClusterUserCredentialLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+        ]
+      },
+      "ManagedClusters.ListClusterAdminCredentialLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
+          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
         ]
       }
     },
