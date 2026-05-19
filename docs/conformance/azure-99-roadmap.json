@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T22:14:05.551Z",
+    "generatedAt": "2026-05-19T22:15:24.004Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -207,10 +207,15 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "2 storage lifecycle capture files"
+                "2 storage lifecycle capture files",
+                "e2e:cosmos-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
               ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=cosmos-nosql-table --all=true"
@@ -244,11 +249,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 113,
+          "score": 0.4279,
+          "priority": 104,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -428,11 +433,18 @@
               "serviceId": "service-bus-topics",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:service-bus-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "retry-after header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true"
@@ -466,11 +478,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 112,
+          "score": 0.4279,
+          "priority": 103,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -649,11 +661,16 @@
               "serviceId": "event-grid",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-grid-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true"
@@ -673,444 +690,6 @@
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
-          "serviceId": "event-hubs-streams",
-          "tier": 2,
-          "awsAnalogue": "Kinesis Data Streams",
-          "azureEquivalent": "Azure Event Hubs",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 0,
-            "partial": 7,
-            "notStarted": 3
-          },
-          "score": 0.3393,
-          "priority": 110,
-          "workItemCount": 10,
-          "nextDimensions": [
-            "iacProviderBehavior",
-            "serviceSpecificFacade",
-            "stateTransitionCaptures",
-            "dataPlaneBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "event-hubs-streams.iacProviderBehavior",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-hubs-parity is wired into npm run smoke",
-                "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            },
-            {
-              "id": "event-hubs-streams.serviceSpecificFacade",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "serviceSpecificFacade",
-              "dimension": "Service-specific local facade/emulator integration",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "11 registry operations declared",
-                "backing engines: event-hubs-emulator"
-              ],
-              "gaps": [
-                "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=event-hubs-streams",
-                "npm run smoke"
-              ],
-              "acceptanceGate": "The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests."
-            },
-            {
-              "id": "event-hubs-streams.stateTransitionCaptures",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "stateTransitionCaptures",
-              "dimension": "State transition captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "create captured",
-                "get captured",
-                "list captured",
-                "delete captured"
-              ],
-              "gaps": [
-                "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized."
-            },
-            {
-              "id": "event-hubs-streams.dataPlaneBehavior",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "dataPlaneBehavior",
-              "dimension": "Data-plane behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Official/local backing option declared: event-hubs-emulator",
-                "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-              ],
-              "commands": [
-                "npm run hybrid:render",
-                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile event-hubs-emulator up -d",
-                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile event-hubs-emulator down -v"
-              ],
-              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
-            },
-            {
-              "id": "event-hubs-streams.parameterVarianceCaptures",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "16 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "event-hubs-streams.errorShapeFidelity",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=event-hubs-streams"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "event-hubs-streams.identityRbacBehavior",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-hubs-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "event-hubs-streams.liveApiSurfaceInventory",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "93 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "event-hubs-streams.retryEventualConsistency",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            },
-            {
-              "id": "event-hubs-streams.ambiguousRepeatCaptures",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
-          "serviceId": "app-configuration-parameters",
-          "tier": 2,
-          "awsAnalogue": "SSM Parameter Store",
-          "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 0,
-            "partial": 7,
-            "notStarted": 3
-          },
-          "score": 0.3393,
-          "priority": 110,
-          "workItemCount": 10,
-          "nextDimensions": [
-            "iacProviderBehavior",
-            "serviceSpecificFacade",
-            "stateTransitionCaptures",
-            "dataPlaneBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "app-configuration-parameters.iacProviderBehavior",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:app-configuration-parity is wired into npm run smoke",
-                "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            },
-            {
-              "id": "app-configuration-parameters.serviceSpecificFacade",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "serviceSpecificFacade",
-              "dimension": "Service-specific local facade/emulator integration",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "7 registry operations declared",
-                "backing engines: app-configuration-emulator, globalstack-secret-store"
-              ],
-              "gaps": [
-                "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=app-configuration-parameters",
-                "npm run smoke"
-              ],
-              "acceptanceGate": "The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests."
-            },
-            {
-              "id": "app-configuration-parameters.stateTransitionCaptures",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "stateTransitionCaptures",
-              "dimension": "State transition captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "create captured",
-                "get captured",
-                "list captured",
-                "delete captured"
-              ],
-              "gaps": [
-                "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized."
-            },
-            {
-              "id": "app-configuration-parameters.dataPlaneBehavior",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "dataPlaneBehavior",
-              "dimension": "Data-plane behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Official/local backing option declared: app-configuration-emulator, globalstack-secret-store",
-                "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-              ],
-              "commands": [
-                "npm run hybrid:render",
-                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile app-configuration-emulator up -d",
-                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile app-configuration-emulator down -v"
-              ],
-              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
-            },
-            {
-              "id": "app-configuration-parameters.parameterVarianceCaptures",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "15 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, invalid-sku=1, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "app-configuration-parameters.errorShapeFidelity",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-validation=4, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=6"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=app-configuration-parameters"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "app-configuration-parameters.identityRbacBehavior",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:app-configuration-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "app-configuration-parameters.liveApiSurfaceInventory",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "57 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "app-configuration-parameters.retryEventualConsistency",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            },
-            {
-              "id": "app-configuration-parameters.ambiguousRepeatCaptures",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true",
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
@@ -1309,10 +888,15 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "2 storage lifecycle capture files"
+                "2 storage lifecycle capture files",
+                "e2e:azure-files-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
               ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true"
@@ -1332,6 +916,454 @@
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
+            }
+          ]
+        },
+        {
+          "serviceId": "event-hubs-streams",
+          "tier": 2,
+          "awsAnalogue": "Kinesis Data Streams",
+          "azureEquivalent": "Azure Event Hubs",
+          "currentStatus": "in-progress",
+          "dimensionCounts": {
+            "complete": 0,
+            "partial": 8,
+            "notStarted": 2
+          },
+          "score": 0.3762,
+          "priority": 101,
+          "workItemCount": 10,
+          "nextDimensions": [
+            "iacProviderBehavior",
+            "serviceSpecificFacade",
+            "stateTransitionCaptures",
+            "dataPlaneBehavior"
+          ],
+          "workItems": [
+            {
+              "id": "event-hubs-streams.iacProviderBehavior",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "iacProviderBehavior",
+              "dimension": "IaC-provider behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-hubs-parity is wired into npm run smoke",
+                "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+              ],
+              "gaps": [
+                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
+                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
+              ],
+              "commands": [
+                "npm run smoke:prompts",
+                "npm run smoke:deploy"
+              ],
+              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
+            },
+            {
+              "id": "event-hubs-streams.serviceSpecificFacade",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "serviceSpecificFacade",
+              "dimension": "Service-specific local facade/emulator integration",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "11 registry operations declared",
+                "backing engines: event-hubs-emulator"
+              ],
+              "gaps": [
+                "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=event-hubs-streams",
+                "npm run smoke"
+              ],
+              "acceptanceGate": "The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests."
+            },
+            {
+              "id": "event-hubs-streams.stateTransitionCaptures",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "stateTransitionCaptures",
+              "dimension": "State transition captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "create captured",
+                "get captured",
+                "list captured",
+                "delete captured"
+              ],
+              "gaps": [
+                "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized."
+            },
+            {
+              "id": "event-hubs-streams.dataPlaneBehavior",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "dataPlaneBehavior",
+              "dimension": "Data-plane behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
+              "gaps": [
+                "Official/local backing option declared: event-hubs-emulator",
+                "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+              ],
+              "commands": [
+                "npm run hybrid:render",
+                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile event-hubs-emulator up -d",
+                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile event-hubs-emulator down -v"
+              ],
+              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
+            },
+            {
+              "id": "event-hubs-streams.parameterVarianceCaptures",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "parameterVarianceCaptures",
+              "dimension": "Parameter variance captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "16 live ARM captures",
+                "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
+              ],
+              "gaps": [
+                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --limit=0",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
+            },
+            {
+              "id": "event-hubs-streams.errorShapeFidelity",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "errorShapeFidelity",
+              "dimension": "Error-shape fidelity",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3"
+              ],
+              "gaps": [
+                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=event-hubs-streams"
+              ],
+              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
+            },
+            {
+              "id": "event-hubs-streams.identityRbacBehavior",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "identityRbacBehavior",
+              "dimension": "Identity/RBAC behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-hubs-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
+              "gaps": [
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+              ],
+              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
+            },
+            {
+              "id": "event-hubs-streams.liveApiSurfaceInventory",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "liveApiSurfaceInventory",
+              "dimension": "Complete live Azure API surface inventory",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "8 candidate catalog calls",
+                "93 provider operations matched"
+              ],
+              "gaps": [
+                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
+                "Add data-plane surface inventory where the service has data-plane APIs."
+              ],
+              "commands": [
+                "npm run providers:surface",
+                "npm run conformance:catalog"
+              ],
+              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+            },
+            {
+              "id": "event-hubs-streams.retryEventualConsistency",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "retryEventualConsistency",
+              "dimension": "Retry/eventual consistency behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:event-hubs-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
+              "gaps": [
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true"
+              ],
+              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
+            },
+            {
+              "id": "event-hubs-streams.ambiguousRepeatCaptures",
+              "serviceId": "event-hubs-streams",
+              "dimensionId": "ambiguousRepeatCaptures",
+              "dimension": "Repeat captures for ambiguous behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
+              "gaps": [
+                "Repeat timing-sensitive captures and record stabilization rules before normalization."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
+            }
+          ]
+        },
+        {
+          "serviceId": "app-configuration-parameters",
+          "tier": 2,
+          "awsAnalogue": "SSM Parameter Store",
+          "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
+          "currentStatus": "in-progress",
+          "dimensionCounts": {
+            "complete": 0,
+            "partial": 8,
+            "notStarted": 2
+          },
+          "score": 0.3762,
+          "priority": 101,
+          "workItemCount": 10,
+          "nextDimensions": [
+            "iacProviderBehavior",
+            "serviceSpecificFacade",
+            "stateTransitionCaptures",
+            "dataPlaneBehavior"
+          ],
+          "workItems": [
+            {
+              "id": "app-configuration-parameters.iacProviderBehavior",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "iacProviderBehavior",
+              "dimension": "IaC-provider behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:app-configuration-parity is wired into npm run smoke",
+                "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+              ],
+              "gaps": [
+                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
+                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
+              ],
+              "commands": [
+                "npm run smoke:prompts",
+                "npm run smoke:deploy"
+              ],
+              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
+            },
+            {
+              "id": "app-configuration-parameters.serviceSpecificFacade",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "serviceSpecificFacade",
+              "dimension": "Service-specific local facade/emulator integration",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "7 registry operations declared",
+                "backing engines: app-configuration-emulator, globalstack-secret-store"
+              ],
+              "gaps": [
+                "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=app-configuration-parameters",
+                "npm run smoke"
+              ],
+              "acceptanceGate": "The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests."
+            },
+            {
+              "id": "app-configuration-parameters.stateTransitionCaptures",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "stateTransitionCaptures",
+              "dimension": "State transition captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "create captured",
+                "get captured",
+                "list captured",
+                "delete captured"
+              ],
+              "gaps": [
+                "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized."
+            },
+            {
+              "id": "app-configuration-parameters.dataPlaneBehavior",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "dataPlaneBehavior",
+              "dimension": "Data-plane behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
+              "gaps": [
+                "Official/local backing option declared: app-configuration-emulator, globalstack-secret-store",
+                "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+              ],
+              "commands": [
+                "npm run hybrid:render",
+                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile app-configuration-emulator up -d",
+                "docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile app-configuration-emulator down -v"
+              ],
+              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
+            },
+            {
+              "id": "app-configuration-parameters.parameterVarianceCaptures",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "parameterVarianceCaptures",
+              "dimension": "Parameter variance captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "15 live ARM captures",
+                "variance cases: empty-body=2, invalid-location=2, invalid-sku=1, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
+              ],
+              "gaps": [
+                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --limit=0",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
+            },
+            {
+              "id": "app-configuration-parameters.errorShapeFidelity",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "errorShapeFidelity",
+              "dimension": "Error-shape fidelity",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "validation depths: provider-validation=4, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=6"
+              ],
+              "gaps": [
+                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=app-configuration-parameters"
+              ],
+              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
+            },
+            {
+              "id": "app-configuration-parameters.identityRbacBehavior",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "identityRbacBehavior",
+              "dimension": "Identity/RBAC behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:app-configuration-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
+              "gaps": [
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+              ],
+              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
+            },
+            {
+              "id": "app-configuration-parameters.liveApiSurfaceInventory",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "liveApiSurfaceInventory",
+              "dimension": "Complete live Azure API surface inventory",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "8 candidate catalog calls",
+                "57 provider operations matched"
+              ],
+              "gaps": [
+                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
+                "Add data-plane surface inventory where the service has data-plane APIs."
+              ],
+              "commands": [
+                "npm run providers:surface",
+                "npm run conformance:catalog"
+              ],
+              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+            },
+            {
+              "id": "app-configuration-parameters.retryEventualConsistency",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "retryEventualConsistency",
+              "dimension": "Retry/eventual consistency behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:app-configuration-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
+              "gaps": [
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true"
+              ],
+              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
+            },
+            {
+              "id": "app-configuration-parameters.ambiguousRepeatCaptures",
+              "serviceId": "app-configuration-parameters",
+              "dimensionId": "ambiguousRepeatCaptures",
+              "dimension": "Repeat captures for ambiguous behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
+              "gaps": [
+                "Repeat timing-sensitive captures and record stabilization rules before normalization."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true",
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
@@ -1532,10 +1564,16 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "2 storage lifecycle capture files"
+                "2 storage lifecycle capture files",
+                "e2e:storage-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "retry-after header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
               ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=blob-storage --all=true"
@@ -1757,10 +1795,16 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "2 storage lifecycle capture files"
+                "2 storage lifecycle capture files",
+                "e2e:storage-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "retry-after header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
               ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true"
@@ -1804,11 +1848,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 119,
+          "score": 0.3762,
+          "priority": 110,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -1985,11 +2029,16 @@
               "serviceId": "identity-rbac",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:identity-rbac-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
@@ -2023,11 +2072,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 110,
+          "score": 0.4279,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2205,11 +2254,16 @@
               "serviceId": "key-vault-keys",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:key-vault-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true"
@@ -2243,11 +2297,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 109,
+          "score": 0.4279,
+          "priority": 100,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2425,11 +2479,16 @@
               "serviceId": "key-vault-secrets",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:key-vault-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true"
@@ -2463,11 +2522,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 107,
+          "score": 0.3762,
+          "priority": 98,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2643,11 +2702,16 @@
               "serviceId": "waf-policy",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:waf-policy-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=waf-policy --all=true"
@@ -2681,11 +2745,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 107,
+          "score": 0.3762,
+          "priority": 98,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -2861,11 +2925,16 @@
               "serviceId": "activity-log-audit",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:activity-log-audit-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --all=true"
@@ -2907,11 +2976,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 120,
+          "score": 0.3762,
+          "priority": 111,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3086,11 +3155,17 @@
               "serviceId": "aks-metadata",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:aks-metadata-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --all=true"
@@ -3124,11 +3199,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 111,
+          "score": 0.4279,
+          "priority": 102,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3307,11 +3382,18 @@
               "serviceId": "api-management",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:api-management-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "retry-after header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true"
@@ -3345,11 +3427,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 110,
+          "score": 0.4279,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3528,11 +3610,17 @@
               "serviceId": "azure-functions",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:azure-functions-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true"
@@ -3566,11 +3654,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 108,
+          "score": 0.3762,
+          "priority": 99,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3746,11 +3834,16 @@
               "serviceId": "logic-workflows",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:logic-workflows-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true"
@@ -3784,11 +3877,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 8,
-            "notStarted": 2
+            "partial": 9,
+            "notStarted": 1
           },
-          "score": 0.391,
-          "priority": 107,
+          "score": 0.4279,
+          "priority": 98,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -3967,11 +4060,16 @@
               "serviceId": "container-registry",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:container-registry-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true"
@@ -4005,11 +4103,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 105,
+          "score": 0.3762,
+          "priority": 96,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4185,11 +4283,16 @@
               "serviceId": "front-door-cdn",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:front-door-cdn-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=front-door-cdn --all=true"
@@ -4223,11 +4326,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 105,
+          "score": 0.3762,
+          "priority": 96,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4403,11 +4506,17 @@
               "serviceId": "service-discovery",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:service-discovery-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-discovery --all=true"
@@ -4441,11 +4550,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 104,
+          "score": 0.3762,
+          "priority": 95,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4621,11 +4730,16 @@
               "serviceId": "load-balancing",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:load-balancing-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true"
@@ -4667,11 +4781,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 113,
+          "score": 0.3762,
+          "priority": 104,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -4848,11 +4962,16 @@
               "serviceId": "postgresql-flexible-server",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:postgresql-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=postgresql-flexible-server --all=true"
@@ -4886,11 +5005,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 103,
+          "score": 0.3762,
+          "priority": 94,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5066,11 +5185,16 @@
               "serviceId": "synapse-warehouse",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:synapse-warehouse-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=synapse-warehouse --all=true"
@@ -5104,11 +5228,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 101,
+          "score": 0.3762,
+          "priority": 92,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5285,11 +5409,16 @@
               "serviceId": "mysql-flexible-server",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:mysql-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=mysql-flexible-server --all=true"
@@ -5323,11 +5452,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 101,
+          "score": 0.3762,
+          "priority": 92,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5504,11 +5633,17 @@
               "serviceId": "redis-cache",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:redis-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true"
@@ -5542,11 +5677,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 101,
+          "score": 0.3762,
+          "priority": 92,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5722,11 +5857,16 @@
               "serviceId": "database-migration-service",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:database-migration-service-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true"
@@ -5768,11 +5908,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 120,
+          "score": 0.3762,
+          "priority": 111,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -5948,11 +6088,16 @@
               "serviceId": "monitor-logs",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:monitor-logs-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-logs --all=true"
@@ -5986,11 +6131,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 111,
+          "score": 0.3762,
+          "priority": 102,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6166,11 +6311,17 @@
               "serviceId": "virtual-network",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:virtual-network-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=virtual-network --all=true"
@@ -6204,11 +6355,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 110,
+          "score": 0.3762,
+          "priority": 101,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6384,11 +6535,16 @@
               "serviceId": "monitor-metrics-alerts",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-metrics-alerts --all=true"
@@ -6422,11 +6578,11 @@
           "currentStatus": "in-progress",
           "dimensionCounts": {
             "complete": 0,
-            "partial": 7,
-            "notStarted": 3
+            "partial": 8,
+            "notStarted": 2
           },
-          "score": 0.3393,
-          "priority": 99,
+          "score": 0.3762,
+          "priority": 90,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6602,11 +6758,17 @@
               "serviceId": "dns-zones",
               "dimensionId": "retryEventualConsistency",
               "dimension": "Retry/eventual consistency behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:dns-zones-parity is wired into npm run smoke",
+                "async-operation header behavior is asserted",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
               "gaps": [
-                "Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service."
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
               ],
               "commands": [
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=dns-zones --all=true"
@@ -6639,63 +6801,6 @@
   "prioritizedServices": [
     {
       "rank": 1,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "aks-metadata",
-      "tier": 1,
-      "score": 0.3393,
-      "priority": 120,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 2,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-logs",
-      "tier": 1,
-      "score": 0.3393,
-      "priority": 120,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 3,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "identity-rbac",
-      "tier": 1,
-      "score": 0.3393,
-      "priority": 119,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 4,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "cosmos-nosql-table",
       "tier": 1,
@@ -6714,16 +6819,73 @@
       ]
     },
     {
-      "rank": 5,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "service-bus-topics",
+      "rank": 2,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "aks-metadata",
       "tier": 1,
-      "score": 0.391,
-      "priority": 113,
+      "score": 0.3762,
+      "priority": 111,
       "dimensionCounts": {
         "complete": 0,
         "partial": 8,
         "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 3,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-logs",
+      "tier": 1,
+      "score": 0.3762,
+      "priority": 111,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 4,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "identity-rbac",
+      "tier": 1,
+      "score": 0.3762,
+      "priority": 110,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 5,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "service-bus-topics",
+      "tier": 1,
+      "score": 0.4279,
+      "priority": 104,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 9,
+        "notStarted": 1
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6737,12 +6899,12 @@
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
-      "score": 0.3393,
-      "priority": 113,
+      "score": 0.3762,
+      "priority": 104,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6756,12 +6918,12 @@
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-grid",
       "tier": 1,
-      "score": 0.391,
-      "priority": 112,
+      "score": 0.4279,
+      "priority": 103,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "partial": 9,
+        "notStarted": 1
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6775,12 +6937,12 @@
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "api-management",
       "tier": 1,
-      "score": 0.391,
-      "priority": 111,
+      "score": 0.4279,
+      "priority": 102,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "partial": 9,
+        "notStarted": 1
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6794,12 +6956,12 @@
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "virtual-network",
       "tier": 1,
-      "score": 0.3393,
-      "priority": 111,
+      "score": 0.3762,
+      "priority": 102,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6810,272 +6972,6 @@
     },
     {
       "rank": 10,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "event-hubs-streams",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 110,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 11,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "app-configuration-parameters",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 110,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 12,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-keys",
-      "tier": 1,
-      "score": 0.391,
-      "priority": 110,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 13,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "azure-functions",
-      "tier": 1,
-      "score": 0.391,
-      "priority": 110,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 14,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-metrics-alerts",
-      "tier": 1,
-      "score": 0.3393,
-      "priority": 110,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 15,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-secrets",
-      "tier": 1,
-      "score": 0.391,
-      "priority": 109,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 16,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "logic-workflows",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 108,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 17,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "waf-policy",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 107,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 18,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "activity-log-audit",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 107,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 19,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "container-registry",
-      "tier": 1,
-      "score": 0.391,
-      "priority": 107,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 20,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "front-door-cdn",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 105,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 21,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "service-discovery",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 105,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 22,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "load-balancing",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 104,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 23,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "synapse-warehouse",
-      "tier": 2,
-      "score": 0.3393,
-      "priority": 103,
-      "dimensionCounts": {
-        "complete": 0,
-        "partial": 7,
-        "notStarted": 3
-      },
-      "nextDimensions": [
-        "iacProviderBehavior",
-        "serviceSpecificFacade",
-        "stateTransitionCaptures",
-        "dataPlaneBehavior"
-      ]
-    },
-    {
-      "rank": 24,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "azure-files",
       "tier": 2,
@@ -7094,16 +6990,282 @@
       ]
     },
     {
-      "rank": 25,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "mysql-flexible-server",
+      "rank": 11,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-hubs-streams",
       "tier": 2,
-      "score": 0.3393,
+      "score": 0.3762,
       "priority": 101,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 12,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "app-configuration-parameters",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 101,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 13,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-keys",
+      "tier": 1,
+      "score": 0.4279,
+      "priority": 101,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 9,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 14,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "azure-functions",
+      "tier": 1,
+      "score": 0.4279,
+      "priority": 101,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 9,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 15,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-metrics-alerts",
+      "tier": 1,
+      "score": 0.3762,
+      "priority": 101,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 16,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-secrets",
+      "tier": 1,
+      "score": 0.4279,
+      "priority": 100,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 9,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 17,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "logic-workflows",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 99,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 18,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "blob-storage",
+      "tier": 1,
+      "score": 0.45,
+      "priority": 98,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 10,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 19,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "waf-policy",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 98,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 20,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "activity-log-audit",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 98,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 21,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "container-registry",
+      "tier": 1,
+      "score": 0.4279,
+      "priority": 98,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 9,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "front-door-cdn",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 96,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 23,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "service-discovery",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 96,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 24,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 95,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
+      },
+      "nextDimensions": [
+        "iacProviderBehavior",
+        "serviceSpecificFacade",
+        "stateTransitionCaptures",
+        "dataPlaneBehavior"
+      ]
+    },
+    {
+      "rank": 25,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "synapse-warehouse",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 94,
+      "dimensionCounts": {
+        "complete": 0,
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7115,14 +7277,14 @@
     {
       "rank": 26,
       "waveId": "wave-4-data-platforms",
-      "serviceId": "redis-cache",
+      "serviceId": "mysql-flexible-server",
       "tier": 2,
-      "score": 0.3393,
-      "priority": 101,
+      "score": 0.3762,
+      "priority": 92,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7134,14 +7296,14 @@
     {
       "rank": 27,
       "waveId": "wave-4-data-platforms",
-      "serviceId": "database-migration-service",
+      "serviceId": "redis-cache",
       "tier": 2,
-      "score": 0.3393,
-      "priority": 101,
+      "score": 0.3762,
+      "priority": 92,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7152,15 +7314,15 @@
     },
     {
       "rank": 28,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "dns-zones",
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "database-migration-service",
       "tier": 2,
-      "score": 0.3393,
-      "priority": 99,
+      "score": 0.3762,
+      "priority": 92,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 7,
-        "notStarted": 3
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7171,15 +7333,15 @@
     },
     {
       "rank": 29,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "blob-storage",
-      "tier": 1,
-      "score": 0.45,
-      "priority": 98,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "dns-zones",
+      "tier": 2,
+      "score": 0.3762,
+      "priority": 90,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 10,
-        "notStarted": 0
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -7210,8 +7372,8 @@
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 225,
-      "start": 75
+      "complete": 251,
+      "start": 49
     },
     "byDimension": {
       "iacProviderBehavior": 30,

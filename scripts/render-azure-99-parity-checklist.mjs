@@ -237,6 +237,24 @@ function identityEvidence(capabilityId, packageJson, scriptSources) {
   return evidence;
 }
 
+function retryConsistencyEvidence(capabilityId, packageJson, scriptSources) {
+  const script = iacScriptByCapability.get(capabilityId);
+  if (!scriptEvidence(script, packageJson)) return null;
+  const source = scriptSource(script, packageJson, scriptSources);
+  if (!source) return null;
+
+  const evidence = [];
+  if (/azure-asyncoperation/i.test(source)) evidence.push('async-operation header behavior is asserted');
+  if (/retry-after/i.test(source)) evidence.push('retry-after header behavior is asserted');
+  if (/Creating|provisioning/i.test(source)) evidence.push('transitional/provisioning state behavior is asserted');
+  if (/post-delete|get after delete|list after delete|delete after delete|after .*delete/i.test(source)) evidence.push('post-delete behavior is asserted');
+  if (!evidence.length) return null;
+  return {
+    script,
+    evidence,
+  };
+}
+
 function markdown(doc) {
   const lines = [
     '# Azure 99% Parity Checklist',
@@ -338,6 +356,7 @@ const services = allCapabilities.map(capability => {
   const iacEvidence = iacProviderEvidence(capability.id, packageJson);
   const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
   const identityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
+  const retryEvidenceItem = retryConsistencyEvidence(capability.id, packageJson, scriptSources);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -392,10 +411,17 @@ const services = allCapabilities.map(capability => {
         : ['Capture allow/deny matrices for ARM and data-plane auth; implement local RBAC decisions with Azure-shaped denials.'],
     }),
     retryEventualConsistency: status({
-      partial: isStorageCapability(capability.id) && lifecycleCaptureCount > 0,
+      partial: (isStorageCapability(capability.id) && lifecycleCaptureCount > 0) || !!retryEvidenceItem,
       complete: false,
-      evidence: isStorageCapability(capability.id) ? [`${lifecycleCaptureCount} storage lifecycle capture files`] : [],
-      gaps: ['Capture poll/retry timing, transitional states, eventual list/read behavior, and delete consistency for this service.'],
+      evidence: [
+        isStorageCapability(capability.id) ? `${lifecycleCaptureCount} storage lifecycle capture files` : null,
+        retryEvidenceItem ? `${retryEvidenceItem.script} is wired into npm run smoke` : null,
+        ...(retryEvidenceItem?.evidence ?? []),
+      ].filter(Boolean),
+      gaps: [
+        'Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.',
+        'Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate.',
+      ],
     }),
     iacProviderBehavior: status({
       partial: !!iacEvidence,
