@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T06:37:48.592Z",
+    "generatedAt": "2026-05-19T07:12:21.144Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -60,7 +60,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "4 registry operations declared",
+                "13 registry operations declared",
                 "backing engines: service-bus-emulator, globalstack-event-router"
               ],
               "gaps": [
@@ -1536,7 +1536,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "5 registry operations declared",
+                "7 registry operations declared",
                 "backing engines: azurite, service-bus-emulator"
               ],
               "gaps": [

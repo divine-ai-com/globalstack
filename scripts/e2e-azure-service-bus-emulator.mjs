@@ -188,6 +188,17 @@ try {
       }
     });
 
+    await record('completed queue message is removed from active delivery', async () => {
+      const receiver = client.createReceiver('robot-telemetry');
+      try {
+        const messages = await receiver.receiveMessages(1, { maxWaitTimeInMs: 3000 });
+        assert.equal(messages.length, 0);
+        return 'queue returned no active messages after completion';
+      } finally {
+        await receiver.close();
+      }
+    });
+
     await record('topic publish and subscription receive configured entity', async () => {
       const sender = client.createSender('topic.1');
       const receiver = client.createReceiver('topic.1', 'subscription.1');
@@ -201,6 +212,32 @@ try {
       } finally {
         await sender.close();
         await receiver.close();
+      }
+    });
+
+    await record('missing topic is rejected by emulator', async () => {
+      const sender = client.createSender(`missing-topic-${suffix}`);
+      try {
+        await assert.rejects(
+          () => sender.sendMessages({ body: { scenario: 'missing-topic' }, messageId: `missing-topic-${suffix}` }),
+          error => /not found|does not exist|404|messaging entity/i.test(error.message),
+        );
+        return 'missing topic rejected';
+      } finally {
+        await sender.close().catch(() => {});
+      }
+    });
+
+    await record('missing subscription is rejected by emulator', async () => {
+      const receiver = client.createReceiver('topic.1', `missing-subscription-${suffix}`);
+      try {
+        await assert.rejects(
+          () => receiver.receiveMessages(1, { maxWaitTimeInMs: 3000 }),
+          error => /not found|does not exist|404|messaging entity/i.test(error.message),
+        );
+        return 'missing subscription rejected';
+      } finally {
+        await receiver.close().catch(() => {});
       }
     });
 

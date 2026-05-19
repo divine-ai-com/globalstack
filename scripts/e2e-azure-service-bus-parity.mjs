@@ -58,6 +58,7 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: {
       ...(options.auth === false ? {} : { authorization: authHeader }),
       'content-type': 'application/json',
+      ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -107,12 +108,58 @@ function namespaceBody(overrides = {}) {
   };
 }
 
+function deploymentBody(namespaceName, topicName, queueName, subscriptionName) {
+  return {
+    properties: {
+      mode: 'Incremental',
+      template: {
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        contentVersion: '1.0.0.0',
+        resources: [
+          {
+            type: 'Microsoft.ServiceBus/namespaces',
+            apiVersion: '2021-11-01',
+            name: namespaceName,
+            location: 'eastus',
+            sku: { name: 'Standard', tier: 'Standard' },
+            properties: {},
+          },
+          {
+            type: 'Microsoft.ServiceBus/namespaces/topics',
+            apiVersion: '2021-11-01',
+            name: `${namespaceName}/${topicName}`,
+            properties: { defaultMessageTimeToLive: 'P7D' },
+          },
+          {
+            type: 'Microsoft.ServiceBus/namespaces/topics/subscriptions',
+            apiVersion: '2021-11-01',
+            name: `${namespaceName}/${topicName}/${subscriptionName}`,
+            properties: { maxDeliveryCount: 5 },
+          },
+          {
+            type: 'Microsoft.ServiceBus/namespaces/queues',
+            apiVersion: '2021-11-01',
+            name: `${namespaceName}/${queueName}`,
+            properties: { maxDeliveryCount: 3 },
+          },
+        ],
+        outputs: {
+          namespaceName: { type: 'string', value: namespaceName },
+          topicName: { type: 'string', value: topicName },
+          queueName: { type: 'string', value: queueName },
+        },
+      },
+    },
+  };
+}
+
 async function runControlPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
   const resourceGroup = `rg-gs-sb-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-sb-missing-${suffix}`;
   const namespace = `sbus${suffix}`.slice(0, 50);
+  const templateNamespace = `sbt${suffix}`.slice(0, 50);
   const topic = `model-events-${suffix}`;
   const queue = `robot-${suffix}`;
   const subscription = `processor-${suffix}`;
@@ -151,6 +198,43 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('malformed bearer token is rejected', async () => {
+      const result = await httpJson(
+        port,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.ServiceBus', namespaceBase),
+        undefined,
+        { headers: { authorization: 'Bearer' } },
+      );
+      assert.equal(result.status, 401);
+      assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('wrong bearer token is rejected', async () => {
+      const result = await httpJson(
+        port,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.ServiceBus', namespaceBase),
+        undefined,
+        { headers: { authorization: 'Bearer not-the-globalstack-local-token' } },
+      );
+      assert.equal(result.status, 401);
+      assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('subscription mismatch is rejected', async () => {
+      const result = await httpJson(
+        port,
+        'GET',
+        `/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/${resourceGroup}/providers/Microsoft.ServiceBus/${namespaceBase}?api-version=2021-11-01`,
+      );
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'AuthorizationFailed');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('missing api-version is rejected', async () => {
       const result = await httpJson(
         port,
@@ -183,6 +267,44 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 201);
       assert.equal(result.body.name, resourceGroup);
       return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('namespace delete not-found preserves Azure no-content shape', async () => {
+      const result = await httpJson(port, 'DELETE', providerPath(resourceGroup, 'Microsoft.ServiceBus', namespaceBase));
+      assert.equal(result.status, 204);
+      return { status: result.status };
+    });
+
+    await record('namespace list is empty before create', async () => {
+      const result = await httpJson(port, 'GET', providerPath(resourceGroup, 'Microsoft.ServiceBus', 'namespaces'));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.value.length, 0);
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('topic create before namespace reports missing parent', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', topicPath), {
+        properties: {},
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ParentResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('queue create before namespace reports missing parent', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', queuePath), {
+        properties: {},
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ParentResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('topic list before namespace reports missing parent', async () => {
+      const result = await httpJson(port, 'GET', providerPath(resourceGroup, 'Microsoft.ServiceBus', `${namespaceBase}/topics`));
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ParentResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('namespace empty body is rejected', async () => {
@@ -311,6 +433,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, resourceId: result.body.id };
     });
 
+    await record('subscription create before topic reports missing parent', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', `${namespaceBase}/topics/missing-topic/subscriptions/${subscription}`), {
+        properties: { maxDeliveryCount: 5 },
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ParentResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('topic idempotent update succeeds', async () => {
       const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', topicPath), {
         properties: { defaultMessageTimeToLive: 'P7D' },
@@ -378,6 +509,38 @@ async function runControlPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
     }
+
+    await record('unsupported authorization rule action fails closed', async () => {
+      const result = await httpJson(
+        port,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ServiceBus', `${topicPath}/authorizationRules/globalstack/listKeys`),
+        {},
+      );
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('ARM template deployment can create namespace topic subscription and queue', async () => {
+      const deploymentName = `sb-deploy-${suffix}`;
+      const templateTopic = `template-topic-${suffix}`;
+      const templateQueue = `template-queue-${suffix}`;
+      const templateSubscription = `template-sub-${suffix}`;
+      const result = await httpJson(
+        port,
+        'PUT',
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}?api-version=2022-09-01`,
+        deploymentBody(templateNamespace, templateTopic, templateQueue, templateSubscription),
+      );
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.provisioningState, 'Succeeded');
+      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/namespaces/${templateNamespace}`)));
+      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/topics/${templateTopic}`)));
+      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/subscriptions/${templateSubscription}`)));
+      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/queues/${templateQueue}`)));
+      return { status: result.status, deploymentName };
+    });
 
     for (const child of [
       { name: 'subscription', path: subscriptionPath },

@@ -19,8 +19,8 @@ By default it runs three layers:
 
 | Layer | Scope | Required Result |
 |---|---|---|
-| Service Bus ARM matrix | Auth rejection, missing `api-version`, missing resource group, captured namespace validation, official namespace/topic/queue/subscription naming rules, async namespace creation, get/update/list/delete/post-delete for namespaces, topics, subscriptions, and queues. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Official emulator matrix | Microsoft Service Bus emulator health plus queue send/receive, topic publish/subscription receive, and missing queue rejection. | The existing `npm run e2e:service-bus` report passes. |
+| Service Bus ARM matrix | Auth rejection, malformed/wrong bearer rejection, subscription mismatch, missing `api-version`, missing resource group, captured namespace validation, missing-parent topic/queue/subscription rejection, official namespace/topic/queue/subscription naming rules, async namespace creation, get/update/list/delete/post-delete for namespaces, topics, subscriptions, and queues, fail-closed unsupported authorization-rule actions, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
+| Official emulator matrix | Microsoft Service Bus emulator health plus queue send/receive/complete removal, topic publish/subscription receive, and missing topic/subscription/queue rejection. | The existing `npm run e2e:service-bus` report passes. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:service-bus-parity -- --skip-emulator --skip-platforms` only for tight local debugging. `npm run validate` requires the official emulator and platform matrices.
@@ -30,8 +30,10 @@ Use `npm run e2e:service-bus-parity -- --skip-emulator --skip-platforms` only fo
 The Service Bus ARM matrix covers these deployment states:
 
 - A request without a bearer token fails with `401 InvalidAuthenticationToken`.
+- Malformed and wrong bearer tokens fail with `401 InvalidAuthenticationToken`, and subscription mismatches fail with `403 AuthorizationFailed`.
 - A provider request without `api-version` fails with `400 MissingApiVersionParameter`.
 - Creating a namespace in a missing resource group fails with `404 ResourceGroupNotFound`.
+- Creating or listing topics/queues/subscriptions without the required parent fails with `404 ParentResourceNotFound`.
 - Empty namespace bodies fail with captured `400 LocationRequired`.
 - Invalid namespace locations fail with captured `400 InvalidResourceLocation`.
 - Invalid namespace SKUs fail with captured `400 ValidateResourceInfoFailedWithInvalidSkuName`.
@@ -39,6 +41,8 @@ The Service Bus ARM matrix covers these deployment states:
 - New namespaces return `201` with `azure-asyncoperation`, `location`, `retry-after`, and `Creating` provisioning/status fields.
 - Operation polling moves the namespace to `Succeeded`.
 - Topics, queues, and subscriptions support create, idempotent update where relevant, list, delete, and post-delete `404`.
+- Unsupported authorization-rule actions fail closed with an explicit GlobalStack route gap instead of returning synthetic success.
+- ARM-template deployment can create a namespace, topic, subscription, and queue in one deployment request.
 
 ## Claim Boundary
 

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T06:37:48.184Z",
+    "generatedAt": "2026-05-19T07:12:26.068Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -497,8 +497,17 @@
       ],
       "implementedOperations": [
         "Namespaces.CreateOrUpdate",
-        "Topics.Create",
-        "Subscriptions.Create",
+        "Namespaces.Get",
+        "Namespaces.List",
+        "Namespaces.Delete",
+        "Topics.CreateOrUpdate",
+        "Topics.Get",
+        "Topics.List",
+        "Topics.Delete",
+        "Subscriptions.CreateOrUpdate",
+        "Subscriptions.Get",
+        "Subscriptions.List",
+        "Subscriptions.Delete",
         "Messages.PublishLocal"
       ],
       "contractTested": false,
@@ -778,8 +787,10 @@
         "service-bus-emulator"
       ],
       "implementedOperations": [
-        "Queues.Create",
+        "Queues.CreateOrUpdate",
         "Queues.Get",
+        "Queues.List",
+        "Queues.Delete",
         "Messages.SendLocal",
         "Messages.ReceiveLocal",
         "Messages.DeleteLocal"
@@ -1882,7 +1893,7 @@
           "No full topic filter, retry, DLQ, or push delivery parity in MVP."
         ]
       },
-      "Topics.Create": {
+      "Namespaces.Get": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
@@ -1897,7 +1908,142 @@
           "No full topic filter, retry, DLQ, or push delivery parity in MVP."
         ]
       },
-      "Subscriptions.Create": {
+      "Namespaces.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Namespaces.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Topics.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Topics.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Topics.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Topics.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Subscriptions.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Subscriptions.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Subscriptions.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "service-bus-emulator",
+          "globalstack-event-router"
+        ],
+        "knownGaps": [
+          "Service Bus has an official emulator; Event Grid fanout needs GlobalStack routing.",
+          "No full topic filter, retry, DLQ, or push delivery parity in MVP."
+        ]
+      },
+      "Subscriptions.Delete": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
@@ -2309,7 +2455,7 @@
       }
     },
     "queue-storage": {
-      "Queues.Create": {
+      "Queues.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
@@ -2325,6 +2471,36 @@
         ]
       },
       "Queues.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Queues.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "azurite",
+          "service-bus-emulator"
+        ],
+        "knownGaps": [
+          "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+          "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+        ]
+      },
+      "Queues.Delete": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,

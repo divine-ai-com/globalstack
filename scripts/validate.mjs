@@ -598,7 +598,10 @@ if (!serviceBusE2eText) {
   const requiredServiceBusSteps = [
     'wait for service bus health endpoint',
     'queue send and receive configured entity',
+    'completed queue message is removed from active delivery',
     'topic publish and subscription receive configured entity',
+    'missing topic is rejected by emulator',
+    'missing subscription is rejected by emulator',
     'missing queue is rejected by emulator',
     'cleanup service bus emulator compose profile',
   ];
@@ -623,19 +626,28 @@ if (!serviceBusParityText) {
   if (serviceBusParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Service Bus parity control-plane matrix has failures');
   }
-  if ((serviceBusParity.controlPlane?.total ?? 0) < 30) {
-    errors.push('Azure Service Bus parity control-plane matrix should exercise at least 30 cases');
+  if ((serviceBusParity.controlPlane?.total ?? 0) < 45) {
+    errors.push('Azure Service Bus parity control-plane matrix should exercise at least 45 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
     'namespace create requires an existing resource group',
+    'namespace delete not-found preserves Azure no-content shape',
+    'topic create before namespace reports missing parent',
+    'queue create before namespace reports missing parent',
     'namespace invalid sku is rejected',
     'namespace invalid name is rejected by official naming rules',
     'valid namespace create returns async Azure shape',
     'namespace get reaches Succeeded',
+    'subscription create before topic reports missing parent',
     'topic create succeeds',
     'subscription create succeeds',
     'queue create succeeds',
+    'unsupported authorization rule action fails closed',
+    'ARM template deployment can create namespace topic subscription and queue',
     'child create after namespace delete reports missing parent',
   ]) {
     if (!serviceBusParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
