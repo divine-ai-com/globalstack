@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-19T22:11:04.475Z
+Generated: 2026-05-19T22:12:41.434Z
 
 ## Guardrails
 
@@ -25,25 +25,25 @@ Generated: 2026-05-19T22:11:04.475Z
 
 | Rank | Service | Tier | Wave | Score | Priority | Complete | Partial | Not Started | Next Dimensions |
 |---:|---|---:|---|---:|---:|---:|---:|---:|---|
-| 1 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 0.2951 | 132 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 2 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 0.2951 | 131 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 3 | api-management | 1 | wave-3-compute-api-and-edge | 0.2951 | 130 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 4 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 5 | azure-functions | 1 | wave-3-compute-api-and-edge | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 6 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 7 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 8 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.2951 | 128 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 9 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.332 | 126 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 10 | container-registry | 1 | wave-3-compute-api-and-edge | 0.2951 | 126 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 11 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.2951 | 122 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 12 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.2951 | 120 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 13 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 14 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 15 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.3393 | 119 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 16 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 17 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.2951 | 117 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 18 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.2951 | 116 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 19 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.2951 | 116 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 1 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 2 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 0.2951 | 129 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 3 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.332 | 126 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 4 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 0.3467 | 122 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 5 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.2951 | 122 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 6 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 0.3467 | 121 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 7 | api-management | 1 | wave-3-compute-api-and-edge | 0.3467 | 120 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 8 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.2951 | 120 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 9 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 10 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 11 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.3393 | 119 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 12 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 0.3467 | 119 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 13 | azure-functions | 1 | wave-3-compute-api-and-edge | 0.3467 | 119 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 14 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.2951 | 119 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 15 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.3467 | 118 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 16 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.2951 | 117 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 17 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.2951 | 116 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 18 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.2951 | 116 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 19 | container-registry | 1 | wave-3-compute-api-and-edge | 0.3467 | 116 | 0 | 7 | 3 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 20 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.2951 | 114 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 21 | service-discovery | 2 | wave-3-compute-api-and-edge | 0.2951 | 114 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 22 | load-balancing | 2 | wave-3-compute-api-and-edge | 0.2951 | 113 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
@@ -59,40 +59,6 @@ Generated: 2026-05-19T22:11:04.475Z
 ## Wave 1: official emulator and storage-family depth
 
 Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests.
-
-### service-bus-topics
-
-Priority: 132; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=service-bus-topics`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile service-bus-emulator up -d`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile service-bus-emulator down -v` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=service-bus-topics` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
-### event-grid
-
-Priority: 131; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=event-grid`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=event-grid` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### cosmos-nosql-table
 
@@ -110,6 +76,40 @@ Priority: 126; current score: 0.332; current status: in-progress.
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=cosmos-nosql-table --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 | Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=cosmos-nosql-table --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### service-bus-topics
+
+Priority: 122; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=service-bus-topics`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile service-bus-emulator up -d`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile service-bus-emulator down -v` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=service-bus-topics` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-bus-topics --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### event-grid
+
+Priority: 121; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=event-grid`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=event-grid` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### event-hubs-streams
 
@@ -201,40 +201,6 @@ Priority: 93; current score: 0.4057; current status: in-progress.
 
 Make authorization, denial, audit, and secure configuration behavior credible across the emulator.
 
-### key-vault-keys
-
-Priority: 129; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=key-vault-keys`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=key-vault-keys` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
-### key-vault-secrets
-
-Priority: 128; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=key-vault-secrets`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=key-vault-secrets` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
 ### identity-rbac
 
 Priority: 119; current score: 0.3393; current status: in-progress.
@@ -251,6 +217,40 @@ Priority: 119; current score: 0.3393; current status: in-progress.
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 | Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### key-vault-keys
+
+Priority: 119; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=key-vault-keys`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=key-vault-keys` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### key-vault-secrets
+
+Priority: 118; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=key-vault-secrets`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=key-vault-secrets` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### waf-policy
 
@@ -291,40 +291,6 @@ Priority: 116; current score: 0.2951; current status: in-progress.
 
 Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.
 
-### api-management
-
-Priority: 130; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=api-management`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=api-management` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
-### azure-functions
-
-Priority: 129; current score: 0.2951; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=azure-functions`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=azure-functions` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
 ### aks-metadata
 
 Priority: 129; current score: 0.2951; current status: in-progress.
@@ -342,22 +308,39 @@ Priority: 129; current score: 0.2951; current status: in-progress.
 | Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 | Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
-### container-registry
+### api-management
 
-Priority: 126; current score: 0.2951; current status: in-progress.
+Priority: 120; current score: 0.3467; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
-| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=container-registry`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Data-plane behavior | not-started | start | `npm run hybrid:render`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile local-oci-registry up -d`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile local-oci-registry down -v` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=container-registry` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=api-management`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=api-management` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
 | Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=api-management --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### azure-functions
+
+Priority: 119; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=azure-functions`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=azure-functions` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### logic-workflows
 
@@ -375,6 +358,23 @@ Priority: 117; current score: 0.2951; current status: in-progress.
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 | Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### container-registry
+
+Priority: 116; current score: 0.3467; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| Service-specific local facade/emulator integration | partial | complete | `npm run conformance:local -- --capability=container-registry`<br>`npm run smoke` | The local service path is implemented, fail-closed for unknown surfaces, backed by official emulators where available, and covered by local replay tests. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Data-plane behavior | partial | complete | `npm run hybrid:render`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile local-oci-registry up -d`<br>`docker compose -f dist/hybrid/docker-compose.official-emulators.yml --profile local-oci-registry down -v` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=container-registry` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
+| Retry/eventual consistency behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### front-door-cdn
 

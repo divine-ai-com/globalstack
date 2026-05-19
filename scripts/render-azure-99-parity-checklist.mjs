@@ -58,6 +58,37 @@ const iacScriptByCapability = new Map([
   ['waf-policy', 'e2e:waf-policy-parity'],
 ]);
 
+const dataPlaneEvidenceByCapability = new Map([
+  ['api-management', {
+    script: 'e2e:api-management-parity',
+    scope: 'local gateway host/path/subscription-key rejection and route smoke',
+  }],
+  ['azure-functions', {
+    script: 'e2e:azure-functions-parity',
+    scope: 'local HTTP-trigger routing, function-key rejection, and post-delete route rejection',
+  }],
+  ['container-registry', {
+    script: 'e2e:container-registry-parity',
+    scope: 'local ACR/Docker Registry bearer challenge, token, catalog, tag, manifest, and post-delete rejection smoke',
+  }],
+  ['event-grid', {
+    script: 'e2e:event-grid-parity',
+    scope: 'Event Grid topic publish URL, key auth, malformed publish rejection, and local event capture',
+  }],
+  ['key-vault-keys', {
+    script: 'e2e:key-vault-parity',
+    scope: 'local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke',
+  }],
+  ['key-vault-secrets', {
+    script: 'e2e:key-vault-parity',
+    scope: 'local Key Vault secret set/get/version-list/delete and malformed secret rejection smoke',
+  }],
+  ['service-bus-topics', {
+    script: 'e2e:service-bus-parity',
+    scope: 'official Service Bus emulator queue/topic send, receive, complete, and missing-entity rejection smoke',
+  }],
+]);
+
 const dimensions = [
   {
     id: 'liveApiSurfaceInventory',
@@ -164,6 +195,19 @@ function iacProviderEvidence(capabilityId, packageJson) {
   return { script, platforms: platformRunnerNames };
 }
 
+function scriptEvidence(script, packageJson) {
+  const scripts = packageJson?.scripts ?? {};
+  const smoke = scripts.smoke ?? '';
+  if (!script || !scripts[script] || !smoke.includes(`npm run ${script}`)) return null;
+  return script;
+}
+
+function dataPlaneEvidence(capabilityId, packageJson) {
+  const evidence = dataPlaneEvidenceByCapability.get(capabilityId);
+  if (!evidence || !scriptEvidence(evidence.script, packageJson)) return null;
+  return evidence;
+}
+
 function markdown(doc) {
   const lines = [
     '# Azure 99% Parity Checklist',
@@ -258,6 +302,7 @@ const services = allCapabilities.map(capability => {
   const hasOfficialEmulator = capability.primaryModes.includes('official-emulator');
   const storageDataPlaneRelevant = ['blob-storage', 'queue-storage'].includes(capability.id);
   const iacEvidence = iacProviderEvidence(capability.id, packageJson);
+  const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -328,12 +373,24 @@ const services = allCapabilities.map(capability => {
         : ['Wire a dedicated parity pack into npm run smoke with Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible GlobalStack lifecycle coverage.'],
     }),
     dataPlaneBehavior: status({
-      partial: storageDataPlaneRelevant && storageDataPlaneExpectationCount > 0,
+      partial: (storageDataPlaneRelevant && storageDataPlaneExpectationCount > 0) || !!dataPlaneEvidenceItem,
       complete: false,
-      evidence: storageDataPlaneRelevant ? [`${storageDataPlaneExpectationCount} Blob/Queue data-plane expectations`] : hasOfficialEmulator ? [`official emulator path declared: ${capability.backingEngines.join(', ')}`] : [],
+      evidence: [
+        storageDataPlaneRelevant ? `${storageDataPlaneExpectationCount} Blob/Queue data-plane expectations` : null,
+        dataPlaneEvidenceItem ? `${dataPlaneEvidenceItem.script} is wired into npm run smoke` : null,
+        dataPlaneEvidenceItem ? dataPlaneEvidenceItem.scope : null,
+      ].filter(Boolean),
       gaps: storageDataPlaneRelevant
         ? ['Expand Blob/Queue captures and local normalization beyond Wave 1.']
-        : ['Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability.'],
+        : dataPlaneEvidenceItem
+          ? [
+            'Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.',
+            'Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out.',
+          ]
+          : [
+            hasOfficialEmulator ? `Official/local backing option declared: ${capability.backingEngines.join(', ')}` : 'No durable local data-plane evidence is recorded yet.',
+            'Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability.',
+          ],
     }),
     ambiguousRepeatCaptures: status({
       partial: storageDataPlaneRelevant,

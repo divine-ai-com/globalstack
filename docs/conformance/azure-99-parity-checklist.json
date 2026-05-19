@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T22:11:04.274Z",
+    "generatedAt": "2026-05-19T22:12:41.205Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -209,8 +209,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -281,12 +281,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
+          "status": "partial",
           "evidence": [
-            "official emulator path declared: functions-core-tools, azurite"
+            "e2e:azure-functions-parity is wired into npm run smoke",
+            "local HTTP-trigger routing, function-key rejection, and post-delete route rejection"
           ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -331,8 +333,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -403,10 +405,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:api-management-parity is wired into npm run smoke",
+            "local gateway host/path/subscription-key rejection and route smoke"
+          ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -529,6 +535,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -574,8 +581,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -646,10 +653,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:key-vault-parity is wired into npm run smoke",
+            "local Key Vault secret set/get/version-list/delete and malformed secret rejection smoke"
+          ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -694,8 +705,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -766,10 +777,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:key-vault-parity is wired into npm run smoke",
+            "local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke"
+          ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -889,6 +904,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1013,10 +1029,9 @@
         },
         "dataPlaneBehavior": {
           "status": "not-started",
-          "evidence": [
-            "official emulator path declared: cosmos-db-emulator, azurite"
-          ],
+          "evidence": [],
           "gaps": [
+            "Official/local backing option declared: cosmos-db-emulator, azurite",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1063,8 +1078,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1135,12 +1150,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
+          "status": "partial",
           "evidence": [
-            "official emulator path declared: service-bus-emulator, globalstack-event-router"
+            "e2e:service-bus-parity is wired into npm run smoke",
+            "official Service Bus emulator queue/topic send, receive, complete, and missing-entity rejection smoke"
           ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -1185,8 +1202,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1257,10 +1274,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:event-grid-parity is wired into npm run smoke",
+            "Event Grid topic publish URL, key auth, malformed publish rejection, and local event capture"
+          ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -1304,8 +1325,8 @@
       },
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 7,
+        "notStarted": 3
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1376,10 +1397,14 @@
           ]
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
+          "status": "partial",
+          "evidence": [
+            "e2e:container-registry-parity is wired into npm run smoke",
+            "local ACR/Docker Registry bearer challenge, token, catalog, tag, manifest, and post-delete rejection smoke"
+          ],
           "gaps": [
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
+            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
+            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
           ]
         },
         "ambiguousRepeatCaptures": {
@@ -1498,6 +1523,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1618,6 +1644,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1738,6 +1765,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1860,6 +1888,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -1980,6 +2009,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2227,6 +2257,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2347,6 +2378,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2487,6 +2519,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2607,6 +2640,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2728,6 +2762,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2848,6 +2883,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -2968,6 +3004,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3091,6 +3128,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3209,10 +3247,9 @@
         },
         "dataPlaneBehavior": {
           "status": "not-started",
-          "evidence": [
-            "official emulator path declared: event-hubs-emulator"
-          ],
+          "evidence": [],
           "gaps": [
+            "Official/local backing option declared: event-hubs-emulator",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3333,6 +3370,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3451,10 +3489,9 @@
         },
         "dataPlaneBehavior": {
           "status": "not-started",
-          "evidence": [
-            "official emulator path declared: app-configuration-emulator, globalstack-secret-store"
-          ],
+          "evidence": [],
           "gaps": [
+            "Official/local backing option declared: app-configuration-emulator, globalstack-secret-store",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3575,6 +3612,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
@@ -3697,6 +3735,7 @@
           "status": "not-started",
           "evidence": [],
           "gaps": [
+            "No durable local data-plane evidence is recorded yet.",
             "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
           ]
         },
