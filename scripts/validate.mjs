@@ -32,6 +32,7 @@ const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-p
 const monitorMetricsAlertsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-metrics-alerts-parity', 'results.json');
 const virtualNetworkParityResultsPath = join(distRoot, 'e2e', 'azure-virtual-network-parity', 'results.json');
 const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity', 'results.json');
+const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1184,6 +1185,81 @@ if (!dnsZonesParityText) {
   }
   if (dnsZonesParity.platformMatrix?.ok !== true || dnsZonesParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure DNS Zones parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const loadBalancingParityText = await readFile(loadBalancingParityResultsPath, 'utf8').catch(() => '');
+if (!loadBalancingParityText) {
+  errors.push('missing Azure Load Balancing parity E2E results; run npm run e2e:load-balancing-parity');
+} else {
+  const loadBalancingParity = JSON.parse(loadBalancingParityText);
+  if (loadBalancingParity.ok !== true) {
+    errors.push('Azure Load Balancing parity E2E did not pass');
+  }
+  if (loadBalancingParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Load Balancing parity control-plane matrix has failures');
+  }
+  if ((loadBalancingParity.controlPlane?.total ?? 0) < 45) {
+    errors.push('Azure Load Balancing parity control-plane matrix should exercise at least 45 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'application gateway create requires an existing resource group',
+    'load balancer create requires an existing resource group',
+    'resource group create succeeds',
+    'application gateway collection list is empty before create',
+    'load balancer collection list is empty before create',
+    'application gateway delete missing returns no content',
+    'load balancer delete missing returns no content',
+    'application gateway empty body is rejected',
+    'load balancer empty body is rejected',
+    'application gateway invalid location is rejected',
+    'load balancer invalid location is rejected',
+    'application gateway invalid sku is rejected',
+    'load balancer invalid sku is rejected',
+    'virtual network create succeeds for load balancing references',
+    'application gateway missing gateway subnet is rejected',
+    'application gateway missing frontend ip is rejected',
+    'application gateway invalid frontend port is rejected',
+    'application gateway missing backend settings is rejected',
+    'application gateway invalid listener is rejected',
+    'application gateway invalid routing rule is rejected',
+    'load balancer missing frontend ip is rejected',
+    'load balancer missing backend pool is rejected',
+    'load balancer missing probe is rejected',
+    'load balancer invalid probe is rejected',
+    'load balancer invalid rule is rejected',
+    'application gateway create succeeds',
+    'application gateway get succeeds',
+    'application gateway update preserves metadata',
+    'load balancer create succeeds',
+    'load balancer get succeeds',
+    'load balancer update preserves metadata',
+    'application gateway list includes created resource',
+    'load balancer list includes created resource',
+    'application gateway backend health route fails closed',
+    'application gateway private endpoint connection route fails closed',
+    'load balancer backend pool child route fails closed',
+    'load balancer health action route fails closed',
+    'ARM template deployment can create load balancing resources',
+    'load balancer get after delete is not found',
+    'load balancer delete after delete returns no content',
+    'application gateway get after delete is not found',
+    'application gateway delete after delete returns no content',
+  ]) {
+    if (!loadBalancingParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Load Balancing parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (loadBalancingParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Load Balancing parity E2E must include the platform matrix during validation');
+  }
+  if (loadBalancingParity.platformMatrix?.ok !== true || loadBalancingParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Load Balancing parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

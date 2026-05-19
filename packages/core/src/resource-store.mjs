@@ -243,6 +243,17 @@ export class ResourceStore {
               numberOfRecordSets: existing?.properties?.numberOfRecordSets ?? 2,
             }
           : {}),
+        ...(type === 'Microsoft.Network/applicationGateways'
+          ? {
+              operationalState: 'Running',
+              resourceGuid: existing?.properties?.resourceGuid ?? createHash('sha256').update(`globalstack:appgw:${id}`).digest('hex').slice(0, 32),
+            }
+          : {}),
+        ...(type === 'Microsoft.Network/loadBalancers'
+          ? {
+              resourceGuid: existing?.properties?.resourceGuid ?? createHash('sha256').update(`globalstack:lb:${id}`).digest('hex').slice(0, 32),
+            }
+          : {}),
         ...((type.startsWith('Microsoft.Network/dnsZones/') || type.startsWith('Microsoft.Network/privateDnsZones/'))
           && !type.endsWith('/virtualNetworkLinks')
           ? {

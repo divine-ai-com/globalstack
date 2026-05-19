@@ -162,6 +162,80 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.dbforpostgresql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', version: '16' } };
   if (lower.includes('microsoft.cache/redis')) return { location: '{location}', sku: { name: 'Basic', family: 'C', capacity: 0 }, properties: { enableNonSslPort: true } };
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
+  if (lower === 'microsoft.network/applicationgateways') {
+    return {
+      location: '{location}',
+      sku: { name: 'Standard_v2', tier: 'Standard_v2', capacity: 1 },
+      properties: {
+        gatewayIPConfigurations: [{
+          name: 'appGatewayIpConfig',
+          properties: {
+            subnet: {
+              id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default',
+            },
+          },
+        }],
+        frontendIPConfigurations: [{
+          name: 'frontend',
+          properties: {
+            publicIPAddress: {
+              id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local',
+            },
+          },
+        }],
+        frontendPorts: [{ name: 'http', properties: { port: 80 } }],
+        backendAddressPools: [{ name: 'backend', properties: { backendAddresses: [{ ipAddress: '10.73.1.10' }] } }],
+        backendHttpSettingsCollection: [{ name: 'httpSettings', properties: { port: 80, protocol: 'Http', cookieBasedAffinity: 'Disabled' } }],
+        httpListeners: [{
+          name: 'listener',
+          properties: {
+            frontendIPConfiguration: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend' },
+            frontendPort: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http' },
+            protocol: 'Http',
+          },
+        }],
+        requestRoutingRules: [{
+          name: 'rule',
+          properties: {
+            ruleType: 'Basic',
+            priority: 100,
+            httpListener: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener' },
+            backendAddressPool: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend' },
+            backendHttpSettings: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings' },
+          },
+        }],
+      },
+    };
+  }
+  if (lower === 'microsoft.network/loadbalancers') {
+    return {
+      location: '{location}',
+      sku: { name: 'Standard' },
+      properties: {
+        frontendIPConfigurations: [{
+          name: 'frontend',
+          properties: {
+            publicIPAddress: {
+              id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local',
+            },
+          },
+        }],
+        backendAddressPools: [{ name: 'backend', properties: {} }],
+        probes: [{ name: 'tcpProbe', properties: { protocol: 'Tcp', port: 80, intervalInSeconds: 5, numberOfProbes: 2 } }],
+        loadBalancingRules: [{
+          name: 'httpRule',
+          properties: {
+            protocol: 'Tcp',
+            frontendPort: 80,
+            backendPort: 80,
+            frontendIPConfiguration: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend' },
+            backendAddressPool: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend' },
+            probe: { id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe' },
+          },
+        }],
+      },
+    };
+  }
   if (lower.includes('webapplicationfirewallpolicies')) return { location: '{location}', properties: { policySettings: { enabledState: 'Enabled', mode: 'Prevention' }, managedRules: { managedRuleSets: [] } } };
   if (lower.includes('microsoft.appconfiguration/configurationstores')) return { location: '{location}', sku: { name: 'free' }, properties: { disableLocalAuth: false } };
   if (lower.includes('microsoft.operationalinsights/workspaces')) return { location: '{location}', properties: { retentionInDays: 30 }, sku: { name: 'PerGB2018' } };

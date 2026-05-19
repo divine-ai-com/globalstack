@@ -1095,6 +1095,124 @@ function validateDnsPayload(resourceType, body, providerRoute = null) {
   return null;
 }
 
+function isNonEmptyString(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
+function isPort(value) {
+  return Number.isInteger(value) && value >= 1 && value <= 65535;
+}
+
+function arrayProp(body, name) {
+  return Array.isArray(body.properties?.[name]) ? body.properties[name] : [];
+}
+
+function refId(value) {
+  return isNonEmptyString(value?.id);
+}
+
+function validateNamedCollection(items, code, message) {
+  if (!Array.isArray(items) || items.length === 0) return envelopedError(400, code, message);
+  if (items.some(item => !isNonEmptyString(item?.name))) return envelopedError(400, 'InvalidRequestFormat', `${message} Each item requires a name.`);
+  return null;
+}
+
+function validateApplicationGatewayPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Network/applicationGateways') return null;
+
+  const skuName = body.sku?.name;
+  if (!['Standard_v2', 'WAF_v2'].includes(skuName)) {
+    return envelopedError(400, 'ApplicationGatewaySkuNotSupported', 'Application Gateway sku.name must be Standard_v2 or WAF_v2 for this local parity surface.');
+  }
+  if (!['Standard_v2', 'WAF_v2'].includes(body.sku?.tier)) {
+    return envelopedError(400, 'ApplicationGatewaySkuTierNotSupported', 'Application Gateway sku.tier must be Standard_v2 or WAF_v2 for this local parity surface.');
+  }
+
+  const gatewayIpConfigurations = arrayProp(body, 'gatewayIPConfigurations');
+  const gatewayIpValidation = validateNamedCollection(gatewayIpConfigurations, 'SubnetIsRequired', 'Application Gateway requires gatewayIPConfigurations.');
+  if (gatewayIpValidation) return gatewayIpValidation;
+  if (gatewayIpConfigurations.some(item => !refId(item.properties?.subnet))) {
+    return envelopedError(400, 'SubnetIsRequired', 'Subnet reference is required for ipconfiguration Application gateway subnet is required.');
+  }
+
+  const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
+  const frontendIpValidation = validateNamedCollection(frontendIpConfigurations, 'ApplicationGatewayFrontendIpConfigurationRequired', 'Application Gateway requires frontendIPConfigurations.');
+  if (frontendIpValidation) return frontendIpValidation;
+  if (frontendIpConfigurations.some(item => !refId(item.properties?.publicIPAddress) && !refId(item.properties?.subnet))) {
+    return envelopedError(400, 'ApplicationGatewayFrontendIpConfigurationInvalid', 'Application Gateway frontend IP configurations require publicIPAddress.id or subnet.id.');
+  }
+
+  const frontendPorts = arrayProp(body, 'frontendPorts');
+  const frontendPortValidation = validateNamedCollection(frontendPorts, 'ApplicationGatewayFrontendPortRequired', 'Application Gateway requires frontendPorts.');
+  if (frontendPortValidation) return frontendPortValidation;
+  if (frontendPorts.some(item => !isPort(item.properties?.port))) {
+    return envelopedError(400, 'ApplicationGatewayFrontendPortInvalid', 'Application Gateway frontendPorts[].properties.port must be between 1 and 65535.');
+  }
+
+  const backendPools = arrayProp(body, 'backendAddressPools');
+  const backendPoolValidation = validateNamedCollection(backendPools, 'ApplicationGatewayBackendPoolRequired', 'Application Gateway requires backendAddressPools.');
+  if (backendPoolValidation) return backendPoolValidation;
+
+  const backendSettings = arrayProp(body, 'backendHttpSettingsCollection');
+  const backendSettingsValidation = validateNamedCollection(backendSettings, 'ApplicationGatewayBackendHttpSettingsRequired', 'Application Gateway requires backendHttpSettingsCollection.');
+  if (backendSettingsValidation) return backendSettingsValidation;
+  if (backendSettings.some(item => !isPort(item.properties?.port) || !['Http', 'Https'].includes(item.properties?.protocol))) {
+    return envelopedError(400, 'ApplicationGatewayBackendHttpSettingsInvalid', 'Application Gateway backend HTTP settings require protocol Http/Https and a port between 1 and 65535.');
+  }
+
+  const listeners = arrayProp(body, 'httpListeners');
+  const listenerValidation = validateNamedCollection(listeners, 'ApplicationGatewayHttpListenerRequired', 'Application Gateway requires httpListeners.');
+  if (listenerValidation) return listenerValidation;
+  if (listeners.some(item => !refId(item.properties?.frontendIPConfiguration) || !refId(item.properties?.frontendPort) || !['Http', 'Https'].includes(item.properties?.protocol))) {
+    return envelopedError(400, 'ApplicationGatewayHttpListenerInvalid', 'Application Gateway HTTP listeners require frontendIPConfiguration.id, frontendPort.id, and protocol Http/Https.');
+  }
+
+  const rules = arrayProp(body, 'requestRoutingRules');
+  const ruleValidation = validateNamedCollection(rules, 'ApplicationGatewayRequestRoutingRuleRequired', 'Application Gateway requires requestRoutingRules.');
+  if (ruleValidation) return ruleValidation;
+  if (rules.some(item => !['Basic', 'PathBasedRouting'].includes(item.properties?.ruleType) || !refId(item.properties?.httpListener) || !refId(item.properties?.backendAddressPool) || !refId(item.properties?.backendHttpSettings))) {
+    return envelopedError(400, 'ApplicationGatewayRequestRoutingRuleInvalid', 'Application Gateway request routing rules require a supported ruleType and listener, backend pool, and backend settings references.');
+  }
+
+  return null;
+}
+
+function validateLoadBalancerPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Network/loadBalancers') return null;
+
+  const skuName = body.sku?.name;
+  if (!['Basic', 'Standard'].includes(skuName)) {
+    return envelopedError(400, 'LoadBalancerSkuNotSupported', 'Load Balancer sku.name must be Basic or Standard for this local parity surface.');
+  }
+
+  const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
+  const frontendIpValidation = validateNamedCollection(frontendIpConfigurations, 'LoadBalancerFrontendIpConfigurationRequired', 'Load Balancer requires frontendIPConfigurations.');
+  if (frontendIpValidation) return frontendIpValidation;
+  if (frontendIpConfigurations.some(item => !refId(item.properties?.publicIPAddress) && !refId(item.properties?.subnet))) {
+    return envelopedError(400, 'LoadBalancerFrontendIpConfigurationInvalid', 'Load Balancer frontend IP configurations require publicIPAddress.id or subnet.id.');
+  }
+
+  const backendPools = arrayProp(body, 'backendAddressPools');
+  const backendPoolValidation = validateNamedCollection(backendPools, 'LoadBalancerBackendPoolRequired', 'Load Balancer requires backendAddressPools.');
+  if (backendPoolValidation) return backendPoolValidation;
+
+  const probes = arrayProp(body, 'probes');
+  const probeValidation = validateNamedCollection(probes, 'LoadBalancerProbeRequired', 'Load Balancer requires probes for this local parity surface.');
+  if (probeValidation) return probeValidation;
+  if (probes.some(item => !['Tcp', 'Http', 'Https'].includes(item.properties?.protocol) || !isPort(item.properties?.port))) {
+    return envelopedError(400, 'LoadBalancerProbeInvalid', 'Load Balancer probes require protocol Tcp/Http/Https and a port between 1 and 65535.');
+  }
+
+  const rules = arrayProp(body, 'loadBalancingRules');
+  const ruleValidation = validateNamedCollection(rules, 'LoadBalancerRuleRequired', 'Load Balancer requires loadBalancingRules.');
+  if (ruleValidation) return ruleValidation;
+  if (rules.some(item => !['Tcp', 'Udp', 'All'].includes(item.properties?.protocol) || !isPort(item.properties?.frontendPort) || !isPort(item.properties?.backendPort) || !refId(item.properties?.frontendIPConfiguration) || !refId(item.properties?.backendAddressPool) || !refId(item.properties?.probe))) {
+    return envelopedError(400, 'LoadBalancerRuleInvalid', 'Load Balancer rules require protocol, frontend/backend ports, frontend IP, backend pool, and probe references.');
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1269,6 +1387,12 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const dnsPayloadValidation = validateDnsPayload(resourceType, body, providerRoute);
   if (dnsPayloadValidation) return dnsPayloadValidation;
 
+  const applicationGatewayPayloadValidation = validateApplicationGatewayPayload(resourceType, body);
+  if (applicationGatewayPayloadValidation) return applicationGatewayPayloadValidation;
+
+  const loadBalancerPayloadValidation = validateLoadBalancerPayload(resourceType, body);
+  if (loadBalancerPayloadValidation) return loadBalancerPayloadValidation;
+
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(
       400,
@@ -1314,14 +1438,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       400,
       'ContainerAppCreateMustContainContainer',
       "Error creating container app 'app-local'. Must specify atleast one container to create a container app.",
-    );
-  }
-
-  if (resourceType === 'Microsoft.Network/applicationGateways') {
-    return envelopedError(
-      400,
-      'SubnetIsRequired',
-      'Subnet reference is required for ipconfiguration Application gateway subnet is required.',
     );
   }
 

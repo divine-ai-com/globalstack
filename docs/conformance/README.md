@@ -291,11 +291,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | Delete | DELETE | 2020-06-01 | 0 |
-| load-balancing | ALB/NLB | Microsoft.Network/applicationGateways | CreateOrUpdate | PUT | 2023-09-01 | 4 |
+| load-balancing | ALB/NLB | Microsoft.Network/applicationGateways | CreateOrUpdate | PUT | 2023-09-01 | 5 |
 | load-balancing | ALB/NLB | Microsoft.Network/applicationGateways | Get | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/applicationGateways | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/applicationGateways | Delete | DELETE | 2023-09-01 | 0 |
-| load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | CreateOrUpdate | PUT | 2023-09-01 | 4 |
+| load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | CreateOrUpdate | PUT | 2023-09-01 | 5 |
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | Get | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | load-balancing | ALB/NLB | Microsoft.Network/loadBalancers | Delete | DELETE | 2023-09-01 | 0 |

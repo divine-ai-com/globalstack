@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T11:25:50.158Z",
+    "generatedAt": "2026-05-19T12:00:22.528Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 328,
@@ -7774,7 +7774,95 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "sku": {
+          "name": "Standard_v2",
+          "tier": "Standard_v2",
+          "capacity": 1
+        },
+        "properties": {
+          "gatewayIPConfigurations": [
+            {
+              "name": "appGatewayIpConfig",
+              "properties": {
+                "subnet": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                }
+              }
+            }
+          ],
+          "frontendIPConfigurations": [
+            {
+              "name": "frontend",
+              "properties": {
+                "publicIPAddress": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                }
+              }
+            }
+          ],
+          "frontendPorts": [
+            {
+              "name": "http",
+              "properties": {
+                "port": 80
+              }
+            }
+          ],
+          "backendAddressPools": [
+            {
+              "name": "backend",
+              "properties": {
+                "backendAddresses": [
+                  {
+                    "ipAddress": "10.73.1.10"
+                  }
+                ]
+              }
+            }
+          ],
+          "backendHttpSettingsCollection": [
+            {
+              "name": "httpSettings",
+              "properties": {
+                "port": 80,
+                "protocol": "Http",
+                "cookieBasedAffinity": "Disabled"
+              }
+            }
+          ],
+          "httpListeners": [
+            {
+              "name": "listener",
+              "properties": {
+                "frontendIPConfiguration": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                },
+                "frontendPort": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                },
+                "protocol": "Http"
+              }
+            }
+          ],
+          "requestRoutingRules": [
+            {
+              "name": "rule",
+              "properties": {
+                "ruleType": "Basic",
+                "priority": 100,
+                "httpListener": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                },
+                "backendAddressPool": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                },
+                "backendHttpSettings": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                }
+              }
+            }
+          ]
+        }
       },
       "varianceCases": [
         {
@@ -7782,7 +7870,95 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Standard_v2",
+              "tier": "Standard_v2",
+              "capacity": 1
+            },
+            "properties": {
+              "gatewayIPConfigurations": [
+                {
+                  "name": "appGatewayIpConfig",
+                  "properties": {
+                    "subnet": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                    }
+                  }
+                }
+              ],
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "frontendPorts": [
+                {
+                  "name": "http",
+                  "properties": {
+                    "port": 80
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {
+                    "backendAddresses": [
+                      {
+                        "ipAddress": "10.73.1.10"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "backendHttpSettingsCollection": [
+                {
+                  "name": "httpSettings",
+                  "properties": {
+                    "port": 80,
+                    "protocol": "Http",
+                    "cookieBasedAffinity": "Disabled"
+                  }
+                }
+              ],
+              "httpListeners": [
+                {
+                  "name": "listener",
+                  "properties": {
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                    },
+                    "frontendPort": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                    },
+                    "protocol": "Http"
+                  }
+                }
+              ],
+              "requestRoutingRules": [
+                {
+                  "name": "rule",
+                  "properties": {
+                    "ruleType": "Basic",
+                    "priority": 100,
+                    "httpListener": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                    },
+                    "backendHttpSettings": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -7794,7 +7970,95 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Standard_v2",
+              "tier": "Standard_v2",
+              "capacity": 1
+            },
+            "properties": {
+              "gatewayIPConfigurations": [
+                {
+                  "name": "appGatewayIpConfig",
+                  "properties": {
+                    "subnet": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                    }
+                  }
+                }
+              ],
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "frontendPorts": [
+                {
+                  "name": "http",
+                  "properties": {
+                    "port": 80
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {
+                    "backendAddresses": [
+                      {
+                        "ipAddress": "10.73.1.10"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "backendHttpSettingsCollection": [
+                {
+                  "name": "httpSettings",
+                  "properties": {
+                    "port": 80,
+                    "protocol": "Http",
+                    "cookieBasedAffinity": "Disabled"
+                  }
+                }
+              ],
+              "httpListeners": [
+                {
+                  "name": "listener",
+                  "properties": {
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                    },
+                    "frontendPort": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                    },
+                    "protocol": "Http"
+                  }
+                }
+              ],
+              "requestRoutingRules": [
+                {
+                  "name": "rule",
+                  "properties": {
+                    "ruleType": "Basic",
+                    "priority": 100,
+                    "httpListener": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                    },
+                    "backendHttpSettings": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -7805,7 +8069,95 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "sku": {
+              "name": "Standard_v2",
+              "tier": "Standard_v2",
+              "capacity": 1
+            },
+            "properties": {
+              "gatewayIPConfigurations": [
+                {
+                  "name": "appGatewayIpConfig",
+                  "properties": {
+                    "subnet": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                    }
+                  }
+                }
+              ],
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "frontendPorts": [
+                {
+                  "name": "http",
+                  "properties": {
+                    "port": 80
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {
+                    "backendAddresses": [
+                      {
+                        "ipAddress": "10.73.1.10"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "backendHttpSettingsCollection": [
+                {
+                  "name": "httpSettings",
+                  "properties": {
+                    "port": 80,
+                    "protocol": "Http",
+                    "cookieBasedAffinity": "Disabled"
+                  }
+                }
+              ],
+              "httpListeners": [
+                {
+                  "name": "listener",
+                  "properties": {
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                    },
+                    "frontendPort": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                    },
+                    "protocol": "Http"
+                  }
+                }
+              ],
+              "requestRoutingRules": [
+                {
+                  "name": "rule",
+                  "properties": {
+                    "ruleType": "Basic",
+                    "priority": 100,
+                    "httpListener": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                    },
+                    "backendHttpSettings": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -7816,6 +8168,103 @@
           "description": "Create/update with an empty JSON body.",
           "body": {},
           "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "properties": {
+              "gatewayIPConfigurations": [
+                {
+                  "name": "appGatewayIpConfig",
+                  "properties": {
+                    "subnet": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                    }
+                  }
+                }
+              ],
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "frontendPorts": [
+                {
+                  "name": "http",
+                  "properties": {
+                    "port": 80
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {
+                    "backendAddresses": [
+                      {
+                        "ipAddress": "10.73.1.10"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "backendHttpSettingsCollection": [
+                {
+                  "name": "httpSettings",
+                  "properties": {
+                    "port": 80,
+                    "protocol": "Http",
+                    "cookieBasedAffinity": "Disabled"
+                  }
+                }
+              ],
+              "httpListeners": [
+                {
+                  "name": "listener",
+                  "properties": {
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                    },
+                    "frontendPort": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                    },
+                    "protocol": "Http"
+                  }
+                }
+              ],
+              "requestRoutingRules": [
+                {
+                  "name": "rule",
+                  "properties": {
+                    "ruleType": "Basic",
+                    "priority": 100,
+                    "httpListener": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                    },
+                    "backendHttpSettings": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -7884,7 +8333,57 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "sku": {
+          "name": "Standard"
+        },
+        "properties": {
+          "frontendIPConfigurations": [
+            {
+              "name": "frontend",
+              "properties": {
+                "publicIPAddress": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                }
+              }
+            }
+          ],
+          "backendAddressPools": [
+            {
+              "name": "backend",
+              "properties": {}
+            }
+          ],
+          "probes": [
+            {
+              "name": "tcpProbe",
+              "properties": {
+                "protocol": "Tcp",
+                "port": 80,
+                "intervalInSeconds": 5,
+                "numberOfProbes": 2
+              }
+            }
+          ],
+          "loadBalancingRules": [
+            {
+              "name": "httpRule",
+              "properties": {
+                "protocol": "Tcp",
+                "frontendPort": 80,
+                "backendPort": 80,
+                "frontendIPConfiguration": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                },
+                "backendAddressPool": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                },
+                "probe": {
+                  "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                }
+              }
+            }
+          ]
+        }
       },
       "varianceCases": [
         {
@@ -7892,7 +8391,57 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Standard"
+            },
+            "properties": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {}
+                }
+              ],
+              "probes": [
+                {
+                  "name": "tcpProbe",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "port": 80,
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                  }
+                }
+              ],
+              "loadBalancingRules": [
+                {
+                  "name": "httpRule",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "frontendPort": 80,
+                    "backendPort": 80,
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                    },
+                    "probe": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -7904,7 +8453,57 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Standard"
+            },
+            "properties": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {}
+                }
+              ],
+              "probes": [
+                {
+                  "name": "tcpProbe",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "port": 80,
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                  }
+                }
+              ],
+              "loadBalancingRules": [
+                {
+                  "name": "httpRule",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "frontendPort": 80,
+                    "backendPort": 80,
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                    },
+                    "probe": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -7915,7 +8514,57 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "sku": {
+              "name": "Standard"
+            },
+            "properties": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {}
+                }
+              ],
+              "probes": [
+                {
+                  "name": "tcpProbe",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "port": 80,
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                  }
+                }
+              ],
+              "loadBalancingRules": [
+                {
+                  "name": "httpRule",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "frontendPort": 80,
+                    "backendPort": 80,
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                    },
+                    "probe": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                    }
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -7926,6 +8575,67 @@
           "description": "Create/update with an empty JSON body.",
           "body": {},
           "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "properties": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "frontend",
+                  "properties": {
+                    "publicIPAddress": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                    }
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "backend",
+                  "properties": {}
+                }
+              ],
+              "probes": [
+                {
+                  "name": "tcpProbe",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "port": 80,
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                  }
+                }
+              ],
+              "loadBalancingRules": [
+                {
+                  "name": "httpRule",
+                  "properties": {
+                    "protocol": "Tcp",
+                    "frontendPort": 80,
+                    "backendPort": 80,
+                    "frontendIPConfiguration": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                    },
+                    "backendAddressPool": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                    },
+                    "probe": {
+                      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

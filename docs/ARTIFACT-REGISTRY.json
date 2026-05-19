@@ -578,6 +578,7 @@
     "e2e:event-grid-parity",
     "e2e:identity-rbac-parity",
     "e2e:key-vault-parity",
+    "e2e:load-balancing-parity",
     "e2e:monitor-logs-parity",
     "e2e:monitor-metrics-alerts-parity",
     "e2e:service-bus",

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T11:25:50.001Z",
+    "generatedAt": "2026-05-19T12:00:22.373Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1021,7 +1021,14 @@
       ],
       "implementedOperations": [
         "ApplicationGateways.CreateOrUpdate",
+        "ApplicationGateways.Get",
+        "ApplicationGateways.List",
+        "ApplicationGateways.Delete",
         "LoadBalancers.CreateOrUpdate",
+        "LoadBalancers.Get",
+        "LoadBalancers.List",
+        "LoadBalancers.Delete",
+        "LoadBalancingRoutes.RejectUnsupportedRoutes",
         "Routes.ProxyLocal"
       ],
       "contractTested": false,
@@ -1032,8 +1039,8 @@
         "frontend IP conflict behavior"
       ],
       "knownGaps": [
-        "MVP supports metadata and simple HTTP routing only.",
-        "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+        "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+        "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -3784,8 +3791,50 @@
           "globalstack-http-router"
         ],
         "knownGaps": [
-          "MVP supports metadata and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "ApplicationGateways.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "ApplicationGateways.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "ApplicationGateways.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
         ]
       },
       "LoadBalancers.CreateOrUpdate": {
@@ -3798,8 +3847,64 @@
           "globalstack-http-router"
         ],
         "knownGaps": [
-          "MVP supports metadata and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "LoadBalancers.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "LoadBalancers.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "LoadBalancers.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        ]
+      },
+      "LoadBalancingRoutes.RejectUnsupportedRoutes": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
         ]
       },
       "Routes.ProxyLocal": {
@@ -3812,8 +3917,8 @@
           "globalstack-http-router"
         ],
         "knownGaps": [
-          "MVP supports metadata and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy, health probe, autoscale, zone, or SNAT parity in MVP."
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
         ]
       }
     },
