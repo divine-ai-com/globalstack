@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T19:00:38.001Z",
+    "generatedAt": "2026-05-19T22:07:34.430Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -71,7 +71,7 @@
       "currentStatus": "in-progress",
       "evidence": {
         "candidateCallCount": 8,
-        "providerOperationCount": 233,
+        "providerOperationCount": 232,
         "liveCaptureCount": 15,
         "validationDepthCounts": {
           "provider-routing-or-parent-validation": 7,
@@ -90,7 +90,7 @@
           "status": "partial",
           "evidence": [
             "8 candidate catalog calls",
-            "233 provider operations matched"
+            "232 provider operations matched"
           ],
           "gaps": [
             "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -897,7 +897,7 @@
       "currentStatus": "in-progress",
       "evidence": {
         "candidateCallCount": 16,
-        "providerOperationCount": 296,
+        "providerOperationCount": 366,
         "liveCaptureCount": 14,
         "validationDepthCounts": {
           "provider-validation": 3,
@@ -917,7 +917,7 @@
           "status": "partial",
           "evidence": [
             "16 candidate catalog calls",
-            "296 provider operations matched"
+            "366 provider operations matched"
           ],
           "gaps": [
             "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -1020,7 +1020,7 @@
       "currentStatus": "in-progress",
       "evidence": {
         "candidateCallCount": 12,
-        "providerOperationCount": 110,
+        "providerOperationCount": 116,
         "liveCaptureCount": 16,
         "validationDepthCounts": {
           "provider-routing-or-parent-validation": 8,
@@ -1039,7 +1039,7 @@
           "status": "partial",
           "evidence": [
             "12 candidate catalog calls",
-            "110 provider operations matched"
+            "116 provider operations matched"
           ],
           "gaps": [
             "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -1484,7 +1484,7 @@
       "currentStatus": "in-progress",
       "evidence": {
         "candidateCallCount": 8,
-        "providerOperationCount": 1010,
+        "providerOperationCount": 1013,
         "liveCaptureCount": 15,
         "validationDepthCounts": {
           "provider-validation": 8,
@@ -1503,7 +1503,7 @@
           "status": "partial",
           "evidence": [
             "8 candidate catalog calls",
-            "1010 provider operations matched"
+            "1013 provider operations matched"
           ],
           "gaps": [
             "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -2324,7 +2324,7 @@
       "currentStatus": "in-progress",
       "evidence": {
         "candidateCallCount": 84,
-        "providerOperationCount": 81,
+        "providerOperationCount": 136,
         "liveCaptureCount": 14,
         "validationDepthCounts": {
           "provider-validation": 4,
@@ -2344,7 +2344,7 @@
           "status": "partial",
           "evidence": [
             "84 candidate catalog calls",
-            "81 provider operations matched"
+            "136 provider operations matched"
           ],
           "gaps": [
             "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",

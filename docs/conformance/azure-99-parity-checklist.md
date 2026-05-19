@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T19:00:38.001Z
+Generated: 2026-05-19T22:07:34.430Z
 
 ## Dimensions
 
@@ -23,26 +23,26 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Service | Tier | Current Status | Complete | Partial | Not Started | Candidate Calls | Live Captures | Provider Ops |
 |---|---:|---|---:|---:|---:|---:|---:|---:|
-| blob-storage | 1 | in-progress | 0 | 8 | 2 | 8 | 15 | 233 |
+| blob-storage | 1 | in-progress | 0 | 8 | 2 | 8 | 15 | 232 |
 | azure-functions | 1 | in-progress | 0 | 5 | 5 | 8 | 15 | 418 |
 | api-management | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 511 |
 | identity-rbac | 1 | in-progress | 0 | 6 | 4 | 12 | 21 | 15 |
 | key-vault-secrets | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 96 |
 | key-vault-keys | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 105 |
 | postgresql-flexible-server | 1 | in-progress | 0 | 5 | 5 | 8 | 16 | 89 |
-| cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 16 | 14 | 296 |
-| service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 12 | 16 | 110 |
+| cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 16 | 14 | 366 |
+| service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 12 | 16 | 116 |
 | event-grid | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 35 |
 | container-registry | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 118 |
 | aks-metadata | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 453 |
-| monitor-logs | 1 | in-progress | 0 | 5 | 5 | 8 | 15 | 1010 |
+| monitor-logs | 1 | in-progress | 0 | 5 | 5 | 8 | 15 | 1013 |
 | monitor-metrics-alerts | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 12 |
 | virtual-network | 1 | in-progress | 0 | 5 | 5 | 12 | 21 | 110 |
 | mysql-flexible-server | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 67 |
 | queue-storage | 2 | in-progress | 0 | 8 | 2 | 8 | 14 | 22 |
 | redis-cache | 2 | in-progress | 0 | 5 | 5 | 8 | 16 | 73 |
 | logic-workflows | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 425 |
-| dns-zones | 2 | in-progress | 0 | 5 | 5 | 84 | 14 | 81 |
+| dns-zones | 2 | in-progress | 0 | 5 | 5 | 84 | 14 | 136 |
 | load-balancing | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 67 |
 | front-door-cdn | 2 | in-progress | 0 | 5 | 5 | 12 | 21 | 133 |
 | waf-policy | 2 | in-progress | 0 | 5 | 5 | 8 | 14 | 9 |
@@ -64,7 +64,7 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>233 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>232 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 15 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-sku=1 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured<br>2 storage lifecycle capture files exist | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -211,7 +211,7 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 16 candidate catalog calls<br>296 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 16 candidate catalog calls<br>366 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured<br>2 storage lifecycle capture files exist | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-validation=3, arm-surface=2, provider-accepted=2, provider-routing-or-parent-validation=4, capture-infrastructure-gap=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -232,7 +232,7 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 12 candidate catalog calls<br>110 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 12 candidate catalog calls<br>116 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 16 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=3, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -316,7 +316,7 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>1010 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>1013 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 15 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-sku=1 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-validation=8, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -463,7 +463,7 @@ Generated: 2026-05-19T19:00:38.001Z
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 84 candidate catalog calls<br>81 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 84 candidate catalog calls<br>136 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-validation=4, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2, capture-infrastructure-gap=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |

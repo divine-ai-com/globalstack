@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-19T19:00:38.240Z
+Generated: 2026-05-19T22:07:34.591Z
 
 ## Guardrails
 
@@ -33,8 +33,8 @@ Generated: 2026-05-19T19:00:38.240Z
 | 6 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.2361 | 140 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 7 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 0.2361 | 140 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 8 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.2361 | 139 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 9 | container-registry | 1 | wave-3-compute-api-and-edge | 0.2361 | 137 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 10 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.273 | 136 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 9 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.273 | 137 | 0 | 6 | 4 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 10 | container-registry | 1 | wave-3-compute-api-and-edge | 0.2361 | 137 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 11 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.2361 | 133 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 12 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.2361 | 131 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 13 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.2361 | 130 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
@@ -52,8 +52,8 @@ Generated: 2026-05-19T19:00:38.240Z
 | 25 | mysql-flexible-server | 2 | wave-4-data-platforms | 0.2361 | 121 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 26 | redis-cache | 2 | wave-4-data-platforms | 0.2361 | 121 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 27 | database-migration-service | 2 | wave-4-data-platforms | 0.2361 | 121 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 28 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 0.3467 | 118 | 0 | 8 | 2 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
-| 29 | dns-zones | 2 | wave-5-networking-observability-and-dns | 0.2361 | 118 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 28 | dns-zones | 2 | wave-5-networking-observability-and-dns | 0.2361 | 119 | 0 | 5 | 5 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
+| 29 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 0.3467 | 118 | 0 | 8 | 2 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 | 30 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 0.3467 | 104 | 0 | 8 | 2 | iacProviderBehavior<br>serviceSpecificFacade<br>stateTransitionCaptures<br>dataPlaneBehavior |
 
 ## Wave 1: official emulator and storage-family depth
@@ -96,7 +96,7 @@ Priority: 142; current score: 0.2361; current status: in-progress.
 
 ### cosmos-nosql-table
 
-Priority: 136; current score: 0.273; current status: in-progress.
+Priority: 137; current score: 0.273; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
@@ -575,7 +575,7 @@ Priority: 130; current score: 0.2361; current status: in-progress.
 
 ### dns-zones
 
-Priority: 118; current score: 0.2361; current status: in-progress.
+Priority: 119; current score: 0.2361; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|

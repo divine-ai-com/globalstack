@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-16T13:35:07.590Z",
+    "generatedAt": "2026-05-19T22:07:34.181Z",
     "generatedBy": "npm run providers:surface",
     "source": "az provider operation show",
     "providerNamespaces": [
@@ -44,10 +44,10 @@
         "Microsoft.Storage/storageAccounts",
         "Microsoft.Storage/storageAccounts/blobServices/containers"
       ],
-      "operationCount": 233,
+      "operationCount": 232,
       "operationKindCounts": {
         "delete": 29,
-        "action": 82,
+        "action": 81,
         "read": 72,
         "write": 50
       },
@@ -1147,13 +1147,6 @@
         {
           "resourceType": "Microsoft.Storage/storageAccounts",
           "name": "Microsoft.Storage/storageAccounts/privateEndpointConnectionProxies/updatePrivateEndpointProperties/action",
-          "kind": "action",
-          "display": null,
-          "origin": null
-        },
-        {
-          "resourceType": "Microsoft.Storage/storageAccounts",
-          "name": "Microsoft.Storage/storageAccounts/privateEndpointConnectionProxies/validate/action",
           "kind": "action",
           "display": null,
           "origin": null
@@ -10452,14 +10445,16 @@
       "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
       "resourceTypes": [
         "Microsoft.DocumentDB/databaseAccounts",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
         "Microsoft.Storage/storageAccounts/tableServices/tables"
       ],
-      "operationCount": 296,
+      "operationCount": 366,
       "operationKindCounts": {
-        "delete": 33,
-        "read": 145,
-        "write": 54,
-        "action": 64
+        "delete": 42,
+        "read": 179,
+        "write": 67,
+        "action": 78
       },
       "operations": [
         {
@@ -12010,7 +12005,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/clientEncryptionKeys/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/clientEncryptionKeys/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/clientEncryptionKeys/read",
           "kind": "read",
           "display": null,
@@ -12024,7 +12033,28 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/clientEncryptionKeys/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/delete",
           "kind": "delete",
           "display": null,
@@ -12038,7 +12068,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/partitionMerge/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/partitionMerge/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/partitionMerge/action",
           "kind": "action",
           "display": null,
@@ -12052,7 +12110,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/partitionMerge/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/partitionMerge/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/read",
           "kind": "read",
           "display": null,
@@ -12066,7 +12152,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/operationResults/read",
           "kind": "read",
           "display": null,
@@ -12080,7 +12194,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures/write",
           "kind": "write",
           "display": null,
@@ -12094,7 +12236,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToAutoscale/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToAutoscale/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToAutoscale/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToAutoscale/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToAutoscale/operationResults/read",
           "kind": "read",
           "display": null,
@@ -12108,7 +12278,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToManualThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToManualThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToManualThroughput/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToManualThroughput/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/migrateToManualThroughput/operationResults/read",
           "kind": "read",
           "display": null,
@@ -12122,7 +12320,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/read",
           "kind": "read",
           "display": null,
@@ -12136,7 +12362,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/redistributeThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/redistributeThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/retrieveThroughputDistribution/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/retrieveThroughputDistribution/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/retrieveThroughputDistribution/action",
           "kind": "action",
           "display": null,
@@ -12150,7 +12404,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/delete",
           "kind": "delete",
           "display": null,
@@ -12164,7 +12446,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/read",
           "kind": "read",
           "display": null,
@@ -12178,7 +12488,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/delete",
           "kind": "delete",
           "display": null,
@@ -12192,7 +12530,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/read",
           "kind": "read",
           "display": null,
@@ -12206,7 +12572,35 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/write",
           "kind": "write",
           "display": null,
@@ -12220,7 +12614,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/operationResults/read",
           "kind": "read",
           "display": null,
@@ -12234,7 +12642,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToAutoscale/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToAutoscale/action",
           "kind": "action",
           "display": null,
@@ -12248,7 +12670,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToAutoscale/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToManualThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToManualThroughput/action",
           "kind": "action",
           "display": null,
@@ -12262,7 +12698,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/migrateToManualThroughput/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/operationResults/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/operationResults/read",
           "kind": "read",
           "display": null,
@@ -12276,7 +12726,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/redistributeThroughput/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/redistributeThroughput/action",
           "kind": "action",
           "display": null,
@@ -12290,6 +12754,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/retrieveThroughputDistribution/action",
+          "kind": "action",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/write",
           "kind": "write",
@@ -12297,7 +12768,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+          "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
           "name": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/write",
           "kind": "write",
           "display": null,
@@ -12544,14 +13029,15 @@
       "azureEquivalent": "Service Bus topics / Event Grid topics",
       "resourceTypes": [
         "Microsoft.ServiceBus/namespaces",
-        "Microsoft.ServiceBus/namespaces/topics"
+        "Microsoft.ServiceBus/namespaces/topics",
+        "Microsoft.ServiceBus/namespaces/topics/subscriptions"
       ],
-      "operationCount": 110,
+      "operationCount": 116,
       "operationKindCounts": {
         "action": 29,
-        "delete": 22,
-        "read": 35,
-        "write": 24
+        "delete": 24,
+        "read": 37,
+        "write": 26
       },
       "operations": [
         {
@@ -13213,6 +13699,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/Delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.ServiceBus/namespaces",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/read",
           "kind": "read",
@@ -13221,6 +13714,13 @@
         },
         {
           "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/read",
           "kind": "read",
           "display": null,
@@ -13235,6 +13735,13 @@
         },
         {
           "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/Delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/Delete",
           "kind": "delete",
           "display": null,
@@ -13249,6 +13756,13 @@
         },
         {
           "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/read",
           "kind": "read",
           "display": null,
@@ -13263,6 +13777,13 @@
         },
         {
           "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules/write",
           "kind": "write",
           "display": null,
@@ -13277,6 +13798,13 @@
         },
         {
           "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+          "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
           "name": "Microsoft.ServiceBus/namespaces/topics/subscriptions/write",
           "kind": "write",
           "display": null,
@@ -17636,10 +18164,10 @@
         "Microsoft.OperationalInsights/workspaces",
         "Microsoft.Insights/diagnosticSettings"
       ],
-      "operationCount": 1010,
+      "operationCount": 1013,
       "operationKindCounts": {
         "delete": 19,
-        "read": 952,
+        "read": 955,
         "write": 22,
         "action": 17
       },
@@ -18606,6 +19134,13 @@
         {
           "resourceType": "Microsoft.OperationalInsights/workspaces",
           "name": "Microsoft.OperationalInsights/workspaces/query/ADFTriggerRun/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.OperationalInsights/workspaces",
+          "name": "Microsoft.OperationalInsights/workspaces/query/ADGSyslogEvent/read",
           "kind": "read",
           "display": null,
           "origin": null
@@ -21175,6 +21710,13 @@
         {
           "resourceType": "Microsoft.OperationalInsights/workspaces",
           "name": "Microsoft.OperationalInsights/workspaces/query/DeviceCustomProcessEvents/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.OperationalInsights/workspaces",
+          "name": "Microsoft.OperationalInsights/workspaces/query/DeviceCustomRegistryEvents/read",
           "kind": "read",
           "display": null,
           "origin": null
@@ -24381,6 +24923,13 @@
         {
           "resourceType": "Microsoft.OperationalInsights/workspaces",
           "name": "Microsoft.OperationalInsights/workspaces/query/WVDSessionHostManagement/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.OperationalInsights/workspaces",
+          "name": "Microsoft.OperationalInsights/workspaces/query/ZTSJobStatus/read",
           "kind": "read",
           "display": null,
           "origin": null
@@ -29808,18 +30357,44 @@
       "azureEquivalent": "Azure DNS / Private DNS Zones",
       "resourceTypes": [
         "Microsoft.Network/dnsZones",
-        "Microsoft.Network/privateDnsZones"
+        "Microsoft.Network/dnsZones/A",
+        "Microsoft.Network/dnsZones/AAAA",
+        "Microsoft.Network/dnsZones/CAA",
+        "Microsoft.Network/dnsZones/CNAME",
+        "Microsoft.Network/dnsZones/MX",
+        "Microsoft.Network/dnsZones/NS",
+        "Microsoft.Network/dnsZones/PTR",
+        "Microsoft.Network/dnsZones/SOA",
+        "Microsoft.Network/dnsZones/SRV",
+        "Microsoft.Network/dnsZones/TXT",
+        "Microsoft.Network/privateDnsZones",
+        "Microsoft.Network/privateDnsZones/A",
+        "Microsoft.Network/privateDnsZones/AAAA",
+        "Microsoft.Network/privateDnsZones/CNAME",
+        "Microsoft.Network/privateDnsZones/MX",
+        "Microsoft.Network/privateDnsZones/PTR",
+        "Microsoft.Network/privateDnsZones/SOA",
+        "Microsoft.Network/privateDnsZones/SRV",
+        "Microsoft.Network/privateDnsZones/TXT",
+        "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
       ],
-      "operationCount": 81,
+      "operationCount": 136,
       "operationKindCounts": {
-        "delete": 22,
-        "read": 32,
-        "write": 26,
+        "delete": 39,
+        "read": 51,
+        "write": 45,
         "action": 1
       },
       "operations": [
         {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/A/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/A",
           "name": "Microsoft.Network/dnszones/A/delete",
           "kind": "delete",
           "display": null,
@@ -29833,7 +30408,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/A",
+          "name": "Microsoft.Network/dnszones/A/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/A/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/A",
           "name": "Microsoft.Network/dnszones/A/write",
           "kind": "write",
           "display": null,
@@ -29847,6 +30436,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/AAAA",
+          "name": "Microsoft.Network/dnszones/AAAA/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
           "name": "Microsoft.Network/dnszones/AAAA/read",
           "kind": "read",
@@ -29854,7 +30450,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/AAAA",
+          "name": "Microsoft.Network/dnszones/AAAA/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/AAAA/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/AAAA",
           "name": "Microsoft.Network/dnszones/AAAA/write",
           "kind": "write",
           "display": null,
@@ -29875,7 +30485,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/CAA",
+          "name": "Microsoft.Network/dnszones/CAA/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/CAA/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/CAA",
           "name": "Microsoft.Network/dnszones/CAA/read",
           "kind": "read",
           "display": null,
@@ -29889,7 +30513,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/CAA",
+          "name": "Microsoft.Network/dnszones/CAA/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/CNAME/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/CNAME",
           "name": "Microsoft.Network/dnszones/CNAME/delete",
           "kind": "delete",
           "display": null,
@@ -29903,7 +30541,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/CNAME",
+          "name": "Microsoft.Network/dnszones/CNAME/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/CNAME/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/CNAME",
           "name": "Microsoft.Network/dnszones/CNAME/write",
           "kind": "write",
           "display": null,
@@ -29966,7 +30618,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/MX",
+          "name": "Microsoft.Network/dnszones/MX/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/MX/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/MX",
           "name": "Microsoft.Network/dnszones/MX/read",
           "kind": "read",
           "display": null,
@@ -29980,7 +30646,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/MX",
+          "name": "Microsoft.Network/dnszones/MX/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/NS/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/NS",
           "name": "Microsoft.Network/dnszones/NS/delete",
           "kind": "delete",
           "display": null,
@@ -29994,7 +30674,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/NS",
+          "name": "Microsoft.Network/dnszones/NS/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/NS/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/NS",
           "name": "Microsoft.Network/dnszones/NS/write",
           "kind": "write",
           "display": null,
@@ -30029,6 +30723,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/PTR",
+          "name": "Microsoft.Network/dnszones/PTR/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
           "name": "Microsoft.Network/dnszones/PTR/read",
           "kind": "read",
@@ -30036,7 +30737,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/PTR",
+          "name": "Microsoft.Network/dnszones/PTR/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/PTR/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/PTR",
           "name": "Microsoft.Network/dnszones/PTR/write",
           "kind": "write",
           "display": null,
@@ -30064,7 +30779,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/SOA",
+          "name": "Microsoft.Network/dnszones/SOA/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/SOA/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/SOA",
           "name": "Microsoft.Network/dnszones/SOA/write",
           "kind": "write",
           "display": null,
@@ -30078,6 +30807,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/SRV",
+          "name": "Microsoft.Network/dnszones/SRV/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
           "name": "Microsoft.Network/dnszones/SRV/read",
           "kind": "read",
@@ -30085,7 +30821,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/SRV",
+          "name": "Microsoft.Network/dnszones/SRV/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/SRV/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/SRV",
           "name": "Microsoft.Network/dnszones/SRV/write",
           "kind": "write",
           "display": null,
@@ -30120,6 +30870,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/TXT",
+          "name": "Microsoft.Network/dnszones/TXT/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
           "name": "Microsoft.Network/dnszones/TXT/read",
           "kind": "read",
@@ -30127,7 +30884,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/dnsZones/TXT",
+          "name": "Microsoft.Network/dnszones/TXT/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/dnsZones",
+          "name": "Microsoft.Network/dnszones/TXT/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/dnsZones/TXT",
           "name": "Microsoft.Network/dnszones/TXT/write",
           "kind": "write",
           "display": null,
@@ -30148,7 +30919,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/A",
+          "name": "Microsoft.Network/privateDnsZones/A/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/A/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/A",
           "name": "Microsoft.Network/privateDnsZones/A/read",
           "kind": "read",
           "display": null,
@@ -30162,7 +30947,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/A",
+          "name": "Microsoft.Network/privateDnsZones/A/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/AAAA/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
           "name": "Microsoft.Network/privateDnsZones/AAAA/delete",
           "kind": "delete",
           "display": null,
@@ -30176,7 +30975,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+          "name": "Microsoft.Network/privateDnsZones/AAAA/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/AAAA/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
           "name": "Microsoft.Network/privateDnsZones/AAAA/write",
           "kind": "write",
           "display": null,
@@ -30197,6 +31010,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+          "name": "Microsoft.Network/privateDnsZones/CNAME/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
           "name": "Microsoft.Network/privateDnsZones/CNAME/read",
           "kind": "read",
@@ -30204,7 +31024,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+          "name": "Microsoft.Network/privateDnsZones/CNAME/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/CNAME/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
           "name": "Microsoft.Network/privateDnsZones/CNAME/write",
           "kind": "write",
           "display": null,
@@ -30232,6 +31066,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/MX",
+          "name": "Microsoft.Network/privateDnsZones/MX/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
           "name": "Microsoft.Network/privateDnsZones/MX/read",
           "kind": "read",
@@ -30239,7 +31080,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/MX",
+          "name": "Microsoft.Network/privateDnsZones/MX/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/MX/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/MX",
           "name": "Microsoft.Network/privateDnsZones/MX/write",
           "kind": "write",
           "display": null,
@@ -30274,6 +31129,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+          "name": "Microsoft.Network/privateDnsZones/PTR/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
           "name": "Microsoft.Network/privateDnsZones/PTR/read",
           "kind": "read",
@@ -30281,7 +31143,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+          "name": "Microsoft.Network/privateDnsZones/PTR/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/PTR/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/PTR",
           "name": "Microsoft.Network/privateDnsZones/PTR/write",
           "kind": "write",
           "display": null,
@@ -30309,7 +31185,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+          "name": "Microsoft.Network/privateDnsZones/SOA/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/SOA/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/SOA",
           "name": "Microsoft.Network/privateDnsZones/SOA/write",
           "kind": "write",
           "display": null,
@@ -30323,7 +31213,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+          "name": "Microsoft.Network/privateDnsZones/SRV/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/SRV/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/SRV",
           "name": "Microsoft.Network/privateDnsZones/SRV/read",
           "kind": "read",
           "display": null,
@@ -30337,7 +31241,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+          "name": "Microsoft.Network/privateDnsZones/SRV/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/TXT/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/TXT",
           "name": "Microsoft.Network/privateDnsZones/TXT/delete",
           "kind": "delete",
           "display": null,
@@ -30351,7 +31269,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+          "name": "Microsoft.Network/privateDnsZones/TXT/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/TXT/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/TXT",
           "name": "Microsoft.Network/privateDnsZones/TXT/write",
           "kind": "write",
           "display": null,
@@ -30365,6 +31297,13 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+          "name": "Microsoft.Network/privateDnsZones/virtualNetworkLinks/delete",
+          "kind": "delete",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
           "name": "Microsoft.Network/privateDnsZones/virtualNetworkLinks/read",
           "kind": "read",
@@ -30372,7 +31311,21 @@
           "origin": null
         },
         {
+          "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+          "name": "Microsoft.Network/privateDnsZones/virtualNetworkLinks/read",
+          "kind": "read",
+          "display": null,
+          "origin": null
+        },
+        {
           "resourceType": "Microsoft.Network/privateDnsZones",
+          "name": "Microsoft.Network/privateDnsZones/virtualNetworkLinks/write",
+          "kind": "write",
+          "display": null,
+          "origin": null
+        },
+        {
+          "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
           "name": "Microsoft.Network/privateDnsZones/virtualNetworkLinks/write",
           "kind": "write",
           "display": null,

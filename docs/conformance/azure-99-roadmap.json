@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T19:00:38.240Z",
+    "generatedAt": "2026-05-19T22:07:34.591Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -177,7 +177,7 @@
               "action": "complete",
               "evidence": [
                 "12 candidate catalog calls",
-                "110 provider operations matched"
+                "116 provider operations matched"
               ],
               "gaps": [
                 "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -443,7 +443,7 @@
             "notStarted": 4
           },
           "score": 0.273,
-          "priority": 136,
+          "priority": 137,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -595,7 +595,7 @@
               "action": "complete",
               "evidence": [
                 "16 candidate catalog calls",
-                "296 provider operations matched"
+                "366 provider operations matched"
               ],
               "gaps": [
                 "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -1439,7 +1439,7 @@
               "action": "complete",
               "evidence": [
                 "8 candidate catalog calls",
-                "233 provider operations matched"
+                "232 provider operations matched"
               ],
               "gaps": [
                 "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -5632,7 +5632,7 @@
               "action": "complete",
               "evidence": [
                 "8 candidate catalog calls",
-                "1010 provider operations matched"
+                "1013 provider operations matched"
               ],
               "gaps": [
                 "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -6105,7 +6105,7 @@
             "notStarted": 5
           },
           "score": 0.2361,
-          "priority": 118,
+          "priority": 119,
           "workItemCount": 10,
           "nextDimensions": [
             "iacProviderBehavior",
@@ -6253,7 +6253,7 @@
               "action": "complete",
               "evidence": [
                 "84 candidate catalog calls",
-                "81 provider operations matched"
+                "136 provider operations matched"
               ],
               "gaps": [
                 "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
@@ -6459,15 +6459,15 @@
     },
     {
       "rank": 9,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "container-registry",
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "cosmos-nosql-table",
       "tier": 1,
-      "score": 0.2361,
+      "score": 0.273,
       "priority": 137,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 5,
-        "notStarted": 5
+        "partial": 6,
+        "notStarted": 4
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6478,15 +6478,15 @@
     },
     {
       "rank": 10,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "cosmos-nosql-table",
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "container-registry",
       "tier": 1,
-      "score": 0.273,
-      "priority": 136,
+      "score": 0.2361,
+      "priority": 137,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 6,
-        "notStarted": 4
+        "partial": 5,
+        "notStarted": 5
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6820,15 +6820,15 @@
     },
     {
       "rank": 28,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "blob-storage",
-      "tier": 1,
-      "score": 0.3467,
-      "priority": 118,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "dns-zones",
+      "tier": 2,
+      "score": 0.2361,
+      "priority": 119,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "partial": 5,
+        "notStarted": 5
       },
       "nextDimensions": [
         "iacProviderBehavior",
@@ -6839,15 +6839,15 @@
     },
     {
       "rank": 29,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "dns-zones",
-      "tier": 2,
-      "score": 0.2361,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "blob-storage",
+      "tier": 1,
+      "score": 0.3467,
       "priority": 118,
       "dimensionCounts": {
         "complete": 0,
-        "partial": 5,
-        "notStarted": 5
+        "partial": 8,
+        "notStarted": 2
       },
       "nextDimensions": [
         "iacProviderBehavior",
