@@ -30,6 +30,7 @@ const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-p
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
 const monitorMetricsAlertsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-metrics-alerts-parity', 'results.json');
+const virtualNetworkParityResultsPath = join(distRoot, 'e2e', 'azure-virtual-network-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1007,6 +1008,83 @@ if (!monitorMetricsAlertsParityText) {
   }
   if (monitorMetricsAlertsParity.platformMatrix?.ok !== true || monitorMetricsAlertsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Monitor Metrics/Alerts parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const virtualNetworkParityText = await readFile(virtualNetworkParityResultsPath, 'utf8').catch(() => '');
+if (!virtualNetworkParityText) {
+  errors.push('missing Azure Virtual Network parity E2E results; run npm run e2e:virtual-network-parity');
+} else {
+  const virtualNetworkParity = JSON.parse(virtualNetworkParityText);
+  if (virtualNetworkParity.ok !== true) {
+    errors.push('Azure Virtual Network parity E2E did not pass');
+  }
+  if (virtualNetworkParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Virtual Network parity control-plane matrix has failures');
+  }
+  if ((virtualNetworkParity.controlPlane?.total ?? 0) < 55) {
+    errors.push('Azure Virtual Network parity control-plane matrix should exercise at least 55 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'virtual network create requires an existing resource group',
+    'private endpoint create requires an existing resource group',
+    'private dns zone create requires an existing resource group',
+    'virtual network collection list is empty before create',
+    'private endpoint collection list is empty before create',
+    'private dns zone collection list is empty before create',
+    'virtual network delete missing returns no content',
+    'private endpoint delete missing returns no content',
+    'private dns zone delete missing returns no content',
+    'virtual network empty body is rejected',
+    'private endpoint empty body is rejected',
+    'private dns zone empty body is rejected',
+    'virtual network missing address prefixes is rejected',
+    'virtual network invalid address prefix is rejected',
+    'virtual network subnet missing prefix is rejected',
+    'private endpoint missing connection is rejected',
+    'private endpoint missing subnet id is rejected',
+    'private endpoint missing private link service id is rejected',
+    'private endpoint missing group ids is rejected',
+    'private dns zone invalid name is rejected',
+    'virtual network create succeeds',
+    'virtual network get succeeds',
+    'virtual network update preserves metadata',
+    'subnet create succeeds',
+    'subnet get succeeds',
+    'subnet list includes created resource',
+    'private dns zone create is accepted asynchronously',
+    'private dns zone operation status succeeds',
+    'private dns zone get succeeds',
+    'private endpoint create succeeds',
+    'private endpoint get succeeds',
+    'private endpoint update preserves metadata',
+    'virtual network list includes created resource',
+    'private endpoint list includes created resource',
+    'private dns zone list includes created resource',
+    'virtual network unsupported peerings route fails closed',
+    'private endpoint unsupported dns zone group route fails closed',
+    'private dns zone unsupported record set route fails closed',
+    'ARM template deployment can create network resources',
+    'private endpoint get after delete is not found',
+    'subnet get after delete is not found',
+    'private dns zone get after delete is not found',
+    'virtual network get after delete is not found',
+    'virtual network delete after delete returns no content',
+  ]) {
+    if (!virtualNetworkParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Virtual Network parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (virtualNetworkParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Virtual Network parity E2E must include the platform matrix during validation');
+  }
+  if (virtualNetworkParity.platformMatrix?.ok !== true || virtualNetworkParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Virtual Network parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

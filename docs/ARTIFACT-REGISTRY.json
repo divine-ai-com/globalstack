@@ -585,6 +585,7 @@
     "e2e:storage-hardening",
     "e2e:storage-normalizer",
     "e2e:storage-parity",
+    "e2e:virtual-network-parity",
     "fetch:azure-coverage",
     "hybrid:emulator",
     "hybrid:render",

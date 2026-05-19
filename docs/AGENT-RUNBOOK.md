@@ -124,6 +124,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:monitor-metrics-alerts-parity
 
 Expected result is `dist/e2e/azure-monitor-metrics-alerts-parity/results.json` with `ok == true`, zero control-plane failures, at least 42 Monitor Metrics/Alerts cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, action group and metric alert lifecycle, parameter rejection, unsupported metric/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Virtual Network parity pack after changing VNet, subnet, Private Endpoint, Private DNS zone, unsupported Network route handling, async Network behavior, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:virtual-network-parity
+```
+
+Expected result is `dist/e2e/azure-virtual-network-parity/results.json` with `ok == true`, zero control-plane failures, at least 55 Azure Network cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, VNet lifecycle, subnet lifecycle, Private Endpoint lifecycle, Private DNS zone async lifecycle, parameter rejection, unsupported Network child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash

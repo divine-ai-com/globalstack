@@ -34,6 +34,7 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Web/serverfarms') return ['Creating', 'Ready', 'Succeeded'];
   if (type === 'Microsoft.Web/sites') return ['Creating', 'Starting', 'Succeeded'];
   if (type === 'Microsoft.ContainerService/managedClusters') return ['Creating', 'Reconciling', 'Succeeded'];
+  if (type === 'Microsoft.Network/privateDnsZones') return ['Creating', 'Succeeded'];
   return null;
 }
 

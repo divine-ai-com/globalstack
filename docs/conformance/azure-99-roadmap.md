@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-19T10:18:32.673Z
+Generated: 2026-05-19T10:43:50.515Z
 
 ## Guardrails
 

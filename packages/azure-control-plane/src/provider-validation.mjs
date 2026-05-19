@@ -791,6 +791,97 @@ function validateMonitorMetricsPayload(resourceType, body) {
   return null;
 }
 
+function isIpv4Cidr(value) {
+  const match = String(value ?? '').match(/^(\d{1,3})(?:\.(\d{1,3})){3}\/(\d{1,2})$/);
+  if (!match) return false;
+  const [address, prefix] = String(value).split('/');
+  const octets = address.split('.').map(Number);
+  return octets.every(octet => Number.isInteger(octet) && octet >= 0 && octet <= 255)
+    && Number(prefix) >= 0
+    && Number(prefix) <= 32;
+}
+
+function validateVirtualNetworkPayload(resourceType, body, providerRoute = null) {
+  if (resourceType === 'Microsoft.Network/virtualNetworks') {
+    const addressPrefixes = body.properties?.addressSpace?.addressPrefixes;
+    if (!Array.isArray(addressPrefixes) || addressPrefixes.length === 0) {
+      return envelopedError(
+        400,
+        'NoAddressPrefixOrPoolProvided',
+        `Address prefix and ipam pool reference are both empty/null in request payload of resource ${providerRoute?.typePath ?? 'virtualNetworks'}. Please provide either address prefix or ipam pool reference.`,
+      );
+    }
+    if (addressPrefixes.some(prefix => !isIpv4Cidr(prefix))) {
+      return envelopedError(400, 'InvalidAddressPrefixFormat', 'Virtual network address prefixes must be valid IPv4 CIDR blocks.');
+    }
+    for (const subnet of body.properties?.subnets ?? []) {
+      if (typeof subnet?.name !== 'string' || subnet.name.trim() === '') {
+        return envelopedError(400, 'InvalidRequestFormat', 'Subnet name is required.');
+      }
+      const subnetPrefixes = [
+        subnet.properties?.addressPrefix,
+        ...(Array.isArray(subnet.properties?.addressPrefixes) ? subnet.properties.addressPrefixes : []),
+      ].filter(Boolean);
+      if (subnetPrefixes.length === 0) {
+        return envelopedError(400, 'SubnetAddressPrefixCannotBeEmpty', 'Subnet address prefix cannot be empty.');
+      }
+      if (subnetPrefixes.some(prefix => !isIpv4Cidr(prefix))) {
+        return envelopedError(400, 'InvalidAddressPrefixFormat', 'Subnet address prefixes must be valid IPv4 CIDR blocks.');
+      }
+    }
+  }
+
+  if (resourceType === 'Microsoft.Network/virtualNetworks/subnets') {
+    const prefixes = [
+      body.properties?.addressPrefix,
+      ...(Array.isArray(body.properties?.addressPrefixes) ? body.properties.addressPrefixes : []),
+    ].filter(Boolean);
+    if (prefixes.length === 0) {
+      return envelopedError(400, 'SubnetAddressPrefixCannotBeEmpty', 'Subnet address prefix cannot be empty.');
+    }
+    if (prefixes.some(prefix => !isIpv4Cidr(prefix))) {
+      return envelopedError(400, 'InvalidAddressPrefixFormat', 'Subnet address prefixes must be valid IPv4 CIDR blocks.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.Network/privateEndpoints') {
+    const connections = body.properties?.privateLinkServiceConnections;
+    if (!Array.isArray(connections) || connections.length === 0) {
+      return envelopedError(
+        400,
+        'MissingParameterOnPrivateEndpoint',
+        `Private endpoint ${providerRoute?.typePath ?? 'privateEndpoints'} is missing required parameter 'private link service connection.'.`,
+      );
+    }
+    if (typeof body.properties?.subnet?.id !== 'string' || body.properties.subnet.id.trim() === '') {
+      return envelopedError(400, 'PrivateEndpointSubnetIdRequired', 'Private endpoint requires properties.subnet.id.');
+    }
+    for (const connection of connections) {
+      if (typeof connection?.name !== 'string' || connection.name.trim() === '') {
+        return envelopedError(400, 'InvalidRequestFormat', 'Private link service connection name is required.');
+      }
+      if (typeof connection.properties?.privateLinkServiceId !== 'string' || connection.properties.privateLinkServiceId.trim() === '') {
+        return envelopedError(400, 'PrivateLinkServiceIdRequired', 'Private link service connection requires properties.privateLinkServiceId.');
+      }
+      if (!Array.isArray(connection.properties?.groupIds) || connection.properties.groupIds.length === 0) {
+        return envelopedError(400, 'PrivateEndpointGroupIdRequired', 'Private link service connection requires at least one group ID.');
+      }
+    }
+  }
+
+  if (resourceType === 'Microsoft.Network/privateDnsZones') {
+    const name = providerRoute?.typePath?.split('/')[1] ?? '';
+    if (!/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*$/.test(name) || !name.includes('.')) {
+      return envelopedError(400, 'InvalidDomainName', `The private DNS zone name '${name}' is invalid.`);
+    }
+    if (body.location && body.location !== 'global') {
+      return envelopedError(400, 'InvalidResourceLocation', "Private DNS zones must use location 'global'.");
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -959,6 +1050,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const monitorMetricsPayloadValidation = validateMonitorMetricsPayload(resourceType, body);
   if (monitorMetricsPayloadValidation) return monitorMetricsPayloadValidation;
 
+  const virtualNetworkPayloadValidation = validateVirtualNetworkPayload(resourceType, body, providerRoute);
+  if (virtualNetworkPayloadValidation) return virtualNetworkPayloadValidation;
+
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(
       400,
@@ -1012,22 +1106,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       400,
       'SubnetIsRequired',
       'Subnet reference is required for ipconfiguration Application gateway subnet is required.',
-    );
-  }
-
-  if (resourceType === 'Microsoft.Network/virtualNetworks' && emptyObject(body.properties)) {
-    return envelopedError(
-      400,
-      'NoAddressPrefixOrPoolProvided',
-      `Address prefix and ipam pool reference are both empty/null in request payload of resource ${providerRoute?.typePath ?? 'virtualNetworks'}. Please provide either address prefix or ipam pool reference.`,
-    );
-  }
-
-  if (resourceType === 'Microsoft.Network/privateEndpoints' && emptyObject(body.properties)) {
-    return envelopedError(
-      400,
-      'MissingParameterOnPrivateEndpoint',
-      `Private endpoint ${providerRoute?.typePath ?? 'privateEndpoints'} is missing required parameter 'private link service connection.'.`,
     );
   }
 

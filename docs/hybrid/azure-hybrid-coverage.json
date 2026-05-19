@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T10:18:32.274Z",
+    "generatedAt": "2026-05-19T10:43:50.117Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -759,8 +759,22 @@
       ],
       "implementedOperations": [
         "VirtualNetworks.CreateOrUpdate",
+        "VirtualNetworks.Get",
+        "VirtualNetworks.List",
+        "VirtualNetworks.Delete",
         "Subnets.CreateOrUpdate",
-        "PrivateDnsZones.CreateOrUpdate"
+        "Subnets.Get",
+        "Subnets.List",
+        "Subnets.Delete",
+        "PrivateEndpoints.CreateOrUpdate",
+        "PrivateEndpoints.Get",
+        "PrivateEndpoints.List",
+        "PrivateEndpoints.Delete",
+        "PrivateDnsZones.CreateOrUpdate",
+        "PrivateDnsZones.Get",
+        "PrivateDnsZones.List",
+        "PrivateDnsZones.Delete",
+        "NetworkRoutes.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -3005,6 +3019,48 @@
           "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
         ]
       },
+      "VirtualNetworks.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworks.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworks.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
       "Subnets.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -3019,7 +3075,161 @@
           "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
         ]
       },
+      "Subnets.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "Subnets.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "Subnets.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateEndpoints.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateEndpoints.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateEndpoints.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateEndpoints.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
       "PrivateDnsZones.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZones.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZones.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZones.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "MVP models ARM dependencies only.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        ]
+      },
+      "NetworkRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

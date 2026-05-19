@@ -121,6 +121,7 @@ flowchart TD
 - `scripts/e2e-azure-storage-normalizer.mjs`
 - `scripts/e2e-azure-storage-parity.mjs`
 - `scripts/e2e-azure-storage.mjs`
+- `scripts/e2e-azure-virtual-network-parity.mjs`
 - `scripts/fetch-localstack-azure-coverage.mjs`
 - `scripts/generate-azure-smoke-prompts.mjs`
 - `scripts/native-deploy-bicep-cli.mjs`
@@ -181,6 +182,7 @@ flowchart TD
 - `npm run e2e:storage-hardening`
 - `npm run e2e:storage-normalizer`
 - `npm run e2e:storage-parity`
+- `npm run e2e:virtual-network-parity`
 - `npm run fetch:azure-coverage`
 - `npm run hybrid:emulator`
 - `npm run hybrid:render`
