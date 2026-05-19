@@ -39,6 +39,7 @@ const virtualNetworkParityResultsPath = join(distRoot, 'e2e', 'azure-virtual-net
 const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity', 'results.json');
 const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
 const frontDoorCdnParityResultsPath = join(distRoot, 'e2e', 'azure-front-door-cdn-parity', 'results.json');
+const wafPolicyParityResultsPath = join(distRoot, 'e2e', 'azure-waf-policy-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1639,6 +1640,75 @@ if (!frontDoorCdnParityText) {
   }
   if (frontDoorCdnParity.platformMatrix?.ok !== true || frontDoorCdnParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Front Door/CDN parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const wafPolicyParityText = await readFile(wafPolicyParityResultsPath, 'utf8').catch(() => '');
+if (!wafPolicyParityText) {
+  errors.push('missing Azure WAF Policy parity E2E results; run npm run e2e:waf-policy-parity');
+} else {
+  const wafPolicyParity = JSON.parse(wafPolicyParityText);
+  if (wafPolicyParity.ok !== true) {
+    errors.push('Azure WAF Policy parity E2E did not pass');
+  }
+  if (wafPolicyParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure WAF Policy parity control-plane matrix has failures');
+  }
+  if ((wafPolicyParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure WAF Policy parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'waf policy create requires an existing resource group',
+    'cdn security policy create requires an existing resource group',
+    'resource group create succeeds',
+    'waf policy collection list is empty before create',
+    'waf policy delete missing returns no content',
+    'cdn security policy create requires an existing profile',
+    'waf policy empty body is rejected',
+    'waf policy invalid location is rejected',
+    'waf policy invalid name is rejected',
+    'waf policy missing settings is rejected',
+    'waf policy invalid state is rejected',
+    'waf policy invalid mode is rejected',
+    'waf policy missing managed rules is rejected',
+    'waf policy invalid custom rule priority is rejected',
+    'waf policy create succeeds',
+    'waf policy get succeeds',
+    'waf policy update can switch to detection mode',
+    'waf policy list includes created resource',
+    'cdn profile create succeeds for security policy parent',
+    'cdn security policy collection list is empty before create',
+    'cdn security policy invalid name is rejected',
+    'cdn security policy missing parameters is rejected',
+    'cdn security policy invalid type is rejected',
+    'cdn security policy missing waf policy id is rejected',
+    'cdn security policy missing association domains is rejected',
+    'cdn security policy missing patterns is rejected',
+    'cdn security policy create succeeds',
+    'cdn security policy get succeeds',
+    'cdn security policy list includes created resource',
+    'unsupported waf attach action fails closed',
+    'unsupported waf managed rules route fails closed',
+    'unsupported cdn security policy child route fails closed',
+    'ARM template deployment can create waf policies',
+    'cdn security policy get after delete is not found',
+    'cdn security policy delete after delete returns no content',
+    'waf policy get after delete is not found',
+  ]) {
+    if (!wafPolicyParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure WAF Policy parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (wafPolicyParity.platformMatrix?.skipped === true) {
+    errors.push('Azure WAF Policy parity E2E must include the platform matrix during validation');
+  }
+  if (wafPolicyParity.platformMatrix?.ok !== true || wafPolicyParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure WAF Policy parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

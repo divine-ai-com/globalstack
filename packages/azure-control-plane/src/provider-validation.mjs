@@ -330,6 +330,14 @@ function invalidCdnName(resourceType, name, rule) {
   );
 }
 
+function invalidWafName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The WAF policy name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -636,6 +644,32 @@ function validateCdnName(resourceType, providerRoute) {
         resourceType,
         name,
         'CDN endpoint names must be 1 through 50 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateWafName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'ApplicationGatewayWebApplicationFirewallPolicies');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9_.-]{0,78}[A-Za-z0-9])?$/.test(name)) {
+      return invalidWafName(
+        resourceType,
+        name,
+        'Application Gateway WAF policy names must be 1 through 80 characters, use alphanumerics, underscore, period, or hyphen, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/securityPolicies') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'securityPolicies');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidWafName(
+        resourceType,
+        name,
+        'CDN security policy names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
       );
     }
   }
@@ -1600,6 +1634,88 @@ function validateCdnPayload(resourceType, body) {
   return null;
 }
 
+function validateWafPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+    const policySettings = body.properties?.policySettings;
+    if (!policySettings || typeof policySettings !== 'object' || Array.isArray(policySettings)) {
+      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policies require properties.policySettings.');
+    }
+    const state = policySettings.state;
+    const mode = policySettings.mode;
+    if (!['Enabled', 'Disabled'].includes(state)) {
+      return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF policySettings.state must be 'Enabled' or 'Disabled'.");
+    }
+    if (!['Detection', 'Prevention'].includes(mode)) {
+      return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF policySettings.mode must be 'Detection' or 'Prevention'.");
+    }
+    if (Object.hasOwn(policySettings, 'requestBodyCheck') && typeof policySettings.requestBodyCheck !== 'boolean') {
+      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policySettings.requestBodyCheck must be a boolean.');
+    }
+    if (Object.hasOwn(policySettings, 'maxRequestBodySizeInKb') && (!Number.isInteger(policySettings.maxRequestBodySizeInKb) || policySettings.maxRequestBodySizeInKb < 8 || policySettings.maxRequestBodySizeInKb > 2000)) {
+      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policySettings.maxRequestBodySizeInKb must be an integer between 8 and 2000.');
+    }
+    const managedRuleSets = body.properties?.managedRules?.managedRuleSets;
+    if (!Array.isArray(managedRuleSets) || managedRuleSets.length === 0) {
+      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policies require at least one managed rule set.');
+    }
+    for (const ruleSet of managedRuleSets) {
+      if (!isNonEmptyString(ruleSet?.ruleSetType) || !isNonEmptyString(ruleSet?.ruleSetVersion)) {
+        return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF managed rule sets require ruleSetType and ruleSetVersion.');
+      }
+    }
+    const customRules = body.properties?.customRules;
+    if (customRules !== undefined) {
+      if (!Array.isArray(customRules)) {
+        return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF customRules must be an array.');
+      }
+      for (const rule of customRules) {
+        if (!isNonEmptyString(rule?.name) || !Number.isInteger(rule?.priority) || rule.priority < 1 || rule.priority > 1000) {
+          return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF custom rules require a name and priority between 1 and 1000.');
+        }
+        if (!['MatchRule', 'RateLimitRule'].includes(rule.ruleType)) {
+          return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF customRules[].ruleType must be 'MatchRule' or 'RateLimitRule'.");
+        }
+        if (!['Allow', 'Block', 'Log'].includes(rule.action)) {
+          return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF customRules[].action must be 'Allow', 'Block', or 'Log'.");
+        }
+        if (!Array.isArray(rule.matchConditions) || rule.matchConditions.length === 0) {
+          return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF custom rules require at least one match condition.');
+        }
+      }
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/securityPolicies') {
+    const parameters = body.properties?.parameters;
+    if (!parameters || typeof parameters !== 'object' || Array.isArray(parameters)) {
+      return envelopedError(400, 'BadRequest', 'CDN security policies require properties.parameters.');
+    }
+    if (parameters.type !== 'WebApplicationFirewall') {
+      return envelopedError(400, 'BadRequest', "CDN security policy parameters.type must be 'WebApplicationFirewall'.");
+    }
+    if (!isNonEmptyString(parameters.wafPolicy?.id)) {
+      return envelopedError(400, 'BadRequest', 'CDN security policy parameters.wafPolicy.id is required.');
+    }
+    const associations = parameters.associations;
+    if (!Array.isArray(associations) || associations.length === 0) {
+      return envelopedError(400, 'BadRequest', 'CDN security policies require at least one association.');
+    }
+    for (const association of associations) {
+      if (!Array.isArray(association?.domains) || association.domains.length === 0) {
+        return envelopedError(400, 'BadRequest', 'CDN security policy associations require at least one domain reference.');
+      }
+      if (!Array.isArray(association.patternsToMatch) || association.patternsToMatch.length === 0) {
+        return envelopedError(400, 'BadRequest', 'CDN security policy associations require at least one patternToMatch.');
+      }
+      if (association.domains.some(domain => !isNonEmptyString(domain?.id))) {
+        return envelopedError(400, 'BadRequest', 'CDN security policy association domains require id.');
+      }
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1737,22 +1853,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const cdnNameValidation = validateCdnName(resourceType, providerRoute);
   if (cdnNameValidation) return cdnNameValidation;
 
+  const wafNameValidation = validateWafName(resourceType, providerRoute);
+  if (wafNameValidation) return wafNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
-
-  if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
-    return envelopedError(
-      400,
-      'InvalidRequestFormat',
-      'Cannot parse the request.',
-      [
-        {
-          code: 'InvalidJson',
-          message: "Could not find member 'enabledState' on object of type 'ApplicationGatewayWebApplicationFirewallPolicySettings'. Path 'properties.policySettings.enabledState', line 1, position 68.",
-        },
-      ],
-    );
-  }
 
   if (resourceType === 'Microsoft.EventGrid/systemTopics') {
     return envelopedError(
@@ -1809,6 +1914,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const cdnPayloadValidation = validateCdnPayload(resourceType, body);
   if (cdnPayloadValidation) return cdnPayloadValidation;
+
+  const wafPayloadValidation = validateWafPayload(resourceType, body);
+  if (wafPayloadValidation) return wafPayloadValidation;
 
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(

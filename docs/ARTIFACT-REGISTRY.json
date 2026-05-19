@@ -594,6 +594,7 @@
     "e2e:storage-normalizer",
     "e2e:storage-parity",
     "e2e:virtual-network-parity",
+    "e2e:waf-policy-parity",
     "fetch:azure-coverage",
     "hybrid:emulator",
     "hybrid:render",

@@ -1201,6 +1201,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             || resourceType.startsWith('Microsoft.Network/privateDnsZones/')
             || resourceType.startsWith('Microsoft.Network/applicationGateways/')
             || resourceType.startsWith('Microsoft.Network/loadBalancers/')
+            || resourceType.startsWith('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/')
           )
           && !exactCapabilityForResourceType(resourceType)
         ) {

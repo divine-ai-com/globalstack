@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:29:27.086Z",
+    "generatedAt": "2026-05-19T13:41:54.775Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -9478,11 +9478,18 @@
         "location": "{location}",
         "properties": {
           "policySettings": {
-            "enabledState": "Enabled",
-            "mode": "Prevention"
+            "state": "Enabled",
+            "mode": "Prevention",
+            "requestBodyCheck": true,
+            "maxRequestBodySizeInKb": 128
           },
           "managedRules": {
-            "managedRuleSets": []
+            "managedRuleSets": [
+              {
+                "ruleSetType": "OWASP",
+                "ruleSetVersion": "3.2"
+              }
+            ]
           }
         }
       },
@@ -9494,11 +9501,18 @@
             "location": "{location}",
             "properties": {
               "policySettings": {
-                "enabledState": "Enabled",
-                "mode": "Prevention"
+                "state": "Enabled",
+                "mode": "Prevention",
+                "requestBodyCheck": true,
+                "maxRequestBodySizeInKb": 128
               },
               "managedRules": {
-                "managedRuleSets": []
+                "managedRuleSets": [
+                  {
+                    "ruleSetType": "OWASP",
+                    "ruleSetVersion": "3.2"
+                  }
+                ]
               }
             }
           },
@@ -9514,11 +9528,18 @@
             "location": "{location}",
             "properties": {
               "policySettings": {
-                "enabledState": "Enabled",
-                "mode": "Prevention"
+                "state": "Enabled",
+                "mode": "Prevention",
+                "requestBodyCheck": true,
+                "maxRequestBodySizeInKb": 128
               },
               "managedRules": {
-                "managedRuleSets": []
+                "managedRuleSets": [
+                  {
+                    "ruleSetType": "OWASP",
+                    "ruleSetVersion": "3.2"
+                  }
+                ]
               }
             }
           },
@@ -9533,11 +9554,18 @@
             "location": "globalstack-invalid-location",
             "properties": {
               "policySettings": {
-                "enabledState": "Enabled",
-                "mode": "Prevention"
+                "state": "Enabled",
+                "mode": "Prevention",
+                "requestBodyCheck": true,
+                "maxRequestBodySizeInKb": 128
               },
               "managedRules": {
-                "managedRuleSets": []
+                "managedRuleSets": [
+                  {
+                    "ruleSetType": "OWASP",
+                    "ruleSetVersion": "3.2"
+                  }
+                ]
               }
             }
           },
@@ -9617,16 +9645,52 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profilesName}/securityPolicies/{securityPoliciesName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "properties": {}
+        "properties": {
+          "parameters": {
+            "type": "WebApplicationFirewall",
+            "wafPolicy": {
+              "id": "{wafPolicyId}"
+            },
+            "associations": [
+              {
+                "domains": [
+                  {
+                    "id": "{endpointId}"
+                  }
+                ],
+                "patternsToMatch": [
+                  "/*"
+                ]
+              }
+            ]
+          }
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "parameters": {
+                "type": "WebApplicationFirewall",
+                "wafPolicy": {
+                  "id": "{wafPolicyId}"
+                },
+                "associations": [
+                  {
+                    "domains": [
+                      {
+                        "id": "{endpointId}"
+                      }
+                    ],
+                    "patternsToMatch": [
+                      "/*"
+                    ]
+                  }
+                ]
+              }
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -9637,8 +9701,26 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "parameters": {
+                "type": "WebApplicationFirewall",
+                "wafPolicy": {
+                  "id": "{wafPolicyId}"
+                },
+                "associations": [
+                  {
+                    "domains": [
+                      {
+                        "id": "{endpointId}"
+                      }
+                    ],
+                    "patternsToMatch": [
+                      "/*"
+                    ]
+                  }
+                ]
+              }
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -9648,8 +9730,27 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "parameters": {
+                "type": "WebApplicationFirewall",
+                "wafPolicy": {
+                  "id": "{wafPolicyId}"
+                },
+                "associations": [
+                  {
+                    "domains": [
+                      {
+                        "id": "{endpointId}"
+                      }
+                    ],
+                    "patternsToMatch": [
+                      "/*"
+                    ]
+                  }
+                ]
+              }
+            },
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",

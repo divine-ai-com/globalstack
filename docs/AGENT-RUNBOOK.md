@@ -205,6 +205,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:front-door-cdn-parity
 
 Expected result is `dist/e2e/azure-front-door-cdn-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 Front Door/CDN cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, CDN profile lifecycle, Front Door and CDN endpoint lifecycle, stricter SKU/origin/flag rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure WAF Policy parity pack after changing Application Gateway WAF policy behavior, CDN security policy behavior, unsupported WAF route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:waf-policy-parity
+```
+
+Expected result is `dist/e2e/azure-waf-policy-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 WAF cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Application Gateway WAF policy lifecycle, CDN security policy lifecycle, stricter policy settings/managed-rule/association rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash

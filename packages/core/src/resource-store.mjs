@@ -295,6 +295,18 @@ export class ResourceStore {
               resourceState: existing?.properties?.resourceState ?? 'Running',
             }
           : {}),
+        ...(type === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              resourceState: existing?.properties?.resourceState ?? 'Enabled',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles/securityPolicies'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
+            }
+          : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'
           ? {
               fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),
