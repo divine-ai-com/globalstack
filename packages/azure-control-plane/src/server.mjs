@@ -1227,6 +1227,20 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
         }
 
         if (
+          providerRoute.providerNamespace === 'Microsoft.DBforMySQL'
+          && resourceType.startsWith('Microsoft.DBforMySQL/flexibleServers/')
+          && resourceType !== 'Microsoft.DBforMySQL/flexibleServers/databases'
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure MySQL child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
           providerRoute.providerNamespace === 'Microsoft.DocumentDB'
           && resourceType.startsWith('Microsoft.DocumentDB/databaseAccounts/')
           && ![

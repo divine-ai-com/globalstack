@@ -73,6 +73,10 @@ function postgresqlFullyQualifiedDomainName(name) {
   return `${name}.postgres.database.azure.com`;
 }
 
+function mysqlFullyQualifiedDomainName(name) {
+  return `${name}.mysql.database.azure.com`;
+}
+
 function cosmosDocumentEndpoint(name) {
   return `https://${name}.documents.azure.com:443/`;
 }
@@ -235,6 +239,12 @@ export class ResourceStore {
         ...(type === 'Microsoft.DBforPostgreSQL/flexibleServers'
           ? {
               fullyQualifiedDomainName: existing?.properties?.fullyQualifiedDomainName ?? postgresqlFullyQualifiedDomainName(name),
+              state: lifecycleSequence ? 'Ready' : existing?.properties?.state ?? 'Ready',
+            }
+          : {}),
+        ...(type === 'Microsoft.DBforMySQL/flexibleServers'
+          ? {
+              fullyQualifiedDomainName: existing?.properties?.fullyQualifiedDomainName ?? mysqlFullyQualifiedDomainName(name),
               state: lifecycleSequence ? 'Ready' : existing?.properties?.state ?? 'Ready',
             }
           : {}),

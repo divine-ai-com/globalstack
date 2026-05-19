@@ -582,6 +582,7 @@
     "e2e:load-balancing-parity",
     "e2e:monitor-logs-parity",
     "e2e:monitor-metrics-alerts-parity",
+    "e2e:mysql-parity",
     "e2e:postgresql-parity",
     "e2e:service-bus",
     "e2e:service-bus-parity",

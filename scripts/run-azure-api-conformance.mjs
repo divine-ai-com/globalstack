@@ -314,6 +314,20 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
     return;
   }
 
+  if (call.resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
+    const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-12-30`;
+    await httpJson(baseUrl, 'PUT', serverPath, {
+      location,
+      sku: { name: 'Standard_B1ms', tier: 'Burstable' },
+      properties: {
+        administratorLogin: 'globalstack',
+        administratorLoginPassword: 'Globalstack1!',
+        version: '8.0.21',
+      },
+    });
+    return;
+  }
+
   if (call.resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases') {
     const accountPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}?api-version=2024-05-15`;
     await httpJson(baseUrl, 'PUT', accountPath, {

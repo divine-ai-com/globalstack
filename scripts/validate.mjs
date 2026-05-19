@@ -28,6 +28,7 @@ const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parit
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
 const cosmosParityResultsPath = join(distRoot, 'e2e', 'azure-cosmos-parity', 'results.json');
+const mysqlParityResultsPath = join(distRoot, 'e2e', 'azure-mysql-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
@@ -912,6 +913,70 @@ if (!cosmosParityText) {
   }
   if (cosmosParity.platformMatrix?.ok !== true || cosmosParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Cosmos DB parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const mysqlParityText = await readFile(mysqlParityResultsPath, 'utf8').catch(() => '');
+if (!mysqlParityText) {
+  errors.push('missing Azure MySQL parity E2E results; run npm run e2e:mysql-parity');
+} else {
+  const mysqlParity = JSON.parse(mysqlParityText);
+  if (mysqlParity.ok !== true) {
+    errors.push('Azure MySQL parity E2E did not pass');
+  }
+  if (mysqlParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure MySQL parity control-plane matrix has failures');
+  }
+  if ((mysqlParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure MySQL parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'server create requires an existing resource group',
+    'resource group create succeeds',
+    'database create with missing server reports resource not found',
+    'server collection list is empty before create',
+    'server delete missing returns no content',
+    'server empty body is rejected',
+    'server invalid location is rejected',
+    'server invalid name is rejected',
+    'server invalid sku is rejected',
+    'server missing administrator login is rejected',
+    'server missing administrator password is rejected',
+    'server weak administrator password is rejected',
+    'server invalid version is rejected',
+    'server create succeeds',
+    'server get succeeds',
+    'server update preserves metadata',
+    'database missing charset is rejected',
+    'database missing collation is rejected',
+    'database invalid name is rejected',
+    'database create succeeds',
+    'database get succeeds',
+    'database list includes created resource',
+    'server list includes created resource',
+    'unsupported firewall rule route fails closed',
+    'unsupported server configuration route fails closed',
+    'ARM template deployment can create mysql resources',
+    'database get after delete is not found',
+    'database delete after delete returns no content',
+    'server get after delete is not found',
+    'server delete after delete returns no content',
+    'database create after server delete reports resource not found',
+  ]) {
+    if (!mysqlParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure MySQL parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (mysqlParity.platformMatrix?.skipped === true) {
+    errors.push('Azure MySQL parity E2E must include the platform matrix during validation');
+  }
+  if (mysqlParity.platformMatrix?.ok !== true || mysqlParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure MySQL parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

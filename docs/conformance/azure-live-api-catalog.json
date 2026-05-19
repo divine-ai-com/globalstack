@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:49:57.961Z",
+    "generatedAt": "2026-05-19T12:58:38.069Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -4175,6 +4175,7 @@
         },
         "properties": {
           "administratorLogin": "globalstack",
+          "administratorLoginPassword": "Globalstack1!",
           "version": "8.0.21"
         }
       },
@@ -4190,6 +4191,7 @@
             },
             "properties": {
               "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
               "version": "8.0.21"
             }
           },
@@ -4209,6 +4211,7 @@
             },
             "properties": {
               "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
               "version": "8.0.21"
             }
           },
@@ -4227,6 +4230,7 @@
             },
             "properties": {
               "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
               "version": "8.0.21"
             }
           },
@@ -4252,6 +4256,7 @@
             },
             "properties": {
               "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
               "version": "8.0.21"
             }
           },
@@ -4323,14 +4328,9 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{flexibleServersName}/databases/{databasesName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "sku": {
-          "name": "Standard_B1ms",
-          "tier": "Burstable"
-        },
         "properties": {
-          "administratorLogin": "globalstack",
-          "version": "8.0.21"
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci"
         }
       },
       "varianceCases": [
@@ -4338,14 +4338,9 @@
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard_B1ms",
-              "tier": "Burstable"
-            },
             "properties": {
-              "administratorLogin": "globalstack",
-              "version": "8.0.21"
+              "charset": "utf8mb4",
+              "collation": "utf8mb4_0900_ai_ci"
             }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
@@ -4357,14 +4352,9 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard_B1ms",
-              "tier": "Burstable"
-            },
             "properties": {
-              "administratorLogin": "globalstack",
-              "version": "8.0.21"
+              "charset": "utf8mb4",
+              "collation": "utf8mb4_0900_ai_ci"
             }
           },
           "expectedAzure": "ARM error for missing api-version.",
@@ -4375,15 +4365,11 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "sku": {
-              "name": "Standard_B1ms",
-              "tier": "Burstable"
-            },
             "properties": {
-              "administratorLogin": "globalstack",
-              "version": "8.0.21"
-            }
+              "charset": "utf8mb4",
+              "collation": "utf8mb4_0900_ai_ci"
+            },
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -4394,23 +4380,6 @@
           "description": "Create/update with an empty JSON body.",
           "body": {},
           "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
-          "id": "invalid-sku",
-          "description": "Create/update with an intentionally invalid SKU.",
-          "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "GlobalStack_InvalidSku_For_Conformance"
-            },
-            "properties": {
-              "administratorLogin": "globalstack",
-              "version": "8.0.21"
-            }
-          },
-          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

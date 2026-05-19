@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:49:57.809Z",
+    "generatedAt": "2026-05-19T12:58:37.884Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -828,7 +828,13 @@
       "implementedOperations": [
         "FlexibleServers.Create",
         "FlexibleServers.Get",
-        "Databases.Create"
+        "FlexibleServers.List",
+        "FlexibleServers.Delete",
+        "Databases.Create",
+        "Databases.Get",
+        "Databases.List",
+        "Databases.Delete",
+        "MysqlRoutes.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -3597,7 +3603,91 @@
           "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
         ]
       },
+      "FlexibleServers.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "FlexibleServers.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
       "Databases.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "Databases.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "Databases.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "Databases.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Local MySQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, private link, or server parameter parity in MVP."
+        ]
+      },
+      "MysqlRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

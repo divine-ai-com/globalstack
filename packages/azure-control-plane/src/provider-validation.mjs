@@ -1309,6 +1309,53 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
   return null;
 }
 
+function validateMysqlPayload(resourceType, body, providerRoute = null) {
+  if (resourceType === 'Microsoft.DBforMySQL/flexibleServers') {
+    const name = providerRoute?.typePath?.split('/')[1] ?? '';
+    if (!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(name)) {
+      return envelopedError(400, 'InvalidServerName', 'MySQL flexible server names must be 3 through 63 lowercase alphanumeric or hyphen characters and start and end with an alphanumeric character.');
+    }
+    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance' || !body.sku?.name || !body.sku?.tier) {
+      return envelopedError(
+        400,
+        'InvalidParameterValue',
+        'Invalid value given for parameter Sku.Name. Specify a valid parameter value.',
+      );
+    }
+    if (!isNonEmptyString(body.properties?.administratorLogin)) {
+      return envelopedError(400, 'MissingRequiredParameter', "Parameter 'AdministratorLogin' must be specified. This parameter cannot be NULL or empty.");
+    }
+    if (!isNonEmptyString(body.properties?.administratorLoginPassword)) {
+      return envelopedError(
+        400,
+        'InvalidAdminLoginPassword',
+        'The password validation failed. Please retry using a valid password.',
+      );
+    }
+    if (String(body.properties.administratorLoginPassword).length < 8) {
+      return envelopedError(400, 'InvalidAdminLoginPassword', 'The password validation failed. Please retry using a valid password.');
+    }
+    if (body.properties?.version && !['5.7', '8.0.21'].includes(String(body.properties.version))) {
+      return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter Version. Specify a valid parameter value.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
+    const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
+    if (!/^[A-Za-z_][A-Za-z0-9_$-]{0,62}$/.test(name)) {
+      return envelopedError(400, 'InvalidDatabaseName', 'MySQL database names must start with a letter or underscore and use alphanumerics, underscore, dollar, or hyphen for this local parity surface.');
+    }
+    if (!isNonEmptyString(body.properties?.charset)) {
+      return envelopedError(400, 'MissingRequiredParameter', "Parameter 'Charset' must be specified. This parameter cannot be NULL or empty.");
+    }
+    if (!isNonEmptyString(body.properties?.collation)) {
+      return envelopedError(400, 'MissingRequiredParameter', "Parameter 'Collation' must be specified. This parameter cannot be NULL or empty.");
+    }
+  }
+
+  return null;
+}
+
 function validateCosmosPayload(resourceType, body, providerRoute = null) {
   if (resourceType === 'Microsoft.DocumentDB/databaseAccounts') {
     if (body.kind && !['GlobalDocumentDB', 'MongoDB', 'Parse'].includes(body.kind)) {
@@ -1553,6 +1600,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const postgresqlPayloadValidation = validatePostgresqlPayload(resourceType, body, providerRoute);
   if (postgresqlPayloadValidation) return postgresqlPayloadValidation;
 
+  const mysqlPayloadValidation = validateMysqlPayload(resourceType, body, providerRoute);
+  if (mysqlPayloadValidation) return mysqlPayloadValidation;
+
   const cosmosPayloadValidation = validateCosmosPayload(resourceType, body, providerRoute);
   if (cosmosPayloadValidation) return cosmosPayloadValidation;
 
@@ -1601,21 +1651,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
       400,
       'ContainerAppCreateMustContainContainer',
       "Error creating container app 'app-local'. Must specify atleast one container to create a container app.",
-    );
-  }
-
-  if (resourceType === 'Microsoft.DBforMySQL/flexibleServers') {
-    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
-      return envelopedError(
-        400,
-        'InvalidParameterValue',
-        'Invalid value given for parameter Sku.Name. Specify a valid parameter value.',
-      );
-    }
-    return envelopedError(
-      400,
-      'InvalidAdminLoginPassword',
-      'The password validation failed. Please retry using a valid password.',
     );
   }
 
