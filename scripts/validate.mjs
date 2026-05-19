@@ -28,6 +28,7 @@ const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parit
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
+const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -889,6 +890,58 @@ if (!identityRbacParityText) {
   }
   if (identityRbacParity.platformMatrix?.ok !== true || identityRbacParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure identity/RBAC parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const monitorLogsParityText = await readFile(monitorLogsParityResultsPath, 'utf8').catch(() => '');
+if (!monitorLogsParityText) {
+  errors.push('missing Azure Monitor Logs parity E2E results; run npm run e2e:monitor-logs-parity');
+} else {
+  const monitorLogsParity = JSON.parse(monitorLogsParityText);
+  if (monitorLogsParity.ok !== true) {
+    errors.push('Azure Monitor Logs parity E2E did not pass');
+  }
+  if (monitorLogsParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Monitor Logs parity control-plane matrix has failures');
+  }
+  if ((monitorLogsParity.controlPlane?.total ?? 0) < 29) {
+    errors.push('Azure Monitor Logs parity control-plane matrix should exercise at least 29 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'workspace create requires an existing resource group',
+    'workspace collection list is empty before create',
+    'workspace delete missing returns no content',
+    'workspace empty body is rejected',
+    'workspace invalid location is rejected',
+    'workspace create succeeds',
+    'workspace get succeeds',
+    'workspace update preserves metadata',
+    'workspace list includes created resource',
+    'workspace unsupported shared keys action fails closed',
+    'workspace unsupported search action fails closed',
+    'diagnostic setting create preserves captured unsupported resource type',
+    'diagnostic setting empty body is rejected',
+    'diagnostic setting get preserves captured unsupported resource type',
+    'diagnostic setting list preserves captured unsupported resource type',
+    'diagnostic setting delete preserves captured unsupported resource type',
+    'ARM template deployment can create workspace',
+    'workspace get after delete is not found',
+    'workspace delete after delete returns no content',
+  ]) {
+    if (!monitorLogsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Monitor Logs parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (monitorLogsParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Monitor Logs parity E2E must include the platform matrix during validation');
+  }
+  if (monitorLogsParity.platformMatrix?.ok !== true || monitorLogsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Monitor Logs parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

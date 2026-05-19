@@ -108,6 +108,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:identity-rbac-parity
 
 Expected result is `dist/e2e/azure-identity-rbac-parity/results.json` with `ok == true`, zero control/token-plane failures, at least 42 identity/RBAC cases, and all eight platform runners passing. This suite covers OpenID/JWKS discovery, local token rejection and issuance, malformed/wrong ARM auth and subscription mismatch, Managed Identity lifecycle, unsupported Managed Identity action fail-closed behavior, captured RBAC create rejection, RBAC not-found/delete-not-found behavior, ARM-template deployment, and representative IaC deployment lifecycles.
 
+Run the Azure Monitor Logs parity pack after changing Log Analytics workspace ARM behavior, Diagnostic Settings validation, unsupported Monitor action handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:monitor-logs-parity
+```
+
+Expected result is `dist/e2e/azure-monitor-logs-parity/results.json` with `ok == true`, zero control-plane failures, at least 29 Monitor Logs cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, unsupported workspace action fail-closed behavior, captured Diagnostic Settings rejection behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
 ```bash

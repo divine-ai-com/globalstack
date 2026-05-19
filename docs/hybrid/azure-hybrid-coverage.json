@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T09:34:19.588Z",
+    "generatedAt": "2026-05-19T09:45:35.066Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -681,8 +681,11 @@
       ],
       "implementedOperations": [
         "Workspaces.CreateOrUpdate",
-        "Logs.IngestLocal",
-        "Logs.QueryBasic"
+        "Workspaces.Get",
+        "Workspaces.List",
+        "Workspaces.Delete",
+        "Workspaces.RejectUnsupportedActions",
+        "DiagnosticSettings.CapturedUnsupported"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -2796,7 +2799,7 @@
           "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
         ]
       },
-      "Logs.IngestLocal": {
+      "Workspaces.Get": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -2809,7 +2812,46 @@
           "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
         ]
       },
-      "Logs.QueryBasic": {
+      "Workspaces.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Workspaces.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Workspaces.RejectUnsupportedActions": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "DiagnosticSettings.CapturedUnsupported": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
