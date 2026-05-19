@@ -338,6 +338,14 @@ function invalidWafName(resourceType, name, rule) {
   );
 }
 
+function invalidAppConfigurationName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The App Configuration store name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -674,6 +682,19 @@ function validateWafName(resourceType, providerRoute) {
     }
   }
 
+  return null;
+}
+
+function validateAppConfigurationName(resourceType, providerRoute) {
+  if (resourceType !== 'Microsoft.AppConfiguration/configurationStores') return null;
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'configurationStores');
+  if (!/^[a-zA-Z0-9](?:[a-zA-Z0-9-]{3,48}[a-zA-Z0-9])$/.test(name)) {
+    return invalidAppConfigurationName(
+      resourceType,
+      name,
+      'Store names must be 5 through 50 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+    );
+  }
   return null;
 }
 
@@ -1716,6 +1737,22 @@ function validateWafPayload(resourceType, body) {
   return null;
 }
 
+function validateAppConfigurationPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.AppConfiguration/configurationStores') return null;
+  const skuName = String(body.sku?.name ?? '');
+  if (!['free', 'standard', 'Free', 'Standard'].includes(skuName)) {
+    return envelopedError(400, 'InvalidProperty', "The property 'Sku' is not valid.");
+  }
+  if (Object.hasOwn(body.properties ?? {}, 'disableLocalAuth') && typeof body.properties.disableLocalAuth !== 'boolean') {
+    return envelopedError(400, 'InvalidProperty', "The property 'disableLocalAuth' is not valid.");
+  }
+  const publicNetworkAccess = body.properties?.publicNetworkAccess;
+  if (publicNetworkAccess && !['Enabled', 'Disabled'].includes(publicNetworkAccess)) {
+    return envelopedError(400, 'InvalidProperty', "The property 'publicNetworkAccess' is not valid.");
+  }
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1856,6 +1893,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const wafNameValidation = validateWafName(resourceType, providerRoute);
   if (wafNameValidation) return wafNameValidation;
 
+  const appConfigurationNameValidation = validateAppConfigurationName(resourceType, providerRoute);
+  if (appConfigurationNameValidation) return appConfigurationNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
@@ -1918,6 +1958,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const wafPayloadValidation = validateWafPayload(resourceType, body);
   if (wafPayloadValidation) return wafPayloadValidation;
 
+  const appConfigurationPayloadValidation = validateAppConfigurationPayload(resourceType, body);
+  if (appConfigurationPayloadValidation) return appConfigurationPayloadValidation;
+
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(
       400,
@@ -1969,17 +2012,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
           message: 'Customer subscription <subscription-id> needs to be registered with Microsoft.Sql resource provider. For steps to register, go to https://go.microsoft.com/fwlink/?linkid=2150550',
         },
       ],
-    );
-  }
-
-  if (
-    resourceType === 'Microsoft.AppConfiguration/configurationStores'
-    && body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance'
-  ) {
-    return envelopedError(
-      400,
-      'InvalidProperty',
-      "The property 'Sku' is not valid.",
     );
   }
 

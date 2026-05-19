@@ -40,6 +40,7 @@ const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity'
 const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
 const frontDoorCdnParityResultsPath = join(distRoot, 'e2e', 'azure-front-door-cdn-parity', 'results.json');
 const wafPolicyParityResultsPath = join(distRoot, 'e2e', 'azure-waf-policy-parity', 'results.json');
+const appConfigurationParityResultsPath = join(distRoot, 'e2e', 'azure-app-configuration-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -1709,6 +1710,60 @@ if (!wafPolicyParityText) {
   }
   if (wafPolicyParity.platformMatrix?.ok !== true || wafPolicyParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure WAF Policy parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const appConfigurationParityText = await readFile(appConfigurationParityResultsPath, 'utf8').catch(() => '');
+if (!appConfigurationParityText) {
+  errors.push('missing Azure App Configuration parity E2E results; run npm run e2e:app-configuration-parity');
+} else {
+  const appConfigurationParity = JSON.parse(appConfigurationParityText);
+  if (appConfigurationParity.ok !== true) {
+    errors.push('Azure App Configuration parity E2E did not pass');
+  }
+  if (appConfigurationParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure App Configuration parity control-plane matrix has failures');
+  }
+  if ((appConfigurationParity.controlPlane?.total ?? 0) < 25) {
+    errors.push('Azure App Configuration parity control-plane matrix should exercise at least 25 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'configuration store create requires an existing resource group',
+    'resource group create succeeds',
+    'configuration store collection list is empty before create',
+    'configuration store delete missing returns no content',
+    'configuration store empty body is rejected',
+    'configuration store invalid location is rejected',
+    'configuration store invalid name is rejected',
+    'configuration store missing sku is rejected',
+    'configuration store invalid sku is rejected',
+    'configuration store invalid local auth flag is rejected',
+    'configuration store invalid public access is rejected',
+    'configuration store create succeeds',
+    'configuration store get succeeds',
+    'configuration store update can disable local auth',
+    'configuration store list includes created resource',
+    'unsupported key-values route fails closed',
+    'unsupported feature flags route fails closed',
+    'unsupported list keys action fails closed',
+    'ARM template deployment can create configuration store',
+    'configuration store get after delete is not found',
+    'configuration store delete after delete returns no content',
+  ]) {
+    if (!appConfigurationParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure App Configuration parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (appConfigurationParity.platformMatrix?.skipped === true) {
+    errors.push('Azure App Configuration parity E2E must include the platform matrix during validation');
+  }
+  if (appConfigurationParity.platformMatrix?.ok !== true || appConfigurationParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure App Configuration parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

@@ -174,6 +174,7 @@ function bodyFor(resourceType) {
   if (lower === 'microsoft.cdn/profiles/endpoints') return { location: '{location}', properties: { origins: [{ name: 'origin1', properties: { hostName: 'example.org', httpPort: 80, httpsPort: 443 } }], isHttpAllowed: true, isHttpsAllowed: true } };
   if (lower === 'microsoft.network/applicationgatewaywebapplicationfirewallpolicies') return { location: '{location}', properties: { policySettings: { state: 'Enabled', mode: 'Prevention', requestBodyCheck: true, maxRequestBodySizeInKb: 128 }, managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] } } };
   if (lower === 'microsoft.cdn/profiles/securitypolicies') return { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: '{wafPolicyId}' }, associations: [{ domains: [{ id: '{endpointId}' }], patternsToMatch: ['/*'] }] } } };
+  if (lower === 'microsoft.appconfiguration/configurationstores') return { location: '{location}', sku: { name: 'free' }, properties: { disableLocalAuth: false, publicNetworkAccess: 'Enabled' } };
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
   if (lower === 'microsoft.network/applicationgateways') {
     return {

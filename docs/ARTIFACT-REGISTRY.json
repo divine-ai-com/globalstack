@@ -572,6 +572,7 @@
     "docs:test",
     "e2e:aks-metadata-parity",
     "e2e:api-management-parity",
+    "e2e:app-configuration-parity",
     "e2e:azure-functions-parity",
     "e2e:container-registry-parity",
     "e2e:cosmos-parity",

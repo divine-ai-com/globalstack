@@ -307,6 +307,15 @@ export class ResourceStore {
               deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
             }
           : {}),
+        ...(type === 'Microsoft.AppConfiguration/configurationStores'
+          ? {
+              endpoint: existing?.properties?.endpoint ?? `https://${name}.azconfig.io`,
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              creationDate: existing?.properties?.creationDate ?? nowIso(),
+              disableLocalAuth: body.properties?.disableLocalAuth ?? existing?.properties?.disableLocalAuth ?? false,
+              publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
+          }
+          : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'
           ? {
               fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:41:54.609Z",
+    "generatedAt": "2026-05-19T13:52:50.947Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1325,6 +1325,10 @@
       ],
       "implementedOperations": [
         "ConfigurationStores.CreateOrUpdate",
+        "ConfigurationStores.Get",
+        "ConfigurationStores.List",
+        "ConfigurationStores.Delete",
+        "ConfigurationStoreRoutes.RejectUnsupportedRoutes",
         "KeyValues.SetLocal",
         "KeyValues.GetLocal"
       ],
@@ -4953,6 +4957,66 @@
     },
     "app-configuration-parameters": {
       "ConfigurationStores.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "ConfigurationStores.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "ConfigurationStores.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "ConfigurationStores.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "app-configuration-emulator",
+          "globalstack-secret-store"
+        ],
+        "knownGaps": [
+          "App Configuration and Key Vault are closest equivalents, not exact SSM Parameter Store clones.",
+          "No hierarchy semantics, IAM policy parity, advanced labels, refresh tokens, or Key Vault reference parity in MVP."
+        ]
+      },
+      "ConfigurationStoreRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,

@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T13:41:55.028Z
+Generated: 2026-05-19T13:52:51.568Z
 
 ## Dimensions
 
@@ -640,7 +640,7 @@ Generated: 2026-05-19T13:41:55.028Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | not-started | official emulator path declared: app-configuration-emulator, globalstack-secret-store | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 3 registry operations declared<br>backing engines: app-configuration-emulator, globalstack-secret-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 7 registry operations declared<br>backing engines: app-configuration-emulator, globalstack-secret-store | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## database-migration-service
 
