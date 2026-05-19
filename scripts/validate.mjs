@@ -729,22 +729,38 @@ if (!apiManagementParityText) {
   if (apiManagementParity.controlAndGatewayPlane?.failedCount !== 0) {
     errors.push('Azure API Management parity control/gateway matrix has failures');
   }
-  if ((apiManagementParity.controlAndGatewayPlane?.total ?? 0) < 30) {
-    errors.push('Azure API Management parity control/gateway matrix should exercise at least 30 cases');
+  if ((apiManagementParity.controlAndGatewayPlane?.total ?? 0) < 50) {
+    errors.push('Azure API Management parity control/gateway matrix should exercise at least 50 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
     'service create requires an existing resource group',
+    'service collection list is empty before create',
+    'service delete missing returns no content',
     'service missing sku preserves captured rejection',
+    'service missing publisher metadata is rejected',
     'valid service create returns async Azure shape',
     'service get reaches Succeeded',
+    'api collection list is empty before child create',
     'api create with missing parent preserves captured ResourceNotFound',
+    'api list with missing parent is rejected',
     'api missing path is rejected',
+    'api protocols must be an array',
     'api create succeeds with documented path shape',
+    'service unsupported subscription action fails closed',
+    'gateway unknown host is rejected',
     'gateway unknown api path is rejected',
     'gateway subscription-required api rejects missing key',
+    'gateway subscription-required api accepts provided local key',
     'gateway routes configured api locally',
+    'inspection route rejects unknown service',
     'ARM template deployment can create service and api',
+    'secure api gateway route after delete is rejected',
+    'api gateway route after delete is rejected',
+    'gateway after service delete is rejected',
     'api create after service delete reports missing parent',
   ]) {
     if (!apiManagementParity.controlAndGatewayPlane?.cases?.some(item => item.name === required && item.ok === true)) {

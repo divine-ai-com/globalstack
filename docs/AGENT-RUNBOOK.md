@@ -90,7 +90,7 @@ Run the API Management parity pack after changing APIM ARM behavior, local gatew
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:api-management-parity
 ```
 
-Expected result is `dist/e2e/azure-api-management-parity/results.json` with `ok == true`, zero control/gateway-plane failures, and all eight platform runners passing. This suite covers captured APIM service validation, async service readiness, service/API lifecycle, gateway route rejection, subscription-key rejection, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-api-management-parity/results.json` with `ok == true`, zero control/gateway-plane failures, at least 50 APIM cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, captured APIM service validation, delete-not-found behavior, async service readiness, service/API collection and lifecycle behavior, unsupported APIM action fail-closed behavior, gateway host/path rejection, subscription-key rejection and local-key smoke routing, ARM-template deployment, post-delete route errors, and representative IaC deployment lifecycles.
 
 Run the Azure Functions parity pack after changing Microsoft.Web server farm or Function App ARM behavior, local HTTP-trigger routing, or platform deployment routing:
 

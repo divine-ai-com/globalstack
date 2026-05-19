@@ -71,6 +71,7 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: {
       ...(options.auth === false ? {} : { authorization: authHeader }),
       'content-type': 'application/json',
+      ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -261,6 +262,36 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('malformed bearer token is rejected', async () => {
+        const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, {
+          auth: false,
+          headers: { authorization: 'token globalstack-local-token' },
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('wrong bearer token is rejected', async () => {
+        const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, {
+          headers: { authorization: 'Bearer wrong-globalstack-token' },
+        });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('subscription mismatch is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          '/subscriptions/11111111-1111-1111-1111-111111111111',
+        );
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'AuthorizationFailed');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('missing api-version is rejected', async () => {
         const result = await httpJson(
           armPort,
@@ -295,6 +326,20 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, resourceId: result.body.id };
       });
 
+      await record('service collection list is empty before create', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ApiManagement', 'service'));
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.value, []);
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('service delete missing returns no content', async () => {
+        const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.ApiManagement', `service/${missingServiceName}`));
+        assert.equal(result.status, 204);
+        assert.equal(result.body, null);
+        return { status: result.status };
+      });
+
       await record('service empty body is rejected', async () => {
         const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ApiManagement', servicePath), {});
         assert.equal(result.status, 400);
@@ -323,6 +368,18 @@ async function runControlPlaneAndGatewayMatrix() {
         );
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'InvalidParameters');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('service missing publisher metadata is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.ApiManagement', servicePath),
+          serviceBody({ properties: { publisherEmail: 'platform@example.com' } }),
+        );
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'ValidationError');
         return { status: result.status, errorCode: errorCode(result) };
       });
 
@@ -387,6 +444,13 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, resourceId: result.body.id };
       });
 
+      await record('api collection list is empty before child create', async () => {
+        const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ApiManagement', `${servicePath}/apis`));
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.value, []);
+        return { status: result.status, count: result.body.value.length };
+      });
+
       await record('api create with missing parent preserves captured ResourceNotFound', async () => {
         const result = await httpJson(
           armPort,
@@ -399,12 +463,35 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('api list with missing parent is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.ApiManagement', `service/${missingServiceName}/apis`),
+        );
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('api missing path is rejected', async () => {
         const result = await httpJson(
           armPort,
           'PUT',
           providerPath(resourceGroup, 'Microsoft.ApiManagement', apiPath),
           { properties: { displayName: 'missing-path' } },
+        );
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'ValidationError');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('api protocols must be an array', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.ApiManagement', apiPath),
+          apiBody({ properties: { displayName: 'bad-protocols', path: 'bad-protocols', protocols: 'https' } }),
         );
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'ValidationError');
@@ -472,6 +559,25 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
+      await record('service unsupported subscription action fails closed', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.ApiManagement', `${servicePath}/subscriptions/master/listSecrets`),
+          {},
+        );
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('gateway unknown host is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/ingest/documents', undefined, { host: 'unknown.azure-api.net' });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('gateway unknown api path is rejected', async () => {
         const result = await httpDataPlaneJson(routerPort, 'GET', '/unknown/ping', undefined, { host: gatewayHost });
         assert.equal(result.status, 404);
@@ -484,6 +590,16 @@ async function runControlPlaneAndGatewayMatrix() {
         assert.equal(result.status, 401);
         assert.equal(errorCode(result), 'AccessDenied');
         return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('gateway subscription-required api accepts provided local key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/secure/status', undefined, {
+          host: gatewayHost,
+          'ocp-apim-subscription-key': 'globalstack-local-subscription-key',
+        });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.apiId, secureApiName);
+        return { status: result.status, route: result.headers['x-globalstack-apim-route'] };
       });
 
       await record('gateway routes configured api locally', async () => {
@@ -500,6 +616,13 @@ async function runControlPlaneAndGatewayMatrix() {
         assert.equal(result.status, 200);
         assert.equal(result.body.value.length, 2);
         return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('inspection route rejects unknown service', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/_globalstack/apim/services/${missingServiceName}/apis`);
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('ARM template deployment can create service and api', async () => {
@@ -536,6 +659,16 @@ async function runControlPlaneAndGatewayMatrix() {
           assert.equal(errorCode(result), 'ResourceNotFound');
           return { status: result.status, errorCode: errorCode(result) };
         });
+
+        await record(`${child.name} gateway route after delete is rejected`, async () => {
+          const result = await httpDataPlaneJson(routerPort, 'GET', `/${child.routePath}/status`, undefined, {
+            host: gatewayHost,
+            'ocp-apim-subscription-key': 'globalstack-local-subscription-key',
+          });
+          assert.equal(result.status, 404);
+          assert.equal(errorCode(result), 'OperationNotFound');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
       }
 
       await record('service delete succeeds', async () => {
@@ -547,6 +680,13 @@ async function runControlPlaneAndGatewayMatrix() {
 
       await record('service get after delete is not found', async () => {
         const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ApiManagement', servicePath));
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'ResourceNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('gateway after service delete is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/ingest/documents', undefined, { host: gatewayHost });
         assert.equal(result.status, 404);
         assert.equal(errorCode(result), 'ResourceNotFound');
         return { status: result.status, errorCode: errorCode(result) };

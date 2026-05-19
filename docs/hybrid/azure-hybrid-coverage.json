@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T07:46:08.314Z",
+    "generatedAt": "2026-05-19T08:13:04.173Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -276,8 +276,16 @@
       ],
       "implementedOperations": [
         "ApiManagementService.CreateOrUpdate",
+        "ApiManagementService.Get",
+        "ApiManagementService.List",
+        "ApiManagementService.Delete",
         "Apis.CreateOrUpdate",
-        "Apis.Get"
+        "Apis.Get",
+        "Apis.List",
+        "Apis.Delete",
+        "Gateway.RouteLocal",
+        "Gateway.RejectUnknownHost",
+        "Gateway.RejectUnknownPath"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1523,6 +1531,48 @@
           "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
         ]
       },
+      "ApiManagementService.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "ApiManagementService.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "ApiManagementService.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
       "Apis.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -1538,6 +1588,76 @@
         ]
       },
       "Apis.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Apis.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Apis.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Gateway.RouteLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Gateway.RejectUnknownHost": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports route/backend metadata and simple local proxying only.",
+          "No complete APIM policy engine, developer portal, product, subscription, or transform parity."
+        ]
+      },
+      "Gateway.RejectUnknownPath": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
