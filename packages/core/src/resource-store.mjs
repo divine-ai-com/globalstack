@@ -340,6 +340,15 @@ export class ResourceStore {
               publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
           }
           : {}),
+        ...(type === 'Microsoft.Storage/storageAccounts/fileServices/shares'
+          ? {
+              accessTier: body.properties?.accessTier ?? existing?.properties?.accessTier ?? 'TransactionOptimized',
+              enabledProtocols: body.properties?.enabledProtocols ?? existing?.properties?.enabledProtocols ?? 'SMB',
+              shareQuota: body.properties?.shareQuota ?? existing?.properties?.shareQuota ?? 5120,
+              deleted: false,
+              version: existing?.properties?.version ?? nowIso(),
+            }
+          : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'
           ? {
               fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),

@@ -1328,6 +1328,32 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           ]);
         }
 
+        if (
+          providerRoute.providerNamespace === 'Microsoft.Storage'
+          && resourceType.startsWith('Microsoft.Storage/storageAccounts/fileServices/shares/')
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Files child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
+          providerRoute.providerNamespace === 'Microsoft.NetApp'
+          && resourceType.startsWith('Microsoft.NetApp/netAppAccounts/capacityPools/volumes/')
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure NetApp Files child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });

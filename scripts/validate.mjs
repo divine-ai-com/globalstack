@@ -41,6 +41,7 @@ const dnsZonesParityResultsPath = join(distRoot, 'e2e', 'azure-dns-zones-parity'
 const loadBalancingParityResultsPath = join(distRoot, 'e2e', 'azure-load-balancing-parity', 'results.json');
 const frontDoorCdnParityResultsPath = join(distRoot, 'e2e', 'azure-front-door-cdn-parity', 'results.json');
 const wafPolicyParityResultsPath = join(distRoot, 'e2e', 'azure-waf-policy-parity', 'results.json');
+const azureFilesParityResultsPath = join(distRoot, 'e2e', 'azure-files-parity', 'results.json');
 const appConfigurationParityResultsPath = join(distRoot, 'e2e', 'azure-app-configuration-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
@@ -1774,6 +1775,65 @@ if (!wafPolicyParityText) {
   }
   if (wafPolicyParity.platformMatrix?.ok !== true || wafPolicyParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure WAF Policy parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const azureFilesParityText = await readFile(azureFilesParityResultsPath, 'utf8').catch(() => '');
+if (!azureFilesParityText) {
+  errors.push('missing Azure Files parity E2E results; run npm run e2e:azure-files-parity');
+} else {
+  const azureFilesParity = JSON.parse(azureFilesParityText);
+  if (azureFilesParity.ok !== true) {
+    errors.push('Azure Files parity E2E did not pass');
+  }
+  if (azureFilesParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Files parity control-plane matrix has failures');
+  }
+  if ((azureFilesParity.controlPlane?.total ?? 0) < 30) {
+    errors.push('Azure Files parity control-plane matrix should exercise at least 30 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'storage account create requires an existing resource group',
+    'resource group create succeeds',
+    'file share create before storage account reports missing parent',
+    'storage account create is async accepted',
+    'file share create before storage readiness is rejected',
+    'async operation status reaches Succeeded',
+    'storage account get reaches Succeeded',
+    'file share collection list is empty before create',
+    'file share delete missing returns no content',
+    'file share invalid name is rejected',
+    'file share invalid quota is rejected',
+    'file share invalid protocol is rejected',
+    'file share invalid access tier is rejected',
+    'file share create succeeds',
+    'file share get succeeds',
+    'file share update can change quota and access tier',
+    'file share list includes created resource',
+    'unsupported file share snapshot route fails closed',
+    'unsupported file share lease action fails closed',
+    'unsupported file share restore action fails closed',
+    'NetApp volume create is explicit parent gap until parents are modeled',
+    'NetApp volume list is explicit parent gap until parents are modeled',
+    'unsupported NetApp volume snapshot route fails closed',
+    'ARM template deployment can create storage account and file share',
+    'file share get after delete is Azure-shaped 404',
+    'storage account get after delete is not found',
+  ]) {
+    if (!azureFilesParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Files parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (azureFilesParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Files parity E2E must include the platform matrix during validation');
+  }
+  if (azureFilesParity.platformMatrix?.ok !== true || azureFilesParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Files parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

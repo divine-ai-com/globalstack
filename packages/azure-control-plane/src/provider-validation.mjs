@@ -1816,6 +1816,23 @@ function validateEventHubPayload(resourceType, body) {
   return null;
 }
 
+function validateAzureFilesPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Storage/storageAccounts/fileServices/shares') return null;
+  const shareQuota = body.properties?.shareQuota;
+  if (Object.hasOwn(body.properties ?? {}, 'shareQuota') && (!Number.isInteger(shareQuota) || shareQuota < 1 || shareQuota > 5120)) {
+    return envelopedError(400, 'InvalidHeaderValue', 'The value for one of the HTTP headers is not in the correct format.');
+  }
+  const enabledProtocols = body.properties?.enabledProtocols;
+  if (enabledProtocols && !['SMB', 'NFS'].includes(enabledProtocols)) {
+    return envelopedError(400, 'InvalidHeaderValue', "The value for enabledProtocols must be 'SMB' or 'NFS'.");
+  }
+  const accessTier = body.properties?.accessTier;
+  if (accessTier && !['TransactionOptimized', 'Hot', 'Cool', 'Premium'].includes(accessTier)) {
+    return envelopedError(400, 'InvalidHeaderValue', 'The specified access tier is not valid for Azure Files.');
+  }
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -2029,6 +2046,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const eventHubPayloadValidation = validateEventHubPayload(resourceType, body);
   if (eventHubPayloadValidation) return eventHubPayloadValidation;
+
+  const azureFilesPayloadValidation = validateAzureFilesPayload(resourceType, body);
+  if (azureFilesPayloadValidation) return azureFilesPayloadValidation;
 
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(

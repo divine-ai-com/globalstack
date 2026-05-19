@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:04:04.228Z",
+    "generatedAt": "2026-05-19T14:13:26.057Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1219,6 +1219,11 @@
       "implementedOperations": [
         "FileShares.Create",
         "FileShares.Get",
+        "FileShares.List",
+        "FileShares.Update",
+        "FileShares.Delete",
+        "FileShareRoutes.RejectUnsupportedRoutes",
+        "NetAppVolumes.RejectUntilParentsModeled",
         "Files.PutLocal",
         "Files.GetLocal"
       ],
@@ -4818,6 +4823,76 @@
         ]
       },
       "FileShares.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "FileShares.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "FileShares.Update": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "FileShares.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "FileShareRoutes.RejectUnsupportedRoutes": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-file-share"
+        ],
+        "knownGaps": [
+          "Azure Files and Azure NetApp Files are closest equivalents, not exact EFS clones.",
+          "No SMB/NFS protocol server, identity-based mount, snapshot, quota enforcement, or NetApp lifecycle parity in MVP."
+        ]
+      },
+      "NetAppVolumes.RejectUntilParentsModeled": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
