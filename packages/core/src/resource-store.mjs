@@ -269,6 +269,22 @@ export class ResourceStore {
               updatedAt: nowIso(),
             }
           : {}),
+        ...(type === 'Microsoft.DataMigration/services'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
+        ...(type === 'Microsoft.DataMigration/services/projects'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              migrationState: existing?.properties?.migrationState ?? 'Ready',
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
         ...(type === 'Microsoft.ApiManagement/service'
           ? {
               gatewayUrl: existing?.properties?.gatewayUrl ?? apiManagementGatewayUrl(name),

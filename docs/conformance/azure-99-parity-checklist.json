@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:34:46.774Z",
+    "generatedAt": "2026-05-19T14:43:52.402Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -3472,7 +3472,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "3 registry operations declared",
+            "10 registry operations declared",
             "backing engines: globalstack-migration-plan-store"
           ],
           "gaps": [

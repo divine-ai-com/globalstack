@@ -362,6 +362,14 @@ function invalidSynapseName(resourceType, name, rule) {
   );
 }
 
+function invalidDataMigrationName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The Database Migration Service resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -516,6 +524,34 @@ function validateSynapseName(resourceType, providerRoute) {
         resourceType,
         name,
         'SQL pool names must be 2 through 60 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  return null;
+}
+
+function validateDataMigrationName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.DataMigration/services') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'services');
+    if (name.includes('{')) return null;
+    if (!/^[A-Za-z0-9][A-Za-z0-9-]{1,61}[A-Za-z0-9]$/.test(name)) {
+      return invalidDataMigrationName(
+        resourceType,
+        name,
+        'Service names must be 3 through 63 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.DataMigration/services/projects') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'projects');
+    if (name.includes('{')) return null;
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,78}[A-Za-z0-9]$/.test(name)) {
+      return invalidDataMigrationName(
+        resourceType,
+        name,
+        'Project names must be 2 through 80 characters, use alphanumerics, periods, underscores, and hyphens, and not start or end with punctuation.',
       );
     }
   }
@@ -1211,6 +1247,38 @@ function validateSynapsePayload(resourceType, body) {
     }
     if (Object.hasOwn(body.properties ?? {}, 'maxSizeBytes') && (!Number.isInteger(body.properties.maxSizeBytes) || body.properties.maxSizeBytes <= 0)) {
       return envelopedError(400, 'InvalidParameterValue', 'SQL pool maxSizeBytes must be a positive integer when provided.');
+    }
+  }
+
+  return null;
+}
+
+function validateDataMigrationPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.DataMigration/services') {
+    if (body.sku?.name !== undefined && !['Premium_4vCores', 'Standard_1vCore', 'Standard_2vCores'].includes(body.sku.name)) {
+      return envelopedError(400, 'InvalidSku', `Database Migration Service sku.name '${body.sku.name}' is invalid.`);
+    }
+    if (Object.hasOwn(body.properties ?? {}, 'publicNetworkAccess') && !['Enabled', 'Disabled'].includes(body.properties.publicNetworkAccess)) {
+      return envelopedError(400, 'InvalidParameterValue', "Database Migration Service publicNetworkAccess must be 'Enabled' or 'Disabled'.");
+    }
+  }
+
+  if (resourceType === 'Microsoft.DataMigration/services/projects') {
+    const properties = body.properties ?? {};
+    const platforms = new Set(['SQL', 'MySQL', 'PostgreSQL', 'MongoDb']);
+    if (!emptyObject(properties)) {
+      if (typeof properties.sourcePlatform !== 'string' || !platforms.has(properties.sourcePlatform)) {
+        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.sourcePlatform must be one of SQL, MySQL, PostgreSQL, or MongoDb.');
+      }
+      if (typeof properties.targetPlatform !== 'string' || !platforms.has(properties.targetPlatform)) {
+        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.targetPlatform must be one of SQL, MySQL, PostgreSQL, or MongoDb.');
+      }
+    }
+    if (Object.hasOwn(properties, 'sourceConnectionInfo') && typeof properties.sourceConnectionInfo !== 'object') {
+      return envelopedError(400, 'InvalidProjectProperties', 'Migration project sourceConnectionInfo must be an object when provided.');
+    }
+    if (Object.hasOwn(properties, 'targetConnectionInfo') && typeof properties.targetConnectionInfo !== 'object') {
+      return envelopedError(400, 'InvalidProjectProperties', 'Migration project targetConnectionInfo must be an object when provided.');
     }
   }
 
@@ -2145,6 +2213,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const synapseNameValidation = validateSynapseName(resourceType, providerRoute);
   if (synapseNameValidation) return synapseNameValidation;
 
+  const dataMigrationNameValidation = validateDataMigrationName(resourceType, providerRoute);
+  if (dataMigrationNameValidation) return dataMigrationNameValidation;
+
   const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
   if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
 
@@ -2211,13 +2282,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const synapsePayloadValidation = validateSynapsePayload(resourceType, body);
   if (synapsePayloadValidation) return synapsePayloadValidation;
 
-  if (resourceType === 'Microsoft.DataMigration/services') {
-    return envelopedError(
-      400,
-      'InvalidRequest',
-      'The URL of the request does not contain a valid resource ID.',
-    );
-  }
+  const dataMigrationPayloadValidation = validateDataMigrationPayload(resourceType, body);
+  if (dataMigrationPayloadValidation) return dataMigrationPayloadValidation;
 
   if (resourceType === 'Microsoft.Insights/actionGroups' && emptyObject(body.properties)) {
     return topLevelError(400, 'BadRequest', "'Group Short Name' must not be empty.");

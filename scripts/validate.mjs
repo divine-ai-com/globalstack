@@ -26,6 +26,7 @@ const serviceBusE2eResultsPath = join(distRoot, 'e2e', 'azure-service-bus', 'res
 const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-parity', 'results.json');
 const eventHubsParityResultsPath = join(distRoot, 'e2e', 'azure-event-hubs-parity', 'results.json');
 const synapseWarehouseParityResultsPath = join(distRoot, 'e2e', 'azure-synapse-warehouse-parity', 'results.json');
+const databaseMigrationServiceParityResultsPath = join(distRoot, 'e2e', 'azure-database-migration-service-parity', 'results.json');
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
@@ -809,6 +810,71 @@ if (!synapseWarehouseParityText) {
   }
   if (synapseWarehouseParity.platformMatrix?.ok !== true || synapseWarehouseParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Synapse Warehouse parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const databaseMigrationServiceParityText = await readFile(databaseMigrationServiceParityResultsPath, 'utf8').catch(() => '');
+if (!databaseMigrationServiceParityText) {
+  errors.push('missing Azure Database Migration Service parity E2E results; run npm run e2e:database-migration-service-parity');
+} else {
+  const databaseMigrationServiceParity = JSON.parse(databaseMigrationServiceParityText);
+  if (databaseMigrationServiceParity.ok !== true) {
+    errors.push('Azure Database Migration Service parity E2E did not pass');
+  }
+  if (databaseMigrationServiceParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Database Migration Service parity control-plane matrix has failures');
+  }
+  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 35) {
+    errors.push('Azure Database Migration Service parity control-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'migration service create requires an existing resource group',
+    'resource group create succeeds',
+    'migration service collection list is empty before create',
+    'migration service delete missing returns no content',
+    'migration project create before service reports missing parent',
+    'migration project list before service reports missing parent',
+    'migration service empty body is rejected',
+    'migration service invalid location is rejected',
+    'migration service invalid name is rejected',
+    'migration service invalid sku is rejected',
+    'migration service invalid public access is rejected',
+    'migration service create succeeds',
+    'migration service get succeeds',
+    'migration service update can disable public access',
+    'migration service list includes created resource',
+    'migration project invalid name is rejected',
+    'migration project missing source platform is rejected',
+    'migration project invalid source platform is rejected',
+    'migration project invalid target platform is rejected',
+    'migration project invalid source connection shape is rejected',
+    'migration project collection list is empty before create',
+    'migration project delete missing returns no content',
+    'migration project create succeeds',
+    'migration project get succeeds',
+    'migration project update can change target platform',
+    'migration project list includes created resource',
+    'unsupported service add worker action fails closed',
+    'unsupported service check status action fails closed',
+    'unsupported project task route fails closed',
+    'ARM template deployment can create migration service and project',
+    'migration project get after delete is not found',
+    'migration service get after delete is not found',
+  ]) {
+    if (!databaseMigrationServiceParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Database Migration Service parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (databaseMigrationServiceParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Database Migration Service parity E2E must include the platform matrix during validation');
+  }
+  if (databaseMigrationServiceParity.platformMatrix?.ok !== true || databaseMigrationServiceParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Database Migration Service parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T14:34:46.382Z",
+    "generatedAt": "2026-05-19T14:43:52.004Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1389,7 +1389,14 @@
       ],
       "implementedOperations": [
         "Services.CreateOrUpdate",
+        "Services.Get",
+        "Services.List",
+        "Services.Delete",
         "Projects.CreateOrUpdate",
+        "Projects.Get",
+        "Projects.List",
+        "Projects.Delete",
+        "MigrationRoutes.RejectUnsupportedRoutes",
         "MigrationPlans.ValidateLocal"
       ],
       "contractTested": false,
@@ -5452,7 +5459,105 @@
           "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
         ]
       },
+      "Services.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Services.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Services.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
       "Projects.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Projects.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Projects.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "Projects.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store"
+        ],
+        "knownGaps": [
+          "MVP stores migration intent and validates basic source/target metadata only.",
+          "No live CDC, schema conversion, task execution, network tunnel, or exact failure-mode parity in MVP."
+        ]
+      },
+      "MigrationRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

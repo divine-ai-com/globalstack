@@ -112,6 +112,7 @@ flowchart TD
 - `scripts/e2e-azure-app-configuration-parity.mjs`
 - `scripts/e2e-azure-container-registry-parity.mjs`
 - `scripts/e2e-azure-cosmos-parity.mjs`
+- `scripts/e2e-azure-database-migration-service-parity.mjs`
 - `scripts/e2e-azure-dns-zones-parity.mjs`
 - `scripts/e2e-azure-event-grid-parity.mjs`
 - `scripts/e2e-azure-event-hubs-parity.mjs`
@@ -189,6 +190,7 @@ flowchart TD
 - `npm run e2e:azure-functions-parity`
 - `npm run e2e:container-registry-parity`
 - `npm run e2e:cosmos-parity`
+- `npm run e2e:database-migration-service-parity`
 - `npm run e2e:dns-zones-parity`
 - `npm run e2e:event-grid-parity`
 - `npm run e2e:event-hubs-parity`
