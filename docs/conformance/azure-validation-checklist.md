@@ -12,8 +12,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ## Progress
 
-- Candidate calls: 328
-- Candidate create/update calls: 82
+- Candidate calls: 336
+- Candidate create/update calls: 84
 - Real Azure fixtures with verified cleanup: 448
 
 ## Tier 1
@@ -324,6 +324,44 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 ### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts / Delete
 
 - [x] `not-found`: captured HTTP 204; cleanup verified
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases / Get
+
+- [ ] `not-found`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases / Delete
+
+- [ ] `not-found`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers / CreateOrUpdate
+
+- [ ] `valid-minimal`: pending
+- [ ] `missing-api-version`: pending
+- [ ] `invalid-location`: pending
+- [ ] `empty-body`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers / Get
+
+- [ ] `not-found`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers / ListByResourceGroup
+
+- [ ] `empty-list`: pending
+
+### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers / Delete
+
+- [ ] `not-found`: pending
 
 ### cosmos-nosql-table / Microsoft.Storage/storageAccounts/tableServices/tables / CreateOrUpdate
 

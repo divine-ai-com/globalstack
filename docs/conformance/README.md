@@ -9,8 +9,8 @@ No call in this file is considered Azure-correct until the exact request shape, 
 - Capabilities: 30
 - Tier 1 capabilities: 15
 - Tier 2 capabilities: 15
-- Candidate calls: 328
-- Create/update calls with parameter variance cases: 82
+- Candidate calls: 336
+- Create/update calls with parameter variance cases: 84
 
 ## Validation Policy
 
@@ -110,6 +110,14 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | Get | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | ListByResourceGroup | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | Delete | DELETE | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | CreateOrUpdate | PUT | 2024-05-15 | 4 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | Get | GET | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | ListByResourceGroup | GET | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | Delete | DELETE | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | CreateOrUpdate | PUT | 2024-05-15 | 4 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | Get | GET | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | ListByResourceGroup | GET | 2024-05-15 | 0 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | Delete | DELETE | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.Storage/storageAccounts/tableServices/tables | CreateOrUpdate | PUT | 2023-01-01 | 4 |
 | cosmos-nosql-table | DynamoDB | Microsoft.Storage/storageAccounts/tableServices/tables | Get | GET | 2023-01-01 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.Storage/storageAccounts/tableServices/tables | ListByResourceGroup | GET | 2023-01-01 | 0 |

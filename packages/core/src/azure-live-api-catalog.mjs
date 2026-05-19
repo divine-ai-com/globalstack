@@ -23,6 +23,8 @@ export const defaultApiVersions = {
   'Microsoft.DBforPostgreSQL/flexibleServers': '2023-06-01-preview',
   'Microsoft.DBforPostgreSQL/flexibleServers/databases': '2023-06-01-preview',
   'Microsoft.DocumentDB/databaseAccounts': '2024-05-15',
+  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases': '2024-05-15',
+  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers': '2024-05-15',
   'Microsoft.EventGrid/eventSubscriptions': '2022-06-15',
   'Microsoft.EventGrid/systemTopics': '2022-06-15',
   'Microsoft.EventGrid/topics': '2022-06-15',
@@ -161,6 +163,9 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.dbformysql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', version: '8.0.21' } };
   if (lower.includes('microsoft.dbforpostgresql/flexibleservers/databases')) return { properties: { charset: 'UTF8', collation: 'en_US.utf8' } };
   if (lower.includes('microsoft.dbforpostgresql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', administratorLoginPassword: 'Globalstack1!', version: '16' } };
+  if (lower.includes('microsoft.documentdb/databaseaccounts/sqldatabases/containers')) return { properties: { resource: { id: '{containersName}', partitionKey: { paths: ['/pk'], kind: 'Hash' } }, options: { throughput: 400 } } };
+  if (lower.includes('microsoft.documentdb/databaseaccounts/sqldatabases')) return { properties: { resource: { id: '{sqlDatabasesName}' }, options: { throughput: 400 } } };
+  if (lower.includes('microsoft.documentdb/databaseaccounts')) return { location: '{location}', kind: 'GlobalDocumentDB', properties: { databaseAccountOfferType: 'Standard', locations: [{ locationName: '{location}', failoverPriority: 0, isZoneRedundant: false }], consistencyPolicy: { defaultConsistencyLevel: 'Session' } } };
   if (lower.includes('microsoft.cache/redis')) return { location: '{location}', sku: { name: 'Basic', family: 'C', capacity: 0 }, properties: { enableNonSslPort: true } };
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
   if (lower === 'microsoft.network/applicationgateways') {

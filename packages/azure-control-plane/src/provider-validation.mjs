@@ -51,6 +51,8 @@ const putMissingParentResourceTypes = new Map([
   ['Microsoft.DataMigration/services/projects', 'ParentResourceNotFound'],
   ['Microsoft.DBforMySQL/flexibleServers/databases', 'ResourceNotFound'],
   ['Microsoft.DBforPostgreSQL/flexibleServers/databases', 'ResourceNotFound'],
+  ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'ResourceNotFound'],
+  ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers', 'ResourceNotFound'],
   ['Microsoft.EventHub/namespaces/eventhubs', 'ParentResourceNotFound'],
   ['Microsoft.KeyVault/vaults/keys', 'ParentResourceNotFound'],
   ['Microsoft.KeyVault/vaults/secrets', 'ParentResourceNotFound'],
@@ -114,6 +116,8 @@ const acceptedDeleteNotFoundResourceTypes = new Set([
   'Microsoft.DataMigration/services',
   'Microsoft.DataMigration/services/projects',
   'Microsoft.DocumentDB/databaseAccounts',
+  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases',
+  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers',
   'Microsoft.EventGrid/eventSubscriptions',
   'Microsoft.EventGrid/systemTopics',
   'Microsoft.EventGrid/topics',
@@ -291,6 +295,14 @@ function invalidAksName(resourceType, name, rule) {
     400,
     'InvalidResourceName',
     `The AKS managed cluster resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
+function invalidCosmosName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'BadRequest',
+    `The Cosmos DB resource name '${name}' is invalid for ${resourceType}. ${rule}`,
   );
 }
 
@@ -504,6 +516,43 @@ function validateAksName(resourceType, providerRoute) {
       'Cluster names must be 1 through 63 characters, use alphanumerics, hyphens, and underscores, and start and end with an alphanumeric character.',
     );
   }
+  return null;
+}
+
+function validateCosmosName(resourceType, providerRoute) {
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'databaseAccounts');
+    if (!/^[a-z0-9](?:[a-z0-9-]{1,42}[a-z0-9])?$/.test(name)) {
+      return invalidCosmosName(
+        resourceType,
+        name,
+        'Account names must be 3 through 44 lowercase letters, numbers, or hyphens, and start and end with a letter or number.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'sqlDatabases');
+    if (!/^[A-Za-z0-9_-]{1,255}$/.test(name)) {
+      return invalidCosmosName(
+        resourceType,
+        name,
+        'SQL database names must be 1 through 255 characters and use alphanumerics, underscore, or hyphen for this local parity surface.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'containers');
+    if (!/^[A-Za-z0-9_-]{1,255}$/.test(name)) {
+      return invalidCosmosName(
+        resourceType,
+        name,
+        'SQL container names must be 1 through 255 characters and use alphanumerics, underscore, or hyphen for this local parity surface.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -1260,6 +1309,64 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
   return null;
 }
 
+function validateCosmosPayload(resourceType, body, providerRoute = null) {
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts') {
+    if (body.kind && !['GlobalDocumentDB', 'MongoDB', 'Parse'].includes(body.kind)) {
+      return envelopedError(400, 'BadRequest', `Database account kind '${body.kind}' is invalid.`);
+    }
+    if (body.properties?.databaseAccountOfferType !== 'Standard') {
+      return topLevelError(
+        400,
+        'BadRequest',
+        "Value '' for Database account offer type is invalid\r\nActivityId: globalstack-redacted, Microsoft.Azure.Documents.Common/2.14.0",
+      );
+    }
+    const locations = body.properties?.locations;
+    if (!Array.isArray(locations) || locations.length === 0) {
+      return envelopedError(400, 'BadRequest', 'At least one write location is required for Cosmos DB database account creation.');
+    }
+    const firstLocation = locations[0];
+    if (!isNonEmptyString(firstLocation?.locationName) || typeof firstLocation?.failoverPriority !== 'number') {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB locations require locationName and numeric failoverPriority.');
+    }
+    const consistency = body.properties?.consistencyPolicy?.defaultConsistencyLevel;
+    if (consistency && !['Eventual', 'Session', 'BoundedStaleness', 'Strong', 'ConsistentPrefix'].includes(consistency)) {
+      return envelopedError(400, 'BadRequest', `Consistency level '${consistency}' is invalid.`);
+    }
+  }
+
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'sqlDatabases');
+    if (body.properties?.resource?.id !== name) {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB SQL database properties.resource.id must match the resource name.');
+    }
+    const throughput = body.properties?.options?.throughput;
+    if (throughput !== undefined && (!Number.isInteger(throughput) || throughput < 400)) {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB throughput must be an integer of at least 400 RU/s for this local parity surface.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'containers');
+    if (body.properties?.resource?.id !== name) {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB SQL container properties.resource.id must match the resource name.');
+    }
+    const partitionKey = body.properties?.resource?.partitionKey;
+    if (!Array.isArray(partitionKey?.paths) || partitionKey.paths.length === 0) {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB SQL containers require at least one partitionKey path.');
+    }
+    if (partitionKey.kind && !['Hash', 'Range', 'MultiHash'].includes(partitionKey.kind)) {
+      return envelopedError(400, 'BadRequest', `Cosmos DB partition key kind '${partitionKey.kind}' is invalid.`);
+    }
+    const throughput = body.properties?.options?.throughput;
+    if (throughput !== undefined && (!Number.isInteger(throughput) || throughput < 400)) {
+      return envelopedError(400, 'BadRequest', 'Cosmos DB throughput must be an integer of at least 400 RU/s for this local parity surface.');
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1385,6 +1492,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const aksNameValidation = validateAksName(resourceType, providerRoute);
   if (aksNameValidation) return aksNameValidation;
 
+  const cosmosNameValidation = validateCosmosName(resourceType, providerRoute);
+  if (cosmosNameValidation) return cosmosNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
@@ -1442,6 +1552,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const postgresqlPayloadValidation = validatePostgresqlPayload(resourceType, body, providerRoute);
   if (postgresqlPayloadValidation) return postgresqlPayloadValidation;
+
+  const cosmosPayloadValidation = validateCosmosPayload(resourceType, body, providerRoute);
+  if (cosmosPayloadValidation) return cosmosPayloadValidation;
 
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(
@@ -1529,18 +1642,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
           message: 'Customer subscription <subscription-id> needs to be registered with Microsoft.Sql resource provider. For steps to register, go to https://go.microsoft.com/fwlink/?linkid=2150550',
         },
       ],
-    );
-  }
-
-  if (
-    resourceType === 'Microsoft.DocumentDB/databaseAccounts'
-    && body.location
-    && emptyObject(body.properties)
-  ) {
-    return topLevelError(
-      400,
-      'BadRequest',
-      "Value '' for Database account offer type is invalid\r\nActivityId: globalstack-redacted, Microsoft.Azure.Documents.Common/2.14.0",
     );
   }
 

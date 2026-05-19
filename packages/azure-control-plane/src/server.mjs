@@ -715,6 +715,8 @@ function azureNotFoundFor({ method, resourceType, providerRoute, store }) {
     'Microsoft.ApiManagement/service/apis',
     'Microsoft.DBforMySQL/flexibleServers/databases',
     'Microsoft.DBforPostgreSQL/flexibleServers/databases',
+    'Microsoft.DocumentDB/databaseAccounts/sqlDatabases',
+    'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers',
   ]);
   const getUsesResourceNotFound = new Set([
     'Microsoft.Cdn/profiles/afdEndpoints',
@@ -1220,6 +1222,23 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             {
               code: 'ExplicitGap',
               message: 'Unsupported Azure PostgreSQL child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
+          providerRoute.providerNamespace === 'Microsoft.DocumentDB'
+          && resourceType.startsWith('Microsoft.DocumentDB/databaseAccounts/')
+          && ![
+            'Microsoft.DocumentDB/databaseAccounts/sqlDatabases',
+            'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers',
+          ].includes(resourceType)
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Cosmos DB child and action routes must fail closed until captured and implemented.',
             },
           ]);
         }

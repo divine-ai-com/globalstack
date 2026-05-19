@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:38:40.018Z",
+    "generatedAt": "2026-05-19T12:49:57.961Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
-    "callCount": 328,
-    "createOrUpdateCallCount": 82,
+    "callCount": 336,
+    "createOrUpdateCallCount": 84,
     "capabilityCount": 30,
     "tier1CapabilityCount": 15,
     "tier2CapabilityCount": 15,
@@ -1940,7 +1940,20 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "kind": "GlobalDocumentDB",
+        "properties": {
+          "databaseAccountOfferType": "Standard",
+          "locations": [
+            {
+              "locationName": "{location}",
+              "failoverPriority": 0,
+              "isZoneRedundant": false
+            }
+          ],
+          "consistencyPolicy": {
+            "defaultConsistencyLevel": "Session"
+          }
+        }
       },
       "varianceCases": [
         {
@@ -1948,7 +1961,20 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "kind": "GlobalDocumentDB",
+            "properties": {
+              "databaseAccountOfferType": "Standard",
+              "locations": [
+                {
+                  "locationName": "{location}",
+                  "failoverPriority": 0,
+                  "isZoneRedundant": false
+                }
+              ],
+              "consistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+              }
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -1960,7 +1986,20 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "kind": "GlobalDocumentDB",
+            "properties": {
+              "databaseAccountOfferType": "Standard",
+              "locations": [
+                {
+                  "locationName": "{location}",
+                  "failoverPriority": 0,
+                  "isZoneRedundant": false
+                }
+              ],
+              "consistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+              }
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -1971,7 +2010,20 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "kind": "GlobalDocumentDB",
+            "properties": {
+              "databaseAccountOfferType": "Standard",
+              "locations": [
+                {
+                  "locationName": "{location}",
+                  "failoverPriority": 0,
+                  "isZoneRedundant": false
+                }
+              ],
+              "consistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+              }
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -2032,6 +2084,300 @@
       "operation": "Delete",
       "method": "DELETE",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "resource": {
+            "id": "{sqlDatabasesName}"
+          },
+          "options": {
+            "throughput": 400
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{sqlDatabasesName}"
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{sqlDatabasesName}"
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{sqlDatabasesName}"
+              },
+              "options": {
+                "throughput": 400
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.createOrUpdate",
+      "operation": "CreateOrUpdate",
+      "method": "PUT",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}/containers/{containersName}",
+      "requestBodyTemplate": {
+        "properties": {
+          "resource": {
+            "id": "{containersName}",
+            "partitionKey": {
+              "paths": [
+                "/pk"
+              ],
+              "kind": "Hash"
+            }
+          },
+          "options": {
+            "throughput": 400
+          }
+        }
+      },
+      "varianceCases": [
+        {
+          "id": "valid-minimal",
+          "description": "Create/update with the minimal candidate body for the selected API version.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
+          "localAssertion": "must-return-success-for-registered-resource-type",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "missing-api-version",
+          "description": "Same create/update request without api-version.",
+          "omitApiVersion": true,
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "ARM error for missing api-version.",
+          "localAssertion": "must-return-400",
+          "requiresRealAzure": false
+        },
+        {
+          "id": "invalid-location",
+          "description": "Create/update with an intentionally invalid location value.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            },
+            "location": "globalstack-invalid-location"
+          },
+          "expectedAzure": "Provider-specific location validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-body",
+          "description": "Create/update with an empty JSON body.",
+          "body": {},
+          "expectedAzure": "Provider-specific required-field validation error or accepted default behavior.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        }
+      ]
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.get",
+      "operation": "Get",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}/containers/{containersName}",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.listByResourceGroup",
+      "operation": "ListByResourceGroup",
+      "method": "GET",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}/containers",
+      "requestBodyTemplate": null,
+      "varianceCases": []
+    },
+    {
+      "capabilityId": "cosmos-nosql-table",
+      "tier": 1,
+      "awsAnalogue": "DynamoDB",
+      "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-05-15",
+      "source": "globalstack-capability-registry",
+      "validationState": "candidate-until-live-azure-captured",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.delete",
+      "operation": "Delete",
+      "method": "DELETE",
+      "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{databaseAccountsName}/sqlDatabases/{sqlDatabasesName}/containers/{containersName}",
       "requestBodyTemplate": null,
       "varianceCases": []
     },

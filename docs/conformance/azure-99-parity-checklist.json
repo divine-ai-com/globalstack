@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:38:40.351Z",
+    "generatedAt": "2026-05-19T12:49:58.195Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -890,11 +890,13 @@
       "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
       "resourceTypes": [
         "Microsoft.DocumentDB/databaseAccounts",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
         "Microsoft.Storage/storageAccounts/tableServices/tables"
       ],
       "currentStatus": "in-progress",
       "evidence": {
-        "candidateCallCount": 8,
+        "candidateCallCount": 16,
         "providerOperationCount": 296,
         "liveCaptureCount": 14,
         "validationDepthCounts": {
@@ -914,7 +916,7 @@
         "liveApiSurfaceInventory": {
           "status": "partial",
           "evidence": [
-            "8 candidate catalog calls",
+            "16 candidate catalog calls",
             "296 provider operations matched"
           ],
           "gaps": [
@@ -996,7 +998,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "4 registry operations declared",
+            "16 registry operations declared",
             "backing engines: cosmos-db-emulator, azurite"
           ],
           "gaps": [

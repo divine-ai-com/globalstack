@@ -27,6 +27,7 @@ const serviceBusParityResultsPath = join(distRoot, 'e2e', 'azure-service-bus-par
 const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parity', 'results.json');
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-parity', 'results.json');
+const cosmosParityResultsPath = join(distRoot, 'e2e', 'azure-cosmos-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
@@ -843,6 +844,74 @@ if (!postgresqlParityText) {
   }
   if (postgresqlParity.platformMatrix?.ok !== true || postgresqlParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure PostgreSQL parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const cosmosParityText = await readFile(cosmosParityResultsPath, 'utf8').catch(() => '');
+if (!cosmosParityText) {
+  errors.push('missing Azure Cosmos DB parity E2E results; run npm run e2e:cosmos-parity');
+} else {
+  const cosmosParity = JSON.parse(cosmosParityText);
+  if (cosmosParity.ok !== true) {
+    errors.push('Azure Cosmos DB parity E2E did not pass');
+  }
+  if (cosmosParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Cosmos DB parity control-plane matrix has failures');
+  }
+  if ((cosmosParity.controlPlane?.total ?? 0) < 40) {
+    errors.push('Azure Cosmos DB parity control-plane matrix should exercise at least 40 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'cosmos account create requires an existing resource group',
+    'resource group create succeeds',
+    'sql database create with missing account reports resource not found',
+    'cosmos account collection list is empty before create',
+    'cosmos account delete missing returns no content',
+    'cosmos account empty body is rejected',
+    'cosmos account invalid location is rejected',
+    'cosmos account invalid name is rejected',
+    'cosmos account missing offer type is rejected',
+    'cosmos account missing locations is rejected',
+    'cosmos account invalid consistency is rejected',
+    'cosmos account create returns async Azure shape',
+    'cosmos account get reaches Succeeded with endpoint metadata',
+    'sql database name mismatch is rejected',
+    'sql database invalid throughput is rejected',
+    'sql database create succeeds',
+    'sql database get succeeds',
+    'sql database list includes created resource',
+    'sql container create with missing database reports resource not found',
+    'sql container missing partition key is rejected',
+    'sql container invalid partition key kind is rejected',
+    'sql container create succeeds',
+    'sql container get succeeds',
+    'sql container list includes created resource',
+    'storage table invalid name is rejected',
+    'storage table create succeeds',
+    'unsupported mongodb database route fails closed',
+    'unsupported stored procedure route fails closed',
+    'ARM template deployment can create cosmos and table resources',
+    'storage table get after delete is not found',
+    'sql container get after delete is not found',
+    'sql container delete after delete returns no content',
+    'sql database get after delete is not found',
+    'cosmos account get after delete is not found',
+    'sql database create after account delete reports resource not found',
+  ]) {
+    if (!cosmosParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Cosmos DB parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (cosmosParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Cosmos DB parity E2E must include the platform matrix during validation');
+  }
+  if (cosmosParity.platformMatrix?.ok !== true || cosmosParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Cosmos DB parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

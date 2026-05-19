@@ -34,6 +34,7 @@ function asyncLifecycleSequence(type) {
   if (type === 'Microsoft.Web/serverfarms') return ['Creating', 'Ready', 'Succeeded'];
   if (type === 'Microsoft.Web/sites') return ['Creating', 'Starting', 'Succeeded'];
   if (type === 'Microsoft.ContainerService/managedClusters') return ['Creating', 'Reconciling', 'Succeeded'];
+  if (type === 'Microsoft.DocumentDB/databaseAccounts') return ['Creating', 'Online', 'Succeeded'];
   if (type === 'Microsoft.Network/privateDnsZones') return ['Creating', 'Succeeded'];
   return null;
 }
@@ -70,6 +71,10 @@ function containerRegistryLoginServer(name) {
 
 function postgresqlFullyQualifiedDomainName(name) {
   return `${name}.postgres.database.azure.com`;
+}
+
+function cosmosDocumentEndpoint(name) {
+  return `https://${name}.documents.azure.com:443/`;
 }
 
 function aksFqdn(name, location, dnsPrefix) {
@@ -231,6 +236,12 @@ export class ResourceStore {
           ? {
               fullyQualifiedDomainName: existing?.properties?.fullyQualifiedDomainName ?? postgresqlFullyQualifiedDomainName(name),
               state: lifecycleSequence ? 'Ready' : existing?.properties?.state ?? 'Ready',
+            }
+          : {}),
+        ...(type === 'Microsoft.DocumentDB/databaseAccounts'
+          ? {
+              documentEndpoint: existing?.properties?.documentEndpoint ?? cosmosDocumentEndpoint(name),
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
             }
           : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'

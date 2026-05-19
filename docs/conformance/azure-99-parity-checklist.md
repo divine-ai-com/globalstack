@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-19T12:38:40.351Z
+Generated: 2026-05-19T12:49:58.195Z
 
 ## Dimensions
 
@@ -30,7 +30,7 @@ Generated: 2026-05-19T12:38:40.351Z
 | key-vault-secrets | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 96 |
 | key-vault-keys | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 105 |
 | postgresql-flexible-server | 1 | in-progress | 0 | 5 | 5 | 8 | 16 | 89 |
-| cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 8 | 14 | 296 |
+| cosmos-nosql-table | 1 | in-progress | 0 | 6 | 4 | 16 | 14 | 296 |
 | service-bus-topics | 1 | in-progress | 0 | 5 | 5 | 12 | 16 | 110 |
 | event-grid | 1 | in-progress | 0 | 5 | 5 | 8 | 14 | 35 |
 | container-registry | 1 | in-progress | 0 | 5 | 5 | 4 | 7 | 118 |
@@ -207,11 +207,11 @@ Generated: 2026-05-19T12:38:40.351Z
 - AWS analogue: DynamoDB
 - Azure equivalent: Cosmos DB for NoSQL / Table Storage
 - Current status: in-progress
-- Resource types: Microsoft.DocumentDB/databaseAccounts, Microsoft.Storage/storageAccounts/tableServices/tables
+- Resource types: Microsoft.DocumentDB/databaseAccounts, Microsoft.DocumentDB/databaseAccounts/sqlDatabases, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers, Microsoft.Storage/storageAccounts/tableServices/tables
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
-| Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>296 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
+| Complete live Azure API surface inventory | partial | 16 candidate catalog calls<br>296 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
 | Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured<br>2 storage lifecycle capture files exist | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
 | Error-shape fidelity | partial | validation depths: provider-validation=3, arm-surface=2, provider-accepted=2, provider-routing-or-parent-validation=4, capture-infrastructure-gap=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
@@ -220,7 +220,7 @@ Generated: 2026-05-19T12:38:40.351Z
 | IaC-provider behavior | not-started |  | Run Terraform/OpenTofu/Pulumi/Bicep/ARM/Ansible create-refresh-update-destroy/import where relevant against the local endpoint. |
 | Data-plane behavior | not-started | official emulator path declared: cosmos-db-emulator, azurite | Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
 | Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
-| Service-specific local facade/emulator integration | partial | 4 registry operations declared<br>backing engines: cosmos-db-emulator, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
+| Service-specific local facade/emulator integration | partial | 16 registry operations declared<br>backing engines: cosmos-db-emulator, azurite | Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed. |
 
 ## service-bus-topics
 

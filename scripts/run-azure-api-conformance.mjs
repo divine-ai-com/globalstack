@@ -125,6 +125,7 @@ function valuesFor(call, varianceId) {
     flexibleServersName: `db-${suffix}`.slice(0, 40),
     databasesName: `db${suffix}`.slice(0, 40),
     databaseAccountsName: `cosmos-${suffix}`.slice(0, 40),
+    sqlDatabasesName: `sqldb${suffix}`.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40),
     tablesName: `table${suffix}`.slice(0, 40),
     namespacesName: `ns-${suffix}`.slice(0, 40),
     topicsName: `topic-${suffix}`.slice(0, 40),
@@ -308,6 +309,41 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
         administratorLogin: 'globalstack',
         administratorLoginPassword: 'Globalstack1!',
         version: '16',
+      },
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases') {
+    const accountPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}?api-version=2024-05-15`;
+    await httpJson(baseUrl, 'PUT', accountPath, {
+      location,
+      kind: 'GlobalDocumentDB',
+      properties: {
+        databaseAccountOfferType: 'Standard',
+        locations: [{ locationName: location, failoverPriority: 0, isZoneRedundant: false }],
+        consistencyPolicy: { defaultConsistencyLevel: 'Session' },
+      },
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers') {
+    const accountPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}?api-version=2024-05-15`;
+    await httpJson(baseUrl, 'PUT', accountPath, {
+      location,
+      kind: 'GlobalDocumentDB',
+      properties: {
+        databaseAccountOfferType: 'Standard',
+        locations: [{ locationName: location, failoverPriority: 0, isZoneRedundant: false }],
+        consistencyPolicy: { defaultConsistencyLevel: 'Session' },
+      },
+    });
+    const databasePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}/sqlDatabases/${replacements.sqlDatabasesName}?api-version=2024-05-15`;
+    await httpJson(baseUrl, 'PUT', databasePath, {
+      properties: {
+        resource: { id: replacements.sqlDatabasesName },
+        options: { throughput: 400 },
       },
     });
     return;

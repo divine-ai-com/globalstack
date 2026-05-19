@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:38:39.850Z",
+    "generatedAt": "2026-05-19T12:49:57.809Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -479,6 +479,8 @@
       "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
       "resourceTypes": [
         "Microsoft.DocumentDB/databaseAccounts",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
         "Microsoft.Storage/storageAccounts/tableServices/tables"
       ],
       "primaryModes": [
@@ -491,8 +493,20 @@
       ],
       "implementedOperations": [
         "DatabaseAccounts.CreateOrUpdate",
+        "DatabaseAccounts.Get",
+        "DatabaseAccounts.List",
+        "DatabaseAccounts.Delete",
+        "SqlDatabases.CreateOrUpdate",
+        "SqlDatabases.Get",
+        "SqlDatabases.List",
+        "SqlDatabases.Delete",
+        "SqlContainers.CreateOrUpdate",
+        "SqlContainers.Get",
+        "SqlContainers.List",
+        "SqlContainers.Delete",
         "Tables.Create",
         "StorageTables.EntitiesCrudLocal",
+        "CosmosRoutes.RejectUnsupportedRoutes",
         "Items.CrudLocal"
       ],
       "contractTested": false,
@@ -2412,6 +2426,171 @@
           "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
         ]
       },
+      "DatabaseAccounts.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "DatabaseAccounts.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "DatabaseAccounts.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlDatabases.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlDatabases.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlDatabases.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlDatabases.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlContainers.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlContainers.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlContainers.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "SqlContainers.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
       "Tables.Create": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
@@ -2428,6 +2607,21 @@
         ]
       },
       "StorageTables.EntitiesCrudLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "cosmos-db-emulator",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No exact DynamoDB equivalence.",
+          "Cosmos consistency, indexing, throughput, and partition behavior are only subset-mode in MVP."
+        ]
+      },
+      "CosmosRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,

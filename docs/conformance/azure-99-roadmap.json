@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:38:40.551Z",
+    "generatedAt": "2026-05-19T12:49:58.346Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -477,7 +477,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "4 registry operations declared",
+                "16 registry operations declared",
                 "backing engines: cosmos-db-emulator, azurite"
               ],
               "gaps": [
@@ -594,7 +594,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "8 candidate catalog calls",
+                "16 candidate catalog calls",
                 "296 provider operations matched"
               ],
               "gaps": [

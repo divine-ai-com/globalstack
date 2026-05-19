@@ -109,6 +109,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:postgresql-parity
 
 Expected result is `dist/e2e/azure-postgresql-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 PostgreSQL cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Flexible Server lifecycle, database child lifecycle, parameter rejection, unsupported firewall/configuration route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
+Run the Azure Cosmos DB NoSQL/Table parity pack after changing Cosmos DB account ARM behavior, SQL database/container child behavior, Storage Table routing, unsupported Cosmos route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:cosmos-parity
+```
+
+Expected result is `dist/e2e/azure-cosmos-parity/results.json` with `ok == true`, zero control-plane failures, at least 40 Cosmos/Table cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Cosmos DB account lifecycle, SQL database/container child lifecycle, Storage Table lifecycle reuse, parameter rejection, unsupported MongoDB/stored-procedure route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+
 Run the Azure Functions parity pack after changing Microsoft.Web server farm or Function App ARM behavior, local HTTP-trigger routing, or platform deployment routing:
 
 ```bash
