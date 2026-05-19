@@ -751,6 +751,46 @@ function validateKeyVaultPayload(resourceType, body) {
   return null;
 }
 
+function validateMonitorMetricsPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.Insights/actionGroups') {
+    const properties = body.properties ?? {};
+    if (typeof properties.groupShortName !== 'string' || properties.groupShortName.trim() === '') {
+      return topLevelError(400, 'BadRequest', "'Group Short Name' must not be empty.");
+    }
+    if (properties.groupShortName.length > 12) {
+      return topLevelError(400, 'BadRequest', "'Group Short Name' must not be longer than 12 characters.");
+    }
+    if (Object.hasOwn(properties, 'enabled') && typeof properties.enabled !== 'boolean') {
+      return topLevelError(400, 'BadRequest', "Property 'enabled' must be a boolean.");
+    }
+  }
+
+  if (resourceType === 'Microsoft.Insights/metricAlerts') {
+    const properties = body.properties ?? {};
+    if (!Number.isInteger(properties.severity)) {
+      return topLevelError(
+        400,
+        'BadRequest',
+        "Required property 'severity' not found in JSON. Path 'properties', line 1, position 36. Activity ID: globalstack-redacted.",
+      );
+    }
+    if (properties.severity < 0 || properties.severity > 4) {
+      return topLevelError(400, 'BadRequest', "Property 'severity' must be between 0 and 4.");
+    }
+    if (Object.hasOwn(properties, 'enabled') && typeof properties.enabled !== 'boolean') {
+      return topLevelError(400, 'BadRequest', "Property 'enabled' must be a boolean.");
+    }
+    if (!Array.isArray(properties.scopes) || properties.scopes.length === 0) {
+      return topLevelError(400, 'BadRequest', "Required property 'scopes' not found in JSON. Path 'properties'.");
+    }
+    if (!properties.criteria || !Array.isArray(properties.criteria.allOf) || properties.criteria.allOf.length === 0) {
+      return topLevelError(400, 'BadRequest', "Required property 'criteria.allOf' not found in JSON. Path 'properties.criteria'.");
+    }
+  }
+
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -915,6 +955,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const keyVaultPayloadValidation = validateKeyVaultPayload(resourceType, body);
   if (keyVaultPayloadValidation) return keyVaultPayloadValidation;
+
+  const monitorMetricsPayloadValidation = validateMonitorMetricsPayload(resourceType, body);
+  if (monitorMetricsPayloadValidation) return monitorMetricsPayloadValidation;
 
   if (resourceType === 'Microsoft.Logic/workflows') {
     return envelopedError(

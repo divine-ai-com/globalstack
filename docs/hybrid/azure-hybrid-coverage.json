@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T09:45:35.066Z",
+    "generatedAt": "2026-05-19T10:18:32.274Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -718,8 +718,14 @@
       ],
       "implementedOperations": [
         "MetricAlerts.CreateOrUpdate",
-        "Metrics.PutLocal",
-        "Metrics.ListLocal"
+        "MetricAlerts.Get",
+        "MetricAlerts.List",
+        "MetricAlerts.Delete",
+        "ActionGroups.CreateOrUpdate",
+        "ActionGroups.Get",
+        "ActionGroups.List",
+        "ActionGroups.Delete",
+        "MetricAlerts.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -2879,7 +2885,7 @@
           "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
         ]
       },
-      "Metrics.PutLocal": {
+      "MetricAlerts.Get": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -2892,7 +2898,85 @@
           "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
         ]
       },
-      "Metrics.ListLocal": {
+      "MetricAlerts.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "MetricAlerts.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActionGroups.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActionGroups.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActionGroups.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActionGroups.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "MetricAlerts.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

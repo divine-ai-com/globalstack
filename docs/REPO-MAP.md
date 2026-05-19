@@ -114,6 +114,7 @@ flowchart TD
 - `scripts/e2e-azure-identity-rbac-parity.mjs`
 - `scripts/e2e-azure-key-vault-parity.mjs`
 - `scripts/e2e-azure-monitor-logs-parity.mjs`
+- `scripts/e2e-azure-monitor-metrics-alerts-parity.mjs`
 - `scripts/e2e-azure-service-bus-emulator.mjs`
 - `scripts/e2e-azure-service-bus-parity.mjs`
 - `scripts/e2e-azure-storage-hardening.mjs`
@@ -173,6 +174,7 @@ flowchart TD
 - `npm run e2e:identity-rbac-parity`
 - `npm run e2e:key-vault-parity`
 - `npm run e2e:monitor-logs-parity`
+- `npm run e2e:monitor-metrics-alerts-parity`
 - `npm run e2e:service-bus`
 - `npm run e2e:service-bus-parity`
 - `npm run e2e:storage`

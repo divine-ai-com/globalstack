@@ -29,6 +29,7 @@ const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-manageme
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
+const monitorMetricsAlertsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-metrics-alerts-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
 const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
@@ -942,6 +943,70 @@ if (!monitorLogsParityText) {
   }
   if (monitorLogsParity.platformMatrix?.ok !== true || monitorLogsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Monitor Logs parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const monitorMetricsAlertsParityText = await readFile(monitorMetricsAlertsParityResultsPath, 'utf8').catch(() => '');
+if (!monitorMetricsAlertsParityText) {
+  errors.push('missing Azure Monitor Metrics/Alerts parity E2E results; run npm run e2e:monitor-metrics-alerts-parity');
+} else {
+  const monitorMetricsAlertsParity = JSON.parse(monitorMetricsAlertsParityText);
+  if (monitorMetricsAlertsParity.ok !== true) {
+    errors.push('Azure Monitor Metrics/Alerts parity E2E did not pass');
+  }
+  if (monitorMetricsAlertsParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Monitor Metrics/Alerts parity control-plane matrix has failures');
+  }
+  if ((monitorMetricsAlertsParity.controlPlane?.total ?? 0) < 42) {
+    errors.push('Azure Monitor Metrics/Alerts parity control-plane matrix should exercise at least 42 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'action group create requires an existing resource group',
+    'metric alert create requires an existing resource group',
+    'action group collection list is empty before create',
+    'metric alert collection list is empty before create',
+    'action group delete missing returns no content',
+    'metric alert delete missing returns no content',
+    'action group empty body is rejected',
+    'metric alert empty body is rejected',
+    'action group missing short name is rejected',
+    'action group invalid enabled type is rejected',
+    'metric alert missing severity is rejected',
+    'metric alert invalid severity is rejected',
+    'metric alert missing scopes is rejected',
+    'metric alert missing criteria is rejected',
+    'metric alert invalid enabled type is rejected',
+    'action group create succeeds',
+    'action group get succeeds',
+    'action group update preserves metadata',
+    'metric alert create succeeds',
+    'metric alert get succeeds',
+    'metric alert update preserves metadata',
+    'action group list includes created resource',
+    'metric alert list includes created resource',
+    'action group unsupported receiver action fails closed',
+    'metric alert unsupported status route fails closed',
+    'metric query extension route fails closed',
+    'ARM template deployment can create action group and metric alert',
+    'metric alert get after delete is not found',
+    'metric alert delete after delete returns no content',
+    'action group get after delete is not found',
+    'action group delete after delete returns no content',
+  ]) {
+    if (!monitorMetricsAlertsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Monitor Metrics/Alerts parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (monitorMetricsAlertsParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Monitor Metrics/Alerts parity E2E must include the platform matrix during validation');
+  }
+  if (monitorMetricsAlertsParity.platformMatrix?.ok !== true || monitorMetricsAlertsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Monitor Metrics/Alerts parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 
