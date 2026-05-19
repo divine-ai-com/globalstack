@@ -171,6 +171,13 @@ const artifacts = [
     purpose: 'Key Vault ARM, local secret/key data-plane router, platform parity pack scope, outputs, and claim boundary.',
   }),
   artifact({
+    path: 'docs/coverage/container-registry-parity-pack.md',
+    kind: 'handwritten-doc',
+    owner: 'container-registry',
+    editPolicy: 'edit directly',
+    purpose: 'Container Registry ARM, local ACR/Docker Registry data-plane router, platform parity pack scope, outputs, and claim boundary.',
+  }),
+  artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
     kind: 'generated-doc',
     owner: 'scripts/render-artifact-registry.mjs',
@@ -373,6 +380,14 @@ const artifacts = [
     editPolicy: 'edit directly with validation',
     purpose: 'Key Vault ARM parity matrix, local secret/key data-plane router E2E, and all-platform lifecycle coverage.',
   }),
+  artifact({
+    path: 'scripts/e2e-azure-container-registry-parity.mjs',
+    kind: 'e2e-tool',
+    owner: 'container-registry',
+    command: 'npm run e2e:container-registry-parity',
+    editPolicy: 'edit directly with validation',
+    purpose: 'Container Registry ARM parity matrix, local ACR/Docker Registry router E2E, and all-platform lifecycle coverage.',
+  }),
 
   artifact({
     path: 'fixtures/azure-captures/',
@@ -492,9 +507,9 @@ const artifacts = [
     path: 'dist/e2e/',
     kind: 'generated-test-output',
     owner: 'e2e scripts',
-    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:azure-functions-parity && npm run e2e:key-vault-parity',
+    command: 'npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:azure-functions-parity && npm run e2e:key-vault-parity && npm run e2e:container-registry-parity',
     editPolicy: 'regenerate',
-    purpose: 'Storage, Service Bus, Event Grid, API Management, Azure Functions, and Key Vault E2E result reports.',
+    purpose: 'Storage, Service Bus, Event Grid, API Management, Azure Functions, Key Vault, and Container Registry E2E result reports.',
   }),
   artifact({
     path: 'dist/deploy-smoke/',
@@ -506,7 +521,7 @@ const artifacts = [
   }),
 ].map(item => ({
   ...item,
-  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md', 'docs/coverage/service-bus-parity-pack.md', 'docs/coverage/event-grid-parity-pack.md', 'docs/coverage/api-management-parity-pack.md', 'docs/coverage/azure-functions-parity-pack.md', 'docs/coverage/key-vault-parity-pack.md'].includes(item.path)
+  group: item.path.startsWith('docs/ARTIFACT') || item.path.startsWith('docs/decisions') || ['docs/README.md', 'docs/START-HERE.md', 'docs/CONFORMANCE-MODEL.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-RUNBOOK.md', 'docs/PLATFORM-RUNNER-LIFECYCLE.md', 'docs/coverage/storage-parity-pack.md', 'docs/coverage/service-bus-parity-pack.md', 'docs/coverage/event-grid-parity-pack.md', 'docs/coverage/api-management-parity-pack.md', 'docs/coverage/azure-functions-parity-pack.md', 'docs/coverage/key-vault-parity-pack.md', 'docs/coverage/container-registry-parity-pack.md'].includes(item.path)
     ? 'governance'
     : item.path.startsWith('packages/') || item.path.startsWith('src/')
       ? 'source'

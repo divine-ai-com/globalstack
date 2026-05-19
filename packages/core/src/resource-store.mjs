@@ -62,6 +62,10 @@ function keyVaultUri(name) {
   return `https://${name}.vault.azure.net/`;
 }
 
+function containerRegistryLoginServer(name) {
+  return `${name}.azurecr.io`;
+}
+
 function keyVaultChildVaultName(name) {
   return String(name ?? '').split('/')[0] ?? '';
 }
@@ -179,6 +183,14 @@ export class ResourceStore {
         ...(type === 'Microsoft.KeyVault/vaults'
           ? {
               vaultUri: existing?.properties?.vaultUri ?? keyVaultUri(name),
+            }
+          : {}),
+        ...(type === 'Microsoft.ContainerRegistry/registries'
+          ? {
+              loginServer: existing?.properties?.loginServer ?? containerRegistryLoginServer(name),
+              creationDate: existing?.properties?.creationDate ?? nowIso(),
+              adminUserEnabled: body.properties?.adminUserEnabled ?? existing?.properties?.adminUserEnabled ?? false,
+              publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
             }
           : {}),
         ...(type === 'Microsoft.KeyVault/vaults/secrets'

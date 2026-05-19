@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T15:11:16.722Z",
+    "generatedAt": "2026-05-19T05:30:21.029Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -560,7 +560,10 @@
       "implementedOperations": [
         "Registries.CreateOrUpdate",
         "Registries.Get",
-        "Oci.PushPullLocal"
+        "Registries.ListByResourceGroup",
+        "Registries.Delete",
+        "Oci.ManifestPutGetDeleteLocal",
+        "Acr.CatalogAndTagsLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -570,7 +573,7 @@
         "geo-replication validation"
       ],
       "knownGaps": [
-        "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+        "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -1853,7 +1856,7 @@
           "local-oci-registry"
         ],
         "knownGaps": [
-          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
         ]
       },
       "Registries.Get": {
@@ -1866,10 +1869,10 @@
           "local-oci-registry"
         ],
         "knownGaps": [
-          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
         ]
       },
-      "Oci.PushPullLocal": {
+      "Registries.ListByResourceGroup": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -1879,7 +1882,46 @@
           "local-oci-registry"
         ],
         "knownGaps": [
-          "No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP."
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
+        ]
+      },
+      "Registries.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
+        ]
+      },
+      "Oci.ManifestPutGetDeleteLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
+        ]
+      },
+      "Acr.CatalogAndTagsLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-oci-registry"
+        ],
+        "knownGaps": [
+          "No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP."
         ]
       }
     },

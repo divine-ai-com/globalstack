@@ -16,6 +16,12 @@ if [ ! -f "${BICEP_PARAMETERS}" ]; then
   exit 1
 fi
 
-az bicep build --file "${BICEP_MAIN}" --outfile "${BICEP_ARM_TEMPLATE}"
+if command -v bicep >/dev/null 2>&1; then
+  bicep build "${BICEP_MAIN}" --outfile "${BICEP_ARM_TEMPLATE}"
+elif [ -x "/root/.azure/bin/bicep" ]; then
+  /root/.azure/bin/bicep build "${BICEP_MAIN}" --outfile "${BICEP_ARM_TEMPLATE}"
+else
+  az bicep build --file "${BICEP_MAIN}" --outfile "${BICEP_ARM_TEMPLATE}"
+fi
 jq type "${BICEP_ARM_TEMPLATE}" >/dev/null
 write_stage_report build PASS "Bicep compiled to ARM JSON"

@@ -80,6 +80,7 @@ flowchart TD
 - `packages/azure-control-plane/src/server.mjs`
 - `packages/azure-data-plane/src/api-management-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
+- `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
 - `packages/azure-data-plane/src/functions-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
@@ -106,6 +107,7 @@ flowchart TD
 - `scripts/capture-real-azure-operation.mjs`
 - `scripts/classify-azure-captures.mjs`
 - `scripts/e2e-azure-api-management-parity.mjs`
+- `scripts/e2e-azure-container-registry-parity.mjs`
 - `scripts/e2e-azure-event-grid-parity.mjs`
 - `scripts/e2e-azure-functions-parity.mjs`
 - `scripts/e2e-azure-key-vault-parity.mjs`
@@ -162,6 +164,7 @@ flowchart TD
 - `npm run docs:test`
 - `npm run e2e:api-management-parity`
 - `npm run e2e:azure-functions-parity`
+- `npm run e2e:container-registry-parity`
 - `npm run e2e:event-grid-parity`
 - `npm run e2e:key-vault-parity`
 - `npm run e2e:service-bus`

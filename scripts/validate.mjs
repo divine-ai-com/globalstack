@@ -28,6 +28,7 @@ const eventGridParityResultsPath = join(distRoot, 'e2e', 'azure-event-grid-parit
 const apiManagementParityResultsPath = join(distRoot, 'e2e', 'azure-api-management-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const keyVaultParityResultsPath = join(distRoot, 'e2e', 'azure-key-vault-parity', 'results.json');
+const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-container-registry-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
@@ -804,6 +805,51 @@ if (!keyVaultParityText) {
   }
   if (keyVaultParity.platformMatrix?.ok !== true || keyVaultParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Key Vault parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const containerRegistryParityText = await readFile(containerRegistryParityResultsPath, 'utf8').catch(() => '');
+if (!containerRegistryParityText) {
+  errors.push('missing Azure Container Registry parity E2E results; run npm run e2e:container-registry-parity');
+} else {
+  const containerRegistryParity = JSON.parse(containerRegistryParityText);
+  if (containerRegistryParity.ok !== true) {
+    errors.push('Azure Container Registry parity E2E did not pass');
+  }
+  if (containerRegistryParity.controlAndDataPlane?.failedCount !== 0) {
+    errors.push('Azure Container Registry parity control/data-plane matrix has failures');
+  }
+  if ((containerRegistryParity.controlAndDataPlane?.total ?? 0) < 35) {
+    errors.push('Azure Container Registry parity control/data-plane matrix should exercise at least 35 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'registry create requires an existing resource group',
+    'registry minimal body without sku preserves captured validation',
+    'registry invalid name is rejected',
+    'registry invalid sku is rejected',
+    'valid registry create succeeds with loginServer metadata',
+    'registry update preserves loginServer metadata',
+    'registry token endpoint issues local ACR token',
+    'data-plane /v2/ without token returns bearer challenge',
+    'data-plane /v2/ with bearer succeeds',
+    'manifest put invalid body is rejected',
+    'manifest put succeeds for robotics controller image',
+    'manifest get by tag succeeds',
+    'ACR catalog includes repository',
+    'ACR tags endpoint includes pushed tag',
+    'ARM template deployment can create registry',
+    'data-plane request after registry delete is rejected',
+  ]) {
+    if (!containerRegistryParity.controlAndDataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Container Registry parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (containerRegistryParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Container Registry parity E2E must include the platform matrix during validation');
+  }
+  if (containerRegistryParity.platformMatrix?.ok !== true || containerRegistryParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Container Registry parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

@@ -229,6 +229,30 @@ function invalidKeyVaultName(resourceType, name, rule) {
   );
 }
 
+function invalidContainerRegistryName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidResourceName',
+    `The Container Registry resource name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
+function containerRegistryValidationError() {
+  return {
+    status: 400,
+    body: {
+      errors: {
+        Sku: [
+          'The Sku field is required.',
+        ],
+      },
+      type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
+      title: 'One or more validation errors occurred.',
+      status: 400,
+    },
+  };
+}
+
 function serviceBusNameFromTypePath(typePath, marker) {
   const parts = String(typePath ?? '').split('/');
   const index = parts.indexOf(marker);
@@ -387,6 +411,19 @@ function validateKeyVaultName(resourceType, providerRoute) {
   return null;
 }
 
+function validateContainerRegistryName(resourceType, providerRoute) {
+  if (resourceType !== 'Microsoft.ContainerRegistry/registries') return null;
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'registries');
+  if (!/^[A-Za-z0-9]{5,50}$/.test(name)) {
+    return invalidContainerRegistryName(
+      resourceType,
+      name,
+      'Registry names must be 5 through 50 characters and use only alphanumerics.',
+    );
+  }
+  return null;
+}
+
 function validateApiManagementPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ApiManagement/service') {
     if (!body.sku || !body.sku.name) {
@@ -422,6 +459,36 @@ function validateApiManagementPayload(resourceType, body) {
     }
   }
 
+  return null;
+}
+
+function validateContainerRegistryPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.ContainerRegistry/registries') return null;
+  if (!body.sku?.name) return containerRegistryValidationError();
+  if (!['Basic', 'Standard', 'Premium'].includes(body.sku.name)) {
+    return envelopedError(
+      400,
+      'SkuNameInvalid',
+      `The SKU name '${body.sku.name}' is invalid. Allowed values are Basic, Standard, and Premium.`,
+    );
+  }
+  if (Object.hasOwn(body.properties ?? {}, 'adminUserEnabled') && typeof body.properties.adminUserEnabled !== 'boolean') {
+    return envelopedError(
+      400,
+      'InvalidRequestBody',
+      'Container Registry properties.adminUserEnabled must be a boolean when provided.',
+    );
+  }
+  if (
+    Object.hasOwn(body.properties ?? {}, 'publicNetworkAccess')
+    && !['Enabled', 'Disabled'].includes(body.properties.publicNetworkAccess)
+  ) {
+    return envelopedError(
+      400,
+      'InvalidRequestBody',
+      'Container Registry properties.publicNetworkAccess must be Enabled or Disabled when provided.',
+    );
+  }
   return null;
 }
 
@@ -614,6 +681,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const keyVaultNameValidation = validateKeyVaultName(resourceType, providerRoute);
   if (keyVaultNameValidation) return keyVaultNameValidation;
 
+  const containerRegistryNameValidation = validateContainerRegistryName(resourceType, providerRoute);
+  if (containerRegistryNameValidation) return containerRegistryNameValidation;
+
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
     return envelopedError(
       400,
@@ -639,6 +709,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const apiManagementPayloadValidation = validateApiManagementPayload(resourceType, body);
   if (apiManagementPayloadValidation) return apiManagementPayloadValidation;
 
+  const containerRegistryPayloadValidation = validateContainerRegistryPayload(resourceType, body);
+  if (containerRegistryPayloadValidation) return containerRegistryPayloadValidation;
+
   const functionAppPayloadValidation = validateFunctionAppPayload(resourceType, body, { referencesExistingServerFarm });
   if (functionAppPayloadValidation) return functionAppPayloadValidation;
 
@@ -662,22 +735,6 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
         message: 'Required parameter servicePrincipalProfile is missing (null).',
         subcode: '',
         target: 'servicePrincipalProfile',
-      },
-    };
-  }
-
-  if (resourceType === 'Microsoft.ContainerRegistry/registries') {
-    return {
-      status: 400,
-      body: {
-        errors: {
-          Sku: [
-            'The Sku field is required.',
-          ],
-        },
-        type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
-        title: 'One or more validation errors occurred.',
-        status: 400,
       },
     };
   }

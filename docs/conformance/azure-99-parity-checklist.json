@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-18T15:17:25.717Z",
+    "generatedAt": "2026-05-19T05:30:21.266Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -1346,7 +1346,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "3 registry operations declared",
+            "6 registry operations declared",
             "backing engines: local-oci-registry"
           ],
           "gaps": [

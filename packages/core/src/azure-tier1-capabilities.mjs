@@ -302,12 +302,19 @@ export const tier1Capabilities = [
     resourceTypes: ['Microsoft.ContainerRegistry/registries'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE],
     backingEngines: ['local-oci-registry'],
-    implementedOperations: ['Registries.CreateOrUpdate', 'Registries.Get', 'Oci.PushPullLocal'],
+    implementedOperations: [
+      'Registries.CreateOrUpdate',
+      'Registries.Get',
+      'Registries.ListByResourceGroup',
+      'Registries.Delete',
+      'Oci.ManifestPutGetDeleteLocal',
+      'Acr.CatalogAndTagsLocal',
+    ],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['repository auth errors', 'webhook defaults', 'geo-replication validation'],
     knownGaps: [
-      'No ACR Tasks, content trust, geo-replication, webhooks, private link, or full Azure auth parity in MVP.',
+      'No ACR Tasks, content trust, geo-replication, webhooks, private link, repository attributes, blob upload/download, or full Azure auth parity in MVP.',
     ],
   },
   {
