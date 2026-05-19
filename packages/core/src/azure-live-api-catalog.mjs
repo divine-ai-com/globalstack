@@ -159,7 +159,8 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.eventhub/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} };
   if (lower.includes('microsoft.eventhub/namespaces/eventhubs')) return { properties: { partitionCount: 2, messageRetentionInDays: 1 } };
   if (lower.includes('microsoft.dbformysql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', version: '8.0.21' } };
-  if (lower.includes('microsoft.dbforpostgresql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', version: '16' } };
+  if (lower.includes('microsoft.dbforpostgresql/flexibleservers/databases')) return { properties: { charset: 'UTF8', collation: 'en_US.utf8' } };
+  if (lower.includes('microsoft.dbforpostgresql/flexibleservers')) return { location: '{location}', sku: { name: 'Standard_B1ms', tier: 'Burstable' }, properties: { administratorLogin: 'globalstack', administratorLoginPassword: 'Globalstack1!', version: '16' } };
   if (lower.includes('microsoft.cache/redis')) return { location: '{location}', sku: { name: 'Basic', family: 'C', capacity: 0 }, properties: { enableNonSslPort: true } };
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
   if (lower === 'microsoft.network/applicationgateways') {

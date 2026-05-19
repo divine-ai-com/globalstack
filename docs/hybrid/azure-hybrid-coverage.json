@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T12:00:22.373Z",
+    "generatedAt": "2026-05-19T12:38:39.850Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -450,7 +450,13 @@
       "implementedOperations": [
         "FlexibleServers.Create",
         "FlexibleServers.Get",
-        "Databases.Create"
+        "FlexibleServers.List",
+        "FlexibleServers.Delete",
+        "Databases.Create",
+        "Databases.Get",
+        "Databases.List",
+        "Databases.Delete",
+        "PostgresqlRoutes.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -2291,7 +2297,91 @@
           "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
         ]
       },
+      "FlexibleServers.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "FlexibleServers.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
       "Databases.Create": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "Databases.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "Databases.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "Databases.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "local-postgres"
+        ],
+        "knownGaps": [
+          "Local PostgreSQL covers SQL data plane only.",
+          "No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP."
+        ]
+      },
+      "PostgresqlRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

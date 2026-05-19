@@ -68,6 +68,10 @@ function containerRegistryLoginServer(name) {
   return `${name}.azurecr.io`;
 }
 
+function postgresqlFullyQualifiedDomainName(name) {
+  return `${name}.postgres.database.azure.com`;
+}
+
 function aksFqdn(name, location, dnsPrefix) {
   const digest = createHash('sha256')
     .update(`globalstack:aks:${name}:${location}:${dnsPrefix}`)
@@ -221,6 +225,12 @@ export class ResourceStore {
               creationDate: existing?.properties?.creationDate ?? nowIso(),
               adminUserEnabled: body.properties?.adminUserEnabled ?? existing?.properties?.adminUserEnabled ?? false,
               publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
+          }
+          : {}),
+        ...(type === 'Microsoft.DBforPostgreSQL/flexibleServers'
+          ? {
+              fullyQualifiedDomainName: existing?.properties?.fullyQualifiedDomainName ?? postgresqlFullyQualifiedDomainName(name),
+              state: lifecycleSequence ? 'Ready' : existing?.properties?.state ?? 'Ready',
             }
           : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'

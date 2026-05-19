@@ -30,6 +30,15 @@ npm run smoke
 npm run providers:gaps
 ```
 
+During parity-pack development, use the short feedback loop first and the full platform loop only once the service matrix is stable:
+
+1. Run the service-specific E2E pack with `--skip-platforms` while editing GlobalStack behavior.
+2. Before commit, run the same service-specific E2E pack without `--skip-platforms` so all eight platform runners exercise native IaC/CLI calls through the GlobalStack provider route.
+3. Run `npm run validate` before commit and push.
+4. Run full `npm run smoke` periodically or after shared platform-runner, image, auth, provider-routing, or repo-wide validation changes.
+
+This keeps local development fast while preserving the end-to-end guarantee that Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON still deploy through the GlobalStack path.
+
 After any command that starts Docker-based emulators:
 
 ```bash
@@ -91,6 +100,14 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:api-management-parity
 ```
 
 Expected result is `dist/e2e/azure-api-management-parity/results.json` with `ok == true`, zero control/gateway-plane failures, at least 50 APIM cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, captured APIM service validation, delete-not-found behavior, async service readiness, service/API collection and lifecycle behavior, unsupported APIM action fail-closed behavior, gateway host/path rejection, subscription-key rejection and local-key smoke routing, ARM-template deployment, post-delete route errors, and representative IaC deployment lifecycles.
+
+Run the Azure PostgreSQL parity pack after changing PostgreSQL Flexible Server ARM behavior, database child behavior, unsupported PostgreSQL route handling, or platform deployment routing:
+
+```bash
+GLOBALSTACK_AUTH_TOKEN=... npm run e2e:postgresql-parity
+```
+
+Expected result is `dist/e2e/azure-postgresql-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 PostgreSQL cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Flexible Server lifecycle, database child lifecycle, parameter rejection, unsupported firewall/configuration route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Functions parity pack after changing Microsoft.Web server farm or Function App ARM behavior, local HTTP-trigger routing, or platform deployment routing:
 

@@ -299,6 +299,20 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
     return;
   }
 
+  if (call.resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
+    const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-06-01-preview`;
+    await httpJson(baseUrl, 'PUT', serverPath, {
+      location,
+      sku: { name: 'Standard_B1ms', tier: 'Burstable' },
+      properties: {
+        administratorLogin: 'globalstack',
+        administratorLoginPassword: 'Globalstack1!',
+        version: '16',
+      },
+    });
+    return;
+  }
+
   if (call.resourceType !== 'Microsoft.ServiceBus/namespaces/topics/subscriptions' || variance.id !== 'valid-minimal') return;
 
   const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}?api-version=2021-11-01`;

@@ -1210,6 +1210,20 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           ]);
         }
 
+        if (
+          providerRoute.providerNamespace === 'Microsoft.DBforPostgreSQL'
+          && resourceType.startsWith('Microsoft.DBforPostgreSQL/flexibleServers/')
+          && resourceType !== 'Microsoft.DBforPostgreSQL/flexibleServers/databases'
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure PostgreSQL child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });
