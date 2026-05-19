@@ -314,6 +314,14 @@ function invalidRedisName(resourceType, name, rule) {
   );
 }
 
+function invalidLogicWorkflowName(resourceType, name, rule) {
+  return envelopedError(
+    400,
+    'InvalidWorkflowName',
+    `The Logic workflow name '${name}' is invalid for ${resourceType}. ${rule}`,
+  );
+}
+
 function containerRegistryValidationError() {
   return {
     status: 400,
@@ -572,6 +580,19 @@ function validateRedisName(resourceType, providerRoute) {
       resourceType,
       name,
       'Redis cache names must be 1 through 63 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
+    );
+  }
+  return null;
+}
+
+function validateLogicWorkflowName(resourceType, providerRoute) {
+  if (resourceType !== 'Microsoft.Logic/workflows') return null;
+  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'workflows');
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9_.-]{0,78}[A-Za-z0-9])?$/.test(name)) {
+    return invalidLogicWorkflowName(
+      resourceType,
+      name,
+      'Workflow names must be 1 through 80 characters, use alphanumerics, underscore, period, or hyphen, and start and end with an alphanumeric character.',
     );
   }
   return null;
@@ -1458,6 +1479,29 @@ function validateRedisPayload(resourceType, body) {
   return null;
 }
 
+function validateLogicWorkflowPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Logic/workflows') return null;
+  const definition = body.properties?.definition;
+  if (!definition || typeof definition !== 'object' || Array.isArray(definition)) {
+    return envelopedError(
+      400,
+      'InvalidWorkflow',
+      "The workflow 'workflow-local' must have Definition property set.",
+    );
+  }
+  if (!definition.triggers || typeof definition.triggers !== 'object' || Array.isArray(definition.triggers)) {
+    return envelopedError(400, 'InvalidWorkflow', "The workflow definition must include a 'triggers' object.");
+  }
+  if (!definition.actions || typeof definition.actions !== 'object' || Array.isArray(definition.actions)) {
+    return envelopedError(400, 'InvalidWorkflow', "The workflow definition must include an 'actions' object.");
+  }
+  const state = body.properties?.state;
+  if (state && !['Enabled', 'Disabled'].includes(state)) {
+    return envelopedError(400, 'InvalidWorkflowState', `Workflow state '${state}' is invalid.`);
+  }
+  return null;
+}
+
 function isFunctionAppKind(kind) {
   return String(kind ?? '').toLowerCase().split(',').map(part => part.trim()).includes('functionapp');
 }
@@ -1589,6 +1633,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const redisNameValidation = validateRedisName(resourceType, providerRoute);
   if (redisNameValidation) return redisNameValidation;
 
+  const logicWorkflowNameValidation = validateLogicWorkflowName(resourceType, providerRoute);
+  if (logicWorkflowNameValidation) return logicWorkflowNameValidation;
+
   const storageChildNameValidation = validateStorageChildName(resourceType, providerRoute);
   if (storageChildNameValidation) return storageChildNameValidation;
 
@@ -1656,13 +1703,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   const redisPayloadValidation = validateRedisPayload(resourceType, body);
   if (redisPayloadValidation) return redisPayloadValidation;
 
-  if (resourceType === 'Microsoft.Logic/workflows') {
-    return envelopedError(
-      400,
-      'InvalidWorkflow',
-      "The workflow 'workflow-local' must have Definition property set.",
-    );
-  }
+  const logicWorkflowPayloadValidation = validateLogicWorkflowPayload(resourceType, body);
+  if (logicWorkflowPayloadValidation) return logicWorkflowPayloadValidation;
 
   if (resourceType === 'Microsoft.DataMigration/services') {
     return envelopedError(

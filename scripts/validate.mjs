@@ -30,6 +30,7 @@ const postgresqlParityResultsPath = join(distRoot, 'e2e', 'azure-postgresql-pari
 const cosmosParityResultsPath = join(distRoot, 'e2e', 'azure-cosmos-parity', 'results.json');
 const mysqlParityResultsPath = join(distRoot, 'e2e', 'azure-mysql-parity', 'results.json');
 const redisParityResultsPath = join(distRoot, 'e2e', 'azure-redis-parity', 'results.json');
+const logicWorkflowsParityResultsPath = join(distRoot, 'e2e', 'azure-logic-workflows-parity', 'results.json');
 const azureFunctionsParityResultsPath = join(distRoot, 'e2e', 'azure-functions-parity', 'results.json');
 const identityRbacParityResultsPath = join(distRoot, 'e2e', 'azure-identity-rbac-parity', 'results.json');
 const monitorLogsParityResultsPath = join(distRoot, 'e2e', 'azure-monitor-logs-parity', 'results.json');
@@ -1031,6 +1032,59 @@ if (!redisParityText) {
   }
   if (redisParity.platformMatrix?.ok !== true || redisParity.platformMatrix?.results?.length !== azurePlatforms.length) {
     errors.push('Azure Redis parity E2E must pass all Azure platform runner lifecycles');
+  }
+}
+
+const logicWorkflowsParityText = await readFile(logicWorkflowsParityResultsPath, 'utf8').catch(() => '');
+if (!logicWorkflowsParityText) {
+  errors.push('missing Azure Logic Workflows parity E2E results; run npm run e2e:logic-workflows-parity');
+} else {
+  const logicWorkflowsParity = JSON.parse(logicWorkflowsParityText);
+  if (logicWorkflowsParity.ok !== true) {
+    errors.push('Azure Logic Workflows parity E2E did not pass');
+  }
+  if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
+    errors.push('Azure Logic Workflows parity control-plane matrix has failures');
+  }
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 25) {
+    errors.push('Azure Logic Workflows parity control-plane matrix should exercise at least 25 cases');
+  }
+  for (const required of [
+    'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
+    'missing api-version is rejected',
+    'workflow create requires an existing resource group',
+    'resource group create succeeds',
+    'workflow collection list is empty before create',
+    'workflow delete missing returns no content',
+    'workflow empty body is rejected',
+    'workflow invalid location is rejected',
+    'workflow invalid name is rejected',
+    'workflow missing definition is rejected',
+    'workflow missing triggers is rejected',
+    'workflow missing actions is rejected',
+    'workflow invalid state is rejected',
+    'workflow create succeeds',
+    'workflow get succeeds',
+    'workflow update can disable workflow',
+    'workflow list includes created resource',
+    'unsupported workflow trigger route fails closed',
+    'unsupported workflow versions route fails closed',
+    'ARM template deployment can create workflow resource',
+    'workflow get after delete is not found',
+    'workflow delete after delete returns no content',
+  ]) {
+    if (!logicWorkflowsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Logic Workflows parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (logicWorkflowsParity.platformMatrix?.skipped === true) {
+    errors.push('Azure Logic Workflows parity E2E must include the platform matrix during validation');
+  }
+  if (logicWorkflowsParity.platformMatrix?.ok !== true || logicWorkflowsParity.platformMatrix?.results?.length !== azurePlatforms.length) {
+    errors.push('Azure Logic Workflows parity E2E must pass all Azure platform runner lifecycles');
   }
 }
 

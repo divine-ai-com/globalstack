@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:07:27.682Z",
+    "generatedAt": "2026-05-19T13:17:50.445Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -2284,7 +2284,7 @@
         "serviceSpecificFacade": {
           "status": "partial",
           "evidence": [
-            "3 registry operations declared",
+            "6 registry operations declared",
             "backing engines: globalstack-workflow-runner, functions-core-tools"
           ],
           "gaps": [

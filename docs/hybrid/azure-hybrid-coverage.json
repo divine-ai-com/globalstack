@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:07:27.271Z",
+    "generatedAt": "2026-05-19T13:17:49.980Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -948,6 +948,9 @@
       "implementedOperations": [
         "Workflows.CreateOrUpdate",
         "Workflows.Get",
+        "Workflows.List",
+        "Workflows.Delete",
+        "WorkflowRoutes.RejectUnsupportedRoutes",
         "Executions.StartLocal"
       ],
       "contractTested": false,
@@ -3929,6 +3932,51 @@
         ]
       },
       "Workflows.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Workflows.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Workflows.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "WorkflowRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,

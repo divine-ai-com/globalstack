@@ -116,6 +116,7 @@ flowchart TD
 - `scripts/e2e-azure-identity-rbac-parity.mjs`
 - `scripts/e2e-azure-key-vault-parity.mjs`
 - `scripts/e2e-azure-load-balancing-parity.mjs`
+- `scripts/e2e-azure-logic-workflows-parity.mjs`
 - `scripts/e2e-azure-monitor-logs-parity.mjs`
 - `scripts/e2e-azure-monitor-metrics-alerts-parity.mjs`
 - `scripts/e2e-azure-mysql-parity.mjs`
@@ -183,6 +184,7 @@ flowchart TD
 - `npm run e2e:identity-rbac-parity`
 - `npm run e2e:key-vault-parity`
 - `npm run e2e:load-balancing-parity`
+- `npm run e2e:logic-workflows-parity`
 - `npm run e2e:monitor-logs-parity`
 - `npm run e2e:monitor-metrics-alerts-parity`
 - `npm run e2e:mysql-parity`

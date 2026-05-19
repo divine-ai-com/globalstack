@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-19T13:07:27.431Z",
+    "generatedAt": "2026-05-19T13:17:50.166Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -4970,7 +4970,25 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "state": "Enabled",
+          "definition": {
+            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+            "contentVersion": "1.0.0.0",
+            "triggers": {
+              "manual": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                  "schema": {}
+                }
+              }
+            },
+            "actions": {},
+            "outputs": {}
+          },
+          "parameters": {}
+        }
       },
       "varianceCases": [
         {
@@ -4978,7 +4996,25 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "state": "Enabled",
+              "definition": {
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                "contentVersion": "1.0.0.0",
+                "triggers": {
+                  "manual": {
+                    "type": "Request",
+                    "kind": "Http",
+                    "inputs": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "actions": {},
+                "outputs": {}
+              },
+              "parameters": {}
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -4990,7 +5026,25 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "state": "Enabled",
+              "definition": {
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                "contentVersion": "1.0.0.0",
+                "triggers": {
+                  "manual": {
+                    "type": "Request",
+                    "kind": "Http",
+                    "inputs": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "actions": {},
+                "outputs": {}
+              },
+              "parameters": {}
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -5001,7 +5055,25 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "state": "Enabled",
+              "definition": {
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                "contentVersion": "1.0.0.0",
+                "triggers": {
+                  "manual": {
+                    "type": "Request",
+                    "kind": "Http",
+                    "inputs": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "actions": {},
+                "outputs": {}
+              },
+              "parameters": {}
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",

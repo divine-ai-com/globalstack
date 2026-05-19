@@ -267,6 +267,12 @@ export class ResourceStore {
               provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
             }
           : {}),
+        ...(type === 'Microsoft.Logic/workflows'
+          ? {
+              state: body.properties?.state ?? existing?.properties?.state ?? 'Enabled',
+              accessEndpoint: existing?.properties?.accessEndpoint ?? `https://logic.azure.com/workflows/${name}`,
+            }
+          : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'
           ? {
               fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),
