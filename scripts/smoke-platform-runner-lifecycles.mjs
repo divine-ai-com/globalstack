@@ -103,16 +103,27 @@ for (const platform of platforms) {
 
   const reportPath = join(platformDir, 'reports', 'lifecycle-report.json');
   const deploymentPath = join(platformDir, 'reports', 'deployment-response.json');
+  const providerLifecyclePath = join(platformDir, 'reports', 'provider-lifecycle-response.json');
   let report = null;
   let deployment = null;
+  let providerLifecycle = null;
   try {
     report = await readJson(reportPath);
     deployment = await readJson(deploymentPath);
+    providerLifecycle = await readJson(providerLifecyclePath);
   } catch {
     // captured in result below
   }
 
-  const ok = code === 0 && report?.status === 'PASS' && report?.stage === 'destroy' && deployment?.properties?.provisioningState === 'Succeeded';
+  const providerLifecycleOk = providerLifecycle?.status === 'PASS'
+    && Array.isArray(providerLifecycle.operations)
+    && providerLifecycle.operations.length > 0
+    && providerLifecycle.operations.every(operation => operation.status === 'PASS');
+  const ok = code === 0
+    && report?.status === 'PASS'
+    && report?.stage === 'destroy'
+    && deployment?.properties?.provisioningState === 'Succeeded'
+    && providerLifecycleOk;
   results.push({
     platformId: platform.id,
     ok,
@@ -122,7 +133,10 @@ for (const platform of platforms) {
     finalStatus: report?.status ?? null,
     provisioningState: deployment?.properties?.provisioningState ?? null,
     deploymentStepCount: deployment?.properties?.globalstackDeploymentSteps?.length ?? null,
+    providerLifecycleOk,
+    providerLifecycleOperationCount: providerLifecycle?.operations?.length ?? null,
     reportPath,
+    providerLifecyclePath,
   });
 
   await writeFile(outPath, `${JSON.stringify({

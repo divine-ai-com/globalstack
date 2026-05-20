@@ -37,7 +37,7 @@ if [ "${STAGE_SCOPE}" != "local-only" ]; then
     stage_family="bicep"
   fi
 
-  stages=(${PIPELINE_STAGES:-build lint unit-tests deploy integration-tests destroy})
+  stages=(${PIPELINE_STAGES:-build lint unit-tests deploy provider-lifecycle integration-tests destroy})
   for stage in "${stages[@]}"; do
     stage_script="/opt/globalstack/stages/${stage_family}/${stage}.sh"
     if [ ! -x "${stage_script}" ]; then

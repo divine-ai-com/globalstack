@@ -16,6 +16,13 @@ function normalizeResourceId(subscriptionId, resourceGroupName, providerNamespac
   return `${normalizeResourceGroupId(subscriptionId, resourceGroupName)}/providers/${providerNamespace}/${typePath}`;
 }
 
+function normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName) {
+  const scope = resourceGroupName
+    ? `${normalizeResourceGroupId(subscriptionId, resourceGroupName)}/providers`
+    : `/subscriptions/${subscriptionId}/providers`;
+  return `${scope}/Microsoft.Resources/deployments/${deploymentName}`;
+}
+
 function emulationDepth(capability) {
   if (!capability) return 'unsupported';
   if (capability.cloudValidated) return 'cloud-validated';
@@ -137,6 +144,7 @@ export class ResourceStore {
     this.subscriptionId = subscriptionId;
     this.resourceGroups = new Map();
     this.resources = new Map();
+    this.deployments = new Map();
     this.calls = [];
   }
 
@@ -192,7 +200,28 @@ export class ResourceStore {
     for (const resourceId of [...this.resources.keys()]) {
       if (resourceId.startsWith(`${key}/providers/`)) this.resources.delete(resourceId);
     }
+    for (const deploymentId of [...this.deployments.keys()]) {
+      if (deploymentId.startsWith(`${key}/providers/microsoft.resources/deployments/`)) this.deployments.delete(deploymentId);
+    }
     return existed;
+  }
+
+  putDeployment({ subscriptionId, resourceGroupName = null, deploymentName, body }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    const deployment = {
+      ...deepClone(body),
+      id,
+      name: deploymentName,
+      type: 'Microsoft.Resources/deployments',
+    };
+    this.deployments.set(id.toLowerCase(), deployment);
+    return deepClone(deployment);
+  }
+
+  getDeployment({ subscriptionId, resourceGroupName = null, deploymentName }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    const deployment = this.deployments.get(id.toLowerCase());
+    return deployment ? deepClone(deployment) : null;
   }
 
   putResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, body = {}, apiVersion, capability }) {

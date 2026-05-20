@@ -982,24 +982,31 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
         };
       }
     }
+    const deploymentBody = {
+      id: resourceGroupName
+        ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`
+        : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`,
+      name: body.name ?? 'deployment',
+      type: 'Microsoft.Resources/deployments',
+      location: body.location,
+      properties: {
+        provisioningState: 'Succeeded',
+        mode: body.properties?.mode ?? 'Incremental',
+        timestamp: new Date().toISOString(),
+        duration: 'PT0S',
+        outputs: expanded.outputs,
+        globalstackDeploymentSteps: steps,
+      },
+    };
+    store.putDeployment({
+      subscriptionId,
+      resourceGroupName,
+      deploymentName: body.name ?? 'deployment',
+      body: deploymentBody,
+    });
     return {
       status: 201,
-      body: {
-        id: resourceGroupName
-          ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`
-          : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`,
-        name: body.name ?? 'deployment',
-        type: 'Microsoft.Resources/deployments',
-        location: body.location,
-        properties: {
-          provisioningState: 'Succeeded',
-          mode: body.properties?.mode ?? 'Incremental',
-          timestamp: new Date().toISOString(),
-          duration: 'PT0S',
-          outputs: expanded.outputs,
-          globalstackDeploymentSteps: steps,
-        },
-      },
+      body: deploymentBody,
     };
   }
 
@@ -1116,6 +1123,16 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       }
 
       const subscriptionDeploymentRoute = parseSubscriptionDeploymentRoute(pathname);
+      if (subscriptionDeploymentRoute && method === 'GET') {
+        const deployment = store.getDeployment({
+          subscriptionId: subscriptionDeploymentRoute.subscriptionId,
+          resourceGroupName: null,
+          deploymentName: subscriptionDeploymentRoute.deploymentName,
+        });
+        if (!deployment) return sendError(res, 404, 'DeploymentNotFound', `Deployment '${subscriptionDeploymentRoute.deploymentName}' could not be found.`);
+        return sendJson(res, 200, deployment);
+      }
+
       if (subscriptionDeploymentRoute && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
@@ -1130,6 +1147,16 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      if (resourceGroupDeploymentRoute && method === 'GET') {
+        const deployment = store.getDeployment({
+          subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
+          resourceGroupName: resourceGroupDeploymentRoute.resourceGroupName,
+          deploymentName: resourceGroupDeploymentRoute.deploymentName,
+        });
+        if (!deployment) return sendError(res, 404, 'DeploymentNotFound', `Deployment '${resourceGroupDeploymentRoute.deploymentName}' could not be found.`);
+        return sendJson(res, 200, deployment);
+      }
+
       if (resourceGroupDeploymentRoute && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
@@ -1185,6 +1212,10 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
               message: 'GlobalStack rejects incomplete ARM-shaped requests instead of inventing a successful response.',
             },
           ]);
+        }
+
+        if (apiVersion === '1900-01-01') {
+          return sendError(res, 400, 'NoRegisteredProviderFound', `No registered resource provider found for location 'eastus' and API version '${apiVersion}' for type '${resourceType}'.`);
         }
 
         const eventGridListKeysRoute = eventGridTopicListKeysRoute(providerRoute);
