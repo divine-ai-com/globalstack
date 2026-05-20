@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T06:32:27.197Z",
+  "generatedAt": "2026-05-20T06:46:12.103Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 381,
+  "expectationCount": 382,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -1158,6 +1158,29 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.unsupported-api-version",
+      "capabilityId": "azure-files",
+      "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "validationDepth": "provider-routing-or-parent-validation",
+      "expected": {
+        "status": 404,
+        "errorCode": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/fileServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54130d5d7f/providers/Microsoft.Storage/storageAccounts/gs54130d5d7f' could not be found."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54130d5d7f/providers/Microsoft.Storage/storageAccounts/gs54130d5d7f/fileServices/default/shares/share54130d5d7f?api-version=1900-01-01",
+        "body": {
+          "properties": {
+            "shareQuota": 1
+          }
+        }
+      },
+      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.valid-minimal",

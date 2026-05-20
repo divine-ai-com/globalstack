@@ -26,7 +26,7 @@ This document splits evidence into:
 | Blob/Queue real Azure data plane | Real Azure | Wave 1 captured 32 Blob/Queue cases with cleanup verified. | Live evidence exists for captured cases only; mismatches must be normalized before claims change. |
 | Blob/Queue GlobalStack data-plane normalization | Proxy in front of Azurite | Normalizer E2E rewrites three captured Azurite mismatches to real Azure status/error-code behavior. | Implemented only for captured safe mismatches; no broad parity claim. |
 | Table data plane | Azurite | Hardening E2E covers invalid names, duplicate table, entity insert/get/delete, duplicate entity conflict, missing auth, and post-delete rejection. | Official-emulator evidence only; not full Azure parity. |
-| Azure Files data plane | None in Azurite | Not yet implemented in repo tests. | Gap requiring separate emulator strategy or real Azure capture. |
+| Azure Files data plane | GlobalStack Azure Files REST-shaped facade | Azure Files parity E2E covers share properties, auth/header rejection, directory creation, file create, range write, read, list, delete, and post-delete not-found. | Local facade evidence only; still needs live Azure capture and SMB/NFS protocol strategy. |
 
 ## Implemented Hardening Checks
 

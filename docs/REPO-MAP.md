@@ -80,6 +80,7 @@ flowchart TD
 - `packages/azure-control-plane/src/server.mjs`
 - `packages/azure-data-plane/src/api-management-router.mjs`
 - `packages/azure-data-plane/src/app-configuration-router.mjs`
+- `packages/azure-data-plane/src/azure-files-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`

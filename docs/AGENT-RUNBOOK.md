@@ -260,7 +260,7 @@ Run the Azure Files parity pack after changing Storage file share behavior, Azur
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-files-parity
 ```
 
-Expected result is `dist/e2e/azure-files-parity/results.json` with `ok == true`, zero control-plane failures, at least 30 Azure Files cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, storage account readiness, file share lifecycle, stricter quota/protocol/tier rejection, unsupported share routes failing closed, explicit Azure NetApp parent-gap behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-files-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 46 Azure Files cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, storage account readiness, file share lifecycle, stricter quota/protocol/tier rejection, Azure Files REST-shaped local directory/file create, range upload, read, list, delete, unsupported share routes failing closed, explicit Azure NetApp parent-gap behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure App Configuration parity pack after changing App Configuration store ARM behavior, unsupported App Configuration route handling, or platform deployment routing:
 

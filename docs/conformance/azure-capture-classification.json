@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-20T06:32:26.974Z",
-  "fixtureCount": 451,
-  "cleanupVerifiedCount": 451,
+  "generatedAt": "2026-05-20T06:46:11.859Z",
+  "fixtureCount": 452,
+  "cleanupVerifiedCount": 452,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
     "provider-validation": 142,
     "arm-surface": 62,
     "provider-accepted": 98,
-    "provider-routing-or-parent-validation": 136,
+    "provider-routing-or-parent-validation": 137,
     "subscription-or-provider-readiness": 5,
     "capture-infrastructure-gap": 8
   },
@@ -23,7 +23,7 @@
     "InvalidParameter": 1,
     "InvalidParameters": 1,
     "InvalidProperty": 1,
-    "ParentResourceNotFound": 72,
+    "ParentResourceNotFound": 73,
     "DeleteNotSupported": 3,
     "InvalidAccountType": 1,
     "NoRegisteredProviderFound": 5,
@@ -826,6 +826,19 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.unsupported-api-version",
+      "capabilityId": "azure-files",
+      "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 404,
+      "errorCode": "ParentResourceNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "provider-routing-or-parent-validation",
+      "cloudValidated": false,
+      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.valid-minimal",

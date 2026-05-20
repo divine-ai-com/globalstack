@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createAzureFilesRouter, createAzureFilesRouterServer } from '../packages/azure-data-plane/src/azure-files-router.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -54,6 +56,18 @@ async function withArmServer(fn) {
   }
 }
 
+async function withAzureFilesRouter(fn) {
+  const router = createAzureFilesRouter();
+  const server = createAzureFilesRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  try {
+    return await fn(port, router);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+
 async function httpJson(port, method, path, body, options = {}) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
     method,
@@ -78,6 +92,45 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: Object.fromEntries(response.headers.entries()),
     body: parsed,
   };
+}
+
+async function httpFiles(port, method, path, body, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const payload = body === undefined ? undefined : Buffer.isBuffer(body) ? body : Buffer.from(String(body));
+    const req = request({
+      host: '127.0.0.1',
+      port,
+      method,
+      path,
+      headers: {
+        ...(payload ? { 'content-length': payload.length } : {}),
+        ...headers,
+      },
+    }, (res) => {
+      const chunks = [];
+      res.on('data', chunk => chunks.push(chunk));
+      res.on('end', () => {
+        const raw = Buffer.concat(chunks);
+        let parsed = null;
+        if (raw.length > 0) {
+          try {
+            parsed = JSON.parse(raw.toString('utf8'));
+          } catch {
+            parsed = raw.toString('utf8');
+          }
+        }
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: parsed,
+          raw,
+        });
+      });
+    });
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
 }
 
 function errorCode(result) {
@@ -198,7 +251,16 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withAzureFilesRouter(async (filesPort, filesRouter) => {
+    const fileHost = `${accountName}.file.core.windows.net`;
+    const fileHeaders = {
+      host: fileHost,
+      authorization: 'SharedKey globalstack:faketestkey',
+      'x-ms-version': '2023-01-03',
+      'x-ms-date': new Date().toUTCString(),
+    };
+
+    await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -318,6 +380,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.shareQuota, 32);
       assert.equal(result.body.properties.enabledProtocols, 'SMB');
       assert.equal(result.body.globalstack.capabilityId, 'azure-files');
+      filesRouter.registerShare({ accountName, shareName, shareQuota: result.body.properties.shareQuota });
       return { status: result.status };
     });
 
@@ -341,6 +404,144 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.id.includes(sharePath)));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('data-plane request without auth is rejected', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}?restype=share`, undefined, {
+        host: fileHost,
+        'x-ms-version': '2023-01-03',
+      });
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'AuthenticationFailed');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane request without x-ms-version is rejected', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}?restype=share`, undefined, {
+        host: fileHost,
+        authorization: 'SharedKey globalstack:faketestkey',
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'MissingRequiredHeader');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane unknown share is not found', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/missing-${suffix}?restype=share`, undefined, fileHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ShareNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane share properties get succeeds', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}?restype=share`, undefined, fileHeaders);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.shareQuota, 32);
+      assert.equal(result.headers['x-ms-share-quota'], '32');
+      return { status: result.status, shareQuota: result.body.properties.shareQuota };
+    });
+
+    await record('data-plane invalid path traversal is rejected', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/..%2Fbad?restype=directory`, undefined, fileHeaders);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidResourceName');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane nested directory before parent is rejected', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/nested?restype=directory`, undefined, fileHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ParentNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane directory create succeeds', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models?restype=directory`, undefined, fileHeaders);
+      assert.equal(result.status, 201);
+      assert.equal(result.headers['x-ms-resource-type'], 'directory');
+      return { status: result.status };
+    });
+
+    await record('data-plane file create requires file type header', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/model.bin`, undefined, {
+        ...fileHeaders,
+        'x-ms-content-length': '11',
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidHeaderValue');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane file create invalid content length is rejected', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/model.bin`, undefined, {
+        ...fileHeaders,
+        'x-ms-type': 'file',
+        'x-ms-content-length': '-1',
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidHeaderValue');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane file create succeeds', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/model.bin`, undefined, {
+        ...fileHeaders,
+        'x-ms-type': 'file',
+        'x-ms-content-length': '11',
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.headers['x-ms-content-length'], '11');
+      return { status: result.status };
+    });
+
+    await record('data-plane range upload invalid range is rejected', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/model.bin?comp=range`, Buffer.from('hello'), {
+        ...fileHeaders,
+        'x-ms-write': 'update',
+        'x-ms-range': 'bytes=0-10',
+      });
+      assert.equal(result.status, 416);
+      assert.equal(errorCode(result), 'InvalidRange');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane range upload succeeds', async () => {
+      const result = await httpFiles(filesPort, 'PUT', `/${shareName}/models/model.bin?comp=range`, Buffer.from('hello files'), {
+        ...fileHeaders,
+        'x-ms-write': 'update',
+        'x-ms-range': 'bytes=0-10',
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.headers['x-ms-range'], 'bytes=0-10');
+      return { status: result.status };
+    });
+
+    await record('data-plane file read succeeds', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}/models/model.bin`, undefined, fileHeaders);
+      assert.equal(result.status, 200);
+      assert.equal(result.raw.toString('utf8'), 'hello files');
+      assert.equal(result.headers['x-ms-content-length'], '11');
+      return { status: result.status, bytes: result.raw.length };
+    });
+
+    await record('data-plane directory list includes file', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}/models?restype=directory&comp=list`, undefined, fileHeaders);
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.type === 'File' && item.name === 'model.bin'));
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('data-plane file delete succeeds', async () => {
+      const result = await httpFiles(filesPort, 'DELETE', `/${shareName}/models/model.bin`, undefined, fileHeaders);
+      assert.equal(result.status, 202);
+      return { status: result.status };
+    });
+
+    await record('data-plane file get after delete is not found', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}/models/model.bin`, undefined, fileHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     for (const [name, method, path] of [
@@ -395,7 +596,15 @@ async function runControlPlaneMatrix() {
     await record('file share delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Storage', sharePath));
       assert.equal(result.status, 200);
+      filesRouter.unregisterShare({ accountName, shareName });
       return { status: result.status };
+    });
+
+    await record('data-plane share get after ARM delete is not found', async () => {
+      const result = await httpFiles(filesPort, 'GET', `/${shareName}?restype=share`, undefined, fileHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ShareNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('file share get after delete is Azure-shaped 404', async () => {
@@ -416,6 +625,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
     });
   });
 
@@ -457,7 +667,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Storage account under test: ${report.controlPlane.accountName}`,
@@ -482,7 +692,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Files share ARM lifecycle, stricter parameter rejection, unsupported share route fail-closed behavior, explicit Azure NetApp parent-gap behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Files as 99%-complete or cloudValidated for SMB/NFS protocol behavior, identity-based mount, snapshots, leases, backup/restore, quota enforcement, Azure NetApp Files lifecycle, RBAC, private link, throttling, or exact Azure service runtime behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Files share ARM lifecycle, stricter parameter rejection, Azure Files REST-shaped local directory/file create, range upload, read, list, delete, unsupported share route fail-closed behavior, explicit Azure NetApp parent-gap behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Files as 99%-complete or cloudValidated for SMB/NFS protocol behavior, Shared Key signature validation, identity-based mount, snapshots, leases, backup/restore, quota enforcement, Azure NetApp Files lifecycle, RBAC, private link, throttling, or exact Azure service runtime behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -494,7 +704,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Files share ARM lifecycle, validation, unsupported route fail-closed checks, explicit NetApp gap checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Files share ARM lifecycle, Azure Files REST-shaped local file data-plane checks, validation, unsupported route fail-closed checks, explicit NetApp gap checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Files cloudValidated claim.',
   controlPlane,
   platformMatrix,

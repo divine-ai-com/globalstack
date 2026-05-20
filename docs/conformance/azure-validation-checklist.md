@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 451
+- Real Azure fixtures with verified cleanup: 452
 
 ## Tier 1
 
@@ -1643,7 +1643,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
 - [ ] `null-properties`: pending

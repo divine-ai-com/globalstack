@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 451) {
-    errors.push('Azure capture classification should include 451 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 452) {
+    errors.push('Azure capture classification should include 452 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -2053,8 +2053,8 @@ if (!azureFilesParityText) {
   if (azureFilesParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Files parity control-plane matrix has failures');
   }
-  if ((azureFilesParity.controlPlane?.total ?? 0) < 30) {
-    errors.push('Azure Files parity control-plane matrix should exercise at least 30 cases');
+  if ((azureFilesParity.controlPlane?.total ?? 0) < 46) {
+    errors.push('Azure Files parity control/data-plane matrix should exercise at least 46 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2079,6 +2079,22 @@ if (!azureFilesParityText) {
     'file share get succeeds',
     'file share update can change quota and access tier',
     'file share list includes created resource',
+    'data-plane request without auth is rejected',
+    'data-plane request without x-ms-version is rejected',
+    'data-plane unknown share is not found',
+    'data-plane share properties get succeeds',
+    'data-plane invalid path traversal is rejected',
+    'data-plane nested directory before parent is rejected',
+    'data-plane directory create succeeds',
+    'data-plane file create requires file type header',
+    'data-plane file create invalid content length is rejected',
+    'data-plane file create succeeds',
+    'data-plane range upload invalid range is rejected',
+    'data-plane range upload succeeds',
+    'data-plane file read succeeds',
+    'data-plane directory list includes file',
+    'data-plane file delete succeeds',
+    'data-plane file get after delete is not found',
     'unsupported file share snapshot route fails closed',
     'unsupported file share lease action fails closed',
     'unsupported file share restore action fails closed',
@@ -2086,6 +2102,7 @@ if (!azureFilesParityText) {
     'NetApp volume list is explicit parent gap until parents are modeled',
     'unsupported NetApp volume snapshot route fails closed',
     'ARM template deployment can create storage account and file share',
+    'data-plane share get after ARM delete is not found',
     'file share get after delete is Azure-shaped 404',
     'storage account get after delete is not found',
   ]) {
