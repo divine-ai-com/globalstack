@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 448) {
-    errors.push('Azure capture classification should include 448 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 449) {
+    errors.push('Azure capture classification should include 449 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -2103,6 +2103,12 @@ if (!appConfigurationParityText) {
   if ((appConfigurationParity.controlPlane?.total ?? 0) < 25) {
     errors.push('Azure App Configuration parity control-plane matrix should exercise at least 25 cases');
   }
+  if (appConfigurationParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure App Configuration parity data-plane matrix has failures');
+  }
+  if ((appConfigurationParity.dataPlane?.total ?? 0) < 17) {
+    errors.push('Azure App Configuration parity data-plane matrix should exercise at least 17 cases');
+  }
   for (const required of [
     'unauthenticated ARM request is rejected',
     'malformed bearer token is rejected',
@@ -2133,6 +2139,29 @@ if (!appConfigurationParityText) {
   ]) {
     if (!appConfigurationParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure App Configuration parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'data-plane request without token is rejected',
+    'data-plane missing api-version is rejected',
+    'data-plane unsupported api-version is rejected',
+    'data-plane unknown store is rejected',
+    'data-plane missing key-value is not found',
+    'data-plane key-value requires string value',
+    'data-plane key-value rejects invalid tags shape',
+    'data-plane key-value set succeeds',
+    'data-plane key-value get succeeds',
+    'data-plane stale etag update is rejected',
+    'data-plane matching etag update succeeds',
+    'data-plane labeled key-value set succeeds',
+    'data-plane key-values list supports key filter',
+    'data-plane key-values list supports label filter',
+    'data-plane unsupported feature-flags route fails closed',
+    'data-plane key-value delete succeeds',
+    'data-plane key-value get after delete is not found',
+  ]) {
+    if (!appConfigurationParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure App Configuration parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (appConfigurationParity.platformMatrix?.skipped === true) {

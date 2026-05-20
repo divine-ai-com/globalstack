@@ -285,6 +285,15 @@ function varianceCases(resourceType, createBody) {
       requiresRealAzure: false,
     },
     {
+      id: 'unsupported-api-version',
+      description: 'Same create/update request with an intentionally unsupported API version.',
+      apiVersionOverride: '1900-01-01',
+      body: createBody,
+      expectedAzure: 'ARM or provider error for an unsupported API version.',
+      localAssertion: 'must-return-400-or-provider-routing-error',
+      requiresRealAzure: true,
+    },
+    {
       id: 'invalid-location',
       description: 'Create/update with an intentionally invalid location value.',
       body: { ...createBody, location: 'globalstack-invalid-location' },
@@ -301,6 +310,39 @@ function varianceCases(resourceType, createBody) {
       requiresRealAzure: true,
     },
   ];
+
+  if (Object.hasOwn(createBody, 'location')) {
+    const { location, ...withoutLocation } = createBody;
+    void location;
+    cases.push({
+      id: 'missing-location',
+      description: 'Create/update without the top-level location field for a regional resource.',
+      body: withoutLocation,
+      expectedAzure: 'Provider-specific location-required validation error.',
+      localAssertion: 'record-gap-until-real-azure-captured',
+      requiresRealAzure: true,
+    });
+  }
+
+  if (createBody.properties && typeof createBody.properties === 'object') {
+    cases.push({
+      id: 'null-properties',
+      description: 'Create/update with properties explicitly set to null.',
+      body: { ...createBody, properties: null },
+      expectedAzure: 'Provider-specific null-properties validation, defaulting, or rejection behavior.',
+      localAssertion: 'record-gap-until-real-azure-captured',
+      requiresRealAzure: true,
+    });
+  }
+
+  cases.push({
+    id: 'invalid-tags-shape',
+    description: 'Create/update with tags set to an invalid non-object shape.',
+    body: { ...createBody, tags: 'globalstack-invalid-tags' },
+    expectedAzure: 'ARM or provider tag-shape validation error.',
+    localAssertion: 'record-gap-until-real-azure-captured',
+    requiresRealAzure: true,
+  });
 
   if (createBody.sku || resourceType.toLowerCase().includes('sku')) {
     cases.push({

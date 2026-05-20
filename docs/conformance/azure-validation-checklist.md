@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 448
+- Real Azure fixtures with verified cleanup: 449
 
 ## Tier 1
 
@@ -22,8 +22,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 202; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 400; cleanup verified
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### blob-storage / Microsoft.Storage/storageAccounts / Get
@@ -42,8 +46,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### blob-storage / Microsoft.Storage/storageAccounts/blobServices/containers / Get
 
@@ -61,8 +68,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### azure-functions / Microsoft.Web/sites / Get
 
@@ -80,8 +91,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 401; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### azure-functions / Microsoft.Web/serverfarms / Get
@@ -100,8 +115,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### api-management / Microsoft.ApiManagement/service / Get
 
@@ -119,8 +138,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### api-management / Microsoft.ApiManagement/service/apis / Get
 
@@ -138,8 +161,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### identity-rbac / Microsoft.ManagedIdentity/userAssignedIdentities / Get
 
@@ -157,8 +184,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### identity-rbac / Microsoft.Authorization/roleAssignments / Get
 
@@ -176,8 +207,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### identity-rbac / Microsoft.Authorization/roleDefinitions / Get
 
@@ -195,8 +230,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 200; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### key-vault-secrets / Microsoft.KeyVault/vaults / Get
 
@@ -214,8 +253,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### key-vault-secrets / Microsoft.KeyVault/vaults/secrets / Get
 
@@ -233,8 +276,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 200; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### key-vault-keys / Microsoft.KeyVault/vaults / Get
 
@@ -252,8 +299,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### key-vault-keys / Microsoft.KeyVault/vaults/keys / Get
 
@@ -271,8 +322,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / Get
@@ -291,8 +346,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers/databases / Get
 
@@ -310,8 +368,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts / Get
 
@@ -329,8 +391,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases / Get
 
@@ -348,8 +413,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### cosmos-nosql-table / Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers / Get
 
@@ -367,8 +435,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### cosmos-nosql-table / Microsoft.Storage/storageAccounts/tableServices/tables / Get
 
@@ -386,8 +457,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### service-bus-topics / Microsoft.ServiceBus/namespaces / Get
@@ -406,8 +481,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 404; cleanup verified
 
 ### service-bus-topics / Microsoft.ServiceBus/namespaces/topics / Get
@@ -426,8 +505,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [ ] `invalid-sku`: pending
 
 ### service-bus-topics / Microsoft.ServiceBus/namespaces/topics/subscriptions / Get
@@ -446,8 +529,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### event-grid / Microsoft.EventGrid/topics / Get
 
@@ -465,8 +552,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### event-grid / Microsoft.EventGrid/eventSubscriptions / Get
 
@@ -484,8 +575,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### container-registry / Microsoft.ContainerRegistry/registries / Get
 
@@ -503,8 +598,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### aks-metadata / Microsoft.ContainerService/managedClusters / Get
 
@@ -522,8 +621,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 201; cleanup verified
 
 ### monitor-logs / Microsoft.OperationalInsights/workspaces / Get
@@ -542,8 +645,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### monitor-logs / Microsoft.Insights/diagnosticSettings / Get
 
@@ -561,8 +668,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### monitor-metrics-alerts / Microsoft.Insights/metricAlerts / Get
 
@@ -580,8 +691,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### monitor-metrics-alerts / Microsoft.Insights/actionGroups / Get
 
@@ -599,8 +714,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### virtual-network / Microsoft.Network/virtualNetworks / Get
 
@@ -618,8 +737,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### virtual-network / Microsoft.Network/privateEndpoints / Get
 
@@ -637,8 +760,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 202; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### virtual-network / Microsoft.Network/privateDnsZones / Get
 
@@ -658,8 +785,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### mysql-flexible-server / Microsoft.DBforMySQL/flexibleServers / Get
@@ -678,8 +809,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### mysql-flexible-server / Microsoft.DBforMySQL/flexibleServers/databases / Get
 
@@ -697,8 +831,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### queue-storage / Microsoft.Storage/storageAccounts/queueServices/queues / Get
 
@@ -716,8 +853,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### queue-storage / Microsoft.ServiceBus/namespaces/queues / Get
 
@@ -735,8 +875,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### redis-cache / Microsoft.Cache/redis / Get
@@ -755,8 +899,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### redis-cache / Microsoft.Cache/redisEnterprise / Get
@@ -775,8 +923,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### logic-workflows / Microsoft.Logic/workflows / Get
 
@@ -794,8 +946,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### logic-workflows / Microsoft.Web/sites / Get
 
@@ -813,8 +969,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones / Get
 
@@ -832,8 +992,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/A / Get
 
@@ -851,8 +1014,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/AAAA / Get
 
@@ -870,8 +1036,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/CAA / Get
 
@@ -889,8 +1058,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/CNAME / Get
 
@@ -908,8 +1080,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/MX / Get
 
@@ -927,8 +1102,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/NS / Get
 
@@ -946,8 +1124,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/PTR / Get
 
@@ -965,8 +1146,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/SOA / Get
 
@@ -984,8 +1168,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/SRV / Get
 
@@ -1003,8 +1190,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/dnsZones/TXT / Get
 
@@ -1022,8 +1212,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 202; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones / Get
 
@@ -1041,8 +1235,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/A / Get
 
@@ -1060,8 +1257,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/AAAA / Get
 
@@ -1079,8 +1279,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/CNAME / Get
 
@@ -1098,8 +1301,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/MX / Get
 
@@ -1117,8 +1323,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/PTR / Get
 
@@ -1136,8 +1345,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/SOA / Get
 
@@ -1155,8 +1367,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/SRV / Get
 
@@ -1174,8 +1389,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/TXT / Get
 
@@ -1193,8 +1411,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [ ] `valid-minimal`: pending
 - [ ] `missing-api-version`: pending
+- [ ] `unsupported-api-version`: pending
 - [ ] `invalid-location`: pending
 - [ ] `empty-body`: pending
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### dns-zones / Microsoft.Network/privateDnsZones/virtualNetworkLinks / Get
 
@@ -1212,8 +1434,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [ ] `invalid-sku`: pending
 
 ### load-balancing / Microsoft.Network/applicationGateways / Get
@@ -1232,8 +1458,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [ ] `invalid-sku`: pending
 
 ### load-balancing / Microsoft.Network/loadBalancers / Get
@@ -1252,8 +1482,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [ ] `invalid-sku`: pending
 
 ### front-door-cdn / Microsoft.Cdn/profiles / Get
@@ -1272,8 +1506,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### front-door-cdn / Microsoft.Cdn/profiles/afdEndpoints / Get
 
@@ -1291,8 +1529,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### front-door-cdn / Microsoft.Cdn/profiles/endpoints / Get
 
@@ -1310,8 +1552,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### waf-policy / Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies / Get
 
@@ -1329,8 +1575,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### waf-policy / Microsoft.Cdn/profiles/securityPolicies / Get
 
@@ -1348,8 +1597,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### activity-log-audit / Microsoft.Insights/diagnosticSettings / Get
 
@@ -1367,8 +1620,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### activity-log-audit / Microsoft.EventGrid/systemTopics / Get
 
@@ -1386,8 +1643,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### azure-files / Microsoft.Storage/storageAccounts/fileServices/shares / Get
 
@@ -1405,8 +1665,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### azure-files / Microsoft.NetApp/netAppAccounts/capacityPools/volumes / Get
 
@@ -1424,8 +1688,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces / Get
@@ -1444,8 +1712,11 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces/eventhubs / Get
 
@@ -1463,8 +1734,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### synapse-warehouse / Microsoft.Synapse/workspaces / Get
 
@@ -1482,8 +1757,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### synapse-warehouse / Microsoft.Synapse/workspaces/sqlPools / Get
 
@@ -1501,8 +1780,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
 
 ### app-configuration-parameters / Microsoft.AppConfiguration/configurationStores / Get
@@ -1521,8 +1804,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### app-configuration-parameters / Microsoft.KeyVault/vaults/secrets / Get
 
@@ -1540,8 +1827,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### database-migration-service / Microsoft.DataMigration/services / Get
 
@@ -1559,8 +1850,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### database-migration-service / Microsoft.DataMigration/services/projects / Get
 
@@ -1578,8 +1873,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 202; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### service-discovery / Microsoft.Network/privateDnsZones / Get
 
@@ -1597,8 +1896,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 201; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### service-discovery / Microsoft.App/managedEnvironments / Get
 
@@ -1616,8 +1919,12 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 400; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
+- [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
+- [ ] `missing-location`: pending
+- [ ] `null-properties`: pending
+- [ ] `invalid-tags-shape`: pending
 
 ### service-discovery / Microsoft.App/containerApps / Get
 

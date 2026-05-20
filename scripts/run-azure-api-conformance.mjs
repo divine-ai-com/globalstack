@@ -278,9 +278,9 @@ async function azureRequest(method, path, body) {
   };
 }
 
-function requestPath(call, replacements, { omitApiVersion = false } = {}) {
+function requestPath(call, replacements, { omitApiVersion = false, apiVersionOverride = null } = {}) {
   const path = interpolate(call.pathTemplate, replacements);
-  return omitApiVersion ? path : `${path}?api-version=${call.apiVersion}`;
+  return omitApiVersion ? path : `${path}?api-version=${apiVersionOverride ?? call.apiVersion}`;
 }
 
 function responseErrorCode(response) {
@@ -394,7 +394,10 @@ async function runLocalCase(baseUrl, call, variance) {
   await seedLocalParents(baseUrl, call, variance, replacements);
 
   const body = interpolate(variance.body, replacements);
-  const path = requestPath(call, replacements, { omitApiVersion: variance.omitApiVersion });
+  const path = requestPath(call, replacements, {
+    omitApiVersion: variance.omitApiVersion,
+    apiVersionOverride: variance.apiVersionOverride,
+  });
   const response = await httpJson(baseUrl, call.method, path, body);
   const classification = await classifyLocal(call, variance, response);
   return {
@@ -426,7 +429,10 @@ async function runAzureCase(call, variance) {
   const inventory = {
     resourceGroupName: replacements.resourceGroupName,
     resourceGroupPath: rgPath,
-    trackedResourcePath: requestPath(call, replacements, { omitApiVersion: variance.omitApiVersion }),
+    trackedResourcePath: requestPath(call, replacements, {
+      omitApiVersion: variance.omitApiVersion,
+      apiVersionOverride: variance.apiVersionOverride,
+    }),
     cleanup: {
       attempted: false,
       verifiedDeleted: false,
@@ -492,6 +498,7 @@ async function writeAzureFixture(result, call, variance) {
       method: call.method,
       path: result.requestPath.replace(subscriptionId, '<subscription-id>'),
       body: sanitize(variance.body),
+      apiVersionOverride: variance.apiVersionOverride ?? null,
     },
     response: {
       status: result.status,

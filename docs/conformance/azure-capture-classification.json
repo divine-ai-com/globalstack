@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-05-19T19:00:36.759Z",
-  "fixtureCount": 448,
-  "cleanupVerifiedCount": 448,
+  "generatedAt": "2026-05-20T05:28:49.717Z",
+  "fixtureCount": 449,
+  "cleanupVerifiedCount": 449,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
     "provider-validation": 142,
     "arm-surface": 62,
     "provider-accepted": 98,
     "provider-routing-or-parent-validation": 136,
-    "capture-infrastructure-gap": 8,
-    "subscription-or-provider-readiness": 2
+    "subscription-or-provider-readiness": 3,
+    "capture-infrastructure-gap": 8
   },
   "byErrorCode": {
     "LocationRequired": 43,
@@ -26,6 +26,7 @@
     "ParentResourceNotFound": 72,
     "DeleteNotSupported": 3,
     "InvalidAccountType": 1,
+    "NoRegisteredProviderFound": 3,
     "SubscriptionNotFound": 4,
     "ValidateResourceInfoFailedWithInvalidSkuName": 2,
     "MalformedRoleAssignmentRequest": 1,
@@ -39,7 +40,6 @@
     "InvalidAdminLoginPassword": 1,
     "MissingRequiredParameter": 2,
     "InvalidRequestBody": 2,
-    "NoRegisteredProviderFound": 2,
     "ContainerAppCreateMustContainContainer": 1,
     "ValidationFailed": 1,
     "MissingParameterOnPrivateEndpoint": 1,
@@ -1216,6 +1216,19 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "blob-storage.microsoft-storage-storageaccounts.createOrUpdate.unsupported-api-version",
+      "capabilityId": "blob-storage",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 400,
+      "errorCode": "NoRegisteredProviderFound",
+      "cleanupVerified": true,
+      "validationDepth": "subscription-or-provider-readiness",
+      "cloudValidated": false,
+      "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
     },
     {
       "id": "blob-storage.microsoft-storage-storageaccounts.createOrUpdate.valid-minimal",
