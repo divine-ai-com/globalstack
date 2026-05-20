@@ -701,8 +701,8 @@ if (!eventHubsParityText) {
   if (eventHubsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Event Hubs parity control-plane matrix has failures');
   }
-  if ((eventHubsParity.controlPlane?.total ?? 0) < 42) {
-    errors.push('Azure Event Hubs parity control/data-plane matrix should exercise at least 42 cases');
+  if ((eventHubsParity.controlPlane?.total ?? 0) < 51) {
+    errors.push('Azure Event Hubs parity control/data-plane matrix should exercise at least 51 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -711,6 +711,7 @@ if (!eventHubsParityText) {
     'subscription mismatch is rejected',
     'missing api-version is rejected',
     'namespace create requires an existing resource group',
+    'local data-plane unknown namespace is not found',
     'resource group create succeeds',
     'namespace collection list is empty before create',
     'namespace delete missing returns no content',
@@ -722,6 +723,7 @@ if (!eventHubsParityText) {
     'namespace invalid sku is rejected',
     'namespace invalid capacity is rejected',
     'namespace create succeeds',
+    'local data-plane unknown event hub is not found',
     'namespace get succeeds',
     'namespace update preserves endpoint and tags',
     'namespace list includes created resource',
@@ -738,11 +740,18 @@ if (!eventHubsParityText) {
     'local data-plane partitions list succeeds',
     'local data-plane publish missing body is rejected',
     'local data-plane publish invalid properties is rejected',
+    'local data-plane batch publish invalid event is rejected',
     'local data-plane publish invalid partition is rejected',
     'local data-plane publish to explicit partition succeeds',
     'local data-plane publish with partition key succeeds',
+    'local data-plane same partition key routes consistently',
+    'local data-plane duplicate message ids are accepted',
+    'local data-plane batch publish succeeds',
     'local data-plane read from sequence succeeds',
+    'local data-plane read from later sequence skips older events',
+    'local data-plane read maxEvents limits result set',
     'local data-plane read invalid sequence is rejected',
+    'local data-plane read invalid maxEvents is rejected',
     'local data-plane read invalid partition is rejected',
     'local data-plane unsupported action fails closed',
     'unsupported namespace authorization rule action fails closed',

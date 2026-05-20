@@ -230,6 +230,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('local data-plane unknown namespace is not found', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}`);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NamespaceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('resource group create succeeds', async () => {
       const result = await httpJson(armPort, 'PUT', resourceGroupPath(resourceGroup), { location: 'eastus', tags: { purpose: 'globalstack-event-hubs-parity' } });
       assert.equal(result.status, 201);
@@ -289,6 +296,13 @@ async function runControlPlaneMatrix() {
         serviceBusEndpoint: result.body.properties.serviceBusEndpoint,
       });
       return { status: result.status, endpoint: result.body.properties.serviceBusEndpoint };
+    });
+
+    await record('local data-plane unknown event hub is not found', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}`);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'EventHubNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('namespace get succeeds', async () => {
@@ -413,6 +427,21 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('local data-plane batch publish invalid event is rejected', async () => {
+      const before = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=0`);
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        events: [
+          { body: { telemetry: 'valid' } },
+          { properties: { missing: 'body' } },
+        ],
+      });
+      const after = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=0`);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadParameter');
+      assert.equal(after.body.value.length, before.body.value.length);
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('local data-plane publish invalid partition is rejected', async () => {
       const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
         partitionId: '9',
@@ -447,6 +476,54 @@ async function runControlPlaneMatrix() {
       return { status: result.status, partitionId: result.body.partitionId, sequenceNumber: result.body.sequenceNumber };
     });
 
+    await record('local data-plane same partition key routes consistently', async () => {
+      const first = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionKey: 'drone-fleet-7',
+        body: { deviceId: 'drone-fleet-7', sample: 1 },
+      });
+      const second = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionKey: 'drone-fleet-7',
+        body: { deviceId: 'drone-fleet-7', sample: 2 },
+      });
+      assert.equal(first.status, 201);
+      assert.equal(second.status, 201);
+      assert.equal(second.body.partitionId, first.body.partitionId);
+      assert.equal(second.body.sequenceNumber, first.body.sequenceNumber + 1);
+      return { status: second.status, partitionId: second.body.partitionId, sequenceNumber: second.body.sequenceNumber };
+    });
+
+    await record('local data-plane duplicate message ids are accepted', async () => {
+      const first = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionId: '1',
+        messageId: 'duplicate-event-id',
+        body: { sample: 'first' },
+      });
+      const second = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionId: '1',
+        messageId: 'duplicate-event-id',
+        body: { sample: 'second' },
+      });
+      assert.equal(first.status, 201);
+      assert.equal(second.status, 201);
+      assert.equal(first.body.messageId, second.body.messageId);
+      assert.equal(second.body.sequenceNumber, first.body.sequenceNumber + 1);
+      return { status: second.status, partitionId: second.body.partitionId, sequenceNumber: second.body.sequenceNumber };
+    });
+
+    await record('local data-plane batch publish succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        events: [
+          { partitionId: '0', messageId: 'batch-event-0', body: { frame: 0 }, properties: { source: 'vision' } },
+          { partitionId: '0', messageId: 'batch-event-1', body: { frame: 1 }, properties: { source: 'vision' } },
+        ],
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.value.length, 2);
+      assert.deepEqual(result.body.value.map(item => item.messageId), ['batch-event-0', 'batch-event-1']);
+      assert.equal(result.body.value[1].sequenceNumber, result.body.value[0].sequenceNumber + 1);
+      return { status: result.status, count: result.body.value.length };
+    });
+
     await record('local data-plane read from sequence succeeds', async () => {
       const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=0`);
       assert.equal(result.status, 200);
@@ -454,8 +531,31 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('local data-plane read from later sequence skips older events', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=2`);
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.length > 0);
+      assert.ok(result.body.value.every(item => item.sequenceNumber >= 2));
+      assert.ok(!result.body.value.some(item => item.messageId === 'robotics-telemetry-1'));
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local data-plane read maxEvents limits result set', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=0&fromSequenceNumber=0&maxEvents=1`);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.value.length, 1);
+      return { status: result.status, count: result.body.value.length };
+    });
+
     await record('local data-plane read invalid sequence is rejected', async () => {
       const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=-1`);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane read invalid maxEvents is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=0&maxEvents=0`);
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'BadParameter');
       return { status: result.status, errorCode: errorCode(result) };

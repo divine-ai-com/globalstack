@@ -48,6 +48,61 @@ function choosePartition(partitionIds, body) {
   return partitionIds[0];
 }
 
+function parseNonNegativeInteger(value, fieldName) {
+  if (value === null || value === undefined) return { value: 0 };
+  if (!/^(0|[1-9]\d*)$/.test(String(value))) {
+    return { error: `${fieldName} must be a non-negative integer.` };
+  }
+  return { value: Number(value) };
+}
+
+function parsePositiveInteger(value, fieldName) {
+  if (value === null || value === undefined) return { value: null };
+  if (!/^[1-9]\d*$/.test(String(value))) {
+    return { error: `${fieldName} must be a positive integer when provided.` };
+  }
+  return { value: Number(value) };
+}
+
+function normalizePublishBody(body) {
+  if (body?.__invalidJson || !isObject(body)) {
+    return { error: 'Event publish requires a JSON object with a body field or an events array.' };
+  }
+  if (Array.isArray(body.events)) {
+    if (body.events.length === 0) return { error: 'Event batch publish requires at least one event.' };
+    return { events: body.events, batch: true };
+  }
+  if (body.body !== undefined) return { events: [body], batch: false };
+  return { error: 'Event publish requires a JSON object with a body field or an events array.' };
+}
+
+function validateEventBody(body) {
+  if (!isObject(body) || body.body === undefined) {
+    return 'Each event requires a JSON object with a body field.';
+  }
+  if (Object.hasOwn(body, 'properties') && !isObject(body.properties)) {
+    return 'Event properties must be an object when provided.';
+  }
+  return null;
+}
+
+function buildEvent(eventHub, partitionId, body) {
+  const events = eventHub.partitions.get(partitionId);
+  const sequenceNumber = events.length;
+  const event = {
+    sequenceNumber,
+    offset: String(sequenceNumber),
+    enqueuedTimeUtc: new Date().toISOString(),
+    messageId: body.messageId ?? randomUUID(),
+    partitionId,
+    partitionKey: body.partitionKey ?? null,
+    body: body.body,
+    properties: body.properties ?? {},
+  };
+  events.push(event);
+  return event;
+}
+
 export class EventHubsRouter {
   constructor() {
     this.namespaces = new Map();
@@ -133,30 +188,22 @@ export class EventHubsRouter {
 
         if (method === 'POST' && action === 'events') {
           const body = await readBody(req);
-          if (body?.__invalidJson || !isObject(body) || body.body === undefined) {
-            return sendError(res, 400, 'BadParameter', 'Event publish requires a JSON object with a body field.');
+          const normalized = normalizePublishBody(body);
+          if (normalized.error) return sendError(res, 400, 'BadParameter', normalized.error);
+
+          const pending = [];
+          for (const eventBody of normalized.events) {
+            const validationError = validateEventBody(eventBody);
+            if (validationError) return sendError(res, 400, 'BadParameter', validationError);
+            const partitionId = choosePartition(eventHub.partitionIds, eventBody);
+            if (!eventHub.partitionIds.includes(partitionId)) {
+              return sendError(res, 400, 'PartitionNotFound', `Partition '${partitionId}' does not exist on event hub '${eventHubName}'.`);
+            }
+            pending.push({ partitionId, eventBody });
           }
-          if (Object.hasOwn(body, 'properties') && !isObject(body.properties)) {
-            return sendError(res, 400, 'BadParameter', 'Event properties must be an object when provided.');
-          }
-          const partitionId = choosePartition(eventHub.partitionIds, body);
-          if (!eventHub.partitionIds.includes(partitionId)) {
-            return sendError(res, 400, 'PartitionNotFound', `Partition '${partitionId}' does not exist on event hub '${eventHubName}'.`);
-          }
-          const events = eventHub.partitions.get(partitionId);
-          const sequenceNumber = events.length;
-          const event = {
-            sequenceNumber,
-            offset: String(sequenceNumber),
-            enqueuedTimeUtc: new Date().toISOString(),
-            messageId: body.messageId ?? randomUUID(),
-            partitionId,
-            partitionKey: body.partitionKey ?? null,
-            body: body.body,
-            properties: body.properties ?? {},
-          };
-          events.push(event);
-          return sendJson(res, 201, event);
+
+          const published = pending.map(item => buildEvent(eventHub, item.partitionId, item.eventBody));
+          return sendJson(res, 201, normalized.batch ? { value: published } : published[0]);
         }
 
         if (method === 'GET' && action === 'events') {
@@ -164,12 +211,16 @@ export class EventHubsRouter {
           if (!eventHub.partitionIds.includes(partitionId)) {
             return sendError(res, 400, 'PartitionNotFound', `Partition '${partitionId}' does not exist on event hub '${eventHubName}'.`);
           }
-          const fromSequenceNumber = Number(url.searchParams.get('fromSequenceNumber') ?? 0);
-          if (!Number.isInteger(fromSequenceNumber) || fromSequenceNumber < 0) {
-            return sendError(res, 400, 'BadParameter', 'fromSequenceNumber must be a non-negative integer.');
+          const fromSequenceNumber = parseNonNegativeInteger(url.searchParams.get('fromSequenceNumber'), 'fromSequenceNumber');
+          if (fromSequenceNumber.error) return sendError(res, 400, 'BadParameter', fromSequenceNumber.error);
+          const maxEvents = parsePositiveInteger(url.searchParams.get('maxEvents'), 'maxEvents');
+          if (maxEvents.error) return sendError(res, 400, 'BadParameter', maxEvents.error);
+          let value = (eventHub.partitions.get(partitionId) ?? []).filter(event => event.sequenceNumber >= fromSequenceNumber.value);
+          if (maxEvents.value !== null) {
+            value = value.slice(0, maxEvents.value);
           }
           return sendJson(res, 200, {
-            value: (eventHub.partitions.get(partitionId) ?? []).filter(event => event.sequenceNumber >= fromSequenceNumber),
+            value,
           });
         }
 

@@ -92,7 +92,7 @@ Run the Event Hubs parity pack after changing Event Hubs namespace behavior, eve
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:event-hubs-parity
 ```
 
-Expected result is `dist/e2e/azure-event-hubs-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 42 Event Hubs cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, namespace and event hub lifecycle, stricter namespace/event hub parameter rejection, local publish/read partition facade behavior, unsupported authorization-rule and consumer-group routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-event-hubs-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 51 Event Hubs cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, namespace and event hub lifecycle, stricter namespace/event hub parameter rejection, local publish/read partition facade behavior, deterministic partition-key routing, duplicate message IDs, batch publish validation, max-event reads, unsupported authorization-rule and consumer-group routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Event Grid parity pack after changing Event Grid ARM behavior, local event routing, or platform deployment routing:
 

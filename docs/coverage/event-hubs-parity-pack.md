@@ -25,11 +25,11 @@ The pack verifies:
 - Event hub create/get/list/update/delete/post-delete lifecycle.
 - Parameter rejection for invalid location, invalid namespace name, invalid namespace SKU/capacity, invalid event hub name, invalid partition count, and invalid retention.
 - Endpoint and partition metadata for local Event Hubs resources.
-- Local publish/read facade behavior for explicit partitions, partition keys, sequence reads, invalid partitions, invalid event body/properties, and post-delete not-found.
+- Local publish/read facade behavior for unknown namespace/hub, explicit partitions, deterministic partition-key routing, duplicate message IDs, batch publish atomic rejection, sequence reads, max-event read limits, invalid partitions, invalid event body/properties, and post-delete not-found.
 - Unsupported Event Hubs child/action routes, including authorization-rule and consumer-group routes, fail closed with `GlobalStackResourceTypeNotEmulated`.
 - ARM template deployment can create a namespace and event hub.
 - The platform runner matrix still deploys native IaC through the GlobalStack provider route.
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Azure Event Hubs control-plane lifecycle, local parameter rejection cases, local publish/read partition facade, unsupported route boundaries, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Event Hubs is `cloudValidated` for AMQP/Kafka protocol semantics, Azure SDK producer/consumer compatibility, full partition assignment, consumer groups, checkpoints, throughput-unit limits, capture, RBAC, private link, throttling, or exact Azure service runtime behavior.
+Passing this pack means GlobalStack handles the listed Azure Event Hubs control-plane lifecycle, local parameter rejection cases, local publish/read partition facade, batch-shape rejection, unsupported route boundaries, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Event Hubs is `cloudValidated` for AMQP/Kafka protocol semantics, Azure SDK producer/consumer compatibility, full partition assignment, consumer groups, checkpoints, throughput-unit limits, capture, RBAC, private link, throttling, or exact Azure service runtime behavior.
