@@ -10,6 +10,7 @@ The pack covers the current GlobalStack Azure Activity Log Audit boundary:
 
 - ARM authentication and subscription mismatch rejection.
 - Event Grid `Microsoft.EventGrid/systemTopics` create, get, list, update, delete, missing-resource-group, not-found, and ARM-template deployment behavior.
+- Local administrative activity-log record emission and query filtering for system-topic write/delete operations, status, and correlation ID.
 - Parameter variance for system topic location, name, source, topic type, and identity shape.
 - Captured root-scope `Microsoft.Insights/diagnosticSettings` rejection behavior.
 - Fail-closed unsupported audit child/action routes, including system topic event subscriptions, key regeneration, and diagnostic setting child routes.

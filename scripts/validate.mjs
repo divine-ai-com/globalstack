@@ -2064,10 +2064,10 @@ if (!activityLogAuditParityText) {
     errors.push('Azure Activity Log Audit parity E2E did not pass');
   }
   if (activityLogAuditParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Activity Log Audit parity control-plane matrix has failures');
+    errors.push('Azure Activity Log Audit parity control/data-plane matrix has failures');
   }
-  if ((activityLogAuditParity.controlPlane?.total ?? 0) < 25) {
-    errors.push('Azure Activity Log Audit parity control-plane matrix should exercise at least 25 cases');
+  if ((activityLogAuditParity.controlPlane?.total ?? 0) < 34) {
+    errors.push('Azure Activity Log Audit parity control/data-plane matrix should exercise at least 34 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2085,16 +2085,24 @@ if (!activityLogAuditParityText) {
     'system topic missing source is rejected',
     'system topic missing topic type is rejected',
     'system topic invalid topic type is rejected',
+    'system topic invalid identity shape is rejected',
     'system topic create succeeds',
+    'local activity log records system topic write',
+    'local activity log status filter excludes missing failures',
     'system topic get succeeds',
     'system topic update can change tags',
+    'local activity log correlation filter returns one record',
     'system topic list includes created resource',
     'diagnostic setting create preserves captured unsupported root-scope behavior',
     'diagnostic setting empty body is rejected before captured root-scope behavior',
+    'diagnostic setting get preserves captured unsupported root-scope behavior',
     'unsupported system topic event subscription route fails closed',
+    'unsupported system topic list event subscriptions action fails closed',
     'unsupported system topic regenerate key action fails closed',
     'unsupported diagnostic setting child route fails closed',
     'ARM template deployment can create system topic',
+    'system topic delete succeeds',
+    'local activity log records system topic delete',
     'system topic get after delete is not found',
   ]) {
     if (!activityLogAuditParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {

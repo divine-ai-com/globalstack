@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createActivityLogStore } from '../packages/azure-data-plane/src/activity-log-store.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -159,6 +160,7 @@ async function runControlPlaneMatrix() {
   const diagnosticName = `diag-${suffix}`;
   const sourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}`;
   const workspaceResourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.OperationalInsights/workspaces/ws-${suffix}`;
+  const activityLog = createActivityLogStore();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -259,7 +261,31 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.type, 'Microsoft.EventGrid/systemTopics');
       assert.equal(result.body.properties.topicType, 'Microsoft.Resources.ResourceGroups');
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
+      activityLog.emit({
+        resourceId: result.body.id,
+        resourceGroup,
+        operationName: 'Microsoft.EventGrid/systemTopics/write',
+        properties: { provisioningState: result.body.properties.provisioningState },
+      });
       return { status: result.status, provisioningState: result.body.properties.provisioningState };
+    });
+
+    await record('local activity log records system topic write', async () => {
+      const records = activityLog.query({
+        resourceGroup,
+        category: 'Administrative',
+        operationName: 'Microsoft.EventGrid/systemTopics/write',
+        status: 'Succeeded',
+      });
+      assert.equal(records.length, 1);
+      assert.equal(records[0].resourceId.endsWith(`/systemTopics/${systemTopicName}`), true);
+      return { count: records.length, operationName: records[0].operationName };
+    });
+
+    await record('local activity log status filter excludes missing failures', async () => {
+      const records = activityLog.query({ resourceGroup, status: 'Failed' });
+      assert.deepEqual(records, []);
+      return { count: records.length };
     });
 
     await record('system topic get succeeds', async () => {
@@ -274,7 +300,26 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', systemTopicPath(resourceGroup, systemTopicName), systemTopicBody(sourceId, { tags: { workload: 'audit-log-routing', owner: 'mlops' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.tags.owner, 'mlops');
+      activityLog.emit({
+        resourceId: result.body.id,
+        resourceGroup,
+        operationName: 'Microsoft.EventGrid/systemTopics/write',
+        properties: { tags: result.body.tags },
+      });
       return { status: result.status };
+    });
+
+    await record('local activity log correlation filter returns one record', async () => {
+      const record = activityLog.emit({
+        resourceId: sourceId,
+        resourceGroup,
+        operationName: 'Microsoft.Resources/subscriptions/resourceGroups/write',
+        correlationId: `corr-${suffix}`,
+      });
+      const records = activityLog.query({ resourceGroup, correlationId: record.correlationId });
+      assert.equal(records.length, 1);
+      assert.equal(records[0].operationName, 'Microsoft.Resources/subscriptions/resourceGroups/write');
+      return { count: records.length, correlationId: record.correlationId };
     });
 
     await record('system topic list includes created resource', async () => {
@@ -337,7 +382,23 @@ async function runControlPlaneMatrix() {
     await record('system topic delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', systemTopicPath(resourceGroup, systemTopicName));
       assert.equal(result.status, 200);
+      activityLog.emit({
+        resourceId: `${sourceId}/providers/Microsoft.EventGrid/systemTopics/${systemTopicName}`,
+        resourceGroup,
+        operationName: 'Microsoft.EventGrid/systemTopics/delete',
+      });
       return { status: result.status };
+    });
+
+    await record('local activity log records system topic delete', async () => {
+      const records = activityLog.query({
+        resourceGroup,
+        operationName: 'Microsoft.EventGrid/systemTopics/delete',
+        status: 'Succeeded',
+      });
+      assert.equal(records.length, 1);
+      assert.equal(records[0].resourceId.endsWith(`/systemTopics/${systemTopicName}`), true);
+      return { count: records.length, operationName: records[0].operationName };
     });
 
     await record('system topic get after delete is not found', async () => {
@@ -386,7 +447,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- System topic under test: ${report.controlPlane.systemTopicName}`,
@@ -410,7 +471,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for Azure Event Grid system-topic ARM lifecycle, stricter parameter rejection, diagnostic-setting root-scope rejection captured from existing conformance evidence, unsupported audit child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Activity Log, tenant audit retention, diagnostic fanout, Event Grid delivery, RBAC, policy integration, immutable storage, throttling, or exact Azure event schema behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for Azure Event Grid system-topic ARM lifecycle, local administrative activity-log emission/query checks, stricter parameter rejection, diagnostic-setting root-scope rejection captured from existing conformance evidence, unsupported audit child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Activity Log, tenant audit retention, diagnostic fanout, Event Grid delivery, RBAC, policy integration, immutable storage, throttling, or exact Azure event schema behavior as cloudValidated.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -422,7 +483,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Activity Log audit system-topic ARM lifecycle, diagnostic-setting captured rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Activity Log audit system-topic ARM lifecycle, local administrative activity-log emission/query checks, diagnostic-setting captured rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Activity Log or Event Grid delivery cloudValidated claim.',
   controlPlane,
   platformMatrix,
