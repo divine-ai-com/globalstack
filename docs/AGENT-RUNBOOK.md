@@ -84,7 +84,7 @@ Run the Service Bus parity pack after changing Service Bus ARM behavior, officia
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-bus-parity
 ```
 
-Expected result is `dist/e2e/azure-service-bus-parity/results.json` with `ok == true`, zero control-plane failures, the official Service Bus emulator matrix passing, and all eight platform runners passing. This suite covers captured namespace validation, malformed/wrong auth and subscription mismatch, missing-parent topic/queue/subscription rejection, official naming-rule rejection, async namespace readiness, topic/queue/subscription lifecycle, fail-closed unsupported authorization-rule actions, ARM-template deployment, post-delete errors, official-emulator message completion and missing entity rejection, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-service-bus-parity/results.json` with `ok == true`, zero control-plane failures, the official Service Bus emulator matrix passing, and all eight platform runners passing. This suite covers captured namespace validation, malformed/wrong auth and subscription mismatch, missing-parent topic/queue/subscription rejection, official naming-rule rejection, async namespace readiness, topic/queue/subscription lifecycle, fail-closed unsupported authorization-rule actions, ARM-template deployment, post-delete errors, official-emulator send/receive/complete, abandon/redelivery, duplicate message-id delivery when duplicate detection is disabled, peek non-removal, dead-letter subqueue routing, missing entity rejection, and representative IaC deployment lifecycles.
 
 Run the Event Hubs parity pack after changing Event Hubs namespace behavior, event hub child behavior, unsupported Event Hubs route handling, or platform deployment routing:
 

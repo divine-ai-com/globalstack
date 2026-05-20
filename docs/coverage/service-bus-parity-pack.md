@@ -1,6 +1,6 @@
 # Azure Service Bus Parity Pack
 
-This pack is the local acceptance suite for Service Bus ARM behavior and official-emulator messaging before the capability moves closer to 99% parity. It does not replace live Azure capture for RBAC, retry windows, topic filters, DLQ behavior, or every management-plane parameter.
+This pack is the local acceptance suite for Service Bus ARM behavior and official-emulator messaging before the capability moves closer to 99% parity. It does not replace live Azure capture for RBAC, retry windows, topic filters, every dead-letter edge, sessions, duplicate-detection enforcement, or every management-plane parameter.
 
 ## What It Tests
 
@@ -20,7 +20,7 @@ By default it runs three layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | Service Bus ARM matrix | Auth rejection, malformed/wrong bearer rejection, subscription mismatch, missing `api-version`, missing resource group, captured namespace validation, missing-parent topic/queue/subscription rejection, official namespace/topic/queue/subscription naming rules, async namespace creation, get/update/list/delete/post-delete for namespaces, topics, subscriptions, and queues, fail-closed unsupported authorization-rule actions, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Official emulator matrix | Microsoft Service Bus emulator health plus queue send/receive/complete removal, topic publish/subscription receive, and missing topic/subscription/queue rejection. | The existing `npm run e2e:service-bus` report passes. |
+| Official emulator matrix | Microsoft Service Bus emulator health plus queue send/receive/complete removal, abandon/redelivery, duplicate message-id delivery when duplicate detection is disabled, peek non-removal, dead-letter subqueue routing, topic publish/subscription receive/complete removal, and missing topic/subscription/queue rejection. | The existing `npm run e2e:service-bus` report passes. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:service-bus-parity -- --skip-emulator --skip-platforms` only for tight local debugging. `npm run validate` requires the official emulator and platform matrices.
@@ -46,6 +46,6 @@ The Service Bus ARM matrix covers these deployment states:
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Service Bus control-plane, official-emulator, and platform deployment paths correctly in the local emulator. It does not mean Service Bus is `cloudValidated` for every live Azure parameter, RBAC case, data-plane error, retry behavior, session behavior, duplicate detection edge, topic filter rule, dead-letter path, or quota boundary.
+Passing this pack means GlobalStack handles the listed Service Bus control-plane, official-emulator, and platform deployment paths correctly in the local emulator. It does not mean Service Bus is `cloudValidated` for every live Azure parameter, RBAC case, data-plane error, retry behavior, session behavior, duplicate-detection enforcement edge, topic filter rule, every dead-letter path, or quota boundary.
 
 Promote behavior from this pack into a stronger claim only when there is cleanup-verified Azure evidence, official-emulator evidence with an explicit caveat, or an explicit out-of-scope declaration.

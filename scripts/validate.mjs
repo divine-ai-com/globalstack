@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 454) {
-    errors.push('Azure capture classification should include 454 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 455) {
+    errors.push('Azure capture classification should include 455 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -619,7 +619,12 @@ if (!serviceBusE2eText) {
     'wait for service bus health endpoint',
     'queue send and receive configured entity',
     'completed queue message is removed from active delivery',
+    'abandoned queue message is redelivered',
+    'duplicate queue message ids are delivered when duplicate detection is disabled',
+    'peeked queue message remains available for receive',
+    'dead-lettered queue message is available on dead-letter subqueue',
     'topic publish and subscription receive configured entity',
+    'completed topic subscription message is removed from active delivery',
     'missing topic is rejected by emulator',
     'missing subscription is rejected by emulator',
     'missing queue is rejected by emulator',

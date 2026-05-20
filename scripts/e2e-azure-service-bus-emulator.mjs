@@ -199,6 +199,93 @@ try {
       }
     });
 
+    await record('abandoned queue message is redelivered', async () => {
+      const sender = client.createSender('robot-telemetry');
+      const receiver = client.createReceiver('robot-telemetry');
+      const messageId = `abandon-${suffix}`;
+      try {
+        await sender.sendMessages({ body: { scenario: 'abandon-redelivery', suffix }, messageId });
+        const first = await receiver.receiveMessages(1, { maxWaitTimeInMs: 15000 });
+        assert.equal(first.length, 1);
+        assert.equal(first[0].messageId, messageId);
+        await receiver.abandonMessage(first[0]);
+        const second = await receiver.receiveMessages(1, { maxWaitTimeInMs: 15000 });
+        assert.equal(second.length, 1);
+        assert.equal(second[0].messageId, messageId);
+        await receiver.completeMessage(second[0]);
+        return `redelivered message ${messageId}`;
+      } finally {
+        await sender.close();
+        await receiver.close();
+      }
+    });
+
+    await record('duplicate queue message ids are delivered when duplicate detection is disabled', async () => {
+      const sender = client.createSender('robot-telemetry');
+      const receiver = client.createReceiver('robot-telemetry');
+      const messageId = `duplicate-${suffix}`;
+      try {
+        await sender.sendMessages([
+          { body: { copy: 1, suffix }, messageId },
+          { body: { copy: 2, suffix }, messageId },
+        ]);
+        const messages = await receiver.receiveMessages(2, { maxWaitTimeInMs: 15000 });
+        assert.equal(messages.length, 2);
+        assert.deepEqual(messages.map(message => message.messageId), [messageId, messageId]);
+        for (const message of messages) await receiver.completeMessage(message);
+        return `delivered ${messages.length} duplicate-id messages`;
+      } finally {
+        await sender.close();
+        await receiver.close();
+      }
+    });
+
+    await record('peeked queue message remains available for receive', async () => {
+      const sender = client.createSender('robot-telemetry');
+      const receiver = client.createReceiver('robot-telemetry');
+      const messageId = `peek-${suffix}`;
+      try {
+        await sender.sendMessages({ body: { scenario: 'peek-non-destructive', suffix }, messageId });
+        const peeked = await receiver.peekMessages(1);
+        assert.equal(peeked.length, 1);
+        assert.equal(peeked[0].messageId, messageId);
+        const received = await receiver.receiveMessages(1, { maxWaitTimeInMs: 15000 });
+        assert.equal(received.length, 1);
+        assert.equal(received[0].messageId, messageId);
+        await receiver.completeMessage(received[0]);
+        return `peeked and received message ${messageId}`;
+      } finally {
+        await sender.close();
+        await receiver.close();
+      }
+    });
+
+    await record('dead-lettered queue message is available on dead-letter subqueue', async () => {
+      const sender = client.createSender('robot-telemetry');
+      const receiver = client.createReceiver('robot-telemetry');
+      const deadLetterReceiver = client.createReceiver('robot-telemetry', { subQueueType: 'deadLetter' });
+      const messageId = `deadletter-${suffix}`;
+      try {
+        await sender.sendMessages({ body: { scenario: 'dead-letter', suffix }, messageId });
+        const messages = await receiver.receiveMessages(1, { maxWaitTimeInMs: 15000 });
+        assert.equal(messages.length, 1);
+        assert.equal(messages[0].messageId, messageId);
+        await receiver.deadLetterMessage(messages[0], {
+          deadLetterReason: 'globalstack-test',
+          deadLetterErrorDescription: 'parity dead-letter smoke',
+        });
+        const deadLetters = await deadLetterReceiver.receiveMessages(1, { maxWaitTimeInMs: 15000 });
+        assert.equal(deadLetters.length, 1);
+        assert.equal(deadLetters[0].messageId, messageId);
+        await deadLetterReceiver.completeMessage(deadLetters[0]);
+        return `dead-lettered message ${messageId}`;
+      } finally {
+        await sender.close();
+        await receiver.close();
+        await deadLetterReceiver.close();
+      }
+    });
+
     await record('topic publish and subscription receive configured entity', async () => {
       const sender = client.createSender('topic.1');
       const receiver = client.createReceiver('topic.1', 'subscription.1');
@@ -211,6 +298,17 @@ try {
         return `received topic message ${messages[0].messageId}`;
       } finally {
         await sender.close();
+        await receiver.close();
+      }
+    });
+
+    await record('completed topic subscription message is removed from active delivery', async () => {
+      const receiver = client.createReceiver('topic.1', 'subscription.1');
+      try {
+        const messages = await receiver.receiveMessages(1, { maxWaitTimeInMs: 3000 });
+        assert.equal(messages.length, 0);
+        return 'subscription returned no active messages after completion';
+      } finally {
         await receiver.close();
       }
     });
