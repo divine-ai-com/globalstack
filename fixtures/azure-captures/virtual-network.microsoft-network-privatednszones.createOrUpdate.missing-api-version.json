@@ -1,6 +1,6 @@
 {
   "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T20:13:51.269Z",
+  "capturedAt": "2026-05-20T14:11:27.081Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "global",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "9407851c-22c7-4743-8cd2-0b6620c8c6d7",
-      "x-ms-request-id": "9407851c-22c7-4743-8cd2-0b6620c8c6d7",
-      "x-ms-routing-request-id": "EASTUS:20260516T201344Z:9407851c-22c7-4743-8cd2-0b6620c8c6d7"
+      "x-ms-correlation-request-id": "75a6669f-44c0-4c57-9c79-6043ed67c62e",
+      "x-ms-request-id": "75a6669f-44c0-4c57-9c79-6043ed67c62e",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T141127Z:75a6669f-44c0-4c57-9c79-6043ed67c62e"
     },
     "body": {
       "error": {
@@ -34,7 +35,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-8f0acfe456",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

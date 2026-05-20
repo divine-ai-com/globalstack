@@ -630,6 +630,23 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         },
         'Virtual network validation error for invalid subnet address prefix format.',
       ),
+      realAzureVariance(
+        'missing-subnet-prefix',
+        'Create/update with a subnet entry that omits addressPrefix and addressPrefixes.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            subnets: [
+              {
+                name: 'bad',
+                properties: {},
+              },
+            ],
+          },
+        },
+        'Virtual network validation error for missing subnet address prefix.',
+      ),
     );
   }
 
@@ -678,6 +695,25 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Private endpoint validation error for missing groupIds.',
+      ),
+      realAzureVariance(
+        'missing-private-link-service-id',
+        'Create/update with privateLinkServiceConnections but without privateLinkServiceId.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            privateLinkServiceConnections: [
+              {
+                name: 'blob',
+                properties: {
+                  groupIds: ['blob'],
+                },
+              },
+            ],
+          },
+        },
+        'Private endpoint validation error for missing privateLinkServiceId.',
       ),
     );
   }

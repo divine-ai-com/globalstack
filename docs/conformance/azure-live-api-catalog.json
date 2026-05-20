@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T13:50:55.525Z",
+    "generatedAt": "2026-05-20T14:11:14.203Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -6207,6 +6207,29 @@
           "expectedAzure": "Virtual network validation error for invalid subnet address prefix format.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "missing-subnet-prefix",
+          "description": "Create/update with a subnet entry that omits addressPrefix and addressPrefixes.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "bad",
+                  "properties": {}
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Virtual network validation error for missing subnet address prefix.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -6529,6 +6552,31 @@
             }
           },
           "expectedAzure": "Private endpoint validation error for missing groupIds.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-private-link-service-id",
+          "description": "Create/update with privateLinkServiceConnections but without privateLinkServiceId.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Private endpoint validation error for missing privateLinkServiceId.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

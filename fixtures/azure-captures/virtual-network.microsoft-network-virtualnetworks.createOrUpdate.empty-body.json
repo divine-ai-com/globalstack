@@ -1,6 +1,6 @@
 {
   "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T20:11:51.039Z",
+  "capturedAt": "2026-05-20T14:11:22.568Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,34 +12,35 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bab0735538/providers/Microsoft.Network/virtualNetworks/vnet-bab0735538?api-version=2023-09-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "83de19a5-4c5a-48a1-a4ca-173efe2ea1d6",
-      "x-ms-request-id": "83de19a5-4c5a-48a1-a4ca-173efe2ea1d6",
-      "x-ms-routing-request-id": "EASTUS:20260516T201149Z:83de19a5-4c5a-48a1-a4ca-173efe2ea1d6"
+      "x-ms-correlation-request-id": "5d77812a-c523-483e-a58c-d597cbdfb9e3",
+      "x-ms-request-id": "5d77812a-c523-483e-a58c-d597cbdfb9e3",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T141122Z:5d77812a-c523-483e-a58c-d597cbdfb9e3"
     },
     "body": {
       "error": {
-        "code": "LocationRequired",
-        "message": "The location property is required for this definition."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-bab0735538",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

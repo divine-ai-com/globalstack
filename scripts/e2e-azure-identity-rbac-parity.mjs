@@ -456,6 +456,15 @@ async function runControlAndTokenMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('role assignment missing principalId preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleAssignmentPath(resourceGroup, roleAssignmentName), {
+        properties: { roleDefinitionId: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionName}` },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('role assignment missing roleDefinitionId preserves captured rejection', async () => {
       const result = await httpJson(armPort, 'PUT', roleAssignmentPath(resourceGroup, roleAssignmentName), {
         properties: { principalId: identityName },
@@ -508,6 +517,18 @@ async function runControlAndTokenMatrix() {
     await record('role definition missing permissions preserves captured rejection', async () => {
       const result = await httpJson(armPort, 'PUT', roleDefinitionPath(resourceGroup, roleDefinitionName), {
         properties: { roleName: 'missing-permissions' },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('role definition missing assignableScopes preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleDefinitionPath(resourceGroup, roleDefinitionName), {
+        properties: {
+          roleName: 'missing-assignable-scopes',
+          permissions: [{ actions: ['Microsoft.ManagedIdentity/userAssignedIdentities/read'], notActions: [] }],
+        },
       });
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'InvalidRequestContent');

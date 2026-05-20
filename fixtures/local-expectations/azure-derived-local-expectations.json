@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T13:51:20.580Z",
+  "generatedAt": "2026-05-20T14:11:35.196Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 390,
+  "expectationCount": 378,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -7680,47 +7680,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.empty-body",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateDnsZones",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d766da4962/providers/Microsoft.Network/privateDnsZones/d766da4962.internal?api-version=2020-06-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.invalid-location",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateDnsZones",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0a3db849f8/providers/Microsoft.Network/privateDnsZones/0a3db849f8.internal?api-version=2020-06-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.missing-api-version",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/privateDnsZones",
@@ -7781,47 +7740,6 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.empty-body",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-61bc7a09cb/providers/Microsoft.Network/privateEndpoints/pe-61bc7a09cb?api-version=2023-09-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.invalid-location",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-abd4c985f5/providers/Microsoft.Network/privateEndpoints/pe-abd4c985f5?api-version=2023-09-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-api-version",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/privateEndpoints",
@@ -7838,92 +7756,10 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3c79a85b02/providers/Microsoft.Network/privateEndpoints/pe-3c79a85b02",
         "body": {
           "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-group-ids",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-group-ids",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingParameterOnPrivateLinkServiceConnection",
-        "message": "Private link service connection /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-150398a98c/providers/Microsoft.Network/privateEndpoints/pe-150398a98c/privateLinkServiceConnections/blob is missing required parameter 'group Id'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-150398a98c/providers/Microsoft.Network/privateEndpoints/pe-150398a98c?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
           "properties": {
             "subnet": {
               "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
             },
-            "privateLinkServiceConnections": [
-              {
-                "name": "blob",
-                "properties": {
-                  "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
-                  "groupIds": []
-                }
-              }
-            ]
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-private-link-connections",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-private-link-connections",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingParameterOnPrivateEndpoint",
-        "message": "Private endpoint /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e7659ae5/providers/Microsoft.Network/privateEndpoints/pe-b8e7659ae5 is missing required parameter 'private link service connection.'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e7659ae5/providers/Microsoft.Network/privateEndpoints/pe-b8e7659ae5?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "subnet": {
-              "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
-            },
-            "privateLinkServiceConnections": []
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-subnet-id",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/privateEndpoints",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-subnet-id",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestFormat",
-        "message": "Cannot parse the request."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3956642ef/providers/Microsoft.Network/privateEndpoints/pe-a3956642ef?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "subnet": {},
             "privateLinkServiceConnections": [
               {
                 "name": "blob",
@@ -7938,7 +7774,7 @@
           }
         }
       },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.delete.not-found",
@@ -7998,151 +7834,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.empty-body",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bab0735538/providers/Microsoft.Network/virtualNetworks/vnet-bab0735538?api-version=2023-09-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-address-prefix",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-address-prefix",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidAddressPrefixFormat",
-        "message": "Address prefix 10.42.0.0/99 of resource /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f6380bf222/providers/Microsoft.Network/virtualNetworks/vnet-f6380bf222 is not formatted correctly. It should follow CIDR notation, for example 10.0.0.0/24."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f6380bf222/providers/Microsoft.Network/virtualNetworks/vnet-f6380bf222?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "addressSpace": {
-              "addressPrefixes": [
-                "10.42.0.0/99"
-              ]
-            },
-            "subnets": [
-              {
-                "name": "default",
-                "properties": {
-                  "addressPrefix": "10.42.1.0/24"
-                }
-              }
-            ]
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-location",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1dfd738771/providers/Microsoft.Network/virtualNetworks/vnet-1dfd738771?api-version=2023-09-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-subnet-prefix",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-subnet-prefix",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidAddressPrefixFormat",
-        "message": "Address prefix 10.42.1.0/99 of resource /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2b5ee8f56f/providers/Microsoft.Network/virtualNetworks/vnet-2b5ee8f56f/subnets/default is not formatted correctly. It should follow CIDR notation, for example 10.0.0.0/24."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2b5ee8f56f/providers/Microsoft.Network/virtualNetworks/vnet-2b5ee8f56f?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "addressSpace": {
-              "addressPrefixes": [
-                "10.42.0.0/16"
-              ]
-            },
-            "subnets": [
-              {
-                "name": "default",
-                "properties": {
-                  "addressPrefix": "10.42.1.0/99"
-                }
-              }
-            ]
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-address-space",
-      "capabilityId": "virtual-network",
-      "resourceType": "Microsoft.Network/virtualNetworks",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-address-space",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "NoAddressPrefixOrPoolProvided",
-        "message": "Address prefix and ipam pool reference are both empty/null in request payload of resource /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f23b06c436/providers/Microsoft.Network/virtualNetworks/vnet-f23b06c436. Please provide either address prefix or ipam pool reference."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f23b06c436/providers/Microsoft.Network/virtualNetworks/vnet-f23b06c436?api-version=2023-09-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "addressSpace": {},
-            "subnets": [
-              {
-                "name": "default",
-                "properties": {
-                  "addressPrefix": "10.42.1.0/24"
-                }
-              }
-            ]
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-api-version",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/virtualNetworks",
@@ -8159,7 +7850,21 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c0df4f59f8/providers/Microsoft.Network/virtualNetworks/vnet-c0df4f59f8",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "addressSpace": {
+              "addressPrefixes": [
+                "10.42.0.0/16"
+              ]
+            },
+            "subnets": [
+              {
+                "name": "default",
+                "properties": {
+                  "addressPrefix": "10.42.1.0/24"
+                }
+              }
+            ]
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."

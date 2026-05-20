@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T13:51:20.903Z",
+    "generatedAt": "2026-05-20T14:11:35.494Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -1958,13 +1958,12 @@
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 110,
-        "liveCaptureCount": 27,
+        "liveCaptureCount": 41,
         "validationDepthCounts": {
-          "provider-validation": 14,
+          "capture-infrastructure-gap": 30,
           "arm-surface": 3,
-          "provider-accepted": 6,
-          "provider-routing-or-parent-validation": 3,
-          "capture-infrastructure-gap": 1
+          "provider-accepted": 5,
+          "provider-routing-or-parent-validation": 3
         }
       },
       "dimensionCounts": {
@@ -1987,8 +1986,8 @@
         "parameterVarianceCaptures": {
           "status": "partial",
           "evidence": [
-            "27 live ARM captures",
-            "variance cases: empty-body=3, invalid-location=3, missing-api-version=3, valid-minimal=3, not-found=6, empty-list=3, missing-group-ids=1, missing-private-link-connections=1, missing-subnet-id=1, invalid-address-prefix=1, invalid-subnet-prefix=1, missing-address-space=1"
+            "41 live ARM captures",
+            "variance cases: empty-body=3, invalid-location=3, invalid-tags-shape=3, missing-api-version=3, missing-location=3, null-properties=3, unsupported-api-version=3, valid-minimal=3, not-found=6, empty-list=3, missing-group-ids=1, missing-private-link-connections=1, missing-private-link-service-id=1, missing-subnet-id=1, invalid-address-prefix=1, invalid-subnet-prefix=1, missing-address-space=1, missing-subnet-prefix=1"
           ],
           "gaps": [
             "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
@@ -2009,7 +2008,7 @@
         "errorShapeFidelity": {
           "status": "partial",
           "evidence": [
-            "validation depths: provider-validation=14, arm-surface=3, provider-accepted=6, provider-routing-or-parent-validation=3, capture-infrastructure-gap=1"
+            "validation depths: capture-infrastructure-gap=30, arm-surface=3, provider-accepted=5, provider-routing-or-parent-validation=3"
           ],
           "gaps": [
             "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."

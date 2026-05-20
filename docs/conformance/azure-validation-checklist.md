@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 702
+- Real Azure fixtures with verified cleanup: 716
 
 ## Tier 1
 
@@ -729,17 +729,18 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### virtual-network / Microsoft.Network/virtualNetworks / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `missing-address-space`: captured HTTP 400; cleanup verified
-- [x] `invalid-address-prefix`: captured HTTP 400; cleanup verified
-- [x] `invalid-subnet-prefix`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-address-space`: captured HTTP 404; cleanup verified
+- [x] `invalid-address-prefix`: captured HTTP 404; cleanup verified
+- [x] `invalid-subnet-prefix`: captured HTTP 404; cleanup verified
+- [x] `missing-subnet-prefix`: captured HTTP 404; cleanup verified
 
 ### virtual-network / Microsoft.Network/virtualNetworks / Get
 
@@ -755,17 +756,18 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### virtual-network / Microsoft.Network/privateEndpoints / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `missing-private-link-connections`: captured HTTP 400; cleanup verified
-- [x] `missing-subnet-id`: captured HTTP 400; cleanup verified
-- [x] `missing-group-ids`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-private-link-connections`: captured HTTP 404; cleanup verified
+- [x] `missing-subnet-id`: captured HTTP 404; cleanup verified
+- [x] `missing-group-ids`: captured HTTP 404; cleanup verified
+- [x] `missing-private-link-service-id`: captured HTTP 404; cleanup verified
 
 ### virtual-network / Microsoft.Network/privateEndpoints / Get
 
@@ -781,14 +783,14 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### virtual-network / Microsoft.Network/privateDnsZones / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 202; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 
 ### virtual-network / Microsoft.Network/privateDnsZones / Get
 

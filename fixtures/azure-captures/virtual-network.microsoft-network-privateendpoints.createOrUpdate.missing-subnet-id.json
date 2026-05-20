@@ -1,6 +1,6 @@
 {
   "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-subnet-id",
-  "capturedAt": "2026-05-20T12:53:57.983Z",
+  "capturedAt": "2026-05-20T14:11:26.384Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -32,37 +32,31 @@
     "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "7a376961-a877-47a8-9e14-16a6cb9ca98f",
-      "x-ms-request-id": "678df074-93b5-4b9d-8f29-b14f621719e1",
-      "x-ms-routing-request-id": "EASTUS:20260520T125251Z:7a376961-a877-47a8-9e14-16a6cb9ca98f"
+      "x-ms-correlation-request-id": "6848de18-b67c-477d-8ed3-687b71b0fb09",
+      "x-ms-request-id": "6848de18-b67c-477d-8ed3-687b71b0fb09",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T141126Z:6848de18-b67c-477d-8ed3-687b71b0fb09"
     },
     "body": {
       "error": {
-        "code": "InvalidRequestFormat",
-        "message": "Cannot parse the request.",
-        "details": [
-          {
-            "code": "MissingJsonReferenceId",
-            "message": "Value for reference id is missing. Path properties.subnet."
-          }
-        ]
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-a3956642ef",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

@@ -1,27 +1,27 @@
 {
-  "generatedAt": "2026-05-20T13:51:20.256Z",
-  "fixtureCount": 702,
-  "cleanupVerifiedCount": 702,
+  "generatedAt": "2026-05-20T14:11:34.919Z",
+  "fixtureCount": 716,
+  "cleanupVerifiedCount": 716,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
-    "provider-validation": 140,
+    "provider-validation": 126,
     "arm-surface": 84,
-    "provider-accepted": 96,
+    "provider-accepted": 95,
     "provider-routing-or-parent-validation": 122,
-    "capture-infrastructure-gap": 255,
+    "capture-infrastructure-gap": 284,
     "subscription-or-provider-readiness": 5
   },
   "byErrorCode": {
-    "LocationRequired": 38,
-    "InvalidResourceLocation": 38,
+    "LocationRequired": 35,
+    "InvalidResourceLocation": 35,
     "MissingApiVersionParameter": 84,
     "InvalidRequest": 5,
-    "null": 101,
+    "null": 100,
     "ResourceNotFound": 58,
     "BadRequest": 9,
     "ResourceTypeNotSupported": 10,
     "InvalidParameter": 1,
-    "SubscriptionNotFound": 251,
+    "SubscriptionNotFound": 280,
     "InvalidProperty": 3,
     "NoRegisteredProviderFound": 5,
     "ParentResourceNotFound": 64,
@@ -41,11 +41,7 @@
     "InvalidRequestBody": 2,
     "ContainerAppCreateMustContainContainer": 1,
     "ValidationFailed": 1,
-    "MissingParameterOnPrivateLinkServiceConnection": 1,
-    "MissingParameterOnPrivateEndpoint": 2,
-    "InvalidRequestFormat": 2,
-    "InvalidAddressPrefixFormat": 2,
-    "NoAddressPrefixOrPoolProvided": 2
+    "InvalidRequestFormat": 1
   },
   "captures": [
     {
@@ -8647,12 +8643,12 @@
       "resourceType": "Microsoft.Network/privateDnsZones",
       "operation": "CreateOrUpdate",
       "varianceId": "empty-body",
-      "status": 400,
-      "errorCode": "LocationRequired",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.invalid-location",
@@ -8660,12 +8656,25 @@
       "resourceType": "Microsoft.Network/privateDnsZones",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "status": 400,
-      "errorCode": "InvalidResourceLocation",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateDnsZones",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.missing-api-version",
@@ -8681,17 +8690,56 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
+      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.missing-location",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateDnsZones",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.null-properties",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateDnsZones",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.unsupported-api-version",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateDnsZones",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
       "id": "virtual-network.microsoft-network-privatednszones.createOrUpdate.valid-minimal",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/privateDnsZones",
       "operation": "CreateOrUpdate",
       "varianceId": "valid-minimal",
-      "status": 202,
-      "errorCode": null,
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-accepted",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privatednszones.delete.not-found",
@@ -8738,12 +8786,12 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "empty-body",
-      "status": 400,
-      "errorCode": "LocationRequired",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.invalid-location",
@@ -8751,12 +8799,25 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "status": 400,
-      "errorCode": "InvalidResourceLocation",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-api-version",
@@ -8777,12 +8838,25 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-group-ids",
-      "status": 400,
-      "errorCode": "MissingParameterOnPrivateLinkServiceConnection",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-location",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-private-link-connections",
@@ -8790,12 +8864,25 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-private-link-connections",
-      "status": 400,
-      "errorCode": "MissingParameterOnPrivateEndpoint",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-private-link-service-id",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-private-link-service-id",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-subnet-id",
@@ -8803,12 +8890,38 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-subnet-id",
-      "status": 400,
-      "errorCode": "InvalidRequestFormat",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.null-properties",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.unsupported-api-version",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.valid-minimal",
@@ -8816,12 +8929,12 @@
       "resourceType": "Microsoft.Network/privateEndpoints",
       "operation": "CreateOrUpdate",
       "varianceId": "valid-minimal",
-      "status": 400,
-      "errorCode": "MissingParameterOnPrivateEndpoint",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-privateendpoints.delete.not-found",
@@ -8868,12 +8981,12 @@
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "empty-body",
-      "status": 400,
-      "errorCode": "LocationRequired",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-address-prefix",
@@ -8881,12 +8994,12 @@
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-address-prefix",
-      "status": 400,
-      "errorCode": "InvalidAddressPrefixFormat",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-location",
@@ -8894,12 +9007,12 @@
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "status": 400,
-      "errorCode": "InvalidResourceLocation",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-subnet-prefix",
@@ -8907,12 +9020,25 @@
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-subnet-prefix",
-      "status": 400,
-      "errorCode": "InvalidAddressPrefixFormat",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-address-space",
@@ -8920,12 +9046,12 @@
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-address-space",
-      "status": 400,
-      "errorCode": "NoAddressPrefixOrPoolProvided",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-api-version",
@@ -8941,17 +9067,69 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-location",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-subnet-prefix",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-subnet-prefix",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.null-properties",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.unsupported-api-version",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
+      "cleanupVerified": true,
+      "validationDepth": "capture-infrastructure-gap",
+      "cloudValidated": false,
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    },
+    {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.valid-minimal",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/virtualNetworks",
       "operation": "CreateOrUpdate",
       "varianceId": "valid-minimal",
-      "status": 400,
-      "errorCode": "NoAddressPrefixOrPoolProvided",
+      "status": 404,
+      "errorCode": "SubscriptionNotFound",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
       "id": "virtual-network.microsoft-network-virtualnetworks.delete.not-found",

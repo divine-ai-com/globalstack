@@ -1,6 +1,6 @@
 {
   "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T20:11:35.156Z",
+  "capturedAt": "2026-05-20T14:11:22.143Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,31 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c0df4f59f8/providers/Microsoft.Network/virtualNetworks/vnet-c0df4f59f8",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.42.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.42.1.0/24"
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "6b29b37f-2e32-473d-b774-5b5aec60af60",
-      "x-ms-request-id": "6b29b37f-2e32-473d-b774-5b5aec60af60",
-      "x-ms-routing-request-id": "EASTUS:20260516T201128Z:6b29b37f-2e32-473d-b774-5b5aec60af60"
+      "x-ms-correlation-request-id": "add729b3-0534-41aa-b39d-33a85ca3bc35",
+      "x-ms-request-id": "add729b3-0534-41aa-b39d-33a85ca3bc35",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T141122Z:add729b3-0534-41aa-b39d-33a85ca3bc35"
     },
     "body": {
       "error": {
@@ -34,7 +49,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-c0df4f59f8",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

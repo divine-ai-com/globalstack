@@ -166,11 +166,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | Get | GET | 2023-01-01 | 0 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | ListByResourceGroup | GET | 2023-01-01 | 0 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | Delete | DELETE | 2023-01-01 | 0 |
-| virtual-network | VPC | Microsoft.Network/virtualNetworks | CreateOrUpdate | PUT | 2023-09-01 | 11 |
+| virtual-network | VPC | Microsoft.Network/virtualNetworks | CreateOrUpdate | PUT | 2023-09-01 | 12 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | Get | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | Delete | DELETE | 2023-09-01 | 0 |
-| virtual-network | VPC | Microsoft.Network/privateEndpoints | CreateOrUpdate | PUT | 2023-09-01 | 11 |
+| virtual-network | VPC | Microsoft.Network/privateEndpoints | CreateOrUpdate | PUT | 2023-09-01 | 12 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | Get | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | Delete | DELETE | 2023-09-01 | 0 |
