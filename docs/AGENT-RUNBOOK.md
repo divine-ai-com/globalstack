@@ -140,7 +140,7 @@ Run the Azure Redis parity pack after changing Azure Cache for Redis ARM behavio
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:redis-parity
 ```
 
-Expected result is `dist/e2e/azure-redis-parity/results.json` with `ok == true`, zero control-plane failures, at least 25 Redis cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Redis cache lifecycle, parameter rejection, unsupported firewall/linked-server route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-redis-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 32 Redis cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Redis cache lifecycle, parameter rejection, local Redis backing-engine command success/failure behavior, unsupported firewall/linked-server route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Logic Workflows parity pack after changing Logic Apps workflow ARM behavior, definition validation, unsupported workflow route handling, or platform deployment routing:
 

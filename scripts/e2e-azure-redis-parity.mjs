@@ -35,8 +35,42 @@ function run(command, args, options = {}) {
   });
 }
 
+function runOutput(command, args, options = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(command, args, {
+      cwd: options.cwd ?? root,
+      env: options.env ?? process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    const timeout = setTimeout(() => {
+      child.kill('SIGTERM');
+      resolve({ code: 124, stdout, stderr });
+    }, options.timeoutMs ?? 120000);
+    child.on('error', error => {
+      clearTimeout(timeout);
+      resolve({ code: 127, stdout, stderr: `${stderr}${error.message}` });
+    });
+    child.on('close', code => {
+      clearTimeout(timeout);
+      resolve({ code: code ?? 1, stdout, stderr });
+    });
+  });
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function docker(args, options = {}) {
+  const result = await runOutput('docker', args, options);
+  if (result.code !== 0 && /permission denied|connect to the docker api/i.test(`${result.stderr}\n${result.stdout}`)) {
+    return runOutput('sudo', ['docker', ...args], options);
+  }
+  return result;
 }
 
 async function withArmServer(fn) {
@@ -47,6 +81,36 @@ async function withArmServer(fn) {
     return await fn(port);
   } finally {
     await new Promise(resolve => server.close(resolve));
+  }
+}
+
+async function withLocalRedis(fn) {
+  const suffix = Date.now().toString(36).slice(-8).toLowerCase();
+  const containerName = `globalstack-redis-${suffix}`;
+  const runResult = await docker([
+    'run',
+    '-d',
+    '--rm',
+    '--name',
+    containerName,
+    'redis:7-alpine',
+    'redis-server',
+    '--appendonly',
+    'no',
+  ], { timeoutMs: 180000 });
+  if (runResult.code !== 0) {
+    throw new Error(`failed to start local Redis backing container: ${runResult.stderr || runResult.stdout}`);
+  }
+
+  try {
+    for (let attempt = 0; attempt < 60; attempt += 1) {
+      const ready = await redis(containerName, ['PING'], { timeoutMs: 10000 });
+      if (ready.stdout.trim() === 'PONG') return await fn({ containerName });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    throw new Error('local Redis backing container did not become ready in time');
+  } finally {
+    await docker(['rm', '-f', containerName], { timeoutMs: 60000 });
   }
 }
 
@@ -140,6 +204,14 @@ function deploymentBody(redisName) {
   };
 }
 
+async function redis(containerName, args, options = {}) {
+  const result = await docker(['exec', containerName, 'redis-cli', '--raw', ...args], { timeoutMs: options.timeoutMs ?? 120000 });
+  if ((options.expectCode ?? 0) === 0 && result.code !== 0) {
+    throw new Error(`redis-cli failed (${result.code}): ${result.stderr || result.stdout}`);
+  }
+  return result;
+}
+
 async function redisReady(port, resourceGroup, redisName) {
   let last = null;
   for (let attempt = 0; attempt < 4; attempt += 1) {
@@ -170,6 +242,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
+  await withLocalRedis(async ({ containerName }) => {
   await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
@@ -267,6 +340,56 @@ async function runControlPlaneMatrix() {
       return { status: result.status, provisioningState: result.body.properties.provisioningState };
     });
 
+    await record('local redis backing ping succeeds', async () => {
+      const result = await redis(containerName, ['PING']);
+      assert.equal(result.stdout.trim(), 'PONG');
+      return { status: 0 };
+    });
+
+    await record('local redis backing string set and get succeeds', async () => {
+      await redis(containerName, ['SET', 'robot:arm:1', 'ready']);
+      const result = await redis(containerName, ['GET', 'robot:arm:1']);
+      assert.equal(result.stdout.trim(), 'ready');
+      return { status: 0, value: result.stdout.trim() };
+    });
+
+    await record('local redis backing integer increment succeeds', async () => {
+      await redis(containerName, ['SET', 'robot:counter', '0']);
+      const result = await redis(containerName, ['INCR', 'robot:counter']);
+      assert.equal(result.stdout.trim(), '1');
+      return { status: 0, value: Number(result.stdout.trim()) };
+    });
+
+    await record('local redis backing list order is preserved', async () => {
+      await redis(containerName, ['RPUSH', 'telemetry:samples', 'a', 'b', 'c']);
+      const result = await redis(containerName, ['LRANGE', 'telemetry:samples', '0', '-1']);
+      assert.deepEqual(result.stdout.trim().split('\n'), ['a', 'b', 'c']);
+      return { status: 0, count: result.stdout.trim().split('\n').length };
+    });
+
+    await record('local redis backing expiry removes key', async () => {
+      await redis(containerName, ['SET', 'short-lived', 'value', 'EX', '1']);
+      const ttl = await redis(containerName, ['TTL', 'short-lived']);
+      assert.ok(Number(ttl.stdout.trim()) > 0);
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      const exists = await redis(containerName, ['EXISTS', 'short-lived']);
+      assert.equal(exists.stdout.trim(), '0');
+      return { status: 0 };
+    });
+
+    await record('local redis backing wrong type is rejected', async () => {
+      await redis(containerName, ['SET', 'wrong-type', 'scalar']);
+      const result = await redis(containerName, ['LPUSH', 'wrong-type', 'value']);
+      assert.match(`${result.stdout}\n${result.stderr}`, /WRONGTYPE/i);
+      return { status: result.code, errorCode: 'RedisWrongType' };
+    });
+
+    await record('local redis backing unknown command is rejected', async () => {
+      const result = await redis(containerName, ['GLOBALSTACK_UNKNOWN_COMMAND'], { expectCode: 1 });
+      assert.match(`${result.stdout}\n${result.stderr}`, /unknown command/i);
+      return { status: result.code, errorCode: 'RedisUnknownCommand' };
+    });
+
     await record('redis update preserves metadata', async () => {
       const result = await httpJson(armPort, 'PUT', redisPath(resourceGroup, redisName), redisBody({ tags: { workload: 'robotics-cache' } }));
       assert.equal(result.status, 200);
@@ -317,6 +440,14 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('local redis backing cleanup succeeds', async () => {
+      const flush = await redis(containerName, ['FLUSHDB']);
+      assert.equal(flush.stdout.trim(), 'OK');
+      const exists = await redis(containerName, ['EXISTS', 'robot:arm:1']);
+      assert.equal(exists.stdout.trim(), '0');
+      return { status: 0 };
+    });
+
     await record('redis get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', redisPath(resourceGroup, redisName));
       assert.equal(result.status, 404);
@@ -329,6 +460,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 204);
       return { status: result.status };
     });
+  });
   });
 
   const failed = cases.filter(item => !item.ok);
@@ -382,7 +514,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Redis cache under test: ${report.controlPlane.redisName}`,
@@ -406,7 +538,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Cache for Redis ARM lifecycle, parameter rejection, unsupported child route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Redis as 99%-complete or cloudValidated for Redis protocol behavior, clustering, persistence, firewall rules, private link, TLS/auth edge cases, patching, throttling, RBAC, or exact Azure data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Cache for Redis ARM lifecycle, parameter rejection, local Redis backing-engine command success and failure behavior, unsupported child route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Redis as 99%-complete or cloudValidated for Azure Cache for Redis runtime behavior, clustering, persistence, firewall rules, private link, TLS/auth edge cases, patching, throttling, RBAC, or exact Azure service behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -418,7 +550,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Cache for Redis ARM lifecycle, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Cache for Redis ARM lifecycle, parameter rejection, local Redis backing-engine command checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Redis cloudValidated claim.',
   controlPlane,
   platformMatrix,

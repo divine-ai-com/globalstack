@@ -1317,8 +1317,8 @@ if (!redisParityText) {
   if (redisParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Redis parity control-plane matrix has failures');
   }
-  if ((redisParity.controlPlane?.total ?? 0) < 25) {
-    errors.push('Azure Redis parity control-plane matrix should exercise at least 25 cases');
+  if ((redisParity.controlPlane?.total ?? 0) < 32) {
+    errors.push('Azure Redis parity control/data-plane matrix should exercise at least 32 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1339,12 +1339,20 @@ if (!redisParityText) {
     'redis invalid non-ssl flag is rejected',
     'redis create returns async Azure shape',
     'redis get reaches Succeeded with endpoint metadata',
+    'local redis backing ping succeeds',
+    'local redis backing string set and get succeeds',
+    'local redis backing integer increment succeeds',
+    'local redis backing list order is preserved',
+    'local redis backing expiry removes key',
+    'local redis backing wrong type is rejected',
+    'local redis backing unknown command is rejected',
     'redis update preserves metadata',
     'redis list includes created resource',
     'unsupported redis firewall rule route fails closed',
     'unsupported redis linked server route fails closed',
     'ARM template deployment can create redis resource',
     'redis get after delete is not found',
+    'local redis backing cleanup succeeds',
     'redis delete after delete returns no content',
   ]) {
     if (!redisParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
