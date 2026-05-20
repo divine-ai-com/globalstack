@@ -1,0 +1,54 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:32:06.539Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e74f514a3d/providers/Microsoft.Network/privateDnsZones/e74f514a3d.internal/virtualNetworkLinks/link-e74f514a3d",
+    "body": {
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5e860d72-e3ed-4005-bc8d-f6ecddb509f6",
+      "x-ms-request-id": "5e860d72-e3ed-4005-bc8d-f6ecddb509f6",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133206Z:5e860d72-e3ed-4005-bc8d-f6ecddb509f6"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e74f514a3d",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

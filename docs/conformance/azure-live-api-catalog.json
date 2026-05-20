@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T12:48:15.244Z",
+    "generatedAt": "2026-05-20T13:28:02.107Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -781,7 +781,14 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "sku": {
+          "name": "Developer",
+          "capacity": 1
+        },
+        "properties": {
+          "publisherEmail": "platform@example.com",
+          "publisherName": "GlobalStack Platform"
+        }
       },
       "varianceCases": [
         {
@@ -789,7 +796,14 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -801,7 +815,14 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -813,7 +834,14 @@
           "apiVersionOverride": "1900-01-01",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -824,7 +852,14 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -842,7 +877,14 @@
           "id": "missing-location",
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
-            "properties": {}
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
           },
           "expectedAzure": "Provider-specific location-required validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -853,6 +895,10 @@
           "description": "Create/update with properties explicitly set to null.",
           "body": {
             "location": "{location}",
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -864,10 +910,70 @@
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
             "location": "{location}",
-            "properties": {},
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-publisher-email",
+          "description": "Create/update without properties.publisherEmail.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "",
+              "publisherName": "GlobalStack Platform"
+            }
+          },
+          "expectedAzure": "API Management service validation error for missing publisherEmail.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-publisher-name",
+          "description": "Create/update without properties.publisherName.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": ""
+            }
+          },
+          "expectedAzure": "API Management service validation error for missing publisherName.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -935,16 +1041,26 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apisName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "properties": {}
+        "properties": {
+          "displayName": "globalstack-api",
+          "path": "ingest",
+          "protocols": [
+            "https"
+          ]
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -955,8 +1071,13 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -967,8 +1088,13 @@
           "description": "Same create/update request with an intentionally unsupported API version.",
           "apiVersionOverride": "1900-01-01",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -978,8 +1104,14 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            },
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -994,20 +1126,9 @@
           "requiresRealAzure": true
         },
         {
-          "id": "missing-location",
-          "description": "Create/update without the top-level location field for a regional resource.",
-          "body": {
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific location-required validation error.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
           "id": "null-properties",
           "description": "Create/update with properties explicitly set to null.",
           "body": {
-            "location": "{location}",
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -1018,11 +1139,45 @@
           "id": "invalid-tags-shape",
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
-            "location": "{location}",
-            "properties": {},
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-path",
+          "description": "Create/update without properties.path.",
+          "body": {
+            "properties": {
+              "displayName": "globalstack-api",
+              "protocols": [
+                "https"
+              ]
+            }
+          },
+          "expectedAzure": "API Management API validation error for missing path.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-protocols-shape",
+          "description": "Create/update with properties.protocols set to a non-array shape.",
+          "body": {
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": "https"
+            }
+          },
+          "expectedAzure": "API Management API validation error for invalid protocols shape.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -3352,6 +3507,40 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "mismatched-resource-id",
+          "description": "Create/update with properties.resource.id that does not match the SQL database resource name.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "wrong-sql-database-id"
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL database validation error for mismatched properties.resource.id.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-throughput",
+          "description": "Create/update with options.throughput below the supported minimum.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{sqlDatabasesName}"
+              },
+              "options": {
+                "throughput": 100
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL database validation error for invalid throughput.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -3567,6 +3756,96 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "mismatched-resource-id",
+          "description": "Create/update with properties.resource.id that does not match the SQL container resource name.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "wrong-container-id",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL container validation error for mismatched properties.resource.id.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-partition-key-paths",
+          "description": "Create/update with an empty partitionKey.paths array.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL container validation error for missing partitionKey paths.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-partition-key-kind",
+          "description": "Create/update with an unsupported partitionKey.kind value.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "InvalidKind"
+                }
+              },
+              "options": {
+                "throughput": 400
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL container validation error for invalid partitionKey.kind.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-throughput",
+          "description": "Create/update with options.throughput below the supported minimum.",
+          "body": {
+            "properties": {
+              "resource": {
+                "id": "{containersName}",
+                "partitionKey": {
+                  "paths": [
+                    "/pk"
+                  ],
+                  "kind": "Hash"
+                }
+              },
+              "options": {
+                "throughput": 100
+              }
+            }
+          },
+          "expectedAzure": "Cosmos DB SQL container validation error for invalid throughput.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -3974,24 +4253,22 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "sku": {
-          "name": "Standard",
-          "tier": "Standard"
-        },
-        "properties": {}
+        "properties": {
+          "defaultMessageTimeToLive": "P14D",
+          "enableBatchedOperations": true,
+          "maxSizeInMegabytes": 1024
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -4002,12 +4279,11 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -4018,12 +4294,11 @@
           "description": "Same create/update request with an intentionally unsupported API version.",
           "apiVersionOverride": "1900-01-01",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -4033,12 +4308,12 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
             },
-            "properties": {}
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -4053,28 +4328,9 @@
           "requiresRealAzure": true
         },
         {
-          "id": "missing-location",
-          "description": "Create/update without the top-level location field for a regional resource.",
-          "body": {
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific location-required validation error.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
           "id": "null-properties",
           "description": "Create/update with properties explicitly set to null.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -4085,12 +4341,11 @@
           "id": "invalid-tags-shape",
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
             },
-            "properties": {},
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
@@ -4098,16 +4353,30 @@
           "requiresRealAzure": true
         },
         {
-          "id": "invalid-sku",
-          "description": "Create/update with an intentionally invalid SKU.",
+          "id": "invalid-max-size",
+          "description": "Create/update with properties.maxSizeInMegabytes set to an invalid non-positive value.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "GlobalStack_InvalidSku_For_Conformance"
-            },
-            "properties": {}
+            "properties": {
+              "defaultMessageTimeToLive": "P14D",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 0
+            }
           },
-          "expectedAzure": "Provider-specific SKU validation error.",
+          "expectedAzure": "Service Bus topic validation error for invalid maxSizeInMegabytes.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-default-message-ttl",
+          "description": "Create/update with properties.defaultMessageTimeToLive set to an invalid duration.",
+          "body": {
+            "properties": {
+              "defaultMessageTimeToLive": "not-a-duration",
+              "enableBatchedOperations": true,
+              "maxSizeInMegabytes": 1024
+            }
+          },
+          "expectedAzure": "Service Bus topic validation error for invalid defaultMessageTimeToLive.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -4175,24 +4444,20 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespacesName}/topics/{topicsName}/subscriptions/{subscriptionsName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "sku": {
-          "name": "Standard",
-          "tier": "Standard"
-        },
-        "properties": {}
+        "properties": {
+          "maxDeliveryCount": 10,
+          "deadLetteringOnFilterEvaluationExceptions": true
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "maxDeliveryCount": 10,
+              "deadLetteringOnFilterEvaluationExceptions": true
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -4203,12 +4468,10 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "maxDeliveryCount": 10,
+              "deadLetteringOnFilterEvaluationExceptions": true
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -4219,12 +4482,10 @@
           "description": "Same create/update request with an intentionally unsupported API version.",
           "apiVersionOverride": "1900-01-01",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
+            "properties": {
+              "maxDeliveryCount": 10,
+              "deadLetteringOnFilterEvaluationExceptions": true
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -4234,12 +4495,11 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
+            "properties": {
+              "maxDeliveryCount": 10,
+              "deadLetteringOnFilterEvaluationExceptions": true
             },
-            "properties": {}
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -4254,28 +4514,9 @@
           "requiresRealAzure": true
         },
         {
-          "id": "missing-location",
-          "description": "Create/update without the top-level location field for a regional resource.",
-          "body": {
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific location-required validation error.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
           "id": "null-properties",
           "description": "Create/update with properties explicitly set to null.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
-            },
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -4286,12 +4527,10 @@
           "id": "invalid-tags-shape",
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "Standard",
-              "tier": "Standard"
+            "properties": {
+              "maxDeliveryCount": 10,
+              "deadLetteringOnFilterEvaluationExceptions": true
             },
-            "properties": {},
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
@@ -4299,16 +4538,15 @@
           "requiresRealAzure": true
         },
         {
-          "id": "invalid-sku",
-          "description": "Create/update with an intentionally invalid SKU.",
+          "id": "invalid-max-delivery-count",
+          "description": "Create/update with properties.maxDeliveryCount set to an invalid non-positive value.",
           "body": {
-            "location": "{location}",
-            "sku": {
-              "name": "GlobalStack_InvalidSku_For_Conformance"
-            },
-            "properties": {}
+            "properties": {
+              "maxDeliveryCount": 0,
+              "deadLetteringOnFilterEvaluationExceptions": true
+            }
           },
-          "expectedAzure": "Provider-specific SKU validation error.",
+          "expectedAzure": "Service Bus subscription validation error for invalid maxDeliveryCount.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -8348,6 +8586,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-a-record",
+          "description": "Create/update with an invalid IPv4 address in properties.ARecords.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "999.1.1.1"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS A record validation error for invalid IPv4 address.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -8527,6 +8782,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-aaaa-record",
+          "description": "Create/update with an invalid IPv6 address in properties.AAAARecords.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "not-ipv6"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS AAAA record validation error for invalid IPv6 address.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -8722,6 +8994,25 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-caa-record",
+          "description": "Create/update with a CAA record missing its value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CAARecords": [
+                {
+                  "flags": 0,
+                  "tag": "issue",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS CAA record validation error for missing value.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -8889,6 +9180,19 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-cname",
+          "description": "Create/update without properties.CNAMERecord.cname.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {}
+            }
+          },
+          "expectedAzure": "DNS CNAME record validation error for missing cname.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -9078,6 +9382,24 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-mx-record",
+          "description": "Create/update with an MX record missing its exchange value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS MX record validation error for missing exchange.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -9259,6 +9581,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-ns-record",
+          "description": "Create/update with an NS record missing its nsdname.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "NSRecords": [
+                {
+                  "nsdname": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS NS record validation error for missing nsdname.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -9438,6 +9777,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-ptr-record",
+          "description": "Create/update with a PTR record missing its ptrdname.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS PTR record validation error for missing ptrdname.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -9645,6 +10001,26 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-soa-record",
+          "description": "Create/update with an SOA record missing minimumTTL.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200
+              }
+            }
+          },
+          "expectedAzure": "DNS SOA record validation error for missing minimumTTL.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -9844,6 +10220,26 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-srv-record",
+          "description": "Create/update with an SRV record missing its target.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS SRV record validation error for missing target.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -10035,6 +10431,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-txt-record",
+          "description": "Create/update with a TXT record that has no text values.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": []
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS TXT record validation error for missing text values.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -10373,6 +10786,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-a-record",
+          "description": "Create/update with an invalid IPv4 address in properties.ARecords.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "ARecords": [
+                {
+                  "ipv4Address": "999.1.1.1"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS A record validation error for invalid IPv4 address.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -10554,6 +10984,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-aaaa-record",
+          "description": "Create/update with an invalid IPv6 address in properties.AAAARecords.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "AAAARecords": [
+                {
+                  "ipv6Address": "not-ipv6"
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS AAAA record validation error for invalid IPv6 address.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -10721,6 +11168,19 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-cname",
+          "description": "Create/update without properties.CNAMERecord.cname.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "CNAMERecord": {}
+            }
+          },
+          "expectedAzure": "DNS CNAME record validation error for missing cname.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -10910,6 +11370,24 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-mx-record",
+          "description": "Create/update with an MX record missing its exchange value.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "MXRecords": [
+                {
+                  "preference": 10,
+                  "exchange": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS MX record validation error for missing exchange.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -11089,6 +11567,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-ptr-record",
+          "description": "Create/update with a PTR record missing its ptrdname.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "PTRRecords": [
+                {
+                  "ptrdname": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS PTR record validation error for missing ptrdname.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -11296,6 +11791,26 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-soa-record",
+          "description": "Create/update with an SOA record missing minimumTTL.",
+          "body": {
+            "properties": {
+              "TTL": 3600,
+              "SOARecord": {
+                "host": "ns1.example.test.",
+                "email": "azuredns-hostmaster.microsoft.com",
+                "serialNumber": 1,
+                "refreshTime": 3600,
+                "retryTime": 300,
+                "expireTime": 2419200
+              }
+            }
+          },
+          "expectedAzure": "DNS SOA record validation error for missing minimumTTL.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -11495,6 +12010,26 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-srv-record",
+          "description": "Create/update with an SRV record missing its target.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "SRVRecords": [
+                {
+                  "priority": 1,
+                  "weight": 5,
+                  "port": 443,
+                  "target": ""
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS SRV record validation error for missing target.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -11688,6 +12223,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-txt-record",
+          "description": "Create/update with a TXT record that has no text values.",
+          "body": {
+            "properties": {
+              "TTL": 60,
+              "TXTRecords": [
+                {
+                  "value": []
+                }
+              ]
+            }
+          },
+          "expectedAzure": "DNS TXT record validation error for missing text values.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -11876,6 +12428,36 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-virtual-network-id",
+          "description": "Create/update without properties.virtualNetwork.id.",
+          "body": {
+            "location": "global",
+            "properties": {
+              "registrationEnabled": false,
+              "virtualNetwork": {}
+            }
+          },
+          "expectedAzure": "Private DNS virtual network link validation error for missing virtualNetwork.id.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-registration-enabled-type",
+          "description": "Create/update with properties.registrationEnabled set to a non-boolean shape.",
+          "body": {
+            "location": "global",
+            "properties": {
+              "registrationEnabled": "false",
+              "virtualNetwork": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+              }
+            }
+          },
+          "expectedAzure": "Private DNS virtual network link validation error for invalid registrationEnabled type.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

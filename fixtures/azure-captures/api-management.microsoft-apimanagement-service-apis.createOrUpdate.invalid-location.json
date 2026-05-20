@@ -1,6 +1,6 @@
 {
   "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T15:54:23.212Z",
+  "capturedAt": "2026-05-20T13:30:07.777Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,36 +13,43 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8036e76251/providers/Microsoft.ApiManagement/service/apim-8036e76251/apis/api-8036e76251?api-version=2023-05-01-preview",
     "body": {
-      "location": "globalstack-invalid-location",
-      "properties": {}
-    }
+      "properties": {
+        "displayName": "globalstack-api",
+        "path": "ingest",
+        "protocols": [
+          "https"
+        ]
+      },
+      "location": "globalstack-invalid-location"
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "5b71e83f-3054-44e0-b96a-115afd349448",
-      "x-ms-request-id": "5b71e83f-3054-44e0-b96a-115afd349448",
-      "x-ms-routing-request-id": "EASTUS:20260516T155416Z:5b71e83f-3054-44e0-b96a-115afd349448"
+      "x-ms-correlation-request-id": "103ffe71-e001-4957-a212-1ff838937bc4",
+      "x-ms-request-id": "103ffe71-e001-4957-a212-1ff838937bc4",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133007Z:103ffe71-e001-4957-a212-1ff838937bc4"
     },
     "body": {
       "error": {
-        "code": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.ApiManagement/service/apim-8036e76251' under resource group 'rg-gs-conf-8036e76251' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-8036e76251",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-routing-or-parent-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
     "providerRegistered": null,
-    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

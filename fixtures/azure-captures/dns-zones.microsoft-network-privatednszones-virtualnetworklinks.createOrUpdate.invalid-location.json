@@ -1,0 +1,54 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-20T13:32:07.527Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6ada0aeb54/providers/Microsoft.Network/privateDnsZones/6ada0aeb54.internal/virtualNetworkLinks/link-6ada0aeb54?api-version=2020-06-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "828107b9-dcab-4e54-8c29-737e77597992",
+      "x-ms-request-id": "828107b9-dcab-4e54-8c29-737e77597992",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133207Z:828107b9-dcab-4e54-8c29-737e77597992"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6ada0aeb54",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

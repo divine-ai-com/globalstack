@@ -1,0 +1,56 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-20T13:30:21.466Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-990a3a97dc/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-990a3a97dc/sqlDatabases/sqldb990a3a97dc?api-version=2024-05-15",
+    "body": {
+      "properties": {
+        "resource": {
+          "id": "{sqlDatabasesName}"
+        },
+        "options": {
+          "throughput": 400
+        }
+      },
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5fc54db7-ba0e-4ce1-be56-ceb4bfde167f",
+      "x-ms-request-id": "5fc54db7-ba0e-4ce1-be56-ceb4bfde167f",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133021Z:5fc54db7-ba0e-4ce1-be56-ceb4bfde167f"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-990a3a97dc",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

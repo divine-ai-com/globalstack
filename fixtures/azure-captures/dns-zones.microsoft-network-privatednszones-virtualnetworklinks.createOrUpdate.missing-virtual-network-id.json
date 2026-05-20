@@ -1,0 +1,52 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.createOrUpdate.missing-virtual-network-id",
+  "capturedAt": "2026-05-20T13:32:10.228Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-virtual-network-id",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-011d151113/providers/Microsoft.Network/privateDnsZones/011d151113.internal/virtualNetworkLinks/link-011d151113?api-version=2020-06-01",
+    "body": {
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {}
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "bccdf39b-97c7-4579-8154-a26c4efbce02",
+      "x-ms-request-id": "bccdf39b-97c7-4579-8154-a26c4efbce02",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T133210Z:bccdf39b-97c7-4579-8154-a26c4efbce02"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-011d151113",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

@@ -1,6 +1,6 @@
 {
   "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.unsupported-api-version",
-  "capturedAt": "2026-05-20T06:58:05.934Z",
+  "capturedAt": "2026-05-20T13:30:16.228Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -32,31 +32,31 @@
     "apiVersionOverride": "1900-01-01"
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "7499536a-8090-4ab8-badc-4fd309a218db",
-      "x-ms-request-id": "7499536a-8090-4ab8-badc-4fd309a218db",
-      "x-ms-routing-request-id": "EASTUS:20260520T065803Z:7499536a-8090-4ab8-badc-4fd309a218db"
+      "x-ms-correlation-request-id": "b2a07d9f-4276-4072-ae54-7bddac2c2ea1",
+      "x-ms-request-id": "b2a07d9f-4276-4072-ae54-7bddac2c2ea1",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133015Z:b2a07d9f-4276-4072-ae54-7bddac2c2ea1"
     },
     "body": {
       "error": {
-        "code": "NoRegisteredProviderFound",
-        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'databaseAccounts'. The supported api-versions are '2014-04-01, 2015-04-08, 2015-11-06, 2016-03-19, 2016-03-31, 2019-08-01-preview, 2019-08-01, 2019-12-12, 2020-03-01, 2020-04-01, 2020-06-01-preview, 2020-09-01, 2021-01-15, 2021-03-01-preview, 2021-03-15, 2021-04-01-preview, 2021-04-15, 2021-05-01-preview, 2021-05-15, 2021-06-15, 2021-07-01-preview, 2021-10-15, 2021-10-15-preview, 2021-11-15-preview, 2022-02-15-preview, 2022-05-15-preview, 2022-05-15, 2022-08-15-preview, 2022-08-15, 2022-11-15, 2022-11-15-preview, 2023-03-01-preview, 2023-03-15, 2023-03-15-preview, 2023-04-15, 2023-09-15-preview, 2023-09-15, 2023-11-15-preview, 2023-11-15, 2024-02-15-preview, 2024-05-15, 2024-05-15-preview, 2024-08-15, 2024-09-01-preview, 2024-11-15, 2024-12-01-preview, 2025-04-15, 2025-05-01-preview, 2025-10-15, 2025-11-01-preview'. The supported locations are 'westcentralus, northcentralus, centralus, brazilsouth, canadacentral, westus2, eastus2, francecentral, japaneast, southeastasia, centralindia, southafricanorth, switzerlandnorth, uaenorth, ukwest, northeurope, westeurope, norwayeast, koreacentral, australiaeast, canadaeast, eastasia, germanywestcentral, uksouth, australiacentral, australiasoutheast, japanwest, koreasouth, southindia, westindia, westus, southcentralus, eastus, westus3, jioindiawest, swedencentral, qatarcentral, polandcentral, italynorth, israelcentral, spaincentral, newzealandnorth, mexicocentral, indonesiacentral, chilecentral, malaysiawest, austriaeast, belgiumcentral, denmarkeast'."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-5a885f814e",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "subscription-or-provider-readiness",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": false,
-    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

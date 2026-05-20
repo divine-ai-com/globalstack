@@ -1,0 +1,53 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-cname.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:26.633Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-410b11b242/providers/Microsoft.Network/privateDnsZones/410b11b242.internal/CNAME/cname-410b11b242",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "CNAMERecord": {
+          "cname": "target.example.test."
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "26956c10-3346-4bfd-8f0d-d58af0f55a6f",
+      "x-ms-request-id": "26956c10-3346-4bfd-8f0d-d58af0f55a6f",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133126Z:26956c10-3346-4bfd-8f0d-d58af0f55a6f"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-410b11b242",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

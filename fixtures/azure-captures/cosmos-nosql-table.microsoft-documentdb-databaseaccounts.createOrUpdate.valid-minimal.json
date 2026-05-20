@@ -1,6 +1,6 @@
 {
   "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T14:28:34.615Z",
+  "capturedAt": "2026-05-20T13:30:15.587Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,33 +14,49 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-54686b3093/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-54686b3093?api-version=2024-05-15",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "locations": [
+          {
+            "locationName": "{location}",
+            "failoverPriority": 0,
+            "isZoneRedundant": false
+          }
+        ],
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session"
+        }
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
-      "content-type": "application/json",
-      "x-ms-correlation-request-id": "cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924",
-      "x-ms-request-id": "cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924",
-      "x-ms-routing-request-id": "EASTUS:20260516T142833Z:cb7b75d9-a1d1-4b3b-a7fa-90df93ca7924"
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "68934012-1548-431d-96ad-f88f2e9bb94b",
+      "x-ms-request-id": "68934012-1548-431d-96ad-f88f2e9bb94b",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T133015Z:68934012-1548-431d-96ad-f88f2e9bb94b"
     },
     "body": {
-      "code": "BadRequest",
-      "message": "Value '' for Database account offer type is invalid\r\nActivityId: c809ac9c-98d5-4302-b781-6daf54fdead9, Microsoft.Azure.Documents.Common/2.14.0"
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-54686b3093",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

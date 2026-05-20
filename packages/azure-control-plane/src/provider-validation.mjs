@@ -453,6 +453,35 @@ function validateServiceBusName(resourceType, providerRoute) {
   return null;
 }
 
+function isIso8601Duration(value) {
+  return typeof value === 'string' && /^P(?=\d|T\d)(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/.test(value);
+}
+
+function validateServiceBusPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.ServiceBus/namespaces/topics') {
+    const maxSizeInMegabytes = body.properties?.maxSizeInMegabytes;
+    if (Object.hasOwn(body.properties ?? {}, 'maxSizeInMegabytes')
+      && (!Number.isInteger(maxSizeInMegabytes) || maxSizeInMegabytes <= 0)) {
+      return envelopedError(400, 'BadRequest', 'Service Bus topic properties.maxSizeInMegabytes must be a positive integer.');
+    }
+    const defaultMessageTimeToLive = body.properties?.defaultMessageTimeToLive;
+    if (Object.hasOwn(body.properties ?? {}, 'defaultMessageTimeToLive') && !isIso8601Duration(defaultMessageTimeToLive)) {
+      return envelopedError(400, 'BadRequest', 'Service Bus topic properties.defaultMessageTimeToLive must be an ISO 8601 duration.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.ServiceBus/namespaces/topics/subscriptions'
+    || resourceType === 'Microsoft.ServiceBus/namespaces/queues') {
+    const maxDeliveryCount = body.properties?.maxDeliveryCount;
+    if (Object.hasOwn(body.properties ?? {}, 'maxDeliveryCount')
+      && (!Number.isInteger(maxDeliveryCount) || maxDeliveryCount < 1)) {
+      return envelopedError(400, 'BadRequest', 'Service Bus subscription and queue properties.maxDeliveryCount must be an integer greater than 0.');
+    }
+  }
+
+  return null;
+}
+
 function validateEventGridName(resourceType, providerRoute) {
   const name = serviceBusNameFromTypePath(providerRoute?.typePath, resourceType.endsWith('/topics') ? 'topics' : 'eventSubscriptions');
   if (resourceType === 'Microsoft.EventGrid/topics') {
@@ -2251,6 +2280,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const mysqlPayloadValidation = validateMysqlPayload(resourceType, body, providerRoute);
   if (mysqlPayloadValidation) return mysqlPayloadValidation;
+
+  const serviceBusPayloadValidation = validateServiceBusPayload(resourceType, body);
+  if (serviceBusPayloadValidation) return serviceBusPayloadValidation;
 
   const cosmosPayloadValidation = validateCosmosPayload(resourceType, body, providerRoute);
   if (cosmosPayloadValidation) return cosmosPayloadValidation;

@@ -1,0 +1,55 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones-ns.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:05.026Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones/NS",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-13af9902a8/providers/Microsoft.Network/dnsZones/13af9902a8.example.test/NS/ns-13af9902a8",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "NSRecords": [
+          {
+            "nsdname": "ns1.example.test."
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "495cf408-5565-4755-a28c-dd0e4ec3d99b",
+      "x-ms-request-id": "495cf408-5565-4755-a28c-dd0e4ec3d99b",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133104Z:495cf408-5565-4755-a28c-dd0e4ec3d99b"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-13af9902a8",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

@@ -62,11 +62,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | azure-functions | Lambda | Microsoft.Web/serverfarms | Get | GET | 2023-12-01 | 0 |
 | azure-functions | Lambda | Microsoft.Web/serverfarms | ListByResourceGroup | GET | 2023-12-01 | 0 |
 | azure-functions | Lambda | Microsoft.Web/serverfarms | Delete | DELETE | 2023-12-01 | 0 |
-| api-management | API Gateway | Microsoft.ApiManagement/service | CreateOrUpdate | PUT | 2023-05-01-preview | 8 |
+| api-management | API Gateway | Microsoft.ApiManagement/service | CreateOrUpdate | PUT | 2023-05-01-preview | 11 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | Get | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | ListByResourceGroup | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | Delete | DELETE | 2023-05-01-preview | 0 |
-| api-management | API Gateway | Microsoft.ApiManagement/service/apis | CreateOrUpdate | PUT | 2023-05-01-preview | 8 |
+| api-management | API Gateway | Microsoft.ApiManagement/service/apis | CreateOrUpdate | PUT | 2023-05-01-preview | 9 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | Get | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | ListByResourceGroup | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | Delete | DELETE | 2023-05-01-preview | 0 |
@@ -110,11 +110,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | Get | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | ListByResourceGroup | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts | Delete | DELETE | 2024-05-15 | 0 |
-| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | CreateOrUpdate | PUT | 2024-05-15 | 7 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | CreateOrUpdate | PUT | 2024-05-15 | 9 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | Get | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | ListByResourceGroup | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases | Delete | DELETE | 2024-05-15 | 0 |
-| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | CreateOrUpdate | PUT | 2024-05-15 | 7 |
+| cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | CreateOrUpdate | PUT | 2024-05-15 | 11 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | Get | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | ListByResourceGroup | GET | 2024-05-15 | 0 |
 | cosmos-nosql-table | DynamoDB | Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers | Delete | DELETE | 2024-05-15 | 0 |
@@ -130,7 +130,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | Get | GET | 2021-11-01 | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | ListByResourceGroup | GET | 2021-11-01 | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics | Delete | DELETE | 2021-11-01 | 0 |
-| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | CreateOrUpdate | PUT | provider-default-required | 9 |
+| service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | CreateOrUpdate | PUT | provider-default-required | 8 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | Get | GET | provider-default-required | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | ListByResourceGroup | GET | provider-default-required | 0 |
 | service-bus-topics | SNS | Microsoft.ServiceBus/namespaces/topics/subscriptions | Delete | DELETE | provider-default-required | 0 |
@@ -219,43 +219,43 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | dns-zones | Route 53 | Microsoft.Network/dnsZones | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/A | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/A | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/A | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/A | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/A | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/AAAA | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/AAAA | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/AAAA | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/AAAA | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/AAAA | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/CAA | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/CAA | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CAA | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CAA | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CAA | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/CNAME | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/CNAME | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CNAME | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CNAME | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/CNAME | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/MX | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/MX | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/MX | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/MX | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/MX | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/NS | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/NS | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/NS | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/NS | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/NS | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/PTR | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/PTR | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/PTR | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/PTR | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/PTR | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/SOA | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/SOA | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SOA | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SOA | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SOA | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/SRV | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/SRV | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SRV | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SRV | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/SRV | Delete | DELETE | 2018-05-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/dnsZones/TXT | CreateOrUpdate | PUT | 2018-05-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/dnsZones/TXT | CreateOrUpdate | PUT | 2018-05-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/TXT | Get | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/TXT | ListByResourceGroup | GET | 2018-05-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/dnsZones/TXT | Delete | DELETE | 2018-05-01 | 0 |
@@ -263,39 +263,39 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/A | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/A | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/A | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/A | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/A | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/AAAA | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/AAAA | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/AAAA | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/AAAA | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/AAAA | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/CNAME | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/CNAME | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/CNAME | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/CNAME | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/CNAME | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/MX | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/MX | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/MX | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/MX | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/MX | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/PTR | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/PTR | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/PTR | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/PTR | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/PTR | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SOA | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SOA | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SOA | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SOA | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SOA | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SRV | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SRV | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SRV | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SRV | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/SRV | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/TXT | CreateOrUpdate | PUT | 2020-06-01 | 7 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/TXT | CreateOrUpdate | PUT | 2020-06-01 | 8 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/TXT | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/TXT | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/TXT | Delete | DELETE | 2020-06-01 | 0 |
-| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | CreateOrUpdate | PUT | 2020-06-01 | 8 |
+| dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | CreateOrUpdate | PUT | 2020-06-01 | 10 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | Get | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | ListByResourceGroup | GET | 2020-06-01 | 0 |
 | dns-zones | Route 53 | Microsoft.Network/privateDnsZones/virtualNetworkLinks | Delete | DELETE | 2020-06-01 | 0 |

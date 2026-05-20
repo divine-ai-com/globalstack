@@ -1,0 +1,52 @@
+{
+  "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.invalid-default-message-ttl",
+  "capturedAt": "2026-05-20T13:30:00.322Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-bus-topics",
+  "tier": 1,
+  "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-default-message-ttl",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1759cf259e/providers/Microsoft.ServiceBus/namespaces/ns-1759cf259e/topics/topic-1759cf259e?api-version=2021-11-01",
+    "body": {
+      "properties": {
+        "defaultMessageTimeToLive": "not-a-duration",
+        "enableBatchedOperations": true,
+        "maxSizeInMegabytes": 1024
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9e014eeb-da1b-44fc-972e-0a97bda69d05",
+      "x-ms-request-id": "9e014eeb-da1b-44fc-972e-0a97bda69d05",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133000Z:9e014eeb-da1b-44fc-972e-0a97bda69d05"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1759cf259e",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

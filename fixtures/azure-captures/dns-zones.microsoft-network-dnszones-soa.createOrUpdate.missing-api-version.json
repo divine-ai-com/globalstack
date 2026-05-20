@@ -1,0 +1,59 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones-soa.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:09.579Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones/SOA",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-869eff1798/providers/Microsoft.Network/dnsZones/869eff1798.example.test/SOA/@",
+    "body": {
+      "properties": {
+        "TTL": 3600,
+        "SOARecord": {
+          "host": "ns1.example.test.",
+          "email": "azuredns-hostmaster.microsoft.com",
+          "serialNumber": 1,
+          "refreshTime": 3600,
+          "retryTime": 300,
+          "expireTime": 2419200,
+          "minimumTTL": 300
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "39c1e821-51ac-4e98-b9b9-b0823009c429",
+      "x-ms-request-id": "39c1e821-51ac-4e98-b9b9-b0823009c429",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T133109Z:39c1e821-51ac-4e98-b9b9-b0823009c429"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-869eff1798",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

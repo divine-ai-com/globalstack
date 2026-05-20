@@ -1,0 +1,48 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones-ptr.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-20T13:31:07.989Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones/PTR",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fd81d92a8f/providers/Microsoft.Network/dnsZones/fd81d92a8f.example.test/PTR/ptr-fd81d92a8f?api-version=2018-05-01",
+    "body": {
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1c8714c2-365c-4722-a901-c45e272b4ad6",
+      "x-ms-request-id": "1c8714c2-365c-4722-a901-c45e272b4ad6",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133107Z:1c8714c2-365c-4722-a901-c45e272b4ad6"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fd81d92a8f",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

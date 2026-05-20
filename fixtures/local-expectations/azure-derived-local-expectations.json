@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T13:00:35.460Z",
+  "generatedAt": "2026-05-20T13:32:24.605Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 398,
+  "expectationCount": 404,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -370,47 +370,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.empty-body",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service/apis",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.ApiManagement/service/apim-b6498975f4' under resource group 'rg-gs-conf-b6498975f4' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b6498975f4/providers/Microsoft.ApiManagement/service/apim-b6498975f4/apis/api-b6498975f4?api-version=2023-05-01-preview",
-        "body": {}
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.invalid-location",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service/apis",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.ApiManagement/service/apim-8036e76251' under resource group 'rg-gs-conf-8036e76251' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8036e76251/providers/Microsoft.ApiManagement/service/apim-8036e76251/apis/api-8036e76251?api-version=2023-05-01-preview",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
       "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.missing-api-version",
       "capabilityId": "api-management",
       "resourceType": "Microsoft.ApiManagement/service/apis",
@@ -426,33 +385,16 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d69b2f9e76/providers/Microsoft.ApiManagement/service/apim-d69b2f9e76/apis/api-d69b2f9e76",
         "body": {
-          "location": "{location}",
-          "properties": {}
+          "properties": {
+            "displayName": "globalstack-api",
+            "path": "ingest",
+            "protocols": [
+              "https"
+            ]
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.valid-minimal",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service/apis",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ResourceNotFound",
-        "message": "The Resource 'Microsoft.ApiManagement/service/apim-7e33c2445b' under resource group 'rg-gs-conf-7e33c2445b' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7e33c2445b/providers/Microsoft.ApiManagement/service/apim-7e33c2445b/apis/api-7e33c2445b?api-version=2023-05-01-preview",
-        "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "api-management.microsoft-apimanagement-service-apis.delete.not-found",
@@ -512,47 +454,6 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
-      "id": "api-management.microsoft-apimanagement-service.createOrUpdate.empty-body",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-40c77c6426/providers/Microsoft.ApiManagement/service/apim-40c77c6426?api-version=2023-05-01-preview",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "api-management.microsoft-apimanagement-service.createOrUpdate.invalid-location",
-      "capabilityId": "api-management",
-      "resourceType": "Microsoft.ApiManagement/service",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1e2a38e68f/providers/Microsoft.ApiManagement/service/apim-1e2a38e68f?api-version=2023-05-01-preview",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "api-management.microsoft-apimanagement-service.createOrUpdate.missing-api-version",
       "capabilityId": "api-management",
       "resourceType": "Microsoft.ApiManagement/service",
@@ -569,7 +470,14 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5bd1933a8d/providers/Microsoft.ApiManagement/service/apim-5bd1933a8d",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "sku": {
+            "name": "Developer",
+            "capacity": 1
+          },
+          "properties": {
+            "publisherEmail": "platform@example.com",
+            "publisherName": "GlobalStack Platform"
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
@@ -2073,45 +1981,61 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.empty-body",
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.createOrUpdate.missing-api-version",
       "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
       "expected": {
         "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a0c97ffa32/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-a0c97ffa32?api-version=2024-05-15",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.invalid-location",
-      "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.DocumentDB/databaseAccounts",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f50b04b1f3/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-f50b04b1f3?api-version=2024-05-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ac94c157b2/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-ac94c157b2/sqlDatabases/sqldbac94c157b2/containers/cac94c157b2",
         "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "resource": {
+              "id": "{containersName}",
+              "partitionKey": "<redacted>"
+            },
+            "options": {
+              "throughput": 400
+            }
+          }
         }
       },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases.createOrUpdate.missing-api-version",
+      "capabilityId": "cosmos-nosql-table",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-221ac7f8cf/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-221ac7f8cf/sqlDatabases/sqldb221ac7f8cf",
+        "body": {
+          "properties": {
+            "resource": {
+              "id": "{sqlDatabasesName}"
+            },
+            "options": {
+              "throughput": 400
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.missing-api-version",
@@ -2130,7 +2054,20 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0e5c9dacf0/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-0e5c9dacf0",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "kind": "GlobalDocumentDB",
+          "properties": {
+            "databaseAccountOfferType": "Standard",
+            "locations": [
+              {
+                "locationName": "{location}",
+                "failoverPriority": 0,
+                "isZoneRedundant": false
+              }
+            ],
+            "consistencyPolicy": {
+              "defaultConsistencyLevel": "Session"
+            }
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
@@ -2193,47 +2130,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.createOrUpdate.empty-body",
-      "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/tableServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-266bfd241a/providers/Microsoft.Storage/storageAccounts/gs266bfd241a' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-266bfd241a/providers/Microsoft.Storage/storageAccounts/gs266bfd241a/tableServices/default/tables/table266bfd241a?api-version=2023-01-01",
-        "body": {}
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.createOrUpdate.invalid-location",
-      "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/tableServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4449df133e/providers/Microsoft.Storage/storageAccounts/gs4449df133e' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4449df133e/providers/Microsoft.Storage/storageAccounts/gs4449df133e/tableServices/default/tables/table4449df133e?api-version=2023-01-01",
-        "body": {
-          "properties": {},
-          "location": "globalstack-invalid-location"
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
       "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.createOrUpdate.missing-api-version",
       "capabilityId": "cosmos-nosql-table",
       "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
@@ -2255,27 +2151,6 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "cosmos-nosql-table.microsoft-storage-storageaccounts-tableservices-tables.createOrUpdate.valid-minimal",
-      "capabilityId": "cosmos-nosql-table",
-      "resourceType": "Microsoft.Storage/storageAccounts/tableServices/tables",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/tableServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-83452ac784/providers/Microsoft.Storage/storageAccounts/gs83452ac784' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-83452ac784/providers/Microsoft.Storage/storageAccounts/gs83452ac784/tableServices/default/tables/table83452ac784?api-version=2023-01-01",
-        "body": {
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
       "id": "database-migration-service.microsoft-datamigration-services.listByResourceGroup.empty-list",
       "capabilityId": "database-migration-service",
       "resourceType": "Microsoft.DataMigration/services",
@@ -2293,6 +2168,296 @@
         "body": null
       },
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-a.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/A",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-34bcedb005/providers/Microsoft.Network/dnsZones/34bcedb005.example.test/A/a-34bcedb005",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "ARecords": [
+              {
+                "ipv4Address": "10.10.1.10"
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-aaaa.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/AAAA",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4a034991f4/providers/Microsoft.Network/dnsZones/4a034991f4.example.test/AAAA/aaaa-4a034991f4",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "AAAARecords": [
+              {
+                "ipv6Address": "2001:db8::10"
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-caa.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/CAA",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ed501d8d41/providers/Microsoft.Network/dnsZones/ed501d8d41.example.test/CAA/caa-ed501d8d41",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "CAARecords": [
+              {
+                "flags": 0,
+                "tag": "issue",
+                "value": "example.com"
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-cname.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/CNAME",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e5741ecd70/providers/Microsoft.Network/dnsZones/e5741ecd70.example.test/CNAME/cname-e5741ecd70",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "CNAMERecord": {
+              "cname": "target.example.test."
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-mx.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/MX",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ba33b4805b/providers/Microsoft.Network/dnsZones/ba33b4805b.example.test/MX/mx-ba33b4805b",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "MXRecords": [
+              {
+                "preference": 10,
+                "exchange": "mail.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-ns.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/NS",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-13af9902a8/providers/Microsoft.Network/dnsZones/13af9902a8.example.test/NS/ns-13af9902a8",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "NSRecords": [
+              {
+                "nsdname": "ns1.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-ptr.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/PTR",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4640c8307d/providers/Microsoft.Network/dnsZones/4640c8307d.example.test/PTR/ptr-4640c8307d",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "PTRRecords": [
+              {
+                "ptrdname": "host.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-soa.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/SOA",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-869eff1798/providers/Microsoft.Network/dnsZones/869eff1798.example.test/SOA/@",
+        "body": {
+          "properties": {
+            "TTL": 3600,
+            "SOARecord": {
+              "host": "ns1.example.test.",
+              "email": "azuredns-hostmaster.microsoft.com",
+              "serialNumber": 1,
+              "refreshTime": 3600,
+              "retryTime": 300,
+              "expireTime": 2419200,
+              "minimumTTL": 300
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-srv.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/SRV",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9e655fe6d2/providers/Microsoft.Network/dnsZones/9e655fe6d2.example.test/SRV/_service._tcp.9e655fe6d2",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "SRVRecords": [
+              {
+                "priority": 1,
+                "weight": 5,
+                "port": 443,
+                "target": "service.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-dnszones-txt.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/dnsZones/TXT",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6d0fa6d832/providers/Microsoft.Network/dnsZones/6d0fa6d832.example.test/TXT/txt-6d0fa6d832",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "TXTRecords": [
+              {
+                "value": [
+                  "globalstack=parity"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "dns-zones.microsoft-network-dnszones.createOrUpdate.empty-body",
@@ -2394,6 +2559,265 @@
         "body": null
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-a.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/A",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-61b1f676f6/providers/Microsoft.Network/privateDnsZones/61b1f676f6.internal/A/a-61b1f676f6",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "ARecords": [
+              {
+                "ipv4Address": "10.10.1.10"
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-aaaa.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-03553fdf26/providers/Microsoft.Network/privateDnsZones/03553fdf26.internal/AAAA/aaaa-03553fdf26",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "AAAARecords": [
+              {
+                "ipv6Address": "2001:db8::10"
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-cname.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/CNAME",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-410b11b242/providers/Microsoft.Network/privateDnsZones/410b11b242.internal/CNAME/cname-410b11b242",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "CNAMERecord": {
+              "cname": "target.example.test."
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-mx.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/MX",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c49af1f3fc/providers/Microsoft.Network/privateDnsZones/c49af1f3fc.internal/MX/mx-c49af1f3fc",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "MXRecords": [
+              {
+                "preference": 10,
+                "exchange": "mail.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-ptr.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c07af290e9/providers/Microsoft.Network/privateDnsZones/c07af290e9.internal/PTR/ptr-c07af290e9",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "PTRRecords": [
+              {
+                "ptrdname": "host.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-soa.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4c0515b53f/providers/Microsoft.Network/privateDnsZones/4c0515b53f.internal/SOA/@",
+        "body": {
+          "properties": {
+            "TTL": 3600,
+            "SOARecord": {
+              "host": "ns1.example.test.",
+              "email": "azuredns-hostmaster.microsoft.com",
+              "serialNumber": 1,
+              "refreshTime": 3600,
+              "retryTime": 300,
+              "expireTime": 2419200,
+              "minimumTTL": 300
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-srv.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/SRV",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-152d1bfc29/providers/Microsoft.Network/privateDnsZones/152d1bfc29.internal/SRV/_service._tcp.152d1bfc29",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "SRVRecords": [
+              {
+                "priority": 1,
+                "weight": 5,
+                "port": 443,
+                "target": "service.example.test."
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-txt.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/TXT",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-411755c348/providers/Microsoft.Network/privateDnsZones/411755c348.internal/TXT/txt-411755c348",
+        "body": {
+          "properties": {
+            "TTL": 60,
+            "TXTRecords": [
+              {
+                "value": [
+                  "globalstack=parity"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "dns-zones.microsoft-network-privatednszones-virtualnetworklinks.createOrUpdate.missing-api-version",
+      "capabilityId": "dns-zones",
+      "resourceType": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e74f514a3d/providers/Microsoft.Network/privateDnsZones/e74f514a3d.internal/virtualNetworkLinks/link-e74f514a3d",
+        "body": {
+          "location": "global",
+          "properties": {
+            "registrationEnabled": false,
+            "virtualNetwork": {
+              "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}"
+            }
+          }
+        }
+      },
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "dns-zones.microsoft-network-privatednszones.createOrUpdate.empty-body",
@@ -6803,49 +7227,28 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.empty-body",
+      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics-subscriptions.createOrUpdate.missing-api-version",
       "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces/topics",
+      "resourceType": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-routing-or-parent-validation",
+      "varianceId": "missing-api-version",
+      "validationDepth": "arm-surface",
       "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ab8ae68945/providers/Microsoft.ServiceBus/namespaces/ns-ab8ae68945' could not be found."
+        "status": 400,
+        "errorCode": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ab8ae68945/providers/Microsoft.ServiceBus/namespaces/ns-ab8ae68945/topics/topic-ab8ae68945?api-version=2021-11-01",
-        "body": {}
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.invalid-location",
-      "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces/topics",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7f1b90913f/providers/Microsoft.ServiceBus/namespaces/ns-7f1b90913f' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7f1b90913f/providers/Microsoft.ServiceBus/namespaces/ns-7f1b90913f/topics/topic-7f1b90913f?api-version=2021-11-01",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-85a2f9fa4e/providers/Microsoft.ServiceBus/namespaces/ns-85a2f9fa4e/topics/topic-85a2f9fa4e/subscriptions/sub-85a2f9fa4e",
         "body": {
-          "location": "globalstack-invalid-location",
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "properties": {}
+          "properties": {
+            "maxDeliveryCount": 10,
+            "deadLetteringOnFilterEvaluationExceptions": true
+          }
         }
       },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.invalid-sku",
@@ -6888,41 +7291,14 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-025f2e9d8b/providers/Microsoft.ServiceBus/namespaces/ns-025f2e9d8b/topics/topic-025f2e9d8b",
         "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "properties": {}
+          "properties": {
+            "defaultMessageTimeToLive": "P14D",
+            "enableBatchedOperations": true,
+            "maxSizeInMegabytes": 1024
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.valid-minimal",
-      "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces/topics",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/topics', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5b45560649/providers/Microsoft.ServiceBus/namespaces/ns-5b45560649' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5b45560649/providers/Microsoft.ServiceBus/namespaces/ns-5b45560649/topics/topic-5b45560649?api-version=2021-11-01",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.delete.not-found",
@@ -6980,76 +7356,6 @@
         "body": null
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.empty-body",
-      "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-db51c58151/providers/Microsoft.ServiceBus/namespaces/ns-db51c58151?api-version=2021-11-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.invalid-location",
-      "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b0f35552af/providers/Microsoft.ServiceBus/namespaces/ns-b0f35552af?api-version=2021-11-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.invalid-sku",
-      "capabilityId": "service-bus-topics",
-      "resourceType": "Microsoft.ServiceBus/namespaces",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-sku",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "ValidateResourceInfoFailedWithInvalidSkuName",
-        "message": "Sku name 'GlobalStack_InvalidSku_For_Conformance' is invalid"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0e5400c7a1/providers/Microsoft.ServiceBus/namespaces/ns-0e5400c7a1?api-version=2021-11-01",
-        "body": {
-          "location": "{location}",
-          "sku": {
-            "name": "GlobalStack_InvalidSku_For_Conformance"
-          },
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.missing-api-version",

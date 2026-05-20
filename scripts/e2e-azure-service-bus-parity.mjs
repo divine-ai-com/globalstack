@@ -412,6 +412,24 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('topic invalid max size is rejected', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', topicPath), {
+        properties: { maxSizeInMegabytes: 0 },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('topic invalid default message ttl is rejected', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', topicPath), {
+        properties: { defaultMessageTimeToLive: 'not-a-duration' },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('queue invalid name is rejected by official naming rules', async () => {
       const result = await httpJson(
         port,
@@ -458,6 +476,15 @@ async function runControlPlaneMatrix() {
         providerPath(resourceGroup, 'Microsoft.ServiceBus', `${topicPath}/subscriptions/bad_`),
         { properties: {} },
       );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('subscription invalid max delivery count is rejected', async () => {
+      const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', subscriptionPath), {
+        properties: { maxDeliveryCount: 0 },
+      });
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'BadRequest');
       return { status: result.status, errorCode: errorCode(result) };

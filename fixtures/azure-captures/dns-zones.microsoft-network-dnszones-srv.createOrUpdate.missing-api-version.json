@@ -1,0 +1,58 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones-srv.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:11.606Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones/SRV",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9e655fe6d2/providers/Microsoft.Network/dnsZones/9e655fe6d2.example.test/SRV/_service._tcp.9e655fe6d2",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "SRVRecords": [
+          {
+            "priority": 1,
+            "weight": 5,
+            "port": 443,
+            "target": "service.example.test."
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "892f0baa-c103-4e2a-b991-2ead8086a234",
+      "x-ms-request-id": "892f0baa-c103-4e2a-b991-2ead8086a234",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133111Z:892f0baa-c103-4e2a-b991-2ead8086a234"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9e655fe6d2",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

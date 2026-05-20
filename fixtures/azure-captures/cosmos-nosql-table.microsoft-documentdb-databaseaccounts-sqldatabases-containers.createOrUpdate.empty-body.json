@@ -1,0 +1,46 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-20T13:30:24.975Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-98c92fdf99/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-98c92fdf99/sqlDatabases/sqldb98c92fdf99/containers/c98c92fdf99?api-version=2024-05-15",
+    "body": {},
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8cc6a748-ab88-43e1-a975-1b12252a368a",
+      "x-ms-request-id": "8cc6a748-ab88-43e1-a975-1b12252a368a",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133024Z:8cc6a748-ab88-43e1-a975-1b12252a368a"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-98c92fdf99",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

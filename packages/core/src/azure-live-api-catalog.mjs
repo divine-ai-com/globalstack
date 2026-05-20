@@ -183,7 +183,25 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.keyvault/vaults')) {
     return { location: '{location}', properties: { tenantId: '{tenantId}', sku: { family: 'A', name: 'standard' }, accessPolicies: [] } };
   }
-  if (lower.includes('microsoft.servicebus/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard' }, properties: {} };
+  if (lower === 'microsoft.apimanagement/service') {
+    return {
+      location: '{location}',
+      sku: { name: 'Developer', capacity: 1 },
+      properties: {
+        publisherEmail: 'platform@example.com',
+        publisherName: 'GlobalStack Platform',
+      },
+    };
+  }
+  if (lower === 'microsoft.apimanagement/service/apis') {
+    return {
+      properties: {
+        displayName: 'globalstack-api',
+        path: 'ingest',
+        protocols: ['https'],
+      },
+    };
+  }
   if (lower === 'microsoft.servicebus/namespaces/topics') {
     return {
       properties: {
@@ -201,6 +219,7 @@ function bodyFor(resourceType) {
       },
     };
   }
+  if (lower.includes('microsoft.servicebus/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard' }, properties: {} };
   if (lower === 'microsoft.eventgrid/topics') {
     return {
       location: '{location}',
@@ -354,6 +373,30 @@ function invalidSkuBody(body) {
   };
 }
 
+function withProperties(createBody, properties) {
+  return {
+    ...createBody,
+    properties: {
+      ...(createBody.properties ?? {}),
+      ...properties,
+    },
+  };
+}
+
+function withNestedProperties(createBody, nestedKey, nestedValue) {
+  return {
+    ...createBody,
+    properties: {
+      ...(createBody.properties ?? {}),
+      [nestedKey]: nestedValue,
+    },
+  };
+}
+
+function dnsRecordVariance(id, description, body, expectedAzure) {
+  return realAzureVariance(id, description, body, expectedAzure);
+}
+
 function realAzureVariance(id, description, body, expectedAzure) {
   return {
     id,
@@ -427,6 +470,62 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.apimanagement/service') {
+    cases.push(
+      realAzureVariance(
+        'missing-publisher-email',
+        'Create/update without properties.publisherEmail.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            publisherEmail: '',
+          },
+        },
+        'API Management service validation error for missing publisherEmail.',
+      ),
+      realAzureVariance(
+        'missing-publisher-name',
+        'Create/update without properties.publisherName.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            publisherName: '',
+          },
+        },
+        'API Management service validation error for missing publisherName.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.apimanagement/service/apis') {
+    cases.push(
+      realAzureVariance(
+        'missing-path',
+        'Create/update without properties.path.',
+        {
+          properties: {
+            displayName: createBody.properties?.displayName ?? 'globalstack-api',
+            protocols: createBody.properties?.protocols ?? ['https'],
+          },
+        },
+        'API Management API validation error for missing path.',
+      ),
+      realAzureVariance(
+        'invalid-protocols-shape',
+        'Create/update with properties.protocols set to a non-array shape.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            protocols: 'https',
+          },
+        },
+        'API Management API validation error for invalid protocols shape.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.appconfiguration/configurationstores') {
     cases.push(
       realAzureVariance(
@@ -452,6 +551,34 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Configuration store validation error for publicNetworkAccess.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.servicebus/namespaces/topics') {
+    cases.push(
+      realAzureVariance(
+        'invalid-max-size',
+        'Create/update with properties.maxSizeInMegabytes set to an invalid non-positive value.',
+        withProperties(createBody, { maxSizeInMegabytes: 0 }),
+        'Service Bus topic validation error for invalid maxSizeInMegabytes.',
+      ),
+      realAzureVariance(
+        'invalid-default-message-ttl',
+        'Create/update with properties.defaultMessageTimeToLive set to an invalid duration.',
+        withProperties(createBody, { defaultMessageTimeToLive: 'not-a-duration' }),
+        'Service Bus topic validation error for invalid defaultMessageTimeToLive.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.servicebus/namespaces/topics/subscriptions') {
+    cases.push(
+      realAzureVariance(
+        'invalid-max-delivery-count',
+        'Create/update with properties.maxDeliveryCount set to an invalid non-positive value.',
+        withProperties(createBody, { maxDeliveryCount: 0 }),
+        'Service Bus subscription validation error for invalid maxDeliveryCount.',
       ),
     );
   }
@@ -555,6 +682,23 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.network/privatednszones/virtualnetworklinks') {
+    cases.push(
+      realAzureVariance(
+        'missing-virtual-network-id',
+        'Create/update without properties.virtualNetwork.id.',
+        withNestedProperties(createBody, 'virtualNetwork', {}),
+        'Private DNS virtual network link validation error for missing virtualNetwork.id.',
+      ),
+      realAzureVariance(
+        'invalid-registration-enabled-type',
+        'Create/update with properties.registrationEnabled set to a non-boolean shape.',
+        withProperties(createBody, { registrationEnabled: 'false' }),
+        'Private DNS virtual network link validation error for invalid registrationEnabled type.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.dbforpostgresql/flexibleservers') {
     cases.push(
       realAzureVariance(
@@ -621,6 +765,106 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.documentdb/databaseaccounts/sqldatabases') {
+    cases.push(
+      realAzureVariance(
+        'mismatched-resource-id',
+        'Create/update with properties.resource.id that does not match the SQL database resource name.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            resource: {
+              ...(createBody.properties?.resource ?? {}),
+              id: 'wrong-sql-database-id',
+            },
+          },
+        },
+        'Cosmos DB SQL database validation error for mismatched properties.resource.id.',
+      ),
+      realAzureVariance(
+        'invalid-throughput',
+        'Create/update with options.throughput below the supported minimum.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            options: {
+              ...(createBody.properties?.options ?? {}),
+              throughput: 100,
+            },
+          },
+        },
+        'Cosmos DB SQL database validation error for invalid throughput.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.documentdb/databaseaccounts/sqldatabases/containers') {
+    cases.push(
+      realAzureVariance(
+        'mismatched-resource-id',
+        'Create/update with properties.resource.id that does not match the SQL container resource name.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            resource: {
+              ...(createBody.properties?.resource ?? {}),
+              id: 'wrong-container-id',
+            },
+          },
+        },
+        'Cosmos DB SQL container validation error for mismatched properties.resource.id.',
+      ),
+      realAzureVariance(
+        'missing-partition-key-paths',
+        'Create/update with an empty partitionKey.paths array.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            resource: {
+              ...(createBody.properties?.resource ?? {}),
+              partitionKey: {
+                ...(createBody.properties?.resource?.partitionKey ?? {}),
+                paths: [],
+              },
+            },
+          },
+        },
+        'Cosmos DB SQL container validation error for missing partitionKey paths.',
+      ),
+      realAzureVariance(
+        'invalid-partition-key-kind',
+        'Create/update with an unsupported partitionKey.kind value.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            resource: {
+              ...(createBody.properties?.resource ?? {}),
+              partitionKey: {
+                ...(createBody.properties?.resource?.partitionKey ?? {}),
+                kind: 'InvalidKind',
+              },
+            },
+          },
+        },
+        'Cosmos DB SQL container validation error for invalid partitionKey.kind.',
+      ),
+      realAzureVariance(
+        'invalid-throughput',
+        'Create/update with options.throughput below the supported minimum.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            options: {
+              ...(createBody.properties?.options ?? {}),
+              throughput: 100,
+            },
+          },
+        },
+        'Cosmos DB SQL container validation error for invalid throughput.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.eventhub/namespaces') {
     cases.push(
       realAzureVariance(
@@ -661,6 +905,128 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Event hub validation error for invalid messageRetentionInDays.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/a' || lower === 'microsoft.network/privatednszones/a') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-a-record',
+        'Create/update with an invalid IPv4 address in properties.ARecords.',
+        { properties: { TTL: 60, ARecords: [{ ipv4Address: '999.1.1.1' }] } },
+        'DNS A record validation error for invalid IPv4 address.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/aaaa' || lower === 'microsoft.network/privatednszones/aaaa') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-aaaa-record',
+        'Create/update with an invalid IPv6 address in properties.AAAARecords.',
+        { properties: { TTL: 60, AAAARecords: [{ ipv6Address: 'not-ipv6' }] } },
+        'DNS AAAA record validation error for invalid IPv6 address.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/caa') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-caa-record',
+        'Create/update with a CAA record missing its value.',
+        { properties: { TTL: 60, CAARecords: [{ flags: 0, tag: 'issue', value: '' }] } },
+        'DNS CAA record validation error for missing value.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/cname' || lower === 'microsoft.network/privatednszones/cname') {
+    cases.push(
+      dnsRecordVariance(
+        'missing-cname',
+        'Create/update without properties.CNAMERecord.cname.',
+        { properties: { TTL: 60, CNAMERecord: {} } },
+        'DNS CNAME record validation error for missing cname.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/mx' || lower === 'microsoft.network/privatednszones/mx') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-mx-record',
+        'Create/update with an MX record missing its exchange value.',
+        { properties: { TTL: 60, MXRecords: [{ preference: 10, exchange: '' }] } },
+        'DNS MX record validation error for missing exchange.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/ns') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-ns-record',
+        'Create/update with an NS record missing its nsdname.',
+        { properties: { TTL: 60, NSRecords: [{ nsdname: '' }] } },
+        'DNS NS record validation error for missing nsdname.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/ptr' || lower === 'microsoft.network/privatednszones/ptr') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-ptr-record',
+        'Create/update with a PTR record missing its ptrdname.',
+        { properties: { TTL: 60, PTRRecords: [{ ptrdname: '' }] } },
+        'DNS PTR record validation error for missing ptrdname.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/soa' || lower === 'microsoft.network/privatednszones/soa') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-soa-record',
+        'Create/update with an SOA record missing minimumTTL.',
+        {
+          properties: {
+            TTL: 3600,
+            SOARecord: {
+              host: 'ns1.example.test.',
+              email: 'azuredns-hostmaster.microsoft.com',
+              serialNumber: 1,
+              refreshTime: 3600,
+              retryTime: 300,
+              expireTime: 2419200,
+            },
+          },
+        },
+        'DNS SOA record validation error for missing minimumTTL.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/srv' || lower === 'microsoft.network/privatednszones/srv') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-srv-record',
+        'Create/update with an SRV record missing its target.',
+        { properties: { TTL: 60, SRVRecords: [{ priority: 1, weight: 5, port: 443, target: '' }] } },
+        'DNS SRV record validation error for missing target.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/dnszones/txt' || lower === 'microsoft.network/privatednszones/txt') {
+    cases.push(
+      dnsRecordVariance(
+        'invalid-txt-record',
+        'Create/update with a TXT record that has no text values.',
+        { properties: { TTL: 60, TXTRecords: [{ value: [] }] } },
+        'DNS TXT record validation error for missing text values.',
       ),
     );
   }

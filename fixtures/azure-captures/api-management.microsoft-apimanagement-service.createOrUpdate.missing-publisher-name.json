@@ -1,0 +1,56 @@
+{
+  "id": "api-management.microsoft-apimanagement-service.createOrUpdate.missing-publisher-name",
+  "capturedAt": "2026-05-20T13:30:07.042Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-publisher-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e743c9193e/providers/Microsoft.ApiManagement/service/apim-e743c9193e?api-version=2023-05-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "properties": {
+        "publisherEmail": "platform@example.com",
+        "publisherName": ""
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "af066ede-c1d9-4ba8-9395-51a5f84c1a80",
+      "x-ms-request-id": "af066ede-c1d9-4ba8-9395-51a5f84c1a80",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133006Z:af066ede-c1d9-4ba8-9395-51a5f84c1a80"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e743c9193e",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

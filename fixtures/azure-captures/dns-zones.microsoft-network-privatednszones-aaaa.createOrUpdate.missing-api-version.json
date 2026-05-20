@@ -1,0 +1,55 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-aaaa.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:20.133Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-03553fdf26/providers/Microsoft.Network/privateDnsZones/03553fdf26.internal/AAAA/aaaa-03553fdf26",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "AAAARecords": [
+          {
+            "ipv6Address": "2001:db8::10"
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9945aee4-6865-47d2-a8e6-1ee01d8414fa",
+      "x-ms-request-id": "9945aee4-6865-47d2-a8e6-1ee01d8414fa",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260520T133119Z:9945aee4-6865-47d2-a8e6-1ee01d8414fa"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-03553fdf26",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

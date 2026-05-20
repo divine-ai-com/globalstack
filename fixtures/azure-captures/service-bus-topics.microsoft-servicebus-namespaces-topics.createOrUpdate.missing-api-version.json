@@ -1,6 +1,6 @@
 {
   "id": "service-bus-topics.microsoft-servicebus-namespaces-topics.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T13:59:57.436Z",
+  "capturedAt": "2026-05-20T13:29:59.095Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,21 +13,21 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-025f2e9d8b/providers/Microsoft.ServiceBus/namespaces/ns-025f2e9d8b/topics/topic-025f2e9d8b",
     "body": {
-      "location": "{location}",
-      "sku": {
-        "name": "Standard",
-        "tier": "Standard"
-      },
-      "properties": {}
-    }
+      "properties": {
+        "defaultMessageTimeToLive": "P14D",
+        "enableBatchedOperations": true,
+        "maxSizeInMegabytes": 1024
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "ef267101-7f69-465e-85b9-08043c0bb322",
-      "x-ms-request-id": "ef267101-7f69-465e-85b9-08043c0bb322",
-      "x-ms-routing-request-id": "EASTUS:20260516T135949Z:ef267101-7f69-465e-85b9-08043c0bb322"
+      "x-ms-correlation-request-id": "89e037f5-5435-4533-aa35-bdddd4e35790",
+      "x-ms-request-id": "89e037f5-5435-4533-aa35-bdddd4e35790",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T132959Z:89e037f5-5435-4533-aa35-bdddd4e35790"
     },
     "body": {
       "error": {
@@ -38,7 +38,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-025f2e9d8b",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

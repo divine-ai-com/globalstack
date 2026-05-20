@@ -1,6 +1,6 @@
 {
   "id": "service-bus-topics.microsoft-servicebus-namespaces.createOrUpdate.invalid-sku",
-  "capturedAt": "2026-05-16T13:59:33.721Z",
+  "capturedAt": "2026-05-20T13:29:58.725Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -18,34 +18,35 @@
         "name": "GlobalStack_InvalidSku_For_Conformance"
       },
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
-      "content-type": "application/json",
-      "x-ms-correlation-request-id": "85f4b1e7-feaa-4acb-a6fd-67a912bc4a88",
-      "x-ms-request-id": "85f4b1e7-feaa-4acb-a6fd-67a912bc4a88",
-      "x-ms-routing-request-id": "EASTUS:20260516T135932Z:85f4b1e7-feaa-4acb-a6fd-67a912bc4a88"
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6d0993a2-b41d-4d57-a8fe-87ba5d65c562",
+      "x-ms-request-id": "6d0993a2-b41d-4d57-a8fe-87ba5d65c562",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T132958Z:6d0993a2-b41d-4d57-a8fe-87ba5d65c562"
     },
     "body": {
       "error": {
-        "code": "ValidateResourceInfoFailedWithInvalidSkuName",
-        "message": "Sku name 'GlobalStack_InvalidSku_For_Conformance' is invalid"
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-0e5400c7a1",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

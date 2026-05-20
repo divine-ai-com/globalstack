@@ -457,6 +457,19 @@ async function seedParents(requestFn, call, variance, replacements) {
     return;
   }
 
+  if (call.resourceType === 'Microsoft.ApiManagement/service/apis') {
+    const servicePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ApiManagement/service/${replacements.serviceName}?api-version=2023-05-01-preview`;
+    await requestFn('PUT', servicePath, {
+      location,
+      sku: { name: 'Developer', capacity: 1 },
+      properties: {
+        publisherEmail: 'platform@example.com',
+        publisherName: 'GlobalStack Platform',
+      },
+    });
+    return;
+  }
+
   if (call.resourceType === 'Microsoft.DataMigration/services/projects') {
     const servicePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DataMigration/services/${replacements.serviceName}?api-version=2022-03-30-preview`;
     await requestFn('PUT', servicePath, {
