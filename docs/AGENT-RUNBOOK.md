@@ -236,7 +236,7 @@ Run the Azure Synapse Warehouse parity pack after changing Synapse workspace beh
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:synapse-warehouse-parity
 ```
 
-Expected result is `dist/e2e/azure-synapse-warehouse-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 Synapse cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, dedicated SQL pool lifecycle, stricter workspace identity/data-lake and SQL pool SKU/createMode rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-synapse-warehouse-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 48 Synapse cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, dedicated SQL pool lifecycle, bounded local SQL runner table/insert/select/error behavior, stricter workspace identity/data-lake and SQL pool SKU/createMode rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Database Migration Service parity pack after changing migration service behavior, migration project behavior, unsupported DMS route handling, or platform deployment routing:
 

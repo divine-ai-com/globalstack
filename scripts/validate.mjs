@@ -783,10 +783,10 @@ if (!synapseWarehouseParityText) {
     errors.push('Azure Synapse Warehouse parity E2E did not pass');
   }
   if (synapseWarehouseParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Synapse Warehouse parity control-plane matrix has failures');
+    errors.push('Azure Synapse Warehouse parity control/data-plane matrix has failures');
   }
-  if ((synapseWarehouseParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure Synapse Warehouse parity control-plane matrix should exercise at least 35 cases');
+  if ((synapseWarehouseParity.controlPlane?.total ?? 0) < 48) {
+    errors.push('Azure Synapse Warehouse parity control/data-plane matrix should exercise at least 48 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -821,10 +821,18 @@ if (!synapseWarehouseParityText) {
     'sql pool get succeeds',
     'sql pool update can change sku',
     'sql pool list includes created resource',
+    'local synapse sql runner missing pool is not found',
+    'local synapse sql runner creates table',
+    'local synapse sql runner duplicate table is rejected',
+    'local synapse sql runner inserts and selects rows',
+    'local synapse sql runner unknown insert column is rejected',
+    'local synapse sql runner unknown table is rejected',
+    'local synapse sql runner unsupported sql is rejected',
     'unsupported workspace firewall rule route fails closed',
     'unsupported workspace administrator route fails closed',
     'unsupported sql pool pause action fails closed',
     'ARM template deployment can create workspace and sql pool',
+    'local synapse sql runner removes deleted pool',
     'sql pool get after delete is not found',
     'workspace get after delete is not found',
   ]) {

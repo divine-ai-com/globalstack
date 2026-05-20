@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createSynapseSqlRunner } from '../packages/azure-data-plane/src/synapse-sql-runner.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -177,6 +178,7 @@ function deploymentBody(workspaceName, sqlPoolName) {
 
 async function runControlPlaneMatrix() {
   const cases = [];
+  const sqlRunner = createSynapseSqlRunner();
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
   const resourceGroup = `rg-gs-synapse-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-synapse-missing-${suffix}`;
@@ -354,6 +356,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.status, 'Online');
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
+      sqlRunner.registerPool({ workspaceName, sqlPoolName, status: result.body.properties.status });
       return { status: result.status, provisioningState: result.body.properties.provisioningState };
     });
 
@@ -377,6 +380,102 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.name === `${workspaceName}/${sqlPoolName}`));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local synapse sql runner missing pool is not found', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName: missingSqlPoolName,
+        sql: 'SELECT COUNT(*) AS row_count FROM dbo.Telemetry',
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'SqlPoolNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local synapse sql runner creates table', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'CREATE TABLE dbo.Telemetry (id INT, reading FLOAT, status NVARCHAR(32))',
+      });
+      assert.equal(result.status, 201);
+      assert.deepEqual(result.body.columns.map(column => column.name), ['id', 'reading', 'status']);
+      return { status: result.status, columnCount: result.body.columns.length };
+    });
+
+    await record('local synapse sql runner duplicate table is rejected', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'CREATE TABLE dbo.Telemetry (id INT, reading FLOAT, status NVARCHAR(32))',
+      });
+      assert.equal(result.error.status, 409);
+      assert.equal(result.error.code, 'TableAlreadyExists');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local synapse sql runner inserts and selects rows', async () => {
+      const firstInsert = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: "INSERT INTO dbo.Telemetry (id, reading, status) VALUES (2, 43.5, 'warm')",
+      });
+      assert.equal(firstInsert.status, 201);
+      const secondInsert = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: "INSERT INTO dbo.Telemetry (id, reading, status) VALUES (1, 41.5, 'ok')",
+      });
+      assert.equal(secondInsert.status, 201);
+      const count = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT COUNT(*) AS row_count FROM dbo.Telemetry',
+      });
+      assert.equal(count.status, 200);
+      assert.equal(count.body.rows[0].row_count, 2);
+      const rows = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT * FROM dbo.Telemetry ORDER BY id',
+      });
+      assert.equal(rows.status, 200);
+      assert.deepEqual(rows.body.rows.map(row => row.id), [1, 2]);
+      return { status: rows.status, rowCount: rows.body.rows.length };
+    });
+
+    await record('local synapse sql runner unknown insert column is rejected', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: "INSERT INTO dbo.Telemetry (id, missing_column) VALUES (3, 'bad')",
+      });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'InvalidColumnName');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local synapse sql runner unknown table is rejected', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT COUNT(*) FROM dbo.MissingTelemetry',
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'TableNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local synapse sql runner unsupported sql is rejected', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'MERGE dbo.Telemetry AS target USING dbo.Source AS source ON target.id = source.id WHEN MATCHED THEN UPDATE SET reading = source.reading',
+      });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'UnsupportedSqlStatement');
+      return { status: result.error.status, errorCode: result.error.code };
     });
 
     for (const [name, method, path] of [
@@ -412,7 +511,19 @@ async function runControlPlaneMatrix() {
     await record('sql pool delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', sqlPoolPath(resourceGroup, workspaceName, sqlPoolName));
       assert.equal(result.status, 200);
+      sqlRunner.unregisterPool({ workspaceName, sqlPoolName });
       return { status: result.status };
+    });
+
+    await record('local synapse sql runner removes deleted pool', async () => {
+      const result = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT COUNT(*) AS row_count FROM dbo.Telemetry',
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'SqlPoolNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
     });
 
     await record('sql pool get after delete is not found', async () => {
@@ -474,7 +585,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Workspace under test: ${report.controlPlane.workspaceName}`,
@@ -499,7 +610,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Synapse workspace and dedicated SQL pool ARM lifecycle, stricter parameter rejection, captured minimal-workspace validation behavior, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark distributed query execution, MPP optimizer behavior, workspace networking, data lake integration, pause/resume, RBAC, private link, firewall behavior, or exact Azure SQL data-plane behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for the listed Synapse workspace and dedicated SQL pool ARM lifecycle, stricter parameter rejection, captured minimal-workspace validation behavior, bounded local SQL runner table/insert/select/error behavior, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark distributed query execution, MPP optimizer behavior, workspace networking, data lake integration, pause/resume, RBAC, private link, firewall behavior, or exact Azure SQL data-plane behavior as cloudValidated.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -511,8 +622,8 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Synapse workspace and dedicated SQL pool ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
-  claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Synapse Analytics cloudValidated claim.',
+  scope: 'Azure Synapse workspace and dedicated SQL pool ARM lifecycle, validation, bounded local SQL runner checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Synapse Analytics cloudValidated or distributed SQL parity claim.',
   controlPlane,
   platformMatrix,
 };
