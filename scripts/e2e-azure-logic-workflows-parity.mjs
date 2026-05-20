@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createWorkflowRunner } from '../packages/azure-data-plane/src/workflow-runner.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -151,6 +152,10 @@ function deploymentBody(workflowName) {
   };
 }
 
+function runnerErrorCode(result) {
+  return result.error?.code ?? null;
+}
+
 async function runControlPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
@@ -171,6 +176,8 @@ async function runControlPlaneMatrix() {
       console.error(error);
     }
   }
+
+  const workflowRunner = createWorkflowRunner();
 
   await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
@@ -258,7 +265,45 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.name, workflowName);
       assert.equal(result.body.properties.state, 'Enabled');
       assert.equal(result.body.properties.accessEndpoint, `https://logic.azure.com/workflows/${workflowName}`);
+      workflowRunner.registerWorkflow({ workflowName, properties: result.body.properties });
       return { status: result.status };
+    });
+
+    await record('local workflow runner missing workflow is not found', async () => {
+      const result = workflowRunner.invoke({
+        workflowName: missingWorkflowName,
+        triggerName: 'manual',
+        body: { robotId: 'arm-1' },
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(runnerErrorCode(result), 'WorkflowNotFound');
+      return { status: result.error.status, errorCode: runnerErrorCode(result) };
+    });
+
+    await record('local workflow runner missing trigger is not found', async () => {
+      const result = workflowRunner.invoke({
+        workflowName,
+        triggerName: 'missing',
+        body: { robotId: 'arm-1' },
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(runnerErrorCode(result), 'TriggerNotFound');
+      return { status: result.error.status, errorCode: runnerErrorCode(result) };
+    });
+
+    await record('local workflow runner request trigger succeeds', async () => {
+      const result = workflowRunner.invoke({
+        workflowName,
+        triggerName: 'manual',
+        body: { robotId: 'arm-1', task: 'calibrate' },
+      });
+      assert.equal(result.status, 202);
+      assert.equal(result.body.status, 'Succeeded');
+      assert.deepEqual(result.body.input, { robotId: 'arm-1', task: 'calibrate' });
+      const run = workflowRunner.getRun({ workflowName, runId: result.body.id });
+      assert.equal(run.status, 200);
+      assert.equal(run.body.status, 'Succeeded');
+      return { status: result.status, runId: result.body.id };
     });
 
     await record('workflow get succeeds', async () => {
@@ -273,7 +318,19 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, workflowName), workflowBody({ properties: { state: 'Disabled' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.state, 'Disabled');
+      workflowRunner.registerWorkflow({ workflowName, properties: result.body.properties });
       return { status: result.status };
+    });
+
+    await record('local workflow runner disabled workflow is rejected', async () => {
+      const result = workflowRunner.invoke({
+        workflowName,
+        triggerName: 'manual',
+        body: { robotId: 'arm-1' },
+      });
+      assert.equal(result.error.status, 409);
+      assert.equal(runnerErrorCode(result), 'WorkflowDisabled');
+      return { status: result.error.status, errorCode: runnerErrorCode(result) };
     });
 
     await record('workflow list includes created resource', async () => {
@@ -315,6 +372,7 @@ async function runControlPlaneMatrix() {
     await record('workflow delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', workflowPath(resourceGroup, workflowName));
       assert.equal(result.status, 200);
+      workflowRunner.unregisterWorkflow(workflowName);
       return { status: result.status };
     });
 
@@ -383,7 +441,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Workflow under test: ${report.controlPlane.workflowName}`,
@@ -407,7 +465,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, unsupported workflow route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, trigger execution, retries, run history, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner success and failure behavior, unsupported workflow route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, Azure-hosted trigger execution, retries, full run history, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -419,7 +477,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Logic Apps cloudValidated claim.',
   controlPlane,
   platformMatrix,

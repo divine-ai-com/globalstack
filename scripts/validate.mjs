@@ -1378,8 +1378,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 25) {
-    errors.push('Azure Logic Workflows parity control-plane matrix should exercise at least 25 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 29) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 29 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1399,8 +1399,12 @@ if (!logicWorkflowsParityText) {
     'workflow missing actions is rejected',
     'workflow invalid state is rejected',
     'workflow create succeeds',
+    'local workflow runner missing workflow is not found',
+    'local workflow runner missing trigger is not found',
+    'local workflow runner request trigger succeeds',
     'workflow get succeeds',
     'workflow update can disable workflow',
+    'local workflow runner disabled workflow is rejected',
     'workflow list includes created resource',
     'unsupported workflow trigger route fails closed',
     'unsupported workflow versions route fails closed',

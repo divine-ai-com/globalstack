@@ -148,7 +148,7 @@ Run the Azure Logic Workflows parity pack after changing Logic Apps workflow ARM
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:logic-workflows-parity
 ```
 
-Expected result is `dist/e2e/azure-logic-workflows-parity/results.json` with `ok == true`, zero control-plane failures, at least 25 Logic workflow cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Logic workflow lifecycle, definition/state rejection, unsupported trigger/version route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-logic-workflows-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 29 Logic workflow cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Logic workflow lifecycle, definition/state rejection, local request-trigger runner success/failure behavior, unsupported trigger/version route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Functions parity pack after changing Microsoft.Web server farm or Function App ARM behavior, local HTTP-trigger routing, or platform deployment routing:
 
