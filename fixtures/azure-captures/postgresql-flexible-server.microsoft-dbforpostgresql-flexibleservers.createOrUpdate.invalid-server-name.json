@@ -1,0 +1,57 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-server-name",
+  "capturedAt": "2026-05-20T15:51:20.393Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-server-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-80eb64ff2d/providers/Microsoft.DBforPostgreSQL/flexibleServers/Bad_Server?api-version=2023-06-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
+        "version": "16"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "52b683bb-3461-47ca-a734-89a7f3a6c330",
+      "x-ms-request-id": "abdeeb51-7f39-4716-b538-9651e4bdcfda",
+      "x-ms-routing-request-id": "EASTUS:20260520T155113Z:52b683bb-3461-47ca-a734-89a7f3a6c330"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidParameterValue",
+        "message": "Invalid value given for parameter serverName. Specify a valid parameter value."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-80eb64ff2d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

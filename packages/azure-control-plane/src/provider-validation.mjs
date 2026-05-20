@@ -1699,7 +1699,7 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
   if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers') {
     const name = providerRoute?.typePath?.split('/')[1] ?? '';
     if (!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(name)) {
-      return envelopedError(400, 'InvalidServerName', 'PostgreSQL flexible server names must be 3 through 63 lowercase alphanumeric or hyphen characters and start and end with an alphanumeric character.');
+      return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter serverName. Specify a valid parameter value.');
     }
     if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance' || !body.sku?.name || !body.sku?.tier) {
       return envelopedError(
@@ -1729,7 +1729,7 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
   if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
     const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
     if (!/^[A-Za-z_][A-Za-z0-9_-]{0,62}$/.test(name)) {
-      return envelopedError(400, 'InvalidDatabaseName', 'PostgreSQL database names must start with a letter or underscore and use alphanumerics, underscore, or hyphen.');
+      return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter databaseName. Specify a valid parameter value.');
     }
     if (!isNonEmptyString(body.properties?.charset)) {
       return envelopedError(400, 'MissingRequiredParameter', "Parameter 'Charset' must be specified. This parameter cannot be NULL or empty.");

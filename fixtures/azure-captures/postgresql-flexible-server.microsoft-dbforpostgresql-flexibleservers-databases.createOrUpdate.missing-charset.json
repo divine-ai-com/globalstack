@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.missing-charset",
-  "capturedAt": "2026-05-20T13:51:14.725Z",
+  "capturedAt": "2026-05-20T15:34:58.096Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -23,9 +23,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "b2d18e60-0e1f-444f-9b98-f337c664118c",
-      "x-ms-request-id": "b2d18e60-0e1f-444f-9b98-f337c664118c",
-      "x-ms-routing-request-id": "WESTINDIA:20260520T135114Z:b2d18e60-0e1f-444f-9b98-f337c664118c"
+      "x-ms-correlation-request-id": "ebc8fc83-492e-4be5-9ce7-4b9db11a4e5e",
+      "x-ms-request-id": "ebc8fc83-492e-4be5-9ce7-4b9db11a4e5e",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260520T153457Z:ebc8fc83-492e-4be5-9ce7-4b9db11a4e5e"
     },
     "body": {
       "error": {

@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-20T13:51:11.742Z",
+  "capturedAt": "2026-05-20T15:50:15.520Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -16,31 +16,31 @@
     "apiVersionOverride": null
   },
   "response": {
-    "status": 404,
+    "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa",
-      "x-ms-request-id": "b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135111Z:b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa"
+      "x-ms-correlation-request-id": "25938b5c-9ece-4c6f-8bf5-e23794e7d867",
+      "x-ms-request-id": "25938b5c-9ece-4c6f-8bf5-e23794e7d867",
+      "x-ms-routing-request-id": "EASTUS:20260520T155013Z:25938b5c-9ece-4c6f-8bf5-e23794e7d867"
     },
     "body": {
       "error": {
-        "code": "SubscriptionNotFound",
-        "message": "The subscription '<subscription-id>' could not be found."
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-9bb5cc5dc6",
-    "deleteStatus": 404,
+    "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "capture-infrastructure-gap",
+    "validationDepth": "provider-validation",
     "cloudValidated": false,
-    "providerRegistered": null,
-    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
   }
 }

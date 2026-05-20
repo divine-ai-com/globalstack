@@ -1160,6 +1160,36 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.dbforpostgresql/flexibleservers') {
+    cases.push(
+      realAzureVariance(
+        'invalid-server-name',
+        'Create/update with a PostgreSQL flexible server name that violates naming rules.',
+        createBody,
+        'PostgreSQL flexible server validation error for invalid server name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/Bad_Server',
+        },
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.dbforpostgresql/flexibleservers/databases') {
+    cases.push(
+      realAzureVariance(
+        'invalid-database-name',
+        'Create/update with a PostgreSQL database name that violates naming rules.',
+        createBody,
+        'PostgreSQL flexible server database validation error for invalid database name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{flexibleServersName}/databases/1bad',
+        },
+      ),
+    );
+  }
+
   if (lower === 'microsoft.network/dnszones/a' || lower === 'microsoft.network/privatednszones/a') {
     cases.push(
       dnsRecordVariance(

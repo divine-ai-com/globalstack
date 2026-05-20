@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 750
+- Real Azure fixtures with verified cleanup: 752
 
 ## Tier 1
 
@@ -332,19 +332,20 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 404; cleanup verified
+- [x] `valid-minimal`: captured HTTP 202; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
-- [x] `invalid-location`: captured HTTP 404; cleanup verified
-- [x] `empty-body`: captured HTTP 404; cleanup verified
-- [x] `missing-location`: captured HTTP 404; cleanup verified
-- [x] `null-properties`: captured HTTP 404; cleanup verified
-- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
-- [x] `invalid-sku`: captured HTTP 404; cleanup verified
-- [x] `missing-admin-login`: captured HTTP 404; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 400; cleanup verified
+- [x] `invalid-location`: captured HTTP 400; cleanup verified
+- [x] `empty-body`: captured HTTP 400; cleanup verified
+- [x] `missing-location`: captured HTTP 400; cleanup verified
+- [x] `null-properties`: captured HTTP 400; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 400; cleanup verified
+- [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [x] `missing-admin-login`: captured HTTP 400; cleanup verified
 - [x] `missing-admin-password`: captured HTTP 404; cleanup verified
 - [x] `weak-admin-password`: captured HTTP 404; cleanup verified
 - [x] `invalid-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-server-name`: captured HTTP 400; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / Get
 
@@ -369,6 +370,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 - [x] `missing-charset`: captured HTTP 404; cleanup verified
 - [x] `missing-collation`: captured HTTP 404; cleanup verified
+- [x] `invalid-database-name`: captured HTTP 400; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers/databases / Get
 

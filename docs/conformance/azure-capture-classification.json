@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-05-20T15:27:18.018Z",
-  "fixtureCount": 750,
-  "cleanupVerifiedCount": 750,
+  "generatedAt": "2026-05-20T16:02:32.526Z",
+  "fixtureCount": 752,
+  "cleanupVerifiedCount": 752,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
-    "provider-validation": 107,
+    "provider-validation": 116,
     "arm-surface": 84,
-    "provider-accepted": 92,
+    "provider-accepted": 93,
     "provider-routing-or-parent-validation": 122,
-    "capture-infrastructure-gap": 340,
-    "subscription-or-provider-readiness": 5
+    "capture-infrastructure-gap": 331,
+    "subscription-or-provider-readiness": 6
   },
   "byErrorCode": {
-    "LocationRequired": 31,
-    "InvalidResourceLocation": 31,
+    "LocationRequired": 33,
+    "InvalidResourceLocation": 32,
     "MissingApiVersionParameter": 84,
     "InvalidRequest": 5,
-    "null": 97,
+    "null": 98,
     "ResourceNotFound": 58,
     "BadRequest": 9,
     "ResourceTypeNotSupported": 10,
     "InvalidParameter": 1,
-    "SubscriptionNotFound": 336,
+    "SubscriptionNotFound": 327,
     "InvalidProperty": 3,
-    "NoRegisteredProviderFound": 5,
+    "NoRegisteredProviderFound": 6,
     "ParentResourceNotFound": 64,
     "DeleteNotSupported": 3,
     "StorageAccountIsNotProvisioned": 2,
@@ -32,8 +32,10 @@
     "RoleDefinitionDoesNotExist": 1,
     "SubnetIsRequired": 1,
     "InvalidWorkflow": 1,
-    "InvalidParameterValue": 1,
+    "InvalidParameterValue": 3,
     "InvalidAdminLoginPassword": 1,
+    "MissingRequiredParameter": 3,
+    "InvalidRequestContent": 1,
     "InvalidRequestBody": 2,
     "ValidationFailed": 1,
     "InvalidRequestFormat": 1
@@ -7229,6 +7231,19 @@
       "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
     },
     {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-database-name",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-database-name",
+      "status": 400,
+      "errorCode": "InvalidParameterValue",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-location",
       "capabilityId": "postgresql-flexible-server",
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
@@ -7390,12 +7405,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "empty-body",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "LocationRequired",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-location",
@@ -7403,12 +7418,25 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "InvalidResourceLocation",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-server-name",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-server-name",
+      "status": 400,
+      "errorCode": "InvalidParameterValue",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-sku",
@@ -7416,12 +7444,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-sku",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "MissingRequiredParameter",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-tags-shape",
@@ -7429,12 +7457,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-tags-shape",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "InvalidRequestContent",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-version",
@@ -7455,12 +7483,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-admin-login",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "MissingRequiredParameter",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-admin-password",
@@ -7494,12 +7522,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "missing-location",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "LocationRequired",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.null-properties",
@@ -7507,12 +7535,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "null-properties",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "MissingRequiredParameter",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-validation",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.unsupported-api-version",
@@ -7520,12 +7548,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "unsupported-api-version",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 400,
+      "errorCode": "NoRegisteredProviderFound",
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "subscription-or-provider-readiness",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.valid-minimal",
@@ -7533,12 +7561,12 @@
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
       "operation": "CreateOrUpdate",
       "varianceId": "valid-minimal",
-      "status": 404,
-      "errorCode": "SubscriptionNotFound",
+      "status": 202,
+      "errorCode": null,
       "cleanupVerified": true,
-      "validationDepth": "capture-infrastructure-gap",
+      "validationDepth": "provider-accepted",
       "cloudValidated": false,
-      "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+      "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.weak-admin-password",

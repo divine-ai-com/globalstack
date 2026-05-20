@@ -98,11 +98,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Get | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Delete | DELETE | 2023-07-01 | 0 |
-| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 13 |
+| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 14 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Get | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | ListByResourceGroup | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Delete | DELETE | 2023-06-01-preview | 0 |
-| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-06-01-preview | 9 |
+| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-06-01-preview | 10 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | Get | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | ListByResourceGroup | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | Delete | DELETE | 2023-06-01-preview | 0 |

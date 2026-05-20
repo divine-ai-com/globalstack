@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-20T13:51:13.386Z",
+  "capturedAt": "2026-05-20T15:34:56.885Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -24,9 +24,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "05108807-bea2-4408-afc2-e26c21d359cd",
-      "x-ms-request-id": "05108807-bea2-4408-afc2-e26c21d359cd",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135113Z:05108807-bea2-4408-afc2-e26c21d359cd"
+      "x-ms-correlation-request-id": "f0ed0e6f-bd77-42e1-abf0-8ebc838b7bc9",
+      "x-ms-request-id": "f0ed0e6f-bd77-42e1-abf0-8ebc838b7bc9",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T153456Z:f0ed0e6f-bd77-42e1-abf0-8ebc838b7bc9"
     },
     "body": {
       "error": {

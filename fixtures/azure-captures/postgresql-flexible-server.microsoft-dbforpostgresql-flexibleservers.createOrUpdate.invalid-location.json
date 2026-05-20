@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-20T13:51:11.588Z",
+  "capturedAt": "2026-05-20T15:50:08.920Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -27,31 +27,31 @@
     "apiVersionOverride": null
   },
   "response": {
-    "status": 404,
+    "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "beb845f9-d18d-4144-99ba-c1529952c2cb",
-      "x-ms-request-id": "beb845f9-d18d-4144-99ba-c1529952c2cb",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135111Z:beb845f9-d18d-4144-99ba-c1529952c2cb"
+      "x-ms-correlation-request-id": "6f25d23d-46c2-4db5-921d-935dac776a81",
+      "x-ms-request-id": "6f25d23d-46c2-4db5-921d-935dac776a81",
+      "x-ms-routing-request-id": "EASTUS:20260520T155000Z:6f25d23d-46c2-4db5-921d-935dac776a81"
     },
     "body": {
       "error": {
-        "code": "SubscriptionNotFound",
-        "message": "The subscription '<subscription-id>' could not be found."
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-8843341766",
-    "deleteStatus": 404,
+    "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "capture-infrastructure-gap",
+    "validationDepth": "provider-validation",
     "cloudValidated": false,
-    "providerRegistered": null,
-    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
   }
 }

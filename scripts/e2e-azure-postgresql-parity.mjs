@@ -372,7 +372,7 @@ async function runControlPlaneMatrix() {
     await record('server invalid name is rejected', async () => {
       const result = await httpJson(armPort, 'PUT', serverPath(resourceGroup, 'Bad_Server'), serverBody());
       assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'InvalidServerName');
+      assert.equal(errorCode(result), 'InvalidParameterValue');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
@@ -451,7 +451,7 @@ async function runControlPlaneMatrix() {
     await record('database invalid name is rejected', async () => {
       const result = await httpJson(armPort, 'PUT', databasePath(resourceGroup, serverName, '1bad'), databaseBody());
       assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'InvalidDatabaseName');
+      assert.equal(errorCode(result), 'InvalidParameterValue');
       return { status: result.status, errorCode: errorCode(result) };
     });
 

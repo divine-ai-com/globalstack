@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.missing-collation",
-  "capturedAt": "2026-05-20T13:51:15.003Z",
+  "capturedAt": "2026-05-20T15:34:58.211Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -23,9 +23,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "f4e62282-ce2a-4c24-830a-8bcce777a668",
-      "x-ms-request-id": "f4e62282-ce2a-4c24-830a-8bcce777a668",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135114Z:f4e62282-ce2a-4c24-830a-8bcce777a668"
+      "x-ms-correlation-request-id": "58335751-b5ef-4e6d-b7a0-bf2671f33ec5",
+      "x-ms-request-id": "58335751-b5ef-4e6d-b7a0-bf2671f33ec5",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T153458Z:58335751-b5ef-4e6d-b7a0-bf2671f33ec5"
     },
     "body": {
       "error": {

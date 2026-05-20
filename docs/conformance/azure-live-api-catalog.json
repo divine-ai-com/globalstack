@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T15:17:47.767Z",
+    "generatedAt": "2026-05-20T15:34:49.999Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -3022,6 +3022,26 @@
           "expectedAzure": "PostgreSQL flexible server validation error for invalid version.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-server-name",
+          "description": "Create/update with a PostgreSQL flexible server name that violates naming rules.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
+              "version": "16"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server validation error for invalid server name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/Bad_Server"
         }
       ]
     },
@@ -3203,6 +3223,20 @@
           "expectedAzure": "PostgreSQL database validation error for missing collation.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-database-name",
+          "description": "Create/update with a PostgreSQL database name that violates naming rules.",
+          "body": {
+            "properties": {
+              "charset": "UTF8",
+              "collation": "en_US.utf8"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server database validation error for invalid database name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{flexibleServersName}/databases/1bad"
         }
       ]
     },

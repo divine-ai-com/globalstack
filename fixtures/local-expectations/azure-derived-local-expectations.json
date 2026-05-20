@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T15:27:18.294Z",
+  "generatedAt": "2026-05-20T16:02:32.831Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 362,
+  "expectationCount": 371,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -5896,6 +5896,30 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-database-name",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-database-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidParameterValue",
+        "message": "Invalid value given for parameter databaseName. Specify a valid parameter value."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-066697d14c/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-066697d14c/databases/1bad?api-version=2023-06-01-preview",
+        "body": {
+          "properties": {
+            "charset": "UTF8",
+            "collation": "en_US.utf8"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-sku",
       "capabilityId": "postgresql-flexible-server",
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
@@ -6005,6 +6029,175 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.empty-body",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "empty-body",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9bb5cc5dc6/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-9bb5cc5dc6?api-version=2023-06-01-preview",
+        "body": {}
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-location",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8843341766/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-8843341766?api-version=2023-06-01-preview",
+        "body": {
+          "location": "globalstack-invalid-location",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-server-name",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-server-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidParameterValue",
+        "message": "Invalid value given for parameter serverName. Specify a valid parameter value."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-80eb64ff2d/providers/Microsoft.DBforPostgreSQL/flexibleServers/Bad_Server?api-version=2023-06-01-preview",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-sku",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-sku",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingRequiredParameter",
+        "message": "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d31ddcf17d/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-d31ddcf17d?api-version=2023-06-01-preview",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "GlobalStack_InvalidSku_For_Conformance"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 214.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8f0a63c93d/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-8f0a63c93d?api-version=2023-06-01-preview",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          },
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-admin-login",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-admin-login",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingRequiredParameter",
+        "message": "Parameter 'AdministratorLogin' must be specified. This parameter cannot be NULL or empty."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a7f59b078a/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-a7f59b078a?api-version=2023-06-01-preview",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-api-version",
       "capabilityId": "postgresql-flexible-server",
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
@@ -6033,6 +6226,61 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-location",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-67eb05b6eb/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-67eb05b6eb?api-version=2023-06-01-preview",
+        "body": {
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
+            "version": "16"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.null-properties",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "MissingRequiredParameter",
+        "message": "Parameter 'Version' must be specified. This parameter cannot be NULL or empty."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fe5f459a6a/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-fe5f459a6a?api-version=2023-06-01-preview",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.delete.not-found",

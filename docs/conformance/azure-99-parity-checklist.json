@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T15:27:18.587Z",
+    "generatedAt": "2026-05-20T16:02:33.202Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -888,12 +888,14 @@
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 89,
-        "liveCaptureCount": 29,
+        "liveCaptureCount": 31,
         "validationDepthCounts": {
-          "capture-infrastructure-gap": 20,
+          "capture-infrastructure-gap": 11,
+          "provider-validation": 9,
           "provider-routing-or-parent-validation": 5,
           "arm-surface": 2,
-          "provider-accepted": 2
+          "subscription-or-provider-readiness": 1,
+          "provider-accepted": 3
         }
       },
       "dimensionCounts": {
@@ -916,8 +918,8 @@
         "parameterVarianceCaptures": {
           "status": "partial",
           "evidence": [
-            "29 live ARM captures",
-            "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, invalid-tags-shape=2, missing-api-version=2, missing-charset=1, missing-collation=1, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-version=1, missing-admin-login=1, missing-admin-password=1, missing-location=1, weak-admin-password=1"
+            "31 live ARM captures",
+            "variance cases: empty-body=2, invalid-database-name=1, invalid-location=2, invalid-sku=2, invalid-tags-shape=2, missing-api-version=2, missing-charset=1, missing-collation=1, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-server-name=1, invalid-version=1, missing-admin-login=1, missing-admin-password=1, missing-location=1, weak-admin-password=1"
           ],
           "gaps": [
             "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
@@ -938,7 +940,7 @@
         "errorShapeFidelity": {
           "status": "partial",
           "evidence": [
-            "validation depths: capture-infrastructure-gap=20, provider-routing-or-parent-validation=5, arm-surface=2, provider-accepted=2"
+            "validation depths: capture-infrastructure-gap=11, provider-validation=9, provider-routing-or-parent-validation=5, arm-surface=2, subscription-or-provider-readiness=1, provider-accepted=3"
           ],
           "gaps": [
             "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."

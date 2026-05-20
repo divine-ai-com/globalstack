@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-tags-shape",
-  "capturedAt": "2026-05-20T13:51:14.443Z",
+  "capturedAt": "2026-05-20T15:34:57.867Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -25,9 +25,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2c0bf83d-88af-4c8e-8df5-51f087d7c69d",
-      "x-ms-request-id": "2c0bf83d-88af-4c8e-8df5-51f087d7c69d",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135114Z:2c0bf83d-88af-4c8e-8df5-51f087d7c69d"
+      "x-ms-correlation-request-id": "76794396-2001-49db-a3e1-c9f1f39accc2",
+      "x-ms-request-id": "76794396-2001-49db-a3e1-c9f1f39accc2",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T153457Z:76794396-2001-49db-a3e1-c9f1f39accc2"
     },
     "body": {
       "error": {

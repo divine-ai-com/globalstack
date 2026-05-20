@@ -22,13 +22,19 @@ const operationFilter = args.get('operation');
 const caseFilter = args.get('case');
 const runAllAzure = args.get('all') === 'true';
 const limit = Number(args.get('limit') ?? 0);
-const subscriptionId = process.env.AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000';
-const tenantId = process.env.AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
+const emptyGuid = '00000000-0000-0000-0000-000000000000';
+const configuredSubscriptionId = [process.env.AZURE_SUBSCRIPTION_ID, process.env.ARM_SUBSCRIPTION_ID]
+  .find(value => value && value.trim())?.trim();
+const configuredTenantId = [process.env.AZURE_TENANT_ID, process.env.ARM_TENANT_ID]
+  .find(value => value && value.trim())?.trim();
+let subscriptionId = configuredSubscriptionId ?? emptyGuid;
+let tenantId = configuredTenantId ?? emptyGuid;
 const location = process.env.AZURE_LOCATION ?? 'eastus';
 const cleanupVerifyAttempts = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_ATTEMPTS ?? 24);
 const cleanupVerifyDelayMs = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_DELAY_MS ?? 5000);
 let azureAccessToken;
 let localExpectationMap;
+let azureAccountContext;
 
 function run(command, commandArgs, opts = {}) {
   return new Promise((resolve) => {
@@ -238,6 +244,16 @@ async function getAzureAccessToken() {
   }
   azureAccessToken = result.stdout.trim();
   return azureAccessToken;
+}
+
+async function getAzureAccountContext() {
+  if (azureAccountContext) return azureAccountContext;
+  const result = await run('az', ['account', 'show', '--output', 'json']);
+  if (result.code !== 0 || !result.stdout.trim()) {
+    throw new Error(`Unable to get Azure account context: ${result.stderr || result.stdout}`);
+  }
+  azureAccountContext = JSON.parse(result.stdout);
+  return azureAccountContext;
 }
 
 function sanitizeHeaders(headers) {
@@ -558,6 +574,9 @@ async function runAzureCase(call, variance) {
     },
   };
   const rgCreate = await azureRequest('PUT', rgPath, { location, tags: { purpose: 'globalstack-conformance', ttl: 'ephemeral' } });
+  if (rgCreate.status < 200 || rgCreate.status >= 300) {
+    throw new Error(`Azure resource group bootstrap failed for ${fixtureId}: HTTP ${rgCreate.status} ${JSON.stringify(rgCreate.body)}`);
+  }
   await seedParents(azureRequest, call, variance, replacements);
   const response = await azureRequest(call.method, inventory.trackedResourcePath, interpolate(variance.body, replacements));
   const deleteResponse = await azureRequest('DELETE', rgPath, null);
@@ -678,6 +697,14 @@ function markdown(report) {
 }
 
 await mkdir(outRoot, { recursive: true });
+if (target === 'azure' && (subscriptionId === emptyGuid || tenantId === emptyGuid)) {
+  const account = await getAzureAccountContext();
+  subscriptionId = subscriptionId === emptyGuid ? account.id ?? emptyGuid : subscriptionId;
+  tenantId = tenantId === emptyGuid ? account.tenantId ?? emptyGuid : tenantId;
+  if (subscriptionId === emptyGuid || tenantId === emptyGuid) {
+    throw new Error('Real Azure conformance requires an active Azure CLI account with subscription and tenant context.');
+  }
+}
 const catalog = buildAzureLiveApiCatalog();
 const calls = selectedCreateCalls(catalog);
 const results = [];

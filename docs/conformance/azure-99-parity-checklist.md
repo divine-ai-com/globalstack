@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-20T15:27:18.587Z
+Generated: 2026-05-20T16:02:33.202Z
 
 ## Dimensions
 
@@ -29,7 +29,7 @@ Generated: 2026-05-20T15:27:18.587Z
 | identity-rbac | 1 | in-progress | 0 | 8 | 2 | 12 | 39 | 15 |
 | key-vault-secrets | 1 | in-progress | 0 | 9 | 1 | 8 | 15 | 96 |
 | key-vault-keys | 1 | in-progress | 0 | 9 | 1 | 8 | 14 | 105 |
-| postgresql-flexible-server | 1 | in-progress | 0 | 8 | 2 | 8 | 29 | 89 |
+| postgresql-flexible-server | 1 | in-progress | 0 | 8 | 2 | 8 | 31 | 89 |
 | cosmos-nosql-table | 1 | in-progress | 0 | 8 | 2 | 16 | 41 | 366 |
 | service-bus-topics | 1 | in-progress | 0 | 9 | 1 | 12 | 33 | 116 |
 | event-grid | 1 | in-progress | 0 | 9 | 1 | 8 | 14 | 35 |
@@ -191,9 +191,9 @@ Generated: 2026-05-20T15:27:18.587Z
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>89 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
-| Parameter variance captures | partial | 29 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-sku=2, invalid-tags-shape=2, missing-api-version=2, missing-charset=1, missing-collation=1, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-version=1, missing-admin-login=1, missing-admin-password=1, missing-location=1, weak-admin-password=1 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | partial | 31 live ARM captures<br>variance cases: empty-body=2, invalid-database-name=1, invalid-location=2, invalid-sku=2, invalid-tags-shape=2, missing-api-version=2, missing-charset=1, missing-collation=1, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-server-name=1, invalid-version=1, missing-admin-login=1, missing-admin-password=1, missing-location=1, weak-admin-password=1 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
-| Error-shape fidelity | partial | validation depths: capture-infrastructure-gap=20, provider-routing-or-parent-validation=5, arm-surface=2, provider-accepted=2 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
+| Error-shape fidelity | partial | validation depths: capture-infrastructure-gap=11, provider-validation=9, provider-routing-or-parent-validation=5, arm-surface=2, subscription-or-provider-readiness=1, provider-accepted=3 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |

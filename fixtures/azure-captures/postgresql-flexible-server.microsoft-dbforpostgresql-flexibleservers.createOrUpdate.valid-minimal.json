@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-20T13:51:11.072Z",
+  "capturedAt": "2026-05-20T15:49:37.212Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -27,31 +27,32 @@
     "apiVersionOverride": null
   },
   "response": {
-    "status": 404,
+    "status": 202,
     "headers": {
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/9626cf62-dffa-4821-b4fd-1c4c7463989e?api-version=2023-06-01-preview&redacted=true",
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2255f3dc-0e4e-465d-bd92-74eb5ebe4ab7",
-      "x-ms-request-id": "2255f3dc-0e4e-465d-bd92-74eb5ebe4ab7",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135110Z:2255f3dc-0e4e-465d-bd92-74eb5ebe4ab7"
+      "location": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/9626cf62-dffa-4821-b4fd-1c4c7463989e?api-version=2023-06-01-preview&redacted=true",
+      "retry-after": "60",
+      "x-ms-correlation-request-id": "913443a7-c4e4-409d-861a-4574287ef76e",
+      "x-ms-request-id": "99ceb531-2919-422c-b2a2-4b6233d99fb8",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T154833Z:913443a7-c4e4-409d-861a-4574287ef76e"
     },
     "body": {
-      "error": {
-        "code": "SubscriptionNotFound",
-        "message": "The subscription '<subscription-id>' could not be found."
-      }
+      "operation": "UpsertServerManagementOperationV2",
+      "startTime": "2026-05-20T15:48:32.383Z"
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-470a547f98",
-    "deleteStatus": 404,
+    "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "capture-infrastructure-gap",
+    "validationDepth": "provider-accepted",
     "cloudValidated": false,
-    "providerRegistered": null,
-    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
   }
 }
