@@ -1090,6 +1090,15 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         },
         'Event Hubs namespace validation error for non-integer capacity.',
       ),
+      realAzureVariance(
+        'invalid-namespace-name',
+        'Create/update with an Event Hubs namespace name that violates naming rules.',
+        createBody,
+        'Event Hubs namespace validation error for invalid namespace name shape.',
+        {
+          pathTemplateOverride: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/1bad',
+        },
+      ),
     );
   }
 
@@ -1138,6 +1147,15 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Event hub validation error for non-integer messageRetentionInDays.',
+      ),
+      realAzureVariance(
+        'invalid-eventhub-name',
+        'Create/update with an Event Hub name that violates naming rules.',
+        createBody,
+        'Event hub validation error for invalid event hub name shape.',
+        {
+          pathTemplateOverride: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespacesName}/eventhubs/bad_',
+        },
       ),
     );
   }

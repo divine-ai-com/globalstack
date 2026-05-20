@@ -1,6 +1,6 @@
 {
   "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.createOrUpdate.invalid-partition-count",
-  "capturedAt": "2026-05-20T13:51:14.520Z",
+  "capturedAt": "2026-05-20T15:17:56.780Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -24,9 +24,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2428e3e4-08cd-4519-9670-50a1028c4047",
-      "x-ms-request-id": "2428e3e4-08cd-4519-9670-50a1028c4047",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135114Z:2428e3e4-08cd-4519-9670-50a1028c4047"
+      "x-ms-correlation-request-id": "04732380-6cd1-4bc3-87d3-fc93d71eab27",
+      "x-ms-request-id": "04732380-6cd1-4bc3-87d3-fc93d71eab27",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T151756Z:04732380-6cd1-4bc3-87d3-fc93d71eab27"
     },
     "body": {
       "error": {

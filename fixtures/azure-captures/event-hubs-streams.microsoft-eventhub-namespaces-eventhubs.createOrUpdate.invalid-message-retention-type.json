@@ -1,6 +1,6 @@
 {
   "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.createOrUpdate.invalid-message-retention-type",
-  "capturedAt": "2026-05-20T13:51:15.079Z",
+  "capturedAt": "2026-05-20T15:17:57.513Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -24,9 +24,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "f3fe822c-80cc-46fc-8acd-b3cb75393d33",
-      "x-ms-request-id": "f3fe822c-80cc-46fc-8acd-b3cb75393d33",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135114Z:f3fe822c-80cc-46fc-8acd-b3cb75393d33"
+      "x-ms-correlation-request-id": "6041ff08-dfe2-4e81-8181-56991b37ab66",
+      "x-ms-request-id": "6041ff08-dfe2-4e81-8181-56991b37ab66",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T151757Z:6041ff08-dfe2-4e81-8181-56991b37ab66"
     },
     "body": {
       "error": {

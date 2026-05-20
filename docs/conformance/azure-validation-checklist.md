@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 748
+- Real Azure fixtures with verified cleanup: 750
 
 ## Tier 1
 
@@ -1750,6 +1750,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `invalid-sku`: captured HTTP 404; cleanup verified
 - [x] `invalid-capacity`: captured HTTP 404; cleanup verified
 - [x] `invalid-capacity-type`: captured HTTP 404; cleanup verified
+- [x] `invalid-namespace-name`: captured HTTP 404; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces / Get
 
@@ -1776,6 +1777,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `invalid-partition-count-type`: captured HTTP 404; cleanup verified
 - [x] `invalid-message-retention`: captured HTTP 404; cleanup verified
 - [x] `invalid-message-retention-type`: captured HTTP 404; cleanup verified
+- [x] `invalid-eventhub-name`: captured HTTP 404; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces/eventhubs / Get
 

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T15:06:59.050Z",
+    "generatedAt": "2026-05-20T15:17:47.767Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -16077,6 +16077,23 @@
           "expectedAzure": "Event Hubs namespace validation error for non-integer capacity.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-namespace-name",
+          "description": "Create/update with an Event Hubs namespace name that violates naming rules.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard",
+              "capacity": 1
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Event Hubs namespace validation error for invalid namespace name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/1bad"
         }
       ]
     },
@@ -16286,6 +16303,20 @@
           "expectedAzure": "Event hub validation error for non-integer messageRetentionInDays.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-eventhub-name",
+          "description": "Create/update with an Event Hub name that violates naming rules.",
+          "body": {
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": 1
+            }
+          },
+          "expectedAzure": "Event hub validation error for invalid event hub name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespacesName}/eventhubs/bad_"
         }
       ]
     },
