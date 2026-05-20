@@ -146,12 +146,12 @@ export class AppConfigurationRouter {
 
       const parts = url.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
       const [collection, key] = parts;
-      if (collection !== 'kv') {
+      if (!['kv', 'locks'].includes(collection)) {
         return sendError(res, 404, 'GlobalStackRouteNotImplemented', `No App Configuration data-plane route handles ${url.pathname}.`);
       }
 
       if (!key) {
-        if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'Key-value collection supports GET.');
+        if (collection !== 'kv' || method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'The requested collection does not support this method.');
         const selector = url.searchParams.get('key');
         const label = url.searchParams.get('label');
         const values = [...store.keyValues.values()]
@@ -163,6 +163,26 @@ export class AppConfigurationRouter {
       const label = url.searchParams.get('label');
       const mapKey = this.key(store, key, label);
 
+      if (collection === 'locks') {
+        const record = store.keyValues.get(mapKey);
+        if (!record) return sendError(res, 404, 'KeyValueNotFound', `The key-value '${key}' was not found.`);
+        if (method === 'PUT') {
+          record.locked = true;
+          record.revision = randomUUID();
+          record.lastModified = new Date().toISOString();
+          record.etag = etagFor(record);
+          return sendJson(res, 200, recordBody(record), { etag: record.etag });
+        }
+        if (method === 'DELETE') {
+          record.locked = false;
+          record.revision = randomUUID();
+          record.lastModified = new Date().toISOString();
+          record.etag = etagFor(record);
+          return sendJson(res, 200, recordBody(record), { etag: record.etag });
+        }
+        return sendError(res, 405, 'MethodNotAllowed', 'Lock resources support PUT and DELETE.');
+      }
+
       if (method === 'GET') {
         const record = store.keyValues.get(mapKey);
         if (!record) return sendError(res, 404, 'KeyValueNotFound', `The key-value '${key}' was not found.`);
@@ -171,7 +191,14 @@ export class AppConfigurationRouter {
 
       if (method === 'PUT') {
         const ifMatch = req.headers['if-match'];
+        const ifNoneMatch = req.headers['if-none-match'];
         const existing = store.keyValues.get(mapKey);
+        if (existing?.locked) {
+          return sendError(res, 409, 'KeyValueLocked', 'The key-value is locked and cannot be modified.');
+        }
+        if (ifNoneMatch === '*' && existing) {
+          return sendError(res, 412, 'PreconditionFailed', 'The provided If-None-Match value does not allow updating an existing key-value.');
+        }
         if (ifMatch && ifMatch !== '*' && existing?.etag !== ifMatch) {
           return sendError(res, 412, 'PreconditionFailed', 'The provided If-Match value does not match the current ETag.');
         }
@@ -197,8 +224,15 @@ export class AppConfigurationRouter {
       }
 
       if (method === 'DELETE') {
+        const ifMatch = req.headers['if-match'];
         const record = store.keyValues.get(mapKey);
         if (!record) return sendError(res, 404, 'KeyValueNotFound', `The key-value '${key}' was not found.`);
+        if (ifMatch && ifMatch !== '*' && record.etag !== ifMatch) {
+          return sendError(res, 412, 'PreconditionFailed', 'The provided If-Match value does not match the current ETag.');
+        }
+        if (record.locked) {
+          return sendError(res, 409, 'KeyValueLocked', 'The key-value is locked and cannot be deleted.');
+        }
         store.keyValues.delete(mapKey);
         return sendJson(res, 200, recordBody(record), { etag: record.etag });
       }

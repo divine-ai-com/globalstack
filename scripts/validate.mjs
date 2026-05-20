@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 453) {
-    errors.push('Azure capture classification should include 453 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 454) {
+    errors.push('Azure capture classification should include 454 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -2153,8 +2153,8 @@ if (!appConfigurationParityText) {
   if (appConfigurationParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure App Configuration parity data-plane matrix has failures');
   }
-  if ((appConfigurationParity.dataPlane?.total ?? 0) < 17) {
-    errors.push('Azure App Configuration parity data-plane matrix should exercise at least 17 cases');
+  if ((appConfigurationParity.dataPlane?.total ?? 0) < 23) {
+    errors.push('Azure App Configuration parity data-plane matrix should exercise at least 23 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2200,6 +2200,12 @@ if (!appConfigurationParityText) {
     'data-plane key-value get succeeds',
     'data-plane stale etag update is rejected',
     'data-plane matching etag update succeeds',
+    'data-plane if-none-match existing key is rejected',
+    'data-plane lock key-value succeeds',
+    'data-plane locked key-value update is rejected',
+    'data-plane locked key-value delete is rejected',
+    'data-plane unlock key-value succeeds',
+    'data-plane delete with stale etag is rejected',
     'data-plane labeled key-value set succeeds',
     'data-plane key-values list supports key filter',
     'data-plane key-values list supports label filter',

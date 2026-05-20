@@ -378,6 +378,7 @@ async function runDataPlaneMatrix() {
   const host = `${storeName}.azconfig.io`;
   const auth = { host, authorization: authHeader };
   let firstEtag = null;
+  let updatedEtag = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -487,7 +488,59 @@ async function runDataPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.equal(result.body.value, 'disabled');
       assert.notEqual(result.headers.etag, firstEtag);
+      updatedEtag = result.headers.etag;
+      return { status: result.status, etag: updatedEtag };
+    });
+
+    await record('data-plane if-none-match existing key is rejected', async () => {
+      const result = await httpDataPlaneJson(port, 'PUT', '/kv/app:setting?api-version=1.0', { value: 'blocked' }, {
+        ...auth,
+        'if-none-match': '*',
+      });
+      assert.equal(result.status, 412);
+      assert.equal(result.body.name, 'PreconditionFailed');
+      return { status: result.status, errorCode: result.body.name };
+    });
+
+    await record('data-plane lock key-value succeeds', async () => {
+      const result = await httpDataPlaneJson(port, 'PUT', '/locks/app:setting?api-version=1.0', undefined, auth);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.locked, true);
       return { status: result.status, etag: result.headers.etag };
+    });
+
+    await record('data-plane locked key-value update is rejected', async () => {
+      const result = await httpDataPlaneJson(port, 'PUT', '/kv/app:setting?api-version=1.0', { value: 'locked-update' }, {
+        ...auth,
+        'if-match': '*',
+      });
+      assert.equal(result.status, 409);
+      assert.equal(result.body.name, 'KeyValueLocked');
+      return { status: result.status, errorCode: result.body.name };
+    });
+
+    await record('data-plane locked key-value delete is rejected', async () => {
+      const result = await httpDataPlaneJson(port, 'DELETE', '/kv/app:setting?api-version=1.0', undefined, auth);
+      assert.equal(result.status, 409);
+      assert.equal(result.body.name, 'KeyValueLocked');
+      return { status: result.status, errorCode: result.body.name };
+    });
+
+    await record('data-plane unlock key-value succeeds', async () => {
+      const result = await httpDataPlaneJson(port, 'DELETE', '/locks/app:setting?api-version=1.0', undefined, auth);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.locked, false);
+      return { status: result.status, etag: result.headers.etag };
+    });
+
+    await record('data-plane delete with stale etag is rejected', async () => {
+      const result = await httpDataPlaneJson(port, 'DELETE', '/kv/app:setting?api-version=1.0', undefined, {
+        ...auth,
+        'if-match': updatedEtag,
+      });
+      assert.equal(result.status, 412);
+      assert.equal(result.body.name, 'PreconditionFailed');
+      return { status: result.status, errorCode: result.body.name };
     });
 
     await record('data-plane labeled key-value set succeeds', async () => {

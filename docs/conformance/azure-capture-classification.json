@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-20T06:58:10.294Z",
-  "fixtureCount": 453,
-  "cleanupVerifiedCount": 453,
+  "generatedAt": "2026-05-20T07:08:44.594Z",
+  "fixtureCount": 454,
+  "cleanupVerifiedCount": 454,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
     "provider-validation": 142,
     "arm-surface": 62,
     "provider-accepted": 98,
     "provider-routing-or-parent-validation": 137,
-    "subscription-or-provider-readiness": 6,
+    "subscription-or-provider-readiness": 7,
     "capture-infrastructure-gap": 8
   },
   "byErrorCode": {
@@ -23,10 +23,10 @@
     "InvalidParameter": 1,
     "InvalidParameters": 1,
     "InvalidProperty": 1,
+    "NoRegisteredProviderFound": 7,
     "ParentResourceNotFound": 73,
     "DeleteNotSupported": 3,
     "InvalidAccountType": 1,
-    "NoRegisteredProviderFound": 6,
     "SubscriptionNotFound": 4,
     "ValidateResourceInfoFailedWithInvalidSkuName": 2,
     "MalformedRoleAssignmentRequest": 1,
@@ -553,6 +553,19 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.unsupported-api-version",
+      "capabilityId": "app-configuration-parameters",
+      "resourceType": "Microsoft.AppConfiguration/configurationStores",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 400,
+      "errorCode": "NoRegisteredProviderFound",
+      "cleanupVerified": true,
+      "validationDepth": "subscription-or-provider-readiness",
+      "cloudValidated": false,
+      "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
     },
     {
       "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.valid-minimal",

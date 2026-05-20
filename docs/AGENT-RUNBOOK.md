@@ -268,7 +268,7 @@ Run the Azure App Configuration parity pack after changing App Configuration sto
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:app-configuration-parity
 ```
 
-Expected result is `dist/e2e/azure-app-configuration-parity/results.json` with `ok == true`, zero control-plane failures, at least 25 App Configuration cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, App Configuration store lifecycle, stricter SKU/local-auth/public-network rejection, unsupported key-value/feature-flag/list-key routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-app-configuration-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 25 control-plane cases, at least 23 data-plane cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, App Configuration store lifecycle, stricter SKU/local-auth/public-network rejection, key-value data-plane lifecycle, labels, ETag preconditions, lock/unlock rejection behavior, unsupported key-value/feature-flag/list-key routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Key Vault parity pack after changing Key Vault vault, secret, key, local data-plane, or platform deployment routing:
 
