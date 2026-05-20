@@ -161,19 +161,23 @@ function redisPath(resourceGroup, redisName, apiVersion = '2023-08-01') {
 }
 
 function redisBody(overrides = {}) {
+  const propertyOverrides = overrides.properties ?? {};
+  const skuOverrides = propertyOverrides.sku ?? {};
+  const propertyPassthrough = Object.fromEntries(Object.entries(propertyOverrides).filter(([key]) => key !== 'sku'));
   return {
     location: 'eastus',
     tags: { workload: 'ai-mlops-cache' },
-    sku: {
-      name: 'Basic',
-      family: 'C',
-      capacity: 0,
-      ...(overrides.sku ?? {}),
-    },
     properties: {
+      sku: {
+        name: 'Basic',
+        family: 'C',
+        capacity: 0,
+        ...(overrides.sku ?? {}),
+        ...skuOverrides,
+      },
       enableNonSslPort: true,
       minimumTlsVersion: '1.2',
-      ...(overrides.properties ?? {}),
+      ...propertyPassthrough,
     },
     ...Object.fromEntries(Object.entries(overrides).filter(([key]) => !['properties', 'sku'].includes(key))),
   };
@@ -192,7 +196,6 @@ function deploymentBody(redisName) {
             apiVersion: '2023-08-01',
             name: redisName,
             location: 'eastus',
-            sku: redisBody().sku,
             properties: redisBody().properties,
           },
         ],
@@ -310,9 +313,9 @@ async function runControlPlaneMatrix() {
       ['redis empty body is rejected', redisName, {}, 'LocationRequired'],
       ['redis invalid location is rejected', redisName, redisBody({ location: 'globalstack-invalid-location' }), 'InvalidResourceLocation'],
       ['redis invalid name is rejected', `-bad-${suffix}`, redisBody(), 'InvalidResourceName'],
-      ['redis invalid sku name is rejected', redisName, redisBody({ sku: { name: 'Ultra' } }), 'InvalidRequestBody'],
-      ['redis invalid sku family is rejected', redisName, redisBody({ sku: { family: 'Z' } }), 'InvalidRequestBody'],
-      ['redis invalid sku capacity is rejected', redisName, redisBody({ sku: { capacity: 99 } }), 'InvalidRequestBody'],
+      ['redis invalid sku name is rejected', redisName, redisBody({ properties: { sku: { name: 'Ultra' } } }), 'InvalidRequestBody'],
+      ['redis invalid sku family is rejected', redisName, redisBody({ properties: { sku: { family: 'Z' } } }), 'InvalidRequestBody'],
+      ['redis invalid sku capacity is rejected', redisName, redisBody({ properties: { sku: { capacity: 99 } } }), 'InvalidRequestBody'],
       ['redis invalid non-ssl flag is rejected', redisName, redisBody({ properties: { enableNonSslPort: 'yes' } }), 'InvalidRequestBody'],
     ]) {
       await record(name, async () => {

@@ -1849,7 +1849,7 @@ function validateCosmosPayload(resourceType, body, providerRoute = null) {
 
 function validateRedisPayload(resourceType, body) {
   if (resourceType !== 'Microsoft.Cache/redis') return null;
-  const sku = body.sku ?? {};
+  const sku = body.properties?.sku ?? {};
   if (!['Basic', 'Standard', 'Premium'].includes(sku.name)) {
     return envelopedError(
       400,

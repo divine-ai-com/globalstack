@@ -251,8 +251,10 @@ function caseDefinitions(runSuffix) {
           path: providerPath(tier2Rg, 'Microsoft.Cache', `redis/${tier2Redis}`, '2023-08-01'),
           body: {
             location,
-            sku: { name: 'Basic', family: 'C', capacity: 0 },
-            properties: { enableNonSslPort: 'yes' },
+            properties: {
+              sku: { name: 'Basic', family: 'C', capacity: 0 },
+              enableNonSslPort: 'yes',
+            },
           },
           expect: [400],
           expectErrorCodes: ['InvalidRequestBody'],

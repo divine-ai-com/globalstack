@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T16:32:31.191Z",
+  "generatedAt": "2026-05-20T17:42:41.270Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 372,
+  "expectationCount": 373,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -6685,13 +6685,44 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3b389de69d/providers/Microsoft.Cache/redis/redis-3b389de69d?api-version=2023-08-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "sku": {
-            "name": "Basic",
-            "family": "C",
-            "capacity": 0
-          },
           "properties": {
-            "enableNonSslPort": true
+            "sku": {
+              "name": "Basic",
+              "family": "C",
+              "capacity": 0
+            },
+            "enableNonSslPort": true,
+            "minimumTlsVersion": "1.2"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "redis-cache.microsoft-cache-redis.createOrUpdate.invalid-resource-name",
+      "capabilityId": "redis-cache",
+      "resourceType": "Microsoft.Cache/redis",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-resource-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "message": "The resource name '-bad-cache' is invalid. It can only contain letters, numbers and hyphens. The first and last characters must each be a letter or a number.\r\nRequestID=bdd3fdf3-b7c3-40e3-b8a5-0909e2ba8b18"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-702cffa663/providers/Microsoft.Cache/redis/-bad-cache?api-version=2023-08-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "sku": {
+              "name": "Basic",
+              "family": "C",
+              "capacity": 0
+            },
+            "enableNonSslPort": true,
+            "minimumTlsVersion": "1.2"
           }
         }
       },
@@ -6707,18 +6738,19 @@
       "expected": {
         "status": 400,
         "errorCode": "InvalidRequestBody",
-        "message": "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=9b8f3462-05df-4209-a881-3839e8b2bd34"
+        "message": "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=4875e85a-a381-497a-bd1a-19de9bae0da9"
       },
       "request": {
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-11684de414/providers/Microsoft.Cache/redis/redis-11684de414?api-version=2023-08-01",
         "body": {
           "location": "{location}",
-          "sku": {
-            "name": "GlobalStack_InvalidSku_For_Conformance"
-          },
           "properties": {
-            "enableNonSslPort": true
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "enableNonSslPort": true,
+            "minimumTlsVersion": "1.2"
           }
         }
       },
@@ -6741,13 +6773,14 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4996a50975/providers/Microsoft.Cache/redis/redis-4996a50975",
         "body": {
           "location": "{location}",
-          "sku": {
-            "name": "Basic",
-            "family": "C",
-            "capacity": 0
-          },
           "properties": {
-            "enableNonSslPort": true
+            "sku": {
+              "name": "Basic",
+              "family": "C",
+              "capacity": 0
+            },
+            "enableNonSslPort": true,
+            "minimumTlsVersion": "1.2"
           }
         }
       },

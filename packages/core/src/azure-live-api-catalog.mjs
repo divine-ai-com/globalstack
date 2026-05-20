@@ -238,7 +238,17 @@ function bodyFor(resourceType) {
   if (lower.includes('microsoft.documentdb/databaseaccounts/sqldatabases/containers')) return { properties: { resource: { id: '{containersName}', partitionKey: { paths: ['/pk'], kind: 'Hash' } }, options: { throughput: 400 } } };
   if (lower.includes('microsoft.documentdb/databaseaccounts/sqldatabases')) return { properties: { resource: { id: '{sqlDatabasesName}' }, options: { throughput: 400 } } };
   if (lower.includes('microsoft.documentdb/databaseaccounts')) return { location: '{location}', kind: 'GlobalDocumentDB', properties: { databaseAccountOfferType: 'Standard', locations: [{ locationName: '{location}', failoverPriority: 0, isZoneRedundant: false }], consistencyPolicy: { defaultConsistencyLevel: 'Session' } } };
-  if (lower.includes('microsoft.cache/redis')) return { location: '{location}', sku: { name: 'Basic', family: 'C', capacity: 0 }, properties: { enableNonSslPort: true } };
+  if (lower === 'microsoft.cache/redis') {
+    return {
+      location: '{location}',
+      properties: {
+        sku: { name: 'Basic', family: 'C', capacity: 0 },
+        enableNonSslPort: true,
+        minimumTlsVersion: '1.2',
+      },
+    };
+  }
+  if (lower.includes('microsoft.cache/redisenterprise')) return { location: '{location}', sku: { name: 'Enterprise_E10', capacity: 2 }, properties: {} };
   if (lower === 'microsoft.logic/workflows') return { location: '{location}', properties: { state: 'Enabled', definition: { '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#', contentVersion: '1.0.0.0', triggers: { manual: { type: 'Request', kind: 'Http', inputs: { schema: {} } } }, actions: {}, outputs: {} }, parameters: {} } };
   if (lower === 'microsoft.cdn/profiles') return { location: '{location}', sku: { name: 'Standard_AzureFrontDoor' }, properties: {} };
   if (lower === 'microsoft.cdn/profiles/afdendpoints') return { location: '{location}', properties: { enabledState: 'Enabled' } };
@@ -367,10 +377,17 @@ function bodyFor(resourceType) {
 }
 
 function invalidSkuBody(body) {
+  if (body.properties?.sku) {
+    return withNestedProperties(body, 'sku', { name: 'GlobalStack_InvalidSku_For_Conformance' });
+  }
   return {
     ...body,
     sku: { name: 'GlobalStack_InvalidSku_For_Conformance' },
   };
+}
+
+function hasSkuShape(body) {
+  return Boolean(body.sku || body.properties?.sku);
 }
 
 function withProperties(createBody, properties) {
@@ -1220,6 +1237,21 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.cache/redis') {
+    cases.push(
+      realAzureVariance(
+        'invalid-resource-name',
+        'Create/update with a Redis cache name that violates naming rules.',
+        createBody,
+        'Redis cache validation error for invalid resource name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/-bad-cache',
+        },
+      ),
+    );
+  }
+
   if (lower === 'microsoft.network/dnszones/a' || lower === 'microsoft.network/privatednszones/a') {
     cases.push(
       dnsRecordVariance(
@@ -1451,7 +1483,7 @@ function varianceCases(resourceType, createBody) {
     requiresRealAzure: true,
   });
 
-  if (createBody.sku || resourceType.toLowerCase().includes('sku')) {
+  if (hasSkuShape(createBody) || resourceType.toLowerCase().includes('sku')) {
     cases.push({
       id: 'invalid-sku',
       description: 'Create/update with an intentionally invalid SKU.',

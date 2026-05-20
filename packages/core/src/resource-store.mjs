@@ -240,7 +240,7 @@ export class ResourceStore {
       type,
       location: body.location ?? existing?.location ?? 'global',
       tags: body.tags ?? existing?.tags ?? {},
-      sku: body.sku,
+      sku: type === 'Microsoft.Cache/redis' ? undefined : body.sku,
       kind: body.kind,
       identity: body.identity ?? existing?.identity,
       properties: {
@@ -385,6 +385,7 @@ export class ResourceStore {
           : {}),
         ...(type === 'Microsoft.Cache/redis'
           ? {
+              sku: body.properties?.sku ?? existing?.properties?.sku,
               hostName: existing?.properties?.hostName ?? redisHostName(name),
               port: existing?.properties?.port ?? 6379,
               sslPort: existing?.properties?.sslPort ?? 6380,

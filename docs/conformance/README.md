@@ -82,19 +82,19 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Get | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | ListByResourceGroup | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Delete | DELETE | 2022-04-01 | 0 |
-| key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults | CreateOrUpdate | PUT | 2023-07-01 | 8 |
+| key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults | CreateOrUpdate | PUT | 2023-07-01 | 9 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults | Get | GET | 2023-07-01 | 0 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults | Delete | DELETE | 2023-07-01 | 0 |
-| key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults/secrets | CreateOrUpdate | PUT | 2023-07-01 | 8 |
+| key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults/secrets | CreateOrUpdate | PUT | 2023-07-01 | 9 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults/secrets | Get | GET | 2023-07-01 | 0 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults/secrets | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-secrets | Secrets Manager | Microsoft.KeyVault/vaults/secrets | Delete | DELETE | 2023-07-01 | 0 |
-| key-vault-keys | KMS | Microsoft.KeyVault/vaults | CreateOrUpdate | PUT | 2023-07-01 | 8 |
+| key-vault-keys | KMS | Microsoft.KeyVault/vaults | CreateOrUpdate | PUT | 2023-07-01 | 9 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults | Get | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults | Delete | DELETE | 2023-07-01 | 0 |
-| key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | CreateOrUpdate | PUT | 2023-07-01 | 8 |
+| key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | CreateOrUpdate | PUT | 2023-07-01 | 9 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Get | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Delete | DELETE | 2023-07-01 | 0 |
@@ -199,7 +199,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | queue-storage | SQS | Microsoft.ServiceBus/namespaces/queues | Get | GET | 2021-11-01 | 0 |
 | queue-storage | SQS | Microsoft.ServiceBus/namespaces/queues | ListByResourceGroup | GET | 2021-11-01 | 0 |
 | queue-storage | SQS | Microsoft.ServiceBus/namespaces/queues | Delete | DELETE | 2021-11-01 | 0 |
-| redis-cache | ElastiCache Redis | Microsoft.Cache/redis | CreateOrUpdate | PUT | 2023-08-01 | 9 |
+| redis-cache | ElastiCache Redis | Microsoft.Cache/redis | CreateOrUpdate | PUT | 2023-08-01 | 10 |
 | redis-cache | ElastiCache Redis | Microsoft.Cache/redis | Get | GET | 2023-08-01 | 0 |
 | redis-cache | ElastiCache Redis | Microsoft.Cache/redis | ListByResourceGroup | GET | 2023-08-01 | 0 |
 | redis-cache | ElastiCache Redis | Microsoft.Cache/redis | Delete | DELETE | 2023-08-01 | 0 |
@@ -363,7 +363,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | Get | GET | 2023-03-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | ListByResourceGroup | GET | 2023-03-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | Delete | DELETE | 2023-03-01 | 0 |
-| app-configuration-parameters | SSM Parameter Store | Microsoft.KeyVault/vaults/secrets | CreateOrUpdate | PUT | 2023-07-01 | 8 |
+| app-configuration-parameters | SSM Parameter Store | Microsoft.KeyVault/vaults/secrets | CreateOrUpdate | PUT | 2023-07-01 | 9 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.KeyVault/vaults/secrets | Get | GET | 2023-07-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.KeyVault/vaults/secrets | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.KeyVault/vaults/secrets | Delete | DELETE | 2023-07-01 | 0 |

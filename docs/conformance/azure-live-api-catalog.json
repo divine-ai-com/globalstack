@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T16:05:33.006Z",
+    "generatedAt": "2026-05-20T17:42:40.488Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -2101,6 +2101,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "tenantId": "{tenantId}",
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "accessPolicies": []
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -2303,6 +2320,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "tenantId": "{tenantId}",
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "accessPolicies": []
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -2509,6 +2543,23 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "tenantId": "{tenantId}",
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "accessPolicies": []
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -2711,6 +2762,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "tenantId": "{tenantId}",
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "accessPolicies": []
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -7641,13 +7709,14 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{redisName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "sku": {
-          "name": "Basic",
-          "family": "C",
-          "capacity": 0
-        },
         "properties": {
-          "enableNonSslPort": true
+          "sku": {
+            "name": "Basic",
+            "family": "C",
+            "capacity": 0
+          },
+          "enableNonSslPort": true,
+          "minimumTlsVersion": "1.2"
         }
       },
       "varianceCases": [
@@ -7656,13 +7725,14 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
@@ -7675,13 +7745,14 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "ARM error for missing api-version.",
@@ -7694,13 +7765,14 @@
           "apiVersionOverride": "1900-01-01",
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
@@ -7712,13 +7784,14 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "Provider-specific location validation error.",
@@ -7737,13 +7810,14 @@
           "id": "missing-location",
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "Provider-specific location-required validation error.",
@@ -7755,11 +7829,6 @@
           "description": "Create/update with properties explicitly set to null.",
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -7771,13 +7840,14 @@
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             },
             "tags": "globalstack-invalid-tags"
           },
@@ -7790,16 +7860,37 @@
           "description": "Create/update with an intentionally invalid SKU.",
           "body": {
             "location": "{location}",
-            "sku": {
-              "name": "GlobalStack_InvalidSku_For_Conformance"
-            },
             "properties": {
-              "enableNonSslPort": true
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
             }
           },
           "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-resource-name",
+          "description": "Create/update with a Redis cache name that violates naming rules.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+              },
+              "enableNonSslPort": true,
+              "minimumTlsVersion": "1.2"
+            }
+          },
+          "expectedAzure": "Redis cache validation error for invalid resource name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/-bad-cache"
         }
       ]
     },
@@ -7867,13 +7958,10 @@
       "requestBodyTemplate": {
         "location": "{location}",
         "sku": {
-          "name": "Basic",
-          "family": "C",
-          "capacity": 0
+          "name": "Enterprise_E10",
+          "capacity": 2
         },
-        "properties": {
-          "enableNonSslPort": true
-        }
+        "properties": {}
       },
       "varianceCases": [
         {
@@ -7882,13 +7970,10 @@
           "body": {
             "location": "{location}",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -7901,13 +7986,10 @@
           "body": {
             "location": "{location}",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -7920,13 +8002,10 @@
           "body": {
             "location": "{location}",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -7938,13 +8017,10 @@
           "body": {
             "location": "globalstack-invalid-location",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -7963,13 +8039,10 @@
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "Provider-specific location-required validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -7981,9 +8054,8 @@
           "body": {
             "location": "{location}",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
             "properties": null
           },
@@ -7997,13 +8069,10 @@
           "body": {
             "location": "{location}",
             "sku": {
-              "name": "Basic",
-              "family": "C",
-              "capacity": 0
+              "name": "Enterprise_E10",
+              "capacity": 2
             },
-            "properties": {
-              "enableNonSslPort": true
-            },
+            "properties": {},
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
@@ -8018,9 +8087,7 @@
             "sku": {
               "name": "GlobalStack_InvalidSku_For_Conformance"
             },
-            "properties": {
-              "enableNonSslPort": true
-            }
+            "properties": {}
           },
           "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -17148,6 +17215,23 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-sku",
+          "description": "Create/update with an intentionally invalid SKU.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "tenantId": "{tenantId}",
+              "sku": {
+                "name": "GlobalStack_InvalidSku_For_Conformance"
+              },
+              "accessPolicies": []
+            }
+          },
+          "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

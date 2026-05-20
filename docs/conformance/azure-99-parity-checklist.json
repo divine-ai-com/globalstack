@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T16:32:31.499Z",
+    "generatedAt": "2026-05-20T17:42:41.566Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -2362,11 +2362,11 @@
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 73,
-        "liveCaptureCount": 16,
+        "liveCaptureCount": 17,
         "validationDepthCounts": {
           "provider-validation": 6,
           "arm-surface": 2,
-          "provider-accepted": 3,
+          "provider-accepted": 4,
           "provider-routing-or-parent-validation": 2,
           "subscription-or-provider-readiness": 2,
           "capture-infrastructure-gap": 1
@@ -2392,8 +2392,8 @@
         "parameterVarianceCaptures": {
           "status": "partial",
           "evidence": [
-            "16 live ARM captures",
-            "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
+            "17 live ARM captures",
+            "variance cases: empty-body=2, invalid-location=2, invalid-resource-name=1, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
           ],
           "gaps": [
             "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
@@ -2414,7 +2414,7 @@
         "errorShapeFidelity": {
           "status": "partial",
           "evidence": [
-            "validation depths: provider-validation=6, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=2, subscription-or-provider-readiness=2, capture-infrastructure-gap=1"
+            "validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2, subscription-or-provider-readiness=2, capture-infrastructure-gap=1"
           ],
           "gaps": [
             "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."

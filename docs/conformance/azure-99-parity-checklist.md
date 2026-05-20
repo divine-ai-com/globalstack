@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-20T16:32:31.499Z
+Generated: 2026-05-20T17:42:41.566Z
 
 ## Dimensions
 
@@ -40,7 +40,7 @@ Generated: 2026-05-20T16:32:31.499Z
 | virtual-network | 1 | in-progress | 0 | 8 | 2 | 12 | 41 | 110 |
 | mysql-flexible-server | 2 | in-progress | 0 | 8 | 2 | 8 | 17 | 67 |
 | queue-storage | 2 | in-progress | 0 | 10 | 0 | 8 | 14 | 22 |
-| redis-cache | 2 | in-progress | 0 | 8 | 2 | 8 | 16 | 73 |
+| redis-cache | 2 | in-progress | 0 | 8 | 2 | 8 | 17 | 73 |
 | logic-workflows | 2 | in-progress | 0 | 8 | 2 | 8 | 14 | 425 |
 | dns-zones | 2 | in-progress | 0 | 8 | 2 | 84 | 168 | 136 |
 | load-balancing | 2 | in-progress | 0 | 8 | 2 | 8 | 14 | 67 |
@@ -422,9 +422,9 @@ Generated: 2026-05-20T16:32:31.499Z
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | partial | 8 candidate catalog calls<br>73 provider operations matched | Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.<br>Add data-plane surface inventory where the service has data-plane APIs. |
-| Parameter variance captures | partial | 16 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | partial | 17 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-resource-name=1, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2 | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
 | State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
-| Error-shape fidelity | partial | validation depths: provider-validation=6, arm-surface=2, provider-accepted=3, provider-routing-or-parent-validation=2, subscription-or-provider-readiness=2, capture-infrastructure-gap=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
+| Error-shape fidelity | partial | validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2, subscription-or-provider-readiness=2, capture-infrastructure-gap=1 | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
 | Identity/RBAC behavior | partial | e2e:redis-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:redis-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | partial | e2e:redis-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON | Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.<br>Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity. |

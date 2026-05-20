@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 753
+- Real Azure fixtures with verified cleanup: 754
 
 ## Tier 1
 
@@ -248,6 +248,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-sku`: pending
 
 ### key-vault-secrets / Microsoft.KeyVault/vaults / Get
 
@@ -271,6 +272,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-sku`: pending
 
 ### key-vault-secrets / Microsoft.KeyVault/vaults/secrets / Get
 
@@ -294,6 +296,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-sku`: pending
 
 ### key-vault-keys / Microsoft.KeyVault/vaults / Get
 
@@ -317,6 +320,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-sku`: pending
 
 ### key-vault-keys / Microsoft.KeyVault/vaults/keys / Get
 
@@ -908,7 +912,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### redis-cache / Microsoft.Cache/redis / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 200; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
 - [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
@@ -917,6 +921,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [x] `invalid-resource-name`: captured HTTP 400; cleanup verified
 
 ### redis-cache / Microsoft.Cache/redis / Get
 
@@ -1877,6 +1882,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-sku`: pending
 
 ### app-configuration-parameters / Microsoft.KeyVault/vaults/secrets / Get
 

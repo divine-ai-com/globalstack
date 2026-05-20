@@ -1,6 +1,6 @@
 {
   "id": "redis-cache.microsoft-cache-redis.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T19:59:56.454Z",
+  "capturedAt": "2026-05-20T17:18:15.279Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,23 +14,25 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4996a50975/providers/Microsoft.Cache/redis/redis-4996a50975",
     "body": {
       "location": "{location}",
-      "sku": {
-        "name": "Basic",
-        "family": "C",
-        "capacity": 0
-      },
       "properties": {
-        "enableNonSslPort": true
+        "sku": {
+          "name": "Basic",
+          "family": "C",
+          "capacity": 0
+        },
+        "enableNonSslPort": true,
+        "minimumTlsVersion": "1.2"
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2b9e6ffe-c572-4c96-a4da-abfc43cb9459",
-      "x-ms-request-id": "2b9e6ffe-c572-4c96-a4da-abfc43cb9459",
-      "x-ms-routing-request-id": "WESTINDIA:20260516T195954Z:2b9e6ffe-c572-4c96-a4da-abfc43cb9459"
+      "x-ms-correlation-request-id": "682009ab-a931-4ed7-98d2-696245fbca8c",
+      "x-ms-request-id": "682009ab-a931-4ed7-98d2-696245fbca8c",
+      "x-ms-routing-request-id": "EASTUS:20260520T171813Z:682009ab-a931-4ed7-98d2-696245fbca8c"
     },
     "body": {
       "error": {
