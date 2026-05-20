@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T14:11:35.196Z",
+  "generatedAt": "2026-05-20T14:25:03.181Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 378,
+  "expectationCount": 372,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -7077,47 +7077,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.empty-body",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.App/containerApps",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e811249ac5/providers/Microsoft.App/containerApps/app-e811249ac5?api-version=2023-05-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.invalid-location",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.App/containerApps",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-dc42d7360d/providers/Microsoft.App/containerApps/app-dc42d7360d?api-version=2023-05-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.missing-api-version",
       "capabilityId": "service-discovery",
       "resourceType": "Microsoft.App/containerApps",
@@ -7197,47 +7156,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.empty-body",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.App/managedEnvironments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-746e5c1f7b/providers/Microsoft.App/managedEnvironments/env-746e5c1f7b?api-version=2023-05-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.invalid-location",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.App/managedEnvironments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-864ec14af1/providers/Microsoft.App/managedEnvironments/env-864ec14af1?api-version=2023-05-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.missing-api-version",
       "capabilityId": "service-discovery",
       "resourceType": "Microsoft.App/managedEnvironments",
@@ -7315,47 +7233,6 @@
         "body": null
       },
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
-    },
-    {
-      "id": "service-discovery.microsoft-network-privatednszones.createOrUpdate.empty-body",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.Network/privateDnsZones",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d5e9e4fb94/providers/Microsoft.Network/privateDnsZones/d5e9e4fb94.internal?api-version=2020-06-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "service-discovery.microsoft-network-privatednszones.createOrUpdate.invalid-location",
-      "capabilityId": "service-discovery",
-      "resourceType": "Microsoft.Network/privateDnsZones",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c76d1091e7/providers/Microsoft.Network/privateDnsZones/c76d1091e7.internal?api-version=2020-06-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "service-discovery.microsoft-network-privatednszones.createOrUpdate.missing-api-version",

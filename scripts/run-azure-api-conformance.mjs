@@ -411,6 +411,17 @@ async function seedParents(requestFn, call, variance, replacements) {
     return;
   }
 
+  if (call.resourceType === 'Microsoft.App/containerApps') {
+    const environmentPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.App/managedEnvironments/${replacements.managedEnvironmentsName}?api-version=2023-05-01`;
+    await requestFn('PUT', environmentPath, {
+      location,
+      properties: {
+        zoneRedundant: false,
+      },
+    });
+    return;
+  }
+
   if (call.resourceType === 'Microsoft.Network/privateEndpoints') {
     const vnetPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/virtualNetworks/${replacements.virtualNetworksName}?api-version=2023-09-01`;
     await requestFn('PUT', vnetPath, {

@@ -526,6 +526,86 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.app/containerapps') {
+    const managedEnvironmentId = `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentsName}`;
+    cases.push(
+      realAzureVariance(
+        'missing-managed-environment-id',
+        'Create/update without properties.managedEnvironmentId.',
+        {
+          location: '{location}',
+          properties: {
+            template: {
+              containers: [
+                {
+                  name: 'api',
+                  image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest',
+                },
+              ],
+              scale: { minReplicas: 0, maxReplicas: 1 },
+            },
+          },
+        },
+        'Container App validation error for missing managedEnvironmentId.',
+      ),
+      realAzureVariance(
+        'missing-managed-environment-reference',
+        'Create/update with properties.managedEnvironmentId referencing a missing managed environment.',
+        {
+          location: '{location}',
+          properties: {
+            managedEnvironmentId: `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentsName}-missing`,
+            template: {
+              containers: [
+                {
+                  name: 'api',
+                  image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest',
+                },
+              ],
+              scale: { minReplicas: 0, maxReplicas: 1 },
+            },
+          },
+        },
+        'Container App create/update rejection when the managed environment resource does not exist.',
+      ),
+      realAzureVariance(
+        'missing-containers',
+        'Create/update with a managed environment but without template.containers.',
+        {
+          location: '{location}',
+          properties: {
+            managedEnvironmentId,
+            template: {
+              containers: [],
+              scale: { minReplicas: 0, maxReplicas: 1 },
+            },
+          },
+        },
+        'Container App validation error for missing template.containers.',
+      ),
+      realAzureVariance(
+        'invalid-scale',
+        'Create/update with minReplicas greater than maxReplicas.',
+        {
+          location: '{location}',
+          properties: {
+            managedEnvironmentId,
+            template: {
+              containers: [
+                {
+                  name: 'api',
+                  image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest',
+                },
+              ],
+              scale: { minReplicas: 3, maxReplicas: 1 },
+            },
+          },
+        },
+        'Container App validation error for invalid scale bounds.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.appconfiguration/configurationstores') {
     cases.push(
       realAzureVariance(

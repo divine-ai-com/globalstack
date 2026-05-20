@@ -1,6 +1,6 @@
 {
   "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:27:57.036Z",
+  "capturedAt": "2026-05-20T14:24:50.210Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,80 +15,35 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 201,
+    "status": 404,
     "headers": {
-      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.App/locations/eastus/managedEnvironmentOperationStatuses/b0181f36-ef1f-4b6e-8c70-7523bf7dfd0e?api-version=2023-05-01&redacted=true",
       "content-type": "application/json; charset=utf-8",
-      "retry-after": "15",
-      "x-ms-correlation-request-id": "f0f4db64-a9c6-4e94-8172-da0d7eee02fb",
-      "x-ms-request-id": "f0f4db64-a9c6-4e94-8172-da0d7eee02fb",
-      "x-ms-routing-request-id": "EASTUS:20260516T161951Z:f0f4db64-a9c6-4e94-8172-da0d7eee02fb"
+      "x-ms-correlation-request-id": "731839ba-81db-48e4-87ec-ae0e7d3b8cd4",
+      "x-ms-request-id": "731839ba-81db-48e4-87ec-ae0e7d3b8cd4",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T142450Z:731839ba-81db-48e4-87ec-ae0e7d3b8cd4"
     },
     "body": {
-      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a322451aaf/providers/Microsoft.App/managedEnvironments/env-a322451aaf",
-      "name": "env-a322451aaf",
-      "type": "Microsoft.App/managedEnvironments",
-      "location": "East US",
-      "systemData": {
-        "createdBy": "harbortestautomation@gmail.com",
-        "createdByType": "User",
-        "createdAt": "2026-05-16T16:19:44.697351",
-        "lastModifiedBy": "harbortestautomation@gmail.com",
-        "lastModifiedByType": "User",
-        "lastModifiedAt": "2026-05-16T16:19:44.697351"
-      },
-      "properties": {
-        "provisioningState": "Waiting",
-        "daprAIInstrumentationKey": "<redacted>",
-        "daprAIConnectionString": null,
-        "vnetConfiguration": null,
-        "defaultDomain": "ambitiousdune-450171d1.eastus.azurecontainerapps.io",
-        "staticIp": "20.84.39.105",
-        "appLogsConfiguration": {
-          "destination": null,
-          "logAnalyticsConfiguration": null
-        },
-        "zoneRedundant": false,
-        "kedaConfiguration": {
-          "version": "2.18.1"
-        },
-        "daprConfiguration": {
-          "version": "1.16.4-msft.6"
-        },
-        "eventStreamEndpoint": "https://eastus.azurecontainerapps.dev/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a322451aaf/managedEnvironments/env-a322451aaf/eventstream",
-        "customDomainConfiguration": {
-          "customDomainVerificationId": "5976791B130CC957C93F06D970D1815795DE5BCB09E4508C93C8718526A65B23",
-          "dnsSuffix": null,
-          "certificateValue": null,
-          "certificatePassword": "<redacted>",
-          "thumbprint": null,
-          "subjectName": null,
-          "expirationDate": null
-        },
-        "workloadProfiles": null,
-        "infrastructureResourceGroup": null,
-        "peerAuthentication": {
-          "mtls": {
-            "enabled": false
-          }
-        }
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-a322451aaf",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-accepted",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

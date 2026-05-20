@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 716
+- Real Azure fixtures with verified cleanup: 732
 
 ## Tier 1
 
@@ -1926,14 +1926,14 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### service-discovery / Microsoft.Network/privateDnsZones / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 202; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 
 ### service-discovery / Microsoft.Network/privateDnsZones / Get
 
@@ -1949,14 +1949,14 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### service-discovery / Microsoft.App/managedEnvironments / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 201; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 
 ### service-discovery / Microsoft.App/managedEnvironments / Get
 
@@ -1972,14 +1972,18 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### service-discovery / Microsoft.App/containerApps / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-managed-environment-id`: captured HTTP 404; cleanup verified
+- [x] `missing-managed-environment-reference`: captured HTTP 404; cleanup verified
+- [x] `missing-containers`: captured HTTP 404; cleanup verified
+- [x] `invalid-scale`: captured HTTP 404; cleanup verified
 
 ### service-discovery / Microsoft.App/containerApps / Get
 

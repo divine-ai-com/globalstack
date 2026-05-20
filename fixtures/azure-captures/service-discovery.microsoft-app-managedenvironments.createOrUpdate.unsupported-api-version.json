@@ -1,0 +1,49 @@
+{
+  "id": "service-discovery.microsoft-app-managedenvironments.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-20T14:24:50.448Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-discovery",
+  "tier": 2,
+  "resourceType": "Microsoft.App/managedEnvironments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0aea11d413/providers/Microsoft.App/managedEnvironments/env-0aea11d413?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "aaffd0c1-1926-489e-b36b-b9e1538742fa",
+      "x-ms-request-id": "aaffd0c1-1926-489e-b36b-b9e1538742fa",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T142450Z:aaffd0c1-1926-489e-b36b-b9e1538742fa"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0aea11d413",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

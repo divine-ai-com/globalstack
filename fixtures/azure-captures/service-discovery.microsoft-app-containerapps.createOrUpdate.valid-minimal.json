@@ -1,6 +1,6 @@
 {
   "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:28:38.690Z",
+  "capturedAt": "2026-05-20T14:24:51.344Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,34 +15,35 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2a5175b2-17f8-4aa5-bde4-cd272dfacbda",
-      "x-ms-request-id": "2a5175b2-17f8-4aa5-bde4-cd272dfacbda",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T162832Z:2a5175b2-17f8-4aa5-bde4-cd272dfacbda"
+      "x-ms-correlation-request-id": "344922bb-6b1c-4e04-a5ce-ea75f83a25da",
+      "x-ms-request-id": "344922bb-6b1c-4e04-a5ce-ea75f83a25da",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T142451Z:344922bb-6b1c-4e04-a5ce-ea75f83a25da"
     },
     "body": {
       "error": {
-        "code": "ContainerAppCreateMustContainContainer",
-        "message": "Error creating container app 'app-c1e30a6aa7'. Must specify atleast one container to create a container app."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-c1e30a6aa7",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

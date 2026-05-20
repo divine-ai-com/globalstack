@@ -383,7 +383,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/managedEnvironments | Get | GET | 2023-05-01 | 0 |
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/managedEnvironments | ListByResourceGroup | GET | 2023-05-01 | 0 |
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/managedEnvironments | Delete | DELETE | 2023-05-01 | 0 |
-| service-discovery | Service Discovery / Cloud Map | Microsoft.App/containerApps | CreateOrUpdate | PUT | 2023-05-01 | 8 |
+| service-discovery | Service Discovery / Cloud Map | Microsoft.App/containerApps | CreateOrUpdate | PUT | 2023-05-01 | 12 |
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/containerApps | Get | GET | 2023-05-01 | 0 |
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/containerApps | ListByResourceGroup | GET | 2023-05-01 | 0 |
 | service-discovery | Service Discovery / Cloud Map | Microsoft.App/containerApps | Delete | DELETE | 2023-05-01 | 0 |

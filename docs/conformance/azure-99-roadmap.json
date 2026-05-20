@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T14:11:35.653Z",
+    "generatedAt": "2026-05-20T14:25:03.721Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -4428,8 +4428,8 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "21 live ARM captures",
-                "variance cases: empty-body=3, invalid-location=3, missing-api-version=3, valid-minimal=3, not-found=6, empty-list=3"
+                "37 live ARM captures",
+                "variance cases: empty-body=3, invalid-location=3, invalid-scale=1, invalid-tags-shape=3, missing-api-version=3, missing-containers=1, missing-location=3, missing-managed-environment-id=1, missing-managed-environment-reference=1, null-properties=3, unsupported-api-version=3, valid-minimal=3, not-found=6, empty-list=3"
               ],
               "gaps": [
                 "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
@@ -4448,7 +4448,7 @@
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "validation depths: provider-validation=7, arm-surface=3, provider-accepted=7, provider-routing-or-parent-validation=3, capture-infrastructure-gap=1"
+                "validation depths: capture-infrastructure-gap=26, arm-surface=3, provider-accepted=5, provider-routing-or-parent-validation=3"
               ],
               "gaps": [
                 "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
