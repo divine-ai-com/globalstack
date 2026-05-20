@@ -13,6 +13,7 @@ const artifactRegistryPath = join(root, 'docs', 'ARTIFACT-REGISTRY.json');
 const captureClassificationPath = join(root, 'docs', 'conformance', 'azure-capture-classification.json');
 const localExpectationsPath = join(root, 'fixtures', 'local-expectations', 'azure-derived-local-expectations.json');
 const storageDataPlaneExpectationsPath = join(root, 'fixtures', 'local-expectations', 'azure-storage-data-plane-expectations.json');
+const azureCaptureFixtureRoot = join(root, 'fixtures', 'azure-captures');
 const deploySmokeRoot = join(distRoot, 'deploy-smoke');
 const deploySmokeResultsPath = join(deploySmokeRoot, 'results.json');
 const iacModelResponseSmokeRoot = join(distRoot, 'iac-model-response-smoke');
@@ -55,6 +56,9 @@ const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
 const modelFacingRuntimeTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 const errors = [];
+const azureCaptureFixtureCount = (await readdir(azureCaptureFixtureRoot).catch(() => []))
+  .filter(name => name.endsWith('.json'))
+  .length;
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -178,6 +182,9 @@ if (!artifactRegistryText) {
   }
   if ((artifactRegistry.counts?.azureCaptures ?? 0) < 400) {
     errors.push('artifact registry should reflect the current Azure capture fixture count');
+  }
+  if ((artifactRegistry.counts?.azureCaptures ?? 0) !== azureCaptureFixtureCount) {
+    errors.push('artifact registry Azure capture count must match fixtures/azure-captures');
   }
 }
 
@@ -415,8 +422,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 455) {
-    errors.push('Azure capture classification should include 455 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== azureCaptureFixtureCount) {
+    errors.push('Azure capture classification fixtureCount must match fixtures/azure-captures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');

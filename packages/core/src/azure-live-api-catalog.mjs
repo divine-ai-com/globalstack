@@ -126,6 +126,32 @@ function baseCollectionUrl(resourceType) {
 
 function bodyFor(resourceType) {
   const lower = resourceType.toLowerCase();
+  if (lower === 'microsoft.managedidentity/userassignedidentities') return { location: '{location}', properties: {} };
+  if (lower === 'microsoft.authorization/roleassignments') {
+    return {
+      properties: {
+        principalId: '33333333-3333-4333-8333-333333333333',
+        principalType: 'ServicePrincipal',
+        roleDefinitionId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}',
+      },
+    };
+  }
+  if (lower === 'microsoft.authorization/roledefinitions') {
+    return {
+      properties: {
+        roleName: 'globalstack-conformance-role',
+        description: 'GlobalStack conformance custom role',
+        type: 'CustomRole',
+        permissions: [
+          {
+            actions: ['Microsoft.ManagedIdentity/userAssignedIdentities/read'],
+            notActions: [],
+          },
+        ],
+        assignableScopes: ['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'],
+      },
+    };
+  }
   if (lower.endsWith('/dnszones/a') || lower.endsWith('/privatednszones/a')) return { properties: { TTL: 60, ARecords: [{ ipv4Address: '10.10.1.10' }] } };
   if (lower.endsWith('/dnszones/aaaa') || lower.endsWith('/privatednszones/aaaa')) return { properties: { TTL: 60, AAAARecords: [{ ipv6Address: '2001:db8::10' }] } };
   if (lower.endsWith('/dnszones/caa')) return { properties: { TTL: 60, CAARecords: [{ flags: 0, tag: 'issue', value: 'example.com' }] } };
@@ -158,6 +184,32 @@ function bodyFor(resourceType) {
     return { location: '{location}', properties: { tenantId: '{tenantId}', sku: { family: 'A', name: 'standard' }, accessPolicies: [] } };
   }
   if (lower.includes('microsoft.servicebus/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard' }, properties: {} };
+  if (lower === 'microsoft.servicebus/namespaces/topics') {
+    return {
+      properties: {
+        defaultMessageTimeToLive: 'P14D',
+        enableBatchedOperations: true,
+        maxSizeInMegabytes: 1024,
+      },
+    };
+  }
+  if (lower === 'microsoft.servicebus/namespaces/topics/subscriptions') {
+    return {
+      properties: {
+        maxDeliveryCount: 10,
+        deadLetteringOnFilterEvaluationExceptions: true,
+      },
+    };
+  }
+  if (lower === 'microsoft.eventgrid/topics') {
+    return {
+      location: '{location}',
+      properties: {
+        inputSchema: 'EventGridSchema',
+        publicNetworkAccess: 'Enabled',
+      },
+    };
+  }
   if (lower.includes('microsoft.eventhub/namespaces/eventhubs')) return { properties: { partitionCount: 2, messageRetentionInDays: 1 } };
   if (lower.includes('microsoft.eventhub/namespaces')) return { location: '{location}', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} };
   if (lower.includes('microsoft.dbformysql/flexibleservers/databases')) return { properties: { charset: 'utf8mb4', collation: 'utf8mb4_0900_ai_ci' } };
@@ -175,6 +227,43 @@ function bodyFor(resourceType) {
   if (lower === 'microsoft.network/applicationgatewaywebapplicationfirewallpolicies') return { location: '{location}', properties: { policySettings: { state: 'Enabled', mode: 'Prevention', requestBodyCheck: true, maxRequestBodySizeInKb: 128 }, managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] } } };
   if (lower === 'microsoft.cdn/profiles/securitypolicies') return { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: '{wafPolicyId}' }, associations: [{ domains: [{ id: '{endpointId}' }], patternsToMatch: ['/*'] }] } } };
   if (lower === 'microsoft.appconfiguration/configurationstores') return { location: '{location}', sku: { name: 'free' }, properties: { disableLocalAuth: false, publicNetworkAccess: 'Enabled' } };
+  if (lower === 'microsoft.network/virtualnetworks') {
+    return {
+      location: '{location}',
+      properties: {
+        addressSpace: {
+          addressPrefixes: ['10.42.0.0/16'],
+        },
+        subnets: [
+          {
+            name: 'default',
+            properties: {
+              addressPrefix: '10.42.1.0/24',
+            },
+          },
+        ],
+      },
+    };
+  }
+  if (lower === 'microsoft.network/privateendpoints') {
+    return {
+      location: '{location}',
+      properties: {
+        subnet: {
+          id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default',
+        },
+        privateLinkServiceConnections: [
+          {
+            name: 'blob',
+            properties: {
+              privateLinkServiceId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}',
+              groupIds: ['blob'],
+            },
+          },
+        ],
+      },
+    };
+  }
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
   if (lower === 'microsoft.network/applicationgateways') {
     return {
@@ -263,6 +352,347 @@ function invalidSkuBody(body) {
     ...body,
     sku: { name: 'GlobalStack_InvalidSku_For_Conformance' },
   };
+}
+
+function realAzureVariance(id, description, body, expectedAzure) {
+  return {
+    id,
+    description,
+    body,
+    expectedAzure,
+    localAssertion: 'record-gap-until-real-azure-captured',
+    requiresRealAzure: true,
+  };
+}
+
+function serviceSpecificVarianceCases(resourceType, createBody) {
+  const lower = resourceType.toLowerCase();
+  const cases = [];
+
+  if (lower === 'microsoft.authorization/roleassignments') {
+    cases.push(
+      realAzureVariance(
+        'missing-principal-id',
+        'Create/update without properties.principalId.',
+        {
+          properties: {
+            principalType: createBody.properties?.principalType ?? 'ServicePrincipal',
+            roleDefinitionId: createBody.properties?.roleDefinitionId,
+          },
+        },
+        'Role assignment validation error for missing principalId.',
+      ),
+      realAzureVariance(
+        'missing-role-definition-id',
+        'Create/update without properties.roleDefinitionId.',
+        {
+          properties: {
+            principalId: createBody.properties?.principalId,
+            principalType: createBody.properties?.principalType ?? 'ServicePrincipal',
+          },
+        },
+        'Role assignment validation error for missing roleDefinitionId.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.authorization/roledefinitions') {
+    cases.push(
+      realAzureVariance(
+        'missing-permissions',
+        'Create/update without properties.permissions.',
+        {
+          properties: {
+            roleName: createBody.properties?.roleName ?? 'globalstack-conformance-role',
+            description: createBody.properties?.description ?? 'GlobalStack conformance custom role',
+            type: createBody.properties?.type ?? 'CustomRole',
+            assignableScopes: createBody.properties?.assignableScopes ?? ['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'],
+          },
+        },
+        'Role definition validation error for missing permissions.',
+      ),
+      realAzureVariance(
+        'missing-assignable-scopes',
+        'Create/update without properties.assignableScopes.',
+        {
+          properties: {
+            roleName: createBody.properties?.roleName ?? 'globalstack-conformance-role',
+            description: createBody.properties?.description ?? 'GlobalStack conformance custom role',
+            type: createBody.properties?.type ?? 'CustomRole',
+            permissions: createBody.properties?.permissions ?? [],
+          },
+        },
+        'Role definition validation error for missing assignableScopes.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.appconfiguration/configurationstores') {
+    cases.push(
+      realAzureVariance(
+        'invalid-disable-local-auth-type',
+        'Create/update with disableLocalAuth set to a non-boolean shape.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            disableLocalAuth: 'invalid',
+          },
+        },
+        'Configuration store validation error for disableLocalAuth type.',
+      ),
+      realAzureVariance(
+        'invalid-public-network-access',
+        'Create/update with an unsupported publicNetworkAccess value.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            publicNetworkAccess: 'PartiallyEnabled',
+          },
+        },
+        'Configuration store validation error for publicNetworkAccess.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/virtualnetworks') {
+    cases.push(
+      realAzureVariance(
+        'missing-address-space',
+        'Create/update without addressSpace.addressPrefixes.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            addressSpace: {},
+          },
+        },
+        'Virtual network validation error for missing address prefixes.',
+      ),
+      realAzureVariance(
+        'invalid-address-prefix',
+        'Create/update with an invalid virtual network CIDR.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            addressSpace: {
+              addressPrefixes: ['10.42.0.0/99'],
+            },
+          },
+        },
+        'Virtual network validation error for invalid address prefix format.',
+      ),
+      realAzureVariance(
+        'invalid-subnet-prefix',
+        'Create/update with an invalid subnet CIDR.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            subnets: [
+              {
+                name: 'default',
+                properties: {
+                  addressPrefix: '10.42.1.0/99',
+                },
+              },
+            ],
+          },
+        },
+        'Virtual network validation error for invalid subnet address prefix format.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/privateendpoints') {
+    cases.push(
+      realAzureVariance(
+        'missing-private-link-connections',
+        'Create/update without privateLinkServiceConnections.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            privateLinkServiceConnections: [],
+          },
+        },
+        'Private endpoint validation error for missing private link service connections.',
+      ),
+      realAzureVariance(
+        'missing-subnet-id',
+        'Create/update without properties.subnet.id.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            subnet: {},
+          },
+        },
+        'Private endpoint validation error for missing subnet.id.',
+      ),
+      realAzureVariance(
+        'missing-group-ids',
+        'Create/update with privateLinkServiceConnections but without groupIds.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            privateLinkServiceConnections: [
+              {
+                name: 'blob',
+                properties: {
+                  privateLinkServiceId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}',
+                  groupIds: [],
+                },
+              },
+            ],
+          },
+        },
+        'Private endpoint validation error for missing groupIds.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.dbforpostgresql/flexibleservers') {
+    cases.push(
+      realAzureVariance(
+        'missing-admin-password',
+        'Create/update without administratorLoginPassword.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            administratorLoginPassword: '',
+          },
+        },
+        'PostgreSQL flexible server validation error for missing administrator password.',
+      ),
+      realAzureVariance(
+        'weak-admin-password',
+        'Create/update with a password that is too short.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            administratorLoginPassword: 'short',
+          },
+        },
+        'PostgreSQL flexible server validation error for weak administrator password.',
+      ),
+      realAzureVariance(
+        'invalid-version',
+        'Create/update with an unsupported PostgreSQL version.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            version: '99',
+          },
+        },
+        'PostgreSQL flexible server validation error for invalid version.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.dbforpostgresql/flexibleservers/databases') {
+    cases.push(
+      realAzureVariance(
+        'missing-charset',
+        'Create/update without properties.charset.',
+        {
+          properties: {
+            collation: createBody.properties?.collation,
+          },
+        },
+        'PostgreSQL database validation error for missing charset.',
+      ),
+      realAzureVariance(
+        'missing-collation',
+        'Create/update without properties.collation.',
+        {
+          properties: {
+            charset: createBody.properties?.charset,
+          },
+        },
+        'PostgreSQL database validation error for missing collation.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.eventhub/namespaces') {
+    cases.push(
+      realAzureVariance(
+        'invalid-capacity',
+        'Create/update with an out-of-range sku.capacity.',
+        {
+          ...createBody,
+          sku: {
+            ...(createBody.sku ?? {}),
+            capacity: 99,
+          },
+        },
+        'Event Hubs namespace validation error for out-of-range capacity.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.eventhub/namespaces/eventhubs') {
+    cases.push(
+      realAzureVariance(
+        'invalid-partition-count',
+        'Create/update with an out-of-range partitionCount.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            partitionCount: 0,
+          },
+        },
+        'Event hub validation error for invalid partitionCount.',
+      ),
+      realAzureVariance(
+        'invalid-message-retention',
+        'Create/update with an out-of-range messageRetentionInDays.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            messageRetentionInDays: 30,
+          },
+        },
+        'Event hub validation error for invalid messageRetentionInDays.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.storage/storageaccounts/fileservices/shares') {
+    cases.push(
+      realAzureVariance(
+        'invalid-share-quota',
+        'Create/update with an out-of-range Azure Files shareQuota.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            shareQuota: 0,
+          },
+        },
+        'Azure Files validation error for invalid shareQuota.',
+      ),
+      realAzureVariance(
+        'invalid-enabled-protocols',
+        'Create/update with an unsupported Azure Files enabledProtocols value.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            enabledProtocols: 'FTP',
+          },
+        },
+        'Azure Files validation error for invalid enabledProtocols.',
+      ),
+    );
+  }
+
+  return cases;
 }
 
 function varianceCases(resourceType, createBody) {
@@ -354,6 +784,7 @@ function varianceCases(resourceType, createBody) {
       requiresRealAzure: true,
     });
   }
+  cases.push(...serviceSpecificVarianceCases(resourceType, createBody));
   return cases;
 }
 

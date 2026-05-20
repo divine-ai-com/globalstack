@@ -1,0 +1,57 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-version",
+  "capturedAt": "2026-05-20T12:56:44.370Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-395be438fe/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-395be438fe?api-version=2023-06-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
+        "version": "99"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a05cc619-8aa5-474a-80b6-0c9e0166a927",
+      "x-ms-request-id": "b442c002-d3c4-4346-b465-7def7752dfe1",
+      "x-ms-routing-request-id": "EASTUS:20260520T125641Z:a05cc619-8aa5-474a-80b6-0c9e0166a927"
+    },
+    "body": {
+      "error": {
+        "code": "ParameterOutOfRange",
+        "message": "The value of the 'Version' should be in: [11,12,13,14,15,16,17,18]. Verify that the specified parameter value is correct."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-395be438fe",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-private-link-connections",
+  "capturedAt": "2026-05-20T12:52:41.713Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/privateEndpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-private-link-connections",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e7659ae5/providers/Microsoft.Network/privateEndpoints/pe-b8e7659ae5?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "subnet": {
+          "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+        },
+        "privateLinkServiceConnections": []
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8bcea51a-127f-49fa-8e0d-216d0c22e7f6",
+      "x-ms-request-id": "3d801a6e-c618-4324-ae4a-9271dd751141",
+      "x-ms-routing-request-id": "EASTUS:20260520T125135Z:8bcea51a-127f-49fa-8e0d-216d0c22e7f6"
+    },
+    "body": {
+      "error": {
+        "code": "MissingParameterOnPrivateEndpoint",
+        "message": "Private endpoint /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e7659ae5/providers/Microsoft.Network/privateEndpoints/pe-b8e7659ae5 is missing required parameter 'private link service connection.'.",
+        "details": []
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b8e7659ae5",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

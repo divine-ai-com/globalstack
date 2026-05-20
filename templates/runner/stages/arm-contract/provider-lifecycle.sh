@@ -54,9 +54,33 @@ token_for_reads() {
   local_access_token
 }
 
+storage_account_url() {
+  printf '%s\n' "${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/$(resource_group_name)/providers/Microsoft.Storage/storageAccounts/$(storage_account_name)?api-version=2023-01-01"
+}
+
+resource_group_id() {
+  printf '/subscriptions/%s/resourceGroups/%s\n' "${ARM_SUBSCRIPTION_ID}" "$(resource_group_name)"
+}
+
+storage_account_id() {
+  printf '%s\n' "$(resource_group_id)/providers/Microsoft.Storage/storageAccounts/$(storage_account_name)"
+}
+
+mutate_storage_account_tls() {
+  local version="$1"
+  local token
+  token="$(token_for_reads)"
+  curl -fsS \
+    -X PUT \
+    -H "Authorization: Bearer ${token}" \
+    -H 'content-type: application/json' \
+    --data "{\"location\":\"${AZURE_LOCATION}\",\"kind\":\"StorageV2\",\"sku\":{\"name\":\"Standard_LRS\"},\"properties\":{\"minimumTlsVersion\":\"${version}\"}}" \
+    "$(storage_account_url)" > "${REPORT_DIR}/provider-lifecycle-storage-account-mutate-${version}.json"
+}
+
 if is_native_hcl_platform; then
   tool="$(hcl_tool)"
-  log_stage provider-lifecycle "checking native HCL plan, refresh, idempotency, and state reads with ${tool}"
+  log_stage provider-lifecycle "checking native HCL plan, refresh, drift, import, idempotency, and state reads with ${tool}"
   setup_native_hcl_auth
   mapfile -t vars < <(hcl_var_args)
   : > "${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}"
@@ -90,17 +114,62 @@ if is_native_hcl_platform; then
     exit 1
   fi
 
+  mutate_storage_account_tls "TLS1_1"
+  set +e
+  "${tool}" -chdir="${PLATFORM_WORK_DIR}/lib" plan -input=false -refresh-only -detailed-exitcode -no-color "${vars[@]}" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"
+  drift_code=$?
+  set -e
+  if [ "${drift_code}" != "2" ]; then
+    write_stage_report provider-lifecycle FAIL "${tool} drift detection plan expected exit code 2 but saw ${drift_code}"
+    exit 1
+  fi
+  if ! "${tool}" -chdir="${PLATFORM_WORK_DIR}/lib" apply -auto-approve -input=false -refresh=true -no-color "${vars[@]}" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} drift reconcile apply failed"
+    exit 1
+  fi
+
+  import_dir="${PLATFORM_WORK_DIR}/.provider-import"
+  rm -rf "${import_dir}"
+  mkdir -p "${import_dir}"
+  cp -R "${PLATFORM_WORK_DIR}/lib/." "${import_dir}/"
+  rm -rf "${import_dir}/.terraform" "${import_dir}/terraform.tfstate" "${import_dir}/terraform.tfstate.backup"
+  if ! "${tool}" -chdir="${import_dir}" init -input=false -no-color >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} import workspace init failed"
+    exit 1
+  fi
+  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" azapi_resource.resource_group "$(resource_group_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} import of resource group failed"
+    exit 1
+  fi
+  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" azapi_resource.storage_account "$(storage_account_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} import of storage account failed"
+    exit 1
+  fi
+  if ! "${tool}" -chdir="${import_dir}" state list >"${REPORT_DIR}/native-import-state-list.txt" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} imported state list failed"
+    exit 1
+  fi
+  if ! grep -q 'azapi_resource.resource_group' "${REPORT_DIR}/native-import-state-list.txt" || ! grep -q 'azapi_resource.storage_account' "${REPORT_DIR}/native-import-state-list.txt"; then
+    write_stage_report provider-lifecycle FAIL "${tool} imported state is missing expected resources"
+    exit 1
+  fi
+
   write_provider_lifecycle_response "NativeHclProviderLifecycle" \
     "$(append_command "${tool}-plan-refresh" "${plan_code}")" \
     "$(json_op "${tool}-apply-idempotent" PASS "apply with refresh=true completed")" \
     "$(append_command "${tool}-plan-refresh-only" "${refresh_code}")" \
-    "$(json_op "${tool}-state-list" PASS "state file contains deployed resources")"
+    "$(json_op "${tool}-state-list" PASS "state file contains deployed resources")" \
+    "$(append_command "${tool}-plan-drift-refresh-only" "${drift_code}")" \
+    "$(json_op "${tool}-apply-drift-reconcile" PASS "drifted storage account was reconciled")" \
+    "$(json_op "${tool}-import-resource-group" PASS "resource group import completed in a clean workspace")" \
+    "$(json_op "${tool}-import-storage-account" PASS "storage account import completed in a clean workspace")" \
+    "$(json_op "${tool}-import-state-list" PASS "import workspace state contains both resources")"
   write_stage_report provider-lifecycle PASS "${tool} provider lifecycle evidence passed"
   exit 0
 fi
 
 if is_native_pulumi_platform; then
-  log_stage provider-lifecycle "checking Pulumi preview, refresh, idempotent up, and stack export"
+  log_stage provider-lifecycle "checking Pulumi preview, refresh, drift reconcile, idempotent up, and stack export"
   setup_native_pulumi_auth
   : > "${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}"
   : > "${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"
@@ -129,11 +198,28 @@ if is_native_pulumi_platform; then
     exit 1
   fi
 
+  mutate_storage_account_tls "TLS1_1"
+  if ! pulumi -C "${PLATFORM_WORK_DIR}" preview --diff --refresh --non-interactive >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "pulumi drift preview --diff --refresh failed"
+    exit 1
+  fi
+  if ! pulumi -C "${PLATFORM_WORK_DIR}" up --yes --refresh --skip-preview --non-interactive >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "pulumi drift reconcile up failed"
+    exit 1
+  fi
+  if ! pulumi -C "${PLATFORM_WORK_DIR}" stack export >"${REPORT_DIR}/pulumi-stack-export-post-drift.json" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "pulumi post-drift stack export failed"
+    exit 1
+  fi
+
   write_provider_lifecycle_response "NativePulumiProviderLifecycle" \
     "$(json_op pulumi-preview-diff PASS "preview/diff completed")" \
     "$(json_op pulumi-refresh PASS "refresh completed")" \
     "$(json_op pulumi-up-idempotent PASS "second up completed")" \
-    "$(json_op pulumi-stack-export PASS "stack export completed")"
+    "$(json_op pulumi-stack-export PASS "stack export completed")" \
+    "$(json_op pulumi-preview-drift-diff PASS "preview with refresh captured out-of-band drift")" \
+    "$(json_op pulumi-up-drift-reconcile PASS "up with refresh reconciled the drifted storage account")" \
+    "$(json_op pulumi-stack-export-post-drift PASS "post-drift stack export completed")"
   write_stage_report provider-lifecycle PASS "Pulumi provider lifecycle evidence passed"
   exit 0
 fi

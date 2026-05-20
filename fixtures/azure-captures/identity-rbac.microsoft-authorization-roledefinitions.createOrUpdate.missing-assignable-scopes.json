@@ -1,0 +1,60 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-assignable-scopes",
+  "capturedAt": "2026-05-20T12:49:22.578Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleDefinitions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-assignable-scopes",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f83059eae1/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
+    "body": {
+      "properties": {
+        "roleName": "globalstack-conformance-role",
+        "description": "GlobalStack conformance custom role",
+        "type": "CustomRole",
+        "permissions": [
+          {
+            "actions": [
+              "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+            ],
+            "notActions": []
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "332c8f28-2536-47e5-94d1-75e0c2aa5b92",
+      "x-ms-request-id": "9dc5e276-5be6-4cbb-ba5c-ef36a24b48b5",
+      "x-ms-routing-request-id": "EASTUS:20260520T124918Z:332c8f28-2536-47e5-94d1-75e0c2aa5b92"
+    },
+    "body": {
+      "error": {
+        "code": "MissingAssignableScopes",
+        "message": "A role definition must have at least one assignable scope and all assignable scopes must be neither null nor empty."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f83059eae1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

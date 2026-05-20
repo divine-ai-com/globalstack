@@ -1,0 +1,50 @@
+{
+  "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.invalid-share-quota",
+  "capturedAt": "2026-05-20T12:57:57.327Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-files",
+  "tier": 2,
+  "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-share-quota",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e43b3e866f/providers/Microsoft.Storage/storageAccounts/gse43b3e866f/fileServices/default/shares/sharee43b3e866f?api-version=2023-01-01",
+    "body": {
+      "properties": {
+        "shareQuota": 0
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "61d116cb-b96e-4119-bbab-d08092d75e51",
+      "x-ms-request-id": "cdfc74b3-dd85-433a-97c0-f91d7ffc0620",
+      "x-ms-routing-request-id": "EASTUS:20260520T125653Z:61d116cb-b96e-4119-bbab-d08092d75e51"
+    },
+    "body": {
+      "error": {
+        "code": "StorageAccountIsNotProvisioned",
+        "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e43b3e866f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

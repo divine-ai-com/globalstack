@@ -1,0 +1,63 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-disable-local-auth-type",
+  "capturedAt": "2026-05-20T12:49:29.629Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-disable-local-auth-type",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b4b67fe3ff/providers/Microsoft.AppConfiguration/configurationStores/cfgb4b67fe3ff?api-version=2023-03-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "free"
+      },
+      "properties": {
+        "disableLocalAuth": "invalid",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "425c7c0b-3f3d-4385-8ff9-1a2bffa4f469",
+      "x-ms-request-id": "af6eb286-7948-4675-b546-e44daabb0c01",
+      "x-ms-routing-request-id": "EASTUS:20260520T124928Z:425c7c0b-3f3d-4385-8ff9-1a2bffa4f469"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidProperty",
+        "message": "The property 'properties.disableLocalAuth' is not valid.",
+        "additionalInfo": [
+          {
+            "type": "ActivityId",
+            "info": {
+              "activityId": "af6eb286-7948-4675-b546-e44daabb0c01"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b4b67fe3ff",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

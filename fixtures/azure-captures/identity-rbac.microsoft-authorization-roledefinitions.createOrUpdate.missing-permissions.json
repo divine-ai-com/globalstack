@@ -1,0 +1,55 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-permissions",
+  "capturedAt": "2026-05-20T12:49:12.381Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleDefinitions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-permissions",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5a5f3e4b0d/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
+    "body": {
+      "properties": {
+        "roleName": "globalstack-conformance-role",
+        "description": "GlobalStack conformance custom role",
+        "type": "CustomRole",
+        "assignableScopes": [
+          "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2dc1e894-28d7-41e7-99ab-a98ed0da13c0",
+      "x-ms-request-id": "0fdb5630-f4d2-44c5-a997-21b21634f3bc",
+      "x-ms-routing-request-id": "EASTUS:20260520T124910Z:2dc1e894-28d7-41e7-99ab-a98ed0da13c0"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'permissions' not found in JSON. Path 'properties', line 1, position 241.'"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5a5f3e4b0d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

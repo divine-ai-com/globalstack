@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 455
+- Real Azure fixtures with verified cleanup: 472
 
 ## Tier 1
 
@@ -187,9 +187,10 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [x] `missing-principal-id`: captured HTTP 400; cleanup verified
+- [x] `missing-role-definition-id`: captured HTTP 400; cleanup verified
 
 ### identity-rbac / Microsoft.Authorization/roleAssignments / Get
 
@@ -210,9 +211,10 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `unsupported-api-version`: pending
 - [x] `invalid-location`: captured HTTP 400; cleanup verified
 - [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [x] `missing-permissions`: captured HTTP 400; cleanup verified
+- [x] `missing-assignable-scopes`: captured HTTP 400; cleanup verified
 
 ### identity-rbac / Microsoft.Authorization/roleDefinitions / Get
 
@@ -329,6 +331,9 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [x] `missing-admin-password`: captured HTTP 400; cleanup verified
+- [x] `weak-admin-password`: captured HTTP 202; cleanup verified
+- [x] `invalid-version`: captured HTTP 400; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / Get
 
@@ -351,6 +356,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `empty-body`: captured HTTP 404; cleanup verified
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `missing-charset`: pending
+- [ ] `missing-collation`: pending
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers/databases / Get
 
@@ -720,6 +727,9 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [x] `missing-address-space`: captured HTTP 400; cleanup verified
+- [x] `invalid-address-prefix`: captured HTTP 400; cleanup verified
+- [x] `invalid-subnet-prefix`: captured HTTP 400; cleanup verified
 
 ### virtual-network / Microsoft.Network/virtualNetworks / Get
 
@@ -743,6 +753,9 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `missing-location`: pending
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [x] `missing-private-link-connections`: captured HTTP 400; cleanup verified
+- [x] `missing-subnet-id`: captured HTTP 400; cleanup verified
+- [x] `missing-group-ids`: captured HTTP 400; cleanup verified
 
 ### virtual-network / Microsoft.Network/privateEndpoints / Get
 
@@ -1648,6 +1661,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `empty-body`: captured HTTP 404; cleanup verified
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [x] `invalid-share-quota`: captured HTTP 409; cleanup verified
+- [x] `invalid-enabled-protocols`: captured HTTP 409; cleanup verified
 
 ### azure-files / Microsoft.Storage/storageAccounts/fileServices/shares / Get
 
@@ -1695,6 +1710,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [ ] `invalid-capacity`: pending
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces / Get
 
@@ -1717,6 +1733,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `empty-body`: captured HTTP 404; cleanup verified
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-partition-count`: pending
+- [ ] `invalid-message-retention`: pending
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces/eventhubs / Get
 
@@ -1787,6 +1805,8 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [x] `invalid-disable-local-auth-type`: captured HTTP 400; cleanup verified
+- [x] `invalid-public-network-access`: captured HTTP 400; cleanup verified
 
 ### app-configuration-parameters / Microsoft.AppConfiguration/configurationStores / Get
 

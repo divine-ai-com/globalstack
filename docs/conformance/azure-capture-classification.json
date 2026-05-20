@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-20T09:39:11.590Z",
-  "fixtureCount": 455,
-  "cleanupVerifiedCount": 455,
+  "generatedAt": "2026-05-20T13:00:34.735Z",
+  "fixtureCount": 472,
+  "cleanupVerifiedCount": 472,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
-    "provider-validation": 142,
+    "provider-validation": 158,
     "arm-surface": 62,
-    "provider-accepted": 98,
+    "provider-accepted": 99,
     "provider-routing-or-parent-validation": 137,
     "subscription-or-provider-readiness": 8,
     "capture-infrastructure-gap": 8
@@ -16,35 +16,40 @@
     "InvalidResourceLocation": 43,
     "MissingApiVersionParameter": 62,
     "InvalidRequest": 5,
-    "null": 103,
+    "null": 104,
     "ResourceNotFound": 64,
     "BadRequest": 10,
     "ResourceTypeNotSupported": 10,
     "InvalidParameter": 1,
     "InvalidParameters": 1,
-    "InvalidProperty": 1,
+    "InvalidProperty": 3,
     "NoRegisteredProviderFound": 8,
     "ParentResourceNotFound": 73,
     "DeleteNotSupported": 3,
+    "StorageAccountIsNotProvisioned": 2,
     "InvalidAccountType": 1,
     "SubscriptionNotFound": 4,
     "ValidateResourceInfoFailedWithInvalidSkuName": 2,
     "MalformedRoleAssignmentRequest": 1,
-    "InvalidRequestContent": 4,
+    "InvalidRequestContent": 7,
     "RoleAssignmentNotFound": 1,
     "InvalidCreateRoleDefinitionRequest": 1,
+    "MissingAssignableScopes": 1,
     "RoleDefinitionDoesNotExist": 1,
     "SubnetIsRequired": 1,
     "InvalidWorkflow": 1,
     "InvalidParameterValue": 1,
     "InvalidAdminLoginPassword": 1,
-    "MissingRequiredParameter": 2,
+    "MissingRequiredParameter": 3,
+    "ParameterOutOfRange": 1,
     "InvalidRequestBody": 2,
     "ContainerAppCreateMustContainContainer": 1,
     "ValidationFailed": 1,
-    "MissingParameterOnPrivateEndpoint": 1,
-    "NoAddressPrefixOrPoolProvided": 1,
-    "InvalidRequestFormat": 1
+    "MissingParameterOnPrivateLinkServiceConnection": 1,
+    "MissingParameterOnPrivateEndpoint": 2,
+    "InvalidRequestFormat": 2,
+    "InvalidAddressPrefixFormat": 2,
+    "NoAddressPrefixOrPoolProvided": 2
   },
   "captures": [
     {
@@ -516,6 +521,19 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-disable-local-auth-type",
+      "capabilityId": "app-configuration-parameters",
+      "resourceType": "Microsoft.AppConfiguration/configurationStores",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-disable-local-auth-type",
+      "status": 400,
+      "errorCode": "InvalidProperty",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-location",
       "capabilityId": "app-configuration-parameters",
       "resourceType": "Microsoft.AppConfiguration/configurationStores",
@@ -523,6 +541,19 @@
       "varianceId": "invalid-location",
       "status": 400,
       "errorCode": "InvalidResourceLocation",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-public-network-access",
+      "capabilityId": "app-configuration-parameters",
+      "resourceType": "Microsoft.AppConfiguration/configurationStores",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-public-network-access",
+      "status": 400,
+      "errorCode": "InvalidProperty",
       "cleanupVerified": true,
       "validationDepth": "provider-validation",
       "cloudValidated": false,
@@ -815,6 +846,19 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
+      "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.invalid-enabled-protocols",
+      "capabilityId": "azure-files",
+      "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-enabled-protocols",
+      "status": 409,
+      "errorCode": "StorageAccountIsNotProvisioned",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.invalid-location",
       "capabilityId": "azure-files",
       "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
@@ -826,6 +870,19 @@
       "validationDepth": "provider-routing-or-parent-validation",
       "cloudValidated": false,
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+    },
+    {
+      "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.invalid-share-quota",
+      "capabilityId": "azure-files",
+      "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-share-quota",
+      "status": 409,
+      "errorCode": "StorageAccountIsNotProvisioned",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.missing-api-version",
@@ -2674,6 +2731,32 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
+      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-principal-id",
+      "capabilityId": "identity-rbac",
+      "resourceType": "Microsoft.Authorization/roleAssignments",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-principal-id",
+      "status": 400,
+      "errorCode": "InvalidRequestContent",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-role-definition-id",
+      "capabilityId": "identity-rbac",
+      "resourceType": "Microsoft.Authorization/roleAssignments",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-role-definition-id",
+      "status": 400,
+      "errorCode": "InvalidRequestContent",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.valid-minimal",
       "capabilityId": "identity-rbac",
       "resourceType": "Microsoft.Authorization/roleAssignments",
@@ -2763,6 +2846,32 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-assignable-scopes",
+      "capabilityId": "identity-rbac",
+      "resourceType": "Microsoft.Authorization/roleDefinitions",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-assignable-scopes",
+      "status": 400,
+      "errorCode": "MissingAssignableScopes",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-permissions",
+      "capabilityId": "identity-rbac",
+      "resourceType": "Microsoft.Authorization/roleDefinitions",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-permissions",
+      "status": 400,
+      "errorCode": "InvalidRequestContent",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.valid-minimal",
@@ -4377,6 +4486,32 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-version",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-version",
+      "status": 400,
+      "errorCode": "ParameterOutOfRange",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-admin-password",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-admin-password",
+      "status": 400,
+      "errorCode": "MissingRequiredParameter",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-api-version",
       "capabilityId": "postgresql-flexible-server",
       "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
@@ -4401,6 +4536,19 @@
       "validationDepth": "provider-validation",
       "cloudValidated": false,
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.weak-admin-password",
+      "capabilityId": "postgresql-flexible-server",
+      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "weak-admin-password",
+      "status": 202,
+      "errorCode": null,
+      "cleanupVerified": true,
+      "validationDepth": "provider-accepted",
+      "cloudValidated": false,
+      "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
       "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.delete.not-found",
@@ -5638,6 +5786,45 @@
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-group-ids",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-group-ids",
+      "status": 400,
+      "errorCode": "MissingParameterOnPrivateLinkServiceConnection",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-private-link-connections",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-private-link-connections",
+      "status": 400,
+      "errorCode": "MissingParameterOnPrivateEndpoint",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-subnet-id",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/privateEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-subnet-id",
+      "status": 400,
+      "errorCode": "InvalidRequestFormat",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.valid-minimal",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/privateEndpoints",
@@ -5703,6 +5890,19 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-address-prefix",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-address-prefix",
+      "status": 400,
+      "errorCode": "InvalidAddressPrefixFormat",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-location",
       "capabilityId": "virtual-network",
       "resourceType": "Microsoft.Network/virtualNetworks",
@@ -5710,6 +5910,32 @@
       "varianceId": "invalid-location",
       "status": 400,
       "errorCode": "InvalidResourceLocation",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.invalid-subnet-prefix",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-subnet-prefix",
+      "status": 400,
+      "errorCode": "InvalidAddressPrefixFormat",
+      "cleanupVerified": true,
+      "validationDepth": "provider-validation",
+      "cloudValidated": false,
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.missing-address-space",
+      "capabilityId": "virtual-network",
+      "resourceType": "Microsoft.Network/virtualNetworks",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-address-space",
+      "status": 400,
+      "errorCode": "NoAddressPrefixOrPoolProvided",
       "cleanupVerified": true,
       "validationDepth": "provider-validation",
       "cloudValidated": false,

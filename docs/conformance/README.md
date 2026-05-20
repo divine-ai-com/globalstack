@@ -74,11 +74,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | Get | GET | 2023-01-31 | 0 |
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | ListByResourceGroup | GET | 2023-01-31 | 0 |
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | Delete | DELETE | 2023-01-31 | 0 |
-| identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | CreateOrUpdate | PUT | 2022-04-01 | 8 |
+| identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | CreateOrUpdate | PUT | 2022-04-01 | 9 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | Get | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | ListByResourceGroup | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | Delete | DELETE | 2022-04-01 | 0 |
-| identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | CreateOrUpdate | PUT | 2022-04-01 | 8 |
+| identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | CreateOrUpdate | PUT | 2022-04-01 | 9 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Get | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | ListByResourceGroup | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Delete | DELETE | 2022-04-01 | 0 |
@@ -98,11 +98,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Get | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Delete | DELETE | 2023-07-01 | 0 |
-| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 9 |
+| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 12 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Get | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | ListByResourceGroup | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Delete | DELETE | 2023-06-01-preview | 0 |
-| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-06-01-preview | 7 |
+| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-06-01-preview | 9 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | Get | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | ListByResourceGroup | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers/databases | Delete | DELETE | 2023-06-01-preview | 0 |
@@ -166,11 +166,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | Get | GET | 2023-01-01 | 0 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | ListByResourceGroup | GET | 2023-01-01 | 0 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Microsoft.Insights/actionGroups | Delete | DELETE | 2023-01-01 | 0 |
-| virtual-network | VPC | Microsoft.Network/virtualNetworks | CreateOrUpdate | PUT | 2023-09-01 | 8 |
+| virtual-network | VPC | Microsoft.Network/virtualNetworks | CreateOrUpdate | PUT | 2023-09-01 | 11 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | Get | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/virtualNetworks | Delete | DELETE | 2023-09-01 | 0 |
-| virtual-network | VPC | Microsoft.Network/privateEndpoints | CreateOrUpdate | PUT | 2023-09-01 | 8 |
+| virtual-network | VPC | Microsoft.Network/privateEndpoints | CreateOrUpdate | PUT | 2023-09-01 | 11 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | Get | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | ListByResourceGroup | GET | 2023-09-01 | 0 |
 | virtual-network | VPC | Microsoft.Network/privateEndpoints | Delete | DELETE | 2023-09-01 | 0 |
@@ -335,7 +335,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | activity-log-audit | CloudTrail | Microsoft.EventGrid/systemTopics | Get | GET | 2022-06-15 | 0 |
 | activity-log-audit | CloudTrail | Microsoft.EventGrid/systemTopics | ListByResourceGroup | GET | 2022-06-15 | 0 |
 | activity-log-audit | CloudTrail | Microsoft.EventGrid/systemTopics | Delete | DELETE | 2022-06-15 | 0 |
-| azure-files | EFS | Microsoft.Storage/storageAccounts/fileServices/shares | CreateOrUpdate | PUT | 2023-01-01 | 7 |
+| azure-files | EFS | Microsoft.Storage/storageAccounts/fileServices/shares | CreateOrUpdate | PUT | 2023-01-01 | 9 |
 | azure-files | EFS | Microsoft.Storage/storageAccounts/fileServices/shares | Get | GET | 2023-01-01 | 0 |
 | azure-files | EFS | Microsoft.Storage/storageAccounts/fileServices/shares | ListByResourceGroup | GET | 2023-01-01 | 0 |
 | azure-files | EFS | Microsoft.Storage/storageAccounts/fileServices/shares | Delete | DELETE | 2023-01-01 | 0 |
@@ -343,11 +343,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | Get | GET | 2023-11-01 | 0 |
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | ListByResourceGroup | GET | 2023-11-01 | 0 |
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | Delete | DELETE | 2023-11-01 | 0 |
-| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | CreateOrUpdate | PUT | 2024-01-01 | 9 |
+| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | CreateOrUpdate | PUT | 2024-01-01 | 10 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Delete | DELETE | 2024-01-01 | 0 |
-| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 7 |
+| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 9 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Delete | DELETE | 2024-01-01 | 0 |
@@ -359,7 +359,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | synapse-warehouse | Redshift | Microsoft.Synapse/workspaces/sqlPools | Get | GET | 2021-06-01 | 0 |
 | synapse-warehouse | Redshift | Microsoft.Synapse/workspaces/sqlPools | ListByResourceGroup | GET | 2021-06-01 | 0 |
 | synapse-warehouse | Redshift | Microsoft.Synapse/workspaces/sqlPools | Delete | DELETE | 2021-06-01 | 0 |
-| app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | CreateOrUpdate | PUT | 2023-03-01 | 9 |
+| app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | CreateOrUpdate | PUT | 2023-03-01 | 11 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | Get | GET | 2023-03-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | ListByResourceGroup | GET | 2023-03-01 | 0 |
 | app-configuration-parameters | SSM Parameter Store | Microsoft.AppConfiguration/configurationStores | Delete | DELETE | 2023-03-01 | 0 |

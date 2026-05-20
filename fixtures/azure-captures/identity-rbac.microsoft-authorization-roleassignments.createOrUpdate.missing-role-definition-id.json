@@ -1,0 +1,51 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-role-definition-id",
+  "capturedAt": "2026-05-20T12:49:04.886Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleAssignments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-role-definition-id",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-876c429753/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
+    "body": {
+      "properties": {
+        "principalId": "33333333-3333-4333-8333-333333333333",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b3d3d49a-e788-4f28-9817-5fdc441836ba",
+      "x-ms-request-id": "4e232f37-9fe8-4d8e-8797-2ec3f58acc13",
+      "x-ms-routing-request-id": "EASTUS:20260520T124903Z:b3d3d49a-e788-4f28-9817-5fdc441836ba"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'roleDefinitionId' not found in JSON. Path 'properties', line 1, position 103.'"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-876c429753",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

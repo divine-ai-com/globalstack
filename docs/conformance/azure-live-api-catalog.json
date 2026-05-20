@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T05:28:06.090Z",
+    "generatedAt": "2026-05-20T12:48:15.244Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -1245,16 +1245,22 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentsName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "properties": {}
+        "properties": {
+          "principalId": "33333333-3333-4333-8333-333333333333",
+          "principalType": "ServicePrincipal",
+          "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -1265,8 +1271,11 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -1277,8 +1286,11 @@
           "description": "Same create/update request with an intentionally unsupported API version.",
           "apiVersionOverride": "1900-01-01",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -1288,8 +1300,12 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            },
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -1304,20 +1320,9 @@
           "requiresRealAzure": true
         },
         {
-          "id": "missing-location",
-          "description": "Create/update without the top-level location field for a regional resource.",
-          "body": {
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific location-required validation error.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
           "id": "null-properties",
           "description": "Create/update with properties explicitly set to null.",
           "body": {
-            "location": "{location}",
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -1328,11 +1333,40 @@
           "id": "invalid-tags-shape",
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
-            "location": "{location}",
-            "properties": {},
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-principal-id",
+          "description": "Create/update without properties.principalId.",
+          "body": {
+            "properties": {
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            }
+          },
+          "expectedAzure": "Role assignment validation error for missing principalId.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-role-definition-id",
+          "description": "Create/update without properties.roleDefinitionId.",
+          "body": {
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal"
+            }
+          },
+          "expectedAzure": "Role assignment validation error for missing roleDefinitionId.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -1400,16 +1434,44 @@
       "method": "PUT",
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}",
       "requestBodyTemplate": {
-        "location": "{location}",
-        "properties": {}
+        "properties": {
+          "roleName": "globalstack-conformance-role",
+          "description": "GlobalStack conformance custom role",
+          "type": "CustomRole",
+          "permissions": [
+            {
+              "actions": [
+                "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+              ],
+              "notActions": []
+            }
+          ],
+          "assignableScopes": [
+            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+          ]
+        }
       },
       "varianceCases": [
         {
           "id": "valid-minimal",
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -1420,8 +1482,22 @@
           "description": "Same create/update request without api-version.",
           "omitApiVersion": true,
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -1432,8 +1508,22 @@
           "description": "Same create/update request with an intentionally unsupported API version.",
           "apiVersionOverride": "1900-01-01",
           "body": {
-            "location": "{location}",
-            "properties": {}
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -1443,8 +1533,23 @@
           "id": "invalid-location",
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
-            "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            },
+            "location": "globalstack-invalid-location"
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -1459,20 +1564,9 @@
           "requiresRealAzure": true
         },
         {
-          "id": "missing-location",
-          "description": "Create/update without the top-level location field for a regional resource.",
-          "body": {
-            "properties": {}
-          },
-          "expectedAzure": "Provider-specific location-required validation error.",
-          "localAssertion": "record-gap-until-real-azure-captured",
-          "requiresRealAzure": true
-        },
-        {
           "id": "null-properties",
           "description": "Create/update with properties explicitly set to null.",
           "body": {
-            "location": "{location}",
             "properties": null
           },
           "expectedAzure": "Provider-specific null-properties validation, defaulting, or rejection behavior.",
@@ -1483,11 +1577,64 @@
           "id": "invalid-tags-shape",
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
-            "location": "{location}",
-            "properties": {},
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-permissions",
+          "description": "Create/update without properties.permissions.",
+          "body": {
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            }
+          },
+          "expectedAzure": "Role definition validation error for missing permissions.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-assignable-scopes",
+          "description": "Create/update without properties.assignableScopes.",
+          "body": {
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Role definition validation error for missing assignableScopes.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -2539,6 +2686,63 @@
           "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "missing-admin-password",
+          "description": "Create/update without administratorLoginPassword.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "globalstack",
+              "administratorLoginPassword": "",
+              "version": "16"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server validation error for missing administrator password.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "weak-admin-password",
+          "description": "Create/update with a password that is too short.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "globalstack",
+              "administratorLoginPassword": "short",
+              "version": "16"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server validation error for weak administrator password.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-version",
+          "description": "Create/update with an unsupported PostgreSQL version.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
+              "version": "99"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server validation error for invalid version.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -2694,6 +2898,30 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-charset",
+          "description": "Create/update without properties.charset.",
+          "body": {
+            "properties": {
+              "collation": "en_US.utf8"
+            }
+          },
+          "expectedAzure": "PostgreSQL database validation error for missing charset.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-collation",
+          "description": "Create/update without properties.collation.",
+          "body": {
+            "properties": {
+              "charset": "UTF8"
+            }
+          },
+          "expectedAzure": "PostgreSQL database validation error for missing collation.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -4149,7 +4377,10 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "inputSchema": "EventGridSchema",
+          "publicNetworkAccess": "Enabled"
+        }
       },
       "varianceCases": [
         {
@@ -4157,7 +4388,10 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -4169,7 +4403,10 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -4181,7 +4418,10 @@
           "apiVersionOverride": "1900-01-01",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -4192,7 +4432,10 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -4210,7 +4453,10 @@
           "id": "missing-location",
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
-            "properties": {}
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            }
           },
           "expectedAzure": "Provider-specific location-required validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -4232,7 +4478,10 @@
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
             "location": "{location}",
-            "properties": {},
+            "properties": {
+              "inputSchema": "EventGridSchema",
+              "publicNetworkAccess": "Enabled"
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
@@ -5443,7 +5692,21 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.42.0.0/16"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "default",
+              "properties": {
+                "addressPrefix": "10.42.1.0/24"
+              }
+            }
+          ]
+        }
       },
       "varianceCases": [
         {
@@ -5451,7 +5714,21 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -5463,7 +5740,21 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -5475,7 +5766,21 @@
           "apiVersionOverride": "1900-01-01",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -5486,7 +5791,21 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -5504,7 +5823,21 @@
           "id": "missing-location",
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
-            "properties": {}
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location-required validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -5526,10 +5859,95 @@
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
             "location": "{location}",
-            "properties": {},
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-address-space",
+          "description": "Create/update without addressSpace.addressPrefixes.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "addressSpace": {},
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Virtual network validation error for missing address prefixes.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-address-prefix",
+          "description": "Create/update with an invalid virtual network CIDR.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/99"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/24"
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Virtual network validation error for invalid address prefix format.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-subnet-prefix",
+          "description": "Create/update with an invalid subnet CIDR.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "addressSpace": {
+                "addressPrefixes": [
+                  "10.42.0.0/16"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "default",
+                  "properties": {
+                    "addressPrefix": "10.42.1.0/99"
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Virtual network validation error for invalid subnet address prefix format.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -5598,7 +6016,22 @@
       "pathTemplate": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateEndpoints/{privateEndpointsName}",
       "requestBodyTemplate": {
         "location": "{location}",
-        "properties": {}
+        "properties": {
+          "subnet": {
+            "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+          },
+          "privateLinkServiceConnections": [
+            {
+              "name": "blob",
+              "properties": {
+                "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                "groupIds": [
+                  "blob"
+                ]
+              }
+            }
+          ]
+        }
       },
       "varianceCases": [
         {
@@ -5606,7 +6039,22 @@
           "description": "Create/update with the minimal candidate body for the selected API version.",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "2xx or accepted async for valid resources, otherwise captured provider error to refine the template.",
           "localAssertion": "must-return-success-for-registered-resource-type",
@@ -5618,7 +6066,22 @@
           "omitApiVersion": true,
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM error for missing api-version.",
           "localAssertion": "must-return-400",
@@ -5630,7 +6093,22 @@
           "apiVersionOverride": "1900-01-01",
           "body": {
             "location": "{location}",
-            "properties": {}
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "ARM or provider error for an unsupported API version.",
           "localAssertion": "must-return-400-or-provider-routing-error",
@@ -5641,7 +6119,22 @@
           "description": "Create/update with an intentionally invalid location value.",
           "body": {
             "location": "globalstack-invalid-location",
-            "properties": {}
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -5659,7 +6152,22 @@
           "id": "missing-location",
           "description": "Create/update without the top-level location field for a regional resource.",
           "body": {
-            "properties": {}
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "expectedAzure": "Provider-specific location-required validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
@@ -5681,10 +6189,89 @@
           "description": "Create/update with tags set to an invalid non-object shape.",
           "body": {
             "location": "{location}",
-            "properties": {},
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            },
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-private-link-connections",
+          "description": "Create/update without privateLinkServiceConnections.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": []
+            }
+          },
+          "expectedAzure": "Private endpoint validation error for missing private link service connections.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-subnet-id",
+          "description": "Create/update without properties.subnet.id.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "subnet": {},
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": [
+                      "blob"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Private endpoint validation error for missing subnet.id.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-group-ids",
+          "description": "Create/update with privateLinkServiceConnections but without groupIds.",
+          "body": {
+            "location": "{location}",
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              },
+              "privateLinkServiceConnections": [
+                {
+                  "name": "blob",
+                  "properties": {
+                    "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+                    "groupIds": []
+                  }
+                }
+              ]
+            }
+          },
+          "expectedAzure": "Private endpoint validation error for missing groupIds.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -14315,6 +14902,31 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-share-quota",
+          "description": "Create/update with an out-of-range Azure Files shareQuota.",
+          "body": {
+            "properties": {
+              "shareQuota": 0
+            }
+          },
+          "expectedAzure": "Azure Files validation error for invalid shareQuota.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-enabled-protocols",
+          "description": "Create/update with an unsupported Azure Files enabledProtocols value.",
+          "body": {
+            "properties": {
+              "shareQuota": 1,
+              "enabledProtocols": "FTP"
+            }
+          },
+          "expectedAzure": "Azure Files validation error for invalid enabledProtocols.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -14679,6 +15291,22 @@
           "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-capacity",
+          "description": "Create/update with an out-of-range sku.capacity.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard",
+              "capacity": 99
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Event Hubs namespace validation error for out-of-range capacity.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -14834,6 +15462,32 @@
             "tags": "globalstack-invalid-tags"
           },
           "expectedAzure": "ARM or provider tag-shape validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-partition-count",
+          "description": "Create/update with an out-of-range partitionCount.",
+          "body": {
+            "properties": {
+              "partitionCount": 0,
+              "messageRetentionInDays": 1
+            }
+          },
+          "expectedAzure": "Event hub validation error for invalid partitionCount.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-message-retention",
+          "description": "Create/update with an out-of-range messageRetentionInDays.",
+          "body": {
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": 30
+            }
+          },
+          "expectedAzure": "Event hub validation error for invalid messageRetentionInDays.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -15361,6 +16015,40 @@
             }
           },
           "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-disable-local-auth-type",
+          "description": "Create/update with disableLocalAuth set to a non-boolean shape.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "free"
+            },
+            "properties": {
+              "disableLocalAuth": "invalid",
+              "publicNetworkAccess": "Enabled"
+            }
+          },
+          "expectedAzure": "Configuration store validation error for disableLocalAuth type.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-public-network-access",
+          "description": "Create/update with an unsupported publicNetworkAccess value.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "free"
+            },
+            "properties": {
+              "disableLocalAuth": false,
+              "publicNetworkAccess": "PartiallyEnabled"
+            }
+          },
+          "expectedAzure": "Configuration store validation error for publicNetworkAccess.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

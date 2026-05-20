@@ -287,22 +287,32 @@ function responseErrorCode(response) {
   return response.body?.error?.code ?? response.body?.code ?? null;
 }
 
-async function seedLocalParents(baseUrl, call, variance, replacements) {
+async function seedParents(requestFn, call, variance, replacements) {
   if (call.resourceType.startsWith('Microsoft.Network/dnsZones/')) {
     const zonePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/dnsZones/${replacements.dnsZonesName}?api-version=2018-05-01`;
-    await httpJson(baseUrl, 'PUT', zonePath, { location: 'global', properties: {} });
+    await requestFn('PUT', zonePath, { location: 'global', properties: {} });
     return;
   }
 
   if (call.resourceType.startsWith('Microsoft.Network/privateDnsZones/')) {
     const zonePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/privateDnsZones/${replacements.privateDnsZonesName}?api-version=2020-06-01`;
-    await httpJson(baseUrl, 'PUT', zonePath, { location: 'global', properties: {} });
+    await requestFn('PUT', zonePath, { location: 'global', properties: {} });
+    if (call.resourceType === 'Microsoft.Network/privateDnsZones/virtualNetworkLinks') {
+      const vnetPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/virtualNetworks/${replacements.virtualNetworksName}?api-version=2023-09-01`;
+      await requestFn('PUT', vnetPath, {
+        location,
+        properties: {
+          addressSpace: { addressPrefixes: ['10.62.0.0/16'] },
+          subnets: [{ name: 'default', properties: { addressPrefix: '10.62.1.0/24' } }],
+        },
+      });
+    }
     return;
   }
 
   if (call.resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
     const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-06-01-preview`;
-    await httpJson(baseUrl, 'PUT', serverPath, {
+    await requestFn('PUT', serverPath, {
       location,
       sku: { name: 'Standard_B1ms', tier: 'Burstable' },
       properties: {
@@ -316,7 +326,7 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
 
   if (call.resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
     const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-12-30`;
-    await httpJson(baseUrl, 'PUT', serverPath, {
+    await requestFn('PUT', serverPath, {
       location,
       sku: { name: 'Standard_B1ms', tier: 'Burstable' },
       properties: {
@@ -330,7 +340,7 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
 
   if (call.resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases') {
     const accountPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}?api-version=2024-05-15`;
-    await httpJson(baseUrl, 'PUT', accountPath, {
+    await requestFn('PUT', accountPath, {
       location,
       kind: 'GlobalDocumentDB',
       properties: {
@@ -344,7 +354,7 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
 
   if (call.resourceType === 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers') {
     const accountPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}?api-version=2024-05-15`;
-    await httpJson(baseUrl, 'PUT', accountPath, {
+    await requestFn('PUT', accountPath, {
       location,
       kind: 'GlobalDocumentDB',
       properties: {
@@ -354,7 +364,7 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
       },
     });
     const databasePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/${replacements.databaseAccountsName}/sqlDatabases/${replacements.sqlDatabasesName}?api-version=2024-05-15`;
-    await httpJson(baseUrl, 'PUT', databasePath, {
+    await requestFn('PUT', databasePath, {
       properties: {
         resource: { id: replacements.sqlDatabasesName },
         options: { throughput: 400 },
@@ -363,17 +373,98 @@ async function seedLocalParents(baseUrl, call, variance, replacements) {
     return;
   }
 
-  if (call.resourceType !== 'Microsoft.ServiceBus/namespaces/topics/subscriptions' || variance.id !== 'valid-minimal') return;
+  if (call.resourceType === 'Microsoft.Storage/storageAccounts/blobServices/containers'
+    || call.resourceType === 'Microsoft.Storage/storageAccounts/queueServices/queues'
+    || call.resourceType === 'Microsoft.Storage/storageAccounts/fileServices/shares'
+    || call.resourceType === 'Microsoft.Storage/storageAccounts/tableServices/tables') {
+    const storagePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Storage/storageAccounts/${replacements.storageAccountsName}?api-version=2023-01-01`;
+    await requestFn('PUT', storagePath, {
+      location,
+      sku: { name: 'Standard_LRS' },
+      kind: 'StorageV2',
+      properties: { allowBlobPublicAccess: false },
+    });
+    return;
+  }
 
-  const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}?api-version=2021-11-01`;
-  const namespaceResponse = await httpJson(baseUrl, 'PUT', namespacePath, {
-    location,
-    sku: { name: 'Standard', tier: 'Standard' },
-    properties: {},
-  });
-  if (namespaceResponse.status < 200 || namespaceResponse.status >= 300) return;
-  const topicPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}/topics/${replacements.topicsName}?api-version=2021-11-01`;
-  await httpJson(baseUrl, 'PUT', topicPath, { properties: {} });
+  if (call.resourceType === 'Microsoft.KeyVault/vaults/secrets' || call.resourceType === 'Microsoft.KeyVault/vaults/keys') {
+    const vaultPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.KeyVault/vaults/${replacements.vaultsName}?api-version=2023-07-01`;
+    await requestFn('PUT', vaultPath, {
+      location,
+      properties: {
+        tenantId,
+        sku: { family: 'A', name: 'standard' },
+        accessPolicies: [],
+      },
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.Web/sites') {
+    const serverFarmPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Web/serverfarms/${replacements.serverfarmsName}?api-version=2023-12-01`;
+    await requestFn('PUT', serverFarmPath, {
+      location,
+      sku: { name: 'Y1', tier: 'Dynamic' },
+      properties: { reserved: false },
+      kind: 'functionapp',
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.Network/privateEndpoints') {
+    const vnetPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Network/virtualNetworks/${replacements.virtualNetworksName}?api-version=2023-09-01`;
+    await requestFn('PUT', vnetPath, {
+      location,
+      properties: {
+        addressSpace: { addressPrefixes: ['10.52.0.0/16'] },
+        subnets: [{ name: 'default', properties: { addressPrefix: '10.52.1.0/24' } }],
+      },
+    });
+    const storagePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.Storage/storageAccounts/${replacements.storageAccountsName}?api-version=2023-01-01`;
+    await requestFn('PUT', storagePath, {
+      location,
+      sku: { name: 'Standard_LRS' },
+      kind: 'StorageV2',
+      properties: { allowBlobPublicAccess: false },
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.ServiceBus/namespaces/queues'
+    || call.resourceType === 'Microsoft.ServiceBus/namespaces/topics'
+    || call.resourceType === 'Microsoft.ServiceBus/namespaces/topics/subscriptions') {
+    const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}?api-version=2021-11-01`;
+    const namespaceResponse = await requestFn('PUT', namespacePath, {
+      location,
+      sku: { name: 'Standard', tier: 'Standard' },
+      properties: {},
+    });
+    if (namespaceResponse.status < 200 || namespaceResponse.status >= 300) return;
+    if (call.resourceType === 'Microsoft.ServiceBus/namespaces/topics/subscriptions') {
+      const topicPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/${replacements.namespacesName}/topics/${replacements.topicsName}?api-version=2021-11-01`;
+      await requestFn('PUT', topicPath, { properties: {} });
+    }
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.EventHub/namespaces/eventhubs') {
+    const namespacePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.EventHub/namespaces/${replacements.namespacesName}?api-version=2024-01-01`;
+    await requestFn('PUT', namespacePath, {
+      location,
+      sku: { name: 'Standard', tier: 'Standard', capacity: 1 },
+      properties: {},
+    });
+    return;
+  }
+
+  if (call.resourceType === 'Microsoft.DataMigration/services/projects') {
+    const servicePath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DataMigration/services/${replacements.serviceName}?api-version=2022-03-30-preview`;
+    await requestFn('PUT', servicePath, {
+      location,
+      sku: { name: 'Standard_1vCore' },
+      properties: { publicNetworkAccess: 'Enabled' },
+    });
+  }
 }
 
 async function classifyLocal(call, variance, response) {
@@ -391,7 +482,7 @@ async function runLocalCase(baseUrl, call, variance) {
   const replacements = valuesFor(call, variance.id);
   const resourceGroupPath = `/subscriptions/${subscriptionId}/resourcegroups/${replacements.resourceGroupName}?api-version=2021-04-01`;
   await httpJson(baseUrl, 'PUT', resourceGroupPath, { location, tags: { purpose: 'globalstack-conformance' } });
-  await seedLocalParents(baseUrl, call, variance, replacements);
+  await seedParents((method, path, body) => httpJson(baseUrl, method, path, body), call, variance, replacements);
 
   const body = interpolate(variance.body, replacements);
   const path = requestPath(call, replacements, {
@@ -441,6 +532,7 @@ async function runAzureCase(call, variance) {
     },
   };
   const rgCreate = await azureRequest('PUT', rgPath, { location, tags: { purpose: 'globalstack-conformance', ttl: 'ephemeral' } });
+  await seedParents(azureRequest, call, variance, replacements);
   const response = await azureRequest(call.method, inventory.trackedResourcePath, interpolate(variance.body, replacements));
   const deleteResponse = await azureRequest('DELETE', rgPath, null);
   inventory.cleanup.attempted = true;

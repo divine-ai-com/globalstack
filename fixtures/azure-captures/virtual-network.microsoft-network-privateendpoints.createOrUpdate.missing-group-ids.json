@@ -1,0 +1,63 @@
+{
+  "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-group-ids",
+  "capturedAt": "2026-05-20T12:55:14.015Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/privateEndpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-group-ids",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-150398a98c/providers/Microsoft.Network/privateEndpoints/pe-150398a98c?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "subnet": {
+          "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+        },
+        "privateLinkServiceConnections": [
+          {
+            "name": "blob",
+            "properties": {
+              "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+              "groupIds": []
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "80ce0da0-28ec-458f-81f1-317dd9a6ed09",
+      "x-ms-request-id": "4740589d-b3a1-419a-8088-540faa2131c4",
+      "x-ms-routing-request-id": "EASTUS:20260520T125408Z:80ce0da0-28ec-458f-81f1-317dd9a6ed09"
+    },
+    "body": {
+      "error": {
+        "code": "MissingParameterOnPrivateLinkServiceConnection",
+        "message": "Private link service connection /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-150398a98c/providers/Microsoft.Network/privateEndpoints/pe-150398a98c/privateLinkServiceConnections/blob is missing required parameter 'group Id'.",
+        "details": []
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-150398a98c",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}
