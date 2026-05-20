@@ -123,6 +123,84 @@ const dimensionCommands = {
   ],
 };
 
+const crossCuttingBacklog = [
+  {
+    id: 'live-azure-capture-expansion',
+    label: 'More live Azure capture expansion per service',
+    detail: 'Turn candidate control-plane and data-plane calls into cleanup-verified real Azure fixtures for every high-value service surface.',
+    commands: [
+      'npm run providers:surface',
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'service-specific-parameter-variance',
+    label: 'More parameter variance beyond generic invalid/missing cases',
+    detail: 'Add service-specific invalid names, parent references, enum values, mutually-exclusive fields, range checks, and schema-shape captures before normalizing local behavior.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --limit=0',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'provider-lifecycle-depth',
+    label: 'Provider refresh, diff/preview, update, import, drift, and destroy semantics',
+    detail: 'Extend each platform runner beyond create/destroy smoke so generated IaC behaves the same way against GlobalStack as it does against Azure provider tooling.',
+    commands: [
+      'npm run smoke:prompts',
+      'npm run smoke:deploy',
+      'GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
+    ],
+  },
+  {
+    id: 'error-shape-header-fidelity',
+    label: 'Exact error-shape and header fidelity',
+    detail: 'Match Azure status codes, error codes, body structure, async-operation headers, retry headers, and request-id shaped responses for captured cases.',
+    commands: [
+      'npm run conformance:local -- --capability=<service>',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'retry-and-eventual-consistency',
+    label: 'Retry and eventual-consistency behavior',
+    detail: 'Capture poll cadence, transitional states, delayed reads, delete lag, and retryable failures before claiming timing fidelity.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'rbac-and-authorization',
+    label: 'RBAC and authorization behavior',
+    detail: 'Expand allow/deny matrices for ARM and service data planes, including propagation lag and inherited-scope behavior where Azure actually enforces it.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true',
+      'npm run conformance:local -- --capability=identity-rbac',
+    ],
+  },
+  {
+    id: 'timing-sensitive-repeat-captures',
+    label: 'Repeat captures for timing-sensitive behavior',
+    detail: 'Re-capture ambiguous or unstable Azure behavior before encoding it into local expectations, especially delete/read races and async completion windows.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'deeper-service-data-planes',
+    label: 'Deeper service-specific data planes where applicable',
+    detail: 'Broaden bounded local facades and official-emulator integrations for services such as Cosmos, Files, Event Hubs, App Configuration, Key Vault, PostgreSQL, MySQL, and Redis.',
+    commands: [
+      'npm run hybrid:render',
+      'npm run smoke',
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+    ],
+  },
+];
+
 function statusScore(status) {
   if (status === 'complete') return 1;
   if (status === 'partial') return 0.45;
@@ -251,11 +329,25 @@ function markdown(doc) {
     '- Unknown resource types, parameters, API versions, and data-plane calls must fail closed.',
     '- IaC provider deploy, refresh, update, import, and destroy behavior must be tested before a service can approach 99%-ready.',
     '',
+    '## Cross-Cutting Pending Backlog',
+    '',
+    'These items remain open across the whole Azure program even when a service-specific parity pack is green.',
+    '',
+    '| Pending Item | Why It Is Still Pending | Default Commands |',
+    '|---|---|---|',
+  ];
+
+  for (const item of doc.crossCuttingBacklog) {
+    lines.push(`| ${item.label} | ${item.detail} | ${item.commands.map(command => `\`${command}\``).join('<br>')} |`);
+  }
+
+  lines.push(
+    '',
     '## Wave Summary',
     '',
     '| Wave | Services | Work Items | Objective |',
     '|---|---:|---:|---|',
-  ];
+  );
 
   for (const wave of doc.waves) {
     lines.push(`| ${wave.label} | ${wave.services.length} | ${wave.workItemCount} | ${wave.objective} |`);
@@ -379,6 +471,7 @@ const doc = {
     workItemCount: allWorkItems.length,
     policy: 'Roadmap is execution order only; parity claims still require checklist dimensions to be complete.',
   },
+  crossCuttingBacklog,
   waves,
   prioritizedServices,
   workItemSummary: summarizeWorkItems(allWorkItems),
