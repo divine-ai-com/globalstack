@@ -248,6 +248,8 @@ async function runControlAndDataPlaneMatrix() {
   const vaultName = `kv-${suffix}`.slice(0, 24);
   const missingVaultName = `missing-${suffix}`.slice(0, 24);
   const secretName = `secret-${suffix}`.slice(0, 80);
+  const disabledSecretName = `disabled-${suffix}`.slice(0, 80);
+  const recoverableSecretName = `recoverable-${suffix}`.slice(0, 80);
   const keyName = `key-${suffix}`.slice(0, 80);
   const encryptOnlyKeyName = `encrypt-only-${suffix}`.slice(0, 80);
   let vaultHost = null;
@@ -633,6 +635,26 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
+      await record('data-plane secret invalid attributes shape is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
+          value: 'bad-attributes',
+          attributes: ['not-an-object'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane secret invalid enabled attribute is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
+          value: 'bad-enabled',
+          attributes: { enabled: 'false' },
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
       await record('data-plane secret set succeeds', async () => {
         const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${secretName}?api-version=7.4`, {
           value: 'data-plane-secret',
@@ -693,6 +715,88 @@ async function runControlAndDataPlaneMatrix() {
         assert.ok(result.body.value.length >= 2);
         assert.ok(result.body.value.some(item => item.id.endsWith(`/${firstSecretVersion}`)));
         return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('data-plane disabled secret set succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${disabledSecretName}?api-version=7.4`, {
+          value: 'disabled-secret',
+          attributes: { enabled: false },
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.attributes.enabled, false);
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane disabled secret get is forbidden', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${disabledSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'SecretDisabled');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane recoverable secret set succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${recoverableSecretName}?api-version=7.4`, {
+          value: 'recoverable-secret',
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.id.includes(`/secrets/${recoverableSecretName}/`));
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane recoverable secret delete succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'DELETE', `/secrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.recoveryId.endsWith(`/deletedsecrets/${recoverableSecretName}`));
+        return { status: result.status, recoveryId: result.body.recoveryId };
+      });
+
+      await record('data-plane deleted secret get succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/deletedsecrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.recoveryId.endsWith(`/deletedsecrets/${recoverableSecretName}`));
+        return { status: result.status, recoveryId: result.body.recoveryId };
+      });
+
+      await record('data-plane deleted secret list includes deleted item', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', '/deletedsecrets?api-version=7.4', undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.value.some(item => item.recoveryId.endsWith(`/deletedsecrets/${recoverableSecretName}`)));
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('data-plane deleted secret recover succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/deletedsecrets/${recoverableSecretName}/recover?api-version=7.4`, {}, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, 'recoverable-secret');
+        assert.ok(result.body.id.includes(`/secrets/${recoverableSecretName}/`));
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane recovered secret get succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, 'recoverable-secret');
+        return { status: result.status, id: result.body.id };
+      });
+
+      await record('data-plane recovered secret delete succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'DELETE', `/secrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.recoveryId.endsWith(`/deletedsecrets/${recoverableSecretName}`));
+        return { status: result.status, recoveryId: result.body.recoveryId };
+      });
+
+      await record('data-plane deleted secret purge succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'DELETE', `/deletedsecrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 204);
+        return { status: result.status };
+      });
+
+      await record('data-plane purged deleted secret get is not found', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'GET', `/deletedsecrets/${recoverableSecretName}?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'SecretNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
       });
 
       await record('data-plane key create invalid kty is rejected', async () => {
@@ -1018,7 +1122,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Key Vault ARM vault/secret/key lifecycle, captured missing-parent and delete-not-supported cases, local secret and RSA key data-plane smoke, ARM-template deployment, and all-platform runner deployment paths. It does not mark Key Vault as 99%-complete or cloudValidated for full RBAC, access policies, private endpoints, firewall behavior, managed HSM, certificate surfaces, soft-delete and purge-protection parity, every cryptographic algorithm, key import/export constraints, request signing, audit logs, throttling, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Key Vault ARM vault/secret/key lifecycle, captured missing-parent and delete-not-supported cases, local secret and RSA key data-plane smoke, disabled-secret rejection, deleted-secret get/recover/purge lifecycle, ARM-template deployment, and all-platform runner deployment paths. It does not mark Key Vault as 99%-complete or cloudValidated for full RBAC, access policies, private endpoints, firewall behavior, managed HSM, certificate surfaces, purge-protection policy parity, every cryptographic algorithm, key import/export constraints, request signing, audit logs, throttling, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1030,7 +1134,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Key Vault ARM vault/secret/key lifecycle, local secret and RSA key data-plane smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Key Vault ARM vault/secret/key lifecycle, local secret and RSA key data-plane smoke, disabled/deleted secret lifecycle, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Key Vault cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

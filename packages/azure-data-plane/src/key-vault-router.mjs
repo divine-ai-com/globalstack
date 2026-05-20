@@ -95,6 +95,7 @@ export class KeyVaultRouter {
       vaultName: name,
       vaultUri: vaultUri ?? `https://${name}.vault.azure.net/`,
       secrets: new Map(),
+      deletedSecrets: new Map(),
       keys: new Map(),
     });
   }
@@ -103,7 +104,7 @@ export class KeyVaultRouter {
     this.vaults.delete(String(vaultName).toLowerCase());
   }
 
-  setSecret({ vaultName, secretName, value, contentType, tags = {} }) {
+  setSecret({ vaultName, secretName, value, contentType, tags = {}, attributes = {} }) {
     const vault = this.vaults.get(String(vaultName).toLowerCase());
     if (!vault) throw new Error(`Key Vault ${vaultName} is not registered in the local router.`);
     const version = versionId(`${vault.vaultName}:secret:${secretName}:${Date.now()}:${randomUUID()}`);
@@ -118,6 +119,7 @@ export class KeyVaultRouter {
       tags,
       attributes: {
         enabled: true,
+        ...attributes,
         created: Math.floor(Date.now() / 1000),
         updated: Math.floor(Date.now() / 1000),
       },
@@ -185,6 +187,59 @@ export class KeyVaultRouter {
       const parts = url.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
       const [collection, name, action] = parts;
 
+      if (collection === 'deletedsecrets') {
+        if (!name) {
+          if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'Deleted secret collection supports GET.');
+          return sendJson(res, 200, {
+            value: [...vault.deletedSecrets.values()].map(secret => ({
+              recoveryId: secret.recoveryId,
+              deletedDate: secret.deletedDate,
+              scheduledPurgeDate: secret.scheduledPurgeDate,
+              id: secret.id,
+              attributes: secret.attributes,
+              tags: secret.tags,
+            })),
+          });
+        }
+
+        const deleted = vault.deletedSecrets.get(name.toLowerCase());
+        if (!deleted) return sendError(res, 404, 'SecretNotFound', `A deleted secret with name '${name}' was not found.`);
+
+        if (method === 'GET' && !action) {
+          return sendJson(res, 200, {
+            recoveryId: deleted.recoveryId,
+            deletedDate: deleted.deletedDate,
+            scheduledPurgeDate: deleted.scheduledPurgeDate,
+            id: deleted.id,
+            attributes: deleted.attributes,
+            tags: deleted.tags,
+          });
+        }
+
+        if (method === 'POST' && action === 'recover') {
+          vault.deletedSecrets.delete(name.toLowerCase());
+          vault.secrets.set(name.toLowerCase(), deleted.secret);
+          return sendJson(res, 200, {
+            value: deleted.secret.value,
+            id: deleted.secret.id,
+            contentType: deleted.secret.contentType,
+            attributes: {
+              ...deleted.secret.attributes,
+              recovered: Math.floor(Date.now() / 1000),
+              updated: Math.floor(Date.now() / 1000),
+            },
+            tags: deleted.secret.tags,
+          });
+        }
+
+        if (method === 'DELETE' && !action) {
+          vault.deletedSecrets.delete(name.toLowerCase());
+          return sendJson(res, 204);
+        }
+
+        return sendError(res, 405, 'MethodNotAllowed', `Deleted secret ${name} does not support ${method} ${action ?? ''}`.trim());
+      }
+
       if (collection === 'secrets') {
         if (!name) {
           if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'Secret collection supports GET.');
@@ -209,12 +264,21 @@ export class KeyVaultRouter {
           if (Object.hasOwn(body, 'tags') && !isObject(body.tags)) {
             return sendError(res, 400, 'BadParameter', 'Secret tags must be an object when provided.');
           }
+          if (Object.hasOwn(body, 'attributes') && !isObject(body.attributes)) {
+            return sendError(res, 400, 'BadParameter', 'Secret attributes must be an object when provided.');
+          }
+          if (Object.hasOwn(body?.attributes ?? {}, 'enabled') && typeof body.attributes.enabled !== 'boolean') {
+            return sendError(res, 400, 'BadParameter', 'Secret attributes.enabled must be a boolean when provided.');
+          }
           this.setSecret({
             vaultName: vault.vaultName,
             secretName: name,
             value: body.value,
             contentType: body.contentType,
             tags: body.tags ?? {},
+            attributes: {
+              ...(body.attributes?.enabled !== undefined ? { enabled: body.attributes.enabled } : {}),
+            },
           });
           const secret = vault.secrets.get(name.toLowerCase());
           return sendJson(res, 200, {
@@ -241,6 +305,9 @@ export class KeyVaultRouter {
         if (method === 'GET') {
           const selected = action ? secret.versions.get(action) : secret;
           if (!selected) return sendError(res, 404, 'SecretNotFound', `A secret version '${action}' with name '${name}' was not found.`);
+          if (selected.attributes.enabled === false) {
+            return sendError(res, 403, 'SecretDisabled', `A secret with name '${name}' is disabled.`);
+          }
           return sendJson(res, 200, {
             value: selected.value,
             id: selected.id,
@@ -250,13 +317,25 @@ export class KeyVaultRouter {
           });
         }
         if (method === 'DELETE') {
+          const deletedDate = Math.floor(Date.now() / 1000);
           vault.secrets.delete(name.toLowerCase());
-          return sendJson(res, 200, {
+          const deletedRecord = {
             recoveryId: `${vault.vaultUri.replace(/\/$/, '')}/deletedsecrets/${name}`,
-            deletedDate: Math.floor(Date.now() / 1000),
-            scheduledPurgeDate: Math.floor(Date.now() / 1000) + 7776000,
+            deletedDate,
+            scheduledPurgeDate: deletedDate + 7776000,
             id: secret.id,
             attributes: secret.attributes,
+            tags: secret.tags,
+            secret,
+          };
+          vault.deletedSecrets.set(name.toLowerCase(), deletedRecord);
+          return sendJson(res, 200, {
+            recoveryId: deletedRecord.recoveryId,
+            deletedDate: deletedRecord.deletedDate,
+            scheduledPurgeDate: deletedRecord.scheduledPurgeDate,
+            id: deletedRecord.id,
+            attributes: deletedRecord.attributes,
+            tags: deletedRecord.tags,
           });
         }
         return sendError(res, 405, 'MethodNotAllowed', `Secret ${name} does not support ${method}.`);

@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 449) {
-    errors.push('Azure capture classification should include 449 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 450) {
+    errors.push('Azure capture classification should include 450 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -2183,8 +2183,8 @@ if (!keyVaultParityText) {
   if (keyVaultParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Key Vault parity control/data-plane matrix has failures');
   }
-  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 65) {
-    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 65 cases');
+  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 77) {
+    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 77 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2201,10 +2201,19 @@ if (!keyVaultParityText) {
     'data-plane malformed bearer token is rejected',
     'data-plane unsupported api-version is rejected',
     'data-plane secret invalid contentType is rejected',
+    'data-plane secret invalid attributes shape is rejected',
+    'data-plane secret invalid enabled attribute is rejected',
     'data-plane secret set succeeds',
     'data-plane secret second version set succeeds',
     'data-plane secret get explicit first version succeeds',
     'data-plane secret versions list includes both versions',
+    'data-plane disabled secret set succeeds',
+    'data-plane disabled secret get is forbidden',
+    'data-plane deleted secret get succeeds',
+    'data-plane deleted secret recover succeeds',
+    'data-plane recovered secret get succeeds',
+    'data-plane deleted secret purge succeeds',
+    'data-plane purged deleted secret get is not found',
     'data-plane key create invalid key_ops is rejected',
     'key invalid keyOps value is rejected',
     'data-plane secret get after delete is not found',
