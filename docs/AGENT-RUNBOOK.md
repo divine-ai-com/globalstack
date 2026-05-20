@@ -220,7 +220,7 @@ Run the Azure WAF Policy parity pack after changing Application Gateway WAF poli
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:waf-policy-parity
 ```
 
-Expected result is `dist/e2e/azure-waf-policy-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 WAF cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Application Gateway WAF policy lifecycle, CDN security policy lifecycle, stricter policy settings/managed-rule/association rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-waf-policy-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 47 WAF cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Application Gateway WAF policy lifecycle, CDN security policy lifecycle, bounded local custom-rule evaluation, stricter policy settings/managed-rule/association rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Activity Log Audit parity pack after changing Event Grid system-topic behavior, diagnostic-setting rejection behavior, unsupported audit route handling, or platform deployment routing:
 

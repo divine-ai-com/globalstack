@@ -1991,10 +1991,10 @@ if (!wafPolicyParityText) {
     errors.push('Azure WAF Policy parity E2E did not pass');
   }
   if (wafPolicyParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure WAF Policy parity control-plane matrix has failures');
+    errors.push('Azure WAF Policy parity control/data-plane matrix has failures');
   }
-  if ((wafPolicyParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure WAF Policy parity control-plane matrix should exercise at least 35 cases');
+  if ((wafPolicyParity.controlPlane?.total ?? 0) < 47) {
+    errors.push('Azure WAF Policy parity control/data-plane matrix should exercise at least 47 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2017,8 +2017,12 @@ if (!wafPolicyParityText) {
     'waf policy missing managed rules is rejected',
     'waf policy invalid custom rule priority is rejected',
     'waf policy create succeeds',
+    'local waf evaluator allows clean request',
+    'local waf evaluator blocks bad bot in prevention mode',
     'waf policy get succeeds',
     'waf policy update can switch to detection mode',
+    'local waf evaluator detects bad bot without blocking in detection mode',
+    'local waf evaluator disabled policy bypasses rules',
     'waf policy list includes created resource',
     'cdn profile create succeeds for security policy parent',
     'cdn security policy collection list is empty before create',

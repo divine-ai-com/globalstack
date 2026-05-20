@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createWafEvaluator } from '../packages/azure-data-plane/src/waf-evaluator.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -225,6 +226,7 @@ async function runControlPlaneMatrix() {
   const missingPolicyName = `security-missing-${suffix}`.slice(0, 40);
   const wafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`;
   const endpointId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/afdEndpoints/default`;
+  const wafEvaluator = createWafEvaluator();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -338,7 +340,30 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.resourceState, 'Enabled');
+      wafEvaluator.registerPolicy({ policyName: appWafName, properties: result.body.properties });
       return { status: result.status };
+    });
+
+    await record('local waf evaluator allows clean request', async () => {
+      const result = wafEvaluator.evaluate({
+        policyName: appWafName,
+        request: { method: 'GET', uri: '/robotics/telemetry', headers: { 'User-Agent': 'trusted-robot-client' } },
+      });
+      assert.equal(result.action, 'Allow');
+      assert.equal(result.reason, 'NoRuleMatch');
+      assert.deepEqual(result.matchedRules, []);
+      return { action: result.action, reason: result.reason };
+    });
+
+    await record('local waf evaluator blocks bad bot in prevention mode', async () => {
+      const result = wafEvaluator.evaluate({
+        policyName: appWafName,
+        request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      assert.equal(result.action, 'Block');
+      assert.equal(result.reason, 'CustomRuleMatch');
+      assert.equal(result.matchedRules[0].name, 'BlockBadBotHeader');
+      return { action: result.action, reason: result.reason, matchedRule: result.matchedRules[0].name };
     });
 
     await record('waf policy get succeeds', async () => {
@@ -352,7 +377,33 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody({ properties: { policySettings: { state: 'Enabled', mode: 'Detection', requestBodyCheck: true } } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.policySettings.mode, 'Detection');
+      wafEvaluator.registerPolicy({ policyName: appWafName, properties: result.body.properties });
       return { status: result.status };
+    });
+
+    await record('local waf evaluator detects bad bot without blocking in detection mode', async () => {
+      const result = wafEvaluator.evaluate({
+        policyName: appWafName,
+        request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      assert.equal(result.action, 'Allow');
+      assert.equal(result.reason, 'DetectionOnly');
+      assert.equal(result.matchedRules[0].name, 'BlockBadBotHeader');
+      return { action: result.action, reason: result.reason, matchedRule: result.matchedRules[0].name };
+    });
+
+    await record('local waf evaluator disabled policy bypasses rules', async () => {
+      wafEvaluator.registerPolicy({
+        policyName: `${appWafName}-disabled`,
+        properties: appWafBody({ properties: { policySettings: { state: 'Disabled', mode: 'Prevention' } } }).properties,
+      });
+      const result = wafEvaluator.evaluate({
+        policyName: `${appWafName}-disabled`,
+        request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      assert.equal(result.action, 'Allow');
+      assert.equal(result.reason, 'PolicyDisabled');
+      return { action: result.action, reason: result.reason };
     });
 
     await record('waf policy list includes created resource', async () => {
@@ -466,6 +517,7 @@ async function runControlPlaneMatrix() {
     await record('waf policy delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', appWafPath(resourceGroup, appWafName));
       assert.equal(result.status, 200);
+      wafEvaluator.unregisterPolicy(appWafName);
       return { status: result.status };
     });
 
@@ -530,7 +582,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- WAF policy under test: ${report.controlPlane.appWafName}`,
@@ -554,7 +606,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Application Gateway WAF policy and CDN security policy ARM lifecycle, stricter parameter rejection, unsupported WAF child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark WAF as 99%-complete or cloudValidated for full managed rule execution, bot protection, exclusions, per-rule overrides, WAF attachment runtime behavior, request blocking/logging semantics, throttling, RBAC, or exact Azure edge/runtime behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Application Gateway WAF policy and CDN security policy ARM lifecycle, bounded local custom-rule evaluation, stricter parameter rejection, unsupported WAF child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark WAF as 99%-complete or cloudValidated for full managed rule execution, bot protection, exclusions, per-rule overrides, WAF attachment runtime behavior, request blocking/logging semantics, throttling, RBAC, or exact Azure edge/runtime behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -566,7 +618,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Application Gateway WAF policy and CDN security policy ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Application Gateway WAF policy and CDN security policy ARM lifecycle, bounded local custom-rule evaluation, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure WAF cloudValidated claim.',
   controlPlane,
   platformMatrix,
