@@ -918,10 +918,10 @@ if (!serviceDiscoveryParityText) {
     errors.push('Azure Service Discovery parity E2E did not pass');
   }
   if (serviceDiscoveryParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Service Discovery parity control-plane matrix has failures');
+    errors.push('Azure Service Discovery parity control/data-plane matrix has failures');
   }
-  if ((serviceDiscoveryParity.controlPlane?.total ?? 0) < 30) {
-    errors.push('Azure Service Discovery parity control-plane matrix should exercise at least 30 cases');
+  if ((serviceDiscoveryParity.controlPlane?.total ?? 0) < 40) {
+    errors.push('Azure Service Discovery parity control/data-plane matrix should exercise at least 40 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -934,6 +934,8 @@ if (!serviceDiscoveryParityText) {
     'private dns zone create is accepted asynchronously',
     'private dns zone operation status succeeds',
     'private dns zone get succeeds',
+    'local private dns registry resolves registered service',
+    'local private dns registry returns nxdomain for missing service',
     'managed environment collection list is empty before create',
     'container app create before managed environment is rejected',
     'managed environment empty body is rejected',
@@ -948,6 +950,8 @@ if (!serviceDiscoveryParityText) {
     'container app invalid scale is rejected',
     'container app collection list is empty before create',
     'container app create succeeds',
+    'local container app registry resolves fqdn',
+    'local container app registry missing fqdn is not found',
     'container app get succeeds',
     'container app update can change scale',
     'container app list includes created resource',
@@ -956,6 +960,7 @@ if (!serviceDiscoveryParityText) {
     'unsupported managed environment certificate route fails closed',
     'ARM template deployment can create service discovery resources',
     'container app delete succeeds',
+    'local container app registry removes deleted fqdn',
     'container app get after delete is not found',
     'managed environment delete succeeds',
     'private dns zone delete succeeds',

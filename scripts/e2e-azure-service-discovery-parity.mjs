@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createServiceDiscoveryRegistry } from '../packages/azure-data-plane/src/service-discovery-registry.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -200,6 +201,7 @@ async function runControlPlaneMatrix() {
   const appName = `app-${suffix}`;
   const environmentId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/managedEnvironments/${environmentName}`;
   const missingEnvironmentId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/managedEnvironments/${missingEnvironmentName}`;
+  const discoveryRegistry = createServiceDiscoveryRegistry();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -282,6 +284,21 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'GET', privateDnsZonePath(resourceGroup, zoneName));
       assert.equal(result.status, 200);
       assert.equal(result.body.type, 'Microsoft.Network/privateDnsZones');
+      discoveryRegistry.registerPrivateDnsRecord({ fqdn: `api.${zoneName}`, values: ['10.0.0.4'] });
+      return { status: result.status };
+    });
+
+    await record('local private dns registry resolves registered service', async () => {
+      const result = discoveryRegistry.resolvePrivateDns(`api.${zoneName}`);
+      assert.equal(result.status, 'NOERROR');
+      assert.deepEqual(result.values, ['10.0.0.4']);
+      return { status: result.status, values: result.values.join(',') };
+    });
+
+    await record('local private dns registry returns nxdomain for missing service', async () => {
+      const result = discoveryRegistry.resolvePrivateDns(`missing.${zoneName}`);
+      assert.equal(result.status, 'NXDOMAIN');
+      assert.deepEqual(result.values, []);
       return { status: result.status };
     });
 
@@ -360,7 +377,31 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
       assert.ok(result.body.properties.configuration.ingress.fqdn.endsWith('.globalstack.local'));
+      discoveryRegistry.registerContainerApp({
+        appName,
+        environmentName,
+        fqdn: result.body.properties.configuration.ingress.fqdn,
+        targetPort: result.body.properties.configuration.ingress.targetPort,
+        external: result.body.properties.configuration.ingress.external,
+      });
       return { status: result.status, fqdn: result.body.properties.configuration.ingress.fqdn };
+    });
+
+    await record('local container app registry resolves fqdn', async () => {
+      const created = await httpJson(armPort, 'GET', containerAppPath(resourceGroup, appName));
+      const result = discoveryRegistry.resolveContainerApp(created.body.properties.configuration.ingress.fqdn);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.appName, appName);
+      assert.equal(result.body.environmentName, environmentName);
+      assert.equal(result.body.targetPort, 8080);
+      return { status: result.status, targetPort: result.body.targetPort };
+    });
+
+    await record('local container app registry missing fqdn is not found', async () => {
+      const result = discoveryRegistry.resolveContainerApp(`missing.${environmentName}.globalstack.local`);
+      assert.equal(result.status, 404);
+      assert.equal(result.code, 'ServiceNotFound');
+      return { status: result.status, errorCode: result.code };
     });
 
     await record('container app get succeeds', async () => {
@@ -416,9 +457,18 @@ async function runControlPlaneMatrix() {
     });
 
     await record('container app delete succeeds', async () => {
+      const existing = await httpJson(armPort, 'GET', containerAppPath(resourceGroup, appName));
       const result = await httpJson(armPort, 'DELETE', containerAppPath(resourceGroup, appName));
       assert.equal(result.status, 200);
+      discoveryRegistry.unregisterContainerApp(existing.body.properties.configuration.ingress.fqdn);
       return { status: result.status };
+    });
+
+    await record('local container app registry removes deleted fqdn', async () => {
+      const result = discoveryRegistry.resolveContainerApp(`${appName}.${environmentName}.globalstack.local`);
+      assert.equal(result.status, 404);
+      assert.equal(result.code, 'ServiceNotFound');
+      return { status: result.status, errorCode: result.code };
     });
 
     await record('container app get after delete is not found', async () => {
@@ -479,7 +529,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Managed environment under test: ${report.controlPlane.environmentName}`,
@@ -505,7 +555,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Private DNS zone, Container Apps managed environment, and Container App ARM lifecycle, managed-environment reference checks, stricter container/scale rejection, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark service mesh behavior, revision traffic splitting, DNS propagation, health-aware discovery, private resolver behavior, Dapr, mTLS, or exact Container Apps runtime behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for the listed Private DNS zone, Container Apps managed environment, Container App ARM lifecycle, local DNS and Container App FQDN discovery checks, managed-environment reference checks, stricter container/scale rejection, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark service mesh behavior, revision traffic splitting, DNS propagation, health-aware discovery, private resolver behavior, Dapr, mTLS, or exact Container Apps runtime behavior as cloudValidated.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -517,7 +567,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Service Discovery via Private DNS and Container Apps ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Service Discovery via Private DNS and Container Apps ARM lifecycle, local DNS and Container App FQDN discovery checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure service discovery or Container Apps runtime cloudValidated claim.',
   controlPlane,
   platformMatrix,

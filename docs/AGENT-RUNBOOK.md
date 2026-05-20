@@ -252,7 +252,7 @@ Run the Azure Service Discovery parity pack after changing Private DNS, Containe
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-discovery-parity
 ```
 
-Expected result is `dist/e2e/azure-service-discovery-parity/results.json` with `ok == true`, zero control-plane failures, at least 30 Service Discovery cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Private DNS zone lifecycle, Container Apps managed environment lifecycle, Container App lifecycle, managed-environment reference checks, stricter container/scale rejection, unsupported Container Apps child/action routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-service-discovery-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 40 Service Discovery cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Private DNS zone lifecycle, local DNS registry resolution, Container Apps managed environment lifecycle, Container App lifecycle, local Container Apps FQDN resolution, managed-environment reference checks, stricter container/scale rejection, unsupported Container Apps child/action routes failing closed, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Files parity pack after changing Storage file share behavior, Azure NetApp explicit-gap behavior, unsupported file route handling, or platform deployment routing:
 
