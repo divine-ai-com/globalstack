@@ -15,4 +15,5 @@ if ! jq -e --arg location "${AZURE_LOCATION}" '.parameters.location.value == $lo
   exit 1
 fi
 
+run_task_stage_command unit-tests
 write_stage_report unit-tests PASS "Bicep task passed local unit checks"

@@ -1,0 +1,4 @@
+name: az-cvflow-pulumi-azurefl0520
+runtime: nodejs
+main: bin/tap.ts
+description: Computer vision inspection intake flow on Azure using Pulumi TypeScript

@@ -34,6 +34,8 @@ Use this file as the routing table for the repo. If you are not sure which docum
 | Add lifecycle behavior | `CONFORMANCE-MODEL.md` | `AGENT-RUNBOOK.md` | `fixtures/azure-lifecycle-captures/` |
 | Add a Tier 1 or Tier 2 capability | `SERVICE-SCOPE.md` | `ARCHITECTURE.md`, `AGENT-RUNBOOK.md` | Capability registry |
 | Work on platform images | `PLATFORM-RUNNER-LIFECYCLE.md` | `ARCHITECTURE.md`, `REPO-MAP.md` | `scripts/render-platform-templates.mjs`, `templates/runner/stages/`, and generated `dist/platform-images/` |
+| Work on dataset-visible Azure IaC bundles, prompts, or tests | `azure-iac-principals.md` | `CURRENT-MISSION.md`, `AGENT-RUNBOOK.md`, `PLATFORM-RUNNER-LIFECYCLE.md` | Azure-only task artifacts plus the hidden runner/runtime layer |
+| Work on Azure bundle layout, outputs, or test structure | `azure-bundle-structure.md` | `azure-iac-principals.md`, `CURRENT-MISSION.md`, `AGENT-RUNBOOK.md` | Platform-native source layout plus runner-generated runtime artifacts |
 | Work on generated prompts or smoke deploys | `AGENT-RUNBOOK.md` | `REPO-MAP.md` | `scripts/generate-azure-smoke-prompts.mjs` and `scripts/smoke-deploy-azure-usecases.mjs` |
 | Understand repo layout or file ownership | `ARTIFACT-REGISTRY.md` | `REPO-MAP.md`, `ARCHITECTURE.md` | Artifact registry plus generated repo map |
 | Add new files or product surfaces | `ARTIFACT-REGISTRY.md` | `CONFORMANCE-MODEL.md`, `ARCHITECTURE.md` | Existing ownership model and source-of-truth order |

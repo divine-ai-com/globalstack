@@ -6,9 +6,24 @@ Use this when changing the repo. It is written for future agents that need to mo
 
 1. Read `docs/START-HERE.md`.
 2. Read `docs/CURRENT-MISSION.md`.
-3. Read `docs/CONFORMANCE-MODEL.md`.
-4. Check the generated scope in `docs/SERVICE-SCOPE.md`.
-5. Confirm the work stays under `/home/ubuntu/globalstack`.
+3. Read `docs/azure-iac-principals.md` before changing dataset-visible prompts, IaC, unit tests, or integration tests.
+4. Read `docs/azure-bundle-structure.md` before changing bundle layout, outputs handling, or test data flow.
+5. Read `docs/CONFORMANCE-MODEL.md`.
+6. Check the generated scope in `docs/SERVICE-SCOPE.md`.
+7. Confirm the work stays under `/home/ubuntu/globalstack`.
+
+## Dataset-Visible Bundle Hygiene
+
+When working on prompts, model responses, IaC, unit tests, or integration tests that may become training artifacts, keep them Azure-only. GlobalStack routing, tokens, sidecar details, and local endpoints belong only in the hidden runner/runtime layer.
+
+Before accepting a bundle, scan the dataset-visible files for leaked runtime-only terms. `provider: GlobalStack` is allowed in metadata only.
+
+```bash
+rg -n 'GlobalStack|LocalStack|localhost|127\\.0\\.0\\.1|4566|4570|GLOBALSTACK_' verified/ dist/deploy-smoke/ templates/sample-tasks/ || true
+rg -n 'provider\\s*[:=]\\s*"?GlobalStack"?' verified/ dist/deploy-smoke/ templates/sample-tasks/ || true
+```
+
+Any hit in prompt, IaC, test, or task-facing docs must be removed before the bundle is treated as training-grade. The only allowed hit is the metadata deployment toggle. See `docs/azure-iac-principals.md`.
 
 ## Normal Regeneration
 

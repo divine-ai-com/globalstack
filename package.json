@@ -71,6 +71,7 @@
     "smoke:iac-model-responses": "node scripts/smoke-azure-iac-model-responses.mjs",
     "trial:openai-arm-json": "node scripts/run-openai-azure-arm-json-trial.mjs",
     "trial:openai-platforms": "node scripts/run-openai-azure-platform-trials.mjs",
+    "trial:openai-verified-bundles": "node scripts/run-openai-azure-verified-bundles.mjs",
     "native:bicep": "node scripts/native-deploy-bicep-cli.mjs",
     "native:terraform": "node scripts/native-deploy-hcl-cli.mjs terraform",
     "native:opentofu": "node scripts/native-deploy-hcl-cli.mjs tofu",

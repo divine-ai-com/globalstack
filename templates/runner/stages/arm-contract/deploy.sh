@@ -22,6 +22,10 @@ if is_native_hcl_platform; then
     write_stage_report deploy FAIL "${tool} apply failed; see native stderr/stdout reports"
     exit 1
   fi
+  if ! "${tool}" -chdir="${PLATFORM_WORK_DIR}/lib" output -json > "${PLATFORM_NATIVE_OUTPUTS}" 2>>"${PLATFORM_NATIVE_STDERR}"; then
+    write_stage_report deploy FAIL "${tool} output -json failed; see native stderr/stdout reports"
+    exit 1
+  fi
   resource_group="$(resource_group_name)"
   storage_account="$(storage_account_name)"
   rg_url="${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourcegroups/${resource_group}?api-version=2021-04-01"
@@ -78,6 +82,7 @@ if is_native_pulumi_platform; then
     "${rg_url}" > "${REPORT_DIR}/resource-group-get.json"
   jq -e --arg name "${resource_group}" '.name == $name' "${REPORT_DIR}/resource-group-get.json" >/dev/null
   pulumi -C "${PLATFORM_WORK_DIR}" stack output --json > "${REPORT_DIR}/pulumi-outputs.json"
+  cp "${REPORT_DIR}/pulumi-outputs.json" "${PLATFORM_NATIVE_OUTPUTS}"
   write_native_pulumi_deployment_response "${resource_group}" "${storage_account}"
   write_stage_report deploy PASS "Pulumi native provider up succeeded"
   exit 0

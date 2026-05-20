@@ -796,6 +796,39 @@ function azureNotFoundFor({ method, resourceType, providerRoute, store }) {
   return null;
 }
 
+function webAppConfigRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4) return null;
+  if (parts[0] !== 'sites' || parts[2] !== 'config') return null;
+  return {
+    siteRoute: {
+      subscriptionId: providerRoute.subscriptionId,
+      resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: providerRoute.providerNamespace,
+      typePath: `${parts[0]}/${parts[1]}`,
+    },
+    configName: parts[3],
+  };
+}
+
+function synthesizeWebAppConfig({ providerRoute, apiVersion, store }) {
+  const configRoute = webAppConfigRoute(providerRoute);
+  if (!configRoute || configRoute.configName !== 'web') return null;
+  const site = store.getResource(configRoute.siteRoute);
+  if (!site) return null;
+  return {
+    id: `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/${providerRoute.providerNamespace}/${providerRoute.typePath}`,
+    name: `${site.name}/web`,
+    type: 'Microsoft.Web/sites/config',
+    location: site.location,
+    properties: {
+      ...(site.properties?.siteConfig ?? {}),
+    },
+    apiVersion,
+  };
+}
+
 export function createArmRequestHandler({ store = new ResourceStore(), persist = false } = {}) {
   void persist;
 
@@ -1203,6 +1236,7 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       if (providerRoute && providerRoute.typePath) {
         const apiVersion = url.searchParams.get('api-version');
         const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
+        const webAppConfig = synthesizeWebAppConfig({ providerRoute, apiVersion, store });
         const capability = capabilityForResourceType(resourceType);
 
         if (!apiVersion) {
@@ -1244,6 +1278,9 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
         }
 
         if (!capability) {
+          if (webAppConfig && method === 'GET') {
+            return sendJson(res, 200, webAppConfig);
+          }
           return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
             {
               code: 'ExplicitGap',
@@ -1505,6 +1542,9 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
         }
 
         if (method === 'GET') {
+          if (webAppConfig) {
+            return sendJson(res, 200, webAppConfig);
+          }
           const validation = capturedProviderValidation({ method, resourceType, providerRoute });
           if (validation) return sendJson(res, validation.status, validation.body);
           const storageParent = storageAccountParentRoute(providerRoute);
@@ -1550,7 +1590,18 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
             if (notFound.body === undefined && notFound.status === 204) return sendJson(res, 204);
             return sendError(res, notFound.status, notFound.code, notFound.message);
           }
-          if (resourceType === 'Microsoft.ServiceBus/namespaces') return sendJson(res, 202);
+          if (resourceType === 'Microsoft.ServiceBus/namespaces') {
+            const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+            const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+            return sendJson(res, 202, {
+              status: 'Deleting',
+              id: `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/${providerRoute.providerNamespace}/${providerRoute.typePath}`,
+            }, {
+              'azure-asyncoperation': operationUrl,
+              location: operationUrl,
+              'retry-after': '0',
+            });
+          }
           if (resourceType === 'Microsoft.Storage/storageAccounts') return sendJson(res, 200);
           if (resourceType.startsWith('Microsoft.Storage/storageAccounts/')) {
             const storageDeleteNoContentTypes = new Set([

@@ -249,6 +249,26 @@ export class ResourceStore {
         ...(type === 'Microsoft.EventGrid/topics'
           ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
           : {}),
+        ...(type === 'Microsoft.Storage/storageAccounts'
+          ? {
+              minimumTlsVersion:
+                body.properties?.minimumTlsVersion
+                ?? body.minimumTlsVersion
+                ?? existing?.properties?.minimumTlsVersion
+                ?? 'TLS1_1',
+              allowBlobPublicAccess:
+                body.properties?.allowBlobPublicAccess
+                ?? body.allowBlobPublicAccess
+                ?? existing?.properties?.allowBlobPublicAccess
+                ?? false,
+              supportsHttpsTrafficOnly:
+                body.properties?.supportsHttpsTrafficOnly
+                ?? body.enableHttpsTrafficOnly
+                ?? body.supportsHttpsTrafficOnly
+                ?? existing?.properties?.supportsHttpsTrafficOnly
+                ?? true,
+            }
+          : {}),
         ...(type === 'Microsoft.EventGrid/systemTopics'
           ? {
               provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',

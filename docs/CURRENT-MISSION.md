@@ -14,6 +14,10 @@ Prompts and model responses must teach Azure, not GlobalStack. A generated task 
 
 Do not add GlobalStack-specific instructions to customer-facing prompts or IaC unless the test is explicitly about the GlobalStack harness itself.
 
+The full rules for dataset-visible bundles live in `docs/azure-iac-principals.md`. Treat that file as the source of truth for prompt wording, IaC hygiene, unit/integration test boundaries, and the rule that dataset artifacts must not leak GlobalStack-specific terms or runtime wiring.
+
+For bundle structure, keep metadata minimal and prefer platform-native layout plus runner-generated runtime artifacts such as `flat-outputs.json`, `execution.log`, and `execution-report.json`. See `docs/azure-bundle-structure.md`.
+
 ## Non-Negotiables
 
 - Do not modify `/home/ubuntu/genex/haawk`.
@@ -88,4 +92,3 @@ sudo -n docker ps -a --format '{{.Names}} {{.Image}} {{.Status}}' | rg 'globalst
 ```
 
 If the full smoke is still running, let it finish. After it passes, clean any GlobalStack smoke containers, run hygiene checks, commit, push, then continue the next roadmap dimension from `docs/conformance/azure-99-roadmap.md`.
-

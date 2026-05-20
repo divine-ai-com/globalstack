@@ -422,6 +422,80 @@ test('ARM facade models Service Bus namespace async shape and entity naming rule
     );
     assert.equal(subscription.status, 201);
     assert.equal(subscription.body.globalstack.capabilityId, 'service-bus-topics');
+
+    const deleteNamespace = await httpJson(
+      port,
+      'DELETE',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+    );
+    assert.equal(deleteNamespace.status, 202);
+    assert.ok(deleteNamespace.headers['azure-asyncoperation']);
+    await httpJson(port, 'GET', deleteNamespace.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+  });
+});
+
+test('ARM facade exposes Function App web config child for Pulumi refresh', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-web-config-refresh';
+    const planId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-refresh-test`;
+
+    const rg = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+    assert.equal(rg.status, 201);
+
+    const plan = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-refresh-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        kind: 'functionapp',
+        sku: { name: 'Y1', tier: 'Dynamic' },
+        properties: { reserved: false },
+      },
+    );
+    assert.equal(plan.status, 201);
+
+    const site = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/func-refresh-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        kind: 'functionapp',
+        properties: {
+          serverFarmId: planId,
+          httpsOnly: true,
+          siteConfig: {
+            appSettings: [
+              { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
+              { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+            ],
+            alwaysOn: false,
+          },
+        },
+      },
+    );
+    assert.equal(site.status, 201);
+
+    const config = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/func-refresh-test/config/web?api-version=2023-12-01`,
+    );
+    assert.equal(config.status, 200);
+    assert.equal(config.body.type, 'Microsoft.Web/sites/config');
+    assert.equal(config.body.name, 'func-refresh-test/web');
+    assert.equal(config.body.properties.alwaysOn, false);
+    assert.deepEqual(config.body.properties.appSettings, [
+      { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
+      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+    ]);
   });
 });
 

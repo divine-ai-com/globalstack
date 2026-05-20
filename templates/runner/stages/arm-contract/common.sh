@@ -21,6 +21,7 @@ export PLATFORM_TEMPLATE="${PLATFORM_CONTRACT_DIR}/azuredeploy.json"
 export PLATFORM_PARAMETERS="${PLATFORM_CONTRACT_DIR}/azuredeploy.parameters.json"
 export PLATFORM_DEPLOYMENT_BODY="${REPORT_DIR}/deployment-body.json"
 export PLATFORM_DEPLOYMENT_RESPONSE="${REPORT_DIR}/deployment-response.json"
+export PLATFORM_NATIVE_OUTPUTS="${REPORT_DIR}/native-outputs.json"
 export PLATFORM_CLEANUP_RESPONSE="${REPORT_DIR}/cleanup-response.json"
 export PLATFORM_LIFECYCLE_REPORT="${REPORT_DIR}/lifecycle-report.json"
 export PLATFORM_TOKEN_RESPONSE="${REPORT_DIR}/token-response.json"
@@ -39,7 +40,10 @@ write_stage_report() {
   local stage="$1"
   local status="$2"
   local message="${3:-}"
-  jq -n \
+  local report_path="${REPORT_DIR}/stage-${stage}.json"
+  local report_json
+  report_json="$(
+    jq -n \
     --arg platform "${PLATFORM_ID}" \
     --arg stage "${stage}" \
     --arg status "${status}" \
@@ -57,13 +61,62 @@ write_stage_report() {
       workDir: $workDir,
       reportDir: $reportDir,
       endpoint: $endpoint
-    }' > "${PLATFORM_LIFECYCLE_REPORT}"
+    }'
+  )"
+  printf '%s\n' "${report_json}" > "${PLATFORM_LIFECYCLE_REPORT}"
+  printf '%s\n' "${report_json}" > "${report_path}"
 }
 
 copy_task_to_workdir() {
   rm -rf "${PLATFORM_WORK_DIR}"
   mkdir -p "${PLATFORM_WORK_DIR}" "${REPORT_DIR}"
   cp -R "${TASK_DIR}/." "${PLATFORM_WORK_DIR}/"
+}
+
+task_metadata_path() {
+  printf '%s\n' "${PLATFORM_WORK_DIR}/metadata.json"
+}
+
+task_stage_command() {
+  local stage="$1"
+  local metadata
+  metadata="$(task_metadata_path)"
+  if [ ! -f "${metadata}" ]; then
+    return 0
+  fi
+  jq -r --arg stage "${stage}" '.stageCommands[$stage] // .tests[$stage] // empty' "${metadata}" 2>/dev/null || true
+}
+
+run_task_stage_command() {
+  local stage="$1"
+  local command
+  command="$(task_stage_command "${stage}")"
+  if [ -z "${command}" ] || [ "${command}" = "null" ]; then
+    return 0
+  fi
+
+  log_stage "${stage}" "running task-defined ${stage} command"
+  export GLOBALSTACK_TASK_DIR="${TASK_DIR}"
+  export GLOBALSTACK_WORK_DIR="${PLATFORM_WORK_DIR}"
+  export GLOBALSTACK_REPORT_DIR="${REPORT_DIR}"
+  export GLOBALSTACK_PLATFORM_ID="${PLATFORM_ID}"
+  export GLOBALSTACK_TEST_STAGE="${stage}"
+  export GLOBALSTACK_TOKEN_RESPONSE_PATH="${PLATFORM_TOKEN_RESPONSE}"
+  export GLOBALSTACK_DEPLOYMENT_RESPONSE_PATH="${PLATFORM_DEPLOYMENT_RESPONSE}"
+  export GLOBALSTACK_PROVIDER_LIFECYCLE_RESPONSE_PATH="${REPORT_DIR}/provider-lifecycle-response.json"
+  export GLOBALSTACK_NATIVE_OUTPUTS_PATH="${PLATFORM_NATIVE_OUTPUTS}"
+  export GLOBALSTACK_ENDPOINT_URL="${AZURE_ENDPOINT_URL}"
+  export AZURE_RESOURCE_MANAGER_ENDPOINT="${AZURE_ENDPOINT_URL}"
+  export ARM_ENDPOINT="${AZURE_ENDPOINT_URL}"
+  export AZURE_ACCESS_TOKEN_PATH="${PLATFORM_TOKEN_RESPONSE}"
+  export AZURE_DEPLOYMENT_OUTPUTS_PATH="${PLATFORM_NATIVE_OUTPUTS}"
+  export AZURE_DEPLOYMENT_RESPONSE_PATH="${PLATFORM_DEPLOYMENT_RESPONSE}"
+
+  if ! GLOBALSTACK_STAGE_COMMAND="${command}" /bin/bash -lc 'cd "${GLOBALSTACK_WORK_DIR}" && eval "${GLOBALSTACK_STAGE_COMMAND}"' \
+    > "${REPORT_DIR}/${stage}-task-stdout.log" 2> "${REPORT_DIR}/${stage}-task-stderr.log"; then
+    write_stage_report "${stage}" FAIL "task-defined ${stage} command failed; see ${stage}-task-stderr.log"
+    return 1
+  fi
 }
 
 resource_group_name() {
@@ -120,7 +173,9 @@ native_check() {
       ;;
     azure-pulumi-ts)
       test -f "${PLATFORM_WORK_DIR}/bin/tap.ts"
-      grep -q '@pulumi/azure-native' "${PLATFORM_WORK_DIR}/bin/tap.ts"
+      test -f "${PLATFORM_WORK_DIR}/lib/tap-stack.ts"
+      grep -q 'createTapStack' "${PLATFORM_WORK_DIR}/bin/tap.ts"
+      grep -q '@pulumi/azure-native' "${PLATFORM_WORK_DIR}/lib/tap-stack.ts"
       jq -e '.dependencies["@pulumi/azure-native"]' "${PLATFORM_WORK_DIR}/package.json" >/dev/null
       ;;
     azure-pulumi-py)

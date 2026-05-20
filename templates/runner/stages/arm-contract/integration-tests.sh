@@ -15,4 +15,5 @@ curl -fsS \
 
 jq -e --arg name "${resource_group}" '.name == $name' "${REPORT_DIR}/resource-group-get.json" >/dev/null
 jq -e '.properties.outputs | type == "object"' "${PLATFORM_DEPLOYMENT_RESPONSE}" >/dev/null
+run_task_stage_command integration-tests
 write_stage_report integration-tests PASS "Deployment is queryable through Azure-shaped ARM reads"

@@ -11,4 +11,5 @@ if [[ ! "${resource_group}" =~ ^rg- ]]; then
 fi
 
 jq -e '.parameters.location.value // "eastus" | strings' "${PLATFORM_PARAMETERS}" >/dev/null
+run_task_stage_command unit-tests
 write_stage_report unit-tests PASS "Deployment contract passed local unit checks"

@@ -1,0 +1,13 @@
+{
+  "name": "azure-pulumi-vision-inspection-intake-flow",
+  "version": "1.0.0",
+  "private": true,
+  "main": "bin/tap.ts",
+  "dependencies": {
+    "@pulumi/azure-native": "^2.80.0",
+    "@pulumi/pulumi": "^3.122.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}

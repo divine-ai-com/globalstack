@@ -1,0 +1,178 @@
+{
+  "provider": "GlobalStack",
+  "cloud": "azure",
+  "model": "gpt-5.5",
+  "platformId": "azure-pulumi-ts",
+  "scenarioId": "robotics-fleet-telemetry-buffer",
+  "promptPath": "lib/PROMPT.md",
+  "modelResponsePath": "lib/MODEL_RESPONSE.md",
+  "solutionFiles": [
+    "Pulumi.yaml",
+    "package.json",
+    "bin/tap.ts",
+    "lib/tap-stack.ts"
+  ],
+  "expectedOutputKeys": [
+    "RobotTelemetryStorageAccountName",
+    "RobotArtifactsContainerName",
+    "RobotJobsQueueName",
+    "RobotFilesShareName",
+    "RobotLedgerTableName",
+    "RobotEventsTopicName",
+    "RobotTelemetryHubName",
+    "RobotFleetConfigStoreName"
+  ],
+  "expectedOutputs": {
+    "RobotTelemetryStorageAccountName": "azrobotipulumiazurepul",
+    "RobotArtifactsContainerName": "azrobotipulumiazurepul/default/robot-artifacts",
+    "RobotJobsQueueName": "azrobotipulumiazurepul/default/robot-jobs",
+    "RobotFilesShareName": "azrobotipulumiazurepul/default/robotfiles",
+    "RobotLedgerTableName": "azrobotipulumiazurepul/default/robotledger",
+    "RobotEventsTopicName": "sb-roboti-pulumi-azurepul0520/robot-events",
+    "RobotTelemetryHubName": "eh-roboti-pulumi-azurepul0520/robot-stream",
+    "RobotFleetConfigStoreName": "cfgrobotipulumiazurepul"
+  },
+  "resourceNames": {
+    "blobContainerName": "robot-artifacts",
+    "queueName": "robot-jobs",
+    "fileShareName": "robotfiles",
+    "tableName": "robotledger",
+    "serviceBusTopicName": "robot-events",
+    "eventHubName": "robot-stream",
+    "environmentSuffix": "azurepul0520",
+    "resourceGroup": "rg-az-roboti-pulumi-azurepul0520",
+    "storageAccount": "azrobotipulumiazurepul",
+    "serviceBusNamespace": "sb-roboti-pulumi-azurepul0520",
+    "eventGridTopic": "eg-roboti-pulumi-azurepul0520",
+    "eventHubNamespace": "eh-roboti-pulumi-azurepul0520",
+    "appConfigStore": "cfgrobotipulumiazurepul"
+  },
+  "unitAssertions": {
+    "fileContains": {
+      "Pulumi.yaml": [
+        "runtime: nodejs"
+      ],
+      "package.json": [
+        "@pulumi/azure-native",
+        "@pulumi/pulumi"
+      ],
+      "bin/tap.ts": [
+        "@pulumi/pulumi"
+      ],
+      "lib/tap-stack.ts": [
+        "resources.ResourceGroup",
+        "storage.StorageAccount",
+        "servicebus.Namespace",
+        "servicebus.Topic",
+        "eventgrid.Topic",
+        "eventhub.Namespace",
+        "eventhub.EventHub",
+        "appconfiguration.ConfigurationStore"
+      ]
+    },
+    "anyFileContains": [
+      "RobotTelemetryStorageAccountName",
+      "RobotArtifactsContainerName",
+      "RobotJobsQueueName",
+      "RobotFilesShareName",
+      "RobotLedgerTableName",
+      "RobotEventsTopicName",
+      "RobotTelemetryHubName",
+      "RobotFleetConfigStoreName"
+    ]
+  },
+  "integrationChecks": [
+    {
+      "label": "storage-account",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrobotipulumiazurepul",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrobotipulumiazurepul",
+      "expectedType": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "label": "blob-container",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrobotipulumiazurepul/blobServices/default/containers/robot-artifacts",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrobotipulumiazurepul/default/robot-artifacts",
+      "expectedType": "Microsoft.Storage/storageAccounts/blobServices/containers"
+    },
+    {
+      "label": "queue",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrobotipulumiazurepul/queueServices/default/queues/robot-jobs",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrobotipulumiazurepul/default/robot-jobs",
+      "expectedType": "Microsoft.Storage/storageAccounts/queueServices/queues"
+    },
+    {
+      "label": "file-share",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrobotipulumiazurepul/fileServices/default/shares/robotfiles",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrobotipulumiazurepul/default/robotfiles",
+      "expectedType": "Microsoft.Storage/storageAccounts/fileServices/shares"
+    },
+    {
+      "label": "table",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrobotipulumiazurepul/tableServices/default/tables/robotledger",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrobotipulumiazurepul/default/robotledger",
+      "expectedType": "Microsoft.Storage/storageAccounts/tableServices/tables"
+    },
+    {
+      "label": "service-bus-namespace",
+      "provider": "Microsoft.ServiceBus",
+      "typePath": "namespaces/sb-roboti-pulumi-azurepul0520",
+      "apiVersion": "2021-11-01",
+      "expectedName": "sb-roboti-pulumi-azurepul0520",
+      "expectedType": "Microsoft.ServiceBus/namespaces"
+    },
+    {
+      "label": "service-bus-topic",
+      "provider": "Microsoft.ServiceBus",
+      "typePath": "namespaces/sb-roboti-pulumi-azurepul0520/topics/robot-events",
+      "apiVersion": "2021-11-01",
+      "expectedName": "sb-roboti-pulumi-azurepul0520/robot-events",
+      "expectedType": "Microsoft.ServiceBus/namespaces/topics"
+    },
+    {
+      "label": "event-grid-topic",
+      "provider": "Microsoft.EventGrid",
+      "typePath": "topics/eg-roboti-pulumi-azurepul0520",
+      "apiVersion": "2022-06-15",
+      "expectedName": "eg-roboti-pulumi-azurepul0520",
+      "expectedType": "Microsoft.EventGrid/topics"
+    },
+    {
+      "label": "event-hub-namespace",
+      "provider": "Microsoft.EventHub",
+      "typePath": "namespaces/eh-roboti-pulumi-azurepul0520",
+      "apiVersion": "2024-01-01",
+      "expectedName": "eh-roboti-pulumi-azurepul0520",
+      "expectedType": "Microsoft.EventHub/namespaces"
+    },
+    {
+      "label": "event-hub",
+      "provider": "Microsoft.EventHub",
+      "typePath": "namespaces/eh-roboti-pulumi-azurepul0520/eventhubs/robot-stream",
+      "apiVersion": "2024-01-01",
+      "expectedName": "eh-roboti-pulumi-azurepul0520/robot-stream",
+      "expectedType": "Microsoft.EventHub/namespaces/eventhubs"
+    },
+    {
+      "label": "app-config-store",
+      "provider": "Microsoft.AppConfiguration",
+      "typePath": "configurationStores/cfgrobotipulumiazurepul",
+      "apiVersion": "2023-03-01",
+      "expectedName": "cfgrobotipulumiazurepul",
+      "expectedType": "Microsoft.AppConfiguration/configurationStores"
+    }
+  ],
+  "stageCommands": {
+    "unit-tests": "node test/tap-stack.unit.test.mjs",
+    "integration-tests": "node test/tap-stack.int.test.mjs"
+  }
+}
