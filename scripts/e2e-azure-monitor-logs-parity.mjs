@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createLogAnalyticsStore } from '../packages/azure-data-plane/src/log-analytics-store.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -166,6 +167,7 @@ function deploymentBody(workspaceName) {
 
 async function runControlPlaneMatrix() {
   const cases = [];
+  const logStore = createLogAnalyticsStore();
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
   const resourceGroup = `rg-gs-logs-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-logs-missing-${suffix}`;
@@ -307,6 +309,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
       assert.equal(result.body.globalstack.capabilityId, 'monitor-logs');
       workspaceResourceId = result.body.id;
+      logStore.registerWorkspace({ workspaceName });
       return { status: result.status, resourceId: result.body.id };
     });
 
@@ -336,6 +339,62 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.name === workspaceName));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local log store missing workspace query is not found', async () => {
+      const result = logStore.query({ workspaceName: missingWorkspaceName, query: 'RobotTelemetry | take 1' });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'WorkspaceNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local log store invalid table ingest is rejected', async () => {
+      const result = logStore.ingest({ workspaceName, tableName: '1BadTable', records: [{ Message: 'bad' }] });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'InvalidTableName');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local log store empty ingest is rejected', async () => {
+      const result = logStore.ingest({ workspaceName, tableName: 'RobotTelemetry', records: [] });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'InvalidLogRecords');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local log store ingests telemetry records', async () => {
+      const result = logStore.ingest({
+        workspaceName,
+        tableName: 'RobotTelemetry',
+        records: [
+          { RobotId: 'robot-1', Severity: 'Info', BatteryPercent: 91 },
+          { RobotId: 'robot-2', Severity: 'Warning', BatteryPercent: 18 },
+        ],
+      });
+      assert.equal(result.status, 202);
+      assert.equal(result.body.accepted, 2);
+      return { status: result.status, accepted: result.body.accepted };
+    });
+
+    await record('local log store query take returns rows', async () => {
+      const result = logStore.query({ workspaceName, query: 'RobotTelemetry | take 1' });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.tables[0].rows.length, 1);
+      return { status: result.status, rowCount: result.body.tables[0].rows.length };
+    });
+
+    await record('local log store query where count returns filtered count', async () => {
+      const result = logStore.query({ workspaceName, query: 'RobotTelemetry | where Severity == "Warning" | count' });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.tables[0].rows[0][0], 1);
+      return { status: result.status, count: result.body.tables[0].rows[0][0] };
+    });
+
+    await record('local log store unsupported KQL is rejected', async () => {
+      const result = logStore.query({ workspaceName, query: 'RobotTelemetry | join kind=inner Other on RobotId' });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'UnsupportedKqlOperator');
+      return { status: result.error.status, errorCode: result.error.code };
     });
 
     await record('workspace unsupported shared keys action fails closed', async () => {
@@ -415,7 +474,15 @@ async function runControlPlaneMatrix() {
     await record('workspace delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', workspacePath(resourceGroup, workspaceName));
       assert.equal(result.status, 200);
+      logStore.unregisterWorkspace({ workspaceName });
       return { status: result.status };
+    });
+
+    await record('local log store query after workspace delete is not found', async () => {
+      const result = logStore.query({ workspaceName, query: 'RobotTelemetry | count' });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'WorkspaceNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
     });
 
     await record('workspace get after delete is not found', async () => {
@@ -504,7 +571,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Workspace under test: ${report.controlPlane.workspaceName}`,
@@ -534,7 +601,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Log Analytics workspace ARM lifecycle, captured diagnostic-setting rejection behavior, unsupported workspace actions failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Monitor Logs as 99%-complete or cloudValidated for KQL, data ingestion APIs, table schemas, retention enforcement, diagnostic setting fanout, query errors, throttling, RBAC, private link, or exact Azure Monitor data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Log Analytics workspace ARM lifecycle, bounded local log ingestion/query behavior, captured diagnostic-setting rejection behavior, unsupported workspace actions failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Monitor Logs as 99%-complete or cloudValidated for full KQL, production ingestion APIs, table schemas, retention enforcement, diagnostic setting fanout, query errors, throttling, RBAC, private link, or exact Azure Monitor data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -546,7 +613,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Monitor Logs workspace ARM lifecycle, captured diagnostic-setting rejection, unsupported workspace action fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Monitor Logs workspace ARM lifecycle, bounded local log ingestion/query checks, captured diagnostic-setting rejection, unsupported workspace action fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Monitor Logs cloudValidated claim.',
   controlPlane,
   platformMatrix,

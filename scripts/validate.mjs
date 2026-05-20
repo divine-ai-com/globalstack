@@ -1573,10 +1573,10 @@ if (!monitorLogsParityText) {
     errors.push('Azure Monitor Logs parity E2E did not pass');
   }
   if (monitorLogsParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Monitor Logs parity control-plane matrix has failures');
+    errors.push('Azure Monitor Logs parity control/data-plane matrix has failures');
   }
-  if ((monitorLogsParity.controlPlane?.total ?? 0) < 29) {
-    errors.push('Azure Monitor Logs parity control-plane matrix should exercise at least 29 cases');
+  if ((monitorLogsParity.controlPlane?.total ?? 0) < 37) {
+    errors.push('Azure Monitor Logs parity control/data-plane matrix should exercise at least 37 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1593,6 +1593,13 @@ if (!monitorLogsParityText) {
     'workspace get succeeds',
     'workspace update preserves metadata',
     'workspace list includes created resource',
+    'local log store missing workspace query is not found',
+    'local log store invalid table ingest is rejected',
+    'local log store empty ingest is rejected',
+    'local log store ingests telemetry records',
+    'local log store query take returns rows',
+    'local log store query where count returns filtered count',
+    'local log store unsupported KQL is rejected',
     'workspace unsupported shared keys action fails closed',
     'workspace unsupported search action fails closed',
     'diagnostic setting create preserves captured unsupported resource type',
@@ -1601,6 +1608,7 @@ if (!monitorLogsParityText) {
     'diagnostic setting list preserves captured unsupported resource type',
     'diagnostic setting delete preserves captured unsupported resource type',
     'ARM template deployment can create workspace',
+    'local log store query after workspace delete is not found',
     'workspace get after delete is not found',
     'workspace delete after delete returns no content',
   ]) {

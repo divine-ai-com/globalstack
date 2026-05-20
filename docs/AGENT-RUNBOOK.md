@@ -172,7 +172,7 @@ Run the Azure Monitor Logs parity pack after changing Log Analytics workspace AR
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:monitor-logs-parity
 ```
 
-Expected result is `dist/e2e/azure-monitor-logs-parity/results.json` with `ok == true`, zero control-plane failures, at least 29 Monitor Logs cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, unsupported workspace action fail-closed behavior, captured Diagnostic Settings rejection behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-monitor-logs-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 37 Monitor Logs cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, workspace lifecycle, bounded local log ingestion/query behavior, unsupported workspace action fail-closed behavior, captured Diagnostic Settings rejection behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Monitor Metrics/Alerts parity pack after changing action group behavior, metric alert behavior, unsupported Monitor metrics route handling, or platform deployment routing:
 
