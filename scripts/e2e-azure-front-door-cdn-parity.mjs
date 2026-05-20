@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createEdgeRouter, createEdgeRouterServer } from '../packages/azure-data-plane/src/edge-router.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -50,6 +51,17 @@ async function withArmServer(fn) {
   }
 }
 
+async function withEdgeServer(router, fn) {
+  const server = createEdgeRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  try {
+    return await fn(port);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+
 async function httpJson(port, method, path, body, options = {}) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
     method,
@@ -59,6 +71,31 @@ async function httpJson(port, method, path, body, options = {}) {
       ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    headers: Object.fromEntries(response.headers.entries()),
+    body: parsed,
+  };
+}
+
+async function edgeJson(port, method, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      ...(options.host ? { 'x-forwarded-host': options.host } : {}),
+      ...(options.protocol ? { 'x-forwarded-proto': options.protocol } : {}),
+      ...(options.headers ?? {}),
+    },
   });
   const text = await response.text();
   let parsed = null;
@@ -204,6 +241,7 @@ async function runControlPlaneMatrix() {
   const cdnEndpointName = `endpoint-${suffix}`.slice(0, 40);
   const missingProfileName = `cdn-missing-${suffix}`.slice(0, 40);
   const missingEndpointName = `endpoint-missing-${suffix}`.slice(0, 40);
+  const edgeRouter = createEdgeRouter();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -218,7 +256,8 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withEdgeServer(edgeRouter, async (edgePort) => {
+    await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -362,6 +401,12 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', afdEndpointPath(resourceGroup, profileName, afdEndpointName), afdEndpointBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.hostName, `${afdEndpointName}.azurefd.net`);
+      edgeRouter.registerEndpoint({
+        endpointName: afdEndpointName,
+        hostName: result.body.properties.hostName,
+        kind: 'frontDoor',
+        enabledState: result.body.properties.enabledState,
+      });
       return { status: result.status, hostName: result.body.properties.hostName };
     });
 
@@ -369,7 +414,56 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', cdnEndpointPath(resourceGroup, profileName, cdnEndpointName), cdnEndpointBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.hostName, `${cdnEndpointName}.azureedge.net`);
+      edgeRouter.registerEndpoint({
+        endpointName: cdnEndpointName,
+        hostName: result.body.properties.hostName,
+        kind: 'cdn',
+        origins: result.body.properties.origins,
+        isHttpAllowed: result.body.properties.isHttpAllowed,
+        isHttpsAllowed: result.body.properties.isHttpsAllowed,
+      });
       return { status: result.status, hostName: result.body.properties.hostName };
+    });
+
+    await record('local edge router unknown host is not found', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/robotics/models/v1', { host: `${missingEndpointName}.azureedge.net` });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'EndpointNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local front door edge route succeeds', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/mlops/control-plane/health?region=eastus', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
+      assert.equal(result.status, 200);
+      assert.equal(result.headers['x-globalstack-edge-route'], `frontDoor/${afdEndpointName}`);
+      assert.equal(result.body.kind, 'frontDoor');
+      assert.equal(result.body.protocol, 'https');
+      return { status: result.status, route: result.headers['x-globalstack-edge-route'] };
+    });
+
+    await record('local cdn edge route returns configured origin', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/artifacts/robotics/model.onnx', { host: `${cdnEndpointName}.azureedge.net` });
+      assert.equal(result.status, 200);
+      assert.equal(result.headers['x-globalstack-edge-route'], `cdn/${cdnEndpointName}`);
+      assert.equal(result.headers['x-globalstack-origin-host'], 'example.org');
+      assert.equal(result.body.originHost, 'example.org');
+      return { status: result.status, originHost: result.body.originHost };
+    });
+
+    await record('local cdn edge route rejects disabled http', async () => {
+      const secureEndpointName = `secure-${suffix}`.slice(0, 40);
+      edgeRouter.registerEndpoint({
+        endpointName: secureEndpointName,
+        hostName: `${secureEndpointName}.azureedge.net`,
+        kind: 'cdn',
+        origins: cdnEndpointBody().properties.origins,
+        isHttpAllowed: false,
+        isHttpsAllowed: true,
+      });
+      const result = await edgeJson(edgePort, 'GET', '/private/model.tar', { host: `${secureEndpointName}.azureedge.net`, protocol: 'http' });
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'ProtocolNotAllowed');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('afd endpoint get succeeds', async () => {
@@ -390,7 +484,20 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', afdEndpointPath(resourceGroup, profileName, afdEndpointName), afdEndpointBody({ properties: { enabledState: 'Disabled' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.enabledState, 'Disabled');
+      edgeRouter.registerEndpoint({
+        endpointName: afdEndpointName,
+        hostName: result.body.properties.hostName,
+        kind: 'frontDoor',
+        enabledState: result.body.properties.enabledState,
+      });
       return { status: result.status };
+    });
+
+    await record('local front door edge route rejects disabled endpoint', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/mlops/control-plane/health', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'EndpointDisabled');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('profile list includes created resource', async () => {
@@ -449,12 +556,14 @@ async function runControlPlaneMatrix() {
     await record('afd endpoint delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', afdEndpointPath(resourceGroup, profileName, afdEndpointName));
       assert.equal(result.status, 200);
+      edgeRouter.unregisterEndpoint(`${afdEndpointName}.azurefd.net`);
       return { status: result.status };
     });
 
     await record('cdn endpoint delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', cdnEndpointPath(resourceGroup, profileName, cdnEndpointName));
       assert.equal(result.status, 200);
+      edgeRouter.unregisterEndpoint(`${cdnEndpointName}.azureedge.net`);
       return { status: result.status };
     });
 
@@ -482,6 +591,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
     });
   });
 
@@ -538,7 +648,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Profile under test: ${report.controlPlane.profileName}`,
@@ -562,7 +672,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Front Door and CDN profile/endpoint ARM lifecycle, stricter parameter rejection, unsupported CDN child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Front Door or CDN as 99%-complete or cloudValidated for global edge routing, cache invalidation, POP behavior, origin health probes, rules engine behavior, custom domains, TLS certificate lifecycle, WAF attachment behavior, throttling, RBAC, or exact Azure edge/runtime behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Front Door and CDN profile/endpoint ARM lifecycle, local edge host/protocol/origin routing checks, stricter parameter rejection, unsupported CDN child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Front Door or CDN as 99%-complete or cloudValidated for global edge routing, cache invalidation, POP behavior, origin health probes, rules engine behavior, custom domains, TLS certificate lifecycle, WAF attachment behavior, throttling, RBAC, or exact Azure edge/runtime behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -574,7 +684,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Front Door/CDN profile and endpoint ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Front Door/CDN profile and endpoint ARM lifecycle, local edge routing checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Front Door/CDN cloudValidated claim.',
   controlPlane,
   platformMatrix,

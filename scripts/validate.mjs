@@ -1915,10 +1915,10 @@ if (!frontDoorCdnParityText) {
     errors.push('Azure Front Door/CDN parity E2E did not pass');
   }
   if (frontDoorCdnParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Front Door/CDN parity control-plane matrix has failures');
+    errors.push('Azure Front Door/CDN parity control/data-plane matrix has failures');
   }
-  if ((frontDoorCdnParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure Front Door/CDN parity control-plane matrix should exercise at least 35 cases');
+  if ((frontDoorCdnParity.controlPlane?.total ?? 0) < 48) {
+    errors.push('Azure Front Door/CDN parity control/data-plane matrix should exercise at least 48 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1952,9 +1952,14 @@ if (!frontDoorCdnParityText) {
     'cdn endpoint invalid http flag is rejected',
     'afd endpoint create succeeds',
     'cdn endpoint create succeeds',
+    'local edge router unknown host is not found',
+    'local front door edge route succeeds',
+    'local cdn edge route returns configured origin',
+    'local cdn edge route rejects disabled http',
     'afd endpoint get succeeds',
     'cdn endpoint get succeeds',
     'afd endpoint update can disable endpoint',
+    'local front door edge route rejects disabled endpoint',
     'profile list includes created resource',
     'afd endpoint list includes created resource',
     'cdn endpoint list includes created resource',

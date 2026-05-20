@@ -212,7 +212,7 @@ Run the Azure Front Door/CDN parity pack after changing Microsoft.Cdn profile, F
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:front-door-cdn-parity
 ```
 
-Expected result is `dist/e2e/azure-front-door-cdn-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 Front Door/CDN cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, CDN profile lifecycle, Front Door and CDN endpoint lifecycle, stricter SKU/origin/flag rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-front-door-cdn-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 48 Front Door/CDN cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, CDN profile lifecycle, Front Door and CDN endpoint lifecycle, local edge host/protocol/origin routing behavior, stricter SKU/origin/flag rejection, unsupported child/action route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure WAF Policy parity pack after changing Application Gateway WAF policy behavior, CDN security policy behavior, unsupported WAF route handling, or platform deployment routing:
 
