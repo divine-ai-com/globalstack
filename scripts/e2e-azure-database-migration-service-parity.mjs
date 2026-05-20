@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createMigrationPlanRunner } from '../packages/azure-data-plane/src/migration-plan-runner.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -174,6 +175,7 @@ async function runControlPlaneMatrix() {
   const missingServiceName = `dms-missing-${suffix}`;
   const projectName = `proj-${suffix}`;
   const missingProjectName = `proj-missing-${suffix}`;
+  const migrationRunner = createMigrationPlanRunner();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -340,7 +342,65 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, projectName), projectBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.migrationState, 'Ready');
+      migrationRunner.registerProject({ serviceName, projectName, properties: result.body.properties });
       return { status: result.status, migrationState: result.body.properties.migrationState };
+    });
+
+    await record('local migration runner missing project is not found', async () => {
+      const result = migrationRunner.start({
+        serviceName,
+        projectName: missingProjectName,
+        sourceDatabase: 'sourceDb',
+        targetDatabase: 'targetDb',
+      });
+      assert.equal(result.error.status, 404);
+      assert.equal(result.error.code, 'ProjectNotFound');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local migration runner rejects incomplete task', async () => {
+      const result = migrationRunner.start({
+        serviceName,
+        projectName,
+        sourceDatabase: 'sourceDb',
+      });
+      assert.equal(result.error.status, 400);
+      assert.equal(result.error.code, 'InvalidMigrationTask');
+      return { status: result.error.status, errorCode: result.error.code };
+    });
+
+    await record('local migration runner starts assessment task', async () => {
+      const result = migrationRunner.start({
+        serviceName,
+        projectName,
+        taskType: 'Assessment',
+        sourceDatabase: 'sourceDb',
+        targetDatabase: 'targetDb',
+      });
+      assert.equal(result.status, 202);
+      assert.equal(result.body.status, 'Running');
+      const fetched = migrationRunner.get(result.body.id);
+      assert.equal(fetched.status, 200);
+      assert.equal(fetched.body.taskType, 'Assessment');
+      return { status: result.status, runId: result.body.id, runStatus: result.body.status };
+    });
+
+    await record('local migration runner completes task and rejects duplicate completion', async () => {
+      const started = migrationRunner.start({
+        serviceName,
+        projectName,
+        taskType: 'Migration',
+        sourceDatabase: 'sourceDb',
+        targetDatabase: 'targetDb',
+      });
+      assert.equal(started.status, 202);
+      const completed = migrationRunner.complete(started.body.id);
+      assert.equal(completed.status, 200);
+      assert.equal(completed.body.status, 'Succeeded');
+      const duplicate = migrationRunner.complete(started.body.id);
+      assert.equal(duplicate.error.status, 409);
+      assert.equal(duplicate.error.code, 'InvalidMigrationRunState');
+      return { status: completed.status, runId: started.body.id, runStatus: completed.body.status };
     });
 
     await record('migration project get succeeds', async () => {
@@ -397,6 +457,7 @@ async function runControlPlaneMatrix() {
     await record('migration project delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', projectPath(resourceGroup, serviceName, projectName));
       assert.equal(result.status, 200);
+      migrationRunner.unregisterProject({ serviceName, projectName });
       return { status: result.status };
     });
 
@@ -459,7 +520,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Service under test: ${report.controlPlane.serviceName}`,
@@ -484,7 +545,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for Database Migration Service and project ARM lifecycle, stricter migration-plan metadata rejection, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark live migration execution, CDC, schema conversion, network tunnel behavior, source/target authentication, task state machines, retry timing, or exact Azure DMS runtime behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for Database Migration Service and project ARM lifecycle, bounded local migration task state checks, stricter migration-plan metadata rejection, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark live migration execution, CDC, schema conversion, network tunnel behavior, source/target authentication, full task state machines, retry timing, or exact Azure DMS runtime behavior as cloudValidated.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -496,7 +557,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Database Migration Service and project ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Database Migration Service and project ARM lifecycle, bounded local migration task state checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure DMS cloudValidated claim.',
   controlPlane,
   platformMatrix,

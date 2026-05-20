@@ -849,10 +849,10 @@ if (!databaseMigrationServiceParityText) {
     errors.push('Azure Database Migration Service parity E2E did not pass');
   }
   if (databaseMigrationServiceParity.controlPlane?.failedCount !== 0) {
-    errors.push('Azure Database Migration Service parity control-plane matrix has failures');
+    errors.push('Azure Database Migration Service parity control/data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure Database Migration Service parity control-plane matrix should exercise at least 35 cases');
+  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 43) {
+    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 43 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -883,6 +883,10 @@ if (!databaseMigrationServiceParityText) {
     'migration project collection list is empty before create',
     'migration project delete missing returns no content',
     'migration project create succeeds',
+    'local migration runner missing project is not found',
+    'local migration runner rejects incomplete task',
+    'local migration runner starts assessment task',
+    'local migration runner completes task and rejects duplicate completion',
     'migration project get succeeds',
     'migration project update can change target platform',
     'migration project list includes created resource',
