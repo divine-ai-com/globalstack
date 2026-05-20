@@ -1089,8 +1089,8 @@ if (!postgresqlParityText) {
   if (postgresqlParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure PostgreSQL parity control-plane matrix has failures');
   }
-  if ((postgresqlParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure PostgreSQL parity control-plane matrix should exercise at least 35 cases');
+  if ((postgresqlParity.controlPlane?.total ?? 0) < 42) {
+    errors.push('Azure PostgreSQL parity control/data-plane matrix should exercise at least 42 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1118,6 +1118,12 @@ if (!postgresqlParityText) {
     'database missing collation is rejected',
     'database invalid name is rejected',
     'database create succeeds',
+    'local postgres backing database can be created',
+    'local postgres backing accepts table insert and select',
+    'local postgres backing enforces primary key uniqueness',
+    'local postgres backing rolls back failed transaction',
+    'local postgres backing rejects invalid sql',
+    'local postgres backing rejects unknown role',
     'database get succeeds',
     'database list includes created resource',
     'server list includes created resource',
@@ -1125,6 +1131,7 @@ if (!postgresqlParityText) {
     'unsupported server configuration route fails closed',
     'ARM template deployment can create postgresql resources',
     'database get after delete is not found',
+    'local postgres backing database cleanup succeeds',
     'database delete after delete returns no content',
     'server get after delete is not found',
     'server delete after delete returns no content',
