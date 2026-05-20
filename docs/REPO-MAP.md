@@ -83,6 +83,7 @@ flowchart TD
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
+- `packages/azure-data-plane/src/event-hubs-router.mjs`
 - `packages/azure-data-plane/src/functions-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`

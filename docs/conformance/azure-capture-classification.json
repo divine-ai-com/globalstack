@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-20T06:19:44.166Z",
-  "fixtureCount": 450,
-  "cleanupVerifiedCount": 450,
+  "generatedAt": "2026-05-20T06:32:26.974Z",
+  "fixtureCount": 451,
+  "cleanupVerifiedCount": 451,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
     "provider-validation": 142,
     "arm-surface": 62,
     "provider-accepted": 98,
     "provider-routing-or-parent-validation": 136,
-    "subscription-or-provider-readiness": 4,
+    "subscription-or-provider-readiness": 5,
     "capture-infrastructure-gap": 8
   },
   "byErrorCode": {
@@ -26,7 +26,7 @@
     "ParentResourceNotFound": 72,
     "DeleteNotSupported": 3,
     "InvalidAccountType": 1,
-    "NoRegisteredProviderFound": 4,
+    "NoRegisteredProviderFound": 5,
     "SubscriptionNotFound": 4,
     "ValidateResourceInfoFailedWithInvalidSkuName": 2,
     "MalformedRoleAssignmentRequest": 1,
@@ -2256,6 +2256,19 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.unsupported-api-version",
+      "capabilityId": "event-hubs-streams",
+      "resourceType": "Microsoft.EventHub/namespaces",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 400,
+      "errorCode": "NoRegisteredProviderFound",
+      "cleanupVerified": true,
+      "validationDepth": "subscription-or-provider-readiness",
+      "cloudValidated": false,
+      "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
     },
     {
       "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.valid-minimal",

@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 450) {
-    errors.push('Azure capture classification should include 450 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 451) {
+    errors.push('Azure capture classification should include 451 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -696,8 +696,8 @@ if (!eventHubsParityText) {
   if (eventHubsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Event Hubs parity control-plane matrix has failures');
   }
-  if ((eventHubsParity.controlPlane?.total ?? 0) < 30) {
-    errors.push('Azure Event Hubs parity control-plane matrix should exercise at least 30 cases');
+  if ((eventHubsParity.controlPlane?.total ?? 0) < 42) {
+    errors.push('Azure Event Hubs parity control/data-plane matrix should exercise at least 42 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -729,10 +729,22 @@ if (!eventHubsParityText) {
     'event hub get succeeds',
     'event hub update can change retention',
     'event hub list includes created resource',
+    'local data-plane event hub metadata succeeds',
+    'local data-plane partitions list succeeds',
+    'local data-plane publish missing body is rejected',
+    'local data-plane publish invalid properties is rejected',
+    'local data-plane publish invalid partition is rejected',
+    'local data-plane publish to explicit partition succeeds',
+    'local data-plane publish with partition key succeeds',
+    'local data-plane read from sequence succeeds',
+    'local data-plane read invalid sequence is rejected',
+    'local data-plane read invalid partition is rejected',
+    'local data-plane unsupported action fails closed',
     'unsupported namespace authorization rule action fails closed',
     'unsupported event hub consumer group route fails closed',
     'unsupported event hub authorization rule route fails closed',
     'ARM template deployment can create namespace and event hub',
+    'local data-plane read after event hub delete is not found',
     'event hub get after delete is not found',
     'namespace get after delete is not found',
   ]) {

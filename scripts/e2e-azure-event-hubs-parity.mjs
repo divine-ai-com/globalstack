@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createEventHubsRouter, createEventHubsRouterServer } from '../packages/azure-data-plane/src/event-hubs-router.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -45,6 +46,18 @@ async function withArmServer(fn) {
   const port = server.address().port;
   try {
     return await fn(port);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+
+async function withEventHubsRouter(fn) {
+  const router = createEventHubsRouter();
+  const server = createEventHubsRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  try {
+    return await fn(port, router);
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -172,7 +185,8 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withEventHubsRouter(async (eventHubsPort, eventHubsRouter) => {
+    await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -270,6 +284,10 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.serviceBusEndpoint, `https://${namespaceName}.servicebus.windows.net:443/`);
       assert.equal(result.body.properties.status, 'Active');
       assert.equal(result.body.globalstack.capabilityId, 'event-hubs-streams');
+      eventHubsRouter.registerNamespace({
+        namespaceName,
+        serviceBusEndpoint: result.body.properties.serviceBusEndpoint,
+      });
       return { status: result.status, endpoint: result.body.properties.serviceBusEndpoint };
     });
 
@@ -327,6 +345,12 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.partitionCount, 2);
       assert.deepEqual(result.body.properties.partitionIds, ['0', '1']);
       assert.equal(result.body.globalstack.capabilityId, 'event-hubs-streams');
+      eventHubsRouter.registerEventHub({
+        namespaceName,
+        eventHubName,
+        partitionCount: result.body.properties.partitionCount,
+        messageRetentionInDays: result.body.properties.messageRetentionInDays,
+      });
       return { status: result.status };
     });
 
@@ -341,6 +365,12 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.EventHub', eventHubPath), eventHubBody({ properties: { messageRetentionInDays: 2 } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.messageRetentionInDays, 2);
+      eventHubsRouter.registerEventHub({
+        namespaceName,
+        eventHubName,
+        partitionCount: result.body.properties.partitionCount,
+        messageRetentionInDays: result.body.properties.messageRetentionInDays,
+      });
       return { status: result.status };
     });
 
@@ -349,6 +379,100 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.name === `${namespaceName}/${eventHubName}`));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local data-plane event hub metadata succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}`);
+      assert.equal(result.status, 200);
+      assert.deepEqual(result.body.partitionIds, ['0', '1']);
+      assert.equal(result.body.messageRetentionInDays, 2);
+      return { status: result.status, partitionCount: result.body.partitionIds.length };
+    });
+
+    await record('local data-plane partitions list succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/partitions`);
+      assert.equal(result.status, 200);
+      assert.deepEqual(result.body.value.map(item => item.partitionId), ['0', '1']);
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local data-plane publish missing body is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {});
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane publish invalid properties is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        body: { telemetry: 'invalid-properties' },
+        properties: ['not-an-object'],
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane publish invalid partition is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionId: '9',
+        body: { telemetry: 'bad-partition' },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'PartitionNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane publish to explicit partition succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionId: '1',
+        messageId: 'robotics-telemetry-1',
+        body: { robotId: 'arm-1', reading: 42 },
+        properties: { source: 'robotics' },
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.partitionId, '1');
+      assert.equal(result.body.sequenceNumber, 0);
+      return { status: result.status, partitionId: result.body.partitionId, sequenceNumber: result.body.sequenceNumber };
+    });
+
+    await record('local data-plane publish with partition key succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events`, {
+        partitionKey: 'device-42',
+        body: { deviceId: 'device-42', status: 'ok' },
+      });
+      assert.equal(result.status, 201);
+      assert.ok(['0', '1'].includes(result.body.partitionId));
+      assert.equal(result.body.partitionKey, 'device-42');
+      return { status: result.status, partitionId: result.body.partitionId, sequenceNumber: result.body.sequenceNumber };
+    });
+
+    await record('local data-plane read from sequence succeeds', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=0`);
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.messageId === 'robotics-telemetry-1'));
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local data-plane read invalid sequence is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=-1`);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane read invalid partition is rejected', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=9`);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'PartitionNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local data-plane unsupported action fails closed', async () => {
+      const result = await httpJson(eventHubsPort, 'POST', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/checkpoint`, {});
+      assert.equal(result.status, 405);
+      assert.equal(errorCode(result), 'MethodNotAllowed');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     for (const [name, method, path] of [
@@ -384,7 +508,15 @@ async function runControlPlaneMatrix() {
     await record('event hub delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.EventHub', eventHubPath));
       assert.equal(result.status, 200);
+      eventHubsRouter.unregisterEventHub({ namespaceName, eventHubName });
       return { status: result.status };
+    });
+
+    await record('local data-plane read after event hub delete is not found', async () => {
+      const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1`);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'EventHubNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('event hub get after delete is not found', async () => {
@@ -397,6 +529,7 @@ async function runControlPlaneMatrix() {
     await record('namespace delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.EventHub', namespaceBase));
       assert.equal(result.status, 200);
+      eventHubsRouter.unregisterNamespace(namespaceName);
       return { status: result.status };
     });
 
@@ -405,6 +538,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
     });
   });
 
@@ -446,7 +580,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Namespace under test: ${report.controlPlane.namespaceName}`,
@@ -471,7 +605,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Event Hubs namespace and event hub ARM lifecycle, stricter parameter rejection, unsupported route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Event Hubs as 99%-complete or cloudValidated for AMQP/Kafka data-plane semantics, partition assignment, consumer groups, checkpoints, throughput-unit limits, capture, RBAC, private link, throttling, or exact Azure service runtime behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Event Hubs namespace and event hub ARM lifecycle, stricter parameter rejection, local publish/read partition facade behavior, unsupported route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Event Hubs as 99%-complete or cloudValidated for AMQP/Kafka protocol semantics, Azure SDK producer/consumer compatibility, full partition assignment, consumer groups, checkpoints, throughput-unit limits, capture, RBAC, private link, throttling, or exact Azure service runtime behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -483,7 +617,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Event Hubs namespace and event hub ARM lifecycle, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Event Hubs namespace and event hub ARM lifecycle, validation, local publish/read partition facade checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Event Hubs cloudValidated claim.',
   controlPlane,
   platformMatrix,
