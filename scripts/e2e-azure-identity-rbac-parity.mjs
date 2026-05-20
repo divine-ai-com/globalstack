@@ -465,9 +465,30 @@ async function runControlAndTokenMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('role assignment empty principalId preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleAssignmentPath(resourceGroup, roleAssignmentName), {
+        properties: {
+          principalId: '',
+          roleDefinitionId: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionName}`,
+        },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('role assignment missing roleDefinitionId preserves captured rejection', async () => {
       const result = await httpJson(armPort, 'PUT', roleAssignmentPath(resourceGroup, roleAssignmentName), {
         properties: { principalId: identityName },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('role assignment empty roleDefinitionId preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleAssignmentPath(resourceGroup, roleAssignmentName), {
+        properties: { principalId: identityName, roleDefinitionId: '' },
       });
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'InvalidRequestContent');
@@ -523,11 +544,37 @@ async function runControlAndTokenMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('role definition empty permissions preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleDefinitionPath(resourceGroup, roleDefinitionName), {
+        properties: {
+          roleName: 'empty-permissions',
+          permissions: [],
+          assignableScopes: [`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}`],
+        },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('role definition missing assignableScopes preserves captured rejection', async () => {
       const result = await httpJson(armPort, 'PUT', roleDefinitionPath(resourceGroup, roleDefinitionName), {
         properties: {
           roleName: 'missing-assignable-scopes',
           permissions: [{ actions: ['Microsoft.ManagedIdentity/userAssignedIdentities/read'], notActions: [] }],
+        },
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidRequestContent');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('role definition empty assignableScopes preserves captured rejection', async () => {
+      const result = await httpJson(armPort, 'PUT', roleDefinitionPath(resourceGroup, roleDefinitionName), {
+        properties: {
+          roleName: 'empty-assignable-scopes',
+          permissions: [{ actions: ['Microsoft.ManagedIdentity/userAssignedIdentities/read'], notActions: [] }],
+          assignableScopes: [],
         },
       });
       assert.equal(result.status, 400);

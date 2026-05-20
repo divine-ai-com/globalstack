@@ -1,6 +1,6 @@
 {
   "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T15:40:02.101Z",
+  "capturedAt": "2026-05-20T14:34:32.264Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,41 +15,35 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 201,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "location": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-conf-595d1f484d/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-595d1f484d",
-      "x-ms-correlation-request-id": "545f13dd-16e0-4f11-8970-7ab4f9c9fed3",
-      "x-ms-request-id": "545f13dd-16e0-4f11-8970-7ab4f9c9fed3",
-      "x-ms-routing-request-id": "EASTUS:20260516T153859Z:545f13dd-16e0-4f11-8970-7ab4f9c9fed3"
+      "x-ms-correlation-request-id": "7a836a85-7107-45d6-9581-4ce9132e80ca",
+      "x-ms-request-id": "7a836a85-7107-45d6-9581-4ce9132e80ca",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T143432Z:7a836a85-7107-45d6-9581-4ce9132e80ca"
     },
     "body": {
-      "location": "eastus",
-      "tags": {},
-      "id": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-conf-595d1f484d/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-595d1f484d",
-      "name": "id-595d1f484d",
-      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "properties": {
-        "tenantId": "<tenant-id>",
-        "principalId": "1e9e7b22-aac8-4229-895d-355479751e3c",
-        "clientId": "af7113de-e2a9-4ef1-a730-fa47dcdcb81c"
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-595d1f484d",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-accepted",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

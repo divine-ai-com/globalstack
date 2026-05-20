@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T14:24:43.693Z",
+    "generatedAt": "2026-05-20T14:34:28.097Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -1513,6 +1513,20 @@
           "requiresRealAzure": true
         },
         {
+          "id": "empty-principal-id",
+          "description": "Create/update with properties.principalId set to an empty string.",
+          "body": {
+            "properties": {
+              "principalId": "",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+            }
+          },
+          "expectedAzure": "Role assignment validation error for an empty principalId.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
           "id": "missing-role-definition-id",
           "description": "Create/update without properties.roleDefinitionId.",
           "body": {
@@ -1522,6 +1536,20 @@
             }
           },
           "expectedAzure": "Role assignment validation error for missing roleDefinitionId.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-role-definition-id",
+          "description": "Create/update with properties.roleDefinitionId set to an empty string.",
+          "body": {
+            "properties": {
+              "principalId": "33333333-3333-4333-8333-333333333333",
+              "principalType": "ServicePrincipal",
+              "roleDefinitionId": ""
+            }
+          },
+          "expectedAzure": "Role assignment validation error for an empty roleDefinitionId.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }
@@ -1772,6 +1800,24 @@
           "requiresRealAzure": true
         },
         {
+          "id": "empty-permissions",
+          "description": "Create/update with properties.permissions set to an empty array.",
+          "body": {
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [],
+              "assignableScopes": [
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
+              ]
+            }
+          },
+          "expectedAzure": "Role definition validation error for empty permissions.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
           "id": "missing-assignable-scopes",
           "description": "Create/update without properties.assignableScopes.",
           "body": {
@@ -1790,6 +1836,29 @@
             }
           },
           "expectedAzure": "Role definition validation error for missing assignableScopes.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "empty-assignable-scopes",
+          "description": "Create/update with properties.assignableScopes set to an empty array.",
+          "body": {
+            "properties": {
+              "roleName": "globalstack-conformance-role",
+              "description": "GlobalStack conformance custom role",
+              "type": "CustomRole",
+              "permissions": [
+                {
+                  "actions": [
+                    "Microsoft.ManagedIdentity/userAssignedIdentities/read"
+                  ],
+                  "notActions": []
+                }
+              ],
+              "assignableScopes": []
+            }
+          },
+          "expectedAzure": "Role definition validation error for empty assignableScopes.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

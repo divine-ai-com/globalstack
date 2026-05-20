@@ -74,11 +74,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | Get | GET | 2023-01-31 | 0 |
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | ListByResourceGroup | GET | 2023-01-31 | 0 |
 | identity-rbac | IAM/STS | Microsoft.ManagedIdentity/userAssignedIdentities | Delete | DELETE | 2023-01-31 | 0 |
-| identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | CreateOrUpdate | PUT | 2022-04-01 | 9 |
+| identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | CreateOrUpdate | PUT | 2022-04-01 | 11 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | Get | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | ListByResourceGroup | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleAssignments | Delete | DELETE | 2022-04-01 | 0 |
-| identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | CreateOrUpdate | PUT | 2022-04-01 | 9 |
+| identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | CreateOrUpdate | PUT | 2022-04-01 | 11 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Get | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | ListByResourceGroup | GET | 2022-04-01 | 0 |
 | identity-rbac | IAM/STS | Microsoft.Authorization/roleDefinitions | Delete | DELETE | 2022-04-01 | 0 |

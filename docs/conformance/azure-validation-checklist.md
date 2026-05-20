@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 732
+- Real Azure fixtures with verified cleanup: 746
 
 ## Tier 1
 
@@ -163,14 +163,14 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### identity-rbac / Microsoft.ManagedIdentity/userAssignedIdentities / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 201; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 
 ### identity-rbac / Microsoft.ManagedIdentity/userAssignedIdentities / Get
 
@@ -186,15 +186,17 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### identity-rbac / Microsoft.Authorization/roleAssignments / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `missing-principal-id`: captured HTTP 400; cleanup verified
-- [x] `missing-role-definition-id`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-principal-id`: captured HTTP 404; cleanup verified
+- [x] `empty-principal-id`: captured HTTP 404; cleanup verified
+- [x] `missing-role-definition-id`: captured HTTP 404; cleanup verified
+- [x] `empty-role-definition-id`: captured HTTP 404; cleanup verified
 
 ### identity-rbac / Microsoft.Authorization/roleAssignments / Get
 
@@ -210,15 +212,17 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### identity-rbac / Microsoft.Authorization/roleDefinitions / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `missing-permissions`: captured HTTP 400; cleanup verified
-- [x] `missing-assignable-scopes`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-permissions`: captured HTTP 404; cleanup verified
+- [x] `empty-permissions`: captured HTTP 404; cleanup verified
+- [x] `missing-assignable-scopes`: captured HTTP 404; cleanup verified
+- [x] `empty-assignable-scopes`: captured HTTP 404; cleanup verified
 
 ### identity-rbac / Microsoft.Authorization/roleDefinitions / Get
 

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T14:25:03.181Z",
+  "generatedAt": "2026-05-20T14:41:47.420Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 372,
+  "expectationCount": 362,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -3755,47 +3755,6 @@
       "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
     },
     {
-      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.empty-body",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleAssignments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MalformedRoleAssignmentRequest",
-        "message": "PASRP RoleAssignment request is malformed"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6d2826189a/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.invalid-location",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleAssignments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'roleDefinitionId' not found in JSON. Path 'properties', line 1, position 58.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-190a607744/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-api-version",
       "capabilityId": "identity-rbac",
       "resourceType": "Microsoft.Authorization/roleAssignments",
@@ -3811,59 +3770,14 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-452803b1ed/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111",
         "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-principal-id",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleAssignments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-principal-id",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'principalId' not found in JSON. Path 'properties', line 1, position 247.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b3b6673f15/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
-        "body": {
           "properties": {
+            "principalId": "33333333-3333-4333-8333-333333333333",
             "principalType": "ServicePrincipal",
             "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
           }
         }
       },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-role-definition-id",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleAssignments",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-role-definition-id",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'roleDefinitionId' not found in JSON. Path 'properties', line 1, position 103.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-876c429753/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
-        "body": {
-          "properties": {
-            "principalId": "33333333-3333-4333-8333-333333333333",
-            "principalType": "ServicePrincipal"
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "identity-rbac.microsoft-authorization-roleassignments.delete.not-found",
@@ -3904,47 +3818,6 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
-      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.empty-body",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleDefinitions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidCreateRoleDefinitionRequest",
-        "message": "The role definition '22222222-2222-4222-8222-222222222222' request is not valid. The request does not contain the role definition or the role definition properties."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-30ca90cc0d/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.invalid-location",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleDefinitions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'permissions' not found in JSON. Path 'properties', line 1, position 58.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1e68a19f01/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
       "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-api-version",
       "capabilityId": "identity-rbac",
       "resourceType": "Microsoft.Authorization/roleDefinitions",
@@ -3960,28 +3833,6 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-74642aafb0/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222",
         "body": {
-          "location": "{location}",
-          "properties": {}
-        }
-      },
-      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-assignable-scopes",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleDefinitions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-assignable-scopes",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "MissingAssignableScopes",
-        "message": "A role definition must have at least one assignable scope and all assignable scopes must be neither null nor empty."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f83059eae1/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
-        "body": {
           "properties": {
             "roleName": "globalstack-conformance-role",
             "description": "GlobalStack conformance custom role",
@@ -3993,39 +3844,14 @@
                 ],
                 "notActions": []
               }
-            ]
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-authorization-roledefinitions.createOrUpdate.missing-permissions",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.Authorization/roleDefinitions",
-      "operation": "CreateOrUpdate",
-      "varianceId": "missing-permissions",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidRequestContent",
-        "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'permissions' not found in JSON. Path 'properties', line 1, position 241.'"
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5a5f3e4b0d/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
-        "body": {
-          "properties": {
-            "roleName": "globalstack-conformance-role",
-            "description": "GlobalStack conformance custom role",
-            "type": "CustomRole",
+            ],
             "assignableScopes": [
               "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}"
             ]
           }
         }
       },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
       "id": "identity-rbac.microsoft-authorization-roledefinitions.delete.not-found",
@@ -4062,47 +3888,6 @@
         "method": "GET",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8bf3c62d68/providers/Microsoft.Authorization/roleDefinitions/22222222-2222-4222-8222-222222222222?api-version=2022-04-01",
         "body": null
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.createOrUpdate.empty-body",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "operation": "CreateOrUpdate",
-      "varianceId": "empty-body",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "LocationRequired",
-        "message": "The location property is required for this definition."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7662b3b9a7/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-7662b3b9a7?api-version=2023-01-31",
-        "body": {}
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
-    },
-    {
-      "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.createOrUpdate.invalid-location",
-      "capabilityId": "identity-rbac",
-      "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-location",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 400,
-        "errorCode": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2cc3c3ba28/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-2cc3c3ba28?api-version=2023-01-31",
-        "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
-        }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },

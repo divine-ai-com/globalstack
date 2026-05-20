@@ -426,6 +426,18 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         'Role assignment validation error for missing principalId.',
       ),
       realAzureVariance(
+        'empty-principal-id',
+        'Create/update with properties.principalId set to an empty string.',
+        {
+          properties: {
+            principalId: '',
+            principalType: createBody.properties?.principalType ?? 'ServicePrincipal',
+            roleDefinitionId: createBody.properties?.roleDefinitionId,
+          },
+        },
+        'Role assignment validation error for an empty principalId.',
+      ),
+      realAzureVariance(
         'missing-role-definition-id',
         'Create/update without properties.roleDefinitionId.',
         {
@@ -435,6 +447,18 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Role assignment validation error for missing roleDefinitionId.',
+      ),
+      realAzureVariance(
+        'empty-role-definition-id',
+        'Create/update with properties.roleDefinitionId set to an empty string.',
+        {
+          properties: {
+            principalId: createBody.properties?.principalId,
+            principalType: createBody.properties?.principalType ?? 'ServicePrincipal',
+            roleDefinitionId: '',
+          },
+        },
+        'Role assignment validation error for an empty roleDefinitionId.',
       ),
     );
   }
@@ -455,6 +479,20 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         'Role definition validation error for missing permissions.',
       ),
       realAzureVariance(
+        'empty-permissions',
+        'Create/update with properties.permissions set to an empty array.',
+        {
+          properties: {
+            roleName: createBody.properties?.roleName ?? 'globalstack-conformance-role',
+            description: createBody.properties?.description ?? 'GlobalStack conformance custom role',
+            type: createBody.properties?.type ?? 'CustomRole',
+            permissions: [],
+            assignableScopes: createBody.properties?.assignableScopes ?? ['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'],
+          },
+        },
+        'Role definition validation error for empty permissions.',
+      ),
+      realAzureVariance(
         'missing-assignable-scopes',
         'Create/update without properties.assignableScopes.',
         {
@@ -466,6 +504,20 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Role definition validation error for missing assignableScopes.',
+      ),
+      realAzureVariance(
+        'empty-assignable-scopes',
+        'Create/update with properties.assignableScopes set to an empty array.',
+        {
+          properties: {
+            roleName: createBody.properties?.roleName ?? 'globalstack-conformance-role',
+            description: createBody.properties?.description ?? 'GlobalStack conformance custom role',
+            type: createBody.properties?.type ?? 'CustomRole',
+            permissions: createBody.properties?.permissions ?? [],
+            assignableScopes: [],
+          },
+        },
+        'Role definition validation error for empty assignableScopes.',
       ),
     );
   }

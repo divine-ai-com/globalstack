@@ -1,6 +1,6 @@
 {
   "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T15:40:42.557Z",
+  "capturedAt": "2026-05-20T14:34:33.563Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,17 +13,21 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-452803b1ed/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111",
     "body": {
-      "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "principalId": "33333333-3333-4333-8333-333333333333",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "c9d90922-da7a-4579-a50a-53fe5991ffda",
-      "x-ms-request-id": "c9d90922-da7a-4579-a50a-53fe5991ffda",
-      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T154041Z:c9d90922-da7a-4579-a50a-53fe5991ffda"
+      "x-ms-correlation-request-id": "8764f028-8153-4467-80cd-583868c9f791",
+      "x-ms-request-id": "8764f028-8153-4467-80cd-583868c9f791",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T143433Z:8764f028-8153-4467-80cd-583868c9f791"
     },
     "body": {
       "error": {
@@ -34,7 +38,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-452803b1ed",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
