@@ -1746,7 +1746,7 @@ function validateMysqlPayload(resourceType, body, providerRoute = null) {
   if (resourceType === 'Microsoft.DBforMySQL/flexibleServers') {
     const name = providerRoute?.typePath?.split('/')[1] ?? '';
     if (!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(name)) {
-      return envelopedError(400, 'InvalidServerName', 'MySQL flexible server names must be 3 through 63 lowercase alphanumeric or hyphen characters and start and end with an alphanumeric character.');
+      return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter serverName. Specify a valid parameter value.');
     }
     if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance' || !body.sku?.name || !body.sku?.tier) {
       return envelopedError(

@@ -1,0 +1,57 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.invalid-server-name",
+  "capturedAt": "2026-05-20T16:05:49.719Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-server-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fe94fbf388/providers/Microsoft.DBforMySQL/flexibleServers/Bad_Server?api-version=2023-12-30",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
+        "version": "8.0.21"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5f148b76-0d7b-4f7d-b159-6f723ffd97fd",
+      "x-ms-request-id": "4195cc36-cf81-47ee-93b2-bfab78c602c6",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T160542Z:5f148b76-0d7b-4f7d-b159-6f723ffd97fd"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidParameterValue",
+        "message": "Invalid value given for parameter serverName. Specify a valid parameter value."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fe94fbf388",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

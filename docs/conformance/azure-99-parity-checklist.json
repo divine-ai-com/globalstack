@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T16:02:33.202Z",
+    "generatedAt": "2026-05-20T16:32:31.499Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -2094,11 +2094,11 @@
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 67,
-        "liveCaptureCount": 16,
+        "liveCaptureCount": 17,
         "validationDepthCounts": {
           "provider-routing-or-parent-validation": 8,
           "arm-surface": 2,
-          "provider-validation": 4,
+          "provider-validation": 5,
           "provider-accepted": 2
         }
       },
@@ -2122,8 +2122,8 @@
         "parameterVarianceCaptures": {
           "status": "partial",
           "evidence": [
-            "16 live ARM captures",
-            "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
+            "17 live ARM captures",
+            "variance cases: empty-body=2, invalid-location=2, invalid-sku=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-server-name=1"
           ],
           "gaps": [
             "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
@@ -2144,7 +2144,7 @@
         "errorShapeFidelity": {
           "status": "partial",
           "evidence": [
-            "validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=4, provider-accepted=2"
+            "validation depths: provider-routing-or-parent-validation=8, arm-surface=2, provider-validation=5, provider-accepted=2"
           ],
           "gaps": [
             "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."

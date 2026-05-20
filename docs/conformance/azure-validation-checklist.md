@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 752
+- Real Azure fixtures with verified cleanup: 753
 
 ## Tier 1
 
@@ -825,6 +825,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
 - [x] `invalid-sku`: captured HTTP 400; cleanup verified
+- [x] `invalid-server-name`: captured HTTP 400; cleanup verified
 
 ### mysql-flexible-server / Microsoft.DBforMySQL/flexibleServers / Get
 
@@ -847,6 +848,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `empty-body`: captured HTTP 404; cleanup verified
 - [ ] `null-properties`: pending
 - [ ] `invalid-tags-shape`: pending
+- [ ] `invalid-database-name`: pending
 
 ### mysql-flexible-server / Microsoft.DBforMySQL/flexibleServers/databases / Get
 

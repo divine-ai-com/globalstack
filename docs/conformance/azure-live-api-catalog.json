@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T15:34:49.999Z",
+    "generatedAt": "2026-05-20T16:05:33.006Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -7106,6 +7106,26 @@
           "expectedAzure": "Provider-specific SKU validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-server-name",
+          "description": "Create/update with a MySQL flexible server name that violates naming rules.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "globalstack",
+              "administratorLoginPassword": "Globalstack1!",
+              "version": "8.0.21"
+            }
+          },
+          "expectedAzure": "MySQL flexible server validation error for invalid server name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/Bad_Server"
         }
       ]
     },
@@ -7263,6 +7283,20 @@
           "expectedAzure": "ARM or provider tag-shape validation error.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-database-name",
+          "description": "Create/update with a MySQL database name that violates naming rules.",
+          "body": {
+            "properties": {
+              "charset": "utf8mb4",
+              "collation": "utf8mb4_0900_ai_ci"
+            }
+          },
+          "expectedAzure": "MySQL flexible server database validation error for invalid database name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{flexibleServersName}/databases/1bad"
         }
       ]
     },

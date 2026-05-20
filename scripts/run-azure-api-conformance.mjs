@@ -30,6 +30,7 @@ const configuredTenantId = [process.env.AZURE_TENANT_ID, process.env.ARM_TENANT_
 let subscriptionId = configuredSubscriptionId ?? emptyGuid;
 let tenantId = configuredTenantId ?? emptyGuid;
 const location = process.env.AZURE_LOCATION ?? 'eastus';
+const mysqlSeedLocation = process.env.GLOBALSTACK_AZURE_MYSQL_SEED_LOCATION ?? 'westus2';
 const cleanupVerifyAttempts = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_ATTEMPTS ?? 24);
 const cleanupVerifyDelayMs = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_DELAY_MS ?? 5000);
 let azureAccessToken;
@@ -270,7 +271,8 @@ function sanitizeHeaders(headers) {
 
 async function azureRequest(method, path, body) {
   const token = await getAzureAccessToken();
-  const response = await fetch(`https://management.azure.com${path}`, {
+  const targetUrl = String(path).startsWith('https://') ? String(path) : `https://management.azure.com${path}`;
+  const response = await fetch(targetUrl, {
     method,
     signal: AbortSignal.timeout(Number(process.env.GLOBALSTACK_AZURE_REQUEST_TIMEOUT_MS ?? 300000)),
     headers: {
@@ -291,6 +293,7 @@ async function azureRequest(method, path, body) {
     ok: response.ok,
     body: sanitize(parsed),
     headers: sanitizeHeaders(response.headers),
+    rawHeaders: Object.fromEntries(response.headers.entries()),
   };
 }
 
@@ -301,6 +304,57 @@ function requestPath(call, replacements, { omitApiVersion = false, apiVersionOve
 
 function responseErrorCode(response) {
   return response.body?.error?.code ?? response.body?.code ?? null;
+}
+
+function adjustAzureBody(call, variance, body) {
+  if (call.resourceType === 'Microsoft.DBforMySQL/flexibleServers'
+    && variance.id !== 'invalid-location'
+    && body
+    && typeof body === 'object'
+    && 'location' in body) {
+    return {
+      ...body,
+      location: mysqlSeedLocation,
+    };
+  }
+  return body;
+}
+
+async function waitForResourceReady(requestFn, path, {
+  readyStates = ['Succeeded'],
+  attempts = Number(process.env.GLOBALSTACK_AZURE_PARENT_READY_ATTEMPTS ?? 30),
+  delayMs = Number(process.env.GLOBALSTACK_AZURE_PARENT_READY_DELAY_MS ?? 5000),
+} = {}) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const response = await requestFn('GET', path, null);
+    const provisioningState = response.body?.properties?.provisioningState ?? response.body?.properties?.state ?? null;
+    if (response.status >= 200 && response.status < 300 && (!provisioningState || readyStates.includes(provisioningState))) {
+      return response;
+    }
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+  }
+  throw new Error(`Timed out waiting for Azure parent readiness: ${path}`);
+}
+
+async function waitForAsyncOperation(requestFn, response, {
+  attempts = Number(process.env.GLOBALSTACK_AZURE_ASYNC_ATTEMPTS ?? 60),
+  defaultDelayMs = Number(process.env.GLOBALSTACK_AZURE_ASYNC_DELAY_MS ?? 10000),
+} = {}) {
+  const asyncUrl = response.rawHeaders?.['azure-asyncoperation'] ?? response.rawHeaders?.location ?? null;
+  if (!asyncUrl) return response;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const operation = await requestFn('GET', asyncUrl, null);
+    const status = String(operation.body?.status ?? operation.body?.properties?.provisioningState ?? '').toLowerCase();
+    if (status === 'succeeded' || (operation.status >= 200 && operation.status < 300 && operation.body === null)) {
+      return operation;
+    }
+    if (status === 'failed' || status === 'canceled') {
+      throw new Error(`Azure async operation failed: HTTP ${operation.status} ${JSON.stringify(operation.body)}`);
+    }
+    const retryAfter = Number(response.rawHeaders?.['retry-after'] ?? operation.rawHeaders?.['retry-after'] ?? defaultDelayMs / 1000);
+    await new Promise(resolve => setTimeout(resolve, Math.max(1, retryAfter) * 1000));
+  }
+  throw new Error(`Timed out waiting for Azure async operation: ${asyncUrl}`);
 }
 
 async function seedParents(requestFn, call, variance, replacements) {
@@ -328,8 +382,8 @@ async function seedParents(requestFn, call, variance, replacements) {
 
   if (call.resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
     const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-06-01-preview`;
-    await requestFn('PUT', serverPath, {
-      location,
+    const createResponse = await requestFn('PUT', serverPath, {
+      location: mysqlSeedLocation,
       sku: { name: 'Standard_B1ms', tier: 'Burstable' },
       properties: {
         administratorLogin: 'globalstack',
@@ -337,12 +391,17 @@ async function seedParents(requestFn, call, variance, replacements) {
         version: '16',
       },
     });
+    if (createResponse.status < 200 || createResponse.status >= 300) {
+      throw new Error(`Failed to seed PostgreSQL flexible server parent: HTTP ${createResponse.status} ${JSON.stringify(createResponse.body)}`);
+    }
+    await waitForAsyncOperation(requestFn, createResponse);
+    await waitForResourceReady(requestFn, serverPath);
     return;
   }
 
   if (call.resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
     const serverPath = `/subscriptions/${subscriptionId}/resourceGroups/${replacements.resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/${replacements.flexibleServersName}?api-version=2023-12-30`;
-    await requestFn('PUT', serverPath, {
+    const createResponse = await requestFn('PUT', serverPath, {
       location,
       sku: { name: 'Standard_B1ms', tier: 'Burstable' },
       properties: {
@@ -351,6 +410,11 @@ async function seedParents(requestFn, call, variance, replacements) {
         version: '8.0.21',
       },
     });
+    if (createResponse.status < 200 || createResponse.status >= 300) {
+      throw new Error(`Failed to seed MySQL flexible server parent: HTTP ${createResponse.status} ${JSON.stringify(createResponse.body)}`);
+    }
+    await waitForAsyncOperation(requestFn, createResponse);
+    await waitForResourceReady(requestFn, serverPath);
     return;
   }
 
@@ -578,7 +642,11 @@ async function runAzureCase(call, variance) {
     throw new Error(`Azure resource group bootstrap failed for ${fixtureId}: HTTP ${rgCreate.status} ${JSON.stringify(rgCreate.body)}`);
   }
   await seedParents(azureRequest, call, variance, replacements);
-  const response = await azureRequest(call.method, inventory.trackedResourcePath, interpolate(variance.body, replacements));
+  const response = await azureRequest(
+    call.method,
+    inventory.trackedResourcePath,
+    adjustAzureBody(call, variance, interpolate(variance.body, replacements)),
+  );
   const deleteResponse = await azureRequest('DELETE', rgPath, null);
   inventory.cleanup.attempted = true;
   inventory.cleanup.status = deleteResponse.status;

@@ -183,11 +183,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 
 | Capability | AWS Analogue | Resource Type | Operation | Method | API Version | Variance Cases |
 |---|---|---|---|---|---|---|
-| mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers | CreateOrUpdate | PUT | 2023-12-30 | 9 |
+| mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers | CreateOrUpdate | PUT | 2023-12-30 | 10 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers | Get | GET | 2023-12-30 | 0 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers | ListByResourceGroup | GET | 2023-12-30 | 0 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers | Delete | DELETE | 2023-12-30 | 0 |
-| mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-12-30 | 7 |
+| mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers/databases | CreateOrUpdate | PUT | 2023-12-30 | 8 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers/databases | Get | GET | 2023-12-30 | 0 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers/databases | ListByResourceGroup | GET | 2023-12-30 | 0 |
 | mysql-flexible-server | RDS MySQL | Microsoft.DBforMySQL/flexibleServers/databases | Delete | DELETE | 2023-12-30 | 0 |

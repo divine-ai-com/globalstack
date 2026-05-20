@@ -357,7 +357,7 @@ async function runControlPlaneMatrix() {
     for (const [name, body, expectedCode] of [
       ['server empty body is rejected', {}, 'LocationRequired'],
       ['server invalid location is rejected', serverBody({ location: 'globalstack-invalid-location' }), 'InvalidResourceLocation'],
-      ['server invalid name is rejected', serverBody(), 'InvalidServerName'],
+      ['server invalid name is rejected', serverBody(), 'InvalidParameterValue'],
       ['server invalid sku is rejected', serverBody({ sku: { name: 'GlobalStack_InvalidSku_For_Conformance' } }), 'InvalidParameterValue'],
       ['server missing administrator login is rejected', serverBody({ properties: { administratorLogin: '' } }), 'MissingRequiredParameter'],
       ['server missing administrator password is rejected', serverBody({ properties: { administratorLoginPassword: '' } }), 'InvalidAdminLoginPassword'],

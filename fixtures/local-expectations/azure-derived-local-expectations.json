@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T16:02:32.831Z",
+  "generatedAt": "2026-05-20T16:32:31.191Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 371,
+  "expectationCount": 372,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -5775,6 +5775,36 @@
           },
           "properties": {
             "administratorLogin": "globalstack",
+            "version": "8.0.21"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.invalid-server-name",
+      "capabilityId": "mysql-flexible-server",
+      "resourceType": "Microsoft.DBforMySQL/flexibleServers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-server-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidParameterValue",
+        "message": "Invalid value given for parameter serverName. Specify a valid parameter value."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fe94fbf388/providers/Microsoft.DBforMySQL/flexibleServers/Bad_Server?api-version=2023-12-30",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_B1ms",
+            "tier": "Burstable"
+          },
+          "properties": {
+            "administratorLogin": "globalstack",
+            "administratorLoginPassword": "<redacted>",
             "version": "8.0.21"
           }
         }
