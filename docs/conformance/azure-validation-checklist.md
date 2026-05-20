@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 680
+- Real Azure fixtures with verified cleanup: 702
 
 ## Tier 1
 
@@ -326,18 +326,19 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 400; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `invalid-sku`: captured HTTP 400; cleanup verified
-- [x] `missing-admin-password`: captured HTTP 400; cleanup verified
-- [x] `weak-admin-password`: captured HTTP 202; cleanup verified
-- [x] `invalid-version`: captured HTTP 400; cleanup verified
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `invalid-sku`: captured HTTP 404; cleanup verified
+- [x] `missing-admin-login`: captured HTTP 404; cleanup verified
+- [x] `missing-admin-password`: captured HTTP 404; cleanup verified
+- [x] `weak-admin-password`: captured HTTP 404; cleanup verified
+- [x] `invalid-version`: captured HTTP 404; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers / Get
 
@@ -355,13 +356,13 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [ ] `missing-charset`: pending
-- [ ] `missing-collation`: pending
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `missing-charset`: captured HTTP 404; cleanup verified
+- [x] `missing-collation`: captured HTTP 404; cleanup verified
 
 ### postgresql-flexible-server / Microsoft.DBforPostgreSQL/flexibleServers/databases / Get
 
@@ -1730,16 +1731,17 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces / CreateOrUpdate
 
-- [x] `valid-minimal`: captured HTTP 201; cleanup verified
+- [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [x] `unsupported-api-version`: captured HTTP 400; cleanup verified
-- [x] `invalid-location`: captured HTTP 400; cleanup verified
-- [x] `empty-body`: captured HTTP 400; cleanup verified
-- [ ] `missing-location`: pending
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [x] `invalid-sku`: captured HTTP 400; cleanup verified
-- [ ] `invalid-capacity`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
+- [x] `invalid-location`: captured HTTP 404; cleanup verified
+- [x] `empty-body`: captured HTTP 404; cleanup verified
+- [x] `missing-location`: captured HTTP 404; cleanup verified
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `invalid-sku`: captured HTTP 404; cleanup verified
+- [x] `invalid-capacity`: captured HTTP 404; cleanup verified
+- [x] `invalid-capacity-type`: captured HTTP 404; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces / Get
 
@@ -1757,13 +1759,15 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - [x] `valid-minimal`: captured HTTP 404; cleanup verified
 - [x] `missing-api-version`: captured HTTP 400; cleanup verified
-- [ ] `unsupported-api-version`: pending
+- [x] `unsupported-api-version`: captured HTTP 404; cleanup verified
 - [x] `invalid-location`: captured HTTP 404; cleanup verified
 - [x] `empty-body`: captured HTTP 404; cleanup verified
-- [ ] `null-properties`: pending
-- [ ] `invalid-tags-shape`: pending
-- [ ] `invalid-partition-count`: pending
-- [ ] `invalid-message-retention`: pending
+- [x] `null-properties`: captured HTTP 404; cleanup verified
+- [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
+- [x] `invalid-partition-count`: captured HTTP 404; cleanup verified
+- [x] `invalid-partition-count-type`: captured HTTP 404; cleanup verified
+- [x] `invalid-message-retention`: captured HTTP 404; cleanup verified
+- [x] `invalid-message-retention-type`: captured HTTP 404; cleanup verified
 
 ### event-hubs-streams / Microsoft.EventHub/namespaces/eventhubs / Get
 

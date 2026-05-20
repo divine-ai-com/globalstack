@@ -98,7 +98,7 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Get | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | ListByResourceGroup | GET | 2023-07-01 | 0 |
 | key-vault-keys | KMS | Microsoft.KeyVault/vaults/keys | Delete | DELETE | 2023-07-01 | 0 |
-| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 12 |
+| postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | CreateOrUpdate | PUT | 2023-06-01-preview | 13 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Get | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | ListByResourceGroup | GET | 2023-06-01-preview | 0 |
 | postgresql-flexible-server | RDS PostgreSQL | Microsoft.DBforPostgreSQL/flexibleServers | Delete | DELETE | 2023-06-01-preview | 0 |
@@ -343,11 +343,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | Get | GET | 2023-11-01 | 0 |
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | ListByResourceGroup | GET | 2023-11-01 | 0 |
 | azure-files | EFS | Microsoft.NetApp/netAppAccounts/capacityPools/volumes | Delete | DELETE | 2023-11-01 | 0 |
-| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | CreateOrUpdate | PUT | 2024-01-01 | 10 |
+| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | CreateOrUpdate | PUT | 2024-01-01 | 11 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces | Delete | DELETE | 2024-01-01 | 0 |
-| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 9 |
+| event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | CreateOrUpdate | PUT | 2024-01-01 | 11 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Get | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | ListByResourceGroup | GET | 2024-01-01 | 0 |
 | event-hubs-streams | Kinesis Data Streams | Microsoft.EventHub/namespaces/eventhubs | Delete | DELETE | 2024-01-01 | 0 |

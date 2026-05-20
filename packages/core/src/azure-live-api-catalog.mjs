@@ -702,6 +702,18 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
   if (lower === 'microsoft.dbforpostgresql/flexibleservers') {
     cases.push(
       realAzureVariance(
+        'missing-admin-login',
+        'Create/update without administratorLogin.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            administratorLogin: '',
+          },
+        },
+        'PostgreSQL flexible server validation error for missing administrator login.',
+      ),
+      realAzureVariance(
         'missing-admin-password',
         'Create/update without administratorLoginPassword.',
         {
@@ -879,6 +891,18 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         },
         'Event Hubs namespace validation error for out-of-range capacity.',
       ),
+      realAzureVariance(
+        'invalid-capacity-type',
+        'Create/update with a non-integer sku.capacity value.',
+        {
+          ...createBody,
+          sku: {
+            ...(createBody.sku ?? {}),
+            capacity: 'two',
+          },
+        },
+        'Event Hubs namespace validation error for non-integer capacity.',
+      ),
     );
   }
 
@@ -896,6 +920,17 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         'Event hub validation error for invalid partitionCount.',
       ),
       realAzureVariance(
+        'invalid-partition-count-type',
+        'Create/update with partitionCount set to a non-integer shape.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            partitionCount: 'two',
+          },
+        },
+        'Event hub validation error for non-integer partitionCount.',
+      ),
+      realAzureVariance(
         'invalid-message-retention',
         'Create/update with an out-of-range messageRetentionInDays.',
         {
@@ -905,6 +940,17 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'Event hub validation error for invalid messageRetentionInDays.',
+      ),
+      realAzureVariance(
+        'invalid-message-retention-type',
+        'Create/update with messageRetentionInDays set to a non-integer shape.',
+        {
+          properties: {
+            ...(createBody.properties ?? {}),
+            messageRetentionInDays: 'two',
+          },
+        },
+        'Event hub validation error for non-integer messageRetentionInDays.',
       ),
     );
   }

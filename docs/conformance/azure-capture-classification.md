@@ -2,8 +2,8 @@
 
 This report prevents shallow real-Azure captures from being interpreted as service parity.
 
-- Fixtures: 680
-- Cleanup verified: 680
+- Fixtures: 702
+- Cleanup verified: 702
 - Cloud-validated operations: 0
 
 ## Validation Depth
@@ -11,11 +11,11 @@ This report prevents shallow real-Azure captures from being interpreted as servi
 | Depth | Count |
 |---|---:|
 | arm-surface | 84 |
-| capture-infrastructure-gap | 215 |
-| provider-accepted | 98 |
-| provider-routing-or-parent-validation | 128 |
-| provider-validation | 149 |
-| subscription-or-provider-readiness | 6 |
+| capture-infrastructure-gap | 255 |
+| provider-accepted | 96 |
+| provider-routing-or-parent-validation | 122 |
+| provider-validation | 140 |
+| subscription-or-provider-readiness | 5 |
 
 ## Caveat
 

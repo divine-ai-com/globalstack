@@ -1,6 +1,6 @@
 {
   "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T14:39:24.213Z",
+  "capturedAt": "2026-05-20T13:51:11.778Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -20,34 +20,35 @@
         "capacity": 1
       },
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2d1ed22e-6ad2-452a-929c-46949b64b480",
-      "x-ms-request-id": "2d1ed22e-6ad2-452a-929c-46949b64b480",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260516T143917Z:2d1ed22e-6ad2-452a-929c-46949b64b480"
+      "x-ms-correlation-request-id": "04acf669-3bc0-45ef-bcbb-58267fbba698",
+      "x-ms-request-id": "04acf669-3bc0-45ef-bcbb-58267fbba698",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135111Z:04acf669-3bc0-45ef-bcbb-58267fbba698"
     },
     "body": {
       "error": {
-        "code": "InvalidResourceLocation",
-        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-67b1da9bb2",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

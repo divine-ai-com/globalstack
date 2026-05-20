@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:37:20.005Z",
+  "capturedAt": "2026-05-20T13:51:11.742Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,34 +12,35 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9bb5cc5dc6/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-9bb5cc5dc6?api-version=2023-06-01-preview",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "3fb479a1-8082-441c-ac6c-2d8333b8e2a1",
-      "x-ms-request-id": "3fb479a1-8082-441c-ac6c-2d8333b8e2a1",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260516T163713Z:3fb479a1-8082-441c-ac6c-2d8333b8e2a1"
+      "x-ms-correlation-request-id": "b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa",
+      "x-ms-request-id": "b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135111Z:b4c87e00-c97f-46f4-97f0-96d2e8d1f4fa"
     },
     "body": {
       "error": {
-        "code": "LocationRequired",
-        "message": "The location property is required for this definition."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-9bb5cc5dc6",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

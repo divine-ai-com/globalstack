@@ -1,6 +1,6 @@
 {
   "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T14:39:16.144Z",
+  "capturedAt": "2026-05-20T13:51:11.222Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -20,15 +20,16 @@
         "capacity": 1
       },
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "91b28869-bd10-4a42-87be-1a425555c7e7",
-      "x-ms-request-id": "91b28869-bd10-4a42-87be-1a425555c7e7",
-      "x-ms-routing-request-id": "EASTUS:20260516T143909Z:91b28869-bd10-4a42-87be-1a425555c7e7"
+      "x-ms-correlation-request-id": "89b8e314-d42f-44c5-8efa-e5497a1ecdb0",
+      "x-ms-request-id": "89b8e314-d42f-44c5-8efa-e5497a1ecdb0",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135111Z:89b8e314-d42f-44c5-8efa-e5497a1ecdb0"
     },
     "body": {
       "error": {
@@ -39,7 +40,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-3c7fbee340",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

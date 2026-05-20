@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-sku",
-  "capturedAt": "2026-05-16T16:37:31.714Z",
+  "capturedAt": "2026-05-20T13:51:12.359Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -19,36 +19,38 @@
       },
       "properties": {
         "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
         "version": "16"
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "6f6b68cf-66bf-44d5-9319-f91b2cd5aa5b",
-      "x-ms-request-id": "55c6da1d-93aa-4617-a777-e1bf0a12d5c5",
-      "x-ms-routing-request-id": "EASTUS:20260516T163724Z:6f6b68cf-66bf-44d5-9319-f91b2cd5aa5b"
+      "x-ms-correlation-request-id": "9920e5a3-2ada-4747-a8b6-caa4f8d4e4cf",
+      "x-ms-request-id": "9920e5a3-2ada-4747-a8b6-caa4f8d4e4cf",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T135112Z:9920e5a3-2ada-4747-a8b6-caa4f8d4e4cf"
     },
     "body": {
       "error": {
-        "code": "MissingRequiredParameter",
-        "message": "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty."
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
       }
     }
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-d31ddcf17d",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
   }
 }

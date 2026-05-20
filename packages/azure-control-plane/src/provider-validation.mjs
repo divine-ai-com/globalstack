@@ -2178,6 +2178,12 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     if (emptyObject(body) || !body.properties) {
       return envelopedError(400, 'MalformedRoleAssignmentRequest', 'PASRP RoleAssignment request is malformed');
     }
+    if (!isNonEmptyString(body.properties.principalId)) {
+      return invalidRequestContent('principalId');
+    }
+    if (!isNonEmptyString(body.properties.roleDefinitionId)) {
+      return invalidRequestContent('roleDefinitionId');
+    }
     return invalidRequestContent('roleDefinitionId');
   }
 
@@ -2188,6 +2194,12 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
         'InvalidCreateRoleDefinitionRequest',
         "The role definition '22222222-2222-4222-8222-222222222222' request is not valid. The request does not contain the role definition or the role definition properties.",
       );
+    }
+    if (!Array.isArray(body.properties.permissions) || body.properties.permissions.length === 0) {
+      return invalidRequestContent('permissions');
+    }
+    if (!Array.isArray(body.properties.assignableScopes) || body.properties.assignableScopes.length === 0) {
+      return invalidRequestContent('assignableScopes');
     }
     return invalidRequestContent('permissions');
   }

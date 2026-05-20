@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:37:06.505Z",
+  "capturedAt": "2026-05-20T13:51:11.220Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -20,17 +20,19 @@
       },
       "properties": {
         "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
         "version": "16"
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "39ae8a2d-2efe-4586-9bb7-f12ddf36af22",
-      "x-ms-request-id": "39ae8a2d-2efe-4586-9bb7-f12ddf36af22",
-      "x-ms-routing-request-id": "EASTUS:20260516T163659Z:39ae8a2d-2efe-4586-9bb7-f12ddf36af22"
+      "x-ms-correlation-request-id": "48a10ec1-2578-43ac-b45e-d18a4f5201ec",
+      "x-ms-request-id": "48a10ec1-2578-43ac-b45e-d18a4f5201ec",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135111Z:48a10ec1-2578-43ac-b45e-d18a4f5201ec"
     },
     "body": {
       "error": {
@@ -41,7 +43,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-3a6fca2ff5",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

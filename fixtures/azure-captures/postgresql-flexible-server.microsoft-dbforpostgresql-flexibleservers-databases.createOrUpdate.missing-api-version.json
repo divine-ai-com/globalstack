@@ -1,6 +1,6 @@
 {
   "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:37:54.420Z",
+  "capturedAt": "2026-05-20T13:51:13.386Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,24 +13,20 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-16bd44b9f7/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-16bd44b9f7/databases/db16bd44b9f7",
     "body": {
-      "location": "{location}",
-      "sku": {
-        "name": "Standard_B1ms",
-        "tier": "Burstable"
-      },
       "properties": {
-        "administratorLogin": "globalstack",
-        "version": "16"
+        "charset": "UTF8",
+        "collation": "en_US.utf8"
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "1c027d63-1327-48eb-a5e9-6e4fcd205100",
-      "x-ms-request-id": "1c027d63-1327-48eb-a5e9-6e4fcd205100",
-      "x-ms-routing-request-id": "EASTUS:20260516T163747Z:1c027d63-1327-48eb-a5e9-6e4fcd205100"
+      "x-ms-correlation-request-id": "05108807-bea2-4408-afc2-e26c21d359cd",
+      "x-ms-request-id": "05108807-bea2-4408-afc2-e26c21d359cd",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135113Z:05108807-bea2-4408-afc2-e26c21d359cd"
     },
     "body": {
       "error": {
@@ -41,7 +37,7 @@
   },
   "cleanup": {
     "resourceGroupName": "rg-gs-conf-16bd44b9f7",
-    "deleteStatus": 202,
+    "deleteStatus": 404,
     "verificationStatus": 404,
     "verifiedDeleted": true
   },

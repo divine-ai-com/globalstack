@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T13:28:02.107Z",
+    "generatedAt": "2026-05-20T13:50:55.525Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -2839,6 +2839,25 @@
             }
           },
           "expectedAzure": "Provider-specific SKU validation error.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "missing-admin-login",
+          "description": "Create/update without administratorLogin.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard_B1ms",
+              "tier": "Burstable"
+            },
+            "properties": {
+              "administratorLogin": "",
+              "administratorLoginPassword": "Globalstack1!",
+              "version": "16"
+            }
+          },
+          "expectedAzure": "PostgreSQL flexible server validation error for missing administrator login.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         },
@@ -15889,6 +15908,22 @@
           "expectedAzure": "Event Hubs namespace validation error for out-of-range capacity.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-capacity-type",
+          "description": "Create/update with a non-integer sku.capacity value.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Standard",
+              "tier": "Standard",
+              "capacity": "two"
+            },
+            "properties": {}
+          },
+          "expectedAzure": "Event Hubs namespace validation error for non-integer capacity.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
         }
       ]
     },
@@ -16061,6 +16096,19 @@
           "requiresRealAzure": true
         },
         {
+          "id": "invalid-partition-count-type",
+          "description": "Create/update with partitionCount set to a non-integer shape.",
+          "body": {
+            "properties": {
+              "partitionCount": "two",
+              "messageRetentionInDays": 1
+            }
+          },
+          "expectedAzure": "Event hub validation error for non-integer partitionCount.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
           "id": "invalid-message-retention",
           "description": "Create/update with an out-of-range messageRetentionInDays.",
           "body": {
@@ -16070,6 +16118,19 @@
             }
           },
           "expectedAzure": "Event hub validation error for invalid messageRetentionInDays.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-message-retention-type",
+          "description": "Create/update with messageRetentionInDays set to a non-integer shape.",
+          "body": {
+            "properties": {
+              "partitionCount": 2,
+              "messageRetentionInDays": "two"
+            }
+          },
+          "expectedAzure": "Event hub validation error for non-integer messageRetentionInDays.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
         }

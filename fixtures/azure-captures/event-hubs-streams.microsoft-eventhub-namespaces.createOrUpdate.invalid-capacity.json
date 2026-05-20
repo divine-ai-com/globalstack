@@ -1,0 +1,54 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces.createOrUpdate.invalid-capacity",
+  "capturedAt": "2026-05-20T13:51:12.922Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-capacity",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-096354742b/providers/Microsoft.EventHub/namespaces/ns-096354742b?api-version=2024-01-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 99
+      },
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c5c625ed-68e4-4b78-ba6c-f6e8bb2cc09a",
+      "x-ms-request-id": "c5c625ed-68e4-4b78-ba6c-f6e8bb2cc09a",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T135112Z:c5c625ed-68e4-4b78-ba6c-f6e8bb2cc09a"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-096354742b",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

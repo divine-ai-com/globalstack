@@ -629,7 +629,7 @@
     "validate"
   ],
   "counts": {
-    "azureCaptures": 680,
+    "azureCaptures": 702,
     "azureLifecycleCaptures": 2,
     "azureStorageDataPlaneCaptures": 1
   }
