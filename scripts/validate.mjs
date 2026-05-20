@@ -1177,8 +1177,8 @@ if (!cosmosParityText) {
   if (cosmosParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Cosmos DB parity control-plane matrix has failures');
   }
-  if ((cosmosParity.controlPlane?.total ?? 0) < 58) {
-    errors.push('Azure Cosmos DB parity control/data-plane matrix should exercise at least 58 cases');
+  if ((cosmosParity.controlPlane?.total ?? 0) < 74) {
+    errors.push('Azure Cosmos DB parity control/data-plane matrix should exercise at least 74 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1212,6 +1212,8 @@ if (!cosmosParityText) {
     'sql container list includes created resource',
     'data-plane request without auth is rejected',
     'data-plane request without x-ms-version is rejected',
+    'data-plane request without x-ms-date is rejected',
+    'data-plane unknown account host is not found',
     'data-plane database list includes ARM-created database',
     'data-plane duplicate database create is rejected',
     'data-plane invalid container create is rejected',
@@ -1219,13 +1221,17 @@ if (!cosmosParityText) {
     'data-plane document create without partition key is rejected',
     'data-plane document create with mismatched partition key is rejected',
     'data-plane document create succeeds',
+    'data-plane document list includes created document',
     'data-plane duplicate document create is rejected',
+    'data-plane document get without partition key is not found',
     'data-plane document get with wrong partition key is not found',
     'data-plane document get succeeds',
     'data-plane document replace cannot change partition key',
     'data-plane document replace succeeds',
     'data-plane SQL query returns created document',
     'data-plane non-select query is rejected',
+    'data-plane document delete with wrong partition key is not found',
+    'data-plane document survives wrong partition delete',
     'data-plane document delete succeeds',
     'data-plane document get after delete is not found',
     'storage table invalid name is rejected',
@@ -1234,6 +1240,7 @@ if (!cosmosParityText) {
     'unsupported stored procedure route fails closed',
     'ARM template deployment can create cosmos and table resources',
     'storage table get after delete is not found',
+    'data-plane container get after ARM delete is not found',
     'sql container get after delete is not found',
     'sql container delete after delete returns no content',
     'sql database get after delete is not found',

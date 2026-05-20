@@ -567,6 +567,29 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('data-plane request without x-ms-date is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, {
+        host: cosmosHost,
+        authorization: 'type=master&ver=1.0&sig=globalstack',
+        'x-ms-version': '2024-05-15',
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane unknown account host is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, {
+        host: `${missingAccountName}.documents.azure.com`,
+        authorization: 'type=master&ver=1.0&sig=globalstack',
+        'x-ms-date': new Date().toUTCString(),
+        'x-ms-version': '2024-05-15',
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('data-plane database list includes ARM-created database', async () => {
       const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, cosmosHeaders);
       assert.equal(result.status, 200);
@@ -624,6 +647,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('data-plane document list includes created document', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs`, undefined, cosmosHeaders);
+      assert.equal(result.status, 200);
+      assert.ok(result.body.Documents.some(item => item.id === 'run-1' && item.pk === 'robotics'));
+      return { status: result.status, count: result.body._count };
+    });
+
     await record('data-plane duplicate document create is rejected', async () => {
       const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { id: 'run-1', pk: 'robotics', score: 0.99 }, {
         ...cosmosHeaders,
@@ -631,6 +661,13 @@ async function runControlPlaneMatrix() {
       });
       assert.equal(result.status, 409);
       assert.equal(errorCode(result), 'Conflict');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document get without partition key is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, cosmosHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
@@ -692,6 +729,26 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'BadRequest');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document delete with wrong partition key is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'DELETE', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['mlops']),
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document survives wrong partition delete', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.score, 0.99);
+      return { status: result.status };
     });
 
     await record('data-plane document delete succeeds', async () => {
@@ -807,6 +864,13 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       cosmosRouter.unregisterContainer({ accountName, databaseName, containerName });
       return { status: result.status };
+    });
+
+    await record('data-plane container get after ARM delete is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}`, undefined, cosmosHeaders);
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('sql container get after delete is not found', async () => {

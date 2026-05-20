@@ -124,7 +124,7 @@ Run the Azure Cosmos DB NoSQL/Table parity pack after changing Cosmos DB account
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:cosmos-parity
 ```
 
-Expected result is `dist/e2e/azure-cosmos-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 58 Cosmos/Table cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Cosmos DB account lifecycle, SQL database/container child lifecycle, Cosmos SQL REST-shaped local document create/read/replace/query/delete behavior, Storage Table lifecycle reuse, parameter rejection, unsupported MongoDB/stored-procedure route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-cosmos-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 74 Cosmos/Table cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Cosmos DB account lifecycle, SQL database/container child lifecycle, Cosmos SQL REST-shaped local header and host rejection, document list/create/read/replace/query/delete behavior, wrong-partition read/delete behavior, ARM/data-plane cleanup coupling, Storage Table lifecycle reuse, parameter rejection, unsupported MongoDB/stored-procedure route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure MySQL parity pack after changing MySQL Flexible Server ARM behavior, database child behavior, unsupported MySQL route handling, or platform deployment routing:
 

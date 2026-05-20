@@ -27,7 +27,8 @@ The pack verifies:
 - NoSQL SQL database negative variance for parent-not-found, name/resource-id mismatch, and invalid throughput.
 - NoSQL SQL container create/get/list/delete/post-delete lifecycle.
 - NoSQL SQL container negative variance for parent-not-found, name/resource-id mismatch, missing partition key, and invalid partition-key kind.
-- Cosmos SQL REST-shaped local data-plane behavior for required headers, database/container reads, duplicate rejection, document partition-key validation, create/read/replace/query/delete, and post-delete not-found.
+- Cosmos SQL REST-shaped local data-plane behavior for required auth/date/version headers, unknown account host rejection, database/container reads, duplicate rejection, document partition-key validation, document list/read/replace/query/delete behavior, wrong-partition delete non-removal, and post-delete not-found.
+- ARM/data-plane cleanup coupling for SQL containers: once the ARM container is deleted, the local Cosmos SQL data-plane route is no longer available.
 - Storage Table child lifecycle reuse for the Table side of the DynamoDB-equivalent surface.
 - Unsupported Cosmos child routes, including MongoDB database and stored procedure routes, fail closed with `GlobalStackResourceTypeNotEmulated`.
 - ARM template deployment can create Cosmos account, SQL database, SQL container, Storage Account, and Storage Table resources.
