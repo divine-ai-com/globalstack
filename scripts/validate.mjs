@@ -415,8 +415,8 @@ if (!captureClassificationText) {
   errors.push('missing Azure capture classification; run npm run conformance:classify');
 } else {
   const captureClassification = JSON.parse(captureClassificationText);
-  if ((captureClassification.fixtureCount ?? 0) !== 452) {
-    errors.push('Azure capture classification should include 452 current real-Azure fixtures');
+  if ((captureClassification.fixtureCount ?? 0) !== 453) {
+    errors.push('Azure capture classification should include 453 current real-Azure fixtures');
   }
   if (captureClassification.cleanupVerifiedCount !== captureClassification.fixtureCount) {
     errors.push('all Azure capture fixtures must have verified cleanup');
@@ -1139,8 +1139,8 @@ if (!cosmosParityText) {
   if (cosmosParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Cosmos DB parity control-plane matrix has failures');
   }
-  if ((cosmosParity.controlPlane?.total ?? 0) < 40) {
-    errors.push('Azure Cosmos DB parity control-plane matrix should exercise at least 40 cases');
+  if ((cosmosParity.controlPlane?.total ?? 0) < 58) {
+    errors.push('Azure Cosmos DB parity control/data-plane matrix should exercise at least 58 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1172,6 +1172,24 @@ if (!cosmosParityText) {
     'sql container create succeeds',
     'sql container get succeeds',
     'sql container list includes created resource',
+    'data-plane request without auth is rejected',
+    'data-plane request without x-ms-version is rejected',
+    'data-plane database list includes ARM-created database',
+    'data-plane duplicate database create is rejected',
+    'data-plane invalid container create is rejected',
+    'data-plane container get succeeds',
+    'data-plane document create without partition key is rejected',
+    'data-plane document create with mismatched partition key is rejected',
+    'data-plane document create succeeds',
+    'data-plane duplicate document create is rejected',
+    'data-plane document get with wrong partition key is not found',
+    'data-plane document get succeeds',
+    'data-plane document replace cannot change partition key',
+    'data-plane document replace succeeds',
+    'data-plane SQL query returns created document',
+    'data-plane non-select query is rejected',
+    'data-plane document delete succeeds',
+    'data-plane document get after delete is not found',
     'storage table invalid name is rejected',
     'storage table create succeeds',
     'unsupported mongodb database route fails closed',

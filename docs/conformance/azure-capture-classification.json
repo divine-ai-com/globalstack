@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-20T06:46:11.859Z",
-  "fixtureCount": 452,
-  "cleanupVerifiedCount": 452,
+  "generatedAt": "2026-05-20T06:58:10.294Z",
+  "fixtureCount": 453,
+  "cleanupVerifiedCount": 453,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
     "provider-validation": 142,
     "arm-surface": 62,
     "provider-accepted": 98,
     "provider-routing-or-parent-validation": 137,
-    "subscription-or-provider-readiness": 5,
+    "subscription-or-provider-readiness": 6,
     "capture-infrastructure-gap": 8
   },
   "byErrorCode": {
@@ -26,7 +26,7 @@
     "ParentResourceNotFound": 73,
     "DeleteNotSupported": 3,
     "InvalidAccountType": 1,
-    "NoRegisteredProviderFound": 5,
+    "NoRegisteredProviderFound": 6,
     "SubscriptionNotFound": 4,
     "ValidateResourceInfoFailedWithInvalidSkuName": 2,
     "MalformedRoleAssignmentRequest": 1,
@@ -1424,6 +1424,19 @@
       "validationDepth": "arm-surface",
       "cloudValidated": false,
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.unsupported-api-version",
+      "capabilityId": "cosmos-nosql-table",
+      "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "status": 400,
+      "errorCode": "NoRegisteredProviderFound",
+      "cleanupVerified": true,
+      "validationDepth": "subscription-or-provider-readiness",
+      "cloudValidated": false,
+      "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
     },
     {
       "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.createOrUpdate.valid-minimal",

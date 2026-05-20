@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
+import { createCosmosSqlRouter, createCosmosSqlRouterServer } from '../packages/azure-data-plane/src/cosmos-sql-router.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -50,6 +52,18 @@ async function withArmServer(fn) {
   }
 }
 
+async function withCosmosSqlRouter(fn) {
+  const router = createCosmosSqlRouter();
+  const server = createCosmosSqlRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  try {
+    return await fn(port, router);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+
 async function httpJson(port, method, path, body, options = {}) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
     method,
@@ -74,6 +88,45 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: Object.fromEntries(response.headers.entries()),
     body: parsed,
   };
+}
+
+async function httpCosmos(port, method, path, body, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const payload = body === undefined ? undefined : Buffer.from(typeof body === 'string' ? body : JSON.stringify(body));
+    const req = request({
+      host: '127.0.0.1',
+      port,
+      method,
+      path,
+      headers: {
+        ...(payload ? { 'content-length': payload.length } : {}),
+        ...headers,
+      },
+    }, (res) => {
+      const chunks = [];
+      res.on('data', chunk => chunks.push(chunk));
+      res.on('end', () => {
+        const raw = Buffer.concat(chunks);
+        let parsed = null;
+        if (raw.length > 0) {
+          try {
+            parsed = JSON.parse(raw.toString('utf8'));
+          } catch {
+            parsed = raw.toString('utf8');
+          }
+        }
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: parsed,
+          raw,
+        });
+      });
+    });
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
 }
 
 function errorCode(result) {
@@ -261,6 +314,16 @@ async function runControlPlaneMatrix() {
     }
   }
 
+  await withCosmosSqlRouter(async (cosmosPort, cosmosRouter) => {
+    const cosmosHost = `${accountName}.documents.azure.com`;
+    const cosmosHeaders = {
+      host: cosmosHost,
+      authorization: 'type=master&ver=1.0&sig=globalstack',
+      'content-type': 'application/json',
+      'x-ms-date': new Date().toUTCString(),
+      'x-ms-version': '2024-05-15',
+    };
+
   await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
@@ -377,6 +440,7 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', accountPath(resourceGroup, accountName), accountBody());
       assert.equal(result.status, 202);
       assert.ok(result.headers['azure-asyncoperation']);
+      cosmosRouter.registerAccount({ accountName });
       return { status: result.status };
     });
 
@@ -413,6 +477,7 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', sqlDatabasePath(resourceGroup, accountName, databaseName), sqlDatabaseBody(databaseName));
       assert.equal(result.status, 201);
       assert.equal(result.body.name, `${accountName}/${databaseName}`);
+      cosmosRouter.registerDatabase({ accountName, databaseName });
       return { status: result.status };
     });
 
@@ -462,6 +527,7 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', containerPath(resourceGroup, accountName, databaseName, containerName), containerBody(containerName));
       assert.equal(result.status, 201);
       assert.equal(result.body.name, `${accountName}/${databaseName}/${containerName}`);
+      cosmosRouter.registerContainer({ accountName, databaseName, containerName, partitionKey: '/pk' });
       return { status: result.status };
     });
 
@@ -477,6 +543,174 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.name === `${accountName}/${databaseName}/${containerName}`));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('data-plane request without auth is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, {
+        host: cosmosHost,
+        'x-ms-date': new Date().toUTCString(),
+        'x-ms-version': '2024-05-15',
+      });
+      assert.equal(result.status, 401);
+      assert.equal(errorCode(result), 'Unauthorized');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane request without x-ms-version is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, {
+        host: cosmosHost,
+        authorization: 'type=master&ver=1.0&sig=globalstack',
+        'x-ms-date': new Date().toUTCString(),
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane database list includes ARM-created database', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', '/dbs', undefined, cosmosHeaders);
+      assert.equal(result.status, 200);
+      assert.ok(result.body.Databases.some(item => item.id === databaseName));
+      return { status: result.status, count: result.body._count };
+    });
+
+    await record('data-plane duplicate database create is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', '/dbs', { id: databaseName }, cosmosHeaders);
+      assert.equal(result.status, 409);
+      assert.equal(errorCode(result), 'Conflict');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane invalid container create is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls`, { id: 'bad/container', partitionKey: { paths: ['/pk'], kind: 'Hash' } }, cosmosHeaders);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane container get succeeds', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}`, undefined, cosmosHeaders);
+      assert.equal(result.status, 200);
+      assert.equal(result.body.id, containerName);
+      assert.deepEqual(result.body.partitionKey.paths, ['/pk']);
+      return { status: result.status };
+    });
+
+    await record('data-plane document create without partition key is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { id: 'run-1', pk: 'robotics', score: 0.98 }, cosmosHeaders);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document create with mismatched partition key is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { id: 'run-1', pk: 'robotics', score: 0.98 }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['mlops']),
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document create succeeds', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { id: 'run-1', pk: 'robotics', score: 0.98 }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.id, 'run-1');
+      assert.equal(result.body.pk, 'robotics');
+      return { status: result.status };
+    });
+
+    await record('data-plane duplicate document create is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { id: 'run-1', pk: 'robotics', score: 0.99 }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 409);
+      assert.equal(errorCode(result), 'Conflict');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document get with wrong partition key is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['mlops']),
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document get succeeds', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.score, 0.98);
+      return { status: result.status };
+    });
+
+    await record('data-plane document replace cannot change partition key', async () => {
+      const result = await httpCosmos(cosmosPort, 'PUT', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, { id: 'run-1', pk: 'mlops', score: 0.7 }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document replace succeeds', async () => {
+      const result = await httpCosmos(cosmosPort, 'PUT', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, { id: 'run-1', pk: 'robotics', score: 0.99 }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.score, 0.99);
+      return { status: result.status };
+    });
+
+    await record('data-plane SQL query returns created document', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { query: 'SELECT * FROM c' }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-isquery': 'true',
+      });
+      assert.equal(result.status, 200);
+      assert.ok(result.body.Documents.some(item => item.id === 'run-1' && item.score === 0.99));
+      return { status: result.status, count: result.body._count };
+    });
+
+    await record('data-plane non-select query is rejected', async () => {
+      const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { query: 'DELETE FROM c' }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-isquery': 'true',
+      });
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document delete succeeds', async () => {
+      const result = await httpCosmos(cosmosPort, 'DELETE', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 204);
+      return { status: result.status };
+    });
+
+    await record('data-plane document get after delete is not found', async () => {
+      const result = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'NotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('cosmos account list includes created resource', async () => {
@@ -571,6 +805,7 @@ async function runControlPlaneMatrix() {
     await record('sql container delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', containerPath(resourceGroup, accountName, databaseName, containerName));
       assert.equal(result.status, 200);
+      cosmosRouter.unregisterContainer({ accountName, databaseName, containerName });
       return { status: result.status };
     });
 
@@ -590,6 +825,7 @@ async function runControlPlaneMatrix() {
     await record('sql database delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', sqlDatabasePath(resourceGroup, accountName, databaseName));
       assert.equal(result.status, 200);
+      cosmosRouter.unregisterDatabase({ accountName, databaseName });
       return { status: result.status };
     });
 
@@ -603,6 +839,7 @@ async function runControlPlaneMatrix() {
     await record('cosmos account delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', accountPath(resourceGroup, accountName));
       assert.equal(result.status, 200);
+      cosmosRouter.unregisterAccount({ accountName });
       return { status: result.status };
     });
 
@@ -619,6 +856,7 @@ async function runControlPlaneMatrix() {
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
+  });
   });
 
   const failed = cases.filter(item => !item.ok);
@@ -675,7 +913,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Account under test: ${report.controlPlane.accountName}`,
@@ -702,7 +940,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Cosmos DB account, SQL database, SQL container, and Storage Table ARM lifecycle, parameter rejection, unsupported Cosmos route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Cosmos DB as 99%-complete or cloudValidated for NoSQL item queries, partition routing, indexing policy, consistency, change feed, multi-region failover, throughput autoscale, RBAC, private link, or exact Azure data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Cosmos DB account, SQL database, SQL container, and Storage Table ARM lifecycle, parameter rejection, Cosmos SQL REST-shaped local item create/read/replace/query/delete behavior, unsupported Cosmos route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Cosmos DB as 99%-complete or cloudValidated for full SQL query semantics, partition routing, indexing policy, consistency, change feed, multi-region failover, throughput autoscale, RBAC, private link, or exact Azure data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -714,7 +952,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Cosmos DB account, NoSQL SQL database/container, Storage Table ARM lifecycle, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Cosmos DB account, NoSQL SQL database/container, Storage Table ARM lifecycle, Cosmos SQL REST-shaped local item data-plane checks, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Cosmos DB cloudValidated claim.',
   controlPlane,
   platformMatrix,
