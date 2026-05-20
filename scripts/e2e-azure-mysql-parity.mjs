@@ -35,8 +35,42 @@ function run(command, args, options = {}) {
   });
 }
 
+function runOutput(command, args, options = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(command, args, {
+      cwd: options.cwd ?? root,
+      env: options.env ?? process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    const timeout = setTimeout(() => {
+      child.kill('SIGTERM');
+      resolve({ code: 124, stdout, stderr });
+    }, options.timeoutMs ?? 120000);
+    child.on('error', error => {
+      clearTimeout(timeout);
+      resolve({ code: 127, stdout, stderr: `${stderr}${error.message}` });
+    });
+    child.on('close', code => {
+      clearTimeout(timeout);
+      resolve({ code: code ?? 1, stdout, stderr });
+    });
+  });
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function docker(args, options = {}) {
+  const result = await runOutput('docker', args, options);
+  if (result.code !== 0 && /permission denied|connect to the docker api/i.test(`${result.stderr}\n${result.stdout}`)) {
+    return runOutput('sudo', ['docker', ...args], options);
+  }
+  return result;
 }
 
 async function withArmServer(fn) {
@@ -47,6 +81,41 @@ async function withArmServer(fn) {
     return await fn(port);
   } finally {
     await new Promise(resolve => server.close(resolve));
+  }
+}
+
+async function withLocalMysql(fn) {
+  const suffix = Date.now().toString(36).slice(-8).toLowerCase();
+  const containerName = `globalstack-mysql-${suffix}`;
+  const runResult = await docker([
+    'run',
+    '-d',
+    '--rm',
+    '--name',
+    containerName,
+    '-e',
+    'MYSQL_ROOT_PASSWORD=globalstack-root',
+    '-e',
+    'MYSQL_USER=globalstack',
+    '-e',
+    'MYSQL_PASSWORD=globalstack',
+    '-e',
+    'MYSQL_DATABASE=globalstack',
+    'mysql:8',
+  ], { timeoutMs: 240000 });
+  if (runResult.code !== 0) {
+    throw new Error(`failed to start local MySQL backing container: ${runResult.stderr || runResult.stdout}`);
+  }
+
+  try {
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      const ready = await docker(['exec', containerName, 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uglobalstack', '-pglobalstack'], { timeoutMs: 10000 });
+      if (ready.code === 0) return await fn({ containerName });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    throw new Error('local MySQL backing container did not become ready in time');
+  } finally {
+    await docker(['rm', '-f', containerName], { timeoutMs: 60000 });
   }
 }
 
@@ -132,6 +201,33 @@ function databaseBody(overrides = {}) {
   };
 }
 
+function quoteIdentifier(name) {
+  return `\`${String(name).replaceAll('`', '``')}\``;
+}
+
+async function mysql(containerName, sql, options = {}) {
+  const user = options.user ?? 'globalstack';
+  const password = options.password ?? 'globalstack';
+  const args = [
+    'exec',
+    containerName,
+    'mysql',
+    '-h',
+    '127.0.0.1',
+    `-u${user}`,
+    `-p${password}`,
+    '--batch',
+    '--skip-column-names',
+  ];
+  if (options.database) args.push(options.database);
+  args.push('-e', sql);
+  const result = await docker(args, { timeoutMs: options.timeoutMs ?? 120000 });
+  if ((options.expectCode ?? 0) === 0 && result.code !== 0) {
+    throw new Error(`mysql failed (${result.code}): ${result.stderr || result.stdout}`);
+  }
+  return result;
+}
+
 function deploymentBody({ serverName, databaseName }) {
   return {
     properties: {
@@ -187,6 +283,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
+  await withLocalMysql(async ({ containerName }) => {
   await withArmServer(async (armPort) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
@@ -322,6 +419,58 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('local mysql backing database can be created', async () => {
+      await mysql(containerName, `CREATE DATABASE ${quoteIdentifier(databaseName)}`, { user: 'root', password: 'globalstack-root' });
+      await mysql(containerName, `GRANT ALL PRIVILEGES ON ${quoteIdentifier(databaseName)}.* TO 'globalstack'@'%'`, { user: 'root', password: 'globalstack-root' });
+      return { status: 0, database: databaseName };
+    });
+
+    await record('local mysql backing accepts table insert and select', async () => {
+      await mysql(containerName, 'CREATE TABLE telemetry (id INT PRIMARY KEY, payload JSON NOT NULL)', { database: databaseName });
+      await mysql(containerName, "INSERT INTO telemetry (id, payload) VALUES (1, JSON_OBJECT('robot', 'arm-1', 'reading', 42))", { database: databaseName });
+      const result = await mysql(containerName, "SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, '$.robot')) FROM telemetry WHERE id = 1", { database: databaseName });
+      assert.equal(result.stdout.trim(), 'arm-1');
+      return { status: 0, selected: result.stdout.trim() };
+    });
+
+    await record('local mysql backing enforces primary key uniqueness', async () => {
+      const result = await mysql(containerName, "INSERT INTO telemetry (id, payload) VALUES (1, JSON_OBJECT('robot', 'duplicate'))", {
+        database: databaseName,
+        expectCode: 1,
+      });
+      assert.notEqual(result.code, 0);
+      assert.match(result.stderr, /Duplicate entry/i);
+      return { status: result.code, errorCode: 'MySQLDuplicateEntry' };
+    });
+
+    await record('local mysql backing rolls back failed transaction', async () => {
+      await mysql(containerName, "START TRANSACTION; INSERT INTO telemetry (id, payload) VALUES (2, JSON_OBJECT('robot', 'rolled-back')); ROLLBACK;", { database: databaseName });
+      const result = await mysql(containerName, 'SELECT count(*) FROM telemetry WHERE id = 2', { database: databaseName });
+      assert.equal(result.stdout.trim(), '0');
+      return { status: 0, count: Number(result.stdout.trim()) };
+    });
+
+    await record('local mysql backing rejects invalid sql', async () => {
+      const result = await mysql(containerName, 'SELECT * FROM missing_table', {
+        database: databaseName,
+        expectCode: 1,
+      });
+      assert.notEqual(result.code, 0);
+      assert.match(result.stderr, /Table .*missing_table.* doesn't exist/i);
+      return { status: result.code, errorCode: 'MySQLNoSuchTable' };
+    });
+
+    await record('local mysql backing rejects unknown user', async () => {
+      const result = await mysql(containerName, 'SELECT 1', {
+        database: databaseName,
+        user: 'missing_globalstack_user',
+        expectCode: 1,
+      });
+      assert.notEqual(result.code, 0);
+      assert.match(result.stderr, /Access denied for user/i);
+      return { status: result.code, errorCode: 'MySQLAccessDenied' };
+    });
+
     await record('database get succeeds', async () => {
       const result = await httpJson(armPort, 'GET', databasePath(resourceGroup, serverName, databaseName));
       assert.equal(result.status, 200);
@@ -378,6 +527,17 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('local mysql backing database cleanup succeeds', async () => {
+      await mysql(containerName, `DROP DATABASE ${quoteIdentifier(databaseName)}`, { user: 'root', password: 'globalstack-root' });
+      const result = await mysql(containerName, 'SELECT 1', {
+        database: databaseName,
+        expectCode: 1,
+      });
+      assert.notEqual(result.code, 0);
+      assert.match(result.stderr, /Unknown database/i);
+      return { status: result.code, errorCode: 'MySQLUnknownDatabase' };
+    });
+
     await record('database get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', databasePath(resourceGroup, serverName, databaseName));
       assert.equal(result.status, 404);
@@ -416,6 +576,7 @@ async function runControlPlaneMatrix() {
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
+  });
   });
 
   const failed = cases.filter(item => !item.ok);
@@ -470,7 +631,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control Plane',
+    '## Control And Data Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Server under test: ${report.controlPlane.serverName}`,
@@ -495,7 +656,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Database for MySQL Flexible Server and database ARM lifecycle, parameter rejection, unsupported child route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark MySQL as 99%-complete or cloudValidated for SQL protocol behavior, firewall rules, server parameters, backup/restore, HA, maintenance windows, private link, throttling, RBAC, or exact Azure data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Database for MySQL Flexible Server and database ARM lifecycle, parameter rejection, local MySQL backing-engine SQL success and failure behavior, unsupported child route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark MySQL as 99%-complete or cloudValidated for Azure Flexible Server runtime behavior, firewall rules, server parameters, backup/restore, HA, maintenance windows, private link, throttling, RBAC, or exact Azure service behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -507,7 +668,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Database for MySQL Flexible Server and database ARM lifecycle, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Database for MySQL Flexible Server and database ARM lifecycle, parameter rejection, local MySQL backing-engine SQL checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure MySQL cloudValidated claim.',
   controlPlane,
   platformMatrix,

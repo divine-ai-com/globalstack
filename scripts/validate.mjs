@@ -1246,8 +1246,8 @@ if (!mysqlParityText) {
   if (mysqlParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure MySQL parity control-plane matrix has failures');
   }
-  if ((mysqlParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure MySQL parity control-plane matrix should exercise at least 35 cases');
+  if ((mysqlParity.controlPlane?.total ?? 0) < 42) {
+    errors.push('Azure MySQL parity control/data-plane matrix should exercise at least 42 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1275,6 +1275,12 @@ if (!mysqlParityText) {
     'database missing collation is rejected',
     'database invalid name is rejected',
     'database create succeeds',
+    'local mysql backing database can be created',
+    'local mysql backing accepts table insert and select',
+    'local mysql backing enforces primary key uniqueness',
+    'local mysql backing rolls back failed transaction',
+    'local mysql backing rejects invalid sql',
+    'local mysql backing rejects unknown user',
     'database get succeeds',
     'database list includes created resource',
     'server list includes created resource',
@@ -1282,6 +1288,7 @@ if (!mysqlParityText) {
     'unsupported server configuration route fails closed',
     'ARM template deployment can create mysql resources',
     'database get after delete is not found',
+    'local mysql backing database cleanup succeeds',
     'database delete after delete returns no content',
     'server get after delete is not found',
     'server delete after delete returns no content',

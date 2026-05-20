@@ -132,7 +132,7 @@ Run the Azure MySQL parity pack after changing MySQL Flexible Server ARM behavio
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:mysql-parity
 ```
 
-Expected result is `dist/e2e/azure-mysql-parity/results.json` with `ok == true`, zero control-plane failures, at least 35 MySQL cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Flexible Server lifecycle, database child lifecycle, parameter rejection, unsupported firewall/configuration route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-mysql-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 42 MySQL cases, and all eight platform runners passing. This suite covers malformed/wrong auth and subscription mismatch, Flexible Server lifecycle, database child lifecycle, parameter rejection, local MySQL backing-engine create/insert/select/rollback/error behavior, unsupported firewall/configuration route fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 Run the Azure Redis parity pack after changing Azure Cache for Redis ARM behavior, endpoint metadata, unsupported Redis route handling, or platform deployment routing:
 
