@@ -14,7 +14,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 
 - Candidate calls: 336
 - Candidate create/update calls: 84
-- Real Azure fixtures with verified cleanup: 746
+- Real Azure fixtures with verified cleanup: 748
 
 ## Tier 1
 
@@ -124,6 +124,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `invalid-sku`: captured HTTP 404; cleanup verified
 - [x] `missing-publisher-email`: captured HTTP 404; cleanup verified
 - [x] `missing-publisher-name`: captured HTTP 404; cleanup verified
+- [x] `invalid-service-name`: captured HTTP 404; cleanup verified
 
 ### api-management / Microsoft.ApiManagement/service / Get
 
@@ -148,6 +149,7 @@ This generated checklist tracks real Azure conformance work. An item is checked 
 - [x] `invalid-tags-shape`: captured HTTP 404; cleanup verified
 - [x] `missing-path`: captured HTTP 404; cleanup verified
 - [x] `invalid-protocols-shape`: captured HTTP 404; cleanup verified
+- [x] `invalid-api-identifier`: captured HTTP 404; cleanup verified
 
 ### api-management / Microsoft.ApiManagement/service/apis / Get
 

@@ -397,7 +397,7 @@ function dnsRecordVariance(id, description, body, expectedAzure) {
   return realAzureVariance(id, description, body, expectedAzure);
 }
 
-function realAzureVariance(id, description, body, expectedAzure) {
+function realAzureVariance(id, description, body, expectedAzure, options = {}) {
   return {
     id,
     description,
@@ -405,6 +405,7 @@ function realAzureVariance(id, description, body, expectedAzure) {
     expectedAzure,
     localAssertion: 'record-gap-until-real-azure-captured',
     requiresRealAzure: true,
+    ...options,
   };
 }
 
@@ -548,6 +549,15 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         },
         'API Management service validation error for missing publisherName.',
       ),
+      realAzureVariance(
+        'invalid-service-name',
+        'Create/update with an API Management service name that starts with a non-letter.',
+        createBody,
+        'API Management service validation error for invalid service name shape.',
+        {
+          pathTemplateOverride: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/1bad',
+        },
+      ),
     );
   }
 
@@ -574,6 +584,15 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
           },
         },
         'API Management API validation error for invalid protocols shape.',
+      ),
+      realAzureVariance(
+        'invalid-api-identifier',
+        'Create/update with an API identifier containing disallowed characters.',
+        createBody,
+        'API Management API validation error for invalid API identifier.',
+        {
+          pathTemplateOverride: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/bad%23api',
+        },
       ),
     );
   }

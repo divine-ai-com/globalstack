@@ -62,11 +62,11 @@ Provider-operation metadata is inventory input only. It does not prove status co
 | azure-functions | Lambda | Microsoft.Web/serverfarms | Get | GET | 2023-12-01 | 0 |
 | azure-functions | Lambda | Microsoft.Web/serverfarms | ListByResourceGroup | GET | 2023-12-01 | 0 |
 | azure-functions | Lambda | Microsoft.Web/serverfarms | Delete | DELETE | 2023-12-01 | 0 |
-| api-management | API Gateway | Microsoft.ApiManagement/service | CreateOrUpdate | PUT | 2023-05-01-preview | 11 |
+| api-management | API Gateway | Microsoft.ApiManagement/service | CreateOrUpdate | PUT | 2023-05-01-preview | 12 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | Get | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | ListByResourceGroup | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service | Delete | DELETE | 2023-05-01-preview | 0 |
-| api-management | API Gateway | Microsoft.ApiManagement/service/apis | CreateOrUpdate | PUT | 2023-05-01-preview | 9 |
+| api-management | API Gateway | Microsoft.ApiManagement/service/apis | CreateOrUpdate | PUT | 2023-05-01-preview | 10 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | Get | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | ListByResourceGroup | GET | 2023-05-01-preview | 0 |
 | api-management | API Gateway | Microsoft.ApiManagement/service/apis | Delete | DELETE | 2023-05-01-preview | 0 |

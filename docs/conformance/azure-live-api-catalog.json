@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T14:34:28.097Z",
+    "generatedAt": "2026-05-20T15:06:59.050Z",
     "source": "globalstack-tier-capability-registry",
     "intent": "Filter candidate live Azure management-plane API calls for Tier 1 and Tier 2 AWS-equivalent capabilities.",
     "callCount": 336,
@@ -976,6 +976,25 @@
           "expectedAzure": "API Management service validation error for missing publisherName.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-service-name",
+          "description": "Create/update with an API Management service name that starts with a non-letter.",
+          "body": {
+            "location": "{location}",
+            "sku": {
+              "name": "Developer",
+              "capacity": 1
+            },
+            "properties": {
+              "publisherEmail": "platform@example.com",
+              "publisherName": "GlobalStack Platform"
+            }
+          },
+          "expectedAzure": "API Management service validation error for invalid service name shape.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/1bad"
         }
       ]
     },
@@ -1180,6 +1199,23 @@
           "expectedAzure": "API Management API validation error for invalid protocols shape.",
           "localAssertion": "record-gap-until-real-azure-captured",
           "requiresRealAzure": true
+        },
+        {
+          "id": "invalid-api-identifier",
+          "description": "Create/update with an API identifier containing disallowed characters.",
+          "body": {
+            "properties": {
+              "displayName": "globalstack-api",
+              "path": "ingest",
+              "protocols": [
+                "https"
+              ]
+            }
+          },
+          "expectedAzure": "API Management API validation error for invalid API identifier.",
+          "localAssertion": "record-gap-until-real-azure-captured",
+          "requiresRealAzure": true,
+          "pathTemplateOverride": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/bad%23api"
         }
       ]
     },

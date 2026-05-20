@@ -1,6 +1,6 @@
 {
   "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.invalid-protocols-shape",
-  "capturedAt": "2026-05-20T13:30:08.605Z",
+  "capturedAt": "2026-05-20T15:07:10.106Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -25,9 +25,9 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "7a9c9512-ed5c-4277-b729-ab742ccf346d",
-      "x-ms-request-id": "7a9c9512-ed5c-4277-b729-ab742ccf346d",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133008Z:7a9c9512-ed5c-4277-b729-ab742ccf346d"
+      "x-ms-correlation-request-id": "29c87f43-49d5-4e7a-acb3-3dd40188458a",
+      "x-ms-request-id": "29c87f43-49d5-4e7a-acb3-3dd40188458a",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T150710Z:29c87f43-49d5-4e7a-acb3-3dd40188458a"
     },
     "body": {
       "error": {

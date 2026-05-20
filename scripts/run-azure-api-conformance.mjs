@@ -278,8 +278,8 @@ async function azureRequest(method, path, body) {
   };
 }
 
-function requestPath(call, replacements, { omitApiVersion = false, apiVersionOverride = null } = {}) {
-  const path = interpolate(call.pathTemplate, replacements);
+function requestPath(call, replacements, { omitApiVersion = false, apiVersionOverride = null, pathTemplateOverride = null } = {}) {
+  const path = interpolate(pathTemplateOverride ?? call.pathTemplate, replacements);
   return omitApiVersion ? path : `${path}?api-version=${apiVersionOverride ?? call.apiVersion}`;
 }
 
@@ -512,6 +512,7 @@ async function runLocalCase(baseUrl, call, variance) {
   const path = requestPath(call, replacements, {
     omitApiVersion: variance.omitApiVersion,
     apiVersionOverride: variance.apiVersionOverride,
+    pathTemplateOverride: variance.pathTemplateOverride,
   });
   const response = await httpJson(baseUrl, call.method, path, body);
   const classification = await classifyLocal(call, variance, response);
@@ -547,6 +548,7 @@ async function runAzureCase(call, variance) {
     trackedResourcePath: requestPath(call, replacements, {
       omitApiVersion: variance.omitApiVersion,
       apiVersionOverride: variance.apiVersionOverride,
+      pathTemplateOverride: variance.pathTemplateOverride,
     }),
     cleanup: {
       attempted: false,
