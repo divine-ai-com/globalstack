@@ -65,6 +65,13 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function stableActivityOutput(activityName, payload = null) {
+  return {
+    activityName,
+    input: payload ?? null,
+  };
+}
+
 function durableStatusPayload(origin, app, instance, includeHistory = false) {
   const basePath = `/runtime/webhooks/durabletask/instances/${encodeURIComponent(instance.instanceId)}`;
   const payload = {
@@ -306,6 +313,32 @@ export class FunctionsRouter {
     return [...app.functions.values()].some(item => item.key === candidate);
   }
 
+  durableExecutionPlan(app, input = null) {
+    const requestedActivities = Array.isArray(input?.callActivities)
+      ? input.callActivities.map(item => String(item))
+      : [];
+    const missingActivity = requestedActivities.find(name => !app.durable.activities.has(String(name).toLowerCase()));
+    if (missingActivity) {
+      return {
+        error: {
+          code: 'ActivityFunctionNotFound',
+          message: `No Durable activity named '${missingActivity}' is registered for Function App '${app.appName}'.`,
+        },
+      };
+    }
+    const activityPayloads = input?.activityPayloads && typeof input.activityPayloads === 'object'
+      ? input.activityPayloads
+      : {};
+    const activityResults = requestedActivities.map(name => ({
+      name,
+      output: stableActivityOutput(name, activityPayloads[name] ?? null),
+    }));
+    return {
+      requestedActivities,
+      activityResults,
+    };
+  }
+
   startDurableInstance({ app, orchestratorName, input, origin, requestedInstanceId = null }) {
     const orchestrator = app.durable.orchestrators.get(String(orchestratorName).toLowerCase());
     if (!orchestrator) {
@@ -320,8 +353,28 @@ export class FunctionsRouter {
       };
     }
     const instanceId = String(requestedInstanceId ?? randomUUID());
+    if (app.durable.instances.has(instanceId.toLowerCase())) {
+      return {
+        status: 409,
+        body: {
+          error: {
+            code: 'InstanceAlreadyExists',
+            message: `The Durable instance '${instanceId}' already exists.`,
+          },
+        },
+      };
+    }
     const createdTime = nowIso();
     const activityNames = [...app.durable.activities.values()].map(item => item.functionName);
+    const plan = this.durableExecutionPlan(app, input);
+    if (plan.error) {
+      return {
+        status: 404,
+        body: {
+          error: plan.error,
+        },
+      };
+    }
     const waitingForEvents = input?.waitForExternalEvent === undefined
       ? []
       : Array.isArray(input.waitForExternalEvent)
@@ -333,6 +386,25 @@ export class FunctionsRouter {
       : waitingForEvents.length > 0
         ? 'Running'
         : 'Completed';
+    const history = [
+      {
+        eventType: 'ExecutionStarted',
+        timestamp: createdTime,
+      },
+      ...plan.activityResults.flatMap(activity => ([
+        {
+          eventType: 'TaskScheduled',
+          name: activity.name,
+          timestamp: createdTime,
+        },
+        {
+          eventType: 'TaskCompleted',
+          name: activity.name,
+          timestamp: createdTime,
+          result: activity.output,
+        },
+      ])),
+    ];
     const instance = {
       instanceId,
       orchestratorName: orchestrator.functionName,
@@ -346,6 +418,7 @@ export class FunctionsRouter {
             orchestrator: orchestrator.functionName,
             input: input ?? null,
             activities: activityNames,
+            activityResults: Object.fromEntries(plan.activityResults.map(item => [item.name, item.output])),
           }
         : null,
       failureDetails: shouldFail
@@ -356,12 +429,8 @@ export class FunctionsRouter {
         : null,
       waitingForEvents,
       receivedEvents: [],
-      history: [
-        {
-          eventType: 'ExecutionStarted',
-          timestamp: createdTime,
-        },
-      ],
+      activityResults: plan.activityResults,
+      history,
     };
     if (runtimeStatus === 'Completed') {
       instance.history.push({
@@ -418,6 +487,7 @@ export class FunctionsRouter {
         instance.output = {
           orchestrator: instance.orchestratorName,
           input: instance.input ?? null,
+          activityResults: Object.fromEntries(instance.activityResults.map(item => [item.name, item.output])),
           events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
         };
         instance.history.push({

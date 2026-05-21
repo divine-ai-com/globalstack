@@ -1474,8 +1474,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 68) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 68 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 71) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 71 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1500,8 +1500,11 @@ if (!azureFunctionsParityText) {
     'durable function resources create succeeds',
     'durable orchestration start rejects missing key',
     'durable orchestration start rejects unknown orchestrator',
+    'durable orchestration start rejects unknown activity',
     'durable orchestration start returns management payload',
     'durable orchestration status query shows running instance',
+    'durable orchestration executes declared activity history',
+    'durable orchestration rejects duplicate instance id',
     'durable orchestration suspend and resume succeed',
     'durable orchestration raise event completes instance',
     'durable orchestration terminate and purge succeed',
