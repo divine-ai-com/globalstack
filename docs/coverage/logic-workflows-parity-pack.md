@@ -25,11 +25,12 @@ The pack verifies:
 - Parameter rejection for invalid location, invalid workflow name, missing definition, missing triggers, missing actions, and invalid workflow state.
 - Endpoint metadata for local workflow resources.
 - Local request-trigger runner behavior for missing workflow, missing trigger, successful invocation/run lookup, route-based trigger execution, run listing, run inspection, and disabled workflow rejection.
-- Basic action execution for `Compose`, `Response`, `InitializeVariable`, and `SetVariable` is covered in the local workflow runner.
+- Bounded action execution for `Compose`, `Response`, `InitializeVariable`, `SetVariable`, `ParseJson`, `If`, and `Terminate` is covered in the local workflow runner.
+- `runAfter` dependency handling is enforced locally, including skipped actions when dependency statuses do not match.
 - Unsupported Logic workflow child/action routes outside the supported trigger/run and run-history subset still fail closed with `GlobalStackResourceTypeNotEmulated`.
 - ARM template deployment can create a Logic workflow resource.
 - The platform runner matrix still deploys native IaC through the GlobalStack provider route.
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, local request-trigger runner success and failure behavior, supported trigger/run and run-history routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for connector execution, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
+Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, bounded request-trigger runner success and failure behavior, `runAfter`/conditional/terminate semantics for the supported action subset, supported trigger/run and run-history routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for connector execution, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.

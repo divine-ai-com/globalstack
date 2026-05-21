@@ -147,6 +147,121 @@ function workflowBody(overrides = {}) {
   };
 }
 
+function advancedWorkflowDefinition() {
+  return workflowDefinition({
+    actions: {
+      initializeState: {
+        type: 'InitializeVariable',
+        inputs: {
+          variables: [
+            { name: 'decision', type: 'string', value: "@triggerBody()?['decision']" },
+            { name: 'result', type: 'string', value: 'pending' },
+          ],
+        },
+      },
+      parsePayload: {
+        type: 'ParseJson',
+        runAfter: {
+          initializeState: ['Succeeded'],
+        },
+        inputs: {
+          content: '@triggerBody()',
+          schema: {
+            type: 'object',
+            required: ['decision'],
+          },
+        },
+      },
+      chooseResult: {
+        type: 'If',
+        runAfter: {
+          parsePayload: ['Succeeded'],
+        },
+        expression: "@equals(@variables('decision'), 'approve')",
+        actions: {
+          markApproved: {
+            type: 'SetVariable',
+            inputs: {
+              name: 'result',
+              value: 'approved',
+            },
+          },
+        },
+        else: {
+          actions: {
+            markRejected: {
+              type: 'SetVariable',
+              inputs: {
+                name: 'result',
+                value: 'rejected',
+              },
+            },
+          },
+        },
+      },
+      respond: {
+        type: 'Response',
+        kind: 'Http',
+        runAfter: {
+          chooseResult: ['Succeeded'],
+        },
+        inputs: {
+          statusCode: 200,
+          body: {
+            decision: "@variables('result')",
+            payload: "@actions('parsePayload').outputs",
+          },
+        },
+      },
+    },
+  });
+}
+
+function advancedWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: advancedWorkflowDefinition(),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
+function terminatingWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        actions: {
+          stopNow: {
+            type: 'Terminate',
+            inputs: {
+              runStatus: 'Failed',
+              runError: {
+                code: 'RejectedByPolicy',
+                message: 'The workflow was rejected by policy.',
+              },
+            },
+          },
+          shouldNotRun: {
+            type: 'Response',
+            runAfter: {
+              stopNow: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                shouldNotRun: true,
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
 function deploymentBody(workflowName) {
   return {
     properties: {
@@ -195,6 +310,8 @@ async function runControlPlaneMatrix() {
   const missingResourceGroup = `rg-gs-logic-missing-${suffix}`;
   const workflowName = `workflow-${suffix}`.slice(0, 40);
   const missingWorkflowName = `workflow-missing-${suffix}`.slice(0, 40);
+  const advancedWorkflowName = `workflow-adv-${suffix}`.slice(0, 40);
+  const terminateWorkflowName = `workflow-term-${suffix}`.slice(0, 40);
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -338,6 +455,94 @@ async function runControlPlaneMatrix() {
       assert.equal(run.status, 200);
       assert.equal(run.body.status, 'Succeeded');
       return { status: result.status, runId: result.body.id };
+    });
+
+    await record('local workflow runner honors runAfter and conditional flow', async () => {
+      workflowRunner.registerWorkflow({
+        workflowName: advancedWorkflowName,
+        properties: advancedWorkflowBody().properties,
+      });
+      const result = workflowRunner.invoke({
+        workflowName: advancedWorkflowName,
+        triggerName: 'manual',
+        body: { decision: 'approve', documentId: 'robot-17' },
+      });
+      assert.equal(result.status, 202);
+      assert.equal(result.body.status, 'Succeeded');
+      assert.equal(result.body.response?.body?.decision, 'approved');
+      assert.equal(result.body.outputs.parsePayload.documentId, 'robot-17');
+      assert.equal(result.body.outputs.chooseResult.condition, true);
+      return { status: result.status, runId: result.body.id };
+    });
+
+    await record('local workflow runner terminate action marks failed run', async () => {
+      workflowRunner.registerWorkflow({
+        workflowName: terminateWorkflowName,
+        properties: terminatingWorkflowBody().properties,
+      });
+      const result = workflowRunner.invoke({
+        workflowName: terminateWorkflowName,
+        triggerName: 'manual',
+        body: { decision: 'reject' },
+      });
+      assert.equal(result.status, 202);
+      assert.equal(result.body.status, 'Failed');
+      assert.equal(result.body.error.code, 'RejectedByPolicy');
+      assert.ok(!result.body.actions.some(item => item.name === 'shouldNotRun'));
+      return { status: result.status, runId: result.body.id };
+    });
+
+    await record('advanced workflow create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, advancedWorkflowName), advancedWorkflowBody());
+      assert.equal(result.status, 201);
+      assert.equal(result.body.name, advancedWorkflowName);
+      return { status: result.status };
+    });
+
+    await record('workflow trigger route executes conditional branch semantics', async () => {
+      const invoked = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${advancedWorkflowName}/triggers/manual/run`, '2019-05-01'),
+        { decision: 'reject', documentId: 'robot-18' },
+      );
+      assert.equal(invoked.status, 202);
+      const runId = invoked.headers.location?.split('/').filter(Boolean).at(-1);
+      assert.ok(runId);
+      const run = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${advancedWorkflowName}/runs/${runId}`, '2019-05-01'),
+      );
+      assert.equal(run.status, 200);
+      assert.equal(run.body.status, 'Succeeded');
+      assert.equal(run.body.response?.body?.decision, 'rejected');
+      assert.equal(run.body.outputs.parsePayload.documentId, 'robot-18');
+      return { status: run.status, runtimeStatus: run.body.status };
+    });
+
+    await record('terminating workflow route preserves failed run status', async () => {
+      const create = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, terminateWorkflowName), terminatingWorkflowBody());
+      assert.equal(create.status, 201);
+      const invoked = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${terminateWorkflowName}/triggers/manual/run`, '2019-05-01'),
+        { decision: 'reject' },
+      );
+      assert.equal(invoked.status, 202);
+      const runId = invoked.headers.location?.split('/').filter(Boolean).at(-1);
+      assert.ok(runId);
+      const run = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${terminateWorkflowName}/runs/${runId}`, '2019-05-01'),
+      );
+      assert.equal(run.status, 200);
+      assert.equal(run.body.status, 'Failed');
+      assert.equal(run.body.error.code, 'RejectedByPolicy');
+      assert.ok(!run.body.actions.some(item => item.name === 'shouldNotRun'));
+      return { status: run.status, runtimeStatus: run.body.status };
     });
 
     await record('workflow trigger run route succeeds', async () => {
@@ -542,7 +747,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner success and failure behavior, supported trigger-run and run-history routes, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, Azure-hosted trigger execution, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, bounded request-trigger runner success and failure behavior, supported runAfter/conditional/terminate semantics for the implemented action subset, supported trigger-run and run-history routes, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, Azure-hosted trigger execution, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -554,7 +759,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner checks, supported trigger-run and run-history routes, unsupported route fail-closed checks outside that subset, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, bounded request-trigger runner checks, supported runAfter/conditional/terminate action semantics, supported trigger-run and run-history routes, unsupported route fail-closed checks outside that subset, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Logic Apps cloudValidated claim.',
   controlPlane,
   platformMatrix,

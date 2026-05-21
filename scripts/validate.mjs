@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 29) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 29 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 38) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 38 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1433,6 +1433,11 @@ if (!logicWorkflowsParityText) {
     'local workflow runner missing workflow is not found',
     'local workflow runner missing trigger is not found',
     'local workflow runner request trigger succeeds',
+    'local workflow runner honors runAfter and conditional flow',
+    'local workflow runner terminate action marks failed run',
+    'advanced workflow create succeeds',
+    'workflow trigger route executes conditional branch semantics',
+    'terminating workflow route preserves failed run status',
     'workflow trigger run route succeeds',
     'workflow runs list includes created runs',
     'workflow run get route succeeds',
@@ -1469,8 +1474,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 57) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 57 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 68) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 68 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1492,6 +1497,14 @@ if (!azureFunctionsParityText) {
     'function child resource create succeeds',
     'function listKeys returns deterministic key',
     'function host listKeys returns host keys',
+    'durable function resources create succeeds',
+    'durable orchestration start rejects missing key',
+    'durable orchestration start rejects unknown orchestrator',
+    'durable orchestration start returns management payload',
+    'durable orchestration status query shows running instance',
+    'durable orchestration suspend and resume succeed',
+    'durable orchestration raise event completes instance',
+    'durable orchestration terminate and purge succeed',
     'function app unsupported function action fails closed',
     'function route rejects disallowed method',
     'secured function rejects missing key',

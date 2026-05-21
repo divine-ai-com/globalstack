@@ -2152,22 +2152,25 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
       );
     }
     const httpTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
-    if (httpTriggers.length !== 1) {
+    const orchestrationTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'orchestrationtrigger');
+    const activityTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
+    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length;
+    if (supportedTriggerCount !== 1) {
       return envelopedError(
         400,
         'ValidationError',
-        'Function resources currently require exactly one httpTrigger binding in this local parity surface.',
+        'Function resources currently require exactly one supported trigger binding in this local parity surface.',
       );
     }
-    const trigger = httpTriggers[0];
-    if (trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
+    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0];
+    if (httpTriggers.length === 1 && trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
       return envelopedError(
         400,
         'ValidationError',
         `Function binding authLevel '${trigger.authLevel}' is invalid.`,
       );
     }
-    if (trigger.methods !== undefined && (!Array.isArray(trigger.methods) || trigger.methods.length === 0 || trigger.methods.some(method => typeof method !== 'string'))) {
+    if (httpTriggers.length === 1 && trigger.methods !== undefined && (!Array.isArray(trigger.methods) || trigger.methods.length === 0 || trigger.methods.some(method => typeof method !== 'string'))) {
       return envelopedError(
         400,
         'ValidationError',

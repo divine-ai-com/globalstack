@@ -295,6 +295,46 @@ function functionResourceBody({ route, authLevel = 'function', methods = ['POST'
   };
 }
 
+function durableOrchestratorResourceBody() {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'orchestrationTrigger',
+            direction: 'in',
+            name: 'context',
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
+function durableActivityResourceBody() {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'activityTrigger',
+            direction: 'in',
+            name: 'input',
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
 async function runControlAndDataPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
@@ -304,9 +344,12 @@ async function runControlAndDataPlaneMatrix() {
   const appName = `func-${suffix}`.slice(0, 60);
   const missingPlanName = `missing-${suffix}`.slice(0, 40);
   let securedFunctionKey = null;
+  let hostFunctionKey = null;
   let planOperation = null;
   let appOperation = null;
   let functionHost = null;
+  let durableWaitInstanceId = null;
+  let durableTerminateInstanceId = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -692,7 +735,178 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.ok(result.body.masterKey);
         assert.ok(result.body.functionKeys?.default);
+        hostFunctionKey = result.body.functionKeys.default;
         return { status: result.status };
+      });
+
+      await record('durable function resources create succeeds', async () => {
+        const orchestrator = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/robotOrchestrator`),
+          durableOrchestratorResourceBody(),
+        );
+        assert.equal(orchestrator.status, 201);
+        const activity = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/scoreActivity`),
+          durableActivityResourceBody(),
+        );
+        assert.equal(activity.status, 201);
+        return { status: activity.status, count: 2 };
+      });
+
+      await record('durable orchestration start rejects missing key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/runtime/webhooks/durabletask/orchestrators/robotOrchestrator', {
+          waitForExternalEvent: 'approved',
+        }, { host: functionHost });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('durable orchestration start rejects unknown orchestrator', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/runtime/webhooks/durabletask/orchestrators/missingFlow?code=' + encodeURIComponent(hostFunctionKey), {
+          waitForExternalEvent: 'approved',
+        }, { host: functionHost });
+        assert.equal(result.status, 404);
+        assert.equal(errorCode(result), 'OrchestratorNotFound');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('durable orchestration start returns management payload', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`, {
+          waitForExternalEvent: 'approved',
+          customStatus: 'waiting-review',
+        }, { host: functionHost });
+        assert.equal(result.status, 202);
+        assert.ok(result.body.id);
+        assert.ok(result.body.statusQueryGetUri);
+        assert.ok(result.body.sendEventPostUri);
+        durableWaitInstanceId = result.body.id;
+        return { status: result.status, instanceId: durableWaitInstanceId };
+      });
+
+      await record('durable orchestration status query shows running instance', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Running');
+        assert.equal(result.body.customStatus, 'waiting-review');
+        assert.ok(Array.isArray(result.body.history));
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
+      await record('durable orchestration suspend and resume succeed', async () => {
+        const suspend = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}/suspend?code=${encodeURIComponent(hostFunctionKey)}`,
+          {},
+          { host: functionHost },
+        );
+        assert.equal(suspend.status, 202);
+        const suspended = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(suspended.body.runtimeStatus, 'Suspended');
+        const resume = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}/resume?code=${encodeURIComponent(hostFunctionKey)}`,
+          {},
+          { host: functionHost },
+        );
+        assert.equal(resume.status, 202);
+        const resumed = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(resumed.body.runtimeStatus, 'Running');
+        return { status: resumed.status, runtimeStatus: resumed.body.runtimeStatus };
+      });
+
+      await record('durable orchestration raise event completes instance', async () => {
+        const raised = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}/raiseEvent/approved?code=${encodeURIComponent(hostFunctionKey)}`,
+          { reviewer: 'ops-bot', approved: true },
+          { host: functionHost },
+        );
+        assert.equal(raised.status, 202);
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Completed');
+        assert.equal(result.body.output.events[0].name, 'approved');
+        assert.ok(result.body.history.some(item => item.eventType === 'ExecutionCompleted'));
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
+      await record('durable orchestration terminate and purge succeed', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          { waitForExternalEvent: 'terminateLater' },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        durableTerminateInstanceId = started.body.id;
+        const terminate = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${durableTerminateInstanceId}/terminate?code=${encodeURIComponent(hostFunctionKey)}`,
+          { reason: 'operator stop' },
+          { host: functionHost },
+        );
+        assert.equal(terminate.status, 202);
+        const terminated = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableTerminateInstanceId}?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(terminated.status, 200);
+        assert.equal(terminated.body.runtimeStatus, 'Terminated');
+        const purge = await httpDataPlaneJson(
+          routerPort,
+          'DELETE',
+          `/runtime/webhooks/durabletask/instances/${durableTerminateInstanceId}?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(purge.status, 200);
+        const missing = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableTerminateInstanceId}?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(missing.status, 404);
+        assert.equal(errorCode(missing), 'OrchestrationNotFound');
+        return { status: purge.status, purged: true };
       });
 
       await record('function app unsupported function action fails closed', async () => {
@@ -986,7 +1200,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, Durable Functions, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, bounded Durable orchestration management routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -998,7 +1212,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded Durable orchestration management routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

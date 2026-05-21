@@ -8,6 +8,36 @@ function error(status, code, message) {
   return { error: { status, code, message } };
 }
 
+function splitExpressionArgs(text) {
+  const args = [];
+  let current = '';
+  let quote = null;
+  let depth = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (quote) {
+      current += char;
+      if (char === quote) quote = null;
+      continue;
+    }
+    if (char === '\'' || char === '"') {
+      quote = char;
+      current += char;
+      continue;
+    }
+    if (char === '(') depth += 1;
+    if (char === ')') depth -= 1;
+    if (char === ',' && depth === 0) {
+      args.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  if (current.trim()) args.push(current.trim());
+  return args;
+}
+
 export class WorkflowRunner {
   constructor() {
     this.workflows = new Map();
@@ -33,7 +63,11 @@ export class WorkflowRunner {
     if (value && typeof value === 'object') {
       return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, this.evaluateExpression(item, context)]));
     }
-    if (typeof value !== 'string' || !value.startsWith('@')) return value;
+    if (typeof value !== 'string') return value;
+    if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
+      return value.slice(1, -1);
+    }
+    if (!value.startsWith('@')) return value;
     if (value === '@triggerBody()') return context.triggerBody;
 
     let match = value.match(/^@triggerBody\(\)\?\['([^']+)'\]$/);
@@ -45,126 +79,251 @@ export class WorkflowRunner {
     match = value.match(/^@actions\('([^']+)'\)\.outputs$/);
     if (match) return context.actionOutputs.get(match[1]) ?? null;
 
-    match = value.match(/^@equals\((.+),\s*(.+)\)$/);
-    if (match) {
-      const left = this.evaluateExpression(match[1].trim(), context);
-      const right = this.evaluateExpression(match[2].trim(), context);
+    if (value.startsWith('@equals(') && value.endsWith(')')) {
+      const args = splitExpressionArgs(value.slice('@equals('.length, -1));
+      const left = this.evaluateExpression(args[0]?.trim(), context);
+      const right = this.evaluateExpression(args[1]?.trim(), context);
       return left === right;
     }
 
-    if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
-      return value.slice(1, -1);
-    }
     return value;
   }
 
+  executeActions(declaredActions, context) {
+    const pending = new Set(Object.keys(declaredActions ?? {}));
+    const orderedResults = [];
+    const actionStatuses = new Map();
+
+    const record = (actionName, result) => {
+      orderedResults.push(result);
+      actionStatuses.set(actionName, result.status);
+      if (result.outputs !== undefined) {
+        context.actionOutputs.set(actionName, result.outputs);
+      }
+    };
+
+    while (pending.size > 0) {
+      let progressed = false;
+      for (const actionName of [...pending]) {
+        const action = declaredActions[actionName];
+        const dependencies = Object.entries(action?.runAfter ?? {});
+        if (dependencies.some(([dependency]) => !actionStatuses.has(dependency))) {
+          continue;
+        }
+        const unsatisfiedDependency = dependencies.find(([dependency, statuses]) => {
+          const actual = actionStatuses.get(dependency);
+          return !Array.isArray(statuses) || !statuses.includes(actual);
+        });
+        if (unsatisfiedDependency) {
+          record(actionName, {
+            name: actionName,
+            type: String(action?.type ?? ''),
+            status: 'Skipped',
+            startTime: new Date().toISOString(),
+            endTime: new Date().toISOString(),
+            outputs: {
+              skippedBecause: unsatisfiedDependency[0],
+            },
+          });
+          pending.delete(actionName);
+          progressed = true;
+          continue;
+        }
+
+        const startedAt = new Date().toISOString();
+        try {
+          const execution = this.executeAction(actionName, action, context);
+          record(actionName, {
+            name: actionName,
+            type: String(action?.type ?? ''),
+            status: execution.status ?? 'Succeeded',
+            startTime: startedAt,
+            endTime: new Date().toISOString(),
+            ...(execution.outputs !== undefined ? { outputs: execution.outputs } : {}),
+            ...(execution.error ? { error: execution.error } : {}),
+          });
+          pending.delete(actionName);
+          progressed = true;
+          if (execution.halt) {
+            return {
+              status: execution.runStatus ?? 'Succeeded',
+              actions: orderedResults,
+              response: context.response,
+              error: execution.error ?? null,
+              outputs: Object.fromEntries(context.actionOutputs.entries()),
+            };
+          }
+        } catch (error) {
+          record(actionName, {
+            name: actionName,
+            type: String(action?.type ?? ''),
+            status: 'Failed',
+            startTime: startedAt,
+            endTime: new Date().toISOString(),
+            error: {
+              code: 'UnsupportedWorkflowAction',
+              message: error.message,
+            },
+          });
+          pending.delete(actionName);
+          return {
+            status: 'Failed',
+            actions: orderedResults,
+            response: context.response,
+            error: {
+              code: 'UnsupportedWorkflowAction',
+              message: error.message,
+            },
+            outputs: Object.fromEntries(context.actionOutputs.entries()),
+          };
+        }
+      }
+
+      if (progressed) continue;
+      for (const actionName of [...pending]) {
+        record(actionName, {
+          name: actionName,
+          type: String(declaredActions[actionName]?.type ?? ''),
+          status: 'Skipped',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+          outputs: {
+            skippedBecause: 'runAfterDependencyNotSatisfied',
+          },
+        });
+        pending.delete(actionName);
+      }
+    }
+
+    return {
+      status: 'Succeeded',
+      actions: orderedResults,
+      response: context.response,
+      outputs: Object.fromEntries(context.actionOutputs.entries()),
+    };
+  }
+
+  executeAction(actionName, action, context) {
+    const actionType = String(action?.type ?? '');
+    if (actionType === 'Compose') {
+      return {
+        status: 'Succeeded',
+        outputs: this.evaluateExpression(action.inputs ?? null, context),
+      };
+    }
+
+    if (actionType === 'InitializeVariable') {
+      for (const variable of action.inputs?.variables ?? []) {
+        context.variables.set(variable.name, this.evaluateExpression(variable.value, context));
+      }
+      return {
+        status: 'Succeeded',
+        outputs: Object.fromEntries(context.variables.entries()),
+      };
+    }
+
+    if (actionType === 'SetVariable') {
+      const variableName = action.inputs?.name;
+      context.variables.set(variableName, this.evaluateExpression(action.inputs?.value, context));
+      return {
+        status: 'Succeeded',
+        outputs: { [variableName]: context.variables.get(variableName) },
+      };
+    }
+
+    if (actionType === 'ParseJson') {
+      const content = this.evaluateExpression(action.inputs?.content ?? null, context);
+      const schema = action.inputs?.schema ?? {};
+      if (schema?.type === 'object' && (!content || typeof content !== 'object' || Array.isArray(content))) {
+        throw new Error(`ParseJson action '${actionName}' expected an object payload.`);
+      }
+      if (Array.isArray(schema?.required)) {
+        for (const key of schema.required) {
+          if (!(key in (content ?? {}))) {
+            throw new Error(`ParseJson action '${actionName}' is missing required property '${key}'.`);
+          }
+        }
+      }
+      return {
+        status: 'Succeeded',
+        outputs: content,
+      };
+    }
+
+    if (actionType === 'If') {
+      const condition = Boolean(this.evaluateExpression(action.expression ?? false, context));
+      const branch = condition ? 'actions' : 'else';
+      const branchActions = condition ? (action.actions ?? {}) : (action.else?.actions ?? {});
+      const branchResult = this.executeActions(branchActions, context);
+      if (branchResult.status === 'Failed' || branchResult.status === 'Cancelled') {
+        return {
+          status: branchResult.status === 'Failed' ? 'Failed' : 'Cancelled',
+          outputs: {
+            condition,
+            branch,
+            actions: branchResult.actions,
+          },
+          error: branchResult.error ?? null,
+          halt: branchResult.status !== 'Succeeded',
+          runStatus: branchResult.status,
+        };
+      }
+      return {
+        status: 'Succeeded',
+        outputs: {
+          condition,
+          branch,
+          actions: branchResult.actions,
+        },
+      };
+    }
+
+    if (actionType === 'Response') {
+      const outputs = {
+        statusCode: this.evaluateExpression(action.inputs?.statusCode ?? 200, context),
+        headers: this.evaluateExpression(action.inputs?.headers ?? {}, context),
+        body: this.evaluateExpression(action.inputs?.body ?? null, context),
+      };
+      context.response = outputs;
+      return {
+        status: 'Succeeded',
+        outputs,
+      };
+    }
+
+    if (actionType === 'Terminate') {
+      const runStatus = String(this.evaluateExpression(action.inputs?.runStatus ?? 'Succeeded', context));
+      const code = this.evaluateExpression(action.inputs?.runError?.code ?? 'WorkflowTerminated', context);
+      const message = this.evaluateExpression(action.inputs?.runError?.message ?? `Workflow terminated with status '${runStatus}'.`, context);
+      return {
+        status: runStatus,
+        outputs: {
+          runStatus,
+          code,
+          message,
+        },
+        error: runStatus === 'Succeeded'
+          ? null
+          : {
+              code,
+              message,
+            },
+        halt: true,
+        runStatus,
+      };
+    }
+
+    throw new Error(`Unsupported workflow action type '${actionType}'.`);
+  }
+
   executeWorkflow(workflow, input) {
-    const actions = [];
     const context = {
       triggerBody: input ?? null,
       variables: new Map(),
       actionOutputs: new Map(),
       response: null,
     };
-    const declaredActions = workflow.definition?.actions ?? {};
-
-    for (const [actionName, action] of Object.entries(declaredActions)) {
-      const actionType = String(action?.type ?? '');
-      const startedAt = new Date().toISOString();
-      try {
-        if (actionType === 'Compose') {
-          const outputs = this.evaluateExpression(action.inputs ?? null, context);
-          context.actionOutputs.set(actionName, outputs);
-          actions.push({
-            name: actionName,
-            type: actionType,
-            status: 'Succeeded',
-            startTime: startedAt,
-            endTime: new Date().toISOString(),
-            outputs,
-          });
-          continue;
-        }
-
-        if (actionType === 'InitializeVariable') {
-          for (const variable of action.inputs?.variables ?? []) {
-            context.variables.set(variable.name, this.evaluateExpression(variable.value, context));
-          }
-          actions.push({
-            name: actionName,
-            type: actionType,
-            status: 'Succeeded',
-            startTime: startedAt,
-            endTime: new Date().toISOString(),
-            outputs: Object.fromEntries(context.variables.entries()),
-          });
-          continue;
-        }
-
-        if (actionType === 'SetVariable') {
-          const variableName = action.inputs?.name;
-          context.variables.set(variableName, this.evaluateExpression(action.inputs?.value, context));
-          actions.push({
-            name: actionName,
-            type: actionType,
-            status: 'Succeeded',
-            startTime: startedAt,
-            endTime: new Date().toISOString(),
-            outputs: { [variableName]: context.variables.get(variableName) },
-          });
-          continue;
-        }
-
-        if (actionType === 'Response') {
-          const outputs = {
-            statusCode: this.evaluateExpression(action.inputs?.statusCode ?? 200, context),
-            headers: this.evaluateExpression(action.inputs?.headers ?? {}, context),
-            body: this.evaluateExpression(action.inputs?.body ?? null, context),
-          };
-          context.response = outputs;
-          context.actionOutputs.set(actionName, outputs);
-          actions.push({
-            name: actionName,
-            type: actionType,
-            status: 'Succeeded',
-            startTime: startedAt,
-            endTime: new Date().toISOString(),
-            outputs,
-          });
-          continue;
-        }
-
-        throw new Error(`Unsupported workflow action type '${actionType}'.`);
-      } catch (error) {
-        actions.push({
-          name: actionName,
-          type: actionType,
-          status: 'Failed',
-          startTime: startedAt,
-          endTime: new Date().toISOString(),
-          error: {
-            code: 'UnsupportedWorkflowAction',
-            message: error.message,
-          },
-        });
-        return {
-          status: 'Failed',
-          actions,
-          response: context.response,
-          error: {
-            code: 'UnsupportedWorkflowAction',
-            message: error.message,
-          },
-        };
-      }
-    }
-
-    return {
-      status: 'Succeeded',
-      actions,
-      response: context.response,
-      outputs: Object.fromEntries(context.actionOutputs.entries()),
-    };
+    return this.executeActions(workflow.definition?.actions ?? {}, context);
   }
 
   invoke({ workflowName, triggerName, body }) {

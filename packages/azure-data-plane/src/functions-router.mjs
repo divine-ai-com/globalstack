@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 
@@ -61,6 +61,70 @@ function hostKey(appName, slot = 'default') {
     .slice(0, 44);
 }
 
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function durableStatusPayload(origin, app, instance, includeHistory = false) {
+  const basePath = `/runtime/webhooks/durabletask/instances/${encodeURIComponent(instance.instanceId)}`;
+  const payload = {
+    name: instance.orchestratorName,
+    instanceId: instance.instanceId,
+    createdTime: instance.createdTime,
+    lastUpdatedTime: instance.lastUpdatedTime,
+    runtimeStatus: instance.runtimeStatus,
+    input: instance.input ?? null,
+    customStatus: instance.customStatus ?? null,
+    output: instance.output ?? null,
+  };
+  if (instance.failureDetails) payload.failureDetails = instance.failureDetails;
+  if (includeHistory) payload.history = instance.history;
+  if (instance.runtimeStatus !== 'Completed') {
+    payload.statusQueryGetUri = `${origin}${basePath}`;
+    payload.sendEventPostUri = `${origin}${basePath}/raiseEvent/{eventName}`;
+    payload.terminatePostUri = `${origin}${basePath}/terminate`;
+    payload.purgeHistoryDeleteUri = `${origin}${basePath}`;
+    payload.suspendPostUri = `${origin}${basePath}/suspend`;
+    payload.resumePostUri = `${origin}${basePath}/resume`;
+  }
+  return payload;
+}
+
+function durableRoute(pathname) {
+  const parts = String(pathname ?? '')
+    .split('/')
+    .filter(Boolean)
+    .map(segment => decodeURIComponent(segment));
+  if (parts[0] !== 'runtime' || parts[1] !== 'webhooks' || parts[2] !== 'durabletask') return null;
+  if (parts[3] === 'orchestrators' && parts[4]) {
+    return {
+      kind: 'start',
+      orchestratorName: parts[4],
+    };
+  }
+  if (parts[3] !== 'instances' || !parts[4]) return null;
+  if (parts.length === 5) {
+    return {
+      kind: 'instance',
+      instanceId: parts[4],
+    };
+  }
+  if (parts[5] === 'raiseEvent' && parts[6]) {
+    return {
+      kind: 'raiseEvent',
+      instanceId: parts[4],
+      eventName: parts[6],
+    };
+  }
+  if (parts.length === 6 && ['terminate', 'suspend', 'resume'].includes(parts[5])) {
+    return {
+      kind: parts[5],
+      instanceId: parts[4],
+    };
+  }
+  return null;
+}
+
 function requestKey(req, url) {
   return req.headers['x-functions-key'] ?? url.searchParams.get('code') ?? null;
 }
@@ -103,6 +167,13 @@ export class FunctionsRouter {
       appName: name,
       defaultHostName: defaultHostName ?? `${name}.azurewebsites.net`,
       functions: new Map(),
+      functionsByName: new Map(),
+      functionResources: new Map(),
+      durable: {
+        orchestrators: new Map(),
+        activities: new Map(),
+        instances: new Map(),
+      },
     });
   }
 
@@ -115,13 +186,15 @@ export class FunctionsRouter {
     if (!app) throw new Error(`Function App ${appName} is not registered in the local router.`);
     const normalizedRoute = normalizeRoute(route || functionName);
     const normalizedMethods = methods.map(method => String(method).toUpperCase());
-    app.functions.set(normalizedRoute.toLowerCase(), {
+    const definition = {
       functionName,
       route: normalizedRoute,
       methods: normalizedMethods,
       authLevel,
       key: key ?? functionKey(app.appName, functionName),
-    });
+    };
+    app.functions.set(normalizedRoute.toLowerCase(), definition);
+    app.functionsByName.set(String(functionName).toLowerCase(), definition);
   }
 
   unregisterHttpFunction({ appName, route }) {
@@ -130,8 +203,30 @@ export class FunctionsRouter {
   }
 
   registerFunctionResource({ appName, functionName, config = {} }) {
+    const app = this.apps.get(String(appName).toLowerCase());
+    if (!app) throw new Error(`Function App ${appName} is not registered in the local router.`);
     const bindings = Array.isArray(config.bindings) ? config.bindings : [];
+    const normalizedFunctionName = String(functionName).toLowerCase();
+    app.functionResources.set(normalizedFunctionName, {
+      functionName,
+      config,
+      bindings,
+    });
     const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
+    const orchestrationTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'orchestrationtrigger');
+    const activityTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
+    if (orchestrationTrigger) {
+      app.durable.orchestrators.set(normalizedFunctionName, {
+        functionName,
+        bindingName: orchestrationTrigger.name ?? 'context',
+      });
+    }
+    if (activityTrigger) {
+      app.durable.activities.set(normalizedFunctionName, {
+        functionName,
+        bindingName: activityTrigger.name ?? 'input',
+      });
+    }
     if (!httpTrigger) return null;
     const route = httpTrigger.route ?? functionName;
     const methods = Array.isArray(httpTrigger.methods) && httpTrigger.methods.length > 0
@@ -152,6 +247,14 @@ export class FunctionsRouter {
   }
 
   unregisterFunctionResource({ appName, config = {}, functionName }) {
+    const app = this.apps.get(String(appName).toLowerCase());
+    if (app) {
+      const normalizedFunctionName = String(functionName).toLowerCase();
+      app.functionResources.delete(normalizedFunctionName);
+      app.functionsByName.delete(normalizedFunctionName);
+      app.durable.orchestrators.delete(normalizedFunctionName);
+      app.durable.activities.delete(normalizedFunctionName);
+    }
     const bindings = Array.isArray(config.bindings) ? config.bindings : [];
     const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
     this.unregisterHttpFunction({
@@ -163,7 +266,8 @@ export class FunctionsRouter {
   listFunctionKeys({ appName, functionName }) {
     const app = this.apps.get(String(appName).toLowerCase());
     if (!app) return null;
-    const fn = [...app.functions.values()].find(item => item.functionName.toLowerCase() === String(functionName).toLowerCase());
+    const fn = app.functionsByName.get(String(functionName).toLowerCase())
+      ?? [...app.functions.values()].find(item => item.functionName.toLowerCase() === String(functionName).toLowerCase());
     if (!fn) return null;
     return {
       keys: {
@@ -181,6 +285,222 @@ export class FunctionsRouter {
         default: hostKey(app.appName, 'function-default'),
       },
       systemKeys: {},
+    };
+  }
+
+  durableInstance(appName, instanceId) {
+    const app = this.apps.get(String(appName).toLowerCase());
+    if (!app) return null;
+    return app.durable.instances.get(String(instanceId).toLowerCase()) ?? null;
+  }
+
+  isAuthorizedKey(app, candidate, functionName = null) {
+    if (!candidate) return false;
+    if (candidate === hostKey(app.appName, 'master') || candidate === hostKey(app.appName, 'function-default')) {
+      return true;
+    }
+    if (functionName) {
+      const fn = app.functionsByName.get(String(functionName).toLowerCase());
+      if (fn?.key === candidate) return true;
+    }
+    return [...app.functions.values()].some(item => item.key === candidate);
+  }
+
+  startDurableInstance({ app, orchestratorName, input, origin, requestedInstanceId = null }) {
+    const orchestrator = app.durable.orchestrators.get(String(orchestratorName).toLowerCase());
+    if (!orchestrator) {
+      return {
+        status: 404,
+        body: {
+          error: {
+            code: 'OrchestratorNotFound',
+            message: `No Durable orchestrator named '${orchestratorName}' is registered for Function App '${app.appName}'.`,
+          },
+        },
+      };
+    }
+    const instanceId = String(requestedInstanceId ?? randomUUID());
+    const createdTime = nowIso();
+    const activityNames = [...app.durable.activities.values()].map(item => item.functionName);
+    const waitingForEvents = input?.waitForExternalEvent === undefined
+      ? []
+      : Array.isArray(input.waitForExternalEvent)
+        ? input.waitForExternalEvent.map(String)
+        : [String(input.waitForExternalEvent)];
+    const shouldFail = input?.failAtStart === true;
+    const runtimeStatus = shouldFail
+      ? 'Failed'
+      : waitingForEvents.length > 0
+        ? 'Running'
+        : 'Completed';
+    const instance = {
+      instanceId,
+      orchestratorName: orchestrator.functionName,
+      createdTime,
+      lastUpdatedTime: createdTime,
+      runtimeStatus,
+      input: input ?? null,
+      customStatus: input?.customStatus ?? null,
+      output: runtimeStatus === 'Completed'
+        ? {
+            orchestrator: orchestrator.functionName,
+            input: input ?? null,
+            activities: activityNames,
+          }
+        : null,
+      failureDetails: shouldFail
+        ? {
+            errorType: 'DurableFunctionFailed',
+            errorMessage: `The Durable orchestrator '${orchestrator.functionName}' failed during local startup.`,
+          }
+        : null,
+      waitingForEvents,
+      receivedEvents: [],
+      history: [
+        {
+          eventType: 'ExecutionStarted',
+          timestamp: createdTime,
+        },
+      ],
+    };
+    if (runtimeStatus === 'Completed') {
+      instance.history.push({
+        eventType: 'ExecutionCompleted',
+        timestamp: createdTime,
+      });
+    } else if (runtimeStatus === 'Failed') {
+      instance.history.push({
+        eventType: 'ExecutionFailed',
+        timestamp: createdTime,
+        details: instance.failureDetails,
+      });
+    }
+    app.durable.instances.set(instanceId.toLowerCase(), instance);
+    return {
+      status: 202,
+      body: {
+        id: instanceId,
+        ...durableStatusPayload(origin, app, instance),
+      },
+      headers: {
+        location: `${origin}/runtime/webhooks/durabletask/instances/${encodeURIComponent(instanceId)}`,
+      },
+    };
+  }
+
+  mutateDurableInstance({ app, instance, operation, body, eventName = null }) {
+    if (operation === 'raiseEvent') {
+      if (!['Running', 'Pending', 'Suspended'].includes(instance.runtimeStatus)) {
+        return {
+          status: 409,
+          body: {
+            error: {
+              code: 'InstanceNotRunning',
+              message: `The Durable instance '${instance.instanceId}' is not running.`,
+            },
+          },
+        };
+      }
+      instance.receivedEvents.push({
+        name: eventName,
+        data: body ?? null,
+        timestamp: nowIso(),
+      });
+      instance.history.push({
+        eventType: 'ExternalEventRaised',
+        name: eventName,
+        timestamp: nowIso(),
+      });
+      const remaining = instance.waitingForEvents.filter(name => name !== eventName);
+      instance.waitingForEvents = remaining;
+      if (remaining.length === 0) {
+        instance.runtimeStatus = 'Completed';
+        instance.output = {
+          orchestrator: instance.orchestratorName,
+          input: instance.input ?? null,
+          events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
+        };
+        instance.history.push({
+          eventType: 'ExecutionCompleted',
+          timestamp: nowIso(),
+        });
+      }
+      instance.lastUpdatedTime = nowIso();
+      return { status: 202, body: null };
+    }
+
+    if (operation === 'terminate') {
+      if (['Completed', 'Failed', 'Terminated'].includes(instance.runtimeStatus)) {
+        return {
+          status: 409,
+          body: {
+            error: {
+              code: 'InstanceNotTerminable',
+              message: `The Durable instance '${instance.instanceId}' cannot be terminated from state '${instance.runtimeStatus}'.`,
+            },
+          },
+        };
+      }
+      instance.runtimeStatus = 'Terminated';
+      instance.output = null;
+      instance.lastUpdatedTime = nowIso();
+      instance.history.push({
+        eventType: 'ExecutionTerminated',
+        timestamp: instance.lastUpdatedTime,
+      });
+      return { status: 202, body: null };
+    }
+
+    if (operation === 'suspend') {
+      if (instance.runtimeStatus !== 'Running') {
+        return {
+          status: 409,
+          body: {
+            error: {
+              code: 'InstanceNotSuspendable',
+              message: `The Durable instance '${instance.instanceId}' cannot be suspended from state '${instance.runtimeStatus}'.`,
+            },
+          },
+        };
+      }
+      instance.runtimeStatus = 'Suspended';
+      instance.lastUpdatedTime = nowIso();
+      instance.history.push({
+        eventType: 'ExecutionSuspended',
+        timestamp: instance.lastUpdatedTime,
+      });
+      return { status: 202, body: null };
+    }
+
+    if (operation === 'resume') {
+      if (instance.runtimeStatus !== 'Suspended') {
+        return {
+          status: 409,
+          body: {
+            error: {
+              code: 'InstanceNotResumable',
+              message: `The Durable instance '${instance.instanceId}' cannot be resumed from state '${instance.runtimeStatus}'.`,
+            },
+          },
+        };
+      }
+      instance.runtimeStatus = 'Running';
+      instance.lastUpdatedTime = nowIso();
+      instance.history.push({
+        eventType: 'ExecutionResumed',
+        timestamp: instance.lastUpdatedTime,
+      });
+      return { status: 202, body: null };
+    }
+
+    return {
+      status: 501,
+      body: {
+        error: {
+          code: 'GlobalStackRouteNotImplemented',
+          message: `No Durable operation handles '${operation}'.`,
+        },
+      },
     };
   }
 
@@ -211,6 +531,55 @@ export class FunctionsRouter {
       const app = this.apps.get(appName.toLowerCase());
       if (!app) {
         return sendError(res, 404, 'ResourceNotFound', `Function App '${appName}' was not found.`);
+      }
+
+      const origin = `http://${req.headers.host ?? app.defaultHostName}`;
+      const durable = durableRoute(url.pathname);
+      if (durable) {
+        if (!this.isAuthorizedKey(app, requestKey(req, url), durable.orchestratorName ?? null)) {
+          return sendError(res, 401, 'Unauthorized', 'The function key is missing or invalid.');
+        }
+        if (durable.kind === 'start' && method === 'POST') {
+          const result = this.startDurableInstance({
+            app,
+            orchestratorName: durable.orchestratorName,
+            input: await readBody(req),
+            origin,
+            requestedInstanceId: url.searchParams.get('instanceId'),
+          });
+          if (result.body?.error) return sendJson(res, result.status, result.body, result.headers ?? {});
+          return sendJson(res, result.status, result.body, result.headers ?? {});
+        }
+        const instance = this.durableInstance(app.appName, durable.instanceId);
+        if (!instance) {
+          return sendError(res, 404, 'OrchestrationNotFound', `The Durable instance '${durable.instanceId}' was not found.`);
+        }
+        if (durable.kind === 'instance' && method === 'GET') {
+          return sendJson(res, 200, durableStatusPayload(origin, app, instance, url.searchParams.get('showHistory') === 'true'));
+        }
+        if (durable.kind === 'instance' && method === 'DELETE') {
+          app.durable.instances.delete(String(durable.instanceId).toLowerCase());
+          return sendJson(res, 200, {
+            instanceId: durable.instanceId,
+            purged: true,
+          });
+        }
+        if (['raiseEvent', 'terminate', 'suspend', 'resume'].includes(durable.kind) && method === 'POST') {
+          const result = this.mutateDurableInstance({
+            app,
+            instance,
+            operation: durable.kind,
+            eventName: durable.eventName ?? null,
+            body: await readBody(req),
+          });
+          if (result.body?.error) return sendJson(res, result.status, result.body);
+          if (result.body === null) {
+            res.writeHead(result.status, { 'content-length': 0 });
+            return res.end();
+          }
+          return sendJson(res, result.status, result.body);
+        }
+        return sendError(res, 404, 'GlobalStackRouteNotImplemented', `No Durable Functions route handles ${method} ${url.pathname}.`);
       }
 
       const route = normalizeRoute(url.pathname);
