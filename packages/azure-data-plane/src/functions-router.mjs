@@ -155,6 +155,17 @@ function durableRoute(pathname) {
   return null;
 }
 
+function adminFunctionRoute(pathname) {
+  const parts = String(pathname ?? '')
+    .split('/')
+    .filter(Boolean)
+    .map(segment => decodeURIComponent(segment));
+  if (parts.length !== 3 || parts[0] !== 'admin' || parts[1] !== 'functions' || !parts[2]) return null;
+  return {
+    functionName: parts[2],
+  };
+}
+
 function requestKey(req, url) {
   return req.headers['x-functions-key'] ?? url.searchParams.get('code') ?? null;
 }
@@ -204,6 +215,7 @@ export class FunctionsRouter {
         activities: new Map(),
         instances: new Map(),
       },
+      triggers: new Map(),
     });
   }
 
@@ -245,6 +257,8 @@ export class FunctionsRouter {
     const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
     const orchestrationTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'orchestrationtrigger');
     const activityTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
+    const timerTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'timertrigger');
+    const queueTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
     if (orchestrationTrigger) {
       app.durable.orchestrators.set(normalizedFunctionName, {
         functionName,
@@ -255,6 +269,20 @@ export class FunctionsRouter {
       app.durable.activities.set(normalizedFunctionName, {
         functionName,
         bindingName: activityTrigger.name ?? 'input',
+      });
+    }
+    if (timerTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'timerTrigger',
+        schedule: timerTrigger.schedule ?? null,
+      });
+    }
+    if (queueTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'queueTrigger',
+        queueName: queueTrigger.queueName ?? null,
       });
     }
     if (!httpTrigger) return null;
@@ -284,6 +312,7 @@ export class FunctionsRouter {
       app.functionsByName.delete(normalizedFunctionName);
       app.durable.orchestrators.delete(normalizedFunctionName);
       app.durable.activities.delete(normalizedFunctionName);
+      app.triggers.delete(normalizedFunctionName);
     }
     const bindings = Array.isArray(config.bindings) ? config.bindings : [];
     const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
@@ -399,6 +428,69 @@ export class FunctionsRouter {
     };
   }
 
+  durableReplayStagePlan(app, input = null) {
+    const rawStages = Array.isArray(input?.replayStages) ? input.replayStages : [];
+    const stages = rawStages.map((stage, index) => {
+      const activityNames = Array.isArray(stage?.activities)
+        ? stage.activities.map(item => String(item))
+        : [];
+      const waitForEvents = stage?.waitForExternalEvent === undefined
+        ? []
+        : Array.isArray(stage.waitForExternalEvent)
+          ? stage.waitForExternalEvent.map(String)
+          : [String(stage.waitForExternalEvent)];
+      const durableTimer = stage?.durableTimer ?? null;
+      return {
+        index,
+        activityNames,
+        waitForEvents,
+        durableTimer,
+      };
+    }).filter(stage => stage.activityNames.length > 0 || stage.waitForEvents.length > 0 || stage.durableTimer);
+    if (stages.length === 0) return null;
+    const missingActivity = stages.flatMap(stage => stage.activityNames).find(name => !app.durable.activities.has(String(name).toLowerCase()));
+    if (missingActivity) {
+      return {
+        error: {
+          code: 'ActivityFunctionNotFound',
+          message: `No Durable activity named '${missingActivity}' is registered for Function App '${app.appName}'.`,
+        },
+      };
+    }
+    const activityPayloads = input?.activityPayloads && typeof input.activityPayloads === 'object'
+      ? input.activityPayloads
+      : {};
+    const now = Date.now();
+    const normalizedStages = stages.map(stage => {
+      let timer = null;
+      if (stage.durableTimer) {
+        const explicitDue = stage.durableTimer.fireAt ? Date.parse(String(stage.durableTimer.fireAt)) : null;
+        const delayMs = Number.isFinite(Number(stage.durableTimer.fireAfterMs)) ? Number(stage.durableTimer.fireAfterMs) : null;
+        const dueTimestamp = Number.isFinite(explicitDue)
+          ? explicitDue
+          : now + Math.max(0, delayMs ?? 0);
+        timer = {
+          name: String(stage.durableTimer.name ?? `stage-${stage.index + 1}-timer`),
+          dueTime: new Date(dueTimestamp).toISOString(),
+          dueTimestamp,
+          fired: dueTimestamp <= now,
+        };
+      }
+      return {
+        ...stage,
+        activities: stage.activityNames.map(name => ({
+          name,
+          output: stableActivityOutput(name, activityPayloads[name] ?? null),
+        })),
+        timer,
+      };
+    });
+    return {
+      stages: normalizedStages,
+      replayCount: clampInteger(input?.replayCount ?? 0, 0, 10),
+    };
+  }
+
   appendDurableReplay(instance, timestamp = nowIso(), reason = 'reconciliation') {
     instance.replayCursor = (instance.replayCursor ?? 0) + 1;
     instance.history.push({
@@ -406,6 +498,99 @@ export class FunctionsRouter {
       name: instance.orchestratorName,
       replayNumber: instance.replayCursor,
       reason,
+      timestamp,
+    });
+    instance.lastUpdatedTime = timestamp;
+  }
+
+  executeReplayStage(instance, stageIndex, timestamp = nowIso()) {
+    const stage = instance.replayStages?.[stageIndex];
+    if (!stage) return;
+    const checkpoint = {
+      ...stableCheckpointOutput(stageIndex, stage.activities.map(item => item.name), 'replay-stage'),
+      savedAt: timestamp,
+    };
+    instance.history.push({
+      eventType: 'CheckpointLoaded',
+      checkpointName: instance.completedReplayStages === 0 ? 'checkpoint-0' : `checkpoint-${instance.completedReplayStages}`,
+      stageIndex: stageIndex + 1,
+      timestamp,
+    });
+    for (const activity of stage.activities) {
+      instance.activityResults.push(activity);
+      instance.history.push({
+        eventType: 'TaskScheduled',
+        name: activity.name,
+        batchIndex: stageIndex + 1,
+        timestamp,
+      });
+      instance.history.push({
+        eventType: 'TaskCompleted',
+        name: activity.name,
+        batchIndex: stageIndex + 1,
+        timestamp,
+        result: activity.output,
+      });
+    }
+    instance.checkpoints.push(checkpoint);
+    instance.history.push({
+      eventType: 'CheckpointSaved',
+      checkpointName: checkpoint.checkpointName,
+      batchIndex: stageIndex + 1,
+      timestamp,
+    });
+    instance.activityBatches.push({
+      batchIndex: stageIndex,
+      activities: stage.activities,
+    });
+    instance.completedReplayStages += 1;
+    instance.activeStageIndex = stageIndex + 1;
+    instance.waitingForEvents = [...stage.waitForEvents];
+    instance.timerResults = stage.timer ? [stage.timer] : [];
+    if (stage.timer) {
+      instance.history.push({
+        eventType: 'TimerCreated',
+        name: stage.timer.name,
+        timestamp,
+        fireAt: stage.timer.dueTime,
+      });
+      if (stage.timer.fired) {
+        instance.history.push({
+          eventType: 'TimerFired',
+          name: stage.timer.name,
+          timestamp,
+        });
+      }
+    }
+  }
+
+  advanceReplayStages(instance, reason = 'replay', timestamp = nowIso()) {
+    if (!instance.replayStages || instance.runtimeStatus === 'Completed' || instance.runtimeStatus === 'Failed' || instance.runtimeStatus === 'Terminated') return;
+    while (instance.activeStageIndex < instance.replayStages.length) {
+      this.appendDurableReplay(instance, timestamp, reason);
+      this.executeReplayStage(instance, instance.activeStageIndex, timestamp);
+      const pendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
+      if (instance.waitingForEvents.length > 0 || pendingTimers.length > 0) {
+        instance.runtimeStatus = 'Running';
+        instance.lastUpdatedTime = timestamp;
+        return;
+      }
+    }
+    instance.runtimeStatus = 'Completed';
+    instance.output = {
+      orchestrator: instance.orchestratorName,
+      input: instance.input ?? null,
+      activityResults: Object.fromEntries((instance.activityResults ?? []).map(item => [item.name, item.output])),
+      activityBatches: (instance.activityBatches ?? []).map(batch => ({
+        batchIndex: batch.batchIndex,
+        activities: batch.activities.map(item => item.name),
+      })),
+      checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
+      timerResults: Object.fromEntries((instance.timerResults ?? []).map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
+      events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
+    };
+    instance.history.push({
+      eventType: 'ExecutionCompleted',
       timestamp,
     });
     instance.lastUpdatedTime = timestamp;
@@ -430,12 +615,17 @@ export class FunctionsRouter {
     }
     const pendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
     if (changed) {
-      this.appendDurableReplay(instance, new Date(now).toISOString(), replayReason ?? 'state-change');
+      const timestamp = new Date(now).toISOString();
+      if (instance.replayStages) {
+        instance.timerResults = [];
+        this.advanceReplayStages(instance, replayReason ?? 'state-change', timestamp);
+      } else {
+        this.appendDurableReplay(instance, timestamp, replayReason ?? 'state-change');
+        instance.lastUpdatedTime = timestamp;
+      }
     }
-    if (changed) {
-      instance.lastUpdatedTime = new Date(now).toISOString();
-    }
-    if (pendingTimers.length === 0 && instance.waitingForEvents.length === 0) {
+    const stillPendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
+    if (!instance.replayStages && pendingTimers.length === 0 && instance.waitingForEvents.length === 0) {
       instance.runtimeStatus = 'Completed';
       instance.output = {
         orchestrator: instance.orchestratorName,
@@ -484,6 +674,71 @@ export class FunctionsRouter {
     }
     const createdTime = nowIso();
     const activityNames = [...app.durable.activities.values()].map(item => item.functionName);
+    const replayStagePlan = this.durableReplayStagePlan(app, input);
+    if (replayStagePlan?.error) {
+      return {
+        status: 404,
+        body: {
+          error: replayStagePlan.error,
+        },
+      };
+    }
+    if (replayStagePlan) {
+      const instance = {
+        instanceId,
+        orchestratorName: orchestrator.functionName,
+        createdTime,
+        lastUpdatedTime: createdTime,
+        runtimeStatus: 'Running',
+        input: input ?? null,
+        customStatus: input?.customStatus ?? null,
+        output: null,
+        failureDetails: null,
+        waitingForEvents: [],
+        receivedEvents: [],
+        activityBatches: [],
+        activityResults: [],
+        checkpoints: [],
+        timerResults: [],
+        replayCursor: replayStagePlan.replayCount,
+        replayStages: replayStagePlan.stages,
+        activeStageIndex: 0,
+        completedReplayStages: 0,
+        history: [
+          {
+            eventType: 'ExecutionStarted',
+            timestamp: createdTime,
+          },
+          {
+            eventType: 'OrchestratorStarted',
+            name: orchestrator.functionName,
+            timestamp: createdTime,
+          },
+          ...Array.from({ length: replayStagePlan.replayCount }, (_, index) => ({
+            eventType: 'OrchestratorReplayed',
+            name: orchestrator.functionName,
+            replayNumber: index + 1,
+            timestamp: createdTime,
+          })),
+        ],
+      };
+      this.executeReplayStage(instance, 0, createdTime);
+      const pendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
+      if (instance.waitingForEvents.length === 0 && pendingTimers.length === 0) {
+        this.advanceReplayStages(instance, 'stage-progress', createdTime);
+      }
+      app.durable.instances.set(instanceId.toLowerCase(), instance);
+      return {
+        status: 202,
+        body: {
+          id: instanceId,
+          ...durableStatusPayload(origin, app, instance),
+        },
+        headers: {
+          location: `${origin}/runtime/webhooks/durabletask/instances/${encodeURIComponent(instanceId)}`,
+        },
+      };
+    }
     const plan = this.durableExecutionPlan(app, input);
     if (plan.error) {
       return {
@@ -651,7 +906,10 @@ export class FunctionsRouter {
       });
       const remaining = instance.waitingForEvents.filter(name => name !== eventName);
       instance.waitingForEvents = remaining;
-      if (remaining.length === 0) {
+      if (remaining.length === 0 && instance.replayStages) {
+        instance.timerResults = [];
+        this.advanceReplayStages(instance, 'external-event', nowIso());
+      } else if (remaining.length === 0) {
         this.appendDurableReplay(instance, nowIso(), 'external-event');
         instance.runtimeStatus = 'Completed';
         instance.output = {
@@ -759,16 +1017,16 @@ export class FunctionsRouter {
         const [, , , , appName, collection] = url.pathname.split('/');
         const app = this.apps.get(decodeURIComponent(appName ?? '').toLowerCase());
         if (!app) return sendError(res, 404, 'ResourceNotFound', `Function App '${appName}' was not found.`);
-        if (collection !== 'functions') return sendError(res, 404, 'GlobalStackRouteNotImplemented', `No Functions inspection route handles ${url.pathname}.`);
-        return sendJson(res, 200, {
-          value: [...app.functions.values()].map(item => ({
-            functionName: item.functionName,
-            route: item.route,
-            methods: item.methods,
-            authLevel: item.authLevel,
-          })),
-        });
-      }
+      if (collection !== 'functions') return sendError(res, 404, 'GlobalStackRouteNotImplemented', `No Functions inspection route handles ${url.pathname}.`);
+      return sendJson(res, 200, {
+        value: [...app.functions.values()].map(item => ({
+          functionName: item.functionName,
+          route: item.route,
+          methods: item.methods,
+          authLevel: item.authLevel,
+        })),
+      });
+    }
 
       const appName = appFromHost(req.headers.host);
       if (!appName) {
@@ -780,6 +1038,26 @@ export class FunctionsRouter {
       }
 
       const origin = `http://${req.headers.host ?? app.defaultHostName}`;
+      const adminFunction = adminFunctionRoute(url.pathname);
+      if (adminFunction) {
+        if (!this.isAuthorizedKey(app, requestKey(req, url), null)) {
+          return sendError(res, 401, 'Unauthorized', 'The function key is missing or invalid.');
+        }
+        const trigger = app.triggers.get(String(adminFunction.functionName).toLowerCase());
+        if (!trigger) {
+          return sendError(res, 404, 'FunctionNotFound', `No trigger function named '${adminFunction.functionName}' is registered.`);
+        }
+        const body = await readBody(req);
+        return sendJson(res, 202, {
+          status: 'Accepted',
+          appName: app.appName,
+          functionName: trigger.functionName,
+          triggerType: trigger.type,
+          input: body ?? null,
+          ...(trigger.queueName ? { queueName: trigger.queueName } : {}),
+          ...(trigger.schedule ? { schedule: trigger.schedule } : {}),
+        });
+      }
       const durable = durableRoute(url.pathname);
       if (durable) {
         if (!this.isAuthorizedKey(app, requestKey(req, url), durable.orchestratorName ?? null)) {

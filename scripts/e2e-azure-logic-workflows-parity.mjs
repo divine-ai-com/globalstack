@@ -54,6 +54,7 @@ async function withArmServer(fn, options = {}) {
 
 async function withLocalHttpEndpoint(fn) {
   const requests = [];
+  const attempts = new Map();
   const server = createServer(async (req, res) => {
     let text = '';
     for await (const chunk of req) text += chunk;
@@ -70,6 +71,7 @@ async function withLocalHttpEndpoint(fn) {
       url: req.url,
       body,
     });
+    attempts.set(req.url, (attempts.get(req.url) ?? 0) + 1);
     if (req.url === '/reject') {
       const payload = JSON.stringify({
         error: {
@@ -78,6 +80,19 @@ async function withLocalHttpEndpoint(fn) {
         },
       });
       res.writeHead(422, {
+        'content-type': 'application/json',
+        'content-length': Buffer.byteLength(payload),
+      });
+      return res.end(payload);
+    }
+    if (req.url === '/flaky' && (attempts.get(req.url) ?? 0) < 3) {
+      const payload = JSON.stringify({
+        error: {
+          code: 'TransientConnectorFailure',
+          message: 'Retryable connector failure.',
+        },
+      });
+      res.writeHead(502, {
         'content-type': 'application/json',
         'content-length': Buffer.byteLength(payload),
       });
@@ -99,6 +114,7 @@ async function withLocalHttpEndpoint(fn) {
     return await fn({
       baseUrl: `http://127.0.0.1:${port}`,
       requests,
+      attempts,
     });
   } finally {
     await new Promise(resolve => server.close(resolve));
@@ -390,6 +406,170 @@ function connectorWorkflowBody(connectorUrl, overrides = {}) {
   });
 }
 
+function retryWorkflowBody(flakyUrl, overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        actions: {
+          fetchConnector: {
+            type: 'Http',
+            retryPolicy: {
+              count: 2,
+              intervalInMilliseconds: 5,
+            },
+            inputs: {
+              method: 'POST',
+              uri: flakyUrl,
+              body: {
+                job: 'robot-replay',
+              },
+            },
+          },
+          respond: {
+            type: 'Response',
+            kind: 'Http',
+            runAfter: {
+              fetchConnector: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                connector: "@actions('fetchConnector').outputs.body",
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
+function longRunningWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        actions: {
+          initializeCounter: {
+            type: 'InitializeVariable',
+            inputs: {
+              variables: [
+                { name: 'count', type: 'integer', value: 0 },
+              ],
+            },
+          },
+          waitBriefly: {
+            type: 'Delay',
+            runAfter: {
+              initializeCounter: ['Succeeded'],
+            },
+            inputs: {
+              milliseconds: 10,
+            },
+          },
+          converge: {
+            type: 'Until',
+            runAfter: {
+              waitBriefly: ['Succeeded'],
+            },
+            expression: "@equals(@variables('count'), 2)",
+            limit: {
+              count: 4,
+            },
+            actions: {
+              increment: {
+                type: 'SetVariable',
+                inputs: {
+                  name: 'count',
+                  value: "@add(@variables('count'), 1)",
+                },
+              },
+            },
+          },
+          respond: {
+            type: 'Response',
+            kind: 'Http',
+            runAfter: {
+              converge: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                count: "@variables('count')",
+                converge: "@actions('converge').outputs",
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
+function apiConnectionWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        actions: {
+          putBlob: {
+            type: 'ApiConnection',
+            inputs: {
+              method: 'PUT',
+              path: '/datasets/default/files/model-output.json',
+              host: {
+                connection: {
+                  name: 'azureblob',
+                },
+              },
+              body: {
+                model: 'gpt',
+                version: '5.5',
+              },
+            },
+          },
+          setConfig: {
+            type: 'ApiConnection',
+            runAfter: {
+              putBlob: ['Succeeded'],
+            },
+            inputs: {
+              method: 'PUT',
+              path: '/kv/model-output',
+              host: {
+                connection: {
+                  name: 'appconfiguration',
+                },
+              },
+              body: {
+                stored: true,
+              },
+            },
+          },
+          respond: {
+            type: 'Response',
+            kind: 'Http',
+            runAfter: {
+              setConfig: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                blob: "@actions('putBlob').outputs",
+                config: "@actions('setConfig').outputs",
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
 function deploymentBody(workflowName) {
   return {
     properties: {
@@ -441,6 +621,9 @@ async function runControlPlaneMatrix() {
   const advancedWorkflowName = `workflow-adv-${suffix}`.slice(0, 40);
   const terminateWorkflowName = `workflow-term-${suffix}`.slice(0, 40);
   const connectorWorkflowName = `workflow-http-${suffix}`.slice(0, 40);
+  const retryWorkflowName = `workflow-retry-${suffix}`.slice(0, 40);
+  const longWorkflowName = `workflow-long-${suffix}`.slice(0, 40);
+  const apiConnWorkflowName = `workflow-conn-${suffix}`.slice(0, 40);
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -455,7 +638,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withLocalHttpEndpoint(async ({ baseUrl, requests }) => {
+  await withLocalHttpEndpoint(async ({ baseUrl, requests, attempts }) => {
     const workflowRunner = createWorkflowRunner({
       httpInvoker: async request => {
         const response = await fetch(request.uri, {
@@ -887,6 +1070,65 @@ async function runControlPlaneMatrix() {
         assert.equal(histories.status, 200);
         assert.equal(histories.body.value.length, 0);
         return { status: reset.status };
+      });
+
+      await record('retry workflow create succeeds', async () => {
+        const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, retryWorkflowName), retryWorkflowBody(`${baseUrl}/flaky`));
+        assert.equal(result.status, 201);
+        return { status: result.status };
+      });
+
+      await record('local workflow runner retries transient HTTP connector failures', async () => {
+        const before = attempts.get('/flaky') ?? 0;
+        const result = await workflowRunner.invoke({
+          workflowName: retryWorkflowName,
+          triggerName: 'manual',
+          body: { retry: true },
+        });
+        assert.equal(result.status, 202);
+        assert.equal(result.body.status, 'Succeeded');
+        assert.equal(result.body.response?.body?.connector?.accepted, true);
+        assert.equal((attempts.get('/flaky') ?? 0) - before, 3);
+        return { status: result.status };
+      });
+
+      await record('long running workflow create succeeds', async () => {
+        const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, longWorkflowName), longRunningWorkflowBody());
+        assert.equal(result.status, 201);
+        return { status: result.status };
+      });
+
+      await record('local workflow runner delay and until semantics succeed', async () => {
+        const result = await workflowRunner.invoke({
+          workflowName: longWorkflowName,
+          triggerName: 'manual',
+          body: { op: 'loop' },
+        });
+        assert.equal(result.status, 202);
+        assert.equal(result.body.status, 'Succeeded');
+        assert.equal(result.body.response?.body?.count, 2);
+        assert.equal(result.body.response?.body?.converge?.completed, true);
+        assert.equal(result.body.response?.body?.converge?.iterationCount, 2);
+        return { status: result.status };
+      });
+
+      await record('api connection workflow create succeeds', async () => {
+        const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, apiConnWorkflowName), apiConnectionWorkflowBody());
+        assert.equal(result.status, 201);
+        return { status: result.status };
+      });
+
+      await record('local workflow runner api connection actions succeed', async () => {
+        const result = await workflowRunner.invoke({
+          workflowName: apiConnWorkflowName,
+          triggerName: 'manual',
+          body: { dataset: 'default' },
+        });
+        assert.equal(result.status, 202);
+        assert.equal(result.body.status, 'Succeeded');
+        assert.equal(result.body.response?.body?.blob?.connector, 'azureblob');
+        assert.equal(result.body.response?.body?.config?.connector, 'appconfiguration');
+        return { status: result.status };
       });
     }, {
       workflowRunner,

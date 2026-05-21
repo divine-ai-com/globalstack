@@ -2154,7 +2154,9 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     const httpTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
     const orchestrationTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'orchestrationtrigger');
     const activityTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
-    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length;
+    const timerTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'timertrigger');
+    const queueTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
+    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length + timerTriggers.length + queueTriggers.length;
     if (supportedTriggerCount !== 1) {
       return envelopedError(
         400,
@@ -2162,7 +2164,7 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         'Function resources currently require exactly one supported trigger binding in this local parity surface.',
       );
     }
-    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0];
+    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0] ?? timerTriggers[0] ?? queueTriggers[0];
     if (httpTriggers.length === 1 && trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
       return envelopedError(
         400,
@@ -2175,6 +2177,20 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         400,
         'ValidationError',
         'Function binding methods must be a non-empty string array when provided.',
+      );
+    }
+    if (timerTriggers.length === 1 && typeof trigger.schedule !== 'string') {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Timer trigger bindings require a string schedule.',
+      );
+    }
+    if (queueTriggers.length === 1 && typeof trigger.queueName !== 'string') {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Queue trigger bindings require a string queueName.',
       );
     }
   }

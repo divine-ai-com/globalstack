@@ -335,6 +335,48 @@ function durableActivityResourceBody() {
   };
 }
 
+function timerTriggerResourceBody({ schedule = '0 */5 * * * *' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'timerTrigger',
+            direction: 'in',
+            name: 'timerInfo',
+            schedule,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
+function queueTriggerResourceBody({ queueName = 'robot-events' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'queueTrigger',
+            direction: 'in',
+            name: 'message',
+            queueName,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
 async function runControlAndDataPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
@@ -764,6 +806,30 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
+      await record('timer trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/heartbeatTimer`),
+          timerTriggerResourceBody(),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
+      await record('queue trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/robotQueue`),
+          queueTriggerResourceBody({ queueName: 'robot-events' }),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
       await record('durable function resources create succeeds', async () => {
         const orchestrator = await httpJson(
           armPort,
@@ -988,6 +1054,70 @@ async function runControlAndDataPlaneMatrix() {
         assert.deepEqual(result.body.output.checkpoints['checkpoint-1'].completedActivities, ['scoreActivity', 'archiveActivity']);
         assert.ok(result.body.history.some(item => item.eventType === 'CheckpointSaved' && item.batchIndex === 1));
         return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
+      await record('durable orchestration staged replay persists checkpoints across waits', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            replayStages: [
+              { activities: ['scoreActivity'], waitForExternalEvent: 'approved' },
+              { activities: ['archiveActivity'], durableTimer: { name: 'archive-delay', fireAfterMs: 10 } },
+              { activities: ['scoreActivity'] },
+            ],
+            activityPayloads: {
+              scoreActivity: { robotId: 'robot-41', score: 0.88 },
+              archiveActivity: { blob: 'robot-41.json' },
+            },
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        const firstStatus = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(firstStatus.status, 200);
+        assert.equal(firstStatus.body.runtimeStatus, 'Running');
+        assert.ok(firstStatus.body.history.some(item => item.eventType === 'CheckpointSaved' && item.batchIndex === 1));
+        assert.ok(!firstStatus.body.history.some(item => item.name === 'archiveActivity' && item.eventType === 'TaskCompleted'));
+        const raised = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}/raiseEvent/approved?code=${encodeURIComponent(hostFunctionKey)}`,
+          { approved: true },
+          { host: functionHost },
+        );
+        assert.equal(raised.status, 202);
+        const secondStatus = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(secondStatus.status, 200);
+        assert.equal(secondStatus.body.runtimeStatus, 'Running');
+        assert.ok(secondStatus.body.history.some(item => item.eventType === 'CheckpointLoaded' && item.stageIndex === 2));
+        assert.ok(secondStatus.body.history.some(item => item.eventType === 'TaskCompleted' && item.name === 'archiveActivity'));
+        await new Promise(resolve => setTimeout(resolve, 25));
+        const finalStatus = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(finalStatus.status, 200);
+        assert.equal(finalStatus.body.runtimeStatus, 'Completed');
+        assert.ok(finalStatus.body.history.some(item => item.eventType === 'CheckpointLoaded' && item.stageIndex === 3));
+        assert.equal(finalStatus.body.output.checkpoints['checkpoint-3'].reason, 'replay-stage');
+        return { status: finalStatus.status, runtimeStatus: finalStatus.body.runtimeStatus };
       });
 
       await record('durable orchestration rejects duplicate instance id', async () => {
@@ -1235,6 +1365,42 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 404);
         assert.equal(errorCode(result), 'ResourceNotFound');
         return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('admin trigger invocation rejects missing key', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', '/admin/functions/heartbeatTimer', { pastDue: false }, { host: functionHost });
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'Unauthorized');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('timer trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/heartbeatTimer?code=${encodeURIComponent(hostFunctionKey)}`,
+          { pastDue: false },
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'timerTrigger');
+        assert.equal(result.body.schedule, '0 */5 * * * *');
+        return { status: result.status };
+      });
+
+      await record('queue trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/robotQueue?code=${encodeURIComponent(hostFunctionKey)}`,
+          { id: 'msg-1', body: 'robot ready' },
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'queueTrigger');
+        assert.equal(result.body.queueName, 'robot-events');
+        assert.equal(result.body.input.id, 'msg-1');
+        return { status: result.status };
       });
 
       await record('ARM template deployment can create server farm and function app', async () => {

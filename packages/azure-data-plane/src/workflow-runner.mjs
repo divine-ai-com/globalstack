@@ -38,6 +38,22 @@ function splitExpressionArgs(text) {
   return args;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function boundedDelayMs(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return 0;
+  return Math.min(parsed, 50);
+}
+
+function retryCount(policy) {
+  const count = Number(policy?.count ?? 0);
+  if (!Number.isFinite(count) || count < 0) return 0;
+  return Math.min(count, 5);
+}
+
 export class WorkflowRunner {
   constructor({ httpInvoker = null } = {}) {
     this.workflows = new Map();
@@ -101,7 +117,10 @@ export class WorkflowRunner {
     if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
       return value.slice(1, -1);
     }
-    if (!value.startsWith('@')) return value;
+    if (!value.startsWith('@')) {
+      if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+      return value;
+    }
     if (value === '@triggerBody()') return context.triggerBody;
     if (value === '@item()') return context.itemStack.at(-1) ?? null;
 
@@ -130,7 +149,80 @@ export class WorkflowRunner {
       return left === right;
     }
 
+    if (value.startsWith('@less(') && value.endsWith(')')) {
+      const args = splitExpressionArgs(value.slice('@less('.length, -1));
+      const left = this.evaluateExpression(args[0]?.trim(), context);
+      const right = this.evaluateExpression(args[1]?.trim(), context);
+      return Number(left) < Number(right);
+    }
+
+    if (value.startsWith('@add(') && value.endsWith(')')) {
+      const args = splitExpressionArgs(value.slice('@add('.length, -1));
+      const left = this.evaluateExpression(args[0]?.trim(), context);
+      const right = this.evaluateExpression(args[1]?.trim(), context);
+      return Number(left) + Number(right);
+    }
+
     return value;
+  }
+
+  async invokeHttpLike(request) {
+    const response = this.httpInvoker
+      ? this.httpInvoker(request)
+      : fetch(request.uri, {
+          method: request.method,
+          headers: request.headers,
+          body: request.body === null || request.body === undefined ? undefined : JSON.stringify(request.body),
+        }).then(async result => {
+          const text = await result.text().catch(() => '');
+          let body = text || null;
+          if (text) {
+            try {
+              body = JSON.parse(text);
+            } catch {
+              body = text;
+            }
+          }
+          return {
+            statusCode: result.status,
+            headers: Object.fromEntries(result.headers.entries()),
+            body,
+          };
+        });
+    return Promise.resolve(response);
+  }
+
+  async invokeApiConnection(actionName, action, context) {
+    const host = action.inputs?.host ?? {};
+    const connectionName = String(host.connection?.name ?? host.apiId ?? action.inputs?.method ?? 'connector').toLowerCase();
+    const path = String(this.evaluateExpression(action.inputs?.path ?? '/', context));
+    const method = String(this.evaluateExpression(action.inputs?.method ?? 'POST', context)).toUpperCase();
+    const body = this.evaluateExpression(action.inputs?.body ?? null, context);
+    if (connectionName.includes('azureblob') || connectionName.includes('blob')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'azureblob',
+          method,
+          path,
+          body,
+          etag: `"${randomUUID()}"`,
+        },
+      };
+    }
+    if (connectionName.includes('appconfig') || connectionName.includes('configuration')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'appconfiguration',
+          method,
+          path,
+          body,
+          statusCode: 200,
+        },
+      };
+    }
+    throw new Error(`Unsupported ApiConnection action '${actionName}' for connector '${connectionName}'.`);
   }
 
   async executeActions(declaredActions, context) {
@@ -366,29 +458,12 @@ export class WorkflowRunner {
         headers: this.evaluateExpression(action.inputs?.headers ?? {}, context),
         body: this.evaluateExpression(action.inputs?.body ?? null, context),
       };
-      const response = this.httpInvoker
-        ? this.httpInvoker(request)
-        : fetch(request.uri, {
-            method: request.method,
-            headers: request.headers,
-            body: request.body === null || request.body === undefined ? undefined : JSON.stringify(request.body),
-          }).then(async result => {
-            const text = await result.text().catch(() => '');
-            let body = text || null;
-            if (text) {
-              try {
-                body = JSON.parse(text);
-              } catch {
-                body = text;
-              }
-            }
-            return {
-              statusCode: result.status,
-              headers: Object.fromEntries(result.headers.entries()),
-              body,
-            };
-          });
-      const result = await Promise.resolve(response);
+      let result = await this.invokeHttpLike(request);
+      const retries = retryCount(action.retryPolicy);
+      for (let attempt = 0; (result.statusCode ?? 500) >= 400 && attempt < retries; attempt += 1) {
+        await sleep(boundedDelayMs(action.retryPolicy?.intervalInMilliseconds ?? 5));
+        result = await this.invokeHttpLike(request);
+      }
       if ((result.statusCode ?? 500) >= 400) {
         return {
           status: 'Failed',
@@ -404,6 +479,74 @@ export class WorkflowRunner {
       return {
         status: 'Succeeded',
         outputs: result,
+      };
+    }
+
+    if (actionType === 'ApiConnection') {
+      return this.invokeApiConnection(actionName, action, context);
+    }
+
+    if (actionType === 'Delay') {
+      const waitMs = boundedDelayMs(
+        this.evaluateExpression(action.inputs?.milliseconds ?? action.inputs?.intervalInMilliseconds ?? action.inputs?.count ?? 0, context),
+      );
+      if (waitMs > 0) await sleep(waitMs);
+      return {
+        status: 'Succeeded',
+        outputs: {
+          waitedMs: waitMs,
+        },
+      };
+    }
+
+    if (actionType === 'Until') {
+      const limit = Math.min(Number(action.limit?.count ?? 3) || 3, 10);
+      const iterations = [];
+      for (let iteration = 0; iteration < limit; iteration += 1) {
+        const condition = Boolean(this.evaluateExpression(action.expression ?? false, context));
+        if (condition) {
+          return {
+            status: 'Succeeded',
+            outputs: {
+              iterations,
+              completed: true,
+              iterationCount: iteration,
+            },
+          };
+        }
+        const branchResult = await this.executeActions(action.actions ?? {}, context);
+        iterations.push({
+          iteration: iteration + 1,
+          status: branchResult.status,
+          actions: branchResult.actions,
+          outputs: branchResult.outputs,
+        });
+        if (branchResult.status === 'Failed' || branchResult.status === 'Cancelled') {
+          return {
+            status: branchResult.status,
+            outputs: { iterations, completed: false },
+            error: branchResult.error ?? null,
+            halt: true,
+            runStatus: branchResult.status,
+          };
+        }
+      }
+      const satisfied = Boolean(this.evaluateExpression(action.expression ?? false, context));
+      return {
+        status: satisfied ? 'Succeeded' : 'Failed',
+        outputs: {
+          iterations,
+          completed: satisfied,
+          iterationCount: iterations.length,
+        },
+        ...(satisfied ? {} : {
+          error: {
+            code: 'UntilLimitExceeded',
+            message: `Until action '${actionName}' exceeded the configured iteration limit.`,
+          },
+          halt: true,
+          runStatus: 'Failed',
+        }),
       };
     }
 

@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 43) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 43 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 49) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 49 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1456,6 +1456,12 @@ if (!logicWorkflowsParityText) {
     'workflow trigger callback URL route succeeds',
     'workflow trigger histories list includes connector runs',
     'workflow trigger reset clears trigger histories',
+    'retry workflow create succeeds',
+    'local workflow runner retries transient HTTP connector failures',
+    'long running workflow create succeeds',
+    'local workflow runner delay and until semantics succeed',
+    'api connection workflow create succeeds',
+    'local workflow runner api connection actions succeed',
   ]) {
     if (!logicWorkflowsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Logic Workflows parity E2E missing passing case: ${required}`);
@@ -1480,8 +1486,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 77) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 77 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 83) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 83 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1501,6 +1507,8 @@ if (!azureFunctionsParityText) {
     'valid function app create returns async Azure shape',
     'function app get reaches Succeeded and registers local host',
     'function child resource create succeeds',
+    'timer trigger function resource create succeeds',
+    'queue trigger function resource create succeeds',
     'function listKeys returns deterministic key',
     'function host listKeys returns host keys',
     'function app syncfunctiontriggers action succeeds',
@@ -1513,6 +1521,7 @@ if (!azureFunctionsParityText) {
     'durable orchestration status query shows running instance',
     'durable orchestration executes declared activity history',
     'durable orchestration replay history is recorded',
+    'durable orchestration staged replay persists checkpoints across waits',
     'durable orchestration future timer keeps instance running',
     'durable orchestration elapsed timer completes instance',
     'durable orchestration fan out batches preserve checkpoints',
@@ -1522,12 +1531,15 @@ if (!azureFunctionsParityText) {
     'durable orchestration terminate and purge succeed',
     'function app unsupported function action fails closed',
     'function route rejects disallowed method',
+    'admin trigger invocation rejects missing key',
     'secured function rejects missing key',
     'secured function rejects wrong query key',
     'secured function rejects wrong header key',
     'anonymous HTTP trigger succeeds',
     'anonymous HTTP trigger succeeds without api prefix',
     'secured HTTP trigger accepts x-functions-key header',
+    'timer trigger admin invocation succeeds',
+    'queue trigger admin invocation succeeds',
     'inspection route rejects unknown app',
     'ARM template deployment can create server farm and function app',
     'function app list after delete is empty',
