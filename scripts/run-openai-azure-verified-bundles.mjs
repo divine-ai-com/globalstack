@@ -17,6 +17,17 @@ const requestedItems = process.argv
 
 const platformById = new Map(azurePlatforms.map(platform => [platform.id, platform]));
 
+function platformIdToImageTag(platformId) {
+  const platform = platformById.get(platformId);
+  if (!platform) throw new Error(`Unknown platform ${platformId}`);
+  return platform.imageTag;
+}
+
+async function imageExists(docker, image) {
+  const inspectCode = await run(docker.command, [...docker.prefix, 'image', 'inspect', image], { cwd: root, stdio: 'ignore' });
+  return inspectCode === 0;
+}
+
 const starterBundles = [
   {
     platformId: 'azure-terraform-hcl',
@@ -1183,11 +1194,28 @@ async function runBundleLifecycle(docker, platformId, runtimeDir, visibleBundleD
   await mkdir(reportDir, { recursive: true });
   await mkdir(workDir, { recursive: true });
 
+  const imageBuildStrategy = process.env.GLOBALSTACK_IMAGE_BUILD_STRATEGY ?? 'auto';
+  if (imageBuildStrategy !== 'reuse') {
+    const requiredImages = ['globalstack/azure-emulator:local', platformIdToImageTag(platformId)];
+    let missing = false;
+    for (const image of requiredImages) {
+      if (!(await imageExists(docker, image))) {
+        missing = true;
+        break;
+      }
+    }
+    if (imageBuildStrategy === 'build' || missing) {
+      const buildCode = await run('node', ['scripts/build-platform-images.mjs', `--platform=${platformId}`], { cwd: root, stdio: 'inherit' });
+      if (buildCode !== 0) {
+        throw new Error(`prewarm image build failed for ${platformId}`);
+      }
+    }
+  }
+
   const composeUp = await runCapture(docker.command, [
     ...docker.prefix,
     'compose',
     'up',
-    '--build',
     '--abort-on-container-exit',
     '--exit-code-from',
     'runner',

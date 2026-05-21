@@ -4,7 +4,17 @@ services:
     build:
       context: ..
       dockerfile: templates/emulator/Dockerfile
+      labels:
+        io.globalstack.owner: globalstack
+        io.globalstack.product: azure-emulator
+        io.globalstack.scope: platform-runtime
+        io.globalstack.cloud: azure
     container_name: globalstack-azure
+    labels:
+      io.globalstack.owner: globalstack
+      io.globalstack.product: azure-emulator
+      io.globalstack.scope: platform-runtime
+      io.globalstack.cloud: azure
     ports:
       - "127.0.0.1:4566:4566"
     environment:
@@ -30,10 +40,22 @@ services:
     build:
       context: ../dist/platform-images/azure-opentofu-hcl
       dockerfile: Dockerfile
+      labels:
+        io.globalstack.owner: globalstack
+        io.globalstack.product: azure-runner
+        io.globalstack.scope: platform-runtime
+        io.globalstack.cloud: azure
+        io.globalstack.platform: azure-opentofu-hcl
     network_mode: "service:globalstack-azure"
     depends_on:
       globalstack-azure:
         condition: service_healthy
+    labels:
+      io.globalstack.owner: globalstack
+      io.globalstack.product: azure-runner
+      io.globalstack.scope: platform-runtime
+      io.globalstack.cloud: azure
+      io.globalstack.platform: azure-opentofu-hcl
     environment:
       PROVIDER: ${PROVIDER:-}
       CLOUD_PROVIDER: ${CLOUD_PROVIDER:-}

@@ -5,6 +5,19 @@ import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const imagesRoot = join(root, 'dist', 'platform-images');
+const requestedPlatformIds = new Set(
+  process.argv
+    .filter(arg => arg.startsWith('--platform='))
+    .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean)),
+);
+const platforms = requestedPlatformIds.size > 0
+  ? azurePlatforms.filter(platform => requestedPlatformIds.has(platform.id))
+  : azurePlatforms;
+
+if (platforms.length === 0) {
+  console.error(`No platform images selected from: ${[...requestedPlatformIds].join(', ')}`);
+  process.exit(1);
+}
 
 function run(command, args, opts = {}) {
   return new Promise((resolve) => {
@@ -33,6 +46,14 @@ const emulatorCode = await run(docker.command, [
   ...docker.prefix,
   'build',
   '--pull=false',
+  '--label',
+  'io.globalstack.owner=globalstack',
+  '--label',
+  'io.globalstack.product=azure-emulator',
+  '--label',
+  'io.globalstack.scope=platform-runtime',
+  '--label',
+  'io.globalstack.cloud=azure',
   '-t',
   'globalstack/azure-emulator:local',
   '-f',
@@ -43,7 +64,7 @@ if (emulatorCode !== 0) {
   failures.push({ platform: 'globalstack-azure', image: 'globalstack/azure-emulator:local', code: emulatorCode });
 }
 
-for (const platform of azurePlatforms) {
+for (const platform of platforms) {
   if (failures.length > 0) break;
   const context = join(imagesRoot, platform.id);
   console.log(`\n=== Building ${platform.imageTag} from ${context} ===`);
@@ -51,6 +72,16 @@ for (const platform of azurePlatforms) {
     ...docker.prefix,
     'build',
     '--pull=false',
+    '--label',
+    'io.globalstack.owner=globalstack',
+    '--label',
+    'io.globalstack.product=azure-runner',
+    '--label',
+    'io.globalstack.scope=platform-runtime',
+    '--label',
+    'io.globalstack.cloud=azure',
+    '--label',
+    `io.globalstack.platform=${platform.id}`,
     '-t',
     platform.imageTag,
     context,
@@ -69,4 +100,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`\nBuilt ${azurePlatforms.length} Azure runner images.`);
+console.log(`\nBuilt ${platforms.length} Azure runner image${platforms.length === 1 ? '' : 's'}.`);

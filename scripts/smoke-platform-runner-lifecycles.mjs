@@ -35,6 +35,27 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
+async function imageExists(docker, image) {
+  const code = await run(docker.command, [...docker.prefix, 'image', 'inspect', image], { stdio: 'ignore' });
+  return code === 0;
+}
+
+async function prewarmImagesIfNeeded(docker, strategy) {
+  if (strategy === 'reuse') return;
+  const requiredImages = ['globalstack/azure-emulator:local', ...platforms.map(platform => platform.imageTag)];
+  const missing = [];
+  for (const image of requiredImages) {
+    if (!(await imageExists(docker, image))) missing.push(image);
+  }
+  if (strategy === 'build' || missing.length > 0) {
+    const platformArg = platforms.length > 0
+      ? [`--platform=${platforms.map(platform => platform.id).join(',')}`]
+      : [];
+    const buildCode = await run('node', ['scripts/build-platform-images.mjs', ...platformArg]);
+    if (buildCode !== 0) process.exit(buildCode);
+  }
+}
+
 const selected = new Set(
   process.argv
     .filter(arg => arg.startsWith('--platform='))
@@ -44,6 +65,7 @@ const platforms = selected.size > 0 ? azurePlatforms.filter(platform => selected
 if (platforms.length === 0) throw new Error(`No platforms selected from: ${[...selected].join(', ')}`);
 
 const docker = await dockerCommand();
+const imageBuildStrategy = process.env.GLOBALSTACK_IMAGE_BUILD_STRATEGY ?? 'auto';
 if (docker.command === 'sudo') {
   await run('sudo', [
     '-n',
@@ -56,6 +78,7 @@ if (docker.command === 'sudo') {
 
 const renderCode = await run('node', ['scripts/render-platform-templates.mjs']);
 if (renderCode !== 0) process.exit(renderCode);
+await prewarmImagesIfNeeded(docker, imageBuildStrategy);
 
 const results = [];
 
@@ -76,7 +99,6 @@ for (const platform of platforms) {
       ...docker.prefix,
       'compose',
       'up',
-      '--build',
       '--abort-on-container-exit',
       '--exit-code-from',
       'runner',
