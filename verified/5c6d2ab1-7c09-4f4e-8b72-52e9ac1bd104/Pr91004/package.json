@@ -1,5 +1,5 @@
 {
-  "name": "azure-pulumi-vision-inspection-intake-flow",
+  "name": "azure-pulumi-robotics-diagnostics-intake-flow",
   "version": "1.0.0",
   "private": true,
   "main": "bin/tap.ts",

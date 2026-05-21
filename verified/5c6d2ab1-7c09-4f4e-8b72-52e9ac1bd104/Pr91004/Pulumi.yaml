@@ -1,4 +1,4 @@
-name: az-cvflow-pulumi-azurefl0520
+name: az-rbflow-pulumi-azurefl0521
 runtime: nodejs
 main: bin/tap.ts
-description: Computer vision inspection intake flow on Azure using Pulumi TypeScript
+description: Robotics diagnostics intake flow on Azure using Pulumi TypeScript

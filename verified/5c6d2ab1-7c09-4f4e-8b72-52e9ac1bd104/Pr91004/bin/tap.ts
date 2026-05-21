@@ -3,15 +3,9 @@ import { createTapStack } from "../lib/tap-stack";
 
 const stack = createTapStack();
 
-export const InspectionArtifactsStorageAccountName = stack.InspectionArtifactsStorageAccountName;
-export const InspectionArtifactsContainerName = stack.InspectionArtifactsContainerName;
-export const InspectionBackendPlanName = stack.InspectionBackendPlanName;
-export const InspectionFunctionAppName = stack.InspectionFunctionAppName;
-export const InspectionBackendHostName = stack.InspectionBackendHostName;
-export const InspectionMetadataPostgresServerName = stack.InspectionMetadataPostgresServerName;
-export const InspectionMetadataPostgresDatabaseName = stack.InspectionMetadataPostgresDatabaseName;
-export const InspectionEventTopicName = stack.InspectionEventTopicName;
-export const InspectionGatewayServiceName = stack.InspectionGatewayServiceName;
-export const InspectionGatewayApiName = stack.InspectionGatewayApiName;
-export const InspectionGatewayUrl = stack.InspectionGatewayUrl;
-export const InspectionMonitoringWorkspaceName = stack.InspectionMonitoringWorkspaceName;
+export const DiagnosticsStorageAccountName = stack.DiagnosticsStorageAccountName;
+export const DiagnosticsArtifactsContainerName = stack.DiagnosticsArtifactsContainerName;
+export const DiagnosticsJobsQueueName = stack.DiagnosticsJobsQueueName;
+export const DiagnosticsLedgerTableName = stack.DiagnosticsLedgerTableName;
+export const FleetEventsTopicName = stack.FleetEventsTopicName;
+export const FleetConfigStoreName = stack.FleetConfigStoreName;

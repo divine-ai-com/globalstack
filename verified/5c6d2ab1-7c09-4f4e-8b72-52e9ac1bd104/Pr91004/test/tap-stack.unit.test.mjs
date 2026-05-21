@@ -41,23 +41,15 @@ for (const marker of ["createTapStack", "../lib/tap-stack"]) {
 
 for (const marker of [
   'import * as storage from "@pulumi/azure-native/storage"',
-  'import * as web from "@pulumi/azure-native/web"',
-  'import * as dbforpostgresql from "@pulumi/azure-native/dbforpostgresql"',
   'import * as eventgrid from "@pulumi/azure-native/eventgrid"',
-  'import * as apimanagement from "@pulumi/azure-native/apimanagement"',
-  'import * as operationalinsights from "@pulumi/azure-native/operationalinsights"',
+  'import * as appconfiguration from "@pulumi/azure-native/appconfiguration"',
   "new resources.ResourceGroup(",
   "new storage.StorageAccount(",
   "new storage.BlobContainer(",
-  "new web.AppServicePlan(",
-  "new web.WebApp(",
-  "new dbforpostgresql.Server(",
-  "new dbforpostgresql.Database(",
+  "new storage.Queue(",
+  "new storage.Table(",
   "new eventgrid.Topic(",
-  "new apimanagement.ApiManagementService(",
-  "new apimanagement.Api(",
-  "new operationalinsights.Workspace(",
-  "pulumi.interpolate`https://${inspectionFunction.defaultHostName}/api/inspection-intake`"
+  "new appconfiguration.ConfigurationStore("
 ]) {
   if (!stack.includes(marker)) {
     throw new Error(`lib/tap-stack.ts is missing ${marker}`);
@@ -68,14 +60,10 @@ for (const value of [
   metadata.resourceNames.resourceGroup,
   metadata.resourceNames.storageAccount,
   metadata.resourceNames.blobContainerName,
-  metadata.resourceNames.appServicePlan,
-  metadata.resourceNames.functionApp,
-  metadata.resourceNames.postgresServer,
-  metadata.resourceNames.postgresDatabase,
+  metadata.resourceNames.queueName,
+  metadata.resourceNames.tableName,
   metadata.resourceNames.eventGridTopic,
-  metadata.resourceNames.apiManagementService,
-  metadata.resourceNames.apiManagementApi,
-  metadata.resourceNames.workspace
+  metadata.resourceNames.appConfigStore
 ]) {
   if (!stack.includes(value)) {
     throw new Error(`lib/tap-stack.ts is missing concrete contract value ${value}`);

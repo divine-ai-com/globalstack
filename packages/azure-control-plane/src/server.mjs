@@ -829,7 +829,12 @@ function synthesizeWebAppConfig({ providerRoute, apiVersion, store }) {
   };
 }
 
-export function createArmRequestHandler({ store = new ResourceStore(), persist = false } = {}) {
+export function createArmRequestHandler({
+  store = new ResourceStore(),
+  persist = false,
+  onResourcePut = null,
+  onResourceDelete = null,
+} = {}) {
   void persist;
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
@@ -932,6 +937,17 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
       apiVersion,
       capability,
     });
+    if (typeof onResourcePut === 'function') {
+      onResourcePut({
+        store,
+        providerRoute,
+        resourceType,
+        body,
+        apiVersion,
+        capability,
+        resource: result.resource,
+      });
+    }
     const storageCreatedOkTypes = new Set([
       'Microsoft.Storage/storageAccounts/queueServices/queues',
       'Microsoft.Storage/storageAccounts/tableServices/tables',
@@ -1583,12 +1599,21 @@ export function createArmRequestHandler({ store = new ResourceStore(), persist =
           if (storageParent && resourceType !== 'Microsoft.Storage/storageAccounts' && storageParentState && storageParentState !== 'Succeeded') {
             return sendJson(res, 409, storageAccountNotProvisioned().body);
           }
+          const deletedResource = store.getResource(providerRoute);
           const existed = store.deleteResource(providerRoute);
           if (!existed) {
             if (acceptsDeleteMissing(resourceType)) return sendJson(res, 204);
             const notFound = azureNotFoundFor({ method, resourceType, providerRoute, store });
             if (notFound.body === undefined && notFound.status === 204) return sendJson(res, 204);
             return sendError(res, notFound.status, notFound.code, notFound.message);
+          }
+          if (typeof onResourceDelete === 'function') {
+            onResourceDelete({
+              store,
+              providerRoute,
+              resourceType,
+              resource: deletedResource,
+            });
           }
           if (resourceType === 'Microsoft.ServiceBus/namespaces') {
             const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;

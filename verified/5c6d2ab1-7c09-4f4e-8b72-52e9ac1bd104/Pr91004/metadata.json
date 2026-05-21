@@ -3,7 +3,7 @@
   "cloud": "azure",
   "model": "gpt-5.5",
   "platformId": "azure-pulumi-ts",
-  "scenarioId": "computer-vision-inspection-intake-flow",
+  "scenarioId": "robotics-diagnostics-intake-flow",
   "promptPath": "lib/PROMPT.md",
   "modelResponsePath": "lib/MODEL_RESPONSE.md",
   "solutionFiles": [
@@ -13,127 +13,79 @@
     "lib/tap-stack.ts"
   ],
   "expectedOutputKeys": [
-    "InspectionArtifactsStorageAccountName",
-    "InspectionArtifactsContainerName",
-    "InspectionBackendPlanName",
-    "InspectionFunctionAppName",
-    "InspectionBackendHostName",
-    "InspectionMetadataPostgresServerName",
-    "InspectionMetadataPostgresDatabaseName",
-    "InspectionEventTopicName",
-    "InspectionGatewayServiceName",
-    "InspectionGatewayApiName",
-    "InspectionGatewayUrl",
-    "InspectionMonitoringWorkspaceName"
+    "DiagnosticsStorageAccountName",
+    "DiagnosticsArtifactsContainerName",
+    "DiagnosticsJobsQueueName",
+    "DiagnosticsLedgerTableName",
+    "FleetEventsTopicName",
+    "FleetConfigStoreName"
   ],
   "expectedOutputs": {
-    "InspectionArtifactsStorageAccountName": "azcvflowpulazurefl",
-    "InspectionArtifactsContainerName": "azcvflowpulazurefl/default/inspection-artifacts",
-    "InspectionBackendPlanName": "asp-cvflow-pulumi-azurefl0520",
-    "InspectionFunctionAppName": "func-cvflow-pulumi-azurefl0520",
-    "InspectionBackendHostName": "func-cvflow-pulumi-azurefl0520.azurewebsites.net",
-    "InspectionMetadataPostgresServerName": "pg-cvflow-pulumi-azurefl0520",
-    "InspectionMetadataPostgresDatabaseName": "pg-cvflow-pulumi-azurefl0520/inspectionmeta",
-    "InspectionEventTopicName": "eg-cvflow-pulumi-azurefl0520",
-    "InspectionGatewayServiceName": "apim-cvflow-pulumi-azurefl0520",
-    "InspectionGatewayApiName": "apim-cvflow-pulumi-azurefl0520/inspection-intake",
-    "InspectionGatewayUrl": "https://apim-cvflow-pulumi-azurefl0520.azure-api.net",
-    "InspectionMonitoringWorkspaceName": "ws-cvflow-pulumi-azurefl0520"
+    "DiagnosticsStorageAccountName": "azrbflowazurefl0521",
+    "DiagnosticsArtifactsContainerName": "azrbflowazurefl0521/default/diagnostics-batches",
+    "DiagnosticsJobsQueueName": "azrbflowazurefl0521/default/diagnostics-jobs",
+    "DiagnosticsLedgerTableName": "azrbflowazurefl0521/default/diagnosticsledger",
+    "FleetEventsTopicName": "eg-rbflow-pulumi-azurefl0521",
+    "FleetConfigStoreName": "cfgrbflowazurefl0521"
   },
   "resourceNames": {
-    "environmentSuffix": "azurefl0520",
-    "resourceGroup": "rg-az-cvflow-pulumi-azurefl0520",
-    "storageAccount": "azcvflowpulazurefl",
-    "blobContainerName": "inspection-artifacts",
-    "appServicePlan": "asp-cvflow-pulumi-azurefl0520",
-    "functionApp": "func-cvflow-pulumi-azurefl0520",
-    "postgresServer": "pg-cvflow-pulumi-azurefl0520",
-    "postgresDatabase": "inspectionmeta",
-    "eventGridTopic": "eg-cvflow-pulumi-azurefl0520",
-    "apiManagementService": "apim-cvflow-pulumi-azurefl0520",
-    "apiManagementApi": "inspection-intake",
-    "workspace": "ws-cvflow-pulumi-azurefl0520"
+    "environmentSuffix": "azurefl0521",
+    "resourceGroup": "rg-az-rbflow-pulumi-azurefl0521",
+    "storageAccount": "azrbflowazurefl0521",
+    "blobContainerName": "diagnostics-batches",
+    "queueName": "diagnostics-jobs",
+    "tableName": "diagnosticsledger",
+    "eventGridTopic": "eg-rbflow-pulumi-azurefl0521",
+    "appConfigStore": "cfgrbflowazurefl0521"
   },
   "integrationChecks": [
     {
       "label": "storage-account",
       "provider": "Microsoft.Storage",
-      "typePath": "storageAccounts/azcvflowpulazurefl",
+      "typePath": "storageAccounts/azrbflowazurefl0521",
       "apiVersion": "2023-01-01",
-      "expectedName": "azcvflowpulazurefl",
+      "expectedName": "azrbflowazurefl0521",
       "expectedType": "Microsoft.Storage/storageAccounts"
     },
     {
       "label": "blob-container",
       "provider": "Microsoft.Storage",
-      "typePath": "storageAccounts/azcvflowpulazurefl/blobServices/default/containers/inspection-artifacts",
+      "typePath": "storageAccounts/azrbflowazurefl0521/blobServices/default/containers/diagnostics-batches",
       "apiVersion": "2023-01-01",
-      "expectedName": "azcvflowpulazurefl/default/inspection-artifacts",
+      "expectedName": "azrbflowazurefl0521/default/diagnostics-batches",
       "expectedType": "Microsoft.Storage/storageAccounts/blobServices/containers"
     },
     {
-      "label": "app-service-plan",
-      "provider": "Microsoft.Web",
-      "typePath": "serverfarms/asp-cvflow-pulumi-azurefl0520",
-      "apiVersion": "2023-12-01",
-      "expectedName": "asp-cvflow-pulumi-azurefl0520",
-      "expectedType": "Microsoft.Web/serverfarms"
+      "label": "queue",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrbflowazurefl0521/queueServices/default/queues/diagnostics-jobs",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrbflowazurefl0521/default/diagnostics-jobs",
+      "expectedType": "Microsoft.Storage/storageAccounts/queueServices/queues"
     },
     {
-      "label": "function-app",
-      "provider": "Microsoft.Web",
-      "typePath": "sites/func-cvflow-pulumi-azurefl0520",
-      "apiVersion": "2023-12-01",
-      "expectedName": "func-cvflow-pulumi-azurefl0520",
-      "expectedType": "Microsoft.Web/sites"
-    },
-    {
-      "label": "postgres-server",
-      "provider": "Microsoft.DBforPostgreSQL",
-      "typePath": "flexibleServers/pg-cvflow-pulumi-azurefl0520",
-      "apiVersion": "2023-06-01-preview",
-      "expectedName": "pg-cvflow-pulumi-azurefl0520",
-      "expectedType": "Microsoft.DBforPostgreSQL/flexibleServers"
-    },
-    {
-      "label": "postgres-database",
-      "provider": "Microsoft.DBforPostgreSQL",
-      "typePath": "flexibleServers/pg-cvflow-pulumi-azurefl0520/databases/inspectionmeta",
-      "apiVersion": "2023-06-01-preview",
-      "expectedName": "pg-cvflow-pulumi-azurefl0520/inspectionmeta",
-      "expectedType": "Microsoft.DBforPostgreSQL/flexibleServers/databases"
+      "label": "table",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azrbflowazurefl0521/tableServices/default/tables/diagnosticsledger",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azrbflowazurefl0521/default/diagnosticsledger",
+      "expectedType": "Microsoft.Storage/storageAccounts/tableServices/tables"
     },
     {
       "label": "event-grid-topic",
       "provider": "Microsoft.EventGrid",
-      "typePath": "topics/eg-cvflow-pulumi-azurefl0520",
+      "typePath": "topics/eg-rbflow-pulumi-azurefl0521",
       "apiVersion": "2022-06-15",
-      "expectedName": "eg-cvflow-pulumi-azurefl0520",
+      "expectedName": "eg-rbflow-pulumi-azurefl0521",
       "expectedType": "Microsoft.EventGrid/topics"
     },
     {
-      "label": "api-management-service",
-      "provider": "Microsoft.ApiManagement",
-      "typePath": "service/apim-cvflow-pulumi-azurefl0520",
-      "apiVersion": "2023-05-01-preview",
-      "expectedName": "apim-cvflow-pulumi-azurefl0520",
-      "expectedType": "Microsoft.ApiManagement/service"
-    },
-    {
-      "label": "api-management-api",
-      "provider": "Microsoft.ApiManagement",
-      "typePath": "service/apim-cvflow-pulumi-azurefl0520/apis/inspection-intake",
-      "apiVersion": "2023-05-01-preview",
-      "expectedName": "apim-cvflow-pulumi-azurefl0520/inspection-intake",
-      "expectedType": "Microsoft.ApiManagement/service/apis"
-    },
-    {
-      "label": "monitoring-workspace",
-      "provider": "Microsoft.OperationalInsights",
-      "typePath": "workspaces/ws-cvflow-pulumi-azurefl0520",
-      "apiVersion": "2022-10-01",
-      "expectedName": "ws-cvflow-pulumi-azurefl0520",
-      "expectedType": "Microsoft.OperationalInsights/workspaces"
+      "label": "app-config-store",
+      "provider": "Microsoft.AppConfiguration",
+      "typePath": "configurationStores/cfgrbflowazurefl0521",
+      "apiVersion": "2023-03-01",
+      "expectedName": "cfgrbflowazurefl0521",
+      "expectedType": "Microsoft.AppConfiguration/configurationStores"
     }
   ],
   "stageCommands": {
