@@ -1437,6 +1437,29 @@ async function runControlAndDataPlaneMatrix() {
         return { status: resumed.status, runtimeStatus: resumed.body.runtimeStatus };
       });
 
+      await record('durable orchestration rejects unexpected external event', async () => {
+        const raised = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}/raiseEvent/unexpected?code=${encodeURIComponent(hostFunctionKey)}`,
+          { reviewer: 'ops-bot' },
+          { host: functionHost },
+        );
+        assert.equal(raised.status, 409);
+        assert.equal(errorCode(raised), 'UnexpectedEvent');
+        const status = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${durableWaitInstanceId}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(status.status, 200);
+        assert.equal(status.body.runtimeStatus, 'Running');
+        assert.ok(!status.body.history.some(item => item.eventType === 'ExternalEventRaised' && item.name === 'unexpected'));
+        return { status: raised.status, errorCode: errorCode(raised) };
+      });
+
       await record('durable orchestration raise event completes instance', async () => {
         const raised = await httpDataPlaneJson(
           routerPort,
@@ -1762,6 +1785,24 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, packageHash: result.body.packageHash };
       });
 
+      await record('latest zipdeploy log exposes deployment messages', async () => {
+        const result = await httpRaw(
+          routerPort,
+          'GET',
+          '/api/deployments/latest/log',
+          undefined,
+          {
+            host: `${appName}.scm.azurewebsites.net`,
+            authorization: `Basic ${Buffer.from(`${publishingUser}:${publishingPassword}`).toString('base64')}`,
+          },
+        );
+        assert.equal(result.status, 200);
+        assert.ok(Array.isArray(result.body));
+        assert.equal(result.body[0].type, 'Message');
+        assert.match(result.body[0].message, /deployment completed successfully/i);
+        return { status: result.status, logCount: result.body.length };
+      });
+
       await record('ARM template deployment can create server farm and function app', async () => {
         const deploymentName = `func-deploy-${suffix}`;
         const deploymentPlan = `pland${suffix}`.slice(0, 40);
@@ -1939,7 +1980,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys and bounded trigger-sync behavior, bounded Durable orchestration management plus activity-history, replay-marker, timer, fan-out, and checkpoint routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, full trigger-sync fidelity, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys and bounded trigger-sync behavior, bounded SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management plus activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, full trigger-sync fidelity, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1951,7 +1992,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded trigger-sync actions, bounded Durable orchestration management, activity-history, replay-marker, timer, fan-out, and checkpoint routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded trigger-sync actions, SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management, activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 56) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 56 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 59) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 59 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1455,6 +1455,9 @@ if (!logicWorkflowsParityText) {
     'local workflow runner foreach and http connector succeed',
     'workflow trigger callback URL route succeeds',
     'workflow trigger histories list includes connector runs',
+    'workflow trigger history item route succeeds',
+    'workflow run actions list route succeeds',
+    'workflow run action item route succeeds',
     'workflow trigger reset clears trigger histories',
     'retry workflow create succeeds',
     'local workflow runner retries transient HTTP connector failures',
@@ -1493,8 +1496,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 96) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 96 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 98) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 98 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1540,6 +1543,7 @@ if (!azureFunctionsParityText) {
     'durable orchestration fan out batches preserve checkpoints',
     'durable orchestration rejects duplicate instance id',
     'durable orchestration suspend and resume succeed',
+    'durable orchestration rejects unexpected external event',
     'durable orchestration raise event completes instance',
     'durable orchestration terminate and purge succeed',
     'function app unsupported function action fails closed',
@@ -1560,6 +1564,7 @@ if (!azureFunctionsParityText) {
     'zipdeploy rejects missing publishing credentials',
     'zipdeploy accepts deterministic publishing credentials',
     'latest zipdeploy status exposes package metadata',
+    'latest zipdeploy log exposes deployment messages',
     'inspection route rejects unknown app',
     'ARM template deployment can create server farm and function app',
     'function app list after delete is empty',

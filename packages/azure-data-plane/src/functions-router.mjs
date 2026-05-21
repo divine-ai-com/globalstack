@@ -1052,6 +1052,17 @@ export class FunctionsRouter {
           },
         };
       }
+      if (Array.isArray(instance.waitingForEvents) && instance.waitingForEvents.length > 0 && !instance.waitingForEvents.includes(eventName)) {
+        return {
+          status: 409,
+          body: {
+            error: {
+              code: 'UnexpectedEvent',
+              message: `The Durable instance '${instance.instanceId}' is not waiting for external event '${eventName}'.`,
+            },
+          },
+        };
+      }
       instance.receivedEvents.push({
         name: eventName,
         data: body ?? null,
@@ -1212,6 +1223,7 @@ export class FunctionsRouter {
             return sendError(res, 400, 'InvalidZipDeployment', 'A zip deployment request must include a non-empty payload.');
           }
           for (const deployment of app.deployments) deployment.active = false;
+          const deploymentTime = nowIso();
           const deployment = {
             id: randomUUID(),
             status: 4,
@@ -1223,9 +1235,18 @@ export class FunctionsRouter {
             message: 'Zip deployment completed successfully.',
             packageHash: packageDigest(payload),
             packageSizeBytes: payload.length,
-            receivedTime: nowIso(),
-            endTime: nowIso(),
+            receivedTime: deploymentTime,
+            endTime: deploymentTime,
             log_url: `${origin}/api/deployments/latest/log`,
+            log: [
+              {
+                id: '1',
+                type: 'Message',
+                message: 'Zip deployment completed successfully.',
+                details_url: null,
+                log_time: deploymentTime,
+              },
+            ],
           };
           app.deployments.unshift(deployment);
           return sendJson(res, 202, deployment, {
@@ -1236,6 +1257,11 @@ export class FunctionsRouter {
           const deployment = app.deployments[0];
           if (!deployment) return sendError(res, 404, 'DeploymentNotFound', `No deployment exists for Function App '${app.appName}'.`);
           return sendJson(res, 200, deployment);
+        }
+        if (method === 'GET' && url.pathname === '/api/deployments/latest/log') {
+          const deployment = app.deployments[0];
+          if (!deployment) return sendError(res, 404, 'DeploymentNotFound', `No deployment exists for Function App '${app.appName}'.`);
+          return sendJson(res, 200, deployment.log ?? []);
         }
         if (method === 'GET' && url.pathname === '/api/deployments') {
           return sendJson(res, 200, app.deployments);

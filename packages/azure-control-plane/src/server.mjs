@@ -542,6 +542,21 @@ function workflowTriggerHistoriesRoute(providerRoute) {
   };
 }
 
+function workflowTriggerHistoryItemRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 6 || parts[0] !== 'workflows' || parts[2] !== 'triggers' || parts[4] !== 'histories') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+    historyName: parts[5],
+  };
+}
+
 function workflowRunRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
   const parts = providerRoute.typePath.split('/');
@@ -553,6 +568,35 @@ function workflowRunRoute(providerRoute) {
     },
     workflowName: parts[1],
     runId: parts[3],
+  };
+}
+
+function workflowRunActionsCollectionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'runs' || parts[4] !== 'actions') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    runId: parts[3],
+  };
+}
+
+function workflowRunActionItemRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 6 || parts[0] !== 'workflows' || parts[2] !== 'runs' || parts[4] !== 'actions') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    runId: parts[3],
+    actionName: parts[5],
   };
 }
 
@@ -1587,6 +1631,25 @@ export function createArmRequestHandler({
           return sendJson(res, 200, result.body);
         }
 
+        const workflowTriggerHistoryItem = workflowTriggerHistoryItemRoute(providerRoute);
+        if (workflowTriggerHistoryItem && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = workflowRunner.getTriggerHistory({
+            workflowName: workflowTriggerHistoryItem.workflowName,
+            triggerName: workflowTriggerHistoryItem.triggerName,
+            historyName: workflowTriggerHistoryItem.historyName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
         const workflowTriggerRoute = workflowTriggerRunRoute(providerRoute);
         if (workflowTriggerRoute && method === 'POST') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1621,6 +1684,43 @@ export function createArmRequestHandler({
           const result = await workflowRunner.getRun({
             workflowName: workflowRunItemRoute.workflowName,
             runId: workflowRunItemRoute.runId,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
+        const workflowRunActionsRoute = workflowRunActionsCollectionRoute(providerRoute);
+        if (workflowRunActionsRoute && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = await workflowRunner.listRunActions({
+            workflowName: workflowRunActionsRoute.workflowName,
+            runId: workflowRunActionsRoute.runId,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
+        const workflowRunActionItem = workflowRunActionItemRoute(providerRoute);
+        if (workflowRunActionItem && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = await workflowRunner.getRunAction({
+            workflowName: workflowRunActionItem.workflowName,
+            runId: workflowRunActionItem.runId,
+            actionName: workflowRunActionItem.actionName,
           });
           if (result.error) {
             return sendError(res, result.error.status, result.error.code, result.error.message);

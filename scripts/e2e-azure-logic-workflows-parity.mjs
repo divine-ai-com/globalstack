@@ -793,6 +793,7 @@ async function runControlPlaneMatrix() {
   const recurrenceWorkflowName = `workflow-recur-${suffix}`.slice(0, 40);
   const webhookWorkflowName = `workflow-hook-${suffix}`.slice(0, 40);
   const apiConnWorkflowName = `workflow-conn-${suffix}`.slice(0, 40);
+  let connectorRunId = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -1195,6 +1196,7 @@ async function runControlPlaneMatrix() {
         assert.equal(result.body.response?.body?.iterations.length, 2);
         assert.equal(result.body.response?.body?.iterations[0].outputs.shapeItem.id, 'doc-1');
         assert.equal(requests.at(-1)?.body?.workflow, 'connector-flow');
+        connectorRunId = result.body.id;
         return { status: result.status, runId: result.body.id };
       });
 
@@ -1221,6 +1223,47 @@ async function runControlPlaneMatrix() {
         assert.ok(result.body.value.length >= 1);
         assert.equal(result.body.value.at(-1).properties.status, 'Succeeded');
         return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('workflow trigger history item route succeeds', async () => {
+        assert.ok(connectorRunId);
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${connectorWorkflowName}/triggers/manual/histories/${connectorRunId}`, '2019-05-01'),
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.properties.runId, connectorRunId);
+        assert.equal(result.body.properties.status, 'Succeeded');
+        return { status: result.status, historyName: result.body.name };
+      });
+
+      await record('workflow run actions list route succeeds', async () => {
+        assert.ok(connectorRunId);
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${connectorWorkflowName}/runs/${connectorRunId}/actions`, '2019-05-01'),
+        );
+        assert.equal(result.status, 200);
+        assert.ok(Array.isArray(result.body.value));
+        assert.ok(result.body.value.some(item => item.name === 'callConnector' && item.properties.status === 'Succeeded'));
+        assert.ok(result.body.value.some(item => item.name === 'fanOutItems' && item.properties.status === 'Succeeded'));
+        return { status: result.status, count: result.body.value.length };
+      });
+
+      await record('workflow run action item route succeeds', async () => {
+        assert.ok(connectorRunId);
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${connectorWorkflowName}/runs/${connectorRunId}/actions/callConnector`, '2019-05-01'),
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.name, 'callConnector');
+        assert.equal(result.body.properties.status, 'Succeeded');
+        assert.equal(result.body.properties.outputs.body.accepted, true);
+        return { status: result.status, actionName: result.body.name };
       });
 
       await record('workflow trigger reset clears trigger histories', async () => {
@@ -1495,7 +1538,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, bounded request-trigger runner success and failure behavior, supported runAfter/conditional/foreach/http/terminate semantics for the implemented action subset, supported trigger-run, callback, history, and reset routes, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for broad connector runtime behavior, Azure-hosted trigger execution, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, bounded trigger-runner success and failure behavior, supported runAfter/conditional/foreach/http/terminate semantics for the implemented action subset, supported trigger-run, callback, history, history-item, run-action, and reset routes, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for broad connector runtime behavior, Azure-hosted trigger execution, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1507,7 +1550,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, bounded request-trigger runner checks, supported runAfter/conditional/foreach/http/terminate action semantics, supported trigger-run, callback, history, and reset routes, unsupported route fail-closed checks outside that subset, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, bounded trigger runner checks, supported runAfter/conditional/foreach/http/terminate action semantics, supported trigger-run, callback, history, history-item, run-action, and reset routes, unsupported route fail-closed checks outside that subset, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Logic Apps cloudValidated claim.',
   controlPlane,
   platformMatrix,

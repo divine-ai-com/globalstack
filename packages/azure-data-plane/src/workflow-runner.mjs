@@ -84,6 +84,22 @@ function triggerSupportsCallback(trigger) {
   return ['request', 'httpwebhook', 'apiconnectionwebhook'].includes(normalizedTriggerType(trigger));
 }
 
+function runActionResource(workflowName, runId, action) {
+  return {
+    id: `/workflows/${workflowName}/runs/${runId}/actions/${action.name}`,
+    name: action.name,
+    type: 'Microsoft.Logic/workflows/runs/actions',
+    properties: {
+      type: action.type,
+      status: action.status,
+      startTime: action.startTime,
+      endTime: action.endTime,
+      ...(action.outputs !== undefined ? { outputs: action.outputs } : {}),
+      ...(action.error ? { error: action.error, code: action.error.code ?? null } : {}),
+    },
+  };
+}
+
 export class WorkflowRunner {
   constructor({ httpInvoker = null } = {}) {
     this.workflows = new Map();
@@ -794,6 +810,30 @@ export class WorkflowRunner {
     return { status: 200, body: run };
   }
 
+  async listRunActions({ workflowName, runId }) {
+    const runResult = await this.getRun({ workflowName, runId });
+    if (runResult.error) return runResult;
+    return {
+      status: 200,
+      body: {
+        value: (runResult.body.actions ?? []).map(action => runActionResource(workflowName, runId, action)),
+      },
+    };
+  }
+
+  async getRunAction({ workflowName, runId, actionName }) {
+    const runResult = await this.getRun({ workflowName, runId });
+    if (runResult.error) return runResult;
+    const action = (runResult.body.actions ?? []).find(item => item.name === actionName);
+    if (!action) {
+      return error(404, 'RunActionNotFound', `The workflow action '${actionName}' was not found in run '${runId}'.`);
+    }
+    return {
+      status: 200,
+      body: runActionResource(workflowName, runId, action),
+    };
+  }
+
   async listRuns({ workflowName }) {
     if (!this.workflows.has(workflowKey(workflowName))) {
       return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
@@ -825,6 +865,26 @@ export class WorkflowRunner {
       body: {
         value: [...(this.triggerHistories.get(this.triggerHistoryKey(workflowName, triggerName)) ?? [])],
       },
+    };
+  }
+
+  getTriggerHistory({ workflowName, triggerName, historyName }) {
+    const workflow = this.workflows.get(workflowKey(workflowName));
+    if (!workflow) {
+      return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
+    }
+    const trigger = workflow.definition?.triggers?.[triggerName];
+    if (!trigger) {
+      return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
+    }
+    const item = (this.triggerHistories.get(this.triggerHistoryKey(workflowName, triggerName)) ?? [])
+      .find(entry => entry.name === historyName || entry.properties?.runId === historyName);
+    if (!item) {
+      return error(404, 'TriggerHistoryNotFound', `The trigger history '${historyName}' was not found.`);
+    }
+    return {
+      status: 200,
+      body: item,
     };
   }
 
