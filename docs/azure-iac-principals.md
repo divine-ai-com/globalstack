@@ -132,6 +132,8 @@ It must not use:
 
 Unit tests must validate Azure structure, not harness implementation details.
 
+Unit tests are the place to prove configuration, structure, and semantic intent from the prompt specification. They should answer: "Did we build the right thing, and is it configured the way the prompt asked?"
+
 They should check:
 
 - required files
@@ -140,6 +142,10 @@ They should check:
 - required properties
 - outputs
 - platform-native conventions
+- exact resource names where the prompt fixes them
+- explicit security and configuration settings named in the prompt
+- structural and semantic validations in source code when the prompt requires behavior, such as route names, required fields, validation branches, payload shapes, or output-key contracts
+- absence of prompt-forbidden or out-of-scope services where practical
 
 They must not check:
 
@@ -148,9 +154,18 @@ They must not check:
 - internal sidecar behavior
 - emulator-only metadata
 
+When a prompt names a specific contract, the unit tests should assert that contract directly from the source files instead of relying on copied expectations in metadata.
+
 ## 6. Integration Test Rules
 
 Integration tests must validate live Azure-shaped behavior against the deployed bundle.
+
+Integration tests should be structured in two phases:
+
+1. service existence and deployed contract checks for every service explicitly listed in the prompt
+2. live end-to-end behavior checks for every workflow or side effect explicitly claimed in the prompt
+
+This ordering is required. Do not jump straight to workflow tests without first proving that the requested services were actually deployed and are readable through Azure-shaped APIs.
 
 They should:
 
@@ -159,6 +174,10 @@ They should:
 - read back deployed resources by Azure resource ID or Azure-shaped route
 - assert exact `name`, `type`, and other contract fields where available
 - fail when the deployment contract is wrong
+- start with service existence checks for every prompt-listed service
+- check exact deployed contract details for those services where the prompt fixes names or properties
+- then execute the live end-to-end flow and verify every claimed side effect
+- verify negative-path behavior when the prompt claims failures such as `400`, `401`, or "must not create side effects"
 
 They must not:
 
@@ -166,6 +185,8 @@ They must not:
 - silently weaken assertions
 - pass on partial deployment success
 - replace exact checks with loose substring checks when the exact contract is available
+
+If a prompt claims a sequence like "request comes in, resource A is written, resource B gets a message, workflow C runs," then the integration suite is not complete until it proves both the deployed service inventory and that full live sequence.
 
 ## 7. No Silent Relaxations
 
