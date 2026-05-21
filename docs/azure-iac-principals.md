@@ -85,10 +85,20 @@ Prompts must request real Azure infrastructure and real Azure outcomes.
 
 Prompts must:
 
+- be written in an imperative, human delivery style
 - describe the intended workload clearly
 - request real Azure resources and constraints
 - specify exact names, SKUs, outputs, and scope when needed
 - stay compatible with production Azure deployment expectations
+
+Prompts should sound like a real engineer or operator asking for a system, similar to the verified AWS prompts. They should focus on:
+
+- the business problem
+- the runtime behavior that must happen
+- the infrastructure constraints that matter
+- the file and output contract
+
+Prompts should avoid teaching the model how to implement the solution in unnecessary detail. Avoid stuffing prompts with low-level framework instructions such as exact import paths, helper-resource construction patterns, SDK object-shape coaching, or other generator-side implementation hints unless that detail is genuinely part of the user-visible contract.
 
 Prompts must not:
 
