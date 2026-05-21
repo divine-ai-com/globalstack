@@ -1618,7 +1618,7 @@ export function createArmRequestHandler({
           if (!workflowRunner) {
             return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
           }
-          const result = workflowRunner.getRun({
+          const result = await workflowRunner.getRun({
             workflowName: workflowRunItemRoute.workflowName,
             runId: workflowRunItemRoute.runId,
           });
@@ -1636,7 +1636,7 @@ export function createArmRequestHandler({
           if (!workflowRunner) {
             return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
           }
-          const result = workflowRunner.listRuns({
+          const result = await workflowRunner.listRuns({
             workflowName: workflowRunsRoute.workflowName,
           });
           if (result.error) {

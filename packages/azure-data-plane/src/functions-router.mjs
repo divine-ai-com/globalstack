@@ -2,9 +2,15 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 
+async function readRawBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  return Buffer.concat(chunks);
+}
+
 async function readBody(req) {
-  let text = '';
-  for await (const chunk of req) text += chunk;
+  const raw = await readRawBody(req);
+  const text = raw.toString('utf8');
   if (!text) return null;
   try {
     return JSON.parse(text);
@@ -32,10 +38,21 @@ function sendError(res, status, code, message) {
   });
 }
 
-function appFromHost(host) {
+function appHostInfo(host) {
   const hostname = String(host ?? '').split(':')[0];
+  if (hostname.endsWith('.scm.azurewebsites.net')) {
+    return {
+      appName: hostname.slice(0, -'.scm.azurewebsites.net'.length).split('.')[0] ?? null,
+      scm: true,
+      hostname,
+    };
+  }
   if (!hostname.endsWith('.azurewebsites.net')) return null;
-  return hostname.split('.')[0] ?? null;
+  return {
+    appName: hostname.split('.')[0] ?? null,
+    scm: false,
+    hostname,
+  };
 }
 
 function normalizeRoute(route) {
@@ -61,8 +78,23 @@ function hostKey(appName, slot = 'default') {
     .slice(0, 44);
 }
 
+function publishingUsername(appName) {
+  return `$${String(appName).toLowerCase()}`;
+}
+
+function publishingPassword(appName) {
+  return createHash('sha256')
+    .update(`globalstack:functions:publishing:${String(appName).toLowerCase()}`)
+    .digest('base64url')
+    .slice(0, 32);
+}
+
 function nowIso() {
   return new Date().toISOString();
+}
+
+function packageDigest(buffer) {
+  return createHash('sha256').update(buffer).digest('hex');
 }
 
 function stableActivityOutput(activityName, payload = null) {
@@ -81,11 +113,30 @@ function stableCheckpointOutput(index, activityNames = [], reason = 'activity-ba
   };
 }
 
+function checkpointFingerprint(checkpoint) {
+  return createHash('sha256')
+    .update(JSON.stringify({
+      checkpointName: checkpoint.checkpointName,
+      index: checkpoint.index,
+      reason: checkpoint.reason,
+      completedActivities: checkpoint.completedActivities,
+    }))
+    .digest('hex')
+    .slice(0, 16);
+}
+
 function stableTimerOutput(timerName, dueTime, fired = false) {
   return {
     timerName,
     dueTime,
     fired,
+  };
+}
+
+function stableSubOrchestrationOutput(orchestratorName, payload = null) {
+  return {
+    orchestratorName,
+    input: payload ?? null,
   };
 }
 
@@ -170,6 +221,23 @@ function requestKey(req, url) {
   return req.headers['x-functions-key'] ?? url.searchParams.get('code') ?? null;
 }
 
+function basicAuthCredentials(req) {
+  const raw = String(req.headers.authorization ?? '');
+  const match = raw.match(/^Basic\s+(.+)$/i);
+  if (!match) return null;
+  try {
+    const decoded = Buffer.from(match[1], 'base64').toString('utf8');
+    const split = decoded.indexOf(':');
+    if (split < 0) return null;
+    return {
+      username: decoded.slice(0, split),
+      password: decoded.slice(split + 1),
+    };
+  } catch {
+    return null;
+  }
+}
+
 function matchFunction(app, route) {
   const exact = app.functions.get(route.toLowerCase());
   if (exact) return { fn: exact, params: {} };
@@ -207,6 +275,7 @@ export class FunctionsRouter {
     this.apps.set(name.toLowerCase(), {
       appName: name,
       defaultHostName: defaultHostName ?? `${name}.azurewebsites.net`,
+      scmHostName: `${name}.scm.azurewebsites.net`,
       functions: new Map(),
       functionsByName: new Map(),
       functionResources: new Map(),
@@ -216,6 +285,7 @@ export class FunctionsRouter {
         instances: new Map(),
       },
       triggers: new Map(),
+      deployments: [],
     });
   }
 
@@ -259,6 +329,8 @@ export class FunctionsRouter {
     const activityTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
     const timerTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'timertrigger');
     const queueTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
+    const blobTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'blobtrigger');
+    const eventGridTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'eventgridtrigger');
     if (orchestrationTrigger) {
       app.durable.orchestrators.set(normalizedFunctionName, {
         functionName,
@@ -283,6 +355,20 @@ export class FunctionsRouter {
         functionName,
         type: 'queueTrigger',
         queueName: queueTrigger.queueName ?? null,
+      });
+    }
+    if (blobTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'blobTrigger',
+        path: blobTrigger.path ?? null,
+      });
+    }
+    if (eventGridTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'eventGridTrigger',
+        eventType: eventGridTrigger.eventType ?? null,
       });
     }
     if (!httpTrigger) return null;
@@ -365,6 +451,12 @@ export class FunctionsRouter {
     return [...app.functions.values()].some(item => item.key === candidate);
   }
 
+  isAuthorizedPublishingCredentials(app, req) {
+    const credentials = basicAuthCredentials(req);
+    if (!credentials) return false;
+    return credentials.username === publishingUsername(app.appName) && credentials.password === publishingPassword(app.appName);
+  }
+
   durableExecutionPlan(app, input = null) {
     const explicitActivityBatches = Array.isArray(input?.callActivityBatches)
       ? input.callActivityBatches
@@ -434,6 +526,9 @@ export class FunctionsRouter {
       const activityNames = Array.isArray(stage?.activities)
         ? stage.activities.map(item => String(item))
         : [];
+      const subOrchestratorNames = Array.isArray(stage?.subOrchestrations)
+        ? stage.subOrchestrations.map(item => String(item))
+        : [];
       const waitForEvents = stage?.waitForExternalEvent === undefined
         ? []
         : Array.isArray(stage.waitForExternalEvent)
@@ -443,10 +538,11 @@ export class FunctionsRouter {
       return {
         index,
         activityNames,
+        subOrchestratorNames,
         waitForEvents,
         durableTimer,
       };
-    }).filter(stage => stage.activityNames.length > 0 || stage.waitForEvents.length > 0 || stage.durableTimer);
+    }).filter(stage => stage.activityNames.length > 0 || stage.subOrchestratorNames.length > 0 || stage.waitForEvents.length > 0 || stage.durableTimer);
     if (stages.length === 0) return null;
     const missingActivity = stages.flatMap(stage => stage.activityNames).find(name => !app.durable.activities.has(String(name).toLowerCase()));
     if (missingActivity) {
@@ -457,8 +553,20 @@ export class FunctionsRouter {
         },
       };
     }
+    const missingSubOrchestrator = stages.flatMap(stage => stage.subOrchestratorNames).find(name => !app.durable.orchestrators.has(String(name).toLowerCase()));
+    if (missingSubOrchestrator) {
+      return {
+        error: {
+          code: 'SubOrchestratorNotFound',
+          message: `No Durable sub-orchestrator named '${missingSubOrchestrator}' is registered for Function App '${app.appName}'.`,
+        },
+      };
+    }
     const activityPayloads = input?.activityPayloads && typeof input.activityPayloads === 'object'
       ? input.activityPayloads
+      : {};
+    const subOrchestrationPayloads = input?.subOrchestrationPayloads && typeof input.subOrchestrationPayloads === 'object'
+      ? input.subOrchestrationPayloads
       : {};
     const now = Date.now();
     const normalizedStages = stages.map(stage => {
@@ -481,6 +589,10 @@ export class FunctionsRouter {
         activities: stage.activityNames.map(name => ({
           name,
           output: stableActivityOutput(name, activityPayloads[name] ?? null),
+        })),
+        subOrchestrations: stage.subOrchestratorNames.map(name => ({
+          name,
+          output: stableSubOrchestrationOutput(name, subOrchestrationPayloads[name] ?? null),
         })),
         timer,
       };
@@ -507,13 +619,18 @@ export class FunctionsRouter {
     const stage = instance.replayStages?.[stageIndex];
     if (!stage) return;
     const checkpoint = {
-      ...stableCheckpointOutput(stageIndex, stage.activities.map(item => item.name), 'replay-stage'),
+      ...stableCheckpointOutput(stageIndex, [
+        ...stage.activities.map(item => item.name),
+        ...stage.subOrchestrations.map(item => item.name),
+      ], 'replay-stage'),
       savedAt: timestamp,
     };
+    checkpoint.fingerprint = checkpointFingerprint(checkpoint);
     instance.history.push({
       eventType: 'CheckpointLoaded',
       checkpointName: instance.completedReplayStages === 0 ? 'checkpoint-0' : `checkpoint-${instance.completedReplayStages}`,
       stageIndex: stageIndex + 1,
+      fingerprint: instance.checkpoints.at(-1)?.fingerprint ?? null,
       timestamp,
     });
     for (const activity of stage.activities) {
@@ -532,16 +649,34 @@ export class FunctionsRouter {
         result: activity.output,
       });
     }
+    for (const subOrchestration of stage.subOrchestrations) {
+      instance.subOrchestrationResults.push(subOrchestration);
+      instance.history.push({
+        eventType: 'SubOrchestrationInstanceCreated',
+        name: subOrchestration.name,
+        batchIndex: stageIndex + 1,
+        timestamp,
+      });
+      instance.history.push({
+        eventType: 'SubOrchestrationInstanceCompleted',
+        name: subOrchestration.name,
+        batchIndex: stageIndex + 1,
+        timestamp,
+        result: subOrchestration.output,
+      });
+    }
     instance.checkpoints.push(checkpoint);
     instance.history.push({
       eventType: 'CheckpointSaved',
       checkpointName: checkpoint.checkpointName,
       batchIndex: stageIndex + 1,
+      fingerprint: checkpoint.fingerprint,
       timestamp,
     });
     instance.activityBatches.push({
       batchIndex: stageIndex,
       activities: stage.activities,
+      subOrchestrations: stage.subOrchestrations,
     });
     instance.completedReplayStages += 1;
     instance.activeStageIndex = stageIndex + 1;
@@ -584,8 +719,10 @@ export class FunctionsRouter {
       activityBatches: (instance.activityBatches ?? []).map(batch => ({
         batchIndex: batch.batchIndex,
         activities: batch.activities.map(item => item.name),
+        subOrchestrations: (batch.subOrchestrations ?? []).map(item => item.name),
       })),
       checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
+      subOrchestrationResults: Object.fromEntries((instance.subOrchestrationResults ?? []).map(item => [item.name, item.output])),
       timerResults: Object.fromEntries((instance.timerResults ?? []).map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
       events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
     };
@@ -698,6 +835,7 @@ export class FunctionsRouter {
         receivedEvents: [],
         activityBatches: [],
         activityResults: [],
+        subOrchestrationResults: [],
         checkpoints: [],
         timerResults: [],
         replayCursor: replayStagePlan.replayCount,
@@ -838,6 +976,7 @@ export class FunctionsRouter {
               activities: batch.activities.map(item => item.name),
             })),
             checkpoints: Object.fromEntries(checkpoints.map(item => [item.checkpointName, item])),
+            subOrchestrationResults: {},
             timerResults: Object.fromEntries(plan.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
           }
         : null,
@@ -851,6 +990,7 @@ export class FunctionsRouter {
       receivedEvents: [],
       activityBatches: plan.activityBatches,
       activityResults: plan.activityResults,
+      subOrchestrationResults: [],
       checkpoints,
       timerResults: plan.timerResults,
       replayCursor: plan.replayCount,
@@ -912,18 +1052,20 @@ export class FunctionsRouter {
       } else if (remaining.length === 0) {
         this.appendDurableReplay(instance, nowIso(), 'external-event');
         instance.runtimeStatus = 'Completed';
-        instance.output = {
-          orchestrator: instance.orchestratorName,
-          input: instance.input ?? null,
-          activityResults: Object.fromEntries(instance.activityResults.map(item => [item.name, item.output])),
-          activityBatches: (instance.activityBatches ?? []).map(batch => ({
-            batchIndex: batch.batchIndex,
-            activities: batch.activities.map(item => item.name),
-          })),
-          checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
-          timerResults: Object.fromEntries(instance.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
-          events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
-        };
+      instance.output = {
+        orchestrator: instance.orchestratorName,
+        input: instance.input ?? null,
+        activityResults: Object.fromEntries(instance.activityResults.map(item => [item.name, item.output])),
+        activityBatches: (instance.activityBatches ?? []).map(batch => ({
+          batchIndex: batch.batchIndex,
+          activities: batch.activities.map(item => item.name),
+          subOrchestrations: (batch.subOrchestrations ?? []).map(item => item.name),
+        })),
+        checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
+        subOrchestrationResults: Object.fromEntries((instance.subOrchestrationResults ?? []).map(item => [item.name, item.output])),
+        timerResults: Object.fromEntries(instance.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
+        events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
+      };
         instance.history.push({
           eventType: 'ExecutionCompleted',
           timestamp: nowIso(),
@@ -1028,16 +1170,72 @@ export class FunctionsRouter {
       });
     }
 
-      const appName = appFromHost(req.headers.host);
-      if (!appName) {
+      const hostInfo = appHostInfo(req.headers.host);
+      if (!hostInfo?.appName) {
         return sendError(res, 404, 'ResourceNotFound', 'The Function App host was not found.');
       }
-      const app = this.apps.get(appName.toLowerCase());
+      const app = this.apps.get(hostInfo.appName.toLowerCase());
       if (!app) {
-        return sendError(res, 404, 'ResourceNotFound', `Function App '${appName}' was not found.`);
+        return sendError(res, 404, 'ResourceNotFound', `Function App '${hostInfo.appName}' was not found.`);
       }
 
       const origin = `http://${req.headers.host ?? app.defaultHostName}`;
+      if (hostInfo.scm) {
+        if (!this.isAuthorizedPublishingCredentials(app, req)) {
+          res.writeHead(401, {
+            'www-authenticate': `Basic realm="${app.scmHostName}"`,
+            'content-length': 0,
+          });
+          return res.end();
+        }
+        if (method === 'POST' && url.pathname === '/api/zipdeploy') {
+          const payload = await readRawBody(req);
+          if (payload.length === 0) {
+            return sendError(res, 400, 'InvalidZipDeployment', 'A zip deployment request must include a non-empty payload.');
+          }
+          for (const deployment of app.deployments) deployment.active = false;
+          const deployment = {
+            id: randomUUID(),
+            status: 4,
+            status_text: 'Success',
+            complete: true,
+            active: true,
+            author: 'GlobalStack',
+            deployer: 'ZipDeploy',
+            message: 'Zip deployment completed successfully.',
+            packageHash: packageDigest(payload),
+            packageSizeBytes: payload.length,
+            receivedTime: nowIso(),
+            endTime: nowIso(),
+            log_url: `${origin}/api/deployments/latest/log`,
+          };
+          app.deployments.unshift(deployment);
+          return sendJson(res, 202, deployment, {
+            location: `${origin}/api/deployments/latest`,
+          });
+        }
+        if (method === 'GET' && url.pathname === '/api/deployments/latest') {
+          const deployment = app.deployments[0];
+          if (!deployment) return sendError(res, 404, 'DeploymentNotFound', `No deployment exists for Function App '${app.appName}'.`);
+          return sendJson(res, 200, deployment);
+        }
+        if (method === 'GET' && url.pathname === '/api/deployments') {
+          return sendJson(res, 200, app.deployments);
+        }
+        return sendError(res, 404, 'ResourceNotFound', `No SCM route handles ${url.pathname}.`);
+      }
+      if (method === 'GET' && url.pathname === '/admin/host/status') {
+        if (!this.isAuthorizedKey(app, requestKey(req, url), null)) {
+          return sendError(res, 401, 'Unauthorized', 'The function key is missing or invalid.');
+        }
+        return sendJson(res, 200, {
+          id: `${app.appName}-host`,
+          state: 'Running',
+          version: '4.0.0-globalstack',
+          processUptimeMs: 0,
+          functionCount: app.functionResources.size,
+        });
+      }
       const adminFunction = adminFunctionRoute(url.pathname);
       if (adminFunction) {
         if (!this.isAuthorizedKey(app, requestKey(req, url), null)) {
@@ -1056,6 +1254,8 @@ export class FunctionsRouter {
           input: body ?? null,
           ...(trigger.queueName ? { queueName: trigger.queueName } : {}),
           ...(trigger.schedule ? { schedule: trigger.schedule } : {}),
+          ...(trigger.path ? { path: trigger.path } : {}),
+          ...(trigger.eventType ? { eventType: trigger.eventType } : {}),
         });
       }
       const durable = durableRoute(url.pathname);
@@ -1149,4 +1349,12 @@ export function deterministicFunctionKey(appName, functionName) {
 
 export function deterministicHostKey(appName, slot = 'default') {
   return hostKey(appName, slot);
+}
+
+export function deterministicPublishingUsername(appName) {
+  return publishingUsername(appName);
+}
+
+export function deterministicPublishingPassword(appName) {
+  return publishingPassword(appName);
 }

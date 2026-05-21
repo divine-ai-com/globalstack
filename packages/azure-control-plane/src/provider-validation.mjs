@@ -2156,7 +2156,9 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     const activityTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'activitytrigger');
     const timerTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'timertrigger');
     const queueTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
-    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length + timerTriggers.length + queueTriggers.length;
+    const blobTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'blobtrigger');
+    const eventGridTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'eventgridtrigger');
+    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length + timerTriggers.length + queueTriggers.length + blobTriggers.length + eventGridTriggers.length;
     if (supportedTriggerCount !== 1) {
       return envelopedError(
         400,
@@ -2164,7 +2166,7 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         'Function resources currently require exactly one supported trigger binding in this local parity surface.',
       );
     }
-    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0] ?? timerTriggers[0] ?? queueTriggers[0];
+    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0] ?? timerTriggers[0] ?? queueTriggers[0] ?? blobTriggers[0] ?? eventGridTriggers[0];
     if (httpTriggers.length === 1 && trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
       return envelopedError(
         400,
@@ -2191,6 +2193,13 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         400,
         'ValidationError',
         'Queue trigger bindings require a string queueName.',
+      );
+    }
+    if (blobTriggers.length === 1 && typeof trigger.path !== 'string') {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Blob trigger bindings require a string path.',
       );
     }
   }

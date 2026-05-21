@@ -461,6 +461,7 @@ function longRunningWorkflowBody(overrides = {}) {
           },
           waitBriefly: {
             type: 'Delay',
+            operationOptions: 'Asynchronous',
             runAfter: {
               initializeCounter: ['Succeeded'],
             },
@@ -548,17 +549,95 @@ function apiConnectionWorkflowBody(overrides = {}) {
               },
             },
           },
+          enqueueBusMessage: {
+            type: 'ApiConnection',
+            runAfter: {
+              setConfig: ['Succeeded'],
+            },
+            inputs: {
+              method: 'POST',
+              path: '/queues/model-events/messages',
+              host: {
+                connection: {
+                  name: 'servicebus',
+                },
+              },
+              body: {
+                id: 'msg-1',
+              },
+            },
+          },
+          publishGridEvent: {
+            type: 'ApiConnection',
+            runAfter: {
+              enqueueBusMessage: ['Succeeded'],
+            },
+            inputs: {
+              method: 'POST',
+              path: '/topics/mlops-events/publish',
+              host: {
+                connection: {
+                  name: 'eventgrid',
+                },
+              },
+              body: {
+                eventType: 'ModelPublished',
+                subject: '/models/gpt-5.5',
+              },
+            },
+          },
+          storeSecret: {
+            type: 'ApiConnection',
+            runAfter: {
+              publishGridEvent: ['Succeeded'],
+            },
+            inputs: {
+              method: 'PUT',
+              path: '/secrets/model-key',
+              host: {
+                connection: {
+                  name: 'keyvault',
+                },
+              },
+              body: {
+                value: 'opaque',
+              },
+            },
+          },
+          upsertTableEntity: {
+            type: 'ApiConnection',
+            runAfter: {
+              storeSecret: ['Succeeded'],
+            },
+            inputs: {
+              method: 'POST',
+              path: '/tables/ModelLedger/entities',
+              host: {
+                connection: {
+                  name: 'azuretables',
+                },
+              },
+              body: {
+                PartitionKey: 'models',
+                RowKey: 'gpt-5.5',
+              },
+            },
+          },
           respond: {
             type: 'Response',
             kind: 'Http',
             runAfter: {
-              setConfig: ['Succeeded'],
+              upsertTableEntity: ['Succeeded'],
             },
             inputs: {
               statusCode: 200,
               body: {
                 blob: "@actions('putBlob').outputs",
                 config: "@actions('setConfig').outputs",
+                serviceBus: "@actions('enqueueBusMessage').outputs",
+                eventGrid: "@actions('publishGridEvent').outputs",
+                keyVault: "@actions('storeSecret').outputs",
+                table: "@actions('upsertTableEntity').outputs",
               },
             },
           },
@@ -786,7 +865,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.response?.statusCode, 202);
       assert.equal(result.body.response?.body?.accepted, true);
       assert.equal(result.body.response?.body?.payload?.robotId, 'arm-1');
-      const run = workflowRunner.getRun({ workflowName, runId: result.body.id });
+      const run = await workflowRunner.getRun({ workflowName, runId: result.body.id });
       assert.equal(run.status, 200);
       assert.equal(run.body.status, 'Succeeded');
       return { status: result.status, runId: result.body.id };
@@ -906,7 +985,7 @@ async function runControlPlaneMatrix() {
     });
 
     await record('workflow run get route succeeds', async () => {
-      const runs = workflowRunner.listRuns({ workflowName });
+      const runs = await workflowRunner.listRuns({ workflowName });
       assert.equal(runs.status, 200);
       const runId = runs.body.value.at(-1)?.id;
       assert.ok(runId);
@@ -1105,11 +1184,56 @@ async function runControlPlaneMatrix() {
           body: { op: 'loop' },
         });
         assert.equal(result.status, 202);
-        assert.equal(result.body.status, 'Succeeded');
-        assert.equal(result.body.response?.body?.count, 2);
-        assert.equal(result.body.response?.body?.converge?.completed, true);
-        assert.equal(result.body.response?.body?.converge?.iterationCount, 2);
-        return { status: result.status };
+        assert.equal(result.body.status, 'Running');
+        assert.equal(result.body.response, null);
+        await new Promise(resolve => setTimeout(resolve, 25));
+        const run = await workflowRunner.getRun({
+          workflowName: longWorkflowName,
+          runId: result.body.id,
+        });
+        assert.equal(run.status, 200);
+        assert.equal(run.body.status, 'Succeeded');
+        assert.equal(run.body.response?.body?.count, 2);
+        assert.equal(run.body.response?.body?.converge?.completed, true);
+        assert.equal(run.body.response?.body?.converge?.iterationCount, 2);
+        return { status: run.status };
+      });
+
+      await record('workflow run get reconciles hosted long running execution', async () => {
+        const invoked = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${longWorkflowName}/triggers/manual/run`, '2019-05-01'),
+          { op: 'loop' },
+        );
+        assert.equal(invoked.status, 202);
+        assert.equal(invoked.body.status, 'Running');
+        const runId = invoked.headers.location?.split('/').filter(Boolean).at(-1);
+        assert.ok(runId);
+        const initial = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${longWorkflowName}/runs/${runId}`, '2019-05-01'),
+        );
+        assert.equal(initial.status, 200);
+        assert.equal(initial.body.status, 'Running');
+        await new Promise(resolve => setTimeout(resolve, 25));
+        const completed = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${longWorkflowName}/runs/${runId}`, '2019-05-01'),
+        );
+        assert.equal(completed.status, 200);
+        assert.equal(completed.body.status, 'Succeeded');
+        assert.equal(completed.body.response?.body?.count, 2);
+        const histories = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${longWorkflowName}/triggers/manual/histories`, '2019-05-01'),
+        );
+        assert.equal(histories.status, 200);
+        assert.equal(histories.body.value.at(-1).properties.status, 'Succeeded');
+        return { status: completed.status, runtimeStatus: completed.body.status };
       });
 
       await record('api connection workflow create succeeds', async () => {
@@ -1128,6 +1252,10 @@ async function runControlPlaneMatrix() {
         assert.equal(result.body.status, 'Succeeded');
         assert.equal(result.body.response?.body?.blob?.connector, 'azureblob');
         assert.equal(result.body.response?.body?.config?.connector, 'appconfiguration');
+        assert.equal(result.body.response?.body?.serviceBus?.connector, 'servicebus');
+        assert.equal(result.body.response?.body?.eventGrid?.connector, 'eventgrid');
+        assert.equal(result.body.response?.body?.keyVault?.connector, 'keyvault');
+        assert.equal(result.body.response?.body?.table?.connector, 'azuretables');
         return { status: result.status };
       });
     }, {

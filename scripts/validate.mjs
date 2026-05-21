@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 49) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 49 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 50) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 50 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1460,6 +1460,7 @@ if (!logicWorkflowsParityText) {
     'local workflow runner retries transient HTTP connector failures',
     'long running workflow create succeeds',
     'local workflow runner delay and until semantics succeed',
+    'workflow run get reconciles hosted long running execution',
     'api connection workflow create succeeds',
     'local workflow runner api connection actions succeed',
   ]) {
@@ -1486,8 +1487,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 83) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 83 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 92) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 92 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1507,8 +1508,11 @@ if (!azureFunctionsParityText) {
     'valid function app create returns async Azure shape',
     'function app get reaches Succeeded and registers local host',
     'function child resource create succeeds',
+    'function host status endpoint succeeds',
     'timer trigger function resource create succeeds',
     'queue trigger function resource create succeeds',
+    'blob trigger function resource create succeeds',
+    'event grid trigger function resource create succeeds',
     'function listKeys returns deterministic key',
     'function host listKeys returns host keys',
     'function app syncfunctiontriggers action succeeds',
@@ -1522,6 +1526,7 @@ if (!azureFunctionsParityText) {
     'durable orchestration executes declared activity history',
     'durable orchestration replay history is recorded',
     'durable orchestration staged replay persists checkpoints across waits',
+    'durable orchestration staged replay preserves sub orchestration history',
     'durable orchestration future timer keeps instance running',
     'durable orchestration elapsed timer completes instance',
     'durable orchestration fan out batches preserve checkpoints',
@@ -1540,6 +1545,11 @@ if (!azureFunctionsParityText) {
     'secured HTTP trigger accepts x-functions-key header',
     'timer trigger admin invocation succeeds',
     'queue trigger admin invocation succeeds',
+    'blob trigger admin invocation succeeds',
+    'event grid trigger admin invocation succeeds',
+    'zipdeploy rejects missing publishing credentials',
+    'zipdeploy accepts deterministic publishing credentials',
+    'latest zipdeploy status exposes package metadata',
     'inspection route rejects unknown app',
     'ARM template deployment can create server farm and function app',
     'function app list after delete is empty',

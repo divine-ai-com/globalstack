@@ -1,6 +1,6 @@
 # Azure Logic Workflows Parity Pack
 
-This pack is the local acceptance suite for Azure Logic Apps workflow control-plane behavior plus a local request-trigger runner and run-history surface before the Step Functions equivalent moves closer to 99% parity. It does not replace live Azure capture for broad connector execution depth, Azure-hosted trigger runtime behavior, full retry semantics, full run history parity, unbounded long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
+This pack is the local acceptance suite for Azure Logic Apps workflow control-plane behavior plus a local request-trigger runner and run-history surface before the Step Functions equivalent moves closer to 99% parity. It does not replace live Azure capture for the broader connector catalog beyond the bounded local subset, Azure-hosted trigger runtime behavior, full retry semantics, full run history parity, unbounded long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
 
 Executable check:
 
@@ -28,12 +28,12 @@ The pack verifies:
 - Bounded action execution for `Compose`, `Response`, `InitializeVariable`, `SetVariable`, `ParseJson`, `If`, `Foreach`, `Http`, `Delay`, `Until`, `ApiConnection`, and `Terminate` is covered in the local workflow runner.
 - `runAfter` dependency handling is enforced locally, including skipped actions when dependency statuses do not match.
 - Bounded HTTP retry policy handling is covered for transient failures.
-- Bounded long-running workflow behavior is covered through `Delay` plus `Until` progression.
-- Bounded connector execution is covered for local `ApiConnection` actions representing blob and App Configuration surfaces.
+- Bounded long-running workflow behavior is covered through asynchronous `Delay` plus `Until` progression and run reconciliation through the workflow run routes.
+- Bounded connector execution is covered for local `ApiConnection` actions representing blob, App Configuration, Service Bus, Event Grid, Key Vault, and Table surfaces.
 - Unsupported Logic workflow child/action routes outside the supported trigger/run and run-history subset still fail closed with `GlobalStackResourceTypeNotEmulated`.
 - ARM template deployment can create a Logic workflow resource.
 - The platform runner matrix still deploys native IaC through the GlobalStack provider route.
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, bounded request-trigger runner success and failure behavior, `runAfter`/conditional/foreach/http/retry/delay/until/api-connection/terminate semantics for the supported action subset, supported trigger/run/callback/history/reset routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for the broader connector catalog, Azure-hosted trigger runtime behavior, full retry parity, full run history parity, unbounded long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
+Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, bounded request-trigger runner success and failure behavior, `runAfter`/conditional/foreach/http/retry/delay/until/api-connection/terminate semantics for the supported action subset, bounded asynchronous run reconciliation, supported trigger/run/callback/history/reset routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for the broader connector catalog, Azure-hosted trigger runtime behavior, full retry parity, full run history parity, unbounded long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.

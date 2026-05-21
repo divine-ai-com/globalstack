@@ -54,6 +54,24 @@ function retryCount(policy) {
   return Math.min(count, 5);
 }
 
+function findAsyncDelayMs(actions = {}) {
+  for (const action of Object.values(actions ?? {})) {
+    const actionType = String(action?.type ?? '');
+    if (actionType === 'Delay' && String(action?.operationOptions ?? '').toLowerCase() === 'asynchronous') {
+      return boundedDelayMs(action.inputs?.milliseconds ?? action.inputs?.intervalInMilliseconds ?? action.inputs?.count ?? 0);
+    }
+    const nestedSets = [
+      action?.actions,
+      action?.else?.actions,
+    ];
+    for (const nested of nestedSets) {
+      const nestedDelay = findAsyncDelayMs(nested);
+      if (nestedDelay !== null) return nestedDelay;
+    }
+  }
+  return null;
+}
+
 export class WorkflowRunner {
   constructor({ httpInvoker = null } = {}) {
     this.workflows = new Map();
@@ -104,6 +122,16 @@ export class WorkflowRunner {
       },
     });
     this.triggerHistories.set(key, entries);
+  }
+
+  updateTriggerHistory({ workflowName, triggerName, run }) {
+    const key = this.triggerHistoryKey(workflowName, triggerName);
+    const entries = this.triggerHistories.get(key) ?? [];
+    const target = entries.find(item => item.properties?.runId === run.id);
+    if (!target) return;
+    target.properties.status = run.status;
+    target.properties.code = run.error?.code ?? null;
+    target.properties.endTime = run.endTime;
   }
 
   evaluateExpression(value, context) {
@@ -219,6 +247,58 @@ export class WorkflowRunner {
           path,
           body,
           statusCode: 200,
+        },
+      };
+    }
+    if (connectionName.includes('servicebus')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'servicebus',
+          method,
+          path,
+          body,
+          enqueued: true,
+          sequenceNumber: 1,
+        },
+      };
+    }
+    if (connectionName.includes('eventgrid')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'eventgrid',
+          method,
+          path,
+          body,
+          accepted: true,
+          eventType: body?.eventType ?? null,
+        },
+      };
+    }
+    if (connectionName.includes('keyvault')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'keyvault',
+          method,
+          path,
+          body,
+          secretName: String(path).split('/').filter(Boolean).at(-1) ?? null,
+          statusCode: 200,
+        },
+      };
+    }
+    if (connectionName.includes('table')) {
+      return {
+        status: 'Succeeded',
+        outputs: {
+          connector: 'azuretables',
+          method,
+          path,
+          body,
+          partitionKey: body?.PartitionKey ?? null,
+          rowKey: body?.RowKey ?? null,
         },
       };
     }
@@ -599,6 +679,33 @@ export class WorkflowRunner {
     return this.executeActions(workflow.definition?.actions ?? {}, context);
   }
 
+  async reconcileRun(run) {
+    if (!run?.pendingExecution) return run;
+    if (Date.now() < run.pendingExecution.resumeAt) return run;
+    const workflow = this.workflows.get(workflowKey(run.workflowName));
+    if (!workflow) {
+      run.status = 'Failed';
+      run.endTime = new Date().toISOString();
+      run.error = {
+        code: 'WorkflowNotFound',
+        message: `The workflow '${run.workflowName}' was removed before the pending run could resume.`,
+      };
+      delete run.pendingExecution;
+      this.updateTriggerHistory({ workflowName: run.workflowName, triggerName: run.triggerName, run });
+      return run;
+    }
+    const execution = await this.executeWorkflow(workflow, run.input ?? null);
+    run.status = execution.status;
+    run.actions = execution.actions;
+    run.response = execution.response ?? null;
+    run.error = execution.error ?? null;
+    run.outputs = execution.outputs ?? {};
+    run.endTime = new Date().toISOString();
+    delete run.pendingExecution;
+    this.updateTriggerHistory({ workflowName: run.workflowName, triggerName: run.triggerName, run });
+    return run;
+  }
+
   async invoke({ workflowName, triggerName, body }) {
     const workflow = this.workflows.get(workflowKey(workflowName));
     if (!workflow) {
@@ -617,6 +724,32 @@ export class WorkflowRunner {
     }
 
     const runId = randomUUID();
+    const asyncDelayMs = findAsyncDelayMs(workflow.definition?.actions ?? {});
+    if (asyncDelayMs !== null) {
+      const run = {
+        id: runId,
+        workflowName: workflow.workflowName,
+        triggerName,
+        status: 'Running',
+        startTime: new Date().toISOString(),
+        endTime: null,
+        input: body ?? null,
+        actions: [],
+        response: null,
+        error: null,
+        outputs: {},
+        pendingExecution: {
+          resumeAt: Date.now() + asyncDelayMs,
+        },
+      };
+      this.runs.set(`${workflowKey(workflowName)}:${runId}`, run);
+      this.recordTriggerHistory({
+        workflowName: workflow.workflowName,
+        triggerName,
+        run,
+      });
+      return { status: 202, body: run };
+    }
     const execution = await this.executeWorkflow(workflow, body ?? null);
     const run = {
       id: runId,
@@ -640,25 +773,28 @@ export class WorkflowRunner {
     return { status: 202, body: run };
   }
 
-  getRun({ workflowName, runId }) {
+  async getRun({ workflowName, runId }) {
     const run = this.runs.get(`${workflowKey(workflowName)}:${runId}`);
     if (!run) {
       return error(404, 'RunNotFound', `The workflow run '${runId}' was not found.`);
     }
+    await this.reconcileRun(run);
     return { status: 200, body: run };
   }
 
-  listRuns({ workflowName }) {
+  async listRuns({ workflowName }) {
     if (!this.workflows.has(workflowKey(workflowName))) {
       return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
     }
     const prefix = `${workflowKey(workflowName)}:`;
+    const runs = [...this.runs.entries()]
+      .filter(([key]) => key.startsWith(prefix))
+      .map(([, run]) => run);
+    await Promise.all(runs.map(run => this.reconcileRun(run)));
     return {
       status: 200,
       body: {
-        value: [...this.runs.entries()]
-          .filter(([key]) => key.startsWith(prefix))
-          .map(([, run]) => run),
+        value: runs,
       },
     };
   }

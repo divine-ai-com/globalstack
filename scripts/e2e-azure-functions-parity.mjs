@@ -5,7 +5,12 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createArmServer } from '../packages/azure-control-plane/src/server.mjs';
-import { createFunctionsRouter, createFunctionsRouterServer } from '../packages/azure-data-plane/src/functions-router.mjs';
+import {
+  createFunctionsRouter,
+  createFunctionsRouterServer,
+  deterministicPublishingPassword,
+  deterministicPublishingUsername,
+} from '../packages/azure-data-plane/src/functions-router.mjs';
 import { azurePlatforms } from '../src/platforms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -377,6 +382,85 @@ function queueTriggerResourceBody({ queueName = 'robot-events' } = {}) {
   };
 }
 
+function blobTriggerResourceBody({ path = 'model-artifacts/{name}' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'blobTrigger',
+            direction: 'in',
+            name: 'blob',
+            path,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
+function eventGridTriggerResourceBody({ eventType = 'ModelPromoted' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'eventGridTrigger',
+            direction: 'in',
+            name: 'event',
+            eventType,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
+async function httpRaw(port, method, path, payload, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const body = Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload ?? ''), 'utf8');
+    const req = request({
+      host: '127.0.0.1',
+      port,
+      method,
+      path,
+      headers: {
+        ...(body.length > 0 ? { 'content-length': body.length } : {}),
+        ...headers,
+      },
+    }, (res) => {
+      let text = '';
+      res.on('data', chunk => { text += chunk; });
+      res.on('end', () => {
+        let parsed = null;
+        if (text) {
+          try {
+            parsed = JSON.parse(text);
+          } catch {
+            parsed = text;
+          }
+        }
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: parsed,
+        });
+      });
+    });
+    req.on('error', reject);
+    if (body.length > 0) req.write(body);
+    req.end();
+  });
+}
+
 async function runControlAndDataPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
@@ -392,6 +476,8 @@ async function runControlAndDataPlaneMatrix() {
   let functionHost = null;
   let durableWaitInstanceId = null;
   let durableTerminateInstanceId = null;
+  let publishingUser = null;
+  let publishingPassword = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -722,6 +808,8 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.body.properties.state, 'Running');
         assert.equal(result.body.globalstack.capabilityId, 'azure-functions');
         functionHost = result.body.properties.defaultHostName;
+        publishingUser = deterministicPublishingUsername(appName);
+        publishingPassword = deterministicPublishingPassword(appName);
         return { status: result.status, host: functionHost };
       });
 
@@ -806,6 +894,20 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
+      await record('function host status endpoint succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/admin/host/status?code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.state, 'Running');
+        assert.equal(result.body.functionCount, 2);
+        return { status: result.status, state: result.body.state };
+      });
+
       await record('timer trigger function resource create succeeds', async () => {
         const result = await httpJson(
           armPort,
@@ -824,6 +926,30 @@ async function runControlAndDataPlaneMatrix() {
           'PUT',
           providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/robotQueue`),
           queueTriggerResourceBody({ queueName: 'robot-events' }),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
+      await record('blob trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/modelBlob`),
+          blobTriggerResourceBody({ path: 'model-artifacts/{name}' }),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
+      await record('event grid trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/modelEvents`),
+          eventGridTriggerResourceBody({ eventType: 'ModelPublished' }),
         );
         assert.equal(result.status, 201);
         assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
@@ -852,7 +978,21 @@ async function runControlAndDataPlaneMatrix() {
           durableActivityResourceBody(),
         );
         assert.equal(archive.status, 201);
-        return { status: archive.status, count: 3 };
+        const child = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/childOrchestrator`),
+          durableOrchestratorResourceBody(),
+        );
+        assert.equal(child.status, 201);
+        const fanout = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/fanoutOrchestrator`),
+          durableOrchestratorResourceBody(),
+        );
+        assert.equal(fanout.status, 201);
+        return { status: fanout.status, count: 5 };
       });
 
       await record('durable orchestration start rejects missing key', async () => {
@@ -1118,6 +1258,55 @@ async function runControlAndDataPlaneMatrix() {
         assert.ok(finalStatus.body.history.some(item => item.eventType === 'CheckpointLoaded' && item.stageIndex === 3));
         assert.equal(finalStatus.body.output.checkpoints['checkpoint-3'].reason, 'replay-stage');
         return { status: finalStatus.status, runtimeStatus: finalStatus.body.runtimeStatus };
+      });
+
+      await record('durable orchestration staged replay preserves sub orchestration history', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            replayStages: [
+              { activities: ['scoreActivity'], subOrchestrations: ['childOrchestrator'], waitForExternalEvent: 'release' },
+              { subOrchestrations: ['fanoutOrchestrator'], durableTimer: { name: 'fanout-delay', fireAfterMs: 10 } },
+              { activities: ['archiveActivity'] },
+            ],
+            activityPayloads: {
+              scoreActivity: { robotId: 'robot-59', score: 0.93 },
+              archiveActivity: { blob: 'robot-59.json' },
+            },
+            subOrchestrationPayloads: {
+              childOrchestrator: { shard: 'alpha' },
+              fanoutOrchestrator: { shard: 'beta' },
+            },
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        const raised = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}/raiseEvent/release?code=${encodeURIComponent(hostFunctionKey)}`,
+          { allowed: true },
+          { host: functionHost },
+        );
+        assert.equal(raised.status, 202);
+        await new Promise(resolve => setTimeout(resolve, 25));
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Completed');
+        assert.ok(result.body.history.some(item => item.eventType === 'SubOrchestrationInstanceCreated' && item.name === 'childOrchestrator'));
+        assert.ok(result.body.history.some(item => item.eventType === 'SubOrchestrationInstanceCompleted' && item.name === 'fanoutOrchestrator'));
+        assert.equal(result.body.output.subOrchestrationResults.childOrchestrator.orchestratorName, 'childOrchestrator');
+        assert.equal(result.body.output.subOrchestrationResults.fanoutOrchestrator.input.shard, 'beta');
+        assert.ok(result.body.output.checkpoints['checkpoint-2'].fingerprint);
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
       });
 
       await record('durable orchestration rejects duplicate instance id', async () => {
@@ -1401,6 +1590,80 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.body.queueName, 'robot-events');
         assert.equal(result.body.input.id, 'msg-1');
         return { status: result.status };
+      });
+
+      await record('blob trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/modelBlob?code=${encodeURIComponent(hostFunctionKey)}`,
+          { blobName: 'model-v5.bin' },
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'blobTrigger');
+        assert.equal(result.body.path, 'model-artifacts/{name}');
+        return { status: result.status };
+      });
+
+      await record('event grid trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/modelEvents?code=${encodeURIComponent(hostFunctionKey)}`,
+          { eventType: 'ModelPublished', subject: '/models/v5' },
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'eventGridTrigger');
+        assert.equal(result.body.eventType, 'ModelPublished');
+        return { status: result.status };
+      });
+
+      await record('zipdeploy rejects missing publishing credentials', async () => {
+        const result = await httpRaw(
+          routerPort,
+          'POST',
+          '/api/zipdeploy',
+          Buffer.from('fake-zip-payload'),
+          { host: `${appName}.scm.azurewebsites.net` },
+        );
+        assert.equal(result.status, 401);
+        return { status: result.status };
+      });
+
+      await record('zipdeploy accepts deterministic publishing credentials', async () => {
+        const result = await httpRaw(
+          routerPort,
+          'POST',
+          '/api/zipdeploy',
+          Buffer.from('fake-zip-payload-v1'),
+          {
+            host: `${appName}.scm.azurewebsites.net`,
+            authorization: `Basic ${Buffer.from(`${publishingUser}:${publishingPassword}`).toString('base64')}`,
+          },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.complete, true);
+        assert.ok(result.body.packageHash);
+        return { status: result.status, deploymentId: result.body.id };
+      });
+
+      await record('latest zipdeploy status exposes package metadata', async () => {
+        const result = await httpRaw(
+          routerPort,
+          'GET',
+          '/api/deployments/latest',
+          undefined,
+          {
+            host: `${appName}.scm.azurewebsites.net`,
+            authorization: `Basic ${Buffer.from(`${publishingUser}:${publishingPassword}`).toString('base64')}`,
+          },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.status_text, 'Success');
+        assert.equal(result.body.packageSizeBytes, Buffer.byteLength('fake-zip-payload-v1'));
+        return { status: result.status, packageHash: result.body.packageHash };
       });
 
       await record('ARM template deployment can create server farm and function app', async () => {
