@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-20T18:44:17.857Z
+Generated: 2026-05-21T16:08:21.719Z
 
 ## Guardrails
 
@@ -10,6 +10,16 @@ Generated: 2026-05-20T18:44:17.857Z
 - A local pass is only meaningful when tied back to real Azure capture, official emulator behavior, or an explicit out-of-scope declaration.
 - Unknown resource types, parameters, API versions, and data-plane calls must fail closed.
 - IaC provider deploy, refresh, update, import, and destroy behavior must be tested before a service can approach 99%-ready.
+
+## Dynamic Estimate Snapshot
+
+- Overall 30-service Azure program: 46.8% (45-50%)
+- Azure Functions / Durable cluster: 70% (65-70%)
+- Azure Logic Apps cluster: 60% (55-60%)
+
+Method:
+- Overall program estimate is derived from roadmap status only: `complete = 100%`, `partial = 55%`, `not-started = 5%`, averaged across all services and dimensions.
+- Service cluster estimates start from the same status-derived base, then add bounded evidence bonuses for a started local facade, started provider behavior, started data-plane behavior, and a passing parity pack with full platform matrix when present.
 
 ## Cross-Cutting Pending Backlog
 

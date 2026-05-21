@@ -1,12 +1,37 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T18:44:17.857Z",
+    "generatedAt": "2026-05-21T16:08:21.719Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
     "workItemCount": 300,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
+  },
+  "estimateSnapshot": {
+    "overall": {
+      "percent": 46.8,
+      "displayRange": "45-50%",
+      "methodology": "status-derived average across all services and dimensions"
+    },
+    "azureFunctionsDurable": {
+      "percent": 70,
+      "displayRange": "65-70%",
+      "methodology": "status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack",
+      "evidence": {
+        "total": 99,
+        "platformOk": true
+      }
+    },
+    "logicWorkflows": {
+      "percent": 60,
+      "displayRange": "55-60%",
+      "methodology": "status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack",
+      "evidence": {
+        "total": 61,
+        "platformOk": true
+      }
+    }
   },
   "crossCuttingBacklog": [
     {

@@ -7,6 +7,7 @@ const outRoot = join(root, 'docs', 'conformance');
 const checklistPath = join(outRoot, 'azure-99-parity-checklist.json');
 const outJsonPath = join(outRoot, 'azure-99-roadmap.json');
 const outMdPath = join(outRoot, 'azure-99-roadmap.md');
+const distRoot = join(root, 'dist', 'e2e');
 
 const waveDefinitions = [
   {
@@ -207,6 +208,12 @@ function statusScore(status) {
   return 0;
 }
 
+function estimateStatusScore(status) {
+  if (status === 'complete') return 1;
+  if (status === 'partial') return 0.55;
+  return 0.05;
+}
+
 function serviceScore(service) {
   let earned = 0;
   let total = 0;
@@ -225,6 +232,50 @@ function priorityFor(service, waveIndex) {
   const providerSize = Math.min(12, Math.ceil((service.evidence.providerOperationCount ?? 0) / 100));
   const notStartedPenalty = service.dimensionCounts.notStarted * 5;
   return Math.round(tierBoost + waveBoost + providerSize + notStartedPenalty + (1 - score) * 100);
+}
+
+async function readJsonIfExists(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function round1(value) {
+  return Number(value.toFixed(1));
+}
+
+function displayRange(percent) {
+  const upper = Math.ceil(percent / 5) * 5;
+  const lower = Math.max(0, upper - 5);
+  return `${lower}-${upper}%`;
+}
+
+function serviceEstimateBase(service) {
+  const dimensionIds = Object.keys(service.dimensions);
+  if (dimensionIds.length === 0) return 0;
+  const total = dimensionIds.reduce((sum, dimensionId) => sum + estimateStatusScore(service.dimensions[dimensionId].status), 0);
+  return (total / dimensionIds.length) * 100;
+}
+
+function serviceEstimateBonus(service, parityEvidence) {
+  let bonus = 0;
+  if (service.dimensions.serviceSpecificFacade?.status !== 'not-started') bonus += 5;
+  if (service.dimensions.iacProviderBehavior?.status !== 'not-started') bonus += 5;
+  if (service.dimensions.dataPlaneBehavior?.status !== 'not-started') bonus += 5;
+  if (parityEvidence?.platformOk === true) bonus += 5;
+  return bonus;
+}
+
+function serviceEstimate(service, parityEvidence = null) {
+  return Math.min(99, round1(serviceEstimateBase(service) + serviceEstimateBonus(service, parityEvidence)));
+}
+
+function programEstimate(services) {
+  if (services.length === 0) return 0;
+  const total = services.reduce((sum, service) => sum + serviceEstimateBase(service), 0);
+  return round1(total / services.length);
 }
 
 function dataPlaneCommandsFor(serviceId) {
@@ -329,6 +380,16 @@ function markdown(doc) {
     '- Unknown resource types, parameters, API versions, and data-plane calls must fail closed.',
     '- IaC provider deploy, refresh, update, import, and destroy behavior must be tested before a service can approach 99%-ready.',
     '',
+    '## Dynamic Estimate Snapshot',
+    '',
+    `- Overall 30-service Azure program: ${doc.estimateSnapshot.overall.percent}% (${doc.estimateSnapshot.overall.displayRange})`,
+    `- Azure Functions / Durable cluster: ${doc.estimateSnapshot.azureFunctionsDurable.percent}% (${doc.estimateSnapshot.azureFunctionsDurable.displayRange})`,
+    `- Azure Logic Apps cluster: ${doc.estimateSnapshot.logicWorkflows.percent}% (${doc.estimateSnapshot.logicWorkflows.displayRange})`,
+    '',
+    'Method:',
+    '- Overall program estimate is derived from roadmap status only: `complete = 100%`, `partial = 55%`, `not-started = 5%`, averaged across all services and dimensions.',
+    '- Service cluster estimates start from the same status-derived base, then add bounded evidence bonuses for a started local facade, started provider behavior, started data-plane behavior, and a passing parity pack with full platform matrix when present.',
+    '',
     '## Cross-Cutting Pending Backlog',
     '',
     'These items remain open across the whole Azure program even when a service-specific parity pack is green.',
@@ -401,6 +462,8 @@ function markdown(doc) {
 }
 
 const checklist = JSON.parse(await readFile(checklistPath, 'utf8'));
+const functionsParity = await readJsonIfExists(join(distRoot, 'azure-functions-parity', 'results.json'));
+const logicParity = await readJsonIfExists(join(distRoot, 'azure-logic-workflows-parity', 'results.json'));
 const serviceById = new Map(checklist.services.map(service => [service.capabilityId, service]));
 const dimensions = new Map(checklist.dimensions.map(dimension => [dimension.id, dimension]));
 const seenServices = new Set();
@@ -447,6 +510,23 @@ if (missingServices.length > 0) {
 }
 
 const allWorkItems = waves.flatMap(wave => wave.services.flatMap(service => service.workItems));
+const overallEstimatePercent = programEstimate(checklist.services);
+const azureFunctionsService = serviceById.get('azure-functions');
+const logicWorkflowsService = serviceById.get('logic-workflows');
+const functionsParityEvidence = functionsParity
+  ? {
+      total: functionsParity.controlAndDataPlane?.total ?? 0,
+      platformOk: functionsParity.platformMatrix?.ok === true,
+    }
+  : null;
+const logicParityEvidence = logicParity
+  ? {
+      total: logicParity.controlPlane?.total ?? 0,
+      platformOk: logicParity.platformMatrix?.ok === true,
+    }
+  : null;
+const azureFunctionsEstimatePercent = azureFunctionsService ? serviceEstimate(azureFunctionsService, functionsParityEvidence) : null;
+const logicWorkflowsEstimatePercent = logicWorkflowsService ? serviceEstimate(logicWorkflowsService, logicParityEvidence) : null;
 const prioritizedServices = waves
   .flatMap(wave => wave.services.map(service => ({
     rank: 0,
@@ -470,6 +550,25 @@ const doc = {
     waveCount: waves.length,
     workItemCount: allWorkItems.length,
     policy: 'Roadmap is execution order only; parity claims still require checklist dimensions to be complete.',
+  },
+  estimateSnapshot: {
+    overall: {
+      percent: overallEstimatePercent,
+      displayRange: displayRange(overallEstimatePercent),
+      methodology: 'status-derived average across all services and dimensions',
+    },
+    azureFunctionsDurable: {
+      percent: azureFunctionsEstimatePercent,
+      displayRange: displayRange(azureFunctionsEstimatePercent),
+      methodology: 'status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack',
+      evidence: functionsParityEvidence,
+    },
+    logicWorkflows: {
+      percent: logicWorkflowsEstimatePercent,
+      displayRange: displayRange(logicWorkflowsEstimatePercent),
+      methodology: 'status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack',
+      evidence: logicParityEvidence,
+    },
   },
   crossCuttingBacklog,
   waves,
