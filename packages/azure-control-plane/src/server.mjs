@@ -461,6 +461,24 @@ function webFunctionListKeysRoute(providerRoute) {
   };
 }
 
+function webFunctionListSecretsRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'sites' || parts[2] !== 'functions' || parts[4].toLowerCase() !== 'listsecrets') return null;
+  return {
+    appRoute: {
+      ...providerRoute,
+      typePath: `sites/${parts[1]}`,
+    },
+    functionRoute: {
+      ...providerRoute,
+      typePath: `sites/${parts[1]}/functions/${parts[3]}`,
+    },
+    appName: parts[1],
+    functionName: parts[3],
+  };
+}
+
 function webSyncFunctionTriggersRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
   const parts = providerRoute.typePath.split('/');
@@ -557,6 +575,24 @@ function workflowTriggerHistoryItemRoute(providerRoute) {
   };
 }
 
+function workflowTriggerHistoryActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 7 || parts[0] !== 'workflows' || parts[2] !== 'triggers' || parts[4] !== 'histories') return null;
+  const action = parts[6].toLowerCase();
+  if (action !== 'resubmit') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+    historyName: parts[5],
+    action,
+  };
+}
+
 function workflowRunRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
   const parts = providerRoute.typePath.split('/');
@@ -568,6 +604,23 @@ function workflowRunRoute(providerRoute) {
     },
     workflowName: parts[1],
     runId: parts[3],
+  };
+}
+
+function workflowRunActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'runs') return null;
+  const action = parts[4].toLowerCase();
+  if (action !== 'cancel') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    runId: parts[3],
+    action,
   };
 }
 
@@ -1515,6 +1568,30 @@ export function createArmRequestHandler({
           });
         }
 
+        const webFunctionSecretsRoute = webFunctionListSecretsRoute(providerRoute);
+        if (webFunctionSecretsRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const app = store.getResource(webFunctionSecretsRoute.appRoute);
+          if (!app) {
+            return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
+          }
+          const fn = store.getResource(webFunctionSecretsRoute.functionRoute);
+          if (!fn) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionSecretsRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const bindings = Array.isArray(fn.properties?.config?.bindings) ? fn.properties.config.bindings : [];
+          const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
+          const route = String(httpTrigger?.route ?? webFunctionSecretsRoute.functionName).replace(/^\/+/, '');
+          const key = deterministicFunctionKey(webFunctionSecretsRoute.appName, webFunctionSecretsRoute.functionName);
+          const appHostName = app.properties?.defaultHostName ?? `${webFunctionSecretsRoute.appName}.azurewebsites.net`;
+          return sendJson(res, 200, {
+            key,
+            trigger_url: `https://${appHostName}/api/${route}?code=${encodeURIComponent(key)}`,
+          });
+        }
+
         const webSyncTriggersRoute = webSyncFunctionTriggersRoute(providerRoute);
         if (webSyncTriggersRoute && method === 'POST') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1650,6 +1727,28 @@ export function createArmRequestHandler({
           return sendJson(res, 200, result.body);
         }
 
+        const workflowTriggerHistoryAction = workflowTriggerHistoryActionRoute(providerRoute);
+        if (workflowTriggerHistoryAction && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local trigger execution.');
+          }
+          const result = await workflowRunner.resubmitTriggerHistory({
+            workflowName: workflowTriggerHistoryAction.workflowName,
+            triggerName: workflowTriggerHistoryAction.triggerName,
+            historyName: workflowTriggerHistoryAction.historyName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          const runLocation = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/Microsoft.Logic/workflows/${workflowTriggerHistoryAction.workflowName}/runs/${result.body.id}?api-version=${apiVersion}`;
+          return sendJson(res, 202, result.body, {
+            location: runLocation,
+          });
+        }
+
         const workflowTriggerRoute = workflowTriggerRunRoute(providerRoute);
         if (workflowTriggerRoute && method === 'POST') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1684,6 +1783,24 @@ export function createArmRequestHandler({
           const result = await workflowRunner.getRun({
             workflowName: workflowRunItemRoute.workflowName,
             runId: workflowRunItemRoute.runId,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
+        const workflowRunMgmtRoute = workflowRunActionRoute(providerRoute);
+        if (workflowRunMgmtRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = await workflowRunner.cancelRun({
+            workflowName: workflowRunMgmtRoute.workflowName,
+            runId: workflowRunMgmtRoute.runId,
           });
           if (result.error) {
             return sendError(res, result.error.status, result.error.code, result.error.message);

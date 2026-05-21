@@ -851,6 +851,34 @@ export class WorkflowRunner {
     };
   }
 
+  async cancelRun({ workflowName, runId }) {
+    const runResult = await this.getRun({ workflowName, runId });
+    if (runResult.error) return runResult;
+    const run = runResult.body;
+    if (run.status !== 'Running') {
+      return error(409, 'RunNotCancelable', `The workflow run '${runId}' cannot be canceled from status '${run.status}'.`);
+    }
+    run.status = 'Cancelled';
+    run.endTime = new Date().toISOString();
+    delete run.pendingExecution;
+    run.error = {
+      code: 'WorkflowRunCanceled',
+      message: `The workflow run '${runId}' was canceled.`,
+    };
+    run.response = null;
+    this.updateTriggerHistory({
+      workflowName: run.workflowName,
+      triggerName: run.triggerName,
+      run,
+    });
+    return {
+      status: 200,
+      body: {
+        status: 'Cancelled',
+      },
+    };
+  }
+
   listTriggerHistories({ workflowName, triggerName }) {
     const workflow = this.workflows.get(workflowKey(workflowName));
     if (!workflow) {
@@ -886,6 +914,21 @@ export class WorkflowRunner {
       status: 200,
       body: item,
     };
+  }
+
+  async resubmitTriggerHistory({ workflowName, triggerName, historyName }) {
+    const historyResult = this.getTriggerHistory({ workflowName, triggerName, historyName });
+    if (historyResult.error) return historyResult;
+    const originalRunId = historyResult.body.properties?.runId ?? String(historyName).split('/').at(-1);
+    const originalRun = this.runs.get(`${workflowKey(workflowName)}:${originalRunId}`);
+    if (!originalRun) {
+      return error(404, 'RunNotFound', `The workflow run '${originalRunId}' was not found for trigger history '${historyName}'.`);
+    }
+    return this.invoke({
+      workflowName,
+      triggerName,
+      body: originalRun.input ?? null,
+    });
   }
 
   listCallbackUrl({ workflowName, triggerName, origin, subscriptionId, resourceGroupName, apiVersion }) {

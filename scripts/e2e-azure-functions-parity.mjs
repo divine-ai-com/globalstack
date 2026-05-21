@@ -897,6 +897,19 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status };
       });
 
+      await record('function listSecrets returns trigger URL and key', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/score/listSecrets`),
+          {},
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.key, securedFunctionKey);
+        assert.match(result.body.trigger_url, new RegExp(`https?://${functionHost.replace('.', '\\.')}/api/score/\\{id\\}\\?code=`));
+        return { status: result.status };
+      });
+
       await record('function host listKeys returns host keys', async () => {
         const result = await httpJson(
           armPort,
@@ -1535,7 +1548,7 @@ async function runControlAndDataPlaneMatrix() {
         const result = await httpJson(
           armPort,
           'POST',
-          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake/listSecrets`),
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake/token`),
           {},
         );
         assert.equal(result.status, 404);
@@ -1980,7 +1993,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys and bounded trigger-sync behavior, bounded SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management plus activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, full trigger-sync fidelity, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys/listSecrets and bounded trigger-sync behavior, bounded SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management plus activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, full trigger-sync fidelity, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1992,7 +2005,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded trigger-sync actions, SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management, activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys/listSecrets behavior, bounded trigger-sync actions, SCM zipdeploy plus deployment-log inspection, bounded Durable orchestration management, activity-history, replay-marker, timer, fan-out, checkpoint, and unexpected-event rejection routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

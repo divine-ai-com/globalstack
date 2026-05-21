@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 59) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 59 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 61) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 61 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1456,6 +1456,7 @@ if (!logicWorkflowsParityText) {
     'workflow trigger callback URL route succeeds',
     'workflow trigger histories list includes connector runs',
     'workflow trigger history item route succeeds',
+    'workflow trigger history resubmit starts a new run',
     'workflow run actions list route succeeds',
     'workflow run action item route succeeds',
     'workflow trigger reset clears trigger histories',
@@ -1464,6 +1465,7 @@ if (!logicWorkflowsParityText) {
     'long running workflow create succeeds',
     'local workflow runner delay and until semantics succeed',
     'workflow run get reconciles hosted long running execution',
+    'workflow run cancel action cancels hosted long running execution',
     'recurrence workflow create succeeds',
     'recurrence trigger run route succeeds',
     'recurrence trigger callback URL is rejected',
@@ -1496,8 +1498,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 98) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 98 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 99) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 99 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1525,6 +1527,7 @@ if (!azureFunctionsParityText) {
     'service bus trigger function resource create succeeds',
     'event hub trigger function resource create succeeds',
     'function listKeys returns deterministic key',
+    'function listSecrets returns trigger URL and key',
     'function host listKeys returns host keys',
     'function app syncfunctiontriggers action succeeds',
     'function app listsyncfunctiontriggerstatus reports registered functions',
