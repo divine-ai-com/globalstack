@@ -39,9 +39,11 @@ function splitExpressionArgs(text) {
 }
 
 export class WorkflowRunner {
-  constructor() {
+  constructor({ httpInvoker = null } = {}) {
     this.workflows = new Map();
     this.runs = new Map();
+    this.triggerHistories = new Map();
+    this.httpInvoker = httpInvoker;
   }
 
   registerWorkflow({ workflowName, properties }) {
@@ -53,7 +55,39 @@ export class WorkflowRunner {
   }
 
   unregisterWorkflow(workflowName) {
-    this.workflows.delete(workflowKey(workflowName));
+    const key = workflowKey(workflowName);
+    this.workflows.delete(key);
+    for (const runKey of [...this.runs.keys()]) {
+      if (runKey.startsWith(`${key}:`)) this.runs.delete(runKey);
+    }
+    for (const triggerKey of [...this.triggerHistories.keys()]) {
+      if (triggerKey.startsWith(`${key}:`)) this.triggerHistories.delete(triggerKey);
+    }
+  }
+
+  triggerHistoryKey(workflowName, triggerName) {
+    return `${workflowKey(workflowName)}:${String(triggerName).toLowerCase()}`;
+  }
+
+  recordTriggerHistory({ workflowName, triggerName, run }) {
+    const key = this.triggerHistoryKey(workflowName, triggerName);
+    const entries = this.triggerHistories.get(key) ?? [];
+    entries.push({
+      name: `${triggerName}/${run.id}`,
+      id: `/workflows/${workflowName}/triggers/${triggerName}/histories/${run.id}`,
+      type: 'Microsoft.Logic/workflows/triggers/histories',
+      properties: {
+        workflow: workflowName,
+        trigger: triggerName,
+        runId: run.id,
+        status: run.status,
+        code: run.error?.code ?? null,
+        startTime: run.startTime,
+        endTime: run.endTime,
+        fired: true,
+      },
+    });
+    this.triggerHistories.set(key, entries);
   }
 
   evaluateExpression(value, context) {
@@ -69,15 +103,25 @@ export class WorkflowRunner {
     }
     if (!value.startsWith('@')) return value;
     if (value === '@triggerBody()') return context.triggerBody;
+    if (value === '@item()') return context.itemStack.at(-1) ?? null;
 
     let match = value.match(/^@triggerBody\(\)\?\['([^']+)'\]$/);
     if (match) return context.triggerBody?.[match[1]] ?? null;
+
+    match = value.match(/^@item\(\)\?\['([^']+)'\]$/);
+    if (match) return context.itemStack.at(-1)?.[match[1]] ?? null;
 
     match = value.match(/^@variables\('([^']+)'\)$/);
     if (match) return context.variables.get(match[1]) ?? null;
 
     match = value.match(/^@actions\('([^']+)'\)\.outputs$/);
     if (match) return context.actionOutputs.get(match[1]) ?? null;
+
+    match = value.match(/^@actions\('([^']+)'\)\.outputs\.([A-Za-z0-9_.-]+)$/);
+    if (match) {
+      const output = context.actionOutputs.get(match[1]) ?? null;
+      return String(match[2]).split('.').reduce((acc, key) => (acc && typeof acc === 'object' ? acc[key] : null), output);
+    }
 
     if (value.startsWith('@equals(') && value.endsWith(')')) {
       const args = splitExpressionArgs(value.slice('@equals('.length, -1));
@@ -89,7 +133,7 @@ export class WorkflowRunner {
     return value;
   }
 
-  executeActions(declaredActions, context) {
+  async executeActions(declaredActions, context) {
     const pending = new Set(Object.keys(declaredActions ?? {}));
     const orderedResults = [];
     const actionStatuses = new Map();
@@ -132,7 +176,7 @@ export class WorkflowRunner {
 
         const startedAt = new Date().toISOString();
         try {
-          const execution = this.executeAction(actionName, action, context);
+          const execution = await this.executeAction(actionName, action, context);
           record(actionName, {
             name: actionName,
             type: String(action?.type ?? ''),
@@ -203,7 +247,7 @@ export class WorkflowRunner {
     };
   }
 
-  executeAction(actionName, action, context) {
+  async executeAction(actionName, action, context) {
     const actionType = String(action?.type ?? '');
     if (actionType === 'Compose') {
       return {
@@ -254,7 +298,7 @@ export class WorkflowRunner {
       const condition = Boolean(this.evaluateExpression(action.expression ?? false, context));
       const branch = condition ? 'actions' : 'else';
       const branchActions = condition ? (action.actions ?? {}) : (action.else?.actions ?? {});
-      const branchResult = this.executeActions(branchActions, context);
+      const branchResult = await this.executeActions(branchActions, context);
       if (branchResult.status === 'Failed' || branchResult.status === 'Cancelled') {
         return {
           status: branchResult.status === 'Failed' ? 'Failed' : 'Cancelled',
@@ -275,6 +319,91 @@ export class WorkflowRunner {
           branch,
           actions: branchResult.actions,
         },
+      };
+    }
+
+    if (actionType === 'Foreach') {
+      const items = this.evaluateExpression(action.foreach ?? action.inputs ?? [], context);
+      if (!Array.isArray(items)) {
+        throw new Error(`Foreach action '${actionName}' expected an array.`);
+      }
+      const iterations = [];
+      for (const item of items) {
+        context.itemStack.push(item);
+        try {
+          const branchResult = await this.executeActions(action.actions ?? {}, context);
+          iterations.push({
+            item,
+            status: branchResult.status,
+            actions: branchResult.actions,
+            outputs: branchResult.outputs,
+          });
+          if (branchResult.status === 'Failed' || branchResult.status === 'Cancelled') {
+            return {
+              status: branchResult.status,
+              outputs: { iterations },
+              error: branchResult.error ?? null,
+              halt: true,
+              runStatus: branchResult.status,
+            };
+          }
+        } finally {
+          context.itemStack.pop();
+        }
+      }
+      return {
+        status: 'Succeeded',
+        outputs: {
+          iterations,
+        },
+      };
+    }
+
+    if (actionType === 'Http') {
+      const request = {
+        method: String(this.evaluateExpression(action.inputs?.method ?? 'GET', context)).toUpperCase(),
+        uri: String(this.evaluateExpression(action.inputs?.uri ?? '', context)),
+        headers: this.evaluateExpression(action.inputs?.headers ?? {}, context),
+        body: this.evaluateExpression(action.inputs?.body ?? null, context),
+      };
+      const response = this.httpInvoker
+        ? this.httpInvoker(request)
+        : fetch(request.uri, {
+            method: request.method,
+            headers: request.headers,
+            body: request.body === null || request.body === undefined ? undefined : JSON.stringify(request.body),
+          }).then(async result => {
+            const text = await result.text().catch(() => '');
+            let body = text || null;
+            if (text) {
+              try {
+                body = JSON.parse(text);
+              } catch {
+                body = text;
+              }
+            }
+            return {
+              statusCode: result.status,
+              headers: Object.fromEntries(result.headers.entries()),
+              body,
+            };
+          });
+      const result = await Promise.resolve(response);
+      if ((result.statusCode ?? 500) >= 400) {
+        return {
+          status: 'Failed',
+          outputs: result,
+          error: {
+            code: 'HttpActionFailed',
+            message: `The HTTP action '${actionName}' returned status ${result.statusCode}.`,
+          },
+          halt: true,
+          runStatus: 'Failed',
+        };
+      }
+      return {
+        status: 'Succeeded',
+        outputs: result,
       };
     }
 
@@ -316,17 +445,18 @@ export class WorkflowRunner {
     throw new Error(`Unsupported workflow action type '${actionType}'.`);
   }
 
-  executeWorkflow(workflow, input) {
+  async executeWorkflow(workflow, input) {
     const context = {
       triggerBody: input ?? null,
       variables: new Map(),
       actionOutputs: new Map(),
       response: null,
+      itemStack: [],
     };
     return this.executeActions(workflow.definition?.actions ?? {}, context);
   }
 
-  invoke({ workflowName, triggerName, body }) {
+  async invoke({ workflowName, triggerName, body }) {
     const workflow = this.workflows.get(workflowKey(workflowName));
     if (!workflow) {
       return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
@@ -344,7 +474,7 @@ export class WorkflowRunner {
     }
 
     const runId = randomUUID();
-    const execution = this.executeWorkflow(workflow, body ?? null);
+    const execution = await this.executeWorkflow(workflow, body ?? null);
     const run = {
       id: runId,
       workflowName: workflow.workflowName,
@@ -359,6 +489,11 @@ export class WorkflowRunner {
       outputs: execution.outputs ?? {},
     };
     this.runs.set(`${workflowKey(workflowName)}:${runId}`, run);
+    this.recordTriggerHistory({
+      workflowName: workflow.workflowName,
+      triggerName,
+      run,
+    });
     return { status: 202, body: run };
   }
 
@@ -384,8 +519,63 @@ export class WorkflowRunner {
       },
     };
   }
+
+  listTriggerHistories({ workflowName, triggerName }) {
+    const workflow = this.workflows.get(workflowKey(workflowName));
+    if (!workflow) {
+      return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
+    }
+    const trigger = workflow.definition?.triggers?.[triggerName];
+    if (!trigger) {
+      return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
+    }
+    return {
+      status: 200,
+      body: {
+        value: [...(this.triggerHistories.get(this.triggerHistoryKey(workflowName, triggerName)) ?? [])],
+      },
+    };
+  }
+
+  listCallbackUrl({ workflowName, triggerName, origin, subscriptionId, resourceGroupName, apiVersion }) {
+    const workflow = this.workflows.get(workflowKey(workflowName));
+    if (!workflow) {
+      return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
+    }
+    const trigger = workflow.definition?.triggers?.[triggerName];
+    if (!trigger) {
+      return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
+    }
+    return {
+      status: 200,
+      body: {
+        value: `${origin}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Logic/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+        method: 'POST',
+      },
+    };
+  }
+
+  resetTrigger({ workflowName, triggerName }) {
+    const workflow = this.workflows.get(workflowKey(workflowName));
+    if (!workflow) {
+      return error(404, 'WorkflowNotFound', `The workflow '${workflowName}' was not found.`);
+    }
+    const trigger = workflow.definition?.triggers?.[triggerName];
+    if (!trigger) {
+      return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
+    }
+    this.triggerHistories.set(this.triggerHistoryKey(workflowName, triggerName), []);
+    return {
+      status: 200,
+      body: {
+        status: 'Reset',
+        workflowName,
+        triggerName,
+      },
+    };
+  }
 }
 
-export function createWorkflowRunner() {
-  return new WorkflowRunner();
+export function createWorkflowRunner(options = {}) {
+  return new WorkflowRunner(options);
 }

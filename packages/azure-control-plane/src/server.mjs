@@ -461,10 +461,77 @@ function webFunctionListKeysRoute(providerRoute) {
   };
 }
 
+function webSyncFunctionTriggersRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'sites' || parts[2].toLowerCase() !== 'syncfunctiontriggers') return null;
+  return {
+    ...providerRoute,
+    typePath: `sites/${parts[1]}`,
+    appName: parts[1],
+  };
+}
+
+function webListSyncFunctionTriggerStatusRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'sites' || parts[2].toLowerCase() !== 'listsyncfunctiontriggerstatus') return null;
+  return {
+    ...providerRoute,
+    typePath: `sites/${parts[1]}`,
+    appName: parts[1],
+  };
+}
+
 function workflowTriggerRunRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
   const parts = providerRoute.typePath.split('/');
   if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'triggers' || parts[4].toLowerCase() !== 'run') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+  };
+}
+
+function workflowTriggerReadRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4 || parts[0] !== 'workflows' || parts[2] !== 'triggers') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+  };
+}
+
+function workflowTriggerActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'triggers') return null;
+  const action = parts[4].toLowerCase();
+  if (!['listcallbackurl', 'reset'].includes(action)) return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+    action,
+  };
+}
+
+function workflowTriggerHistoriesRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'triggers' || parts[4] !== 'histories') return null;
   return {
     workflowRoute: {
       ...providerRoute,
@@ -1404,6 +1471,122 @@ export function createArmRequestHandler({
           });
         }
 
+        const webSyncTriggersRoute = webSyncFunctionTriggersRoute(providerRoute);
+        if (webSyncTriggersRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const site = store.getResource(webSyncTriggersRoute);
+          if (!site) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${webSyncTriggersRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          res.writeHead(204, { 'content-length': 0 });
+          return res.end();
+        }
+
+        const webSyncTriggerStatusRoute = webListSyncFunctionTriggerStatusRoute(providerRoute);
+        if (webSyncTriggerStatusRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const site = store.getResource(webSyncTriggerStatusRoute);
+          if (!site) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${webSyncTriggerStatusRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const functions = store.listResourcesByType({
+            subscriptionId: providerRoute.subscriptionId,
+            resourceGroupName: providerRoute.resourceGroupName,
+            providerNamespace: 'Microsoft.Web',
+            typePath: `sites/${webSyncTriggerStatusRoute.appName}/functions`,
+          });
+          return sendJson(res, 200, {
+            value: functions.map(fn => ({
+              functionName: String(fn.name ?? '').split('/').at(-1),
+              triggerName: String(fn.name ?? '').split('/').at(-1),
+              status: 'Success',
+              details: null,
+            })),
+          });
+        }
+
+        const workflowTriggerInfoRoute = workflowTriggerReadRoute(providerRoute);
+        if (workflowTriggerInfoRoute && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const workflow = store.getResource(workflowTriggerInfoRoute.workflowRoute);
+          if (!workflow) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${workflowTriggerInfoRoute.workflowRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const trigger = workflow.properties?.definition?.triggers?.[workflowTriggerInfoRoute.triggerName];
+          if (!trigger) {
+            return sendError(res, 404, 'TriggerNotFound', `The workflow trigger '${workflowTriggerInfoRoute.triggerName}' was not found.`);
+          }
+          return sendJson(res, 200, {
+            id: `${workflow.id}/triggers/${workflowTriggerInfoRoute.triggerName}`,
+            name: workflowTriggerInfoRoute.triggerName,
+            type: 'Microsoft.Logic/workflows/triggers',
+            properties: {
+              type: trigger.type,
+              kind: trigger.kind ?? null,
+              provisioningState: 'Succeeded',
+              state: workflow.properties?.state ?? 'Enabled',
+            },
+          });
+        }
+
+        const workflowTriggerMgmtRoute = workflowTriggerActionRoute(providerRoute);
+        if (workflowTriggerMgmtRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local trigger execution.');
+          }
+          if (workflowTriggerMgmtRoute.action === 'listcallbackurl') {
+            const result = workflowRunner.listCallbackUrl({
+              workflowName: workflowTriggerMgmtRoute.workflowName,
+              triggerName: workflowTriggerMgmtRoute.triggerName,
+              origin: facadeOrigin(req),
+              subscriptionId: providerRoute.subscriptionId,
+              resourceGroupName: providerRoute.resourceGroupName,
+              apiVersion,
+            });
+            if (result.error) {
+              return sendError(res, result.error.status, result.error.code, result.error.message);
+            }
+            return sendJson(res, 200, result.body);
+          }
+          if (workflowTriggerMgmtRoute.action === 'reset') {
+            const result = workflowRunner.resetTrigger({
+              workflowName: workflowTriggerMgmtRoute.workflowName,
+              triggerName: workflowTriggerMgmtRoute.triggerName,
+            });
+            if (result.error) {
+              return sendError(res, result.error.status, result.error.code, result.error.message);
+            }
+            return sendJson(res, 200, result.body);
+          }
+        }
+
+        const workflowTriggerHistoryRoute = workflowTriggerHistoriesRoute(providerRoute);
+        if (workflowTriggerHistoryRoute && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = workflowRunner.listTriggerHistories({
+            workflowName: workflowTriggerHistoryRoute.workflowName,
+            triggerName: workflowTriggerHistoryRoute.triggerName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
         const workflowTriggerRoute = workflowTriggerRunRoute(providerRoute);
         if (workflowTriggerRoute && method === 'POST') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1413,7 +1596,7 @@ export function createArmRequestHandler({
             return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local trigger execution.');
           }
           const body = await readBody(req);
-          const result = workflowRunner.invoke({
+          const result = await workflowRunner.invoke({
             workflowName: workflowTriggerRoute.workflowName,
             triggerName: workflowTriggerRoute.triggerName,
             body,

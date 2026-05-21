@@ -739,6 +739,31 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status };
       });
 
+      await record('function app syncfunctiontriggers action succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/syncfunctiontriggers`),
+          {},
+        );
+        assert.equal(result.status, 204);
+        assert.equal(result.body, null);
+        return { status: result.status };
+      });
+
+      await record('function app listsyncfunctiontriggerstatus reports registered functions', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/listsyncfunctiontriggerstatus`),
+          {},
+        );
+        assert.equal(result.status, 200);
+        assert.ok(Array.isArray(result.body.value));
+        assert.ok(result.body.value.some(item => item.functionName === 'score' && item.status === 'Success'));
+        return { status: result.status, count: result.body.value.length };
+      });
+
       await record('durable function resources create succeeds', async () => {
         const orchestrator = await httpJson(
           armPort,
@@ -754,7 +779,14 @@ async function runControlAndDataPlaneMatrix() {
           durableActivityResourceBody(),
         );
         assert.equal(activity.status, 201);
-        return { status: activity.status, count: 2 };
+        const archive = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/archiveActivity`),
+          durableActivityResourceBody(),
+        );
+        assert.equal(archive.status, 201);
+        return { status: archive.status, count: 3 };
       });
 
       await record('durable orchestration start rejects missing key', async () => {
@@ -925,6 +957,39 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, runtimeStatus: result.body.runtimeStatus };
       });
 
+      await record('durable orchestration fan out batches preserve checkpoints', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            callActivityBatches: [
+              ['scoreActivity', 'archiveActivity'],
+              ['scoreActivity'],
+            ],
+            activityPayloads: {
+              scoreActivity: { robotId: 'robot-33', score: 0.99 },
+              archiveActivity: { blob: 'robot-33.json' },
+            },
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Completed');
+        assert.deepEqual(result.body.output.activityBatches[0].activities, ['scoreActivity', 'archiveActivity']);
+        assert.deepEqual(result.body.output.checkpoints['checkpoint-1'].completedActivities, ['scoreActivity', 'archiveActivity']);
+        assert.ok(result.body.history.some(item => item.eventType === 'CheckpointSaved' && item.batchIndex === 1));
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
       await record('durable orchestration rejects duplicate instance id', async () => {
         const instanceId = `durable-${suffix}`;
         const first = await httpDataPlaneJson(
@@ -1007,6 +1072,7 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.body.runtimeStatus, 'Completed');
         assert.equal(result.body.output.events[0].name, 'approved');
         assert.ok(result.body.history.some(item => item.eventType === 'ExecutionCompleted'));
+        assert.ok(result.body.history.some(item => item.eventType === 'OrchestratorReplayed' && item.reason === 'external-event'));
         return { status: result.status, runtimeStatus: result.body.runtimeStatus };
       });
 
@@ -1348,7 +1414,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, bounded Durable orchestration management plus activity-history, replay-marker, and timer routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys and bounded trigger-sync behavior, bounded Durable orchestration management plus activity-history, replay-marker, timer, fan-out, and checkpoint routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, full trigger-sync fidelity, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1360,7 +1426,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded Durable orchestration management, activity-history, replay-marker, and timer routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded trigger-sync actions, bounded Durable orchestration management, activity-history, replay-marker, timer, fan-out, and checkpoint routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

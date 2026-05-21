@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 38) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 38 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 43) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 43 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1448,8 +1448,14 @@ if (!logicWorkflowsParityText) {
     'workflow trigger route rejects disabled workflow',
     'unsupported workflow versions route fails closed',
     'ARM template deployment can create workflow resource',
+    'workflow delete succeeds',
     'workflow get after delete is not found',
     'workflow delete after delete returns no content',
+    'connector workflow create succeeds',
+    'local workflow runner foreach and http connector succeed',
+    'workflow trigger callback URL route succeeds',
+    'workflow trigger histories list includes connector runs',
+    'workflow trigger reset clears trigger histories',
   ]) {
     if (!logicWorkflowsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Logic Workflows parity E2E missing passing case: ${required}`);
@@ -1474,8 +1480,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 74) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 74 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 77) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 77 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1497,6 +1503,8 @@ if (!azureFunctionsParityText) {
     'function child resource create succeeds',
     'function listKeys returns deterministic key',
     'function host listKeys returns host keys',
+    'function app syncfunctiontriggers action succeeds',
+    'function app listsyncfunctiontriggerstatus reports registered functions',
     'durable function resources create succeeds',
     'durable orchestration start rejects missing key',
     'durable orchestration start rejects unknown orchestrator',
@@ -1507,6 +1515,7 @@ if (!azureFunctionsParityText) {
     'durable orchestration replay history is recorded',
     'durable orchestration future timer keeps instance running',
     'durable orchestration elapsed timer completes instance',
+    'durable orchestration fan out batches preserve checkpoints',
     'durable orchestration rejects duplicate instance id',
     'durable orchestration suspend and resume succeed',
     'durable orchestration raise event completes instance',

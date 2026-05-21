@@ -1,6 +1,6 @@
 # Azure Functions Parity Pack
 
-This pack is the local acceptance suite for Azure Functions server farm and Function App behavior before the capability moves closer to 99% parity. It does not replace live Azure capture for deployment packages, trigger sync, scale controller behavior, broader non-HTTP trigger fidelity, full Durable Functions orchestration semantics, deployment slots, runtime image builds, managed identity token behavior, binding retries, or every management-plane parameter.
+This pack is the local acceptance suite for Azure Functions server farm and Function App behavior before the capability moves closer to 99% parity. It does not replace live Azure capture for deployment packages, full trigger sync semantics, scale controller behavior, broader non-HTTP trigger fidelity, full Durable Functions orchestration semantics, deployment slots, runtime image builds, managed identity token behavior, binding retries, or every management-plane parameter.
 
 ## What It Tests
 
@@ -19,7 +19,7 @@ By default it runs two layers:
 
 | Layer | Scope | Required Result |
 |---|---|---|
-| Azure Functions ARM, Durable, and HTTP-trigger matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured server farm validation, server farm and Function App collection/delete-not-found behavior, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, Function child-resource create/listKeys/host-key behavior, Durable orchestration management endpoints plus bounded activity execution/history, replay markers, and timer semantics, unsupported function action fail-closed behavior, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
+| Azure Functions ARM, Durable, and HTTP-trigger matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured server farm validation, server farm and Function App collection/delete-not-found behavior, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, Function child-resource create/listKeys/host-key behavior, bounded sync-trigger actions, Durable orchestration management endpoints plus bounded activity execution/history, replay markers, timer semantics, fan-out activity batches, checkpoint snapshots, unsupported function action fail-closed behavior, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:azure-functions-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
@@ -46,8 +46,9 @@ The Azure Functions matrix covers these deployment states:
 - Function App updates preserve generated host metadata like `<app>.azurewebsites.net`.
 - Function child resources can be declared through `Microsoft.Web/sites/functions` with a bounded `httpTrigger`, `orchestrationTrigger`, or `activityTrigger` subset and are synced into the local Functions router.
 - Function and host `listKeys` actions return deterministic Azure-shaped key payloads for declared local functions.
+- `syncfunctiontriggers` and `listsyncfunctiontriggerstatus` actions return bounded Azure-shaped trigger-sync responses for declared local functions.
 - Durable orchestration management endpoints cover local start, status query, suspend, resume, external event delivery, terminate, and purge behavior for declared orchestrator/activity functions.
-- Bounded Durable execution covers declared activity scheduling/completion history, duplicate instance rejection, unknown-activity rejection, replay history markers, future timer waiting, and elapsed timer completion for the local orchestration surface.
+- Bounded Durable execution covers declared activity scheduling/completion history, duplicate instance rejection, unknown-activity rejection, replay history markers, future timer waiting, elapsed timer completion, fan-out activity batches, and checkpoint snapshots for the local orchestration surface.
 - Unsupported Function App child actions still fail closed instead of returning invented success.
 - The local Functions router rejects unknown apps, unknown routes, disallowed methods, missing function keys, and wrong function keys.
 - Anonymous HTTP triggers and function-key protected HTTP triggers route to local inspection responses for integration-test smoke.
@@ -58,6 +59,6 @@ The Azure Functions matrix covers these deployment states:
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Azure Functions control-plane, local HTTP-trigger smoke, bounded Durable management plus activity-history, replay-marker, and timer behavior, captured validation, and representative platform deployment paths correctly in the local emulator. It does not mean Azure Functions is `cloudValidated` for packaging, trigger sync, host runtime worker behavior, scale controller decisions, Service Bus/Event Grid/blob/timer triggers, full Durable Functions replay/history/activity semantics, slots, managed identity tokens, app settings encryption, VNet integration, deployment failures, or every live Azure validation edge.
+Passing this pack means GlobalStack handles the listed Azure Functions control-plane, local HTTP-trigger smoke, bounded sync-trigger actions, bounded Durable management plus activity-history, replay-marker, timer, fan-out, and checkpoint behavior, captured validation, and representative platform deployment paths correctly in the local emulator. It does not mean Azure Functions is `cloudValidated` for packaging, full trigger sync fidelity, host runtime worker behavior, scale controller decisions, Service Bus/Event Grid/blob/timer triggers, full Durable Functions replay/history/activity semantics, slots, managed identity tokens, app settings encryption, VNet integration, deployment failures, or every live Azure validation edge.
 
 Promote behavior from this pack into a stronger claim only when there is cleanup-verified Azure evidence, official documentation-backed behavior with tests and a caveat, or an explicit out-of-scope declaration.

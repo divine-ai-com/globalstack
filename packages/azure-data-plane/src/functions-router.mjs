@@ -72,6 +72,15 @@ function stableActivityOutput(activityName, payload = null) {
   };
 }
 
+function stableCheckpointOutput(index, activityNames = [], reason = 'activity-batch') {
+  return {
+    checkpointName: `checkpoint-${index + 1}`,
+    index: index + 1,
+    reason,
+    completedActivities: [...activityNames],
+  };
+}
+
 function stableTimerOutput(timerName, dueTime, fired = false) {
   return {
     timerName,
@@ -328,9 +337,19 @@ export class FunctionsRouter {
   }
 
   durableExecutionPlan(app, input = null) {
-    const requestedActivities = Array.isArray(input?.callActivities)
-      ? input.callActivities.map(item => String(item))
+    const explicitActivityBatches = Array.isArray(input?.callActivityBatches)
+      ? input.callActivityBatches
       : [];
+    const fallbackActivities = Array.isArray(input?.callActivities)
+      ? [input.callActivities]
+      : [];
+    const normalizedActivityBatches = (explicitActivityBatches.length > 0 ? explicitActivityBatches : fallbackActivities)
+      .map((batch, batchIndex) => ({
+        batchIndex,
+        activityNames: Array.isArray(batch) ? batch.map(item => String(item)) : [String(batch)],
+      }))
+      .filter(batch => batch.activityNames.length > 0);
+    const requestedActivities = normalizedActivityBatches.flatMap(batch => batch.activityNames);
     const missingActivity = requestedActivities.find(name => !app.durable.activities.has(String(name).toLowerCase()));
     if (missingActivity) {
       return {
@@ -343,10 +362,14 @@ export class FunctionsRouter {
     const activityPayloads = input?.activityPayloads && typeof input.activityPayloads === 'object'
       ? input.activityPayloads
       : {};
-    const activityResults = requestedActivities.map(name => ({
-      name,
-      output: stableActivityOutput(name, activityPayloads[name] ?? null),
+    const activityBatches = normalizedActivityBatches.map(batch => ({
+      ...batch,
+      activities: batch.activityNames.map(name => ({
+        name,
+        output: stableActivityOutput(name, activityPayloads[name] ?? null),
+      })),
     }));
+    const activityResults = activityBatches.flatMap(batch => batch.activities);
     const timers = Array.isArray(input?.durableTimers)
       ? input.durableTimers
       : [];
@@ -369,16 +392,30 @@ export class FunctionsRouter {
     const replayCount = clampInteger(input?.replayCount ?? 0, 0, 10);
     return {
       requestedActivities,
+      activityBatches,
       activityResults,
       timerResults,
       replayCount,
     };
   }
 
+  appendDurableReplay(instance, timestamp = nowIso(), reason = 'reconciliation') {
+    instance.replayCursor = (instance.replayCursor ?? 0) + 1;
+    instance.history.push({
+      eventType: 'OrchestratorReplayed',
+      name: instance.orchestratorName,
+      replayNumber: instance.replayCursor,
+      reason,
+      timestamp,
+    });
+    instance.lastUpdatedTime = timestamp;
+  }
+
   reconcileDurableInstance(instance) {
     if (!instance || instance.runtimeStatus !== 'Running') return;
     const now = Date.now();
     let changed = false;
+    let replayReason = null;
     for (const timer of instance.timerResults ?? []) {
       if (!timer.fired && timer.dueTimestamp <= now) {
         timer.fired = true;
@@ -388,9 +425,13 @@ export class FunctionsRouter {
           timestamp: new Date(now).toISOString(),
         });
         changed = true;
+        replayReason = replayReason ?? 'timer-fired';
       }
     }
     const pendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
+    if (changed) {
+      this.appendDurableReplay(instance, new Date(now).toISOString(), replayReason ?? 'state-change');
+    }
     if (changed) {
       instance.lastUpdatedTime = new Date(now).toISOString();
     }
@@ -400,6 +441,11 @@ export class FunctionsRouter {
         orchestrator: instance.orchestratorName,
         input: instance.input ?? null,
         activityResults: Object.fromEntries((instance.activityResults ?? []).map(item => [item.name, item.output])),
+        activityBatches: (instance.activityBatches ?? []).map(batch => ({
+          batchIndex: batch.batchIndex,
+          activities: batch.activities.map(item => item.name),
+        })),
+        checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
         timerResults: Object.fromEntries((instance.timerResults ?? []).map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
         events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
       };
@@ -459,6 +505,10 @@ export class FunctionsRouter {
       : (waitingForEvents.length > 0 || pendingTimers.length > 0)
         ? 'Running'
         : 'Completed';
+    const checkpoints = plan.activityBatches.map((batch, index) => ({
+      ...stableCheckpointOutput(index, batch.activityNames),
+      savedAt: createdTime,
+    }));
     const history = [
       {
         eventType: 'ExecutionStarted',
@@ -475,17 +525,27 @@ export class FunctionsRouter {
         replayNumber: index + 1,
         timestamp: createdTime,
       })),
-      ...plan.activityResults.flatMap(activity => ([
+      ...plan.activityBatches.flatMap((batch, index) => ([
+        ...batch.activities.flatMap(activity => ([
+          {
+            eventType: 'TaskScheduled',
+            name: activity.name,
+            batchIndex: index + 1,
+            timestamp: createdTime,
+          },
+          {
+            eventType: 'TaskCompleted',
+            name: activity.name,
+            batchIndex: index + 1,
+            timestamp: createdTime,
+            result: activity.output,
+          },
+        ])),
         {
-          eventType: 'TaskScheduled',
-          name: activity.name,
+          eventType: 'CheckpointSaved',
+          checkpointName: checkpoints[index].checkpointName,
+          batchIndex: index + 1,
           timestamp: createdTime,
-        },
-        {
-          eventType: 'TaskCompleted',
-          name: activity.name,
-          timestamp: createdTime,
-          result: activity.output,
         },
       ])),
       ...plan.timerResults.flatMap(timer => ([
@@ -518,6 +578,11 @@ export class FunctionsRouter {
             input: input ?? null,
             activities: activityNames,
             activityResults: Object.fromEntries(plan.activityResults.map(item => [item.name, item.output])),
+            activityBatches: plan.activityBatches.map(batch => ({
+              batchIndex: batch.batchIndex,
+              activities: batch.activities.map(item => item.name),
+            })),
+            checkpoints: Object.fromEntries(checkpoints.map(item => [item.checkpointName, item])),
             timerResults: Object.fromEntries(plan.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
           }
         : null,
@@ -529,8 +594,11 @@ export class FunctionsRouter {
         : null,
       waitingForEvents,
       receivedEvents: [],
+      activityBatches: plan.activityBatches,
       activityResults: plan.activityResults,
+      checkpoints,
       timerResults: plan.timerResults,
+      replayCursor: plan.replayCount,
       history,
     };
     if (runtimeStatus === 'Completed') {
@@ -584,11 +652,17 @@ export class FunctionsRouter {
       const remaining = instance.waitingForEvents.filter(name => name !== eventName);
       instance.waitingForEvents = remaining;
       if (remaining.length === 0) {
+        this.appendDurableReplay(instance, nowIso(), 'external-event');
         instance.runtimeStatus = 'Completed';
         instance.output = {
           orchestrator: instance.orchestratorName,
           input: instance.input ?? null,
           activityResults: Object.fromEntries(instance.activityResults.map(item => [item.name, item.output])),
+          activityBatches: (instance.activityBatches ?? []).map(batch => ({
+            batchIndex: batch.batchIndex,
+            activities: batch.activities.map(item => item.name),
+          })),
+          checkpoints: Object.fromEntries((instance.checkpoints ?? []).map(item => [item.checkpointName, item])),
           timerResults: Object.fromEntries(instance.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
           events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
         };

@@ -1,6 +1,6 @@
 # Azure Logic Workflows Parity Pack
 
-This pack is the local acceptance suite for Azure Logic Apps workflow control-plane behavior plus a local request-trigger runner and run-history surface before the Step Functions equivalent moves closer to 99% parity. It does not replace live Azure capture for connector execution, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
+This pack is the local acceptance suite for Azure Logic Apps workflow control-plane behavior plus a local request-trigger runner and run-history surface before the Step Functions equivalent moves closer to 99% parity. It does not replace live Azure capture for connector execution depth, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
 
 Executable check:
 
@@ -24,8 +24,8 @@ The pack verifies:
 - Logic workflow create/get/list/update/delete/post-delete lifecycle.
 - Parameter rejection for invalid location, invalid workflow name, missing definition, missing triggers, missing actions, and invalid workflow state.
 - Endpoint metadata for local workflow resources.
-- Local request-trigger runner behavior for missing workflow, missing trigger, successful invocation/run lookup, route-based trigger execution, run listing, run inspection, and disabled workflow rejection.
-- Bounded action execution for `Compose`, `Response`, `InitializeVariable`, `SetVariable`, `ParseJson`, `If`, and `Terminate` is covered in the local workflow runner.
+- Local request-trigger runner behavior for missing workflow, missing trigger, successful invocation/run lookup, route-based trigger execution, callback URL generation, trigger-history listing/reset, run listing, run inspection, and disabled workflow rejection.
+- Bounded action execution for `Compose`, `Response`, `InitializeVariable`, `SetVariable`, `ParseJson`, `If`, `Foreach`, `Http`, and `Terminate` is covered in the local workflow runner.
 - `runAfter` dependency handling is enforced locally, including skipped actions when dependency statuses do not match.
 - Unsupported Logic workflow child/action routes outside the supported trigger/run and run-history subset still fail closed with `GlobalStackResourceTypeNotEmulated`.
 - ARM template deployment can create a Logic workflow resource.
@@ -33,4 +33,4 @@ The pack verifies:
 
 ## Claim Boundary
 
-Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, bounded request-trigger runner success and failure behavior, `runAfter`/conditional/terminate semantics for the supported action subset, supported trigger/run and run-history routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for connector execution, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
+Passing this pack means GlobalStack handles the listed Azure Logic Apps workflow control-plane lifecycle, local parameter rejection cases, bounded request-trigger runner success and failure behavior, `runAfter`/conditional/foreach/http/terminate semantics for the supported action subset, supported trigger/run/callback/history/reset routes, unsupported route boundaries outside that subset, ARM-template deployment path, and representative platform deployment paths correctly in the local emulator. It does not mean Logic Apps is `cloudValidated` for broad connector execution, Azure-hosted trigger runtime behavior, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.
