@@ -848,6 +848,83 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, runtimeStatus: result.body.runtimeStatus };
       });
 
+      await record('durable orchestration replay history is recorded', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            replayCount: 2,
+            callActivities: ['scoreActivity'],
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        const replayEvents = result.body.history.filter(item => item.eventType === 'OrchestratorReplayed');
+        assert.equal(replayEvents.length, 2);
+        return { status: result.status, replayCount: replayEvents.length };
+      });
+
+      await record('durable orchestration future timer keeps instance running', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            durableTimers: [{ name: 'approvalTimeout', fireAfterMs: 60000 }],
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Running');
+        assert.ok(result.body.history.some(item => item.eventType === 'TimerCreated' && item.name === 'approvalTimeout'));
+        assert.ok(!result.body.history.some(item => item.eventType === 'TimerFired' && item.name === 'approvalTimeout'));
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
+      await record('durable orchestration elapsed timer completes instance', async () => {
+        const started = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/runtime/webhooks/durabletask/orchestrators/robotOrchestrator?code=${encodeURIComponent(hostFunctionKey)}`,
+          {
+            durableTimers: [{ name: 'fastTimer', fireAfterMs: 10 }],
+          },
+          { host: functionHost },
+        );
+        assert.equal(started.status, 202);
+        await new Promise(resolve => setTimeout(resolve, 25));
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'GET',
+          `/runtime/webhooks/durabletask/instances/${started.body.id}?showHistory=true&code=${encodeURIComponent(hostFunctionKey)}`,
+          undefined,
+          { host: functionHost },
+        );
+        assert.equal(result.status, 200);
+        assert.equal(result.body.runtimeStatus, 'Completed');
+        assert.equal(result.body.output.timerResults.fastTimer.fired, true);
+        assert.ok(result.body.history.some(item => item.eventType === 'TimerCreated' && item.name === 'fastTimer'));
+        assert.ok(result.body.history.some(item => item.eventType === 'TimerFired' && item.name === 'fastTimer'));
+        return { status: result.status, runtimeStatus: result.body.runtimeStatus };
+      });
+
       await record('durable orchestration rejects duplicate instance id', async () => {
         const instanceId = `durable-${suffix}`;
         const first = await httpDataPlaneJson(
@@ -1271,7 +1348,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, bounded Durable orchestration management plus activity-history routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, bounded Durable orchestration management plus activity-history, replay-marker, and timer routes, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, full Durable Functions replay/history/activity semantics, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1283,7 +1360,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded Durable orchestration management and activity-history routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, bounded Durable orchestration management, activity-history, replay-marker, and timer routes, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

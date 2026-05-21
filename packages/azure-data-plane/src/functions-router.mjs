@@ -72,6 +72,20 @@ function stableActivityOutput(activityName, payload = null) {
   };
 }
 
+function stableTimerOutput(timerName, dueTime, fired = false) {
+  return {
+    timerName,
+    dueTime,
+    fired,
+  };
+}
+
+function clampInteger(value, min, max) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) return min;
+  return Math.max(min, Math.min(max, parsed));
+}
+
 function durableStatusPayload(origin, app, instance, includeHistory = false) {
   const basePath = `/runtime/webhooks/durabletask/instances/${encodeURIComponent(instance.instanceId)}`;
   const payload = {
@@ -333,10 +347,68 @@ export class FunctionsRouter {
       name,
       output: stableActivityOutput(name, activityPayloads[name] ?? null),
     }));
+    const timers = Array.isArray(input?.durableTimers)
+      ? input.durableTimers
+      : [];
+    const now = Date.now();
+    const timerResults = timers.map((timer, index) => {
+      const timerName = String(timer?.name ?? `timer-${index + 1}`);
+      const explicitDue = timer?.fireAt ? Date.parse(String(timer.fireAt)) : null;
+      const delayMs = Number.isFinite(Number(timer?.fireAfterMs)) ? Number(timer.fireAfterMs) : null;
+      const dueTimestamp = Number.isFinite(explicitDue)
+        ? explicitDue
+        : now + Math.max(0, delayMs ?? 0);
+      const dueTime = new Date(dueTimestamp).toISOString();
+      return {
+        name: timerName,
+        dueTime,
+        dueTimestamp,
+        fired: dueTimestamp <= now,
+      };
+    });
+    const replayCount = clampInteger(input?.replayCount ?? 0, 0, 10);
     return {
       requestedActivities,
       activityResults,
+      timerResults,
+      replayCount,
     };
+  }
+
+  reconcileDurableInstance(instance) {
+    if (!instance || instance.runtimeStatus !== 'Running') return;
+    const now = Date.now();
+    let changed = false;
+    for (const timer of instance.timerResults ?? []) {
+      if (!timer.fired && timer.dueTimestamp <= now) {
+        timer.fired = true;
+        instance.history.push({
+          eventType: 'TimerFired',
+          name: timer.name,
+          timestamp: new Date(now).toISOString(),
+        });
+        changed = true;
+      }
+    }
+    const pendingTimers = (instance.timerResults ?? []).filter(item => !item.fired);
+    if (changed) {
+      instance.lastUpdatedTime = new Date(now).toISOString();
+    }
+    if (pendingTimers.length === 0 && instance.waitingForEvents.length === 0) {
+      instance.runtimeStatus = 'Completed';
+      instance.output = {
+        orchestrator: instance.orchestratorName,
+        input: instance.input ?? null,
+        activityResults: Object.fromEntries((instance.activityResults ?? []).map(item => [item.name, item.output])),
+        timerResults: Object.fromEntries((instance.timerResults ?? []).map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
+        events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
+      };
+      instance.history.push({
+        eventType: 'ExecutionCompleted',
+        timestamp: new Date(now).toISOString(),
+      });
+      instance.lastUpdatedTime = new Date(now).toISOString();
+    }
   }
 
   startDurableInstance({ app, orchestratorName, input, origin, requestedInstanceId = null }) {
@@ -381,9 +453,10 @@ export class FunctionsRouter {
         ? input.waitForExternalEvent.map(String)
         : [String(input.waitForExternalEvent)];
     const shouldFail = input?.failAtStart === true;
+    const pendingTimers = plan.timerResults.filter(item => !item.fired);
     const runtimeStatus = shouldFail
       ? 'Failed'
-      : waitingForEvents.length > 0
+      : (waitingForEvents.length > 0 || pendingTimers.length > 0)
         ? 'Running'
         : 'Completed';
     const history = [
@@ -391,6 +464,17 @@ export class FunctionsRouter {
         eventType: 'ExecutionStarted',
         timestamp: createdTime,
       },
+      {
+        eventType: 'OrchestratorStarted',
+        name: orchestrator.functionName,
+        timestamp: createdTime,
+      },
+      ...Array.from({ length: plan.replayCount }, (_, index) => ({
+        eventType: 'OrchestratorReplayed',
+        name: orchestrator.functionName,
+        replayNumber: index + 1,
+        timestamp: createdTime,
+      })),
       ...plan.activityResults.flatMap(activity => ([
         {
           eventType: 'TaskScheduled',
@@ -403,6 +487,21 @@ export class FunctionsRouter {
           timestamp: createdTime,
           result: activity.output,
         },
+      ])),
+      ...plan.timerResults.flatMap(timer => ([
+        {
+          eventType: 'TimerCreated',
+          name: timer.name,
+          timestamp: createdTime,
+          fireAt: timer.dueTime,
+        },
+        ...(timer.fired
+          ? [{
+              eventType: 'TimerFired',
+              name: timer.name,
+              timestamp: createdTime,
+            }]
+          : []),
       ])),
     ];
     const instance = {
@@ -419,6 +518,7 @@ export class FunctionsRouter {
             input: input ?? null,
             activities: activityNames,
             activityResults: Object.fromEntries(plan.activityResults.map(item => [item.name, item.output])),
+            timerResults: Object.fromEntries(plan.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
           }
         : null,
       failureDetails: shouldFail
@@ -430,6 +530,7 @@ export class FunctionsRouter {
       waitingForEvents,
       receivedEvents: [],
       activityResults: plan.activityResults,
+      timerResults: plan.timerResults,
       history,
     };
     if (runtimeStatus === 'Completed') {
@@ -488,6 +589,7 @@ export class FunctionsRouter {
           orchestrator: instance.orchestratorName,
           input: instance.input ?? null,
           activityResults: Object.fromEntries(instance.activityResults.map(item => [item.name, item.output])),
+          timerResults: Object.fromEntries(instance.timerResults.map(item => [item.name, stableTimerOutput(item.name, item.dueTime, item.fired)])),
           events: instance.receivedEvents.map(item => ({ name: item.name, data: item.data })),
         };
         instance.history.push({
@@ -625,6 +727,7 @@ export class FunctionsRouter {
           return sendError(res, 404, 'OrchestrationNotFound', `The Durable instance '${durable.instanceId}' was not found.`);
         }
         if (durable.kind === 'instance' && method === 'GET') {
+          this.reconcileDurableInstance(instance);
           return sendJson(res, 200, durableStatusPayload(origin, app, instance, url.searchParams.get('showHistory') === 'true'));
         }
         if (durable.kind === 'instance' && method === 'DELETE') {

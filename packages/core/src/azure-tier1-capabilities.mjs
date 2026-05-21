@@ -170,6 +170,8 @@ export const tier1Capabilities = [
       'DurableOrchestrations.StartLocal',
       'DurableOrchestrations.GetStatusLocal',
       'DurableOrchestrations.ExecuteActivitiesLocal',
+      'DurableOrchestrations.ReplayHistoryLocal',
+      'DurableOrchestrations.TimersLocal',
       'DurableOrchestrations.RaiseEventLocal',
       'DurableOrchestrations.SuspendResumeLocal',
       'DurableOrchestrations.TerminateLocal',
