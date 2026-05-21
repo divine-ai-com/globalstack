@@ -510,6 +510,94 @@ function longRunningWorkflowBody(overrides = {}) {
   });
 }
 
+function recurrenceWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        triggers: {
+          recurrence: {
+            type: 'Recurrence',
+            recurrence: {
+              frequency: 'Minute',
+              interval: 1,
+            },
+          },
+        },
+        actions: {
+          composeSchedule: {
+            type: 'Compose',
+            inputs: {
+              source: 'recurrence',
+              payload: '@triggerBody()',
+            },
+          },
+          respond: {
+            type: 'Response',
+            runAfter: {
+              composeSchedule: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                trigger: 'recurrence',
+                payload: "@actions('composeSchedule').outputs",
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
+function webhookWorkflowBody(overrides = {}) {
+  return workflowBody({
+    properties: {
+      definition: workflowDefinition({
+        triggers: {
+          webhook: {
+            type: 'HttpWebhook',
+            kind: 'Http',
+            inputs: {
+              subscribe: {
+                method: 'POST',
+                uri: 'https://example.invalid/subscribe',
+              },
+              unsubscribe: {
+                method: 'POST',
+                uri: 'https://example.invalid/unsubscribe',
+              },
+            },
+          },
+        },
+        actions: {
+          capturePayload: {
+            type: 'Compose',
+            inputs: '@triggerBody()',
+          },
+          respond: {
+            type: 'Response',
+            runAfter: {
+              capturePayload: ['Succeeded'],
+            },
+            inputs: {
+              statusCode: 200,
+              body: {
+                trigger: 'httpWebhook',
+                payload: "@actions('capturePayload').outputs",
+              },
+            },
+          },
+        },
+      }),
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  });
+}
+
 function apiConnectionWorkflowBody(overrides = {}) {
   return workflowBody({
     properties: {
@@ -702,6 +790,8 @@ async function runControlPlaneMatrix() {
   const connectorWorkflowName = `workflow-http-${suffix}`.slice(0, 40);
   const retryWorkflowName = `workflow-retry-${suffix}`.slice(0, 40);
   const longWorkflowName = `workflow-long-${suffix}`.slice(0, 40);
+  const recurrenceWorkflowName = `workflow-recur-${suffix}`.slice(0, 40);
+  const webhookWorkflowName = `workflow-hook-${suffix}`.slice(0, 40);
   const apiConnWorkflowName = `workflow-conn-${suffix}`.slice(0, 40);
 
   async function record(name, fn) {
@@ -1234,6 +1324,71 @@ async function runControlPlaneMatrix() {
         assert.equal(histories.status, 200);
         assert.equal(histories.body.value.at(-1).properties.status, 'Succeeded');
         return { status: completed.status, runtimeStatus: completed.body.status };
+      });
+
+      await record('recurrence workflow create succeeds', async () => {
+        const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, recurrenceWorkflowName), recurrenceWorkflowBody());
+        assert.equal(result.status, 201);
+        return { status: result.status };
+      });
+
+      await record('recurrence trigger run route succeeds', async () => {
+        const invoked = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${recurrenceWorkflowName}/triggers/recurrence/run`, '2019-05-01'),
+          { source: 'schedule' },
+        );
+        assert.equal(invoked.status, 202);
+        assert.equal(invoked.body.status, 'Succeeded');
+        assert.equal(invoked.body.response?.body?.trigger, 'recurrence');
+        assert.equal(invoked.body.response?.body?.payload?.payload?.source, 'schedule');
+        return { status: invoked.status, runId: invoked.body.id };
+      });
+
+      await record('recurrence trigger callback URL is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${recurrenceWorkflowName}/triggers/recurrence/listCallbackUrl`, '2019-05-01'),
+          {},
+        );
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'TriggerCallbackNotSupported');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('http webhook workflow create succeeds', async () => {
+        const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, webhookWorkflowName), webhookWorkflowBody());
+        assert.equal(result.status, 201);
+        return { status: result.status };
+      });
+
+      await record('http webhook trigger run route succeeds', async () => {
+        const invoked = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${webhookWorkflowName}/triggers/webhook/run`, '2019-05-01'),
+          { robotId: 'hook-7', status: 'ready' },
+        );
+        assert.equal(invoked.status, 202);
+        assert.equal(invoked.body.status, 'Succeeded');
+        assert.equal(invoked.body.response?.body?.trigger, 'httpWebhook');
+        assert.equal(invoked.body.response?.body?.payload?.robotId, 'hook-7');
+        return { status: invoked.status, runId: invoked.body.id };
+      });
+
+      await record('http webhook trigger callback URL succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${webhookWorkflowName}/triggers/webhook/listCallbackUrl`, '2019-05-01'),
+          {},
+        );
+        assert.equal(result.status, 200);
+        assert.match(result.body.value, new RegExp(`/workflows/${webhookWorkflowName}/triggers/webhook/run\\?api-version=2019-05-01$`));
+        assert.equal(result.body.method, 'POST');
+        return { status: result.status };
       });
 
       await record('api connection workflow create succeeds', async () => {

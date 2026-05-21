@@ -1409,8 +1409,8 @@ if (!logicWorkflowsParityText) {
   if (logicWorkflowsParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Logic Workflows parity control-plane matrix has failures');
   }
-  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 50) {
-    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 50 cases');
+  if ((logicWorkflowsParity.controlPlane?.total ?? 0) < 56) {
+    errors.push('Azure Logic Workflows parity control/data-plane matrix should exercise at least 56 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1461,6 +1461,12 @@ if (!logicWorkflowsParityText) {
     'long running workflow create succeeds',
     'local workflow runner delay and until semantics succeed',
     'workflow run get reconciles hosted long running execution',
+    'recurrence workflow create succeeds',
+    'recurrence trigger run route succeeds',
+    'recurrence trigger callback URL is rejected',
+    'http webhook workflow create succeeds',
+    'http webhook trigger run route succeeds',
+    'http webhook trigger callback URL succeeds',
     'api connection workflow create succeeds',
     'local workflow runner api connection actions succeed',
   ]) {
@@ -1487,8 +1493,8 @@ if (!azureFunctionsParityText) {
   if (azureFunctionsParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Functions parity control/data-plane matrix has failures');
   }
-  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 92) {
-    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 92 cases');
+  if ((azureFunctionsParity.controlAndDataPlane?.total ?? 0) < 96) {
+    errors.push('Azure Functions parity control/data-plane matrix should exercise at least 96 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1513,6 +1519,8 @@ if (!azureFunctionsParityText) {
     'queue trigger function resource create succeeds',
     'blob trigger function resource create succeeds',
     'event grid trigger function resource create succeeds',
+    'service bus trigger function resource create succeeds',
+    'event hub trigger function resource create succeeds',
     'function listKeys returns deterministic key',
     'function host listKeys returns host keys',
     'function app syncfunctiontriggers action succeeds',
@@ -1547,6 +1555,8 @@ if (!azureFunctionsParityText) {
     'queue trigger admin invocation succeeds',
     'blob trigger admin invocation succeeds',
     'event grid trigger admin invocation succeeds',
+    'service bus trigger admin invocation succeeds',
+    'event hub trigger admin invocation succeeds',
     'zipdeploy rejects missing publishing credentials',
     'zipdeploy accepts deterministic publishing credentials',
     'latest zipdeploy status exposes package metadata',

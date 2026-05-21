@@ -72,6 +72,18 @@ function findAsyncDelayMs(actions = {}) {
   return null;
 }
 
+function normalizedTriggerType(trigger) {
+  return String(trigger?.type ?? '').toLowerCase();
+}
+
+function isInvokableTrigger(trigger) {
+  return ['request', 'recurrence', 'httpwebhook', 'apiconnectionwebhook'].includes(normalizedTriggerType(trigger));
+}
+
+function triggerSupportsCallback(trigger) {
+  return ['request', 'httpwebhook', 'apiconnectionwebhook'].includes(normalizedTriggerType(trigger));
+}
+
 export class WorkflowRunner {
   constructor({ httpInvoker = null } = {}) {
     this.workflows = new Map();
@@ -719,8 +731,8 @@ export class WorkflowRunner {
     if (!trigger) {
       return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
     }
-    if (trigger.type !== 'Request') {
-      return error(400, 'TriggerNotInvokable', `The workflow trigger '${triggerName}' is not a request trigger.`);
+    if (!isInvokableTrigger(trigger)) {
+      return error(400, 'TriggerNotInvokable', `The workflow trigger '${triggerName}' is not invokable in this local workflow surface.`);
     }
 
     const runId = randomUUID();
@@ -824,6 +836,9 @@ export class WorkflowRunner {
     const trigger = workflow.definition?.triggers?.[triggerName];
     if (!trigger) {
       return error(404, 'TriggerNotFound', `The workflow trigger '${triggerName}' was not found.`);
+    }
+    if (!triggerSupportsCallback(trigger)) {
+      return error(400, 'TriggerCallbackNotSupported', `The workflow trigger '${triggerName}' does not expose a callback URL.`);
     }
     return {
       status: 200,

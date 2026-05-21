@@ -331,6 +331,8 @@ export class FunctionsRouter {
     const queueTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
     const blobTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'blobtrigger');
     const eventGridTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'eventgridtrigger');
+    const serviceBusTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'servicebustrigger');
+    const eventHubTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'eventhubtrigger');
     if (orchestrationTrigger) {
       app.durable.orchestrators.set(normalizedFunctionName, {
         functionName,
@@ -369,6 +371,22 @@ export class FunctionsRouter {
         functionName,
         type: 'eventGridTrigger',
         eventType: eventGridTrigger.eventType ?? null,
+      });
+    }
+    if (serviceBusTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'serviceBusTrigger',
+        queueName: serviceBusTrigger.queueName ?? null,
+        topicName: serviceBusTrigger.topicName ?? null,
+        subscriptionName: serviceBusTrigger.subscriptionName ?? null,
+      });
+    }
+    if (eventHubTrigger) {
+      app.triggers.set(normalizedFunctionName, {
+        functionName,
+        type: 'eventHubTrigger',
+        eventHubName: eventHubTrigger.eventHubName ?? null,
       });
     }
     if (!httpTrigger) return null;
@@ -1253,9 +1271,12 @@ export class FunctionsRouter {
           triggerType: trigger.type,
           input: body ?? null,
           ...(trigger.queueName ? { queueName: trigger.queueName } : {}),
+          ...(trigger.topicName ? { topicName: trigger.topicName } : {}),
+          ...(trigger.subscriptionName ? { subscriptionName: trigger.subscriptionName } : {}),
           ...(trigger.schedule ? { schedule: trigger.schedule } : {}),
           ...(trigger.path ? { path: trigger.path } : {}),
           ...(trigger.eventType ? { eventType: trigger.eventType } : {}),
+          ...(trigger.eventHubName ? { eventHubName: trigger.eventHubName } : {}),
         });
       }
       const durable = durableRoute(url.pathname);

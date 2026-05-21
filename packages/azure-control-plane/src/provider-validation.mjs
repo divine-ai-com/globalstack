@@ -2158,7 +2158,17 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     const queueTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'queuetrigger');
     const blobTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'blobtrigger');
     const eventGridTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'eventgridtrigger');
-    const supportedTriggerCount = httpTriggers.length + orchestrationTriggers.length + activityTriggers.length + timerTriggers.length + queueTriggers.length + blobTriggers.length + eventGridTriggers.length;
+    const serviceBusTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'servicebustrigger');
+    const eventHubTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'eventhubtrigger');
+    const supportedTriggerCount = httpTriggers.length
+      + orchestrationTriggers.length
+      + activityTriggers.length
+      + timerTriggers.length
+      + queueTriggers.length
+      + blobTriggers.length
+      + eventGridTriggers.length
+      + serviceBusTriggers.length
+      + eventHubTriggers.length;
     if (supportedTriggerCount !== 1) {
       return envelopedError(
         400,
@@ -2166,7 +2176,15 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         'Function resources currently require exactly one supported trigger binding in this local parity surface.',
       );
     }
-    const trigger = httpTriggers[0] ?? orchestrationTriggers[0] ?? activityTriggers[0] ?? timerTriggers[0] ?? queueTriggers[0] ?? blobTriggers[0] ?? eventGridTriggers[0];
+    const trigger = httpTriggers[0]
+      ?? orchestrationTriggers[0]
+      ?? activityTriggers[0]
+      ?? timerTriggers[0]
+      ?? queueTriggers[0]
+      ?? blobTriggers[0]
+      ?? eventGridTriggers[0]
+      ?? serviceBusTriggers[0]
+      ?? eventHubTriggers[0];
     if (httpTriggers.length === 1 && trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
       return envelopedError(
         400,
@@ -2200,6 +2218,24 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
         400,
         'ValidationError',
         'Blob trigger bindings require a string path.',
+      );
+    }
+    if (serviceBusTriggers.length === 1) {
+      const hasQueue = typeof trigger.queueName === 'string';
+      const hasTopicSubscription = typeof trigger.topicName === 'string' && typeof trigger.subscriptionName === 'string';
+      if (!hasQueue && !hasTopicSubscription) {
+        return envelopedError(
+          400,
+          'ValidationError',
+          'Service Bus trigger bindings require queueName or topicName plus subscriptionName.',
+        );
+      }
+    }
+    if (eventHubTriggers.length === 1 && typeof trigger.eventHubName !== 'string') {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Event Hub trigger bindings require a string eventHubName.',
       );
     }
   }

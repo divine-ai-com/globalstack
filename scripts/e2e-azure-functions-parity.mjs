@@ -424,6 +424,48 @@ function eventGridTriggerResourceBody({ eventType = 'ModelPromoted' } = {}) {
   };
 }
 
+function serviceBusTriggerResourceBody({ queueName = 'robot-bus' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'serviceBusTrigger',
+            direction: 'in',
+            name: 'message',
+            queueName,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
+function eventHubTriggerResourceBody({ eventHubName = 'robot-hub' } = {}) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            type: 'eventHubTrigger',
+            direction: 'in',
+            name: 'events',
+            eventHubName,
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
 async function httpRaw(port, method, path, payload, headers = {}) {
   return new Promise((resolve, reject) => {
     const body = Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload ?? ''), 'utf8');
@@ -950,6 +992,30 @@ async function runControlAndDataPlaneMatrix() {
           'PUT',
           providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/modelEvents`),
           eventGridTriggerResourceBody({ eventType: 'ModelPublished' }),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
+      await record('service bus trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/robotBus`),
+          serviceBusTriggerResourceBody({ queueName: 'robot-bus' }),
+        );
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
+        return { status: result.status };
+      });
+
+      await record('event hub trigger function resource create succeeds', async () => {
+        const result = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/robotStream`),
+          eventHubTriggerResourceBody({ eventHubName: 'robot-hub' }),
         );
         assert.equal(result.status, 201);
         assert.equal(result.body.type, 'Microsoft.Web/sites/functions');
@@ -1617,6 +1683,36 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 202);
         assert.equal(result.body.triggerType, 'eventGridTrigger');
         assert.equal(result.body.eventType, 'ModelPublished');
+        return { status: result.status };
+      });
+
+      await record('service bus trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/robotBus?code=${encodeURIComponent(hostFunctionKey)}`,
+          { id: 'bus-1', body: 'robot bus message' },
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'serviceBusTrigger');
+        assert.equal(result.body.queueName, 'robot-bus');
+        assert.equal(result.body.input.id, 'bus-1');
+        return { status: result.status };
+      });
+
+      await record('event hub trigger admin invocation succeeds', async () => {
+        const result = await httpDataPlaneJson(
+          routerPort,
+          'POST',
+          `/admin/functions/robotStream?code=${encodeURIComponent(hostFunctionKey)}`,
+          [{ sequenceNumber: 7, body: 'robot stream event' }],
+          { host: functionHost },
+        );
+        assert.equal(result.status, 202);
+        assert.equal(result.body.triggerType, 'eventHubTrigger');
+        assert.equal(result.body.eventHubName, 'robot-hub');
+        assert.equal(result.body.input[0].sequenceNumber, 7);
         return { status: result.status };
       });
 
