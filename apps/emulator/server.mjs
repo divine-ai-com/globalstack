@@ -2,17 +2,21 @@ import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createAppConfigurationRouter, createAppConfigurationRouterServer } from '../../packages/azure-data-plane/src/app-configuration-router.mjs';
 import { createEventGridRouter, createEventGridRouterServer } from '../../packages/azure-data-plane/src/event-grid-router.mjs';
+import { createFunctionsRouter, createFunctionsRouterServer } from '../../packages/azure-data-plane/src/functions-router.mjs';
 import {
   createBlobStorageServer,
   createQueueStorageServer,
   createStorageDataPlaneRouter,
   createTableStorageServer,
 } from '../../packages/azure-data-plane/src/storage-router.mjs';
+import { createWorkflowRunner } from '../../packages/azure-data-plane/src/workflow-runner.mjs';
 
 const store = new ResourceStore();
 const storageRouter = createStorageDataPlaneRouter();
 const appConfigurationRouter = createAppConfigurationRouter();
 const eventGridRouter = createEventGridRouter();
+const functionsRouter = createFunctionsRouter();
+const workflowRunner = createWorkflowRunner();
 const storageAccountKey = process.env.GLOBALSTACK_AZURE_STORAGE_ACCOUNT_KEY
   ?? 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==';
 
@@ -50,6 +54,32 @@ function syncResource({ store: resourceStore, providerRoute, resourceType, resou
     appConfigurationRouter.registerStore({
       storeName: resource.name,
       endpoint: resource.properties?.endpoint,
+    });
+    return;
+  }
+
+  if (resourceType === 'Microsoft.Web/sites') {
+    functionsRouter.registerApp({
+      appName: resource.name,
+      defaultHostName: resource.properties?.defaultHostName,
+    });
+    return;
+  }
+
+  if (resourceType === 'Microsoft.Web/sites/functions') {
+    const [, appName, , functionName] = providerRoute.typePath.split('/');
+    functionsRouter.registerFunctionResource({
+      appName,
+      functionName,
+      config: resource.properties?.config ?? {},
+    });
+    return;
+  }
+
+  if (resourceType === 'Microsoft.Logic/workflows') {
+    workflowRunner.registerWorkflow({
+      workflowName: resource.name,
+      properties: resource.properties,
     });
     return;
   }
@@ -102,6 +132,26 @@ function unsyncResource({ providerRoute, resourceType, resource }) {
     return;
   }
 
+  if (resourceType === 'Microsoft.Web/sites') {
+    functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
+    return;
+  }
+
+  if (resourceType === 'Microsoft.Web/sites/functions') {
+    const [, appName, , functionName] = providerRoute.typePath.split('/');
+    functionsRouter.unregisterFunctionResource({
+      appName,
+      functionName,
+      config: resource?.properties?.config ?? {},
+    });
+    return;
+  }
+
+  if (resourceType === 'Microsoft.Logic/workflows') {
+    workflowRunner.unregisterWorkflow(resource?.name ?? providerRoute.typePath.split('/')[1]);
+    return;
+  }
+
   if (resourceType === 'Microsoft.EventGrid/topics') {
     eventGridRouter.unregisterTopic(resource?.name ?? providerRoute.typePath.split('/')[1]);
   }
@@ -121,12 +171,14 @@ const armServer = createArmServer({
   store,
   onResourcePut: syncResource,
   onResourceDelete: unsyncResource,
+  workflowRunner,
 });
 const blobServer = createBlobStorageServer(storageRouter);
 const queueServer = createQueueStorageServer(storageRouter);
 const tableServer = createTableStorageServer(storageRouter);
 const appConfigurationServer = createAppConfigurationRouterServer(appConfigurationRouter);
 const eventGridServer = createEventGridRouterServer(eventGridRouter);
+const functionsServer = createFunctionsRouterServer(functionsRouter);
 
 await Promise.all([
   listen(armServer, Number(process.env.GLOBALSTACK_ARM_PORT ?? 4566), process.env.GLOBALSTACK_ARM_HOST ?? '0.0.0.0'),
@@ -135,6 +187,7 @@ await Promise.all([
   listen(tableServer, Number(process.env.GLOBALSTACK_TABLE_PORT ?? 10002)),
   listen(appConfigurationServer, Number(process.env.GLOBALSTACK_APP_CONFIGURATION_PORT ?? 8483)),
   listen(eventGridServer, Number(process.env.GLOBALSTACK_EVENT_GRID_PORT ?? 6010)),
+  listen(functionsServer, Number(process.env.GLOBALSTACK_FUNCTIONS_PORT ?? 7071)),
 ]);
 
 const shutdown = async () => {
@@ -145,6 +198,7 @@ const shutdown = async () => {
     new Promise(resolve => tableServer.close(resolve)),
     new Promise(resolve => appConfigurationServer.close(resolve)),
     new Promise(resolve => eventGridServer.close(resolve)),
+    new Promise(resolve => functionsServer.close(resolve)),
   ]);
   process.exit(0);
 };

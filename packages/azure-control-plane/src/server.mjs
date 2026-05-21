@@ -3,6 +3,7 @@ import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
+import { deterministicFunctionKey, deterministicHostKey } from '../../azure-data-plane/src/functions-router.mjs';
 import { acceptsDeleteMissing, capturedProviderValidation, capturedPutMissingParent, storageAccountNotProvisioned, storagePostDeleteNotFound } from './provider-validation.mjs';
 
 async function readBody(req) {
@@ -414,6 +415,90 @@ function aksCredentialActionRoute(providerRoute) {
       typePath: `managedClusters/${parts[1]}`,
     },
     role: action === 'listclusteradmincredential' ? 'admin' : 'user',
+  };
+}
+
+function webHostListKeysRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'sites' || parts[2] !== 'host' || parts[3].toLowerCase() !== 'default' || parts[4].toLowerCase() !== 'listkeys') return null;
+  return {
+    ...providerRoute,
+    typePath: `sites/${parts[1]}`,
+  };
+}
+
+function webFunctionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4 || parts[0] !== 'sites' || parts[2] !== 'functions') return null;
+  return {
+    appRoute: {
+      ...providerRoute,
+      typePath: `sites/${parts[1]}`,
+    },
+    functionRoute: providerRoute,
+    appName: parts[1],
+    functionName: parts[3],
+  };
+}
+
+function webFunctionListKeysRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'sites' || parts[2] !== 'functions' || parts[4].toLowerCase() !== 'listkeys') return null;
+  return {
+    appRoute: {
+      ...providerRoute,
+      typePath: `sites/${parts[1]}`,
+    },
+    functionRoute: {
+      ...providerRoute,
+      typePath: `sites/${parts[1]}/functions/${parts[3]}`,
+    },
+    appName: parts[1],
+    functionName: parts[3],
+  };
+}
+
+function workflowTriggerRunRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'workflows' || parts[2] !== 'triggers' || parts[4].toLowerCase() !== 'run') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    triggerName: parts[3],
+  };
+}
+
+function workflowRunRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4 || parts[0] !== 'workflows' || parts[2] !== 'runs') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
+    runId: parts[3],
+  };
+}
+
+function workflowRunsCollectionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Logic') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'workflows' || parts[2] !== 'runs') return null;
+  return {
+    workflowRoute: {
+      ...providerRoute,
+      typePath: `workflows/${parts[1]}`,
+    },
+    workflowName: parts[1],
   };
 }
 
@@ -834,6 +919,7 @@ export function createArmRequestHandler({
   persist = false,
   onResourcePut = null,
   onResourceDelete = null,
+  workflowRunner = null,
 } = {}) {
   void persist;
 
@@ -1278,6 +1364,102 @@ export function createArmRequestHandler({
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${eventGridListKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
           return sendJson(res, 200, keys);
+        }
+
+        const webHostKeysRoute = webHostListKeysRoute(providerRoute);
+        if (webHostKeysRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const site = store.getResource(webHostKeysRoute);
+          if (!site) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${webHostKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, {
+            masterKey: deterministicHostKey(site.name, 'master'),
+            functionKeys: {
+              default: deterministicHostKey(site.name, 'function-default'),
+            },
+            systemKeys: {},
+          });
+        }
+
+        const webFunctionKeysRoute = webFunctionListKeysRoute(providerRoute);
+        if (webFunctionKeysRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const app = store.getResource(webFunctionKeysRoute.appRoute);
+          if (!app) {
+            return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
+          }
+          const fn = store.getResource(webFunctionKeysRoute.functionRoute);
+          if (!fn) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionKeysRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, {
+            keys: {
+              default: deterministicFunctionKey(webFunctionKeysRoute.appName, webFunctionKeysRoute.functionName),
+            },
+          });
+        }
+
+        const workflowTriggerRoute = workflowTriggerRunRoute(providerRoute);
+        if (workflowTriggerRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local trigger execution.');
+          }
+          const body = await readBody(req);
+          const result = workflowRunner.invoke({
+            workflowName: workflowTriggerRoute.workflowName,
+            triggerName: workflowTriggerRoute.triggerName,
+            body,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          const runLocation = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/Microsoft.Logic/workflows/${workflowTriggerRoute.workflowName}/runs/${result.body.id}?api-version=${apiVersion}`;
+          return sendJson(res, 202, result.body, {
+            location: runLocation,
+          });
+        }
+
+        const workflowRunItemRoute = workflowRunRoute(providerRoute);
+        if (workflowRunItemRoute && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = workflowRunner.getRun({
+            workflowName: workflowRunItemRoute.workflowName,
+            runId: workflowRunItemRoute.runId,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
+        const workflowRunsRoute = workflowRunsCollectionRoute(providerRoute);
+        if (workflowRunsRoute && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!workflowRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No workflow runner is configured for local run inspection.');
+          }
+          const result = workflowRunner.listRuns({
+            workflowName: workflowRunsRoute.workflowName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
         }
 
         const aksCredentialRoute = aksCredentialActionRoute(providerRoute);

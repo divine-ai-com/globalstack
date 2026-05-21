@@ -54,6 +54,13 @@ function functionKey(appName, functionName) {
     .slice(0, 44);
 }
 
+function hostKey(appName, slot = 'default') {
+  return createHash('sha256')
+    .update(`globalstack:functions:host:${String(appName).toLowerCase()}:${String(slot).toLowerCase()}`)
+    .digest('base64url')
+    .slice(0, 44);
+}
+
 function requestKey(req, url) {
   return req.headers['x-functions-key'] ?? url.searchParams.get('code') ?? null;
 }
@@ -122,6 +129,61 @@ export class FunctionsRouter {
     if (app) app.functions.delete(normalizeRoute(route).toLowerCase());
   }
 
+  registerFunctionResource({ appName, functionName, config = {} }) {
+    const bindings = Array.isArray(config.bindings) ? config.bindings : [];
+    const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
+    if (!httpTrigger) return null;
+    const route = httpTrigger.route ?? functionName;
+    const methods = Array.isArray(httpTrigger.methods) && httpTrigger.methods.length > 0
+      ? httpTrigger.methods
+      : ['GET', 'POST'];
+    const authLevel = String(httpTrigger.authLevel ?? 'function').toLowerCase();
+    this.registerHttpFunction({
+      appName,
+      functionName,
+      route,
+      methods,
+      authLevel,
+    });
+    return {
+      route: normalizeRoute(route),
+      key: functionKey(appName, functionName),
+    };
+  }
+
+  unregisterFunctionResource({ appName, config = {}, functionName }) {
+    const bindings = Array.isArray(config.bindings) ? config.bindings : [];
+    const httpTrigger = bindings.find(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
+    this.unregisterHttpFunction({
+      appName,
+      route: httpTrigger?.route ?? functionName,
+    });
+  }
+
+  listFunctionKeys({ appName, functionName }) {
+    const app = this.apps.get(String(appName).toLowerCase());
+    if (!app) return null;
+    const fn = [...app.functions.values()].find(item => item.functionName.toLowerCase() === String(functionName).toLowerCase());
+    if (!fn) return null;
+    return {
+      keys: {
+        default: fn.key,
+      },
+    };
+  }
+
+  listHostKeys({ appName }) {
+    const app = this.apps.get(String(appName).toLowerCase());
+    if (!app) return null;
+    return {
+      masterKey: hostKey(app.appName, 'master'),
+      functionKeys: {
+        default: hostKey(app.appName, 'function-default'),
+      },
+      systemKeys: {},
+    };
+  }
+
   handler() {
     return async (req, res) => {
       const url = new URL(req.url, 'http://localhost');
@@ -185,4 +247,12 @@ export function createFunctionsRouter() {
 
 export function createFunctionsRouterServer(router = createFunctionsRouter()) {
   return createServer(router.handler());
+}
+
+export function deterministicFunctionKey(appName, functionName) {
+  return functionKey(appName, functionName);
+}
+
+export function deterministicHostKey(appName, slot = 'default') {
+  return hostKey(appName, slot);
 }

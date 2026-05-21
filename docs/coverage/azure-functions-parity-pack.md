@@ -19,7 +19,7 @@ By default it runs two layers:
 
 | Layer | Scope | Required Result |
 |---|---|---|
-| Azure Functions ARM and HTTP-trigger matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured server farm validation, server farm and Function App collection/delete-not-found behavior, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, unsupported function action fail-closed behavior, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
+| Azure Functions ARM and HTTP-trigger matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured server farm validation, server farm and Function App collection/delete-not-found behavior, documented server farm and Function App success shapes, async provisioning, Function App create/update/list/delete/post-delete, Function child-resource create/listKeys/host-key behavior, unsupported function action fail-closed behavior, ARM-template deployment, and local HTTP-trigger rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
 | Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:azure-functions-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
@@ -44,7 +44,9 @@ The Azure Functions matrix covers these deployment states:
 - Function Apps require `kind` to include `functionapp`, `properties.serverFarmId`, and a server farm that already exists in the local ARM store.
 - Function App names and server farm names are rejected when they violate the local Azure-shaped naming rules.
 - Function App updates preserve generated host metadata like `<app>.azurewebsites.net`.
-- Unsupported Function App child actions fail closed instead of returning invented success.
+- Function child resources can be declared through `Microsoft.Web/sites/functions` with an `httpTrigger` binding subset and are synced into the local Functions router.
+- Function and host `listKeys` actions return deterministic Azure-shaped key payloads for declared local functions.
+- Unsupported Function App child actions still fail closed instead of returning invented success.
 - The local Functions router rejects unknown apps, unknown routes, disallowed methods, missing function keys, and wrong function keys.
 - Anonymous HTTP triggers and function-key protected HTTP triggers route to local inspection responses for integration-test smoke.
 - HTTP trigger routing accepts the default `/api/<route>` prefix and direct `<route>` form used by the local Functions host.

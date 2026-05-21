@@ -40,8 +40,8 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
+async function withArmServer(fn, options = {}) {
+  const server = createArmServer(options);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
@@ -108,7 +108,26 @@ function workflowDefinition(overrides = {}) {
         inputs: { schema: {} },
       },
     },
-    actions: {},
+    actions: {
+      composePayload: {
+        type: 'Compose',
+        inputs: '@triggerBody()',
+      },
+      respond: {
+        type: 'Response',
+        kind: 'Http',
+        runAfter: {
+          composePayload: ['Succeeded'],
+        },
+        inputs: {
+          statusCode: 202,
+          body: {
+            accepted: true,
+            payload: "@actions('composePayload').outputs",
+          },
+        },
+      },
+    },
     outputs: {},
     ...overrides,
   };
@@ -154,6 +173,19 @@ function deploymentBody(workflowName) {
 
 function runnerErrorCode(result) {
   return result.error?.code ?? null;
+}
+
+function syncWorkflowResource(workflowRunner, { resourceType, resource }) {
+  if (resourceType !== 'Microsoft.Logic/workflows') return;
+  workflowRunner.registerWorkflow({
+    workflowName: resource.name,
+    properties: resource.properties,
+  });
+}
+
+function unsyncWorkflowResource(workflowRunner, { resourceType, resource, providerRoute }) {
+  if (resourceType !== 'Microsoft.Logic/workflows') return;
+  workflowRunner.unregisterWorkflow(resource?.name ?? providerRoute.typePath.split('/')[1]);
 }
 
 async function runControlPlaneMatrix() {
@@ -265,7 +297,6 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.name, workflowName);
       assert.equal(result.body.properties.state, 'Enabled');
       assert.equal(result.body.properties.accessEndpoint, `https://logic.azure.com/workflows/${workflowName}`);
-      workflowRunner.registerWorkflow({ workflowName, properties: result.body.properties });
       return { status: result.status };
     });
 
@@ -300,10 +331,54 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 202);
       assert.equal(result.body.status, 'Succeeded');
       assert.deepEqual(result.body.input, { robotId: 'arm-1', task: 'calibrate' });
+      assert.equal(result.body.response?.statusCode, 202);
+      assert.equal(result.body.response?.body?.accepted, true);
+      assert.equal(result.body.response?.body?.payload?.robotId, 'arm-1');
       const run = workflowRunner.getRun({ workflowName, runId: result.body.id });
       assert.equal(run.status, 200);
       assert.equal(run.body.status, 'Succeeded');
       return { status: result.status, runId: result.body.id };
+    });
+
+    await record('workflow trigger run route succeeds', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/triggers/manual/run`, '2019-05-01'),
+        { robotId: 'arm-2', task: 'inspect' },
+      );
+      assert.equal(result.status, 202);
+      assert.ok(result.headers.location);
+      assert.equal(result.body.status, 'Succeeded');
+      assert.equal(result.body.response?.body?.payload?.task, 'inspect');
+      return { status: result.status, runId: result.body.id };
+    });
+
+    await record('workflow runs list includes created runs', async () => {
+      const result = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/runs`, '2019-05-01'),
+      );
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.length >= 2);
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('workflow run get route succeeds', async () => {
+      const runs = workflowRunner.listRuns({ workflowName });
+      assert.equal(runs.status, 200);
+      const runId = runs.body.value.at(-1)?.id;
+      assert.ok(runId);
+      const result = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/runs/${runId}`, '2019-05-01'),
+      );
+      assert.equal(result.status, 200);
+      assert.equal(result.body.id, runId);
+      assert.equal(result.body.response?.body?.accepted, true);
+      return { status: result.status, runId };
     });
 
     await record('workflow get succeeds', async () => {
@@ -318,7 +393,6 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, workflowName), workflowBody({ properties: { state: 'Disabled' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.state, 'Disabled');
-      workflowRunner.registerWorkflow({ workflowName, properties: result.body.properties });
       return { status: result.status };
     });
 
@@ -340,10 +414,10 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
-    await record('unsupported workflow trigger route fails closed', async () => {
+    await record('workflow trigger route rejects disabled workflow', async () => {
       const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/triggers/manual/run`, '2019-05-01'), {});
-      assert.equal(result.status, 501);
-      assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
+      assert.equal(result.status, 409);
+      assert.equal(errorCode(result), 'WorkflowDisabled');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
@@ -369,12 +443,11 @@ async function runControlPlaneMatrix() {
       return { status: result.status, stepCount: result.body.properties.globalstackDeploymentSteps.length };
     });
 
-    await record('workflow delete succeeds', async () => {
-      const result = await httpJson(armPort, 'DELETE', workflowPath(resourceGroup, workflowName));
-      assert.equal(result.status, 200);
-      workflowRunner.unregisterWorkflow(workflowName);
-      return { status: result.status };
-    });
+      await record('workflow delete succeeds', async () => {
+        const result = await httpJson(armPort, 'DELETE', workflowPath(resourceGroup, workflowName));
+        assert.equal(result.status, 200);
+        return { status: result.status };
+      });
 
     await record('workflow get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', workflowPath(resourceGroup, workflowName));
@@ -388,6 +461,10 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 204);
       return { status: result.status };
     });
+  }, {
+    workflowRunner,
+    onResourcePut: context => syncWorkflowResource(workflowRunner, context),
+    onResourceDelete: context => unsyncWorkflowResource(workflowRunner, context),
   });
 
   const failed = cases.filter(item => !item.ok);
@@ -465,7 +542,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner success and failure behavior, unsupported workflow route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, Azure-hosted trigger execution, retries, full run history, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner success and failure behavior, supported trigger-run and run-history routes, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Logic Apps as 99%-complete or cloudValidated for connector runtime behavior, Azure-hosted trigger execution, retries, full run history parity, long-running orchestration, RBAC, private link, throttling, or exact Azure workflow data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -477,7 +554,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Logic Apps workflow ARM lifecycle, definition validation, local request-trigger runner checks, supported trigger-run and run-history routes, unsupported route fail-closed checks outside that subset, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Logic Apps cloudValidated claim.',
   controlPlane,
   platformMatrix,

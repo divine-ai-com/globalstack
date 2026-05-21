@@ -42,8 +42,8 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
+async function withArmServer(fn, options = {}) {
+  const server = createArmServer(options);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
@@ -89,6 +89,39 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: Object.fromEntries(response.headers.entries()),
     body: parsed,
   };
+}
+
+function syncFunctionsResource(router, { resourceType, providerRoute, resource }) {
+  if (resourceType === 'Microsoft.Web/sites') {
+    router.registerApp({
+      appName: resource.name,
+      defaultHostName: resource.properties?.defaultHostName,
+    });
+    return;
+  }
+  if (resourceType === 'Microsoft.Web/sites/functions') {
+    const [, appName, , functionName] = providerRoute.typePath.split('/');
+    router.registerFunctionResource({
+      appName,
+      functionName,
+      config: resource.properties?.config ?? {},
+    });
+  }
+}
+
+function unsyncFunctionsResource(router, { resourceType, providerRoute, resource }) {
+  if (resourceType === 'Microsoft.Web/sites') {
+    router.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
+    return;
+  }
+  if (resourceType === 'Microsoft.Web/sites/functions') {
+    const [, appName, , functionName] = providerRoute.typePath.split('/');
+    router.unregisterFunctionResource({
+      appName,
+      functionName,
+      config: resource?.properties?.config ?? {},
+    });
+  }
 }
 
 async function httpDataPlaneJson(port, method, path, body, headers = {}) {
@@ -234,6 +267,34 @@ function deploymentBody(resourceGroup, planName, appName) {
   };
 }
 
+function functionResourceBody({ route, authLevel = 'function', methods = ['POST'] }) {
+  return {
+    properties: {
+      config: {
+        bindings: [
+          {
+            authLevel,
+            type: 'httpTrigger',
+            direction: 'in',
+            name: 'req',
+            methods,
+            route,
+          },
+          {
+            type: 'http',
+            direction: 'out',
+            name: '$return',
+          },
+        ],
+      },
+      files: {
+        'function.json': '{}',
+      },
+      testData: '',
+    },
+  };
+}
+
 async function runControlAndDataPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
@@ -242,7 +303,7 @@ async function runControlAndDataPlaneMatrix() {
   const planName = `plan-${suffix}`.slice(0, 40);
   const appName = `func-${suffix}`.slice(0, 60);
   const missingPlanName = `missing-${suffix}`.slice(0, 40);
-  const securedFunctionKey = `gs-fn-key-${suffix}`;
+  let securedFunctionKey = null;
   let planOperation = null;
   let appOperation = null;
   let functionHost = null;
@@ -576,22 +637,6 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.body.properties.state, 'Running');
         assert.equal(result.body.globalstack.capabilityId, 'azure-functions');
         functionHost = result.body.properties.defaultHostName;
-        router.registerApp({ appName, defaultHostName: functionHost });
-        router.registerHttpFunction({
-          appName,
-          functionName: 'intake',
-          route: 'intake',
-          methods: ['POST'],
-          authLevel: 'anonymous',
-        });
-        router.registerHttpFunction({
-          appName,
-          functionName: 'score',
-          route: 'score/{id}',
-          methods: ['POST'],
-          authLevel: 'function',
-          key: securedFunctionKey,
-        });
         return { status: result.status, host: functionHost };
       });
 
@@ -605,11 +650,56 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, resourceId: result.body.id };
       });
 
+      await record('function child resource create succeeds', async () => {
+        const intake = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake`),
+          functionResourceBody({ route: 'intake', authLevel: 'anonymous', methods: ['POST'] }),
+        );
+        assert.equal(intake.status, 201);
+        assert.equal(intake.body.type, 'Microsoft.Web/sites/functions');
+        const score = await httpJson(
+          armPort,
+          'PUT',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/score`),
+          functionResourceBody({ route: 'score/{id}', authLevel: 'function', methods: ['POST'] }),
+        );
+        assert.equal(score.status, 201);
+        return { status: score.status, count: 2 };
+      });
+
+      await record('function listKeys returns deterministic key', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/score/listKeys`),
+          {},
+        );
+        assert.equal(result.status, 200);
+        assert.ok(result.body.keys?.default);
+        securedFunctionKey = result.body.keys.default;
+        return { status: result.status };
+      });
+
+      await record('function host listKeys returns host keys', async () => {
+        const result = await httpJson(
+          armPort,
+          'POST',
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/host/default/listKeys`),
+          {},
+        );
+        assert.equal(result.status, 200);
+        assert.ok(result.body.masterKey);
+        assert.ok(result.body.functionKeys?.default);
+        return { status: result.status };
+      });
+
       await record('function app unsupported function action fails closed', async () => {
         const result = await httpJson(
           armPort,
           'POST',
-          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake/listKeys`),
+          providerPath(resourceGroup, 'Microsoft.Web', `${appPath}/functions/intake/listSecrets`),
           {},
         );
         assert.equal(result.status, 404);
@@ -739,7 +829,6 @@ async function runControlAndDataPlaneMatrix() {
       await record('function app delete succeeds', async () => {
         const result = await httpJson(armPort, 'DELETE', providerPath(resourceGroup, 'Microsoft.Web', appPath));
         assert.equal(result.status, 200);
-        router.unregisterApp(appName);
         return { status: result.status };
       });
 
@@ -808,6 +897,9 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(errorCode(result), 'ResourceGroupNotFound');
         return { status: result.status, errorCode: errorCode(result) };
       });
+    }, {
+      onResourcePut: context => syncFunctionsResource(router, context),
+      onResourceDelete: context => unsyncFunctionsResource(router, context),
     });
   });
 
@@ -894,7 +986,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, Durable Functions, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Functions server farm and Function App ARM lifecycle, Function child-resource create/listKeys behavior, captured rejection cases, ARM-template deployment path, and local HTTP-trigger route smoke. It does not mark Azure Functions as 99%-complete or cloudValidated for deployment packaging, trigger sync, scale controller behavior, non-HTTP triggers, Durable Functions, deployment slots, runtime image build, managed identity tokens, binding retries, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -906,7 +998,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlAndDataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Functions server farm and Function App ARM lifecycle, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Functions server farm and Function App ARM lifecycle, Function child-resource and listKeys behavior, local HTTP-trigger route smoke, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Functions cloudValidated claim.',
   controlAndDataPlane,
   platformMatrix,

@@ -2141,6 +2141,41 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     }
   }
 
+  if (resourceType === 'Microsoft.Web/sites/functions') {
+    const config = body.properties?.config;
+    const bindings = Array.isArray(config?.bindings) ? config.bindings : null;
+    if (!bindings || bindings.length === 0) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function resources require properties.config.bindings with at least one binding definition.',
+      );
+    }
+    const httpTriggers = bindings.filter(binding => String(binding?.type ?? '').toLowerCase() === 'httptrigger');
+    if (httpTriggers.length !== 1) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function resources currently require exactly one httpTrigger binding in this local parity surface.',
+      );
+    }
+    const trigger = httpTriggers[0];
+    if (trigger.authLevel !== undefined && !['anonymous', 'function', 'admin'].includes(String(trigger.authLevel).toLowerCase())) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        `Function binding authLevel '${trigger.authLevel}' is invalid.`,
+      );
+    }
+    if (trigger.methods !== undefined && (!Array.isArray(trigger.methods) || trigger.methods.length === 0 || trigger.methods.some(method => typeof method !== 'string'))) {
+      return envelopedError(
+        400,
+        'ValidationError',
+        'Function binding methods must be a non-empty string array when provided.',
+      );
+    }
+  }
+
   return null;
 }
 
