@@ -1,4 +1,0 @@
-name: az-rbflow-pulumi-azurefl0521
-runtime: nodejs
-main: bin/tap.ts
-description: Robotics diagnostics intake flow on Azure using Pulumi TypeScript

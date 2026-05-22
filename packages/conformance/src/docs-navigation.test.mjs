@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
-import { dirname, join, normalize } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, normalize } from 'node:path';
+import { workspaceRoot } from '../../workspace-utils/src/index.mjs';
 import { test } from 'node:test';
 
-const root = dirname(dirname(dirname(dirname(fileURLToPath(import.meta.url)))));
+const root = workspaceRoot(import.meta.url);
 const requiredDocs = [
   'docs/README.md',
   'docs/START-HERE.md',
@@ -95,9 +95,9 @@ test('generated navigation docs are fresh', async () => {
   }
 
   try {
-    await execNode('scripts/render-service-scope.mjs');
-    await execNode('scripts/render-repo-map.mjs');
-    await execNode('scripts/render-artifact-registry.mjs');
+    await execNode('scripts/render/render-service-scope.mjs');
+    await execNode('scripts/render/render-repo-map.mjs');
+    await execNode('scripts/render/render-artifact-registry.mjs');
 
     for (const doc of generatedDocs) {
       const after = await read(doc);

@@ -14,9 +14,11 @@ Prompts and model responses must teach Azure, not GlobalStack. A generated task 
 
 Do not add GlobalStack-specific instructions to customer-facing prompts or IaC unless the test is explicitly about the GlobalStack harness itself.
 
-The full rules for dataset-visible bundles live in `docs/azure-iac-principals.md`. Treat that file as the source of truth for prompt wording, IaC hygiene, and unit/integration test boundaries. In particular: prompts should be written in an imperative human style, unit tests should validate configuration/structure/semantic contract from the prompt, and integration tests should first prove service existence for all prompt-listed services before checking the end-to-end flow. Dataset artifacts must not leak GlobalStack-specific terms or runtime wiring.
+The full rules for dataset-visible bundles live in `docs/product/azure-iac-principals.md`. Treat that file as the source of truth for prompt wording, IaC hygiene, and unit/integration test boundaries. In particular: prompts should be written in an imperative human style, unit tests should validate configuration/structure/semantic contract from the prompt, and integration tests should first prove service existence for all prompt-listed services before checking the end-to-end flow. Dataset artifacts must not leak GlobalStack-specific terms or runtime wiring.
 
-For bundle structure, keep metadata minimal and prefer platform-native layout plus runner-generated runtime artifacts such as `flat-outputs.json`, `execution.log`, and `execution-report.json`. See `docs/azure-bundle-structure.md`.
+For bundle structure, keep metadata minimal and prefer platform-native layout plus runner-generated runtime artifacts such as `flat-outputs.json`, `execution.log`, and `execution-report.json`. See `docs/product/azure-bundle-structure.md`.
+
+Verified bundles are part of the verification workspace, not the product core. Keep them addressable through `verified/`, but prefer storing the actual corpus outside the core repo and pointing `GLOBALSTACK_VERIFIED_ROOT` at that location when needed.
 
 ## Non-Negotiables
 

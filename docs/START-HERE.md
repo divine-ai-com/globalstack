@@ -1,6 +1,6 @@
 # Start Here
 
-This workspace is a standalone GlobalStack Azure prototype. It exists to build Azure deployment platform templates and a first-party Azure emulator strategy without modifying `/home/ubuntu/genex/haawk`.
+This workspace is the GlobalStack product repo. It exists to build Azure deployment platform templates and a first-party Azure emulator strategy without modifying `/home/ubuntu/genex/haawk`.
 
 ## Vision
 
@@ -23,7 +23,7 @@ The goal is not to make Azure calls "work" by returning friendly local success. 
 - Deprovision every real Azure resource created for capture or smoke testing.
 - Do not use LocalStack for Azure as a runtime dependency. GlobalStack must own the emulator surface it claims.
 - Treat official Microsoft emulators as useful local data planes, not proof of full Azure management-plane parity.
-- Keep dataset-visible Azure IaC artifacts Azure-only. Prompts, IaC, unit tests, and integration tests must not mention GlobalStack, local endpoints, or emulator-only runtime details. See `docs/azure-iac-principals.md`.
+- Keep dataset-visible Azure IaC artifacts Azure-only. Prompts, IaC, unit tests, and integration tests must not mention GlobalStack, local endpoints, or emulator-only runtime details. See `docs/product/azure-iac-principals.md`.
 
 ## Current Scope
 
@@ -50,9 +50,9 @@ See `docs/SERVICE-SCOPE.md` for the generated capability matrix.
 - Capture classification lives in `docs/conformance/azure-capture-classification.json`.
 - The 99%-parity checklist lives in `docs/conformance/azure-99-parity-checklist.md`.
 - The prioritized execution roadmap lives in `docs/conformance/azure-99-roadmap.md`.
-- The platform runner lifecycle checklist lives in `docs/PLATFORM-RUNNER-LIFECYCLE.md`.
+- The platform runner lifecycle checklist lives in `docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md`.
 - The local ARM facade lives in `packages/azure-control-plane/src/server.mjs`.
-- Storage data-plane E2E uses Azurite through `scripts/e2e-azure-storage.mjs`.
+- Storage data-plane E2E uses Azurite through `scripts/e2e/e2e-azure-storage.mjs`.
 
 As of the latest validated run:
 

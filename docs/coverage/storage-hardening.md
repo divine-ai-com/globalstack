@@ -93,7 +93,7 @@ GlobalStack now has a storage data-plane normalizer that can sit in front of Azu
 
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
-- `scripts/e2e-azure-storage-normalizer.mjs`
+- `scripts/e2e/e2e-azure-storage-normalizer.mjs`
 
 Run it with:
 

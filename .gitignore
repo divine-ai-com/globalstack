@@ -8,6 +8,10 @@ node_modules/
 /work/
 /volume/
 templates/volume/
+verified/**/execution.log
+verified/**/execution-report.json
+verified/**/execution_report.json
+verified/**/flat-outputs.json
 
 # Local tool downloads and generated certificates
 /.tools/

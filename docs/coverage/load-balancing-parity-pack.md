@@ -4,7 +4,7 @@ This pack is the local acceptance suite for Azure Application Gateway and Azure 
 
 ## Harness
 
-- Script: `scripts/e2e-azure-load-balancing-parity.mjs`
+- Script: `scripts/e2e/e2e-azure-load-balancing-parity.mjs`
 - Command: `npm run e2e:load-balancing-parity`
 - Output: `dist/e2e/azure-load-balancing-parity/results.json`
 - Report: `dist/e2e/azure-load-balancing-parity/report.md`

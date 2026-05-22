@@ -48,6 +48,9 @@ flowchart TD
 | Provider validation | `packages/azure-control-plane/src/provider-validation.mjs` | Azure-captured validation responses normalized into local behavior. |
 | Data plane adapters | `packages/azure-data-plane/src/*` | Official emulator compose generation and Azurite client checks. |
 | Conformance | `packages/conformance/src/*` | Registry, capture, local expectation, lifecycle, and hybrid behavior tests. |
+| Platform registry | `packages/platform-registry/src/index.mjs` | Platform definitions, solution/test file contracts, and smoke scenarios used by runners and verified bundles. |
+| Bundle runtime | `packages/bundle-runtime/src/*` | Package-owned runtime helpers behind stable script entrypoints. |
+| Bundle generator | `packages/bundle-generator/src/*` | Package-owned prompt, verified-bundle, and model-response generation helpers behind stable script entrypoints. |
 
 ## Generated Artifacts
 
@@ -76,21 +79,32 @@ flowchart TD
 - `packages/core/src/azure-tier1-capabilities.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
 - `packages/core/src/resource-store.mjs`
+- `packages/azure-control-plane/src/provider-validation-support.mjs`
 - `packages/azure-control-plane/src/provider-validation.mjs`
+- `packages/azure-control-plane/src/server-support.mjs`
 - `packages/azure-control-plane/src/server.mjs`
+- `packages/azure-data-plane/src/activity-log-store.mjs`
 - `packages/azure-data-plane/src/api-management-router.mjs`
 - `packages/azure-data-plane/src/app-configuration-router.mjs`
 - `packages/azure-data-plane/src/azure-files-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/cosmos-sql-router.mjs`
+- `packages/azure-data-plane/src/edge-router.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
 - `packages/azure-data-plane/src/event-hubs-router.mjs`
 - `packages/azure-data-plane/src/functions-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
+- `packages/azure-data-plane/src/log-analytics-store.mjs`
+- `packages/azure-data-plane/src/migration-plan-runner.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
+- `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
+- `packages/azure-data-plane/src/storage-router.mjs`
+- `packages/azure-data-plane/src/synapse-sql-runner.mjs`
+- `packages/azure-data-plane/src/waf-evaluator.mjs`
+- `packages/azure-data-plane/src/workflow-runner.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`
@@ -101,74 +115,92 @@ flowchart TD
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
+- `packages/platform-registry/src/index.mjs`
+- `packages/bundle-runtime/src/build-platform-images.mjs`
+- `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
+- `packages/bundle-runtime/src/docker-globalstack-janitor.mjs`
+- `packages/bundle-runtime/src/native-deploy-bicep-cli.mjs`
+- `packages/bundle-runtime/src/native-deploy-hcl-cli.mjs`
+- `packages/bundle-runtime/src/smoke-bicep-runner-lifecycle.mjs`
+- `packages/bundle-runtime/src/smoke-deploy-azure-usecases.mjs`
+- `packages/bundle-runtime/src/smoke-platform-runner-lifecycles.mjs`
+- `packages/bundle-runtime/src/validate.mjs`
+- `packages/bundle-generator/src/generate-azure-smoke-prompts.mjs`
+- `packages/bundle-generator/src/run-openai-azure-arm-json-trial.mjs`
+- `packages/bundle-generator/src/run-openai-azure-platform-trials.mjs`
+- `packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`
+- `packages/bundle-generator/src/smoke-azure-iac-model-responses.mjs`
 
 ## Scripts
 
-- `scripts/build-platform-images.mjs`
-- `scripts/capture-azure-provider-surface.mjs`
-- `scripts/capture-azure-storage-data-plane.mjs`
-- `scripts/capture-azure-storage-lifecycle.mjs`
-- `scripts/capture-real-azure-operation.mjs`
-- `scripts/classify-azure-captures.mjs`
-- `scripts/e2e-azure-activity-log-audit-parity.mjs`
-- `scripts/e2e-azure-aks-metadata-parity.mjs`
-- `scripts/e2e-azure-api-management-parity.mjs`
-- `scripts/e2e-azure-app-configuration-parity.mjs`
-- `scripts/e2e-azure-container-registry-parity.mjs`
-- `scripts/e2e-azure-cosmos-parity.mjs`
-- `scripts/e2e-azure-database-migration-service-parity.mjs`
-- `scripts/e2e-azure-dns-zones-parity.mjs`
-- `scripts/e2e-azure-event-grid-parity.mjs`
-- `scripts/e2e-azure-event-hubs-parity.mjs`
-- `scripts/e2e-azure-files-parity.mjs`
-- `scripts/e2e-azure-front-door-cdn-parity.mjs`
-- `scripts/e2e-azure-functions-parity.mjs`
-- `scripts/e2e-azure-identity-rbac-parity.mjs`
-- `scripts/e2e-azure-key-vault-parity.mjs`
-- `scripts/e2e-azure-load-balancing-parity.mjs`
-- `scripts/e2e-azure-logic-workflows-parity.mjs`
-- `scripts/e2e-azure-monitor-logs-parity.mjs`
-- `scripts/e2e-azure-monitor-metrics-alerts-parity.mjs`
-- `scripts/e2e-azure-mysql-parity.mjs`
-- `scripts/e2e-azure-postgresql-parity.mjs`
-- `scripts/e2e-azure-redis-parity.mjs`
-- `scripts/e2e-azure-service-bus-emulator.mjs`
-- `scripts/e2e-azure-service-bus-parity.mjs`
-- `scripts/e2e-azure-service-discovery-parity.mjs`
-- `scripts/e2e-azure-storage-hardening.mjs`
-- `scripts/e2e-azure-storage-normalizer.mjs`
-- `scripts/e2e-azure-storage-parity.mjs`
-- `scripts/e2e-azure-storage.mjs`
-- `scripts/e2e-azure-synapse-warehouse-parity.mjs`
-- `scripts/e2e-azure-virtual-network-parity.mjs`
-- `scripts/e2e-azure-waf-policy-parity.mjs`
-- `scripts/fetch-localstack-azure-coverage.mjs`
-- `scripts/generate-azure-smoke-prompts.mjs`
-- `scripts/native-deploy-bicep-cli.mjs`
-- `scripts/native-deploy-hcl-cli.mjs`
-- `scripts/render-artifact-registry.mjs`
-- `scripts/render-azure-99-parity-checklist.mjs`
-- `scripts/render-azure-99-roadmap.mjs`
-- `scripts/render-azure-live-api-catalog.mjs`
-- `scripts/render-azure-validation-checklist.mjs`
-- `scripts/render-hybrid-artifacts.mjs`
-- `scripts/render-local-expectations-from-captures.mjs`
-- `scripts/render-local-lifecycle-expectations.mjs`
-- `scripts/render-platform-templates.mjs`
-- `scripts/render-repo-map.mjs`
-- `scripts/render-service-scope.mjs`
-- `scripts/render-storage-data-plane-expectations.mjs`
-- `scripts/report-provider-registration-gaps.mjs`
-- `scripts/rerun-registered-shallow-azure-captures.mjs`
-- `scripts/run-approval-provider-wave.mjs`
-- `scripts/run-azure-api-conformance.mjs`
-- `scripts/run-openai-azure-arm-json-trial.mjs`
-- `scripts/run-openai-azure-platform-trials.mjs`
-- `scripts/smoke-azure-iac-model-responses.mjs`
-- `scripts/smoke-bicep-runner-lifecycle.mjs`
-- `scripts/smoke-deploy-azure-usecases.mjs`
-- `scripts/smoke-platform-runner-lifecycles.mjs`
-- `scripts/validate.mjs`
+- `scripts/capture/capture-azure-provider-surface.mjs`
+- `scripts/capture/capture-azure-storage-data-plane.mjs`
+- `scripts/capture/capture-azure-storage-lifecycle.mjs`
+- `scripts/capture/capture-real-azure-operation.mjs`
+- `scripts/capture/fetch-localstack-azure-coverage.mjs`
+- `scripts/conformance/classify-azure-captures.mjs`
+- `scripts/conformance/report-provider-registration-gaps.mjs`
+- `scripts/conformance/rerun-registered-shallow-azure-captures.mjs`
+- `scripts/conformance/run-approval-provider-wave.mjs`
+- `scripts/conformance/run-azure-api-conformance.mjs`
+- `scripts/e2e/e2e-azure-activity-log-audit-parity.mjs`
+- `scripts/e2e/e2e-azure-aks-metadata-parity.mjs`
+- `scripts/e2e/e2e-azure-api-management-parity.mjs`
+- `scripts/e2e/e2e-azure-app-configuration-parity.mjs`
+- `scripts/e2e/e2e-azure-container-registry-parity.mjs`
+- `scripts/e2e/e2e-azure-cosmos-parity.mjs`
+- `scripts/e2e/e2e-azure-database-migration-service-parity.mjs`
+- `scripts/e2e/e2e-azure-dns-zones-parity.mjs`
+- `scripts/e2e/e2e-azure-event-grid-parity.mjs`
+- `scripts/e2e/e2e-azure-event-hubs-parity.mjs`
+- `scripts/e2e/e2e-azure-files-parity.mjs`
+- `scripts/e2e/e2e-azure-front-door-cdn-parity.mjs`
+- `scripts/e2e/e2e-azure-functions-parity.mjs`
+- `scripts/e2e/e2e-azure-identity-rbac-parity.mjs`
+- `scripts/e2e/e2e-azure-key-vault-parity.mjs`
+- `scripts/e2e/e2e-azure-load-balancing-parity.mjs`
+- `scripts/e2e/e2e-azure-logic-workflows-parity.mjs`
+- `scripts/e2e/e2e-azure-monitor-logs-parity.mjs`
+- `scripts/e2e/e2e-azure-monitor-metrics-alerts-parity.mjs`
+- `scripts/e2e/e2e-azure-mysql-parity.mjs`
+- `scripts/e2e/e2e-azure-postgresql-parity.mjs`
+- `scripts/e2e/e2e-azure-redis-parity.mjs`
+- `scripts/e2e/e2e-azure-service-bus-emulator.mjs`
+- `scripts/e2e/e2e-azure-service-bus-parity.mjs`
+- `scripts/e2e/e2e-azure-service-discovery-parity.mjs`
+- `scripts/e2e/e2e-azure-storage-hardening.mjs`
+- `scripts/e2e/e2e-azure-storage-normalizer.mjs`
+- `scripts/e2e/e2e-azure-storage-parity.mjs`
+- `scripts/e2e/e2e-azure-storage.mjs`
+- `scripts/e2e/e2e-azure-synapse-warehouse-parity.mjs`
+- `scripts/e2e/e2e-azure-virtual-network-parity.mjs`
+- `scripts/e2e/e2e-azure-waf-policy-parity.mjs`
+- `scripts/render/render-artifact-registry.mjs`
+- `scripts/render/render-azure-99-parity-checklist.mjs`
+- `scripts/render/render-azure-99-roadmap.mjs`
+- `scripts/render/render-azure-live-api-catalog.mjs`
+- `scripts/render/render-azure-validation-checklist.mjs`
+- `scripts/render/render-hybrid-artifacts.mjs`
+- `scripts/render/render-local-expectations-from-captures.mjs`
+- `scripts/render/render-local-lifecycle-expectations.mjs`
+- `scripts/render/render-platform-templates.mjs`
+- `scripts/render/render-repo-map.mjs`
+- `scripts/render/render-service-scope.mjs`
+- `scripts/render/render-storage-data-plane-expectations.mjs`
+- `scripts/runtime/build-platform-images.mjs`
+- `scripts/runtime/clean-runtime-artifacts.mjs`
+- `scripts/runtime/docker-globalstack-janitor.mjs`
+- `scripts/runtime/native-deploy-bicep-cli.mjs`
+- `scripts/runtime/native-deploy-hcl-cli.mjs`
+- `scripts/runtime/smoke-bicep-runner-lifecycle.mjs`
+- `scripts/runtime/smoke-deploy-azure-usecases.mjs`
+- `scripts/runtime/smoke-platform-runner-lifecycles.mjs`
+- `scripts/runtime/validate.mjs`
+- `scripts/verified/generate-azure-smoke-prompts.mjs`
+- `scripts/verified/run-openai-azure-arm-json-trial.mjs`
+- `scripts/verified/run-openai-azure-platform-trials.mjs`
+- `scripts/verified/run-openai-azure-verified-bundles.mjs`
+- `scripts/verified/smoke-azure-iac-model-responses.mjs`
 
 ## NPM Commands
 
@@ -182,6 +214,9 @@ flowchart TD
 - `npm run conformance:local`
 - `npm run conformance:parity`
 - `npm run conformance:roadmap`
+- `npm run docker:janitor`
+- `npm run docker:janitor:dry-run`
+- `npm run docker:prewarm`
 - `npm run docs:artifacts`
 - `npm run docs:map`
 - `npm run docs:nav`
@@ -233,6 +268,8 @@ flowchart TD
 - `npm run providers:rerun-shallow`
 - `npm run providers:surface`
 - `npm run render`
+- `npm run repo:clean-runtime`
+- `npm run repo:clean-runtime:dry-run`
 - `npm run smoke`
 - `npm run smoke:bicep-runner`
 - `npm run smoke:deploy`
@@ -243,4 +280,5 @@ flowchart TD
 - `npm run storage:expectations`
 - `npm run trial:openai-arm-json`
 - `npm run trial:openai-platforms`
+- `npm run trial:openai-verified-bundles`
 - `npm run validate`

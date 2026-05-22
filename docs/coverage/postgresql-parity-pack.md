@@ -4,7 +4,7 @@ This pack is the local acceptance suite for Azure Database for PostgreSQL Flexib
 
 ## Harness
 
-- Script: `scripts/e2e-azure-postgresql-parity.mjs`
+- Script: `scripts/e2e/e2e-azure-postgresql-parity.mjs`
 - Command: `npm run e2e:postgresql-parity`
 - Output: `dist/e2e/azure-postgresql-parity/results.json`
 - Report: `dist/e2e/azure-postgresql-parity/report.md`

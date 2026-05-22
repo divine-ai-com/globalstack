@@ -1,4 +1,0 @@
-name: az-roboti-pulumi-azurepul0520
-runtime: nodejs
-main: bin/tap.ts
-description: Azure robotics telemetry intake layer

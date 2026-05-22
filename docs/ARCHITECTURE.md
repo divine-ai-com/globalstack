@@ -7,8 +7,8 @@ GlobalStack Azure is organized around one rule: generated infrastructure and loc
 | Component | Location | Role |
 |---|---|---|
 | Capability registry | `packages/core/src/azure-tier1-capabilities.mjs` | Defines Tier 1 and Tier 2 capabilities, AWS analogues, Azure resource types, backing engines, and known gaps. |
-| Platform renderer | `scripts/render-platform-templates.mjs` | Renders Azure platform runner images, lifecycle stages, and sample tasks into `dist/platform-images/`. |
-| Hybrid renderer | `scripts/render-hybrid-artifacts.mjs` | Renders support coverage docs and official emulator compose artifacts. |
+| Platform renderer | `scripts/render/render-platform-templates.mjs` | Renders Azure platform runner images, lifecycle stages, and sample tasks into `dist/platform-images/`. |
+| Hybrid renderer | `scripts/render/render-hybrid-artifacts.mjs` | Renders support coverage docs and official emulator compose artifacts. |
 | ARM facade | `packages/azure-control-plane/src/server.mjs` | Provides a local Azure management-plane HTTP surface. |
 | Provider validation | `packages/azure-control-plane/src/provider-validation.mjs` | Encodes Azure-captured validation responses. |
 | Resource store | `packages/core/src/resource-store.mjs` | Stores resource groups, resources, and selected lifecycle state in memory. |
@@ -65,7 +65,7 @@ Run the full platform lifecycle matrix with:
 GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
 ```
 
-The matrix writes `dist/platform-lifecycle-smoke-results.json` plus per-platform reports under `dist/platform-images/<platform>/reports/`. See `docs/PLATFORM-RUNNER-LIFECYCLE.md` for the platform checklist and current support boundary.
+The matrix writes `dist/platform-lifecycle-smoke-results.json` plus per-platform reports under `dist/platform-images/<platform>/reports/`. See `docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md` for the platform checklist and current support boundary.
 
 ## Emulator Strategy
 

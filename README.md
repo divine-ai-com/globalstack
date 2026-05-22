@@ -1,6 +1,6 @@
-# GlobalStack Azure Platform Templates
+# GlobalStack
 
-This workspace is a standalone prototype for Azure deployment platform templates that target the first-party GlobalStack Azure emulator. It intentionally does not write to `/home/ubuntu/genex/haawk`.
+GlobalStack is a product workspace for Azure emulation, conformance capture, platform runners, and verified Azure IaC bundle execution.
 
 ## Start here
 
@@ -14,6 +14,13 @@ Future agents should read these in order before changing behavior:
 6. `docs/AGENT-RUNBOOK.md`
 7. `docs/ARTIFACT-REGISTRY.md`
 8. `docs/REPO-MAP.md`
+9. `docs/product/PRODUCT-REPO-BOUNDARIES.md`
+
+Repo governance:
+
+- `CONTRIBUTING.md`
+- `DEVELOPMENT.md`
+- `SECURITY.md`
 
 Regenerate the generated navigation docs with:
 
@@ -33,6 +40,8 @@ npm run docs:nav
 - A hybrid Azure emulator foundation that prefers official Microsoft emulators, fills control-plane gaps with a GlobalStack ARM facade, and reserves real Azure for conformance capture.
 - Tier 1 and Tier 2 AWS-to-Azure capability mappings with explicit backing engines, known gaps, and cloud-validation status.
 - A generated artifact registry in `docs/ARTIFACT-REGISTRY.md` that records file ownership, source-of-truth boundaries, generator commands, and edit policy.
+- Product repo boundaries in `docs/product/PRODUCT-REPO-BOUNDARIES.md` so runtime noise stays out of git.
+- A split between the core product repo and the sibling verification repo at `../globalstack-verification`, with `verified/` kept as a compatibility path.
 
 ## Support boundary
 
@@ -122,6 +131,13 @@ Build all Docker runner images:
 ```bash
 npm run render
 npm run build:images
+```
+
+Clean runtime artifacts without touching source files:
+
+```bash
+npm run repo:clean-runtime:dry-run
+npm run repo:clean-runtime
 ```
 
 Run the current Bicep reference lifecycle against the shared GlobalStack Azure sidecar:

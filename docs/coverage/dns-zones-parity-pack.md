@@ -4,7 +4,7 @@ This pack is the local acceptance suite for Azure DNS, Private DNS zones, public
 
 ## Harness
 
-- Script: `scripts/e2e-azure-dns-zones-parity.mjs`
+- Script: `scripts/e2e/e2e-azure-dns-zones-parity.mjs`
 - Command: `npm run e2e:dns-zones-parity`
 - Output: `dist/e2e/azure-dns-zones-parity/results.json`
 - Report: `dist/e2e/azure-dns-zones-parity/report.md`

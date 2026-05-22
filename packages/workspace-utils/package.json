@@ -1,0 +1,15 @@
+{
+  "name": "@globalstack/workspace-utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./src/index.mjs",
+    "./*": "./src/*.mjs",
+    "./package.json": "./package.json"
+  }
+}

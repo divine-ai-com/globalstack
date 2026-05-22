@@ -32,6 +32,33 @@
   ],
   "artifacts": [
     {
+      "path": "CONTRIBUTING.md",
+      "kind": "handwritten-doc",
+      "owner": "governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Contributor rules, required validation, and change-shape guidance.",
+      "group": "governance"
+    },
+    {
+      "path": "DEVELOPMENT.md",
+      "kind": "handwritten-doc",
+      "owner": "governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Workspace model, verified-workspace boundary, and development conventions.",
+      "group": "governance"
+    },
+    {
+      "path": "SECURITY.md",
+      "kind": "handwritten-doc",
+      "owner": "security",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Secrets handling, evidence safety, and security-sensitive review boundaries.",
+      "group": "governance"
+    },
+    {
       "path": "docs/README.md",
       "kind": "handwritten-doc",
       "owner": "documentation",
@@ -77,12 +104,57 @@
       "group": "governance"
     },
     {
-      "path": "docs/PLATFORM-RUNNER-LIFECYCLE.md",
+      "path": "docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md",
       "kind": "handwritten-doc",
       "owner": "platform-templates",
       "command": null,
       "editPolicy": "edit directly",
       "purpose": "Platform runner lifecycle contract, checklist, smoke command, and support boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/azure-iac-principals.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Dataset-visible Azure IaC principles for prompts, IaC, unit tests, and integration tests.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/azure-bundle-structure.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Bundle layout and runtime artifact structure for Azure verified tasks.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/PRODUCT-REPO-BOUNDARIES.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "What belongs in git versus generated runtime output.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/BEDROCK-GENERATION.md",
+      "kind": "handwritten-doc",
+      "owner": "bundle-generator",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Amazon Bedrock request path, streaming model invocation, and single-file generation constraints.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/EXTENSIONS.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Core-versus-extension boundary for optional integrations and add-ons.",
       "group": "governance"
     },
     {
@@ -160,7 +232,7 @@
     {
       "path": "docs/ARTIFACT-REGISTRY.md",
       "kind": "generated-doc",
-      "owner": "scripts/render-artifact-registry.mjs",
+      "owner": "scripts/render/render-artifact-registry.mjs",
       "command": "npm run docs:artifacts",
       "editPolicy": "regenerate",
       "purpose": "Product-grade inventory of key files and ownership boundaries.",
@@ -221,13 +293,49 @@
       "group": "source"
     },
     {
-      "path": "src/platforms.mjs",
+      "path": "packages/bundle-runtime/src/",
+      "kind": "source-package",
+      "owner": "platform-templates",
+      "command": null,
+      "editPolicy": "edit directly with runtime smoke validation",
+      "purpose": "Package-owned runtime helpers for platform builds, janitor flows, cleanup, smoke orchestration, and runtime validation.",
+      "group": "source"
+    },
+    {
+      "path": "packages/bundle-generator/src/",
+      "kind": "source-package",
+      "owner": "bundle-generator",
+      "command": null,
+      "editPolicy": "edit directly with bundle-generation validation",
+      "purpose": "Package-owned helpers for smoke prompt generation, verified bundle generation, model-response smoke, and trial runs.",
+      "group": "source"
+    },
+    {
+      "path": "packages/platform-registry/src/index.mjs",
       "kind": "source-registry",
       "owner": "platform-templates",
       "command": null,
       "editPolicy": "edit directly with render validation",
       "purpose": "Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Bicep, and ARM JSON.",
       "group": "source"
+    },
+    {
+      "path": "packages/workspace-utils/src/index.mjs",
+      "kind": "source-library",
+      "owner": "workspace-utils",
+      "command": null,
+      "editPolicy": "edit directly with command compatibility validation",
+      "purpose": "Shared workspace-root, verified-workspace, and dist-path helpers used across scripts and package-owned modules.",
+      "group": "source"
+    },
+    {
+      "path": "extensions/README.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Reserved boundary for optional product extensions and customer-specific integrations.",
+      "group": "governance"
     },
     {
       "path": "templates/runner/stages/bicep/",
@@ -266,7 +374,7 @@
       "group": "runtime"
     },
     {
-      "path": "scripts/render-azure-99-parity-checklist.mjs",
+      "path": "scripts/render/render-azure-99-parity-checklist.mjs",
       "kind": "generator",
       "owner": "conformance",
       "command": "npm run conformance:parity",
@@ -275,7 +383,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/render-azure-99-roadmap.mjs",
+      "path": "scripts/render/render-azure-99-roadmap.mjs",
       "kind": "generator",
       "owner": "conformance",
       "command": "npm run conformance:roadmap",
@@ -284,7 +392,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/capture-azure-provider-surface.mjs",
+      "path": "scripts/capture/capture-azure-provider-surface.mjs",
       "kind": "capture-tool",
       "owner": "conformance",
       "command": "npm run providers:surface",
@@ -293,7 +401,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/run-azure-api-conformance.mjs",
+      "path": "scripts/conformance/run-azure-api-conformance.mjs",
       "kind": "capture-and-test-tool",
       "owner": "conformance",
       "command": "npm run conformance:local / npm run conformance:azure",
@@ -302,7 +410,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/smoke-bicep-runner-lifecycle.mjs",
+      "path": "scripts/runtime/smoke-bicep-runner-lifecycle.mjs",
       "kind": "e2e-tool",
       "owner": "platform-templates",
       "command": "npm run smoke:bicep-runner",
@@ -311,7 +419,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/smoke-platform-runner-lifecycles.mjs",
+      "path": "scripts/runtime/smoke-platform-runner-lifecycles.mjs",
       "kind": "e2e-tool",
       "owner": "platform-templates",
       "command": "npm run smoke:platform-runners",
@@ -320,7 +428,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/capture-azure-storage-data-plane.mjs",
+      "path": "scripts/capture/capture-azure-storage-data-plane.mjs",
       "kind": "capture-tool",
       "owner": "storage",
       "command": "npm run storage:capture:data-plane",
@@ -329,7 +437,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-storage*.mjs",
+      "path": "scripts/e2e/e2e-azure-storage*.mjs",
       "kind": "e2e-tools",
       "owner": "storage",
       "command": "npm run e2e:storage / npm run e2e:storage-hardening / npm run e2e:storage-normalizer / npm run e2e:storage-parity",
@@ -338,7 +446,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-service-bus-emulator.mjs",
+      "path": "scripts/e2e/e2e-azure-service-bus-emulator.mjs",
       "kind": "e2e-tool",
       "owner": "service-bus",
       "command": "npm run e2e:service-bus",
@@ -347,7 +455,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-service-bus-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-service-bus-parity.mjs",
       "kind": "e2e-tool",
       "owner": "service-bus",
       "command": "npm run e2e:service-bus-parity",
@@ -356,7 +464,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-event-grid-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-event-grid-parity.mjs",
       "kind": "e2e-tool",
       "owner": "event-grid",
       "command": "npm run e2e:event-grid-parity",
@@ -365,7 +473,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-api-management-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-api-management-parity.mjs",
       "kind": "e2e-tool",
       "owner": "api-management",
       "command": "npm run e2e:api-management-parity",
@@ -374,7 +482,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-functions-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-functions-parity.mjs",
       "kind": "e2e-tool",
       "owner": "azure-functions",
       "command": "npm run e2e:azure-functions-parity",
@@ -383,7 +491,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-key-vault-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-key-vault-parity.mjs",
       "kind": "e2e-tool",
       "owner": "key-vault",
       "command": "npm run e2e:key-vault-parity",
@@ -392,7 +500,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-container-registry-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-container-registry-parity.mjs",
       "kind": "e2e-tool",
       "owner": "container-registry",
       "command": "npm run e2e:container-registry-parity",
@@ -401,7 +509,7 @@
       "group": "generators"
     },
     {
-      "path": "scripts/e2e-azure-aks-metadata-parity.mjs",
+      "path": "scripts/e2e/e2e-azure-aks-metadata-parity.mjs",
       "kind": "e2e-tool",
       "owner": "aks-metadata",
       "command": "npm run e2e:aks-metadata-parity",
@@ -448,7 +556,7 @@
     {
       "path": "docs/conformance/azure-99-parity-checklist.md",
       "kind": "generated-doc",
-      "owner": "scripts/render-azure-99-parity-checklist.mjs",
+      "owner": "scripts/render/render-azure-99-parity-checklist.mjs",
       "command": "npm run conformance:parity",
       "editPolicy": "regenerate",
       "purpose": "Service-by-service 99%-parity state across 10 dimensions.",
@@ -457,7 +565,7 @@
     {
       "path": "docs/conformance/azure-99-roadmap.md",
       "kind": "generated-doc",
-      "owner": "scripts/render-azure-99-roadmap.mjs",
+      "owner": "scripts/render/render-azure-99-roadmap.mjs",
       "command": "npm run conformance:roadmap",
       "editPolicy": "regenerate",
       "purpose": "Prioritized implementation waves and work items for 30 services.",
@@ -466,7 +574,7 @@
     {
       "path": "docs/conformance/azure-provider-surface-inventory.md",
       "kind": "generated-doc",
-      "owner": "scripts/capture-azure-provider-surface.mjs",
+      "owner": "scripts/capture/capture-azure-provider-surface.mjs",
       "command": "npm run providers:surface",
       "editPolicy": "regenerate",
       "purpose": "Live Azure provider-operation inventory input.",
@@ -475,7 +583,7 @@
     {
       "path": "docs/conformance/azure-live-api-catalog.json",
       "kind": "generated-doc",
-      "owner": "scripts/render-azure-live-api-catalog.mjs",
+      "owner": "scripts/render/render-azure-live-api-catalog.mjs",
       "command": "npm run conformance:catalog",
       "editPolicy": "regenerate",
       "purpose": "Candidate ARM calls and variance cases.",
@@ -484,7 +592,7 @@
     {
       "path": "docs/hybrid/azure-hybrid-coverage.json",
       "kind": "generated-doc",
-      "owner": "scripts/render-hybrid-artifacts.mjs",
+      "owner": "scripts/render/render-hybrid-artifacts.mjs",
       "command": "npm run hybrid:render",
       "editPolicy": "regenerate",
       "purpose": "Generated local support-state matrix.",
@@ -493,7 +601,7 @@
     {
       "path": "docs/SERVICE-SCOPE.md",
       "kind": "generated-doc",
-      "owner": "scripts/render-service-scope.mjs",
+      "owner": "scripts/render/render-service-scope.mjs",
       "command": "npm run docs:scope",
       "editPolicy": "regenerate",
       "purpose": "Service matrix generated from the capability registry and evidence.",
@@ -502,7 +610,7 @@
     {
       "path": "docs/REPO-MAP.md",
       "kind": "generated-doc",
-      "owner": "scripts/render-repo-map.mjs",
+      "owner": "scripts/render/render-repo-map.mjs",
       "command": "npm run docs:map",
       "editPolicy": "regenerate",
       "purpose": "Repository navigation map.",
@@ -511,7 +619,7 @@
     {
       "path": "dist/platform-images/",
       "kind": "generated-runtime-output",
-      "owner": "scripts/render-platform-templates.mjs",
+      "owner": "scripts/render/render-platform-templates.mjs",
       "command": "npm run render",
       "editPolicy": "regenerate",
       "purpose": "Rendered platform Dockerfiles, compose files, and sample tasks.",
@@ -520,7 +628,7 @@
     {
       "path": "dist/platform-lifecycle-smoke-results.json",
       "kind": "generated-test-output",
-      "owner": "scripts/smoke-platform-runner-lifecycles.mjs",
+      "owner": "scripts/runtime/smoke-platform-runner-lifecycles.mjs",
       "command": "npm run smoke:platform-runners",
       "editPolicy": "regenerate",
       "purpose": "Latest all-platform lifecycle smoke summary.",
@@ -529,7 +637,7 @@
     {
       "path": "dist/hybrid/",
       "kind": "generated-runtime-output",
-      "owner": "scripts/render-hybrid-artifacts.mjs",
+      "owner": "scripts/render/render-hybrid-artifacts.mjs",
       "command": "npm run hybrid:render",
       "editPolicy": "regenerate",
       "purpose": "Official emulator compose and environment outputs.",
@@ -547,7 +655,7 @@
     {
       "path": "dist/deploy-smoke/",
       "kind": "generated-test-output",
-      "owner": "scripts/smoke-deploy-azure-usecases.mjs",
+      "owner": "scripts/runtime/smoke-deploy-azure-usecases.mjs",
       "command": "npm run smoke:deploy",
       "editPolicy": "regenerate",
       "purpose": "Use-case smoke deployment outputs.",
@@ -565,6 +673,9 @@
     "conformance:local",
     "conformance:parity",
     "conformance:roadmap",
+    "docker:janitor",
+    "docker:janitor:dry-run",
+    "docker:prewarm",
     "docs:artifacts",
     "docs:map",
     "docs:nav",
@@ -616,6 +727,8 @@
     "providers:rerun-shallow",
     "providers:surface",
     "render",
+    "repo:clean-runtime",
+    "repo:clean-runtime:dry-run",
     "smoke",
     "smoke:bicep-runner",
     "smoke:deploy",
@@ -626,6 +739,7 @@
     "storage:expectations",
     "trial:openai-arm-json",
     "trial:openai-platforms",
+    "trial:openai-verified-bundles",
     "validate"
   ],
   "counts": {
