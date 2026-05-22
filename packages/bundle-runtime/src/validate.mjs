@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { distPath, workspaceRoot } from '../../workspace-utils/src/index.mjs';
+import { checkPackageContract } from '../../workspace-utils/src/package-check.mjs';
 import { azurePlatforms } from '../../platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -60,15 +61,6 @@ const azureCaptureFixtureCount = (await readdir(azureCaptureFixtureRoot).catch((
   .filter(name => name.endsWith('.json'))
   .length;
 
-async function pathExists(path) {
-  try {
-    await stat(path);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -119,29 +111,15 @@ for (const relativePath of [
   'packages/bundle-generator/package.json',
   'packages/workspace-utils/package.json',
 ]) {
-  const manifestPath = join(root, relativePath);
-  const manifestText = await readFile(manifestPath, 'utf8').catch(() => '');
+  const packageDir = join(root, relativePath.replace(/package\.json$/, ''));
+  const manifestText = await readFile(join(packageDir, 'package.json'), 'utf8').catch(() => '');
   if (!manifestText) {
     errors.push(`missing workspace manifest ${relativePath}`);
     continue;
   }
-  const manifest = JSON.parse(manifestText);
-  for (const fileEntry of manifest.files ?? []) {
-    if (!await pathExists(join(root, relativePath.replace(/package\.json$/, ''), fileEntry))) {
-      errors.push(`${relativePath} declares missing files entry ${fileEntry}`);
-    }
-  }
-  for (const [exportKey, exportTarget] of Object.entries(manifest.exports ?? {})) {
-    if (String(exportTarget).includes('*')) {
-      const prefix = String(exportTarget).split('*')[0];
-      if (!await pathExists(join(root, relativePath.replace(/package\.json$/, ''), prefix))) {
-        errors.push(`${relativePath} export ${exportKey} points at missing prefix ${exportTarget}`);
-      }
-      continue;
-    }
-    if (!await pathExists(join(root, relativePath.replace(/package\.json$/, ''), exportTarget))) {
-      errors.push(`${relativePath} export ${exportKey} points at missing file ${exportTarget}`);
-    }
+  const contract = await checkPackageContract(packageDir);
+  for (const contractError of contract.errors) {
+    errors.push(`${relativePath} ${contractError}`);
   }
 }
 

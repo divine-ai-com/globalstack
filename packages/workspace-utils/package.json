@@ -11,5 +11,10 @@
     ".": "./src/index.mjs",
     "./*": "./src/*.mjs",
     "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node ./src/package-check.mjs build",
+    "test": "node ./src/package-check.mjs test",
+    "validate": "node ./src/package-check.mjs validate"
   }
 }

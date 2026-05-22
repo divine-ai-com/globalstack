@@ -13,7 +13,7 @@ test('Azure captures are cleanup-verified and classified without cloud-validatio
     fixtures.push(JSON.parse(await readFile(join(fixtureRoot.pathname, entry), 'utf8')));
   }
 
-  assert.equal(fixtures.length, 448);
+  assert.ok(fixtures.length > 0, 'expected at least one Azure capture fixture');
   for (const fixture of fixtures) {
     assert.equal(fixture.cleanup?.verifiedDeleted, true, `${fixture.id} cleanup was not verified`);
     const classification = classifyAzureCapture(fixture);

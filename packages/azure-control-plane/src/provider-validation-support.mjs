@@ -397,3 +397,9 @@ export function aksMissingServicePrincipalProfile() {
     },
   };
 }
+
+export function serviceBusNameFromTypePath(typePath, marker) {
+  const parts = String(typePath ?? '').split('/');
+  const index = parts.indexOf(marker);
+  return index >= 0 ? parts[index + 1] ?? '' : '';
+}

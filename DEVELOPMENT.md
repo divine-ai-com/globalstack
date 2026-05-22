@@ -10,6 +10,8 @@ GlobalStack is a single product repo with npm workspaces under `apps/*` and `pac
 - `templates/` own runner and sample task source templates
 - `docs/` own durable product, architecture, and runbook documentation
 
+Each workspace package or app should own its local `build`, `test`, and `validate` scripts in its own `package.json`. The root should orchestrate those package-owned scripts through workspace commands instead of re-implementing package checks ad hoc.
+
 ## Verified Workspace
 
 Verified task bundles are treated as a separate verification workspace. The product repo keeps a compatibility path at `verified/`, but the primary storage location now lives in the sibling repo `../globalstack-verification`.
@@ -23,6 +25,16 @@ Before or after smoke work:
 ```bash
 npm run repo:clean-runtime:dry-run
 npm run repo:clean-runtime
+```
+
+## Workspace Validation
+
+Use the workspace-owned scripts when you want structural checks without the full smoke path:
+
+```bash
+npm run workspace:build
+npm run workspace:test
+npm run workspace:validate
 ```
 
 ## Design Standard

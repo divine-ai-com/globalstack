@@ -282,3 +282,6 @@ flowchart TD
 - `npm run trial:openai-platforms`
 - `npm run trial:openai-verified-bundles`
 - `npm run validate`
+- `npm run workspace:build`
+- `npm run workspace:test`
+- `npm run workspace:validate`

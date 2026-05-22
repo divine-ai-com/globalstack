@@ -12,6 +12,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "start": "node server.mjs"
+    "build": "node ../../packages/workspace-utils/src/package-check.mjs build",
+    "start": "node server.mjs",
+    "test": "node ../../packages/workspace-utils/src/package-check.mjs test",
+    "validate": "node ../../packages/workspace-utils/src/package-check.mjs validate"
   }
 }

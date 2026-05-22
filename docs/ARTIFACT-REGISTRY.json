@@ -740,7 +740,10 @@
     "trial:openai-arm-json",
     "trial:openai-platforms",
     "trial:openai-verified-bundles",
-    "validate"
+    "validate",
+    "workspace:build",
+    "workspace:test",
+    "workspace:validate"
   ],
   "counts": {
     "azureCaptures": 754,

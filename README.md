@@ -28,6 +28,14 @@ Regenerate the generated navigation docs with:
 npm run docs:nav
 ```
 
+Package-owned structural validation is available through workspace scripts:
+
+```bash
+npm run workspace:build
+npm run workspace:test
+npm run workspace:validate
+```
+
 ## What is included
 
 - Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Bicep, and ARM JSON.
