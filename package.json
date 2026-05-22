@@ -87,6 +87,7 @@
     "smoke:bicep-runner": "node scripts/runtime/smoke-bicep-runner-lifecycle.mjs",
     "smoke:platform-runners": "node scripts/runtime/smoke-platform-runner-lifecycles.mjs",
     "smoke:iac-model-responses": "node scripts/verified/smoke-azure-iac-model-responses.mjs",
+    "shipment:export": "node packages/bundle-runtime/src/export-azure-shipment-bundle.mjs",
     "trial:openai-arm-json": "node scripts/verified/run-openai-azure-arm-json-trial.mjs",
     "trial:openai-platforms": "node scripts/verified/run-openai-azure-platform-trials.mjs",
     "trial:openai-verified-bundles": "node scripts/verified/run-openai-azure-verified-bundles.mjs",
