@@ -258,6 +258,103 @@ test('operational insights workspace sharedKeys action returns deterministic key
   });
 });
 
+test('activity log alert lifecycle supports create/get/list/delete', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-alerts?api-version=2021-04-01`, { location: 'eastus' });
+
+    const invalid = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts/ops-alert?api-version=2020-10-01`,
+      {
+        location: 'global',
+        properties: {
+          enabled: true,
+        },
+      },
+    );
+    assert.equal(invalid.status, 400);
+    assert.equal(invalid.body.code, 'BadRequest');
+
+    const actionGroup = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/actionGroups/ops-group?api-version=2023-01-01`,
+      {
+        location: 'global',
+        properties: {
+          groupShortName: 'opsgrp',
+          enabled: true,
+        },
+      },
+    );
+    assert.equal(actionGroup.status, 201);
+
+    const alert = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts/ops-alert?api-version=2020-10-01`,
+      {
+        location: 'global',
+        properties: {
+          enabled: true,
+          scopes: [`${subscriptionPath}/resourceGroups/rg-alerts`],
+          condition: {
+            allOf: [
+              {
+                field: 'category',
+                equals: 'Administrative',
+              },
+            ],
+          },
+          actions: {
+            actionGroups: [
+              {
+                actionGroupId: actionGroup.body.id,
+              },
+            ],
+          },
+        },
+      },
+    );
+    assert.equal(alert.status, 201);
+    assert.equal(alert.body.type, 'Microsoft.Insights/activityLogAlerts');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts/ops-alert?api-version=2020-10-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.name, 'ops-alert');
+    assert.equal(get.body.properties.condition.allOf[0].field, 'category');
+
+    const list = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts?api-version=2020-10-01`,
+    );
+    assert.equal(list.status, 200);
+    assert.equal(list.body.value.length, 1);
+    assert.equal(list.body.value[0].name, 'ops-alert');
+
+    const del = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts/ops-alert?api-version=2020-10-01`,
+    );
+    assert.equal(del.status, 200);
+
+    const getAfterDelete = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-alerts/providers/Microsoft.Insights/activityLogAlerts/ops-alert?api-version=2020-10-01`,
+    );
+    assert.equal(getAfterDelete.status, 404);
+    assert.equal(getAfterDelete.body.error.code, 'ResourceNotFound');
+  });
+});
+
 test('virtual network create with inline subnets materializes child subnet resources', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-vnet?api-version=2021-04-01`, { location: 'eastus' });

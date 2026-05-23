@@ -842,6 +842,43 @@ function validateMonitorMetricsPayload(resourceType, body) {
     }
   }
 
+  if (resourceType === 'Microsoft.Insights/activityLogAlerts') {
+    const properties = body.properties ?? {};
+    if (body.location && body.location !== 'global') {
+      return topLevelError(400, 'BadRequest', "Property 'location' must be 'global'.");
+    }
+    if (Object.hasOwn(properties, 'enabled') && typeof properties.enabled !== 'boolean') {
+      return topLevelError(400, 'BadRequest', "Property 'enabled' must be a boolean.");
+    }
+    if (!Array.isArray(properties.scopes) || properties.scopes.length === 0) {
+      return topLevelError(400, 'BadRequest', "Required property 'scopes' not found in JSON. Path 'properties'.");
+    }
+    if (!properties.condition || !Array.isArray(properties.condition.allOf) || properties.condition.allOf.length === 0) {
+      return topLevelError(400, 'BadRequest', "Required property 'condition.allOf' not found in JSON. Path 'properties.condition'.");
+    }
+    for (const clause of properties.condition.allOf) {
+      if (typeof clause?.field !== 'string' || clause.field.trim() === '') {
+        return topLevelError(400, 'BadRequest', "Property 'condition.allOf[].field' must be a non-empty string.");
+      }
+      if (!['equals', 'containsAny', 'containsAnyCaseInsensitive'].some((operator) => Object.hasOwn(clause ?? {}, operator))) {
+        return topLevelError(400, 'BadRequest', "Property 'condition.allOf[]' must include one of 'equals', 'containsAny', or 'containsAnyCaseInsensitive'.");
+      }
+    }
+    if (Object.hasOwn(properties, 'actions')) {
+      if (typeof properties.actions !== 'object' || properties.actions === null) {
+        return topLevelError(400, 'BadRequest', "Property 'actions' must be an object.");
+      }
+      if (!Array.isArray(properties.actions.actionGroups)) {
+        return topLevelError(400, 'BadRequest', "Property 'actions.actionGroups' must be an array.");
+      }
+      for (const actionGroup of properties.actions.actionGroups) {
+        if (typeof actionGroup?.actionGroupId !== 'string' || actionGroup.actionGroupId.trim() === '') {
+          return topLevelError(400, 'BadRequest', "Property 'actions.actionGroups[].actionGroupId' must be a non-empty string.");
+        }
+      }
+    }
+  }
+
   return null;
 }
 

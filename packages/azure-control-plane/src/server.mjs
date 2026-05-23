@@ -1133,6 +1133,7 @@ export function createArmRequestHandler({
           && (
             resourceType.startsWith('Microsoft.Insights/metricAlerts/')
             || resourceType.startsWith('Microsoft.Insights/actionGroups/')
+            || resourceType.startsWith('Microsoft.Insights/activityLogAlerts/')
             || resourceType.startsWith('Microsoft.Insights/diagnosticSettings/')
           )
           && !exactCapabilityForResourceType(resourceType)

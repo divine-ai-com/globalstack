@@ -31,6 +31,7 @@ export const defaultApiVersions = {
   'Microsoft.EventHub/namespaces': '2024-01-01',
   'Microsoft.EventHub/namespaces/eventhubs': '2024-01-01',
   'Microsoft.Insights/actionGroups': '2023-01-01',
+  'Microsoft.Insights/activityLogAlerts': '2020-10-01',
   'Microsoft.Insights/diagnosticSettings': '2021-05-01-preview',
   'Microsoft.Insights/metricAlerts': '2018-03-01',
   'Microsoft.KeyVault/vaults': '2023-07-01',
