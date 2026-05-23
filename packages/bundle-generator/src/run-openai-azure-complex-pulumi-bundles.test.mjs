@@ -902,6 +902,62 @@ export function createTapStack() {
   );
 });
 
+test('validateTapStack accepts privatedns imports when the scenario requires network.PrivateZone', () => {
+  const scenario = {
+    prompt: 'Use one private DNS zone and link both regional virtual networks.',
+    resourceNames: {},
+    expectedOutputKeys: [],
+    requiredSourceMarkers: ['network.PrivateZone'],
+    forbiddenSourceMarkers: [],
+    integrationChecks: [],
+  };
+  const tapStack = `
+import * as privatedns from "@pulumi/azure-native/privatedns";
+
+export function createTapStack() {
+  new privatedns.PrivateZone("example.internal", {
+    privateZoneName: "example.internal",
+    resourceGroupName: "rg-example",
+    location: "global",
+  });
+  return {};
+}
+`;
+  assert.doesNotThrow(() => validateTapStack(scenario, tapStack));
+});
+
+test('validateTapStack accepts azure.network public DNS resources when the scenario requires dns.Zone and dns.RecordSet', () => {
+  const scenario = {
+    prompt: 'Use one public DNS zone and one A record.',
+    resourceNames: {},
+    expectedOutputKeys: [],
+    requiredSourceMarkers: ['dns.Zone', 'dns.RecordSet'],
+    forbiddenSourceMarkers: [],
+    integrationChecks: [{ typePath: 'dnsZones/example.contoso.net/A/east' }],
+  };
+  const tapStack = `
+import * as azure from "@pulumi/azure-native";
+
+export function createTapStack() {
+  new azure.network.Zone("example.contoso.net", {
+    resourceGroupName: "rg-example",
+    zoneName: "example.contoso.net",
+    location: "global",
+  });
+  new azure.network.RecordSet("east", {
+    resourceGroupName: "rg-example",
+    zoneName: "example.contoso.net",
+    relativeRecordSetName: "east",
+    recordType: "A",
+    ttl: 60,
+    aRecords: [{ ipv4Address: "10.0.0.4" }],
+  });
+  return {};
+}
+`;
+  assert.doesNotThrow(() => validateTapStack(scenario, tapStack));
+});
+
 test('validateTapStack does not infer application gateway requirements from a negative prompt phrase alone', () => {
   const scenario = {
     prompt: 'Keep this limited to the adjudication exchange. Do not add Front Door, Application Gateway, AKS, or private endpoints.',
@@ -1080,5 +1136,118 @@ test('Pr91065 includes Synapse, Cosmos, and the escalation subscription check', 
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-escalation'
       && check.typePath === 'namespaces/sb-reg-replay-91065/topics/reg-replay-events/subscriptions/escalation'),
+  );
+});
+
+test('Pr91066 includes Front Door security policy, both DMS projects, and the rollback operation policy', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91066');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-cutover-governance-91066/securityPolicies/cutover-governance-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-governance-91066/projects/mysql-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-cutover-governance-91066/projects/postgres-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-rollback-policy'
+      && check.typePath === 'service/apim-cutover-governance-91066/apis/cutover-governance-api/operations/rollback-cutover/policies/policy'),
+  );
+});
+
+test('Pr91067 includes dual AKS clusters, a private registry record, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91067');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-release-east-91067'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-release-west-91067'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-registry-record'
+      && check.typePath === 'privateDnsZones/release91067.internal/A/registry'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-release-command-91067/topics/release-rollouts/subscriptions/rollback'),
+  );
+});
+
+test('Pr91068 includes dual managed environments, both regional event hubs, and the private events record', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91068');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-signal-east-91068'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-event-hub'
+      && check.typePath === 'namespaces/eh-signal-east-91068/eventhubs/signal-east'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-signal-west-91068/eventhubs/signal-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-events-record'
+      && check.typePath === 'privateDnsZones/signal91068.internal/A/events'),
+  );
+});
+
+test('Pr91069 includes both IoT Hubs, Digital Twins, Logic App, and the incident subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91069');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-fleet-east-91069'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-iot-hub'
+      && check.typePath === 'IotHubs/iot-fleet-west-91069'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-fleet-governor-91069'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'workflow'
+      && check.typePath === 'workflows/la-fleet-governor-91069'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-incident'
+      && check.typePath === 'namespaces/sb-fleet-governor-91069/topics/fleet-commands/subscriptions/incident'),
+  );
+});
+
+test('Pr91070 includes Synapse, DMS, Cosmos SQL, and the MySQL database', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91070');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-reg-reconcile-91070/sqlPools/regreconcilepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project'
+      && check.typePath === 'services/dms-reg-reconcile-91070/projects/mysql-reconciliation-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-reg-reconcile-91070/sqlDatabases/ReconcileStateDb/containers/ReconcileState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-reg-reconcile-91070/databases/reconciledb'),
   );
 });

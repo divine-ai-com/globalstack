@@ -7,6 +7,7 @@ import { ultraExpertWave91046to91050 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91051to91055 } from "./complex-pulumi-scenarios-wave-91051-91055.mjs";
 import { ultraExpertWave91056to91060 } from "./complex-pulumi-scenarios-wave-91056-91060.mjs";
 import { ultraExpertWave91061to91065 } from "./complex-pulumi-scenarios-wave-91061-91065.mjs";
+import { ultraExpertWave91066to91070 } from "./complex-pulumi-scenarios-wave-91066-91070.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4989,6 +4990,7 @@ scenarios.push(...ultraExpertWave91046to91050);
 scenarios.push(...ultraExpertWave91051to91055);
 scenarios.push(...ultraExpertWave91056to91060);
 scenarios.push(...ultraExpertWave91061to91065);
+scenarios.push(...ultraExpertWave91066to91070);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5129,6 +5131,24 @@ const lowerStack = stack.toLowerCase();
 function sourceSatisfiesMarker(marker) {
   const normalizedMarker = String(marker ?? "").toLowerCase();
   if (lowerStack.includes(normalizedMarker)) return true;
+  if (normalizedMarker === "dns.zone") {
+    return /\\bdns\\.zone\\b/.test(lowerStack)
+      || /\\bazure\\.dns\\.zone\\b/.test(lowerStack)
+      || /\\bnetwork\\.zone\\b/.test(lowerStack)
+      || /\\bazure\\.network\\.zone\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "dns.recordset") {
+    return /\\bdns\\.recordset\\b/.test(lowerStack)
+      || /\\bazure\\.dns\\.recordset\\b/.test(lowerStack)
+      || /\\bnetwork\\.recordset\\b/.test(lowerStack)
+      || /\\bazure\\.network\\.recordset\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "network.privatezone") {
+    return /\\bnetwork\\.privatezone\\b/.test(lowerStack)
+      || /\\bprivatedns\\.privatezone\\b/.test(lowerStack)
+      || /\\bazure\\.network\\.privatezone\\b/.test(lowerStack)
+      || /\\bazure\\.privatedns\\.privatezone\\b/.test(lowerStack);
+  }
   if (normalizedMarker === "applicationinsights." || normalizedMarker === "applicationinsights.component") {
     return /\\bapplicationinsights\\./.test(lowerStack)
       || /\\bazure\\.insights\\.component\\b/.test(lowerStack)
@@ -5555,6 +5575,24 @@ function sourceSatisfiesMarker(tapStackText, marker) {
   const source = String(tapStackText ?? '').toLowerCase();
   const normalizedMarker = String(marker ?? '').toLowerCase();
   if (source.includes(normalizedMarker)) return true;
+  if (normalizedMarker === 'dns.zone') {
+    return /\bdns\.zone\b/.test(source)
+      || /\bazure\.dns\.zone\b/.test(source)
+      || /\bnetwork\.zone\b/.test(source)
+      || /\bazure\.network\.zone\b/.test(source);
+  }
+  if (normalizedMarker === 'dns.recordset') {
+    return /\bdns\.recordset\b/.test(source)
+      || /\bazure\.dns\.recordset\b/.test(source)
+      || /\bnetwork\.recordset\b/.test(source)
+      || /\bazure\.network\.recordset\b/.test(source);
+  }
+  if (normalizedMarker === 'network.privatezone') {
+    return /\bnetwork\.privatezone\b/.test(source)
+      || /\bprivatedns\.privatezone\b/.test(source)
+      || /\bazure\.network\.privatezone\b/.test(source)
+      || /\bazure\.privatedns\.privatezone\b/.test(source);
+  }
   if (normalizedMarker === 'applicationinsights.' || normalizedMarker === 'applicationinsights.component') {
     return /\bapplicationinsights\./.test(source)
       || /\bazure\.insights\.component\b/.test(source)
