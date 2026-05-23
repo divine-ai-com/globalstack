@@ -1594,3 +1594,328 @@ test('Pr91075 includes Synapse, Cosmos, both DMS projects, and the escalation su
       && check.typePath === 'namespaces/sb-reconcile-graph-91075/topics/reconcile-graph-events/subscriptions/escalation'),
   );
 });
+
+test('Pr91076 includes dual IoT hubs, Digital Twins, Cosmos, and Synapse checks', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91076');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-safety-east-91076'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-safety-fabric-91076'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-safety-fabric-91076/sqlDatabases/SafetyTwinDb/containers/SafetyState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-safety-fabric-91076/sqlPools/safetytwinpool'),
+  );
+});
+
+test('Pr91077 includes Front Door, dual container environments, and the approve subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91077');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-container-governance-91077/securityPolicies/container-governance-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-gov-east-91077'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-container-governance-91077/topics/container-governance-events/subscriptions/approve'),
+  );
+});
+
+test('Pr91078 includes private DNS, both DMS projects, and both relational engines', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91078');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-zone'
+      && check.typePath === 'privateDnsZones/modernize91078.internal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-modernization-tower-91078/projects/mysql-modernization-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-modernization-91078/databases/modernizationdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-modernization-91078/databases/modernizationledger'),
+  );
+});
+
+test('Pr91079 includes dual AKS clusters, private DNS records, and the dispatch subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91079');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-mesh-east-91079'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-files-record'
+      && check.typePath === 'privateDnsZones/mesh91079.internal/A/files'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch'
+      && check.typePath === 'namespaces/sb-private-mesh-91079/topics/private-mesh-events/subscriptions/dispatch'),
+  );
+});
+
+test('Pr91080 includes Synapse, Cosmos, both DMS projects, and the escalation subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-warehouse-orchestrator-91080/sqlPools/warehousepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-warehouse-orchestrator-91080/sqlDatabases/WarehouseStateDb/containers/WarehouseState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-warehouse-orchestrator-91080/projects/postgres-warehouse-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-escalation'
+      && check.typePath === 'namespaces/sb-warehouse-orchestrator-91080/topics/warehouse-orchestrator-events/subscriptions/escalation'),
+  );
+});
+
+test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const client = { tenantId: "00000000-0000-0000-0000-000000000000" };',
+        '  const rg = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const kv = new azure.keyvault.Vault("kv-warehouse-91080", {',
+        '    resourceGroupName: rg.name,',
+        '    vaultName: "kv-warehouse-91080",',
+        '    location: "eastus",',
+        '    tenantId: client.tenantId,',
+        '    properties: {',
+          '      tenantId: client.tenantId,',
+          '      sku: { family: "A", name: "standard" },',
+          '      accessPolicies: [],',
+        '    },',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /must not set tenantId at the top level of VaultArgs/,
+  );
+});
+
+test('validateTapStack rejects top-level sku on Key Vault VaultArgs', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const client = { tenantId: "00000000-0000-0000-0000-000000000000" };',
+        '  const rg = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const kv = new azure.keyvault.Vault("kv-warehouse-91080", {',
+        '    resourceGroupName: rg.name,',
+        '    vaultName: "kv-warehouse-91080",',
+        '    location: "eastus",',
+        '    sku: { family: "A", name: "standard" },',
+        '    properties: {',
+        '      tenantId: client.tenantId,',
+        '      sku: { family: "A", name: "standard" },',
+        '      accessPolicies: [],',
+        '    },',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /must not set sku at the top level of VaultArgs/,
+  );
+});
+
+test('validateTapStack rejects Cosmos SQL containers without explicit dependsOn on the SQL database', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const account = { name: "cosmos-warehouse-orchestrator-91080" } as any;',
+        '  const sqlDatabase = new azure.documentdb.SqlResourceSqlDatabase("WarehouseStateDb", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    accountName: account.name,',
+        '    databaseName: "WarehouseStateDb",',
+        '    resource: { id: "WarehouseStateDb" },',
+        '  });',
+        '  const container = new azure.documentdb.SqlResourceSqlContainer("WarehouseState", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    accountName: account.name,',
+        '    databaseName: "WarehouseStateDb",',
+        '    containerName: "WarehouseState",',
+        '    resource: { id: "WarehouseState", partitionKey: { paths: ["/pk"], kind: "Hash" } },',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /SqlResourceSqlContainer must include an explicit dependsOn option/,
+  );
+});
+
+test('validateTapStack rejects Key Vault properties blocks that omit properties.sku', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const client = { tenantId: "00000000-0000-0000-0000-000000000000" };',
+        '  const rg = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const kv = new azure.keyvault.Vault("kv-warehouse-91080", {',
+        '    resourceGroupName: rg.name,',
+        '    vaultName: "kv-warehouse-91080",',
+        '    location: "eastus",',
+        '    properties: {',
+        '      tenantId: client.tenantId,',
+        '      enableRbacAuthorization: true,',
+        '    },',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /must include properties.sku inside the Vault properties block/,
+  );
+});
+
+test('validateTapStack rejects storage child resources that use raw accountName strings without dependency edges', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const storage = { name: "azwarehouse91080" } as any;',
+        '  const raw = new azure.storage.BlobContainer("raw-events", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    accountName: "azwarehouse91080",',
+        '    containerName: "raw-events",',
+        '    publicAccess: "None",',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure\.storage child resources must use accountName from the created storage resource output/,
+  );
+});
+
+test('validateTapStack rejects listStorageAccountKeysOutput calls that use raw accountName strings', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91080');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-warehouse-orchestrator-pulumi-91080" } as any;',
+        '  const storageKeys = azure.storage.listStorageAccountKeysOutput({',
+        '    resourceGroupName: resourceGroup.name,',
+        '    accountName: "azwarehouse91080",',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure\.storage\.listStorageAccountKeysOutput must use accountName from the created storage resource output/,
+  );
+});

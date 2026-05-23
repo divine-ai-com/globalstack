@@ -9,6 +9,7 @@ import { ultraExpertWave91056to91060 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91061to91065 } from "./complex-pulumi-scenarios-wave-91061-91065.mjs";
 import { ultraExpertWave91066to91070 } from "./complex-pulumi-scenarios-wave-91066-91070.mjs";
 import { ultraExpertWave91071to91075 } from "./complex-pulumi-scenarios-wave-91071-91075.mjs";
+import { ultraExpertWave91076to91080 } from "./complex-pulumi-scenarios-wave-91076-91080.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4993,6 +4994,7 @@ scenarios.push(...ultraExpertWave91056to91060);
 scenarios.push(...ultraExpertWave91061to91065);
 scenarios.push(...ultraExpertWave91066to91070);
 scenarios.push(...ultraExpertWave91071to91075);
+scenarios.push(...ultraExpertWave91076to91080);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5467,11 +5469,15 @@ function generationHints(scenario) {
     "When the stack creates a ResourceGroup, instantiate it first and pass resourceGroupName: resourceGroup.name to downstream resources instead of reusing the raw resource group string. That creates the correct dependency edge.",
     "Do not use @pulumi/random or any random suffix generation.",
     "For StorageAccount, use enableHttpsTrafficOnly rather than supportsHttpsTrafficOnly.",
+    "For Azure Storage child resources such as BlobContainer, FileShare, Queue, and Table, do not pass the raw storage account name string. Use the created storage account resource output, for example accountName: storage.name, so Pulumi waits for the account to exist.",
+    "When calling azure.storage.listStorageAccountKeysOutput, use accountName: storage.name rather than the raw prompt-fixed string so the invoke waits for the storage account resource.",
     "Do not invent unsupported convenience properties on Azure Database for PostgreSQL Flexible Server.",
     "When using azure.apimanagement.ProductApi, pass the prompt-fixed productId and apiId string identifiers directly; do not read .productId or .apiId from created resources.",
     "If a constructor input expects a fixed Azure identifier like apiId, productId, endpointName, queueName, or topicName, prefer the prompt-fixed string instead of reading a non-existent output property.",
     "When using operationalinsights.getWorkspaceSharedKeysOutput, do not access .primarySharedKey directly on the Output. Derive it with workspaceKeys.apply(keys => keys.primarySharedKey ?? \"\") so strict TypeScript accepts it.",
     "When creating azure.servicebus.Subscription resources for a topic, add an explicit dependsOn: [topic] option so subscriptions are created only after the topic exists.",
+    "For azure.keyvault.Vault, do not set tenantId or sku at the top level of VaultArgs in this repo. Put tenantId only inside properties.tenantId and put sku only inside properties.sku.",
+    "In this repo's shipped Azure Native surface, VaultPropertiesArgs requires properties.sku. Keep sku inside the properties block and omit top-level sku from VaultArgs.",
     "For Event Grid custom topics in Azure Native, do not set a top-level sku unless the exact generated TopicArgs type proves it is accepted.",
     "For API Management Product in Azure Native, do not use a nonexistent published property. Use displayName and state, and only include properties that exist on ProductArgs.",
     "For API Management child resources, add explicit dependency edges: ProductApi should depend on both the Api and the Product, ApiOperation should depend on the Api, and ApiOperationPolicy should depend on the ApiOperation.",
@@ -5564,6 +5570,7 @@ function generationHints(scenario) {
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('documentdb.'))) {
     hints.push("For Azure Cosmos DB SQL API in Azure Native, use azure.documentdb.DatabaseAccount, SqlResourceSqlDatabase, and SqlResourceSqlContainer.");
     hints.push("For Cosmos SQL database and container resources, pass accountName, databaseName, and containerName explicitly and keep the resource.id fields aligned to those exact names.");
+    hints.push("Parent names do not create Pulumi ordering for Cosmos SQL containers. Every azure.documentdb.SqlResourceSqlContainer must include an explicit dependsOn: [sqlDatabase] option so the container is created only after its SQL database exists.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('devices.'))) {
@@ -5928,6 +5935,9 @@ export function validateTapStack(scenario, tapStackText) {
   const usesWrongDnsModulesForLegacy = !usesAzureNativeV3
     && /\b(?:azure\.)?(?:dns\.(?:Zone|RecordSet)|privatedns\.(?:PrivateZone|VirtualNetworkLink|PrivateRecordSet))\b/.test(tapStackText);
   const usesUnsupportedAzureNativeModules = /from\s+["']@pulumi\/azure-native\/frontdoor["']/.test(tapStackText);
+  const keyVaultPattern = /new\s+(?:azure\.)?keyvault\.Vault\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const cosmosContainerPattern = /new\s+(?:azure\.)?documentdb\.SqlResourceSqlContainer\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const storageChildPattern = /new\s+(?:azure\.)?storage\.(?:BlobContainer|FileShare|Queue|Table)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
 
   if (hasPrivateDns && !hasPrivateRecordSet) {
     throw new Error(usesAzureNativeV3
@@ -5941,6 +5951,43 @@ export function validateTapStack(scenario, tapStackText) {
   }
   if (usesUnsupportedAzureNativeModules) {
     throw new Error('This repo\'s shipped Azure Native version does not expose @pulumi/azure-native/frontdoor; use azure.cdn.* plus azure.network.WebApplicationFirewallPolicy instead');
+  }
+  for (const block of tapStackText.match(keyVaultPattern) ?? []) {
+    const topLevelTenantIdIndex = block.indexOf('tenantId:');
+    const topLevelSkuIndex = block.indexOf('sku:');
+    const propertiesIndex = block.indexOf('properties:');
+    if (topLevelTenantIdIndex !== -1 && (propertiesIndex === -1 || topLevelTenantIdIndex < propertiesIndex)) {
+      throw new Error('azure.keyvault.Vault must not set tenantId at the top level of VaultArgs; put tenantId only inside properties.tenantId');
+    }
+    if (topLevelSkuIndex !== -1 && (propertiesIndex === -1 || topLevelSkuIndex < propertiesIndex)) {
+      throw new Error('azure.keyvault.Vault must not set sku at the top level of VaultArgs; put sku only inside properties.sku');
+    }
+    if (propertiesIndex !== -1 && !/\bproperties\s*:\s*{[\s\S]*?\bsku\s*:/.test(block)) {
+      throw new Error('azure.keyvault.Vault must include properties.sku inside the Vault properties block');
+    }
+  }
+  for (const block of tapStackText.match(cosmosContainerPattern) ?? []) {
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure.documentdb.SqlResourceSqlContainer must include an explicit dependsOn option that waits for its SQL database resource');
+    }
+  }
+  for (const block of tapStackText.match(storageChildPattern) ?? []) {
+    const accountNameMatch = block.match(/\baccountName\s*:\s*([^\n,]+)/);
+    if (!accountNameMatch) continue;
+    const accountNameExpr = accountNameMatch[1];
+    const hasOutputDependency = /\.\s*name\b/.test(accountNameExpr) || /\.apply\s*\(/.test(accountNameExpr);
+    if (!hasOutputDependency && !/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure.storage child resources must use accountName from the created storage resource output or include an explicit dependsOn on the storage account');
+    }
+  }
+  for (const match of tapStackText.matchAll(/listStorageAccountKeysOutput\(\s*{([\s\S]*?)}\s*\)/g)) {
+    const block = match[1] ?? '';
+    const accountNameMatch = block.match(/\baccountName\s*:\s*([^\n,]+)/);
+    if (!accountNameMatch) continue;
+    const accountNameExpr = accountNameMatch[1];
+    if (!/\.\s*name\b/.test(accountNameExpr) && !/\.apply\s*\(/.test(accountNameExpr)) {
+      throw new Error('azure.storage.listStorageAccountKeysOutput must use accountName from the created storage resource output');
+    }
   }
   if (/\bWorkspaceResourceId\s*:/.test(tapStackText)) {
     throw new Error(usesAzureNativeV3
@@ -6062,6 +6109,30 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   if (String(error).includes('missing scenario marker devices.')) {
     extraGuidance.push('This task must declare Azure IoT Hub resources. In Front Door / v3-style tasks, import iothub from @pulumi/azure-native/iothub and use iothub.IotHubResource. In top-level v2 tasks, azure.devices.IotHubResource is valid.');
   }
+  if (String(error).includes('SqlResourceSqlContainer must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure.documentdb.SqlResourceSqlContainer must be created with a third-argument resource options object that includes dependsOn: [sqlDatabase].');
+    extraGuidance.push('Keep the prompt-fixed accountName, databaseName, and containerName, and wire the container after the Azure Cosmos SQL database resource variable.');
+  }
+  if (String(error).includes('azure.storage child resources must use accountName from the created storage resource output')) {
+    extraGuidance.push('For azure.storage.BlobContainer, FileShare, Queue, and Table, use accountName: storage.name instead of the raw prompt-fixed storage account string.');
+    extraGuidance.push('If you cannot use storage.name directly, then add an explicit dependsOn: [storage] resource option to each storage child resource.');
+  }
+  if (String(error).includes('azure.storage.listStorageAccountKeysOutput must use accountName from the created storage resource output')) {
+    extraGuidance.push('Call azure.storage.listStorageAccountKeysOutput with accountName: storage.name so the invoke waits for the storage account resource.');
+    extraGuidance.push('Do not use accountName: "prompt-fixed-storage-name" or accountName: storageAccountName in the invoke payload.');
+  }
+  if (String(error).includes('must not set tenantId at the top level of VaultArgs')) {
+    extraGuidance.push('For azure.keyvault.Vault, remove any top-level tenantId field from VaultArgs.');
+    extraGuidance.push('Keep tenantId only inside properties: { tenantId: client.tenantId, ... }. The top level should contain vaultName, resourceGroupName, location, and properties only.');
+  }
+  if (String(error).includes('must not set sku at the top level of VaultArgs')) {
+    extraGuidance.push('For azure.keyvault.Vault, remove any top-level sku field from VaultArgs.');
+    extraGuidance.push('Keep sku only inside properties: { tenantId: client.tenantId, sku: { family: "A", name: "standard" }, ... }.');
+  }
+  if (String(error).includes('must include properties.sku inside the Vault properties block')) {
+    extraGuidance.push('For azure.keyvault.Vault, include sku only inside the properties block.');
+    extraGuidance.push('Use this shape: properties: { tenantId: client.tenantId, sku: { family: "A", name: "standard" }, accessPolicies: [], ... }.');
+  }
   return [
     originalPrompt,
     "",
@@ -6099,6 +6170,18 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push(usesAzureNativeV3
       ? 'Import Application Insights from the top-level azure namespace and use azure.applicationinsights.Component in this repo.'
       : 'Do not import @pulumi/azure-native/applicationinsights in this bundle. Use azure.insights.Component from the top-level azure namespace.');
+  }
+  if (String(runFailure).includes("tenantId' does not exist in type 'VaultArgs")) {
+    extraGuidance.push('Your Key Vault declaration is wrong. Remove any top-level tenantId field from new azure.keyvault.Vault(...).');
+    extraGuidance.push('Put tenantId only inside properties.tenantId, for example: new azure.keyvault.Vault(name, { resourceGroupName: rg.name, vaultName: name, location, properties: { tenantId: client.tenantId, sku: { family: "A", name: "standard" }, accessPolicies: [] } });');
+  }
+  if (String(runFailure).includes("sku' does not exist in type 'VaultArgs")) {
+    extraGuidance.push('Your Key Vault declaration is wrong. Remove any top-level sku field from new azure.keyvault.Vault(...).');
+    extraGuidance.push('Put sku only inside properties.sku, for example: new azure.keyvault.Vault(name, { resourceGroupName: rg.name, vaultName: name, location, properties: { tenantId: client.tenantId, sku: { family: "A", name: "standard" }, accessPolicies: [], enableRbacAuthorization: true } });');
+  }
+  if (String(runFailure).includes("Property 'sku' is missing") && String(runFailure).includes('VaultPropertiesArgs')) {
+    extraGuidance.push('Your Key Vault properties block is incomplete. Add properties.sku inside the properties object and omit top-level sku from VaultArgs.');
+    extraGuidance.push('Use this pattern: new azure.keyvault.Vault(name, { resourceGroupName: rg.name, vaultName: name, location, properties: { tenantId: client.tenantId, sku: { family: "A", name: "standard" }, accessPolicies: [], enableRbacAuthorization: true } });');
   }
   if (String(runFailure).includes('SubnetIsRequired')
     && String(runFailure).includes('Application gateway subnet is required')) {
@@ -6276,7 +6359,18 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   }
   if (String(runFailure).includes('Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers')
     && String(runFailure).includes('ResourceNotFound')) {
-    extraGuidance.push('Ensure every azure.documentdb.SqlResourceSqlContainer has an explicit dependsOn: [sqlDatabase] option so the container is created only after its SQL database exists.');
+    extraGuidance.push('Your Cosmos SQL container raced its parent database. Declare the SQL database resource first, keep a variable for it, and then create the container with a third-argument options object: { dependsOn: [sqlDatabase] }.');
+    extraGuidance.push('Do not rely on accountName/databaseName strings to order Cosmos SQL resources. The container must depend explicitly on the SqlResourceSqlDatabase resource instance.');
+  }
+  if ((String(runFailure).includes('Microsoft.Storage/storageAccounts/blobServices/containers')
+      || String(runFailure).includes('Microsoft.Storage/storageAccounts/fileServices/shares'))
+    && String(runFailure).includes('ParentResourceNotFound')) {
+    extraGuidance.push('Your storage child resources raced the storage account. For every BlobContainer or FileShare, use accountName: storage.name so Pulumi tracks the dependency, or add a third-argument options object with dependsOn: [storage].');
+    extraGuidance.push('Do not pass the raw prompt-fixed storage account string into storage child resources when the storage account is created in the same stack.');
+  }
+  if (String(runFailure).includes('azure-native:storage:listStorageAccountKeys')
+    && String(runFailure).includes('ResourceNotFound')) {
+    extraGuidance.push('Your storage keys invoke raced the storage account. Call azure.storage.listStorageAccountKeysOutput with accountName: storage.name, not the raw storage account string.');
   }
   if (String(runFailure).includes('publicNetworkAccess')
     && String(runFailure).includes('ServerArgs')
@@ -6470,7 +6564,7 @@ function repairEvidence(runResult) {
   return evidence.slice(-4000);
 }
 
-async function main() {
+export async function main() {
   const results = [];
   for (const scenario of selectedScenarios()) {
     console.log(`\n=== Generating ${scenario.prId} (${scenario.scenarioId}) with ${model} ===`);
