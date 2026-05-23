@@ -8,6 +8,7 @@ import { ultraExpertWave91051to91055 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91056to91060 } from "./complex-pulumi-scenarios-wave-91056-91060.mjs";
 import { ultraExpertWave91061to91065 } from "./complex-pulumi-scenarios-wave-91061-91065.mjs";
 import { ultraExpertWave91066to91070 } from "./complex-pulumi-scenarios-wave-91066-91070.mjs";
+import { ultraExpertWave91071to91075 } from "./complex-pulumi-scenarios-wave-91071-91075.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4944,7 +4945,7 @@ scenarios.push({
     "approve-exception",
     "exception-events",
   ],
-  forbiddenSourceMarkers: ["containerservice", "network.ApplicationGateway", "network.WebApplicationFirewallPolicy", "privateDnsZones", "private endpoint", "dbformysql", "documentdb", "synapse.", "datamigration"],
+  forbiddenSourceMarkers: ["containerservice", "network.ApplicationGateway", "privateDnsZones", "private endpoint", "dbformysql", "documentdb", "synapse.", "datamigration"],
   integrationChecks: [
     { label: "front-door-profile", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles" },
     { label: "front-door-endpoint", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/afdEndpoints/exception-governance-endpoint", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints" },
@@ -4991,6 +4992,7 @@ scenarios.push(...ultraExpertWave91051to91055);
 scenarios.push(...ultraExpertWave91056to91060);
 scenarios.push(...ultraExpertWave91061to91065);
 scenarios.push(...ultraExpertWave91066to91070);
+scenarios.push(...ultraExpertWave91071to91075);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5056,12 +5058,16 @@ function solutionFiles() {
   ];
 }
 
+function scenarioUsesAzureNativeV3(scenario) {
+  return scenarioUsesFrontDoorWafPolicyResource(scenario);
+}
+
 function pulumiYaml() {
   return `name: tap-stack\nruntime: nodejs\nmain: bin/tap.ts\n`;
 }
 
 function packageJson(scenario) {
-  const azureNativeVersion = scenarioUsesFrontDoorWafPolicyResource(scenario)
+  const azureNativeVersion = scenarioUsesAzureNativeV3(scenario)
     ? "^3.18.0"
     : "^2.80.0";
   return `${JSON.stringify(
@@ -5127,32 +5133,69 @@ const packageJson = JSON.parse(await readFile(join(root, "package.json"), "utf8"
 const entry = await readFile(join(root, "bin", "tap.ts"), "utf8");
 const stack = await readFile(join(root, "lib", "tap-stack.ts"), "utf8");
 const lowerStack = stack.toLowerCase();
+const usesAzureNativeV3 = /^\\^?3\\./.test(String(packageJson.dependencies?.["@pulumi/azure-native"] ?? ""));
 
 function sourceSatisfiesMarker(marker) {
   const normalizedMarker = String(marker ?? "").toLowerCase();
   if (lowerStack.includes(normalizedMarker)) return true;
+  if (normalizedMarker === "frontdoor.policy") {
+    return /\\bnetwork\\.webapplicationfirewallpolicy\\b/.test(lowerStack)
+      || /\\bazure\\.network\\.webapplicationfirewallpolicy\\b/.test(lowerStack);
+  }
   if (normalizedMarker === "dns.zone") {
-    return /\\bdns\\.zone\\b/.test(lowerStack)
-      || /\\bazure\\.dns\\.zone\\b/.test(lowerStack)
-      || /\\bnetwork\\.zone\\b/.test(lowerStack)
-      || /\\bazure\\.network\\.zone\\b/.test(lowerStack);
+    return usesAzureNativeV3
+      ? /\\bdns\\.zone\\b/.test(lowerStack) || /\\bazure\\.dns\\.zone\\b/.test(lowerStack)
+      : /\\bnetwork\\.zone\\b/.test(lowerStack) || /\\bazure\\.network\\.zone\\b/.test(lowerStack);
   }
   if (normalizedMarker === "dns.recordset") {
-    return /\\bdns\\.recordset\\b/.test(lowerStack)
-      || /\\bazure\\.dns\\.recordset\\b/.test(lowerStack)
-      || /\\bnetwork\\.recordset\\b/.test(lowerStack)
-      || /\\bazure\\.network\\.recordset\\b/.test(lowerStack);
+    return usesAzureNativeV3
+      ? /\\bdns\\.recordset\\b/.test(lowerStack) || /\\bazure\\.dns\\.recordset\\b/.test(lowerStack)
+      : /\\bnetwork\\.recordset\\b/.test(lowerStack) || /\\bazure\\.network\\.recordset\\b/.test(lowerStack);
   }
   if (normalizedMarker === "network.privatezone") {
-    return /\\bnetwork\\.privatezone\\b/.test(lowerStack)
-      || /\\bprivatedns\\.privatezone\\b/.test(lowerStack)
-      || /\\bazure\\.network\\.privatezone\\b/.test(lowerStack)
-      || /\\bazure\\.privatedns\\.privatezone\\b/.test(lowerStack);
+    return usesAzureNativeV3
+      ? /\\bprivatedns\\.privatezone\\b/.test(lowerStack) || /\\bazure\\.privatedns\\.privatezone\\b/.test(lowerStack)
+      : /\\bnetwork\\.privatezone\\b/.test(lowerStack) || /\\bazure\\.network\\.privatezone\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "privatedns.privatezone") {
+    return usesAzureNativeV3
+      ? /\\bprivatedns\\.privatezone\\b/.test(lowerStack) || /\\bazure\\.privatedns\\.privatezone\\b/.test(lowerStack)
+      : /\\bnetwork\\.privatezone\\b/.test(lowerStack) || /\\bazure\\.network\\.privatezone\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "privatedns.virtualnetworklink") {
+    return usesAzureNativeV3
+      ? /\\bprivatedns\\.virtualnetworklink\\b/.test(lowerStack) || /\\bazure\\.privatedns\\.virtualnetworklink\\b/.test(lowerStack)
+      : /\\bnetwork\\.virtualnetworklink\\b/.test(lowerStack) || /\\bazure\\.network\\.virtualnetworklink\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "privatedns.privaterecordset") {
+    return usesAzureNativeV3
+      ? /\\bprivatedns\\.privaterecordset\\b/.test(lowerStack) || /\\bazure\\.privatedns\\.privaterecordset\\b/.test(lowerStack)
+      : /\\bnetwork\\.privaterecordset\\b/.test(lowerStack) || /\\bazure\\.network\\.privaterecordset\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "cache.redis" || normalizedMarker === "redis.redis") {
+    return usesAzureNativeV3
+      ? /\\bredis\\.redis\\b/.test(lowerStack) || /\\bazure\\.redis\\.redis\\b/.test(lowerStack)
+      : /\\bcache\\.redis\\b/.test(lowerStack) || /\\bazure\\.cache\\.redis\\b/.test(lowerStack);
   }
   if (normalizedMarker === "applicationinsights." || normalizedMarker === "applicationinsights.component") {
-    return /\\bapplicationinsights\\./.test(lowerStack)
-      || /\\bazure\\.insights\\.component\\b/.test(lowerStack)
-      || /\\binsights\\.component\\b/.test(lowerStack);
+    return usesAzureNativeV3
+      ? /\\bazure\\.applicationinsights\\.component\\b/.test(lowerStack) || /\\bapplicationinsights\\.component\\b/.test(lowerStack)
+      : /\\bazure\\.insights\\.component\\b/.test(lowerStack) || /\\binsights\\.component\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "monitor.actiongroup") {
+    return usesAzureNativeV3
+      ? /\\bmonitor\\.actiongroup\\b/.test(lowerStack) || /\\bazure\\.monitor\\.actiongroup\\b/.test(lowerStack)
+      : /\\binsights\\.actiongroup\\b/.test(lowerStack) || /\\bazure\\.insights\\.actiongroup\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "monitor.metricalert") {
+    return usesAzureNativeV3
+      ? /\\bmonitor\\.metricalert\\b/.test(lowerStack) || /\\bazure\\.monitor\\.metricalert\\b/.test(lowerStack)
+      : /\\binsights\\.metricalert\\b/.test(lowerStack) || /\\bazure\\.insights\\.metricalert\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "monitor.activitylogalert") {
+    return usesAzureNativeV3
+      ? /\\bmonitor\\.activitylogalert\\b/.test(lowerStack) || /\\bazure\\.monitor\\.activitylogalert\\b/.test(lowerStack)
+      : /\\binsights\\.activitylogalert\\b/.test(lowerStack) || /\\bazure\\.insights\\.activitylogalert\\b/.test(lowerStack);
   }
   if (normalizedMarker === "devices.") {
     return /\\bdevices\\./.test(lowerStack)
@@ -5215,11 +5258,10 @@ for (const forbidden of metadata.forbiddenSourceMarkers ?? []) {
 }
 
 if (metadata.integrationChecks?.some((check) => check.expectedType === "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies")) {
-  if (!stack.includes("frontdoor.Policy")) {
-    throw new Error("Front Door WAF scenarios must use azure.frontdoor.Policy");
-  }
-  if (stack.includes("network.WebApplicationFirewallPolicy")) {
-    throw new Error("Front Door WAF scenarios must not use azure.network.WebApplicationFirewallPolicy");
+  const hasFrontDoorWaf = stack.includes("network.WebApplicationFirewallPolicy")
+    || stack.includes("azure.network.WebApplicationFirewallPolicy");
+  if (!hasFrontDoorWaf) {
+    throw new Error("Front Door WAF scenarios must declare a Front Door WAF policy resource");
   }
 }
 
@@ -5410,13 +5452,16 @@ function armParameters(scenario) {
 }
 
 function generationHints(scenario) {
+  const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   const hasPublicDns = scenarioUsesPublicDns(scenario);
   const hasPrivateDns = scenarioUsesPrivateDns(scenario);
   const hints = [
     "You are generating the missing Pulumi implementation for an Azure IaC task.",
     "Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\".",
     "Do not return any prose before or after the fenced code block.",
-    "Use only APIs and resource classes that exist in @pulumi/azure-native v2.80.0.",
+    usesAzureNativeV3
+      ? "Use only APIs and resource classes that exist in @pulumi/azure-native v3.18.0."
+      : "Use only APIs and resource classes that exist in the Azure Native 2.x surface shipped by this bundle (dependency range ^2.80.0, currently resolving to 2.92.2 in the runner).",
     "The task must be fully self-contained. Do not require Pulumi stack config, environment variables, or manual operator input for names, passwords, or secrets.",
     "Do not use new pulumi.Config(), config.require(...), config.requireSecret(...), or config.getSecret(...) in this file. Use deterministic, strong, prompt-scoped constants when credentials are required.",
     "When the stack creates a ResourceGroup, instantiate it first and pass resourceGroupName: resourceGroup.name to downstream resources instead of reusing the raw resource group string. That creates the correct dependency edge.",
@@ -5430,8 +5475,12 @@ function generationHints(scenario) {
     "For Event Grid custom topics in Azure Native, do not set a top-level sku unless the exact generated TopicArgs type proves it is accepted.",
     "For API Management Product in Azure Native, do not use a nonexistent published property. Use displayName and state, and only include properties that exist on ProductArgs.",
     "For API Management child resources, add explicit dependency edges: ProductApi should depend on both the Api and the Product, ApiOperation should depend on the Api, and ApiOperationPolicy should depend on the ApiOperation.",
-    "For azure.insights.Component, use applicationType rather than ARM-style Application_Type.",
-    "For azure.insights.Component, set kind to web and set applicationType to web unless the prompt explicitly requires a different exact shape.",
+    usesAzureNativeV3
+      ? "For azure.applicationinsights.Component, use applicationType rather than ARM-style Application_Type."
+      : "For azure.insights.Component, use applicationType rather than ARM-style Application_Type.",
+    usesAzureNativeV3
+      ? "For azure.applicationinsights.Component, set kind to web and set applicationType to web unless the prompt explicitly requires a different exact shape."
+      : "For azure.insights.Component, set kind to web and set applicationType to web unless the prompt explicitly requires a different exact shape.",
     "For output keys ending in Url or Endpoint, emit a single well-formed https URL. Do not prepend https:// if the Azure Native property already includes the scheme.",
     "For output keys ending in HostName, emit the bare hostname without http:// or https://.",
     "For output keys ending in Name, emit the exact leaf resource name from the prompt rather than an ARM id, parent-qualified name, or path-like composite value.",
@@ -5445,12 +5494,13 @@ function generationHints(scenario) {
     hints.push("Azure Front Door child resources keyed only by profileName, endpointName, or originGroupName do not automatically create Pulumi graph dependencies. Add explicit dependsOn edges: AFDEndpoint and AFDOriginGroup depend on the Profile, each AFDOrigin depends on the AFDOriginGroup, Route depends on the AFDEndpoint plus its Origins, and SecurityPolicy depends on the endpoint or route plus the WAF policy.");
     hints.push("Do not rely on string parent names to order Azure Front Door resources. Use explicit dependsOn for the real parent-child creation sequence.");
     if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-      hints.push("This task installs @pulumi/azure-native v3. Use namespace-specific imports such as import * as cdn from \"@pulumi/azure-native/cdn\", import * as frontdoor from \"@pulumi/azure-native/frontdoor\", import * as network from \"@pulumi/azure-native/network\", and similar subpath imports for the other Azure namespaces you use.");
-      hints.push("When using @pulumi/azure-native v3, do not rely on a single top-level import like import * as azure from \"@pulumi/azure-native\" for service namespaces such as frontdoor, monitor, applicationinsights, redis, dns, or network.");
-      hints.push("For this v3 task, use these module families directly: cdn from @pulumi/azure-native/cdn, frontdoor from @pulumi/azure-native/frontdoor, dns from @pulumi/azure-native/dns, redis from @pulumi/azure-native/redis, monitor from @pulumi/azure-native/monitor, applicationinsights from @pulumi/azure-native/applicationinsights, operationalinsights from @pulumi/azure-native/operationalinsights, plus the other service subpaths you need.");
-      hints.push("This task expects the Azure Front Door WAF resource family. Use azure.frontdoor.Policy, not azure.network.WebApplicationFirewallPolicy.");
-      hints.push("For azure.frontdoor.Policy, set sku.name to Standard_AzureFrontDoor or Premium_AzureFrontDoor, and configure policySettings.enabledState, policySettings.mode, requestBodyCheck, customRules, and managedRules as needed.");
-      hints.push("Attach the resulting Front Door WAF policy id through azure.cdn.SecurityPolicy.");
+      hints.push("This repo's shipped Azure Native runner uses the top-level azure import surface for these resources.");
+      hints.push("For Front Door WAF in this runner, use azure.network.WebApplicationFirewallPolicy and attach it through azure.cdn.SecurityPolicy.");
+      hints.push("Do not import nonexistent modules like @pulumi/azure-native/frontdoor in this repo.");
+      hints.push("For azure.network.WebApplicationFirewallPolicy, keep managedRules, customRules, and policySettings. Do not add a top-level sku unless the generated WebApplicationFirewallPolicyArgs type explicitly accepts it.");
+      hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
+      hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
+      hints.push("Copy this Front Door WAF shape exactly in this repo unless the generated SDK types prove otherwise: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: \"global\", policySettings: { state: \"Enabled\", mode: \"Prevention\" }, managedRules: { managedRuleSets: [{ ruleSetType: \"Microsoft_DefaultRuleSet\", ruleSetVersion: \"2.1\" }] } }); Do not add sku, enabledState, or legacy Front Door WAF classes.");
     } else {
       hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
       hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
@@ -5473,30 +5523,32 @@ function generationHints(scenario) {
   }
 
   if (hasPublicDns) {
-    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-      hints.push("For Azure public DNS in these Azure Native v3 Front Door tasks, import dns from @pulumi/azure-native/dns and use dns.Zone plus dns.RecordSet.");
-      hints.push("Do not use azure.network.Zone or azure.network.RecordSet in these v3 tasks. Keep public DNS on the dns submodule only.");
-    } else {
-      hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
-      hints.push("Azure public DNS zones must use location \"global\".");
-      hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
-      hints.push("Do not import @pulumi/azure-native/network and then call network.Zone or network.RecordSet. For DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.Zone and azure.network.RecordSet.");
-    }
+    hints.push(usesAzureNativeV3
+      ? "For Azure public DNS, use azure.dns.Zone for the DNS zone and azure.dns.RecordSet for public DNS records."
+      : "For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
+    hints.push("Azure public DNS zones must use location \"global\".");
+    hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
+    hints.push(usesAzureNativeV3
+      ? "Do not import @pulumi/azure-native/network and then call network.Zone or network.RecordSet. For DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.dns.Zone and azure.dns.RecordSet."
+      : "For this bundle's Azure Native 2.x surface, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.Zone and azure.network.RecordSet for public DNS.");
   }
 
   if (hasPrivateDns) {
-    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-      hints.push("For Azure Private DNS in these Azure Native v3 Front Door tasks, import privatedns from @pulumi/azure-native/privatedns and use privatedns.PrivateZone, privatedns.VirtualNetworkLink, and privatedns.PrivateRecordSet.");
-      hints.push("Do not use azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet in these v3 tasks. Keep private DNS on the privatedns submodule only.");
-    } else {
-      hints.push("For Azure Private DNS, use azure.network.PrivateZone, VirtualNetworkLink, and PrivateRecordSet resources with prompt-fixed zone and record names.");
-      hints.push("Do not import @pulumi/azure-native/network and then call network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet. For private DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet.");
-    }
+    hints.push(usesAzureNativeV3
+      ? "For Azure Private DNS, use azure.privatedns.PrivateZone, azure.privatedns.VirtualNetworkLink, and azure.privatedns.PrivateRecordSet resources with prompt-fixed zone and record names."
+      : "For Azure Private DNS in this bundle's Azure Native 2.x surface, use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet resources with prompt-fixed zone and record names.");
+    hints.push(usesAzureNativeV3
+      ? "Do not import @pulumi/azure-native/network and then call network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet. For private DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.privatedns.PrivateZone, azure.privatedns.VirtualNetworkLink, and azure.privatedns.PrivateRecordSet."
+      : "For this bundle's Azure Native 2.x surface, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet for private DNS.");
   }
 
   if (hasPublicDns && hasPrivateDns) {
-    hints.push("This task uses both Azure public DNS and Azure Private DNS. Keep them separate: use azure.network.Zone plus azure.network.RecordSet only for the public zone, and use azure.network.PrivateZone plus VirtualNetworkLink plus azure.network.PrivateRecordSet only for the private zone.");
-    hints.push("Do not use azure.network.RecordSet against the private zone. Do not use azure.network.PrivateRecordSet against the public zone.");
+    hints.push(usesAzureNativeV3
+      ? "This task uses both Azure public DNS and Azure Private DNS. Keep them separate: use azure.dns.Zone plus azure.dns.RecordSet only for the public zone, and use azure.privatedns.PrivateZone plus azure.privatedns.VirtualNetworkLink plus azure.privatedns.PrivateRecordSet only for the private zone."
+      : "This task uses both Azure public DNS and Azure Private DNS on the Azure Native 2.x surface. Keep them separate: use azure.network.Zone plus azure.network.RecordSet only for the public zone, and use azure.network.PrivateZone plus azure.network.VirtualNetworkLink plus azure.network.PrivateRecordSet only for the private zone.");
+    hints.push(usesAzureNativeV3
+      ? "Do not use azure.dns.RecordSet against the private zone. Do not use azure.privatedns.PrivateRecordSet against the public zone."
+      : "Do not use azure.network.RecordSet against the private zone. Do not use azure.network.PrivateRecordSet against the public zone.");
   }
 
   if (scenario.prompt.toLowerCase().includes('public ip')) {
@@ -5537,16 +5589,31 @@ function generationHints(scenario) {
     hints.push("For azure.dbforpostgresql.Database, set both charset and collation explicitly.");
   }
 
+  if (scenario.requiredSourceMarkers.some((marker) => {
+    const normalizedMarker = String(marker).toLowerCase();
+    return normalizedMarker.includes('cache.redis') || normalizedMarker.includes('redis.redis');
+  })) {
+    hints.push(usesAzureNativeV3
+      ? "For Azure Cache for Redis in this repo, use azure.redis.Redis. Do not use azure.cache.Redis."
+      : "For Azure Cache for Redis in this repo's Azure Native 2.x surface, use azure.cache.Redis.");
+  }
+
   if (scenario.prompt.toLowerCase().includes('action group')
     || scenario.prompt.toLowerCase().includes('metric alert')
     || scenario.prompt.toLowerCase().includes('activity log alert')) {
-    hints.push("For Azure Monitor alerting, use azure.insights.ActionGroup, azure.insights.MetricAlert, and azure.insights.ActivityLogAlert when the prompt asks for them.");
+    hints.push(usesAzureNativeV3
+      ? "For Azure Monitor alerting, use azure.monitor.ActionGroup, azure.monitor.MetricAlert, and azure.monitor.ActivityLogAlert when the prompt asks for them."
+      : "For Azure Monitor alerting in this bundle's Azure Native 2.x surface, use azure.insights.ActionGroup, azure.insights.MetricAlert, and azure.insights.ActivityLogAlert.");
     hints.push("ActionGroup requires actionGroupName and groupShortName. MetricAlert requires scopes plus a criteria block. ActivityLogAlert requires scopes, condition, an actions block that references the action group, and location set to global.");
-    hints.push("For azure.insights.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs.");
+    hints.push(usesAzureNativeV3
+      ? "For azure.monitor.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs."
+      : "For azure.insights.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('applicationinsights.'))) {
-    hints.push("This task must include an Application Insights component. In Azure Native v2, azure.insights.Component is acceptable. In v3 Front Door tasks, applicationinsights.Component is also acceptable.");
+    hints.push(usesAzureNativeV3
+      ? "This task must include an Application Insights component. Use azure.applicationinsights.Component in this repo."
+      : "This task must include an Application Insights component. Use azure.insights.Component in this repo's Azure Native 2.x surface.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('apimanagement'))) {
@@ -5574,29 +5641,66 @@ function generationHints(scenario) {
 function sourceSatisfiesMarker(tapStackText, marker) {
   const source = String(tapStackText ?? '').toLowerCase();
   const normalizedMarker = String(marker ?? '').toLowerCase();
+  const usesAzureNativeV3 = scenarioUsesAzureNativeV3ByText(source);
   if (source.includes(normalizedMarker)) return true;
+  if (normalizedMarker === 'frontdoor.policy') {
+    return /\bnetwork\.webapplicationfirewallpolicy\b/.test(source)
+      || /\bazure\.network\.webapplicationfirewallpolicy\b/.test(source);
+  }
   if (normalizedMarker === 'dns.zone') {
-    return /\bdns\.zone\b/.test(source)
-      || /\bazure\.dns\.zone\b/.test(source)
-      || /\bnetwork\.zone\b/.test(source)
-      || /\bazure\.network\.zone\b/.test(source);
+    return usesAzureNativeV3
+      ? /\bdns\.zone\b/.test(source) || /\bazure\.dns\.zone\b/.test(source)
+      : /\bnetwork\.zone\b/.test(source) || /\bazure\.network\.zone\b/.test(source);
   }
   if (normalizedMarker === 'dns.recordset') {
-    return /\bdns\.recordset\b/.test(source)
-      || /\bazure\.dns\.recordset\b/.test(source)
-      || /\bnetwork\.recordset\b/.test(source)
-      || /\bazure\.network\.recordset\b/.test(source);
+    return usesAzureNativeV3
+      ? /\bdns\.recordset\b/.test(source) || /\bazure\.dns\.recordset\b/.test(source)
+      : /\bnetwork\.recordset\b/.test(source) || /\bazure\.network\.recordset\b/.test(source);
   }
   if (normalizedMarker === 'network.privatezone') {
-    return /\bnetwork\.privatezone\b/.test(source)
-      || /\bprivatedns\.privatezone\b/.test(source)
-      || /\bazure\.network\.privatezone\b/.test(source)
-      || /\bazure\.privatedns\.privatezone\b/.test(source);
+    return usesAzureNativeV3
+      ? /\bprivatedns\.privatezone\b/.test(source) || /\bazure\.privatedns\.privatezone\b/.test(source)
+      : /\bnetwork\.privatezone\b/.test(source) || /\bazure\.network\.privatezone\b/.test(source);
+  }
+  if (normalizedMarker === 'privatedns.privatezone') {
+    return usesAzureNativeV3
+      ? /\bprivatedns\.privatezone\b/.test(source) || /\bazure\.privatedns\.privatezone\b/.test(source)
+      : /\bnetwork\.privatezone\b/.test(source) || /\bazure\.network\.privatezone\b/.test(source);
+  }
+  if (normalizedMarker === 'privatedns.virtualnetworklink') {
+    return usesAzureNativeV3
+      ? /\bprivatedns\.virtualnetworklink\b/.test(source) || /\bazure\.privatedns\.virtualnetworklink\b/.test(source)
+      : /\bnetwork\.virtualnetworklink\b/.test(source) || /\bazure\.network\.virtualnetworklink\b/.test(source);
+  }
+  if (normalizedMarker === 'privatedns.privaterecordset') {
+    return usesAzureNativeV3
+      ? /\bprivatedns\.privaterecordset\b/.test(source) || /\bazure\.privatedns\.privaterecordset\b/.test(source)
+      : /\bnetwork\.privaterecordset\b/.test(source) || /\bazure\.network\.privaterecordset\b/.test(source);
+  }
+  if (normalizedMarker === 'cache.redis' || normalizedMarker === 'redis.redis') {
+    return usesAzureNativeV3
+      ? /\bredis\.redis\b/.test(source) || /\bazure\.redis\.redis\b/.test(source)
+      : /\bcache\.redis\b/.test(source) || /\bazure\.cache\.redis\b/.test(source);
   }
   if (normalizedMarker === 'applicationinsights.' || normalizedMarker === 'applicationinsights.component') {
-    return /\bapplicationinsights\./.test(source)
-      || /\bazure\.insights\.component\b/.test(source)
-      || /\binsights\.component\b/.test(source);
+    return usesAzureNativeV3
+      ? /\bazure\.applicationinsights\.component\b/.test(source) || /\bapplicationinsights\.component\b/.test(source)
+      : /\bazure\.insights\.component\b/.test(source) || /\binsights\.component\b/.test(source);
+  }
+  if (normalizedMarker === 'monitor.actiongroup') {
+    return usesAzureNativeV3
+      ? /\bmonitor\.actiongroup\b/.test(source) || /\bazure\.monitor\.actiongroup\b/.test(source)
+      : /\binsights\.actiongroup\b/.test(source) || /\bazure\.insights\.actiongroup\b/.test(source);
+  }
+  if (normalizedMarker === 'monitor.metricalert') {
+    return usesAzureNativeV3
+      ? /\bmonitor\.metricalert\b/.test(source) || /\bazure\.monitor\.metricalert\b/.test(source)
+      : /\binsights\.metricalert\b/.test(source) || /\bazure\.insights\.metricalert\b/.test(source);
+  }
+  if (normalizedMarker === 'monitor.activitylogalert') {
+    return usesAzureNativeV3
+      ? /\bmonitor\.activitylogalert\b/.test(source) || /\bazure\.monitor\.activitylogalert\b/.test(source)
+      : /\binsights\.activitylogalert\b/.test(source) || /\bazure\.insights\.activitylogalert\b/.test(source);
   }
   if (normalizedMarker === 'devices.') {
     return /\bdevices\./.test(source)
@@ -5611,6 +5715,14 @@ function openAiInput(scenario, prompt) {
     ...generationHints(scenario),
     prompt,
   ].join("\n");
+}
+
+function scenarioUsesAzureNativeV3ByText(source) {
+  return /\b(?:azure\.)?dns\./.test(source)
+    || /\b(?:azure\.)?privatedns\./.test(source)
+    || /\b(?:azure\.)?applicationinsights\./.test(source)
+    || /\b(?:azure\.)?redis\.redis\b/.test(source)
+    || /\b(?:azure\.)?monitor\.(?:actiongroup|metricalert|activitylogalert)\b/.test(source);
 }
 
 function extractCodeBlocks(markdown) {
@@ -5683,6 +5795,9 @@ function outputText(response) {
 }
 
 function maxOutputTokensForScenario(scenario) {
+  if (Number.isFinite(scenario?.maxOutputTokens) && scenario.maxOutputTokens > 0) {
+    return Math.max(5000, Math.min(12000, Math.trunc(scenario.maxOutputTokens)));
+  }
   const integrationCheckBudget = (scenario.integrationChecks?.length ?? 0) * 120;
   const outputKeyBudget = (scenario.expectedOutputKeys?.length ?? 0) * 25;
   return Math.min(12000, Math.max(5000, 5000 + integrationCheckBudget + outputKeyBudget));
@@ -5738,27 +5853,39 @@ async function callOpenAI(scenario, prompt) {
 }
 
 function scenarioUsesPublicDns(scenario) {
-  return (scenario.requiredSourceMarkers ?? []).some((marker) => String(marker).includes('network.RecordSet'))
+  return (scenario.requiredSourceMarkers ?? []).some((marker) => {
+    const normalizedMarker = String(marker ?? '').toLowerCase();
+    return normalizedMarker.includes('dns.recordset') || normalizedMarker.includes('network.recordset');
+  })
     || (scenario.integrationChecks ?? []).some((check) => String(check.typePath ?? '').startsWith('dnsZones/'));
 }
 
 function scenarioUsesPrivateDns(scenario) {
-  return (scenario.requiredSourceMarkers ?? []).some((marker) => String(marker).includes('network.PrivateRecordSet'))
+  return (scenario.requiredSourceMarkers ?? []).some((marker) => {
+    const normalizedMarker = String(marker ?? '').toLowerCase();
+    return normalizedMarker.includes('privatedns.privaterecordset') || normalizedMarker.includes('network.privaterecordset');
+  })
     || (scenario.integrationChecks ?? []).some((check) => String(check.typePath ?? '').startsWith('privateDnsZones/'));
 }
 
 function scenarioUsesFrontDoorWafPolicyResource(scenario) {
-  return (scenario.integrationChecks ?? []).some(
+  return (scenario.requiredSourceMarkers ?? []).some(
+    (marker) => String(marker).toLowerCase() === 'frontdoor.policy',
+  ) || (scenario.integrationChecks ?? []).some(
     (check) => check.expectedType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies',
   );
 }
 
 function scenarioUsesFrontDoor(scenario) {
   return (scenario.requiredSourceMarkers ?? []).some(
-    (marker) => /cdn\.(AFDEndpoint|AFDOriginGroup|AFDOrigin|Route|SecurityPolicy)/i.test(String(marker)),
+    (marker) => /cdn\.(AFDEndpoint|AFDOriginGroup|AFDOrigin|Route|SecurityPolicy)/i.test(String(marker))
+      || String(marker).toLowerCase() === 'frontdoor.policy',
+  ) || Object.keys(scenario.resourceNames ?? {}).some(
+    (key) => key.toLowerCase().includes('frontdoor') || key.toLowerCase().includes('securitypolicy'),
   ) || (scenario.integrationChecks ?? []).some(
     (check) => String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/afdEndpoints')
-      || String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/originGroups'),
+      || String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/originGroups')
+      || String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/securityPolicies'),
   );
 }
 
@@ -5771,6 +5898,7 @@ function scenarioUsesApplicationGateway(scenario) {
 }
 
 export function validateTapStack(scenario, tapStackText) {
+  const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   if (!tapStackText.includes("export function createTapStack")) {
     throw new Error("missing export function createTapStack");
   }
@@ -5789,45 +5917,69 @@ export function validateTapStack(scenario, tapStackText) {
   }
   const hasPublicDns = scenarioUsesPublicDns(scenario);
   const hasPrivateDns = scenarioUsesPrivateDns(scenario);
-  const usesFrontDoorWafV3 = scenarioUsesFrontDoorWafPolicyResource(scenario);
-  const hasPublicRecordSet = /new\s+(?:(?:azure\.)?network|dns)\.RecordSet\(/.test(tapStackText);
-  const hasPrivateRecordSet = /new\s+(?:(?:azure\.)?network\.PrivateRecordSet|privatedns\.PrivateRecordSet)\(/.test(tapStackText);
-  const usesNetworkSubmoduleForDns = /from\s+["']@pulumi\/azure-native\/network["']/.test(tapStackText)
-    && /\bnetwork\.(?:Zone|RecordSet|PrivateZone|VirtualNetworkLink|PrivateRecordSet)\b/.test(tapStackText);
+  const hasPublicRecordSet = usesAzureNativeV3
+    ? /new\s+(?:azure\.)?dns\.RecordSet\(/.test(tapStackText)
+    : /new\s+(?:azure\.)?network\.RecordSet\(/.test(tapStackText);
+  const hasPrivateRecordSet = usesAzureNativeV3
+    ? /new\s+(?:azure\.)?privatedns\.PrivateRecordSet\(/.test(tapStackText)
+    : /new\s+(?:azure\.)?network\.PrivateRecordSet\(/.test(tapStackText);
+  const usesWrongNetworkNamespaceForDns = usesAzureNativeV3
+    && /\b(?:azure\.)?network\.(?:Zone|RecordSet|PrivateZone|VirtualNetworkLink|PrivateRecordSet)\b/.test(tapStackText);
+  const usesWrongDnsModulesForLegacy = !usesAzureNativeV3
+    && /\b(?:azure\.)?(?:dns\.(?:Zone|RecordSet)|privatedns\.(?:PrivateZone|VirtualNetworkLink|PrivateRecordSet))\b/.test(tapStackText);
+  const usesUnsupportedAzureNativeModules = /from\s+["']@pulumi\/azure-native\/frontdoor["']/.test(tapStackText);
 
   if (hasPrivateDns && !hasPrivateRecordSet) {
-    throw new Error('private DNS scenarios must create azure.network.PrivateRecordSet resources');
+    throw new Error(usesAzureNativeV3
+      ? 'private DNS scenarios must create azure.privatedns.PrivateRecordSet resources'
+      : 'private DNS scenarios must create azure.network.PrivateRecordSet resources');
   }
   if (hasPublicDns && !hasPublicRecordSet) {
-    throw new Error('public DNS scenarios must create azure.network.RecordSet resources');
+    throw new Error(usesAzureNativeV3
+      ? 'public DNS scenarios must create azure.dns.RecordSet resources'
+      : 'public DNS scenarios must create azure.network.RecordSet resources');
   }
-  if ((hasPublicDns || hasPrivateDns) && usesNetworkSubmoduleForDns) {
-    if (usesFrontDoorWafV3) {
-      throw new Error('Front Door WAF v3 DNS scenarios must not use @pulumi/azure-native/network for DNS resources; use @pulumi/azure-native/dns for public DNS and @pulumi/azure-native/privatedns for private DNS');
-    }
-    throw new Error('DNS scenarios must not use @pulumi/azure-native/network for Zone, RecordSet, PrivateZone, VirtualNetworkLink, or PrivateRecordSet; use a top-level azure import and call azure.network.* instead');
+  if (usesUnsupportedAzureNativeModules) {
+    throw new Error('This repo\'s shipped Azure Native version does not expose @pulumi/azure-native/frontdoor; use azure.cdn.* plus azure.network.WebApplicationFirewallPolicy instead');
   }
-  if (usesFrontDoorWafV3 && hasPublicDns && /\b(?:azure\.)?network\.(?:Zone|RecordSet)\b/.test(tapStackText)) {
-    throw new Error('Front Door WAF v3 DNS scenarios must use @pulumi/azure-native/dns for public DNS resources, not azure.network.Zone or azure.network.RecordSet');
+  if (/\bWorkspaceResourceId\s*:/.test(tapStackText)) {
+    throw new Error(usesAzureNativeV3
+      ? 'For azure.applicationinsights.Component, use workspaceResourceId, not WorkspaceResourceId.'
+      : 'For azure.insights.Component, use workspaceResourceId, not WorkspaceResourceId.');
   }
-  if (usesFrontDoorWafV3 && hasPrivateDns && /\b(?:azure\.)?network\.(?:PrivateZone|VirtualNetworkLink|PrivateRecordSet)\b/.test(tapStackText)) {
-    throw new Error('Front Door WAF v3 DNS scenarios must use @pulumi/azure-native/privatedns for private DNS resources, not azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet');
+  if ((hasPublicDns || hasPrivateDns) && usesWrongNetworkNamespaceForDns) {
+    throw new Error('DNS scenarios must not use network.Zone, network.RecordSet, network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet; use azure.dns.* for public DNS and azure.privatedns.* for private DNS.');
+  }
+  if ((hasPublicDns || hasPrivateDns) && usesWrongDnsModulesForLegacy) {
+    throw new Error('This bundle uses the Azure Native 2.x surface. Use azure.network.Zone and azure.network.RecordSet for public DNS, and use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet for private DNS.');
   }
   if (hasPrivateDns && !hasPublicDns && hasPublicRecordSet) {
-    throw new Error('private DNS-only scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
+    throw new Error(usesAzureNativeV3
+      ? 'private DNS-only scenarios must use azure.privatedns.PrivateRecordSet, not azure.dns.RecordSet'
+      : 'private DNS-only scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
+  }
+  if (scenarioUsesFrontDoor(scenario) && /new\s+(?:azure\.)?cdn\.Route\([\s\S]*?\borigins\s*:/.test(tapStackText)) {
+    throw new Error('Azure Front Door RouteArgs must use originGroup, not origins, in this repo\'s shipped Azure Native version.');
   }
   if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-    if (!tapStackText.includes('frontdoor.Policy')) {
-      throw new Error('Front Door WAF scenarios must use azure.frontdoor.Policy.');
+    if (/(?:azure\.)?(?:cdn\.(?:WebApplicationFirewallPolicy|FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy)|network\.(?:FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy))\b/.test(tapStackText)) {
+      throw new Error('Front Door WAF scenarios must use azure.network.WebApplicationFirewallPolicy, not FrontDoorWebApplicationFirewallPolicy or azure.cdn.* WebApplicationFirewallPolicy resources, in this repo\'s shipped Azure Native version.');
     }
-    if (tapStackText.includes('network.WebApplicationFirewallPolicy')) {
-      throw new Error('Front Door WAF scenarios must not use azure.network.WebApplicationFirewallPolicy.');
+    const hasFrontDoorWaf = tapStackText.includes('network.WebApplicationFirewallPolicy')
+      || tapStackText.includes('azure.network.WebApplicationFirewallPolicy');
+    if (!hasFrontDoorWaf) {
+      throw new Error('Front Door WAF scenarios must declare a Front Door WAF policy resource.');
     }
-    if (tapStackText.includes('@pulumi/azure-native/insights')) {
-      throw new Error('Front Door WAF v3 scenarios must not import @pulumi/azure-native/insights; use @pulumi/azure-native/monitor and @pulumi/azure-native/applicationinsights instead');
-    }
-    if (!tapStackText.includes('@pulumi/azure-native/monitor')) {
-      throw new Error('Front Door WAF v3 scenarios must import @pulumi/azure-native/monitor for ActionGroup, MetricAlert, and ActivityLogAlert');
+    for (const block of tapStackText.match(/new\s+(?:azure\.)?network\.WebApplicationFirewallPolicy\([\s\S]*?\n\s*}\s*(?:as\s+any)?\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+      if (/\bpolicySettings\s*:\s*{[\s\S]*?\benabledState\b/.test(block)) {
+        throw new Error('Front Door WAF scenarios must use policySettings.state, not policySettings.enabledState, on azure.network.WebApplicationFirewallPolicy.');
+      }
+      if (/\bsku\s*:/.test(block)) {
+        throw new Error('Front Door WAF scenarios must not set a top-level sku on azure.network.WebApplicationFirewallPolicy in this repo\'s shipped Azure Native version.');
+      }
+      if (/}\s*as\s+any\s*(?:,\s*\{[\s\S]*?\})?\s*\);/.test(block)) {
+        throw new Error('Front Door WAF scenarios must not cast azure.network.WebApplicationFirewallPolicy payloads with "as any". Use the typed WebApplicationFirewallPolicyArgs shape.');
+      }
     }
   }
   if (scenarioUsesApplicationGateway(scenario)
@@ -5838,14 +5990,22 @@ export function validateTapStack(scenario, tapStackText) {
     && !/\bgatewayIPConfigurations\b/.test(tapStackText)) {
     throw new Error('application gateway scenarios must declare gatewayIPConfigurations with subnet references');
   }
-  for (const block of tapStackText.match(/new\s+(?:(?:azure\.)?network|dns)\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+  const publicRecordSetPattern = usesAzureNativeV3
+    ? /new\s+(?:azure\.)?dns\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g
+    : /new\s+(?:azure\.)?network\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  for (const block of tapStackText.match(publicRecordSetPattern) ?? []) {
     if (/\bprivateZoneName\b/.test(block)) {
       throw new Error('public DNS RecordSet resources must target the public zone with zoneName, not a privateZoneName');
     }
   }
-  for (const block of tapStackText.match(/new\s+(?:azure\.)?network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+  const privateRecordSetPattern = usesAzureNativeV3
+    ? /new\s+(?:azure\.)?privatedns\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g
+    : /new\s+(?:azure\.)?network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  for (const block of tapStackText.match(privateRecordSetPattern) ?? []) {
     if (/\bzoneName\b/.test(block)) {
-      throw new Error('azure.network.PrivateRecordSet must target the private zone with privateZoneName, not zoneName');
+      throw new Error(usesAzureNativeV3
+        ? 'azure.privatedns.PrivateRecordSet must target the private zone with privateZoneName, not zoneName'
+        : 'azure.network.PrivateRecordSet must target the private zone with privateZoneName, not zoneName');
     }
   }
   for (const marker of scenario.requiredSourceMarkers) {
@@ -5861,9 +6021,43 @@ export function validateTapStack(scenario, tapStackText) {
 }
 
 function repairPrompt(scenario, originalPrompt, error, previousResponse) {
+  const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   const extraGuidance = [];
+  if (String(error).includes('missing scenario marker frontdoor.policy')) {
+    extraGuidance.push('This task must declare an Azure Front Door WAF policy using azure.network.WebApplicationFirewallPolicy in the shipped Azure Native version for this repo.');
+    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. Attach the WAF policy id through azure.cdn.SecurityPolicy.');
+    extraGuidance.push('Keep the policy name fixed to the prompt and use managedRules, customRules, and policySettings only unless the generated SDK type proves additional fields are accepted.');
+  }
+  if (String(error).includes('must use azure.network.WebApplicationFirewallPolicy, not FrontDoorWebApplicationFirewallPolicy')) {
+    extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
+    extraGuidance.push('Do not use azure.network.FrontDoorWebApplicationFirewallPolicy, azure.network.AfdWebApplicationFirewallPolicy, azure.cdn.WebApplicationFirewallPolicy, azure.cdn.FrontDoorWebApplicationFirewallPolicy, or azure.cdn.AfdWebApplicationFirewallPolicy. In this repo, Front Door WAF must be azure.network.WebApplicationFirewallPolicy.');
+    extraGuidance.push('Rewrite it exactly as: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
+  }
+  if (String(error).includes('policySettings.state, not policySettings.enabledState')) {
+    extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
+    extraGuidance.push('For azure.network.WebApplicationFirewallPolicy, set policySettings.state: "Enabled" or "Disabled". Do not use policySettings.enabledState.');
+    extraGuidance.push('Use this exact WAF resource shape and only substitute the prompt-fixed name variables: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
+  }
+  if (String(error).includes('must not set a top-level sku on azure.network.WebApplicationFirewallPolicy')) {
+    extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
+    extraGuidance.push('Remove the top-level sku from azure.network.WebApplicationFirewallPolicy. Keep location, policyName, policySettings, managedRules, and customRules only.');
+    extraGuidance.push('Use this exact WAF resource shape and do not add any extra top-level fields: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
+  }
+  if (String(error).includes('must not cast azure.network.WebApplicationFirewallPolicy payloads with "as any"')) {
+    extraGuidance.push('Do not cast azure.network.WebApplicationFirewallPolicy with "as any". Use the typed payload shape so invalid properties fail before deploy.');
+  }
+  if (String(error).includes('RouteArgs must use originGroup, not origins')) {
+    extraGuidance.push('For azure.cdn.Route in this repo, use the originGroup property only. Do not set origins on the route payload.');
+  }
+  if (String(error).includes('use workspaceResourceId, not WorkspaceResourceId')) {
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.applicationinsights.Component, use workspaceResourceId in lower camel case. Do not use WorkspaceResourceId.'
+      : 'For azure.insights.Component, use workspaceResourceId in lower camel case. Do not use WorkspaceResourceId.');
+  }
   if (String(error).includes('missing scenario marker applicationinsights.')) {
-    extraGuidance.push('This task must declare an Application Insights component. In Azure Native v2, azure.insights.Component is valid. In v3 Front Door tasks, applicationinsights.Component is also valid.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'This task must declare an Application Insights component using azure.applicationinsights.Component.'
+      : 'This task must declare an Application Insights component using azure.insights.Component.');
   }
   if (String(error).includes('missing scenario marker devices.')) {
     extraGuidance.push('This task must declare Azure IoT Hub resources. In Front Door / v3-style tasks, import iothub from @pulumi/azure-native/iothub and use iothub.IotHubResource. In top-level v2 tasks, azure.devices.IotHubResource is valid.');
@@ -5886,6 +6080,7 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
 }
 
 function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapStack) {
+  const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   const extraGuidance = [];
   if (String(runFailure).includes('Microsoft.ServiceBus/namespaces/topics/subscriptions')
     && String(runFailure).includes('ParentResourceNotFound')) {
@@ -5897,8 +6092,13 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('ApplicationGatewaySkuNotSupported')) {
     extraGuidance.push('Use Azure Application Gateway v2. Set sku.name and sku.tier to Standard_v2 or WAF_v2.');
   }
-  if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/insights'")) {
-    extraGuidance.push('Do not import @pulumi/azure-native/insights. In these v3 Front Door scenarios, import monitor from @pulumi/azure-native/monitor and import applicationinsights from @pulumi/azure-native/applicationinsights.');
+  if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/frontdoor'")) {
+    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. In this repo, declare Front Door WAF with azure.network.WebApplicationFirewallPolicy and keep Front Door profile, endpoints, routes, and security policy on azure.cdn.');
+  }
+  if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/applicationinsights'")) {
+    extraGuidance.push(usesAzureNativeV3
+      ? 'Import Application Insights from the top-level azure namespace and use azure.applicationinsights.Component in this repo.'
+      : 'Do not import @pulumi/azure-native/applicationinsights in this bundle. Use azure.insights.Component from the top-level azure namespace.');
   }
   if (String(runFailure).includes('SubnetIsRequired')
     && String(runFailure).includes('Application gateway subnet is required')) {
@@ -5923,40 +6123,55 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('ParentResourceNotFound')) {
     extraGuidance.push('Your Azure Front Door origin group raced the parent profile. Add dependsOn: [profile] to each cdn.AFDOriginGroup and then depend child origins on that origin group.');
   }
-  if (String(runFailure).includes('CdnWebApplicationFirewallPolicy')) {
-    extraGuidance.push('Use azure.network.WebApplicationFirewallPolicy for Front Door WAF, then attach it with azure.cdn.SecurityPolicy.');
+  if (String(runFailure).includes('CdnWebApplicationFirewallPolicy')
+    || String(runFailure).includes('FrontDoorWebApplicationFirewallPolicy')
+    || String(runFailure).includes('AfdWebApplicationFirewallPolicy')
+    || (String(runFailure).includes("Property 'WebApplicationFirewallPolicy' does not exist") && String(runFailure).includes('/cdn/index'))) {
+    extraGuidance.push('Use azure.network.WebApplicationFirewallPolicy for Azure Front Door WAF in this repo, then attach it with azure.cdn.SecurityPolicy.');
+    extraGuidance.push('Do not use nonexistent Front Door WAF classes from azure.cdn or @pulumi/azure-native/frontdoor in this runner image.');
   }
   if (String(runFailure).includes('privateZoneName')
     && String(runFailure).includes('RecordSetArgs')) {
-    extraGuidance.push('For private DNS records, use azure.network.PrivateRecordSet instead of azure.network.RecordSet.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For private DNS records, use azure.privatedns.PrivateRecordSet instead of azure.dns.RecordSet.'
+      : 'For private DNS records, use azure.network.PrivateRecordSet instead of azure.network.RecordSet.');
+  }
+  if (!usesAzureNativeV3
+    && (String(runFailure).includes("Property 'dns' does not exist")
+      || String(runFailure).includes("Property 'privatedns' does not exist"))) {
+    extraGuidance.push('This bundle uses the Azure Native 2.x surface. Do not use azure.dns.* or azure.privatedns.* here.');
+    extraGuidance.push('Use azure.network.Zone and azure.network.RecordSet for public DNS, and use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet for private DNS.');
   }
   if (String(runFailure).includes("Property 'Zone' does not exist")
     || String(runFailure).includes("Property 'PrivateZone' does not exist")
     || String(runFailure).includes("Property 'RecordSet' does not exist")
     || String(runFailure).includes("Property 'PrivateRecordSet' does not exist")
     || String(runFailure).includes("Property 'VirtualNetworkLink' does not exist")) {
-    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-      extraGuidance.push('This task uses Azure Native v3 because it includes Front Door WAF resources.');
-      extraGuidance.push('For public DNS in these v3 tasks, import dns from "@pulumi/azure-native/dns" and use dns.Zone plus dns.RecordSet.');
-      extraGuidance.push('For private DNS in these v3 tasks, import privatedns from "@pulumi/azure-native/privatedns" and use privatedns.PrivateZone, privatedns.VirtualNetworkLink, and privatedns.PrivateRecordSet.');
-      extraGuidance.push('Do not use azure.network.Zone, azure.network.RecordSet, azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet in this v3 task.');
-    } else {
+    if (usesAzureNativeV3) {
       extraGuidance.push('Do not import @pulumi/azure-native/network and then call network.Zone, network.RecordSet, network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet.');
-      extraGuidance.push('For DNS resources in this repo, prefer import * as azure from "@pulumi/azure-native" and then create azure.network.Zone, azure.network.RecordSet, azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet.');
+      extraGuidance.push('For DNS resources in this repo, prefer import * as azure from "@pulumi/azure-native" and then create azure.dns.Zone, azure.dns.RecordSet, azure.privatedns.PrivateZone, azure.privatedns.VirtualNetworkLink, and azure.privatedns.PrivateRecordSet.');
+    } else {
+      extraGuidance.push('This bundle uses the Azure Native 2.x surface. Use azure.network.Zone and azure.network.RecordSet for public DNS, and use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet for private DNS.');
     }
   }
   if (String(runFailure).includes('ParentResourceNotFound')
     && String(runFailure).includes('Microsoft.Network/dnsZones/A')) {
-    extraGuidance.push('You used public DNS record-set semantics against a private DNS zone. Replace azure.network.RecordSet with azure.network.PrivateRecordSet and use privateZoneName instead of zoneName.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'You used public DNS record-set semantics against a private DNS zone. Replace azure.dns.RecordSet with azure.privatedns.PrivateRecordSet and use privateZoneName instead of zoneName.'
+      : 'You used public DNS record-set semantics against a private DNS zone. Replace azure.network.RecordSet with azure.network.PrivateRecordSet and use privateZoneName instead of zoneName.');
   }
   if (String(runFailure).includes('RecordSetArgs')
     && String(runFailure).includes('zoneName')
     && String(runFailure).includes('relativeRecordSetName')) {
-    extraGuidance.push('For Azure public DNS, keep azure.network.RecordSet on the public zone, use zoneName for the zone, and use relativeRecordSetName values like east or api rather than full FQDNs.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For Azure public DNS, keep azure.dns.RecordSet on the public zone, use zoneName for the zone, and use relativeRecordSetName values like east or api rather than full FQDNs.'
+      : 'For Azure public DNS, keep azure.network.RecordSet on the public zone, use zoneName for the zone, and use relativeRecordSetName values like east or api rather than full FQDNs.');
   }
   if (scenarioUsesPublicDns(scenario)
     && scenarioUsesPrivateDns(scenario)) {
-    extraGuidance.push('This scenario mixes public and private DNS. Keep azure.network.RecordSet only on the public DNS zone and keep azure.network.PrivateRecordSet only on the private DNS zone.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'This scenario mixes public and private DNS. Keep azure.dns.RecordSet only on the public DNS zone and keep azure.privatedns.PrivateRecordSet only on the private DNS zone.'
+      : 'This scenario mixes public and private DNS. Keep azure.network.RecordSet only on the public DNS zone and keep azure.network.PrivateRecordSet only on the private DNS zone.');
   }
   if (String(runFailure).includes('PublicIPAddress')
     && String(runFailure).includes('sku')) {
@@ -5996,21 +6211,51 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('WebApplicationFirewallPolicyArgs')) {
     extraGuidance.push('Remove the top-level sku property from azure.network.WebApplicationFirewallPolicy. Keep policySettings, customRules, and managedRules only.');
   }
+  if (String(runFailure).includes('Application Gateway WAF policySettings.state must be')) {
+    extraGuidance.push('For azure.network.WebApplicationFirewallPolicy, set policySettings.state to "Enabled" or "Disabled". Do not use policySettings.enabledState.');
+    extraGuidance.push('Do not cast the WebApplicationFirewallPolicy payload with "as any", because that can hide the wrong policySettings shape until deploy time.');
+  }
+  if (usesAzureNativeV3
+    && String(runFailure).includes("Property 'insights' does not exist")) {
+    extraGuidance.push('Do not use azure.insights.* in this repo. Use azure.monitor.ActionGroup, azure.monitor.MetricAlert, and azure.monitor.ActivityLogAlert for Azure Monitor, and use azure.applicationinsights.Component for Application Insights.');
+  }
+  if (!usesAzureNativeV3
+    && (String(runFailure).includes("Property 'applicationinsights' does not exist")
+      || String(runFailure).includes("Property 'monitor' does not exist")
+      || (String(runFailure).includes("Property 'ActionGroup' does not exist") && String(runFailure).includes('/monitor/index'))
+      || (String(runFailure).includes("Property 'MetricAlert' does not exist") && String(runFailure).includes('/monitor/index'))
+      || (String(runFailure).includes("Property 'ActivityLogAlert' does not exist") && String(runFailure).includes('/monitor/index')))) {
+    extraGuidance.push('This bundle uses the Azure Native 2.x surface. Use azure.insights.Component for Application Insights, and use azure.insights.ActionGroup, azure.insights.MetricAlert, and azure.insights.ActivityLogAlert for alerting.');
+  }
+  if (usesAzureNativeV3
+    && String(runFailure).includes("Property 'cache' does not exist")) {
+    extraGuidance.push('Do not use azure.cache.Redis in this repo. Use azure.redis.Redis.');
+  }
+  if (!usesAzureNativeV3
+    && String(runFailure).includes("Property 'redis' does not exist")) {
+    extraGuidance.push('This bundle uses the Azure Native 2.x surface. Use azure.cache.Redis here.');
+  }
   if (String(runFailure).includes("Property 'location' must be 'global'")) {
-    extraGuidance.push('For azure.insights.ActivityLogAlert, set location to "global".');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.monitor.ActivityLogAlert, set location to "global".'
+      : 'For azure.insights.ActivityLogAlert, set location to "global".');
   }
   if (String(runFailure).includes("DNS zones must use location 'global'")) {
     extraGuidance.push('For Azure public DNS zones, set location to "global".');
   }
   if (String(runFailure).includes('Application_Type')
     && String(runFailure).includes('ComponentArgs')) {
-    extraGuidance.push('For azure.insights.Component, replace Application_Type with applicationType.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.applicationinsights.Component, replace Application_Type with applicationType.'
+      : 'For azure.insights.Component, replace Application_Type with applicationType.');
   }
   if ((String(runFailure).includes('kind')
       && String(runFailure).includes('ComponentArgs'))
     || (String(runFailure).includes("Property 'kind' is missing")
       && String(runFailure).includes('Component'))) {
-    extraGuidance.push('For azure.insights.Component, set both kind: "web" and applicationType: "web" unless the prompt explicitly requires a different exact shape.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.applicationinsights.Component, set both kind: "web" and applicationType: "web" unless the prompt explicitly requires a different exact shape.'
+      : 'For azure.insights.Component, set both kind: "web" and applicationType: "web" unless the prompt explicitly requires a different exact shape.');
   }
   if ((String(runFailure).includes('TS2322')
       || String(runFailure).includes('is not assignable to type'))
@@ -6019,7 +6264,9 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   }
   if (String(runFailure).includes('odata.type')
     && String(runFailure).includes('MetricAlert')) {
-    extraGuidance.push('For azure.insights.MetricAlert criteria, remove raw ARM fields like "odata.type" and use the typed Azure Native criteria shape only.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.monitor.MetricAlert criteria, remove raw ARM fields like "odata.type" and use the typed Azure Native criteria shape only.'
+      : 'For azure.insights.MetricAlert criteria, remove raw ARM fields like "odata.type" and use the typed Azure Native criteria shape only.');
   }
   if (String(runFailure).includes('invalid URL output')) {
     extraGuidance.push('For output keys ending in Url or Endpoint, emit exactly one https:// scheme. If the Azure Native property already includes https://, export it directly without prepending another scheme.');
