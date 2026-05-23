@@ -134,6 +134,36 @@ storage_account_name() {
   jq -r '.parameters.storageAccountName.value // empty' "${PLATFORM_PARAMETERS}"
 }
 
+storage_account_host_aliases() {
+  {
+    storage_account_name
+    if [ -f "$(task_metadata_path)" ]; then
+      jq -r '
+        .integrationChecks[]?
+        | select(.provider == "Microsoft.Storage")
+        | .typePath
+        | capture("^storageAccounts/(?<account>[^/]+)").account
+      ' "$(task_metadata_path)" 2>/dev/null || true
+    fi
+  } | awk 'NF { print tolower($0) }' | awk '!seen[$0]++'
+}
+
+key_vault_host_aliases() {
+  {
+    if [ -f "$(task_metadata_path)" ]; then
+      jq -r '
+        [
+          (.resourceNames.keyVault // empty),
+          (.integrationChecks[]?
+            | select(.provider == "Microsoft.KeyVault")
+            | .typePath
+            | capture("^vaults/(?<vault>[^/]+)").vault)
+        ] | .[]
+      ' "$(task_metadata_path)" 2>/dev/null || true
+    fi
+  } | awk 'NF { print tolower($0) }' | awk '!seen[$0]++'
+}
+
 local_access_token() {
   jq -r '.access_token' "${PLATFORM_TOKEN_RESPONSE}"
 }
@@ -490,6 +520,8 @@ setup_pulumi_transparent_globalstack_proxy() {
   local proxy="${PLATFORM_TRANSPARENT_PROXY_DIR}/proxy.py"
   local pid_file="${PLATFORM_TRANSPARENT_PROXY_DIR}/proxy.pid"
   local hosts="management.azure.com login.microsoftonline.com login.windows.net login.microsoft.com sts.windows.net"
+  local storage_account
+  local vault_name
 
   if [ ! -f "${cert}" ] || [ ! -f "${key}" ]; then
     openssl req \
@@ -501,7 +533,7 @@ setup_pulumi_transparent_globalstack_proxy() {
       -keyout "${key}" \
       -out "${cert}" \
       -subj '/CN=management.azure.com' \
-      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,IP:127.0.0.1' >/dev/null 2>&1
+      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,DNS:*.blob.core.windows.net,DNS:*.queue.core.windows.net,DNS:*.table.core.windows.net,DNS:*.vault.azure.net,IP:127.0.0.1' >/dev/null 2>&1
   fi
 
   for host in ${hosts}; do
@@ -509,6 +541,24 @@ setup_pulumi_transparent_globalstack_proxy() {
       printf '127.0.0.1 %s\n' "${host}" >> /etc/hosts
     fi
   done
+
+  while IFS= read -r storage_account; do
+    [ -n "${storage_account}" ] || continue
+    for suffix in blob.core.windows.net queue.core.windows.net table.core.windows.net; do
+      local storage_host="${storage_account}.${suffix}"
+      if ! grep -Eq "^[[:space:]]*127\\.0\\.0\\.1[[:space:]].*\\b${storage_host}\\b" /etc/hosts; then
+        printf '127.0.0.1 %s\n' "${storage_host}" >> /etc/hosts
+      fi
+    done
+  done < <(storage_account_host_aliases)
+
+  while IFS= read -r vault_name; do
+    [ -n "${vault_name}" ] || continue
+    local vault_host="${vault_name}.vault.azure.net"
+    if ! grep -Eq "^[[:space:]]*127\\.0\\.0\\.1[[:space:]].*\\b${vault_host}\\b" /etc/hosts; then
+      printf '127.0.0.1 %s\n' "${vault_host}" >> /etc/hosts
+    fi
+  done < <(key_vault_host_aliases)
 
   if command -v update-ca-certificates >/dev/null 2>&1; then
     cp "${cert}" /usr/local/share/ca-certificates/globalstack-transparent.crt
@@ -526,8 +576,26 @@ import ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
-target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_PROXY_TARGET"])
-target_port = target.port or (443 if target.scheme == "https" else 80)
+arm_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_PROXY_TARGET"])
+blob_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_BLOB_TARGET"])
+queue_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_QUEUE_TARGET"])
+table_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_TABLE_TARGET"])
+key_vault_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET"])
+
+def target_parts(parsed):
+    return parsed, parsed.port or (443 if parsed.scheme == "https" else 80)
+
+def target_for_host(host):
+    lower = (host or "").split(":", 1)[0].lower()
+    if lower.endswith(".blob.core.windows.net"):
+        return target_parts(blob_target)
+    if lower.endswith(".queue.core.windows.net"):
+        return target_parts(queue_target)
+    if lower.endswith(".table.core.windows.net"):
+        return target_parts(table_target)
+    if lower.endswith(".vault.azure.net"):
+        return target_parts(key_vault_target)
+    return target_parts(arm_target)
 
 class Proxy(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -538,7 +606,9 @@ class Proxy(BaseHTTPRequestHandler):
     def _proxy(self):
         length = int(self.headers.get("content-length", "0") or "0")
         body = self.rfile.read(length) if length else None
-        conn = http.client.HTTPConnection(target.hostname, target_port, timeout=60)
+        target, target_port = target_for_host(self.headers.get("host", "management.azure.com"))
+        connection_cls = http.client.HTTPSConnection if target.scheme == "https" else http.client.HTTPConnection
+        conn = connection_cls(target.hostname, target_port, timeout=60)
         headers = {k: v for k, v in self.headers.items() if k.lower() not in {"host", "content-length"}}
         headers["host"] = self.headers.get("host", "management.azure.com")
         headers["x-forwarded-proto"] = "https"
@@ -572,6 +642,10 @@ server.serve_forever()
 PY
 
   GLOBALSTACK_TRANSPARENT_PROXY_TARGET="${AZURE_ENDPOINT_URL%/}" \
+  GLOBALSTACK_TRANSPARENT_BLOB_TARGET="http://127.0.0.1:${GLOBALSTACK_BLOB_PORT:-10000}" \
+  GLOBALSTACK_TRANSPARENT_QUEUE_TARGET="http://127.0.0.1:${GLOBALSTACK_QUEUE_PORT:-10001}" \
+  GLOBALSTACK_TRANSPARENT_TABLE_TARGET="http://127.0.0.1:${GLOBALSTACK_TABLE_PORT:-10002}" \
+  GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET="http://127.0.0.1:${GLOBALSTACK_KEY_VAULT_PORT:-10003}" \
   GLOBALSTACK_TRANSPARENT_PROXY_PORT="${PLATFORM_TRANSPARENT_PROXY_PORT}" \
   GLOBALSTACK_TRANSPARENT_PROXY_CERT="${cert}" \
   GLOBALSTACK_TRANSPARENT_PROXY_KEY="${key}" \

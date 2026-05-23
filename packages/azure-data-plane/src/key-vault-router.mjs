@@ -23,13 +23,22 @@ function sendJson(res, status, body, headers = {}) {
   res.end(payload);
 }
 
-function sendError(res, status, code, message) {
+function sendError(res, status, code, message, headers = {}) {
   sendJson(res, status, {
     error: {
       code,
       message,
     },
-  });
+  }, headers);
+}
+
+function authChallenge(vault) {
+  const tenantId = process.env.GLOBALSTACK_ARM_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
+  const authorization = `https://login.windows.net/${tenantId}`;
+  const resource = 'https://vault.azure.net';
+  return {
+    'www-authenticate': `Bearer authorization="${authorization}", resource="${resource}"`,
+  };
 }
 
 function vaultFromHost(host) {
@@ -49,10 +58,15 @@ function requireApiVersion(url) {
   return null;
 }
 
-function requireAuth(req) {
+function requireAuth(req, vault = null) {
   const auth = String(req.headers.authorization ?? '');
   if (!auth.match(/^Bearer\s+.+/i)) {
-    return { status: 401, code: 'Unauthorized', message: 'AKV10000: Request is missing a Bearer authorization token.' };
+    return {
+      status: 401,
+      code: 'Unauthorized',
+      message: 'AKV10000: Request is missing a Bearer authorization token.',
+      headers: authChallenge(vault),
+    };
   }
   return null;
 }
@@ -85,15 +99,21 @@ function publicJwk(publicKey, kid, keyOps) {
 }
 
 export class KeyVaultRouter {
-  constructor() {
+  constructor({ onSecretSet, onSecretDelete, onKeyCreate, onKeyDelete } = {}) {
     this.vaults = new Map();
+    this.onSecretSet = onSecretSet ?? null;
+    this.onSecretDelete = onSecretDelete ?? null;
+    this.onKeyCreate = onKeyCreate ?? null;
+    this.onKeyDelete = onKeyDelete ?? null;
   }
 
-  registerVault({ vaultName, vaultUri }) {
+  registerVault({ vaultName, vaultUri, subscriptionId = null, resourceGroupName = null }) {
     const name = String(vaultName);
     this.vaults.set(name.toLowerCase(), {
       vaultName: name,
       vaultUri: vaultUri ?? `https://${name}.vault.azure.net/`,
+      subscriptionId,
+      resourceGroupName,
       secrets: new Map(),
       deletedSecrets: new Map(),
       keys: new Map(),
@@ -104,7 +124,7 @@ export class KeyVaultRouter {
     this.vaults.delete(String(vaultName).toLowerCase());
   }
 
-  setSecret({ vaultName, secretName, value, contentType, tags = {}, attributes = {} }) {
+  setSecret({ vaultName, secretName, value, contentType, tags = {}, attributes = {}, emitHook = true }) {
     const vault = this.vaults.get(String(vaultName).toLowerCase());
     if (!vault) throw new Error(`Key Vault ${vaultName} is not registered in the local router.`);
     const version = versionId(`${vault.vaultName}:secret:${secretName}:${Date.now()}:${randomUUID()}`);
@@ -130,9 +150,31 @@ export class KeyVaultRouter {
       ...record,
       versions,
     });
+    if (emitHook && this.onSecretSet) {
+      this.onSecretSet({
+        subscriptionId: vault.subscriptionId,
+        resourceGroupName: vault.resourceGroupName,
+        vaultName: vault.vaultName,
+        vaultUri: vault.vaultUri,
+        secretName,
+        value,
+        contentType: contentType ?? null,
+        tags,
+        attributes: {
+          enabled: record.attributes.enabled,
+        },
+      });
+    }
   }
 
-  createKey({ vaultName, keyName, kty = 'RSA', keyOps = ['encrypt', 'decrypt'], keySize = 2048, tags = {} }) {
+  removeSecret({ vaultName, secretName }) {
+    const vault = this.vaults.get(String(vaultName).toLowerCase());
+    if (!vault) return null;
+    vault.deletedSecrets.delete(String(secretName).toLowerCase());
+    return vault.secrets.delete(String(secretName).toLowerCase());
+  }
+
+  createKey({ vaultName, keyName, kty = 'RSA', keyOps = ['encrypt', 'decrypt'], keySize = 2048, tags = {}, emitHook = true }) {
     const vault = this.vaults.get(String(vaultName).toLowerCase());
     if (!vault) throw new Error(`Key Vault ${vaultName} is not registered in the local router.`);
     const version = versionId(`${vault.vaultName}:key:${keyName}:${Date.now()}`);
@@ -153,6 +195,25 @@ export class KeyVaultRouter {
         updated: Math.floor(Date.now() / 1000),
       },
     });
+    if (emitHook && this.onKeyCreate) {
+      this.onKeyCreate({
+        subscriptionId: vault.subscriptionId,
+        resourceGroupName: vault.resourceGroupName,
+        vaultName: vault.vaultName,
+        vaultUri: vault.vaultUri,
+        keyName,
+        kty,
+        keyOps,
+        keySize,
+        tags,
+      });
+    }
+  }
+
+  removeKey({ vaultName, keyName }) {
+    const vault = this.vaults.get(String(vaultName).toLowerCase());
+    if (!vault) return null;
+    return vault.keys.delete(String(keyName).toLowerCase());
   }
 
   handler() {
@@ -169,9 +230,6 @@ export class KeyVaultRouter {
         return sendError(res, 404, 'GlobalStackRouteNotImplemented', `No Key Vault inspection route handles ${url.pathname}.`);
       }
 
-      const authError = requireAuth(req);
-      if (authError) return sendError(res, authError.status, authError.code, authError.message);
-
       const versionError = requireApiVersion(url);
       if (versionError) return sendError(res, versionError.status, versionError.code, versionError.message);
 
@@ -183,6 +241,8 @@ export class KeyVaultRouter {
       if (!vault) {
         return sendError(res, 404, 'VaultNotFound', `The vault '${vaultName}' was not found.`);
       }
+      const authError = requireAuth(req, vault);
+      if (authError) return sendError(res, authError.status, authError.code, authError.message, authError.headers);
 
       const parts = url.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
       const [collection, name, action] = parts;
@@ -219,6 +279,21 @@ export class KeyVaultRouter {
         if (method === 'POST' && action === 'recover') {
           vault.deletedSecrets.delete(name.toLowerCase());
           vault.secrets.set(name.toLowerCase(), deleted.secret);
+          if (this.onSecretSet) {
+            this.onSecretSet({
+              subscriptionId: vault.subscriptionId,
+              resourceGroupName: vault.resourceGroupName,
+              vaultName: vault.vaultName,
+              vaultUri: vault.vaultUri,
+              secretName: name,
+              value: deleted.secret.value,
+              contentType: deleted.secret.contentType,
+              tags: deleted.secret.tags ?? {},
+              attributes: {
+                enabled: deleted.secret.attributes?.enabled ?? true,
+              },
+            });
+          }
           return sendJson(res, 200, {
             value: deleted.secret.value,
             id: deleted.secret.id,
@@ -329,6 +404,14 @@ export class KeyVaultRouter {
             secret,
           };
           vault.deletedSecrets.set(name.toLowerCase(), deletedRecord);
+          if (this.onSecretDelete) {
+            this.onSecretDelete({
+              subscriptionId: vault.subscriptionId,
+              resourceGroupName: vault.resourceGroupName,
+              vaultName: vault.vaultName,
+              secretName: name,
+            });
+          }
           return sendJson(res, 200, {
             recoveryId: deletedRecord.recoveryId,
             deletedDate: deletedRecord.deletedDate,
@@ -419,6 +502,14 @@ export class KeyVaultRouter {
 
         if (method === 'DELETE' && !action) {
           vault.keys.delete(name.toLowerCase());
+          if (this.onKeyDelete) {
+            this.onKeyDelete({
+              subscriptionId: vault.subscriptionId,
+              resourceGroupName: vault.resourceGroupName,
+              vaultName: vault.vaultName,
+              keyName: name,
+            });
+          }
           return sendJson(res, 200, {
             recoveryId: `${vault.vaultUri.replace(/\/$/, '')}/deletedkeys/${name}`,
             deletedDate: Math.floor(Date.now() / 1000),
@@ -436,8 +527,8 @@ export class KeyVaultRouter {
   }
 }
 
-export function createKeyVaultRouter() {
-  return new KeyVaultRouter();
+export function createKeyVaultRouter(options) {
+  return new KeyVaultRouter(options);
 }
 
 export function createKeyVaultRouterServer(router = createKeyVaultRouter()) {

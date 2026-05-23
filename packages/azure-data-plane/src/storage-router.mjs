@@ -42,27 +42,36 @@ function canonicalizedResource(url, accountName) {
   return parts.join('\n');
 }
 
+function headerValue(headers, name) {
+  return headers[name.toLowerCase()] ?? headers[name] ?? '';
+}
+
 function signSharedKey({ method, url, headers, bodyLength = 0, accountKey, accountName }) {
-  const contentLength = bodyLength === 0 ? '' : String(bodyLength);
-  const contentType = headers['content-type'] ?? headers['Content-Type'] ?? '';
+  const contentLengthHeader = headerValue(headers, 'content-length');
+  const contentLength = String(contentLengthHeader || bodyLength || '') === '0'
+    ? ''
+    : String(contentLengthHeader || bodyLength || '');
   const stringToSign = [
     method.toUpperCase(),
-    '',
-    '',
+    headerValue(headers, 'content-encoding'),
+    headerValue(headers, 'content-language'),
     contentLength,
-    '',
-    contentType,
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
+    headerValue(headers, 'content-md5'),
+    headerValue(headers, 'content-type'),
+    headerValue(headers, 'date'),
+    headerValue(headers, 'if-modified-since'),
+    headerValue(headers, 'if-match'),
+    headerValue(headers, 'if-none-match'),
+    headerValue(headers, 'if-unmodified-since'),
+    headerValue(headers, 'range'),
     `${canonicalizedHeaders(headers)}${canonicalizedResource(url, accountName)}`,
   ].join('\n');
-  return createHmac('sha256', Buffer.from(accountKey, 'base64'))
-    .update(stringToSign, 'utf8')
-    .digest('base64');
+  return {
+    signature: createHmac('sha256', Buffer.from(accountKey, 'base64'))
+      .update(stringToSign, 'utf8')
+      .digest('base64'),
+    stringToSign,
+  };
 }
 
 function signSharedKeyLite({ url, headers, accountKey, accountName }) {
@@ -71,9 +80,12 @@ function signSharedKeyLite({ url, headers, accountKey, accountName }) {
     date,
     canonicalizedResource(url, accountName),
   ].join('\n');
-  return createHmac('sha256', Buffer.from(accountKey, 'base64'))
-    .update(stringToSign, 'utf8')
-    .digest('base64');
+  return {
+    signature: createHmac('sha256', Buffer.from(accountKey, 'base64'))
+      .update(stringToSign, 'utf8')
+      .digest('base64'),
+    stringToSign,
+  };
 }
 
 function send(res, status, body = '', headers = {}) {
@@ -131,17 +143,102 @@ function validateAuth(req, url, account, bodyLength = 0, preferredScheme = 'Shar
   const auth = parseAuthorization(req);
   if (!auth) return { ok: false, status: 401, code: 'NoAuthenticationInformation', message: 'Server failed to authenticate the request. Please refer to the information in the Authorization header.' };
   if (auth.accountName !== account.accountName) return { ok: false, status: 403, code: 'AuthenticationFailed', message: 'The Authorization header is malformed.' };
+  const acceptedSchemes = Array.isArray(preferredScheme) ? preferredScheme : [preferredScheme];
   const expected = auth.scheme === 'SharedKeyLite'
     ? signSharedKeyLite({ url, headers: req.headers, accountKey: account.accountKey, accountName: account.accountName })
     : signSharedKey({ method: req.method, url, headers: req.headers, bodyLength, accountKey: account.accountKey, accountName: account.accountName });
-  if (auth.signature !== expected || auth.scheme !== preferredScheme) {
+  if (auth.signature !== expected.signature || !acceptedSchemes.includes(auth.scheme)) {
+    if (process.env.DEBUG) {
+      console.error('[globalstack-storage-auth]', JSON.stringify({
+        ok: false,
+        method: req.method,
+        host: req.headers.host ?? '',
+        path: url.pathname,
+        query: url.search,
+        accountName: account.accountName,
+        authScheme: auth.scheme,
+        acceptedSchemes,
+        contentLength: req.headers['content-length'] ?? '',
+        receivedSignature: auth.signature,
+        expectedSignature: expected.signature,
+        stringToSign: expected.stringToSign,
+        xMsHeaders: Object.fromEntries(
+          Object.entries(req.headers).filter(([key]) => key.toLowerCase().startsWith('x-ms-')),
+        ),
+      }));
+    }
     return { ok: false, status: 403, code: 'AuthenticationFailed', message: 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.' };
+  }
+  return { ok: true };
+}
+
+function validateServiceSas(url, account, actualResource, method) {
+  const signature = url.searchParams.get('sig');
+  if (!signature) return { ok: false };
+  const fields = {
+    permissions: url.searchParams.get('sp') ?? '',
+    startTime: url.searchParams.get('st') ?? '',
+    expiryTime: url.searchParams.get('se') ?? '',
+    canonicalizedResource: actualResource,
+    protocols: url.searchParams.get('spr') ?? '',
+    version: url.searchParams.get('sv') ?? '',
+    resource: url.searchParams.get('sr') ?? '',
+    cacheControl: url.searchParams.get('rscc') ?? '',
+    contentDisposition: url.searchParams.get('rscd') ?? '',
+    contentEncoding: url.searchParams.get('rsce') ?? '',
+    contentLanguage: url.searchParams.get('rscl') ?? '',
+    contentType: url.searchParams.get('rsct') ?? '',
+  };
+  const expected = createHmac('sha256', Buffer.from(account.accountKey, 'base64'))
+    .update([
+      fields.permissions,
+      fields.startTime,
+      fields.expiryTime,
+      fields.canonicalizedResource,
+      fields.protocols,
+      fields.version,
+      fields.resource,
+      fields.cacheControl,
+      fields.contentDisposition,
+      fields.contentEncoding,
+      fields.contentLanguage,
+      fields.contentType,
+    ].join('\n'), 'utf8')
+    .digest('base64');
+  const permissions = fields.permissions.toLowerCase();
+  const needsRead = ['GET', 'HEAD'].includes(method.toUpperCase());
+  const needsWrite = ['PUT', 'DELETE'].includes(method.toUpperCase());
+  const protocol = fields.protocols.toLowerCase();
+  if (signature !== expected) {
+    return {
+      ok: false,
+      status: 403,
+      code: 'AuthenticationFailed',
+      message: 'Server failed to authenticate the request. Make sure the value of Authorization header or SAS token is formed correctly.',
+    };
+  }
+  if ((protocol && protocol !== 'https' && protocol !== 'https,http') || (needsRead && !permissions.includes('r')) || (needsWrite && !permissions.includes('w') && !permissions.includes('d'))) {
+    return {
+      ok: false,
+      status: 403,
+      code: 'AuthorizationFailure',
+      message: 'This request is not authorized to perform this operation using the specified service SAS.',
+    };
   }
   return { ok: true };
 }
 
 function blobKey(containerName, blobName) {
   return `${lower(containerName)}\0${blobName}`;
+}
+
+function normalizeStoragePathSegments(segments, accountName) {
+  if (segments.length >= 3
+    && lower(segments[0]) === lower(accountName)
+    && lower(segments[1]) === 'default') {
+    return segments.slice(2);
+  }
+  return segments;
 }
 
 function entityKey(partitionKey, rowKey) {
@@ -237,12 +334,17 @@ export class StorageDataPlaneRouter {
       if (!accountName) return sendXmlError(res, 404, 'ResourceNotFound', 'The storage account host was not found.', requestId);
       const account = this.account(accountName);
       if (!account) return sendXmlError(res, 404, 'ResourceNotFound', `The storage account '${accountName}' was not found.`, requestId);
-      const auth = validateAuth(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKey');
-      if (!auth.ok) return sendXmlError(res, auth.status, auth.code, auth.message, requestId);
 
-      const segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+      const segments = normalizeStoragePathSegments(
+        url.pathname.split('/').filter(Boolean).map(decodeURIComponent),
+        accountName,
+      );
       if (segments.length < 2) return sendXmlError(res, 404, 'ResourceNotFound', 'The blob path is incomplete.', requestId);
       const [containerName, ...blobParts] = segments;
+      const auth = String(req.headers.authorization ?? '').trim() !== ''
+        ? validateAuth(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
+        : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
+      if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
       const container = account.containers.get(lower(containerName));
       if (!container) return sendXmlError(res, 404, 'ContainerNotFound', `The specified container does not exist.`, requestId);
       const blobName = blobParts.join('/');
@@ -278,6 +380,19 @@ export class StorageDataPlaneRouter {
           'content-type': blob.contentType,
           etag: blob.etag,
           'last-modified': blob.lastModified,
+          'x-ms-blob-type': 'BlockBlob',
+          'x-ms-request-id': requestId,
+          'x-ms-version': '2023-11-03',
+          date: nowUtc(),
+        });
+      }
+
+      if (req.method === 'HEAD') {
+        return send(res, 200, '', {
+          'content-type': blob.contentType,
+          etag: blob.etag,
+          'last-modified': blob.lastModified,
+          'content-length': String(blob.body.length),
           'x-ms-blob-type': 'BlockBlob',
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',

@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -8,12 +8,20 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function deterministicGuid(seed) {
+  const hex = createHash('sha256').update(seed).digest('hex').slice(0, 32);
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+}
+
 function normalizeResourceGroupId(subscriptionId, resourceGroupName) {
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}`;
 }
 
-function normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath) {
-  return `${normalizeResourceGroupId(subscriptionId, resourceGroupName)}/providers/${providerNamespace}/${typePath}`;
+function normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null) {
+  const scopePrefix = scopeId
+    ? String(scopeId).replace(/\/$/, '')
+    : normalizeResourceGroupId(subscriptionId, resourceGroupName);
+  return `${scopePrefix}/providers/${providerNamespace}/${typePath}`;
 }
 
 function normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName) {
@@ -63,14 +71,86 @@ function eventHubNamespaceEndpoint(name) {
   return `https://${name}.servicebus.windows.net:443/`;
 }
 
+function serviceBusNamespacePrimaryKey(id, keyName) {
+  return createHash('sha256')
+    .update(`globalstack:servicebus:${keyName}:primary:${id.toLowerCase()}`)
+    .digest('base64');
+}
+
+function serviceBusNamespaceSecondaryKey(id, keyName) {
+  return createHash('sha256')
+    .update(`globalstack:servicebus:${keyName}:secondary:${id.toLowerCase()}`)
+    .digest('base64');
+}
+
 function eventGridTopicKey(id, slot) {
   return createHash('sha256')
     .update(`globalstack:event-grid:${slot}:${id.toLowerCase()}`)
     .digest('base64url');
 }
 
+function storageAccountKey(id, slot) {
+  return createHash('sha256')
+    .update(`globalstack:storage:${slot}:${id.toLowerCase()}`)
+    .digest('base64');
+}
+
+function storageServiceSasSignature(accountKey, fields) {
+  const stringToSign = [
+    fields.permissions ?? '',
+    fields.startTime ?? '',
+    fields.expiryTime ?? '',
+    fields.canonicalizedResource ?? '',
+    fields.protocols ?? '',
+    fields.version ?? '',
+    fields.resource ?? '',
+    fields.cacheControl ?? '',
+    fields.contentDisposition ?? '',
+    fields.contentEncoding ?? '',
+    fields.contentLanguage ?? '',
+    fields.contentType ?? '',
+  ].join('\n');
+  return createHmac('sha256', Buffer.from(accountKey, 'base64'))
+    .update(stringToSign, 'utf8')
+    .digest('base64');
+}
+
+function appInsightsAppId(id) {
+  return createHash('sha256')
+    .update(`globalstack:appinsights:app:${id.toLowerCase()}`)
+    .digest('hex')
+    .slice(0, 32);
+}
+
+function appInsightsInstrumentationKey(id) {
+  const digest = createHash('sha256')
+    .update(`globalstack:appinsights:ikey:${id.toLowerCase()}`)
+    .digest('hex');
+  return `${digest.slice(0, 8)}-${digest.slice(8, 12)}-${digest.slice(12, 16)}-${digest.slice(16, 20)}-${digest.slice(20, 32)}`;
+}
+
+function appInsightsConnectionString(id, location = 'global') {
+  const instrumentationKey = appInsightsInstrumentationKey(id);
+  const appId = appInsightsAppId(id);
+  return `InstrumentationKey=${instrumentationKey};IngestionEndpoint=https://${location}.in.applicationinsights.azure.com/;LiveEndpoint=https://${location}.livediagnostics.monitor.azure.com/;ApplicationId=${appId}`;
+}
+
+function operationalInsightsWorkspaceCustomerId(id) {
+  return deterministicGuid(`globalstack:operationalinsights:customer:${id.toLowerCase()}`);
+}
+
+function operationalInsightsWorkspaceSharedKey(id, slot) {
+  return createHash('sha256')
+    .update(`globalstack:operationalinsights:${slot}:${id.toLowerCase()}`)
+    .digest('base64');
+}
+
 function functionAppHostName(name) {
   return `${name}.azurewebsites.net`;
+}
+
+function iotHubHostName(name) {
+  return `${name}.azure-devices.net`;
 }
 
 function keyVaultUri(name) {
@@ -91,6 +171,10 @@ function mysqlFullyQualifiedDomainName(name) {
 
 function cosmosDocumentEndpoint(name) {
   return `https://${name}.documents.azure.com:443/`;
+}
+
+function digitalTwinsHostName(name, location = 'global') {
+  return `${name}.api.${location}.digitaltwins.azure.net`;
 }
 
 function redisHostName(name) {
@@ -125,6 +209,29 @@ function dnsRecordFqdn(typePath) {
   return fqdn.endsWith('.') ? fqdn : `${fqdn}.`;
 }
 
+function apiManagementIdentityFields(typePath) {
+  const parts = String(typePath ?? '').split('/');
+  if (parts[0] !== 'service' || !parts[1]) return {};
+  const identifiers = {
+    serviceName: parts[1],
+  };
+
+  for (let index = 2; index < parts.length; index += 2) {
+    const segmentType = parts[index];
+    const segmentName = parts[index + 1];
+    if (!segmentType || !segmentName) break;
+    if (segmentType === 'apis') identifiers.apiId = segmentName;
+    if (segmentType === 'products') identifiers.productId = segmentName;
+    if (segmentType === 'operations') identifiers.operationId = segmentName;
+    if (segmentType === 'policies') identifiers.policyId = segmentName;
+    if (segmentType === 'namedValues') identifiers.namedValueId = segmentName;
+    if (segmentType === 'loggers') identifiers.loggerId = segmentName;
+    if (segmentType === 'diagnostics') identifiers.diagnosticId = segmentName;
+  }
+
+  return identifiers;
+}
+
 function keyVaultChildVaultName(name) {
   return String(name ?? '').split('/')[0] ?? '';
 }
@@ -137,6 +244,21 @@ function keyVaultSecretUri(name) {
 function keyVaultKeyUri(name) {
   const [vaultName, keyName] = String(name ?? '').split('/');
   return `${keyVaultUri(vaultName)}keys/${keyName}`;
+}
+
+function materializeIdentity(identity, resourceId) {
+  if (!identity || typeof identity !== 'object') return identity;
+  const type = String(identity.type ?? '');
+  const includesSystemAssigned = type
+    .split(',')
+    .map(value => value.trim().toLowerCase())
+    .includes('systemassigned');
+  if (!includesSystemAssigned) return deepClone(identity);
+  return {
+    ...deepClone(identity),
+    principalId: identity.principalId ?? deterministicGuid(`${resourceId}:principalId`),
+    tenantId: identity.tenantId ?? '00000000-0000-0000-0000-000000000000',
+  };
 }
 
 export class ResourceStore {
@@ -224,8 +346,8 @@ export class ResourceStore {
     return deployment ? deepClone(deployment) : null;
   }
 
-  putResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, body = {}, apiVersion, capability }) {
-    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath);
+  putResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null, body = {}, apiVersion, capability }) {
+    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId);
     const key = id.toLowerCase();
     const existing = this.resources.get(key);
     const typeParts = typePath.split('/');
@@ -238,16 +360,26 @@ export class ResourceStore {
       id,
       name,
       type,
+      resourceGroupName,
+      ...(providerNamespace === 'Microsoft.ApiManagement' ? apiManagementIdentityFields(typePath) : {}),
       location: body.location ?? existing?.location ?? 'global',
       tags: body.tags ?? existing?.tags ?? {},
-      sku: type === 'Microsoft.Cache/redis' ? undefined : body.sku,
+      sku: type === 'Microsoft.Cache/redis' ? undefined : (body.sku ?? body.properties?.sku),
       kind: body.kind,
-      identity: body.identity ?? existing?.identity,
+      identity: materializeIdentity(body.identity ?? existing?.identity, id),
       properties: {
         ...(existing?.properties ?? {}),
         ...(body.properties ?? {}),
         ...(type === 'Microsoft.EventGrid/topics'
           ? { endpoint: eventGridTopicEndpoint(name, body.location ?? existing?.location ?? 'global') }
+          : {}),
+        ...(type === 'Microsoft.EventGrid/eventSubscriptions'
+          ? {
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
+              destination: body.properties?.destination ?? body.destination ?? existing?.properties?.destination ?? null,
+              eventDeliverySchema: body.properties?.eventDeliverySchema ?? body.eventDeliverySchema ?? existing?.properties?.eventDeliverySchema ?? 'EventGridSchema',
+              expirationTimeUtc: body.properties?.expirationTimeUtc ?? existing?.properties?.expirationTimeUtc ?? null,
+            }
           : {}),
         ...(type === 'Microsoft.Storage/storageAccounts'
           ? {
@@ -267,6 +399,26 @@ export class ResourceStore {
                 ?? body.supportsHttpsTrafficOnly
                 ?? existing?.properties?.supportsHttpsTrafficOnly
                 ?? true,
+              primaryEndpoints:
+                existing?.properties?.primaryEndpoints
+                ?? {
+                  blob: `https://${name}.blob.core.windows.net/`,
+                  queue: `https://${name}.queue.core.windows.net/`,
+                  table: `https://${name}.table.core.windows.net/`,
+                  file: `https://${name}.file.core.windows.net/`,
+                  web: `https://${name}.web.core.windows.net/`,
+                  dfs: `https://${name}.dfs.core.windows.net/`,
+                },
+              primaryLocation:
+                existing?.properties?.primaryLocation
+                ?? body.location
+                ?? existing?.location
+                ?? 'global',
+              publicNetworkAccess:
+                body.properties?.publicNetworkAccess
+                ?? body.publicNetworkAccess
+                ?? existing?.properties?.publicNetworkAccess
+                ?? 'Enabled',
             }
           : {}),
         ...(type === 'Microsoft.EventGrid/systemTopics'
@@ -403,6 +555,28 @@ export class ResourceStore {
               provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
             }
           : {}),
+        ...(type === 'Microsoft.Devices/IotHubs'
+          ? {
+              hostName: existing?.properties?.hostName ?? iotHubHostName(name),
+              provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
+              state: existing?.properties?.state ?? 'Active',
+              eventHubEndpoints: existing?.properties?.eventHubEndpoints ?? {
+                events: {
+                  endpoint: `sb://${name}.servicebus.windows.net/`,
+                  path: 'messages/events',
+                  partitionCount: 4,
+                  retentionTimeInDays: 1,
+                },
+              },
+            }
+          : {}),
+        ...(type === 'Microsoft.DigitalTwins/digitalTwinsInstances'
+          ? {
+              hostName: existing?.properties?.hostName ?? digitalTwinsHostName(name, body.location ?? existing?.location ?? 'global'),
+              provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
+              publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
+            }
+          : {}),
         ...(type === 'Microsoft.Cache/redis'
           ? {
               sku: body.properties?.sku ?? existing?.properties?.sku,
@@ -416,6 +590,29 @@ export class ResourceStore {
           ? {
               state: body.properties?.state ?? existing?.properties?.state ?? 'Enabled',
               accessEndpoint: existing?.properties?.accessEndpoint ?? `https://logic.azure.com/workflows/${name}`,
+            }
+          : {}),
+        ...(type === 'Microsoft.Insights/components'
+          ? {
+              AppId: existing?.properties?.AppId ?? appInsightsAppId(id),
+              InstrumentationKey: existing?.properties?.InstrumentationKey ?? appInsightsInstrumentationKey(id),
+              ConnectionString: existing?.properties?.ConnectionString ?? appInsightsConnectionString(id, body.location ?? existing?.location ?? 'global'),
+              ApplicationId: existing?.properties?.ApplicationId ?? appInsightsAppId(id),
+              provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
+            }
+          : {}),
+        ...(type === 'Microsoft.OperationalInsights/workspaces'
+          ? {
+              customerId: existing?.properties?.customerId ?? operationalInsightsWorkspaceCustomerId(id),
+              provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
+              publicNetworkAccessForIngestion:
+                body.properties?.publicNetworkAccessForIngestion
+                ?? existing?.properties?.publicNetworkAccessForIngestion
+                ?? 'Enabled',
+              publicNetworkAccessForQuery:
+                body.properties?.publicNetworkAccessForQuery
+                ?? existing?.properties?.publicNetworkAccessForQuery
+                ?? 'Enabled',
             }
           : {}),
         ...(type === 'Microsoft.Cdn/profiles'
@@ -432,11 +629,54 @@ export class ResourceStore {
               enabledState: body.properties?.enabledState ?? existing?.properties?.enabledState ?? 'Enabled',
             }
           : {}),
+        ...(type === 'Microsoft.Cdn/profiles/originGroups'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
+              profileName: existing?.properties?.profileName ?? typeParts[1],
+              sessionAffinityState:
+                body.properties?.sessionAffinityState
+                ?? body.sessionAffinityState
+                ?? existing?.properties?.sessionAffinityState
+                ?? 'Disabled',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles/originGroups/origins'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
+              profileName: existing?.properties?.profileName ?? typeParts[1],
+              originGroupName: existing?.properties?.originGroupName ?? typeParts[3],
+              enabledState:
+                body.properties?.enabledState
+                ?? body.enabledState
+                ?? existing?.properties?.enabledState
+                ?? 'Enabled',
+              enforceCertificateNameCheck:
+                body.properties?.enforceCertificateNameCheck
+                ?? body.enforceCertificateNameCheck
+                ?? existing?.properties?.enforceCertificateNameCheck
+                ?? true,
+            }
+          : {}),
         ...(type === 'Microsoft.Cdn/profiles/endpoints'
           ? {
               hostName: existing?.properties?.hostName ?? `${leafName}.azureedge.net`,
               provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
               resourceState: existing?.properties?.resourceState ?? 'Running',
+            }
+          : {}),
+        ...(type === 'Microsoft.Cdn/profiles/afdEndpoints/routes'
+          ? {
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              deploymentStatus: existing?.properties?.deploymentStatus ?? 'NotStarted',
+              profileName: existing?.properties?.profileName ?? typeParts[1],
+              endpointName: existing?.properties?.endpointName ?? typeParts[3],
+              enabledState:
+                body.properties?.enabledState
+                ?? body.enabledState
+                ?? existing?.properties?.enabledState
+                ?? 'Enabled',
             }
           : {}),
         ...(type === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
@@ -491,6 +731,41 @@ export class ResourceStore {
           : {}),
         ...(type === 'Microsoft.Network/applicationGateways'
           ? {
+              gatewayIPConfigurations:
+                body.properties?.gatewayIPConfigurations
+                ?? body.gatewayIPConfigurations
+                ?? existing?.properties?.gatewayIPConfigurations
+                ?? [],
+              frontendIPConfigurations:
+                body.properties?.frontendIPConfigurations
+                ?? body.frontendIPConfigurations
+                ?? existing?.properties?.frontendIPConfigurations
+                ?? [],
+              frontendPorts:
+                body.properties?.frontendPorts
+                ?? body.frontendPorts
+                ?? existing?.properties?.frontendPorts
+                ?? [],
+              backendAddressPools:
+                body.properties?.backendAddressPools
+                ?? body.backendAddressPools
+                ?? existing?.properties?.backendAddressPools
+                ?? [],
+              backendHttpSettingsCollection:
+                body.properties?.backendHttpSettingsCollection
+                ?? body.backendHttpSettingsCollection
+                ?? existing?.properties?.backendHttpSettingsCollection
+                ?? [],
+              httpListeners:
+                body.properties?.httpListeners
+                ?? body.httpListeners
+                ?? existing?.properties?.httpListeners
+                ?? [],
+              requestRoutingRules:
+                body.properties?.requestRoutingRules
+                ?? body.requestRoutingRules
+                ?? existing?.properties?.requestRoutingRules
+                ?? [],
               operationalState: 'Running',
               resourceGuid: existing?.properties?.resourceGuid ?? createHash('sha256').update(`globalstack:appgw:${id}`).digest('hex').slice(0, 32),
             }
@@ -526,6 +801,18 @@ export class ResourceStore {
           : {}),
       },
       apiVersion,
+      ...(type === 'Microsoft.Insights/components'
+        ? {
+            appId: existing?.appId ?? appInsightsAppId(id),
+            instrumentationKey: existing?.instrumentationKey ?? appInsightsInstrumentationKey(id),
+            connectionString: existing?.connectionString ?? appInsightsConnectionString(id, body.location ?? existing?.location ?? 'global'),
+          }
+        : {}),
+      ...(type === 'Microsoft.OperationalInsights/workspaces'
+        ? {
+            customerId: existing?.customerId ?? operationalInsightsWorkspaceCustomerId(id),
+          }
+        : {}),
       globalstack: {
         supportLevel,
         capabilityId: capability.id,
@@ -545,8 +832,8 @@ export class ResourceStore {
     return { resource: deepClone(resource), created: !existing, asyncAccepted: Boolean(lifecycleSequence) };
   }
 
-  getResource({ subscriptionId, resourceGroupName, providerNamespace, typePath }) {
-    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath);
+  getResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null }) {
+    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId);
     const resource = this.resources.get(id.toLowerCase());
     if (!resource) return null;
     const lifecycleState = lifecycleStateFor(resource);
@@ -565,7 +852,7 @@ export class ResourceStore {
   }
 
   resourceProvisioningState(route) {
-    const id = normalizeResourceId(route.subscriptionId, route.resourceGroupName, route.providerNamespace, route.typePath);
+    const id = normalizeResourceId(route.subscriptionId, route.resourceGroupName, route.providerNamespace, route.typePath, route.scopeId ?? null);
     const resource = this.resources.get(id.toLowerCase());
     return resource?.properties?.provisioningState ?? null;
   }
@@ -586,8 +873,8 @@ export class ResourceStore {
     }
   }
 
-  deleteResource({ subscriptionId, resourceGroupName, providerNamespace, typePath }) {
-    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath);
+  deleteResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null }) {
+    const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId);
     return this.resources.delete(id.toLowerCase());
   }
 
@@ -621,6 +908,95 @@ export class ResourceStore {
     return {
       key1: eventGridTopicKey(resource.id, 'key1'),
       key2: eventGridTopicKey(resource.id, 'key2'),
+    };
+  }
+
+  listStorageAccountKeys(route) {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.Storage/storageAccounts') return null;
+    return {
+      keys: [
+        {
+          keyName: 'key1',
+          permissions: 'FULL',
+          value: storageAccountKey(resource.id, 'key1'),
+          creationTime: nowIso(),
+        },
+        {
+          keyName: 'key2',
+          permissions: 'FULL',
+          value: storageAccountKey(resource.id, 'key2'),
+          creationTime: nowIso(),
+        },
+      ],
+    };
+  }
+
+  listStorageAccountServiceSas(route, body = {}) {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.Storage/storageAccounts') return null;
+    const accountKeys = this.listStorageAccountKeys(route);
+    const accountKey = accountKeys?.keys?.[0]?.value;
+    if (!accountKey) return null;
+    const fields = {
+      permissions: body.permissions ?? '',
+      startTime: body.sharedAccessStartTime ?? '',
+      expiryTime: body.sharedAccessExpiryTime ?? '',
+      canonicalizedResource: body.canonicalizedResource ?? `/blob/${resource.name}`,
+      protocols: body.protocols ?? 'Https',
+      version: body.version ?? '2024-11-04',
+      resource: body.resource ?? 'b',
+      cacheControl: body.cacheControl ?? '',
+      contentDisposition: body.contentDisposition ?? '',
+      contentEncoding: body.contentEncoding ?? '',
+      contentLanguage: body.contentLanguage ?? '',
+      contentType: body.contentType ?? '',
+    };
+    const sig = storageServiceSasSignature(accountKey, fields);
+    const params = new URLSearchParams();
+    params.set('sv', fields.version);
+    params.set('spr', String(fields.protocols).toLowerCase());
+    if (fields.startTime) params.set('st', fields.startTime);
+    if (fields.expiryTime) params.set('se', fields.expiryTime);
+    if (fields.permissions) params.set('sp', fields.permissions);
+    if (fields.resource) params.set('sr', String(fields.resource).toLowerCase());
+    if (fields.cacheControl) params.set('rscc', fields.cacheControl);
+    if (fields.contentDisposition) params.set('rscd', fields.contentDisposition);
+    if (fields.contentEncoding) params.set('rsce', fields.contentEncoding);
+    if (fields.contentLanguage) params.set('rscl', fields.contentLanguage);
+    if (fields.contentType) params.set('rsct', fields.contentType);
+    params.set('sig', sig);
+    return {
+      serviceSasToken: params.toString(),
+    };
+  }
+
+  listOperationalInsightsWorkspaceSharedKeys(route) {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.OperationalInsights/workspaces') return null;
+    return {
+      primarySharedKey: operationalInsightsWorkspaceSharedKey(resource.id, 'primary'),
+      secondarySharedKey: operationalInsightsWorkspaceSharedKey(resource.id, 'secondary'),
+    };
+  }
+
+  listServiceBusNamespaceKeys(namespaceRoute, authorizationRuleName = 'RootManageSharedAccessKey') {
+    const resource = this.getResource(namespaceRoute);
+    if (!resource || resource.type !== 'Microsoft.ServiceBus/namespaces') return null;
+    const keyName = authorizationRuleName.includes('/')
+      ? authorizationRuleName.split('/').at(-1)
+      : authorizationRuleName;
+    const endpoint = `sb://${resource.name}.servicebus.windows.net/`;
+    const primaryKey = serviceBusNamespacePrimaryKey(resource.id, keyName);
+    const secondaryKey = serviceBusNamespaceSecondaryKey(resource.id, keyName);
+    return {
+      keyName,
+      primaryKey,
+      secondaryKey,
+      primaryConnectionString: `Endpoint=${endpoint};SharedAccessKeyName=${keyName};SharedAccessKey=${primaryKey}`,
+      secondaryConnectionString: `Endpoint=${endpoint};SharedAccessKeyName=${keyName};SharedAccessKey=${secondaryKey}`,
+      aliasPrimaryConnectionString: '',
+      aliasSecondaryConnectionString: '',
     };
   }
 

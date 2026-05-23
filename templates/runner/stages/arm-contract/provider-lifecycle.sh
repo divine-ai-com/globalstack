@@ -66,6 +66,10 @@ storage_account_id() {
   printf '%s\n' "$(resource_group_id)/providers/Microsoft.Storage/storageAccounts/$(storage_account_name)"
 }
 
+resource_group_url() {
+  printf '%s\n' "${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/$(resource_group_name)?api-version=2022-09-01"
+}
+
 mutate_storage_account_tls() {
   local version="$1"
   local token
@@ -76,6 +80,45 @@ mutate_storage_account_tls() {
     -H 'content-type: application/json' \
     --data "{\"location\":\"${AZURE_LOCATION}\",\"kind\":\"StorageV2\",\"sku\":{\"name\":\"Standard_LRS\"},\"properties\":{\"minimumTlsVersion\":\"${version}\"}}" \
     "$(storage_account_url)" > "${REPORT_DIR}/provider-lifecycle-storage-account-mutate-${version}.json"
+}
+
+mutate_resource_group_tags() {
+  local tag_value="$1"
+  local token
+  local current
+  local location
+  local tags
+  token="$(token_for_reads)"
+  current="$(curl -fsS -H "Authorization: Bearer ${token}" "$(resource_group_url)")"
+  location="$(printf '%s' "${current}" | jq -r '.location // empty')"
+  if [ -z "${location}" ]; then
+    location="${AZURE_LOCATION}"
+  fi
+  tags="$(printf '%s' "${current}" | jq --arg value "${tag_value}" '(.tags // {}) + {"globalstack-provider-lifecycle": $value}')"
+  jq -n \
+    --arg location "${location}" \
+    --argjson tags "${tags}" \
+    '{location: $location, tags: $tags}' |
+    curl -fsS \
+      -X PUT \
+      -H "Authorization: Bearer ${token}" \
+      -H 'content-type: application/json' \
+      --data @- \
+      "$(resource_group_url)" > "${REPORT_DIR}/provider-lifecycle-resource-group-mutate-tags.json"
+}
+
+mutate_drift_target() {
+  local storage_account
+  storage_account="$(storage_account_name)"
+  if [ -n "${storage_account}" ]; then
+    mutate_storage_account_tls "TLS1_1"
+    DRIFT_TARGET_KIND="storage-account-minimum-tls"
+    DRIFT_TARGET_DETAIL="drifted storage account minimumTlsVersion"
+    return 0
+  fi
+  mutate_resource_group_tags "drifted"
+  DRIFT_TARGET_KIND="resource-group-tags"
+  DRIFT_TARGET_DETAIL="drifted resource group tags"
 }
 
 if is_native_hcl_platform; then
@@ -114,7 +157,7 @@ if is_native_hcl_platform; then
     exit 1
   fi
 
-  mutate_storage_account_tls "TLS1_1"
+  mutate_drift_target
   set +e
   "${tool}" -chdir="${PLATFORM_WORK_DIR}/lib" plan -input=false -refresh-only -detailed-exitcode -no-color "${vars[@]}" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"
   drift_code=$?
@@ -160,7 +203,7 @@ if is_native_hcl_platform; then
     "$(append_command "${tool}-plan-refresh-only" "${refresh_code}")" \
     "$(json_op "${tool}-state-list" PASS "state file contains deployed resources")" \
     "$(append_command "${tool}-plan-drift-refresh-only" "${drift_code}")" \
-    "$(json_op "${tool}-apply-drift-reconcile" PASS "drifted storage account was reconciled")" \
+    "$(json_op "${tool}-apply-drift-reconcile" PASS "${DRIFT_TARGET_DETAIL} was reconciled")" \
     "$(json_op "${tool}-import-resource-group" PASS "resource group import completed in a clean workspace")" \
     "$(json_op "${tool}-import-storage-account" PASS "storage account import completed in a clean workspace")" \
     "$(json_op "${tool}-import-state-list" PASS "import workspace state contains both resources")"
@@ -198,7 +241,7 @@ if is_native_pulumi_platform; then
     exit 1
   fi
 
-  mutate_storage_account_tls "TLS1_1"
+  mutate_drift_target
   if ! pulumi -C "${PLATFORM_WORK_DIR}" preview --diff --refresh --non-interactive >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
     write_stage_report provider-lifecycle FAIL "pulumi drift preview --diff --refresh failed"
     exit 1
@@ -217,8 +260,8 @@ if is_native_pulumi_platform; then
     "$(json_op pulumi-refresh PASS "refresh completed")" \
     "$(json_op pulumi-up-idempotent PASS "second up completed")" \
     "$(json_op pulumi-stack-export PASS "stack export completed")" \
-    "$(json_op pulumi-preview-drift-diff PASS "preview with refresh captured out-of-band drift")" \
-    "$(json_op pulumi-up-drift-reconcile PASS "up with refresh reconciled the drifted storage account")" \
+    "$(json_op pulumi-preview-drift-diff PASS "preview with refresh captured out-of-band drift on ${DRIFT_TARGET_KIND}")" \
+    "$(json_op pulumi-up-drift-reconcile PASS "${DRIFT_TARGET_DETAIL} was reconciled")" \
     "$(json_op pulumi-stack-export-post-drift PASS "post-drift stack export completed")"
   write_stage_report provider-lifecycle PASS "Pulumi provider lifecycle evidence passed"
   exit 0

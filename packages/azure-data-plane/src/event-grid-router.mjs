@@ -58,6 +58,7 @@ export class EventGridRouter {
   constructor() {
     this.topics = new Map();
     this.events = new Map();
+    this.subscriptions = new Map();
   }
 
   registerTopic({ topicName, host, key1, key2 }) {
@@ -75,8 +76,29 @@ export class EventGridRouter {
     return [...(this.events.get(String(topicName).toLowerCase()) ?? [])];
   }
 
+  registerSubscription({ topicName, subscriptionName, destination }) {
+    const key = String(topicName).toLowerCase();
+    const existing = this.subscriptions.get(key) ?? [];
+    const next = existing.filter(item => item.subscriptionName.toLowerCase() !== String(subscriptionName).toLowerCase());
+    next.push({
+      subscriptionName: String(subscriptionName),
+      destination: destination ?? {},
+    });
+    this.subscriptions.set(key, next);
+  }
+
+  unregisterSubscription({ topicName, subscriptionName }) {
+    const key = String(topicName).toLowerCase();
+    const existing = this.subscriptions.get(key) ?? [];
+    this.subscriptions.set(
+      key,
+      existing.filter(item => item.subscriptionName.toLowerCase() !== String(subscriptionName).toLowerCase()),
+    );
+  }
+
   unregisterTopic(topicName) {
     this.topics.delete(String(topicName).toLowerCase());
+    this.subscriptions.delete(String(topicName).toLowerCase());
   }
 
   handler() {
@@ -141,6 +163,27 @@ export class EventGridRouter {
         });
       }
       this.events.set(topicName.toLowerCase(), existing);
+      for (const subscription of this.subscriptions.get(topicName.toLowerCase()) ?? []) {
+        const endpointType = String(subscription.destination?.endpointType ?? '');
+        const endpointUrl = String(
+          subscription.destination?.endpointUrl
+          ?? subscription.destination?.properties?.endpointUrl
+          ?? subscription.destination?.properties?.endpointBaseUrl
+          ?? '',
+        );
+        if (endpointType !== 'WebHook' || !endpointUrl) continue;
+        try {
+          await fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify(body),
+          });
+        } catch {
+          // Delivery failures remain inspectable through Event Grid diagnostics, but should not break publish acknowledgements.
+        }
+      }
       return sendJson(res, 200);
     };
   }

@@ -31,7 +31,7 @@ function httpJson(port, method, path, body) {
         } catch {
           // keep text
         }
-        resolve({ status: res.statusCode, body: parsed });
+        resolve({ status: res.statusCode, body: parsed, headers: res.headers });
       });
     });
     req.on('error', reject);
@@ -183,5 +183,439 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
     );
     assert.equal(listAfterDelete.status, 200);
     assert.equal(listAfterDelete.body.value.length, 0);
+  });
+});
+
+test('service bus namespace listKeys supports encoded authorization rule names', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-sb?api-version=2021-04-01`, { location: 'eastus' });
+
+    const namespace = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sb/providers/Microsoft.ServiceBus/namespaces/lifesb?api-version=2021-11-01`,
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    assert.equal(namespace.status, 201);
+
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await httpJson(
+        port,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-sb/providers/Microsoft.ServiceBus/namespaces/lifesb?api-version=2021-11-01`,
+      );
+    }
+
+    const authRule = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sb/providers/Microsoft.ServiceBus/namespaces/lifesb/AuthorizationRules/RootManageSharedAccessKey?api-version=2021-11-01`,
+      { properties: { rights: ['Listen', 'Send', 'Manage'] } },
+    );
+    assert.equal(authRule.status, 201);
+
+    const keys = await httpJson(
+      port,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-sb/providers/Microsoft.ServiceBus/namespaces/lifesb/AuthorizationRules/lifesb%2FRootManageSharedAccessKey/listKeys?api-version=2021-11-01`,
+    );
+    assert.equal(keys.status, 200);
+    assert.equal(keys.body.keyName, 'RootManageSharedAccessKey');
+    assert.match(keys.body.primaryConnectionString, /^Endpoint=sb:\/\/lifesb\.servicebus\.windows\.net\/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=/);
+    assert.ok(keys.body.primaryKey);
+    assert.ok(keys.body.secondaryKey);
+  });
+});
+
+test('operational insights workspace sharedKeys action returns deterministic keys', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-law?api-version=2021-04-01`, { location: 'eastus' });
+
+    const workspace = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-law/providers/Microsoft.OperationalInsights/workspaces/law-ops?api-version=2022-10-01`,
+      {
+        location: 'eastus',
+        properties: {
+          sku: { name: 'PerGB2018' },
+          retentionInDays: 30,
+        },
+      },
+    );
+    assert.equal(workspace.status, 201);
+    assert.match(workspace.body.customerId, /^[0-9a-f-]{36}$/i);
+
+    const keys = await httpJson(
+      port,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-law/providers/Microsoft.OperationalInsights/workspaces/law-ops/sharedKeys?api-version=2022-10-01`,
+    );
+    assert.equal(keys.status, 200);
+    assert.ok(keys.body.primarySharedKey);
+    assert.ok(keys.body.secondarySharedKey);
+    assert.notEqual(keys.body.primarySharedKey, keys.body.secondarySharedKey);
+  });
+});
+
+test('application gateway accepts provider-style top-level v2 payloads', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-appgw?api-version=2021-04-01`, { location: 'eastus' });
+
+    const gateway = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard_v2', tier: 'Standard_v2', capacity: 1 },
+        gatewayIPConfigurations: [{
+          name: 'appGatewayIpConfig',
+          subnet: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/virtualNetworks/vnet-life/subnets/agw-snet`,
+          },
+        }],
+        frontendIPConfigurations: [{
+          name: 'internalFrontend',
+          subnet: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/virtualNetworks/vnet-life/subnets/agw-snet`,
+          },
+          privateIPAddress: '10.10.1.10',
+          privateIPAllocationMethod: 'Static',
+        }],
+        frontendPorts: [{ name: 'httpPort', port: 80 }],
+        backendAddressPools: [{ name: 'backend' }],
+        backendHttpSettingsCollection: [{
+          name: 'httpSettings',
+          port: 80,
+          protocol: 'Http',
+          cookieBasedAffinity: 'Disabled',
+        }],
+        httpListeners: [{
+          name: 'httpListener',
+          frontendIPConfiguration: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life/frontendIPConfigurations/internalFrontend`,
+          },
+          frontendPort: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life/frontendPorts/httpPort`,
+          },
+          protocol: 'Http',
+        }],
+        requestRoutingRules: [{
+          name: 'defaultRule',
+          ruleType: 'Basic',
+          httpListener: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life/httpListeners/httpListener`,
+          },
+          backendAddressPool: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life/backendAddressPools/backend`,
+          },
+          backendHttpSettings: {
+            id: `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life/backendHttpSettingsCollection/httpSettings`,
+          },
+        }],
+      },
+    );
+    assert.equal(gateway.status, 201);
+    assert.equal(gateway.body.sku.name, 'Standard_v2');
+    assert.equal(gateway.body.properties.frontendIPConfigurations.length, 1);
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-appgw/providers/Microsoft.Network/applicationGateways/agw-life?api-version=2023-09-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.properties.operationalState, 'Running');
+    assert.equal(get.body.properties.requestRoutingRules.length, 1);
+  });
+});
+
+test('scoped diagnostic settings PUT persists scope without server error', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-diag?api-version=2021-04-01`, { location: 'eastus' });
+
+    const topic = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-diag/providers/Microsoft.EventGrid/topics/lifetopic?api-version=2022-06-15`,
+      { location: 'eastus', properties: { inputSchema: 'EventGridSchema' } },
+    );
+    assert.equal(topic.status, 201);
+
+    const put = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-diag/providers/Microsoft.EventGrid/topics/lifetopic/providers/Microsoft.Insights/diagnosticSettings/default?api-version=2021-05-01-preview`,
+      {
+        properties: {
+          workspaceId: '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-diag/providers/Microsoft.OperationalInsights/workspaces/law-diag',
+          logs: [{ category: 'AllLogs', enabled: true }],
+          metrics: [{ category: 'AllMetrics', enabled: true }],
+        },
+      },
+    );
+    assert.equal(put.status, 201);
+    assert.equal(
+      put.body.properties.scope,
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-diag/providers/Microsoft.EventGrid/topics/lifetopic',
+    );
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-diag/providers/Microsoft.EventGrid/topics/lifetopic/providers/Microsoft.Insights/diagnosticSettings/default?api-version=2021-05-01-preview`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.properties.logs[0].category, 'AllLogs');
+  });
+});
+
+test('scoped diagnostic settings allow the same name on different resource scopes', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-diag-names?api-version=2021-04-01`, { location: 'eastus' });
+
+    for (const topicName of ['topic-a', 'topic-b']) {
+      const topic = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-diag-names/providers/Microsoft.EventGrid/topics/${topicName}?api-version=2022-06-15`,
+        { location: 'eastus', properties: { inputSchema: 'EventGridSchema' } },
+      );
+      assert.equal(topic.status, 201);
+    }
+
+    for (const topicName of ['topic-a', 'topic-b']) {
+      const put = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-diag-names/providers/Microsoft.EventGrid/topics/${topicName}/providers/Microsoft.Insights/diagnosticSettings/toLogAnalytics?api-version=2021-05-01-preview`,
+        {
+          properties: {
+            workspaceId: '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-diag-names/providers/Microsoft.OperationalInsights/workspaces/law-diag',
+            logs: [{ category: 'AllLogs', enabled: true }],
+          },
+        },
+      );
+      assert.equal(put.status, 201);
+      assert.equal(
+        put.body.properties.scope,
+        `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-diag-names/providers/Microsoft.EventGrid/topics/${topicName}`,
+      );
+    }
+
+    const getTopicB = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-diag-names/providers/Microsoft.EventGrid/topics/topic-b/providers/Microsoft.Insights/diagnosticSettings/toLogAnalytics?api-version=2021-05-01-preview`,
+    );
+    assert.equal(getTopicB.status, 200);
+    assert.equal(
+      getTopicB.body.id,
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-diag-names/providers/Microsoft.EventGrid/topics/topic-b/providers/Microsoft.Insights/diagnosticSettings/toLogAnalytics',
+    );
+  });
+});
+
+test('storage account ListServiceSas returns an Azure-shaped token', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-sas?api-version=2021-04-01`, { location: 'eastus' });
+    const storage = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sas/providers/Microsoft.Storage/storageAccounts/lifesas?api-version=2023-01-01`,
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(storage.status, 202);
+    const sas = await httpJson(
+      port,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-sas/providers/Microsoft.Storage/storageAccounts/lifesas/ListServiceSas?api-version=2023-01-01`,
+      {
+        protocols: 'Https',
+        sharedAccessStartTime: '2024-01-01T00:00:00Z',
+        sharedAccessExpiryTime: '2099-01-01T00:00:00Z',
+        resource: 'b',
+        permissions: 'r',
+        canonicalizedResource: '/blob/lifesas/deployments/functionapp.zip',
+        contentType: 'application/zip',
+      },
+    );
+    assert.equal(sas.status, 200);
+    assert.match(sas.body.serviceSasToken, /(?:^|&)sig=/);
+    assert.match(sas.body.serviceSasToken, /(?:^|&)sp=r(?:&|$)/);
+    assert.match(sas.body.serviceSasToken, /(?:^|&)sr=b(?:&|$)/);
+  });
+});
+
+test('system-assigned identities materialize principalId and tenantId on resource reads', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-identity?api-version=2021-04-01`, { location: 'eastus' });
+    const apim = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-identity/providers/Microsoft.ApiManagement/service/apim-identity?api-version=2022-08-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Developer', capacity: 1 },
+        identity: { type: 'SystemAssigned' },
+        properties: {
+          publisherEmail: 'admin@example.com',
+          publisherName: 'Identity Test',
+        },
+      },
+    );
+    assert.equal(apim.status, 201);
+    assert.equal(apim.body.identity.type, 'SystemAssigned');
+    assert.match(apim.body.identity.principalId, /^[0-9a-f-]{36}$/);
+    assert.equal(apim.body.identity.tenantId, '00000000-0000-0000-0000-000000000000');
+  });
+});
+
+test('api management product api route returns association type with linked api details', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-apim-contract?api-version=2021-04-01`, { location: 'eastus' });
+
+    const service = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract?api-version=2022-08-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Developer', capacity: 1 },
+        properties: {
+          publisherEmail: 'admin@example.com',
+          publisherName: 'Contract Test',
+        },
+      },
+    );
+    assert.equal(service.status, 201);
+
+    const api = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/apis/partner-api?api-version=2022-08-01`,
+      {
+        properties: {
+          displayName: 'Partner API',
+          path: 'partner',
+          protocols: ['https'],
+          serviceUrl: 'https://example.internal/api',
+          subscriptionRequired: false,
+        },
+      },
+    );
+    assert.equal(api.status, 201);
+
+    const product = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/products/partner-product?api-version=2022-08-01`,
+      {
+        properties: {
+          displayName: 'Partner Product',
+          subscriptionRequired: false,
+          state: 'published',
+        },
+      },
+    );
+    assert.equal(product.status, 201);
+
+    const productApi = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/products/partner-product/apis/partner-api?api-version=2022-08-01`,
+      {},
+    );
+    assert.equal(productApi.status, 201);
+    assert.equal(
+      productApi.body.id,
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/apis/partner-api`,
+    );
+    assert.equal(productApi.body.type, 'Microsoft.ApiManagement/service/apis');
+    assert.equal(productApi.body.name, 'partner-api');
+    assert.equal(productApi.body.apiRevision, '1');
+    assert.equal(productApi.body.displayName, 'Partner API');
+    assert.equal(productApi.body.path, 'partner');
+    assert.equal(productApi.body.isCurrent, true);
+    assert.equal(productApi.body.properties.displayName, 'Partner API');
+    assert.equal(productApi.body.properties.path, 'partner');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/products/partner-product/apis/partner-api?api-version=2022-08-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(
+      get.body.id,
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/apis/partner-api`,
+    );
+    assert.equal(get.body.type, 'Microsoft.ApiManagement/service/apis');
+    assert.equal(get.body.name, 'partner-api');
+    assert.equal(get.body.apiRevision, '1');
+    assert.equal(get.body.displayName, 'Partner API');
+    assert.equal(get.body.path, 'partner');
+    assert.equal(get.body.isCurrent, true);
+    assert.equal(get.body.properties.displayName, 'Partner API');
+    assert.equal(get.body.properties.path, 'partner');
+
+    const head = await httpJson(
+      port,
+      'HEAD',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/products/partner-product/apis/partner-api?api-version=2022-08-01`,
+    );
+    assert.equal(head.status, 204);
+    assert.equal(head.headers['content-length'], '0');
+
+    const missingHead = await httpJson(
+      port,
+      'HEAD',
+      `${subscriptionPath}/resourceGroups/rg-apim-contract/providers/Microsoft.ApiManagement/service/apim-contract/products/partner-product/apis/missing-api?api-version=2022-08-01`,
+    );
+    assert.equal(missingHead.status, 404);
+    assert.equal(missingHead.headers['content-length'], '0');
+    assert.equal(missingHead.body, null);
+  });
+});
+
+test('scoped Event Grid event subscriptions can be created under a topic resource', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-egsub?api-version=2021-04-01`, { location: 'eastus' });
+    const topic = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-egsub/providers/Microsoft.EventGrid/topics/lifetopic?api-version=2022-06-15`,
+      { location: 'eastus', properties: { inputSchema: 'EventGridSchema' } },
+    );
+    assert.equal(topic.status, 201);
+
+    const put = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-egsub/providers/Microsoft.EventGrid/topics/lifetopic/providers/Microsoft.EventGrid/eventSubscriptions/sub-audit?api-version=2022-06-15`,
+      {
+        properties: {
+          destination: {
+            endpointType: 'WebHook',
+            properties: {
+              endpointUrl: 'http://localhost:4566/example-webhook',
+            },
+          },
+          eventDeliverySchema: 'EventGridSchema',
+        },
+      },
+    );
+    assert.equal(put.status, 201);
+    assert.equal(put.body.properties.scope, '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-egsub/providers/Microsoft.EventGrid/topics/lifetopic');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-egsub/providers/Microsoft.EventGrid/topics/lifetopic/providers/Microsoft.EventGrid/eventSubscriptions/sub-audit?api-version=2022-06-15`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.type, 'Microsoft.EventGrid/eventSubscriptions');
+    assert.equal(get.body.name, 'sub-audit');
   });
 });

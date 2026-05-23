@@ -479,8 +479,8 @@ export const tier1Capabilities = [
     id: 'monitor-logs',
     tier: 1,
     awsAnalogue: 'CloudWatch Logs',
-    azureEquivalent: 'Log Analytics / Azure Monitor Logs',
-    resourceTypes: ['Microsoft.OperationalInsights/workspaces', 'Microsoft.Insights/diagnosticSettings'],
+    azureEquivalent: 'Log Analytics / Application Insights / Azure Monitor Logs',
+    resourceTypes: ['Microsoft.OperationalInsights/workspaces', 'Microsoft.Insights/components', 'Microsoft.Insights/diagnosticSettings'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE],
     backingEngines: ['globalstack-log-store'],
     implementedOperations: [
@@ -488,8 +488,16 @@ export const tier1Capabilities = [
       'Workspaces.Get',
       'Workspaces.List',
       'Workspaces.Delete',
+      'Workspaces.SharedKeys',
+      'Components.CreateOrUpdate',
+      'Components.Get',
+      'Components.List',
+      'Components.Delete',
       'Workspaces.RejectUnsupportedActions',
-      'DiagnosticSettings.CapturedUnsupported',
+      'DiagnosticSettings.CreateOrUpdate',
+      'DiagnosticSettings.Get',
+      'DiagnosticSettings.List',
+      'DiagnosticSettings.Delete',
     ],
     contractTested: false,
     cloudValidated: false,
@@ -787,7 +795,14 @@ export const tier2Capabilities = [
     tier: 2,
     awsAnalogue: 'CloudFront',
     azureEquivalent: 'Azure Front Door / Azure CDN',
-    resourceTypes: ['Microsoft.Cdn/profiles', 'Microsoft.Cdn/profiles/afdEndpoints', 'Microsoft.Cdn/profiles/endpoints'],
+    resourceTypes: [
+      'Microsoft.Cdn/profiles',
+      'Microsoft.Cdn/profiles/afdEndpoints',
+      'Microsoft.Cdn/profiles/endpoints',
+      'Microsoft.Cdn/profiles/originGroups',
+      'Microsoft.Cdn/profiles/originGroups/origins',
+      'Microsoft.Cdn/profiles/afdEndpoints/routes',
+    ],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-edge-router'],
     implementedOperations: [
@@ -799,12 +814,22 @@ export const tier2Capabilities = [
       'AfdEndpoints.Get',
       'AfdEndpoints.List',
       'AfdEndpoints.Delete',
+      'AfdOriginGroups.CreateOrUpdate',
+      'AfdOriginGroups.Get',
+      'AfdOriginGroups.List',
+      'AfdOriginGroups.Delete',
+      'AfdOrigins.CreateOrUpdate',
+      'AfdOrigins.Get',
+      'AfdOrigins.List',
+      'AfdOrigins.Delete',
       'CdnEndpoints.CreateOrUpdate',
       'CdnEndpoints.Get',
       'CdnEndpoints.List',
       'CdnEndpoints.Delete',
-      'CdnRoutes.RejectUnsupportedRoutes',
       'Routes.CreateOrUpdate',
+      'Routes.Get',
+      'Routes.List',
+      'Routes.Delete',
     ],
     contractTested: false,
     cloudValidated: false,
@@ -1042,14 +1067,61 @@ export const tier2Capabilities = [
 ];
 
 export const allCapabilities = [...tier1Capabilities, ...tier2Capabilities];
+export const extendedCapabilities = [
+  {
+    id: 'iot-hub-extension',
+    tier: null,
+    awsAnalogue: 'IoT Core',
+    azureEquivalent: 'Azure IoT Hub',
+    resourceTypes: ['Microsoft.Devices/IotHubs'],
+    primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
+    backingEngines: ['globalstack-iot-hub-metadata'],
+    implementedOperations: [
+      'IotHubs.CreateOrUpdate',
+      'IotHubs.Get',
+      'IotHubs.List',
+      'IotHubs.Delete',
+    ],
+    contractTested: false,
+    cloudValidated: false,
+    realAzureCaptureRequired: ['consumer groups', 'routes', 'endpoints', 'device identity lifecycle', 'twin semantics'],
+    knownGaps: [
+      'MVP covers the ARM metadata surface only.',
+      'No device registry, MQTT ingress, routing, built-in endpoint delivery, or twin parity in MVP.',
+    ],
+  },
+  {
+    id: 'digital-twins-extension',
+    tier: null,
+    awsAnalogue: 'IoT SiteWise / graph digital twin composition',
+    azureEquivalent: 'Azure Digital Twins',
+    resourceTypes: ['Microsoft.DigitalTwins/digitalTwinsInstances'],
+    primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
+    backingEngines: ['globalstack-digital-twins-metadata'],
+    implementedOperations: [
+      'DigitalTwins.CreateOrUpdate',
+      'DigitalTwins.Get',
+      'DigitalTwins.List',
+      'DigitalTwins.Delete',
+    ],
+    contractTested: false,
+    cloudValidated: false,
+    realAzureCaptureRequired: ['models', 'twins graph lifecycle', 'event routes', 'query semantics', 'identity failures'],
+    knownGaps: [
+      'MVP covers the ARM metadata surface only.',
+      'No models graph, twin instances, query, event route execution, or endpoint parity in MVP.',
+    ],
+  },
+];
+export const supportedCapabilities = [...allCapabilities, ...extendedCapabilities];
 
 export function capabilityById(id) {
-  return allCapabilities.find(capability => capability.id === id);
+  return supportedCapabilities.find(capability => capability.id === id);
 }
 
 export function capabilityForResourceType(type) {
   const normalized = String(type ?? '').toLowerCase();
-  const matches = allCapabilities.flatMap(capability =>
+  const matches = supportedCapabilities.flatMap(capability =>
     capability.resourceTypes
       .filter(resourceType => normalized.startsWith(resourceType.toLowerCase()))
       .map(resourceType => ({ capability, resourceType }))

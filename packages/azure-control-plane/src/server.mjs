@@ -7,24 +7,37 @@ import { deterministicFunctionKey, deterministicHostKey } from '../../azure-data
 import { acceptsDeleteMissing, capturedProviderValidation, capturedPutMissingParent, storageAccountNotProvisioned, storagePostDeleteNotFound } from './provider-validation.mjs';
 import {
   authorizeRequest,
+  apiManagementProductApiLinkedApiRoute,
   azureEnvironmentMetadata,
   azureNotFoundFor,
+  exactCapabilityForResourceType,
   eventGridTopicListKeysRoute,
   expandDeploymentTemplate,
   facadeOrigin,
+  isCollectionRoute,
+  lowerSegments,
+  nearestCapabilityParentRoute,
+  normalizeProviderRoute,
   openIdConfiguration,
   parseProviderRoute,
   parseResourceGroupRoute,
   parseResourceGroupDeploymentRoute,
   parseSubscriptionDeploymentRoute,
   providerNamespace,
+  providerNamespaces,
   providerOperations,
+  providerRouteFromResourceId,
   readBody,
   requireGlobalStackAuthToken,
   scopedDiagnosticSettingsRoute,
+  scopedEventGridEventSubscriptionRoute,
+  segments,
   sendError,
   sendJson,
+  serviceBusNamespaceAuthorizationRuleListKeysRoute,
+  operationalInsightsWorkspaceSharedKeysRoute,
   siteReferencesExistingServerFarm,
+  storageAccountListServiceSasRoute,
   storageAccountListKeysRoute,
   storageAccountParentRoute,
   synthesizeWebAppConfig,
@@ -37,6 +50,7 @@ import {
   webListSyncFunctionTriggerStatusRoute,
   webSyncFunctionTriggersRoute,
   workflowRunActionRoute,
+  workflowRunActionsCollectionRoute,
   workflowRunActionItemRoute,
   workflowRunRoute,
   workflowRunsCollectionRoute,
@@ -49,6 +63,89 @@ import {
   aksCredentialActionRoute,
   webAppConfigRoute,
 } from './server-support.mjs';
+
+function apiManagementApiContract(resource, { idOverride = null } = {}) {
+  if (!resource) return null;
+  const properties = resource.properties ?? {};
+  const apiId = resource.apiId ?? String(resource.name ?? '').split('/').at(-1);
+  const displayName = resource.displayName ?? properties.displayName ?? apiId;
+  const apiRevision = properties.apiRevision ?? '1';
+  const serviceUrl = resource.serviceUrl ?? properties.serviceUrl ?? '';
+  const path = resource.path ?? properties.path ?? '';
+  const protocols = resource.protocols ?? properties.protocols ?? ['https'];
+  const subscriptionRequired = resource.subscriptionRequired ?? properties.subscriptionRequired ?? false;
+  const subscriptionKeyParameterNames = properties.subscriptionKeyParameterNames ?? {
+    header: 'Ocp-Apim-Subscription-Key',
+    query: 'subscription-key',
+  };
+  const isCurrent = properties.isCurrent ?? true;
+  const isOnline = properties.isOnline ?? true;
+  return {
+    id: idOverride ?? resource.id,
+    name: apiId,
+    type: 'Microsoft.ApiManagement/service/apis',
+    apiRevision,
+    apiRevisionDescription: properties.apiRevisionDescription ?? null,
+    apiType: properties.apiType ?? null,
+    apiVersion: properties.apiVersion ?? null,
+    apiVersionDescription: properties.apiVersionDescription ?? null,
+    apiVersionSet: properties.apiVersionSet ?? null,
+    apiVersionSetId: properties.apiVersionSetId ?? null,
+    authenticationSettings: properties.authenticationSettings ?? null,
+    contact: properties.contact ?? null,
+    description: properties.description ?? null,
+    displayName,
+    isCurrent,
+    isOnline,
+    license: properties.license ?? null,
+    path,
+    protocols,
+    provisioningState: properties.provisioningState ?? 'Succeeded',
+    serviceUrl,
+    sourceApiId: properties.sourceApiId ?? null,
+    subscriptionKeyParameterNames,
+    subscriptionRequired,
+    termsOfServiceUrl: properties.termsOfServiceUrl ?? null,
+    properties: {
+      provisioningState: properties.provisioningState ?? 'Succeeded',
+      displayName,
+      apiRevision,
+      apiRevisionDescription: properties.apiRevisionDescription ?? null,
+      apiType: properties.apiType ?? null,
+      apiVersion: properties.apiVersion ?? null,
+      apiVersionDescription: properties.apiVersionDescription ?? null,
+      apiVersionSet: properties.apiVersionSet ?? null,
+      apiVersionSetId: properties.apiVersionSetId ?? null,
+      authenticationSettings: properties.authenticationSettings ?? null,
+      contact: properties.contact ?? null,
+      description: properties.description ?? null,
+      isCurrent,
+      isOnline,
+      license: properties.license ?? null,
+      serviceUrl,
+      path,
+      protocols,
+      sourceApiId: properties.sourceApiId ?? null,
+      subscriptionKeyParameterNames,
+      subscriptionRequired,
+      termsOfServiceUrl: properties.termsOfServiceUrl ?? null,
+    },
+  };
+}
+
+function apiManagementProductApiContract(associationResource, linkedApi) {
+  if (!associationResource || !linkedApi) return null;
+  return apiManagementApiContract(linkedApi);
+}
+
+function sendHeadStatus(res, status, headers = {}) {
+  res.writeHead(status, {
+    'content-length': 0,
+    ...headers,
+  });
+  res.end();
+}
+
 export function createArmRequestHandler({
   store = new ResourceStore(),
   persist = false,
@@ -59,6 +156,7 @@ export function createArmRequestHandler({
   void persist;
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
+    providerRoute = normalizeProviderRoute(providerRoute);
     const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
     const capability = capabilityForResourceType(resourceType);
     if (!apiVersion) {
@@ -469,10 +567,11 @@ export function createArmRequestHandler({
         }
       }
 
-      const providerRoute = parseProviderRoute(pathname);
+      const providerRoute = normalizeProviderRoute(parseProviderRoute(pathname));
       if (providerRoute && providerRoute.typePath) {
         const apiVersion = url.searchParams.get('api-version');
         const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
+        const productApiLinkedApiRoute = apiManagementProductApiLinkedApiRoute(providerRoute);
         const webAppConfig = synthesizeWebAppConfig({ providerRoute, apiVersion, store });
         const capability = capabilityForResourceType(resourceType);
 
@@ -513,30 +612,83 @@ export function createArmRequestHandler({
           return sendJson(res, 200, keys);
         }
 
+        const storageListServiceSas = storageAccountListServiceSasRoute(providerRoute);
+        if (storageListServiceSas && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const account = store.getResource(storageListServiceSas);
+          if (!account) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${storageListServiceSas.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const body = await readBody(req);
+          const sas = store.listStorageAccountServiceSas(storageListServiceSas, body);
+          return sendJson(res, 200, sas);
+        }
+
+        const workspaceSharedKeysRoute = operationalInsightsWorkspaceSharedKeysRoute(providerRoute);
+        if (workspaceSharedKeysRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const keys = store.listOperationalInsightsWorkspaceSharedKeys(workspaceSharedKeysRoute);
+          if (!keys) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${workspaceSharedKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, keys);
+        }
+
+        const serviceBusListKeysRoute = serviceBusNamespaceAuthorizationRuleListKeysRoute(providerRoute);
+        if (serviceBusListKeysRoute && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!store.getResource(serviceBusListKeysRoute.namespaceRoute)) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${serviceBusListKeysRoute.namespaceRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!store.getResource(serviceBusListKeysRoute.authorizationRuleRoute)) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${serviceBusListKeysRoute.authorizationRuleRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const keys = store.listServiceBusNamespaceKeys(
+            serviceBusListKeysRoute.namespaceRoute,
+            serviceBusListKeysRoute.authorizationRuleName,
+          );
+          if (!keys) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${serviceBusListKeysRoute.namespaceRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, keys);
+        }
+
         const scopedDiagnosticRoute = scopedDiagnosticSettingsRoute(providerRoute);
         if (scopedDiagnosticRoute) {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
             return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
           }
-          if (!store.getResource(scopedDiagnosticRoute.scopeRoute)) {
+          const scopeResource = store.getResource(scopedDiagnosticRoute.scopeRoute);
+          if (!scopeResource) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedDiagnosticRoute.scopeRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
+          const scopedDiagnosticIdentity = {
+            ...scopedDiagnosticRoute.diagnosticRoute,
+            scopeId: scopeResource.id,
+          };
           const capability = exactCapabilityForResourceType('Microsoft.Insights/diagnosticSettings');
           if (method === 'PUT') {
+            const body = await readBody(req);
             const validation = capturedProviderValidation({
               method,
               resourceType: 'Microsoft.Insights/diagnosticSettings',
               body,
-              providerRoute: scopedDiagnosticRoute.diagnosticRoute,
+              providerRoute: scopedDiagnosticIdentity,
             });
             if (validation) return sendJson(res, validation.status, validation.body);
             const { resource, created } = store.putResource({
-              ...scopedDiagnosticRoute.diagnosticRoute,
+              ...scopedDiagnosticIdentity,
               body: {
                 ...body,
                 properties: {
                   ...(body.properties ?? {}),
-                  scope: store.getResource(scopedDiagnosticRoute.scopeRoute)?.id,
+                  scope: scopeResource.id,
                 },
               },
               apiVersion,
@@ -545,20 +697,76 @@ export function createArmRequestHandler({
             return sendJson(res, created ? 201 : 200, resource);
           }
           if (method === 'GET') {
-            const resource = store.getResource(scopedDiagnosticRoute.diagnosticRoute);
+            const resource = store.getResource(scopedDiagnosticIdentity);
             if (!resource) {
               return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedDiagnosticRoute.diagnosticRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
             }
             return sendJson(res, 200, resource);
           }
           if (method === 'DELETE') {
-            const existed = store.deleteResource(scopedDiagnosticRoute.diagnosticRoute);
+            const existed = store.deleteResource(scopedDiagnosticIdentity);
             if (!existed) {
               return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedDiagnosticRoute.diagnosticRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
             }
             return sendJson(res, 200, {
               status: 'Deleted',
-              id: `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/Microsoft.Insights/${scopedDiagnosticRoute.diagnosticRoute.typePath}`,
+              id: `${scopeResource.id}/providers/Microsoft.Insights/${scopedDiagnosticRoute.diagnosticRoute.typePath}`,
+            });
+          }
+        }
+
+        const scopedEventSubscriptionRoute = scopedEventGridEventSubscriptionRoute(providerRoute);
+        if (scopedEventSubscriptionRoute) {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const scopeResource = store.getResource(scopedEventSubscriptionRoute.scopeRoute);
+          if (!scopeResource) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedEventSubscriptionRoute.scopeRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const scopedSubscriptionIdentity = {
+            ...scopedEventSubscriptionRoute.subscriptionRoute,
+            scopeId: scopeResource.id,
+          };
+          const capability = exactCapabilityForResourceType('Microsoft.EventGrid/eventSubscriptions');
+          if (method === 'PUT') {
+            const body = await readBody(req);
+            const validation = capturedProviderValidation({
+              method,
+              resourceType: 'Microsoft.EventGrid/eventSubscriptions',
+              body,
+              providerRoute: scopedSubscriptionIdentity,
+            });
+            if (validation) return sendJson(res, validation.status, validation.body);
+            const { resource, created } = store.putResource({
+              ...scopedSubscriptionIdentity,
+              body: {
+                ...body,
+                properties: {
+                  ...(body.properties ?? {}),
+                  scope: scopeResource.id,
+                },
+              },
+              apiVersion,
+              capability,
+            });
+            return sendJson(res, created ? 201 : 200, resource);
+          }
+          if (method === 'GET') {
+            const resource = store.getResource(scopedSubscriptionIdentity);
+            if (!resource) {
+              return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedEventSubscriptionRoute.subscriptionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            return sendJson(res, 200, resource);
+          }
+          if (method === 'DELETE') {
+            const existed = store.deleteResource(scopedSubscriptionIdentity);
+            if (!existed) {
+              return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedEventSubscriptionRoute.subscriptionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            return sendJson(res, 200, {
+              status: 'Deleted',
+              id: `${scopeResource.id}/providers/Microsoft.EventGrid/${scopedEventSubscriptionRoute.subscriptionRoute.typePath}`,
             });
           }
         }
@@ -1107,6 +1315,32 @@ export function createArmRequestHandler({
         }
 
         if (
+          providerRoute.providerNamespace === 'Microsoft.Devices'
+          && resourceType.startsWith('Microsoft.Devices/IotHubs/')
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure IoT Hub child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
+          providerRoute.providerNamespace === 'Microsoft.DigitalTwins'
+          && resourceType.startsWith('Microsoft.DigitalTwins/digitalTwinsInstances/')
+          && !exactCapabilityForResourceType(resourceType)
+        ) {
+          return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
+            {
+              code: 'ExplicitGap',
+              message: 'Unsupported Azure Digital Twins child and action routes must fail closed until captured and implemented.',
+            },
+          ]);
+        }
+
+        if (
           providerRoute.providerNamespace === 'Microsoft.Storage'
           && resourceType.startsWith('Microsoft.Storage/storageAccounts/fileServices/shares/')
           && !exactCapabilityForResourceType(resourceType)
@@ -1163,6 +1397,13 @@ export function createArmRequestHandler({
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });
+          if (productApiLinkedApiRoute && result.status < 400 && result.body) {
+            const linkedApi = store.getResource(productApiLinkedApiRoute);
+            if (!linkedApi) {
+              return sendError(res, 404, 'ResourceNotFound', `The Resource '${productApiLinkedApiRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            result.body = apiManagementProductApiContract(result.body, linkedApi);
+          }
           const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
           const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
           return sendJson(res, result.status, result.body, result.asyncOperation ? {
@@ -1203,7 +1444,34 @@ export function createArmRequestHandler({
             const notFound = azureNotFoundFor({ method, resourceType, providerRoute, store });
             return sendError(res, notFound.status, notFound.code, notFound.message);
           }
+          if (productApiLinkedApiRoute) {
+            const linkedApi = store.getResource(productApiLinkedApiRoute);
+            if (!linkedApi) {
+              return sendError(res, 404, 'ResourceNotFound', `The Resource '${productApiLinkedApiRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            return sendJson(res, 200, apiManagementProductApiContract(resource, linkedApi));
+          }
           return sendJson(res, 200, resource);
+        }
+
+        if (method === 'HEAD') {
+          const validation = capturedProviderValidation({ method, resourceType, providerRoute });
+          if (validation) {
+            sendHeadStatus(res, validation.status);
+            return;
+          }
+          const resource = store.getResource(providerRoute);
+          if (!resource) {
+            const notFound = azureNotFoundFor({ method, resourceType, providerRoute, store }) ?? { status: 404 };
+            sendHeadStatus(res, notFound.status);
+            return;
+          }
+          if (productApiLinkedApiRoute && !store.getResource(productApiLinkedApiRoute)) {
+            sendHeadStatus(res, 404);
+            return;
+          }
+          sendHeadStatus(res, 204);
+          return;
         }
 
         if (method === 'DELETE') {
@@ -1270,6 +1538,12 @@ export function createArmRequestHandler({
         },
       ]);
     } catch (error) {
+      console.error('[globalstack:azure-control-plane] unhandled request error', {
+        method,
+        pathname,
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return sendError(res, 500, 'GlobalStackInternalError', error instanceof Error ? error.message : String(error));
     } finally {
       store.recordCall({

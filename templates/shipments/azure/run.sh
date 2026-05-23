@@ -201,9 +201,24 @@ docker_cmd compose up --abort-on-container-exit --exit-code-from runner runner |
 
 docker_cmd compose down --remove-orphans >/dev/null 2>&1 || true
 
-if [ "${#docker_prefix[@]}" -gt 0 ]; then
-  sudo -n chown -R "$(id -u):$(id -g)" "$SHIPMENT_DOCKER_DIR" "$EXECUTION_LOG_PATH" >/dev/null 2>&1 || true
-fi
+normalize_shipment_ownership() {
+  local uid gid
+  uid="$(id -u)"
+  gid="$(id -g)"
+
+  if [ "${#docker_prefix[@]}" -gt 0 ]; then
+    sudo -n chown -R "${uid}:${gid}" "$LIB_DIR" >/dev/null 2>&1 || true
+    return 0
+  fi
+
+  docker_cmd run --rm \
+    -v "$LIB_DIR:/shipment" \
+    --entrypoint sh \
+    "$GLOBALSTACK_AZURE_IMAGE" \
+    -lc "chown -R ${uid}:${gid} /shipment" >/dev/null 2>&1 || true
+}
+
+normalize_shipment_ownership
 
 stage_status() {
   local stage="$1"
@@ -213,6 +228,63 @@ stage_status() {
     return 0
   fi
   printf '%s\n' "NOT_RUN"
+}
+
+log_section() {
+  local title="$1"
+  printf '\n========== %s ==========\n' "$title"
+}
+
+log_file_if_present() {
+  local label="$1"
+  local path="$2"
+  if [ -f "$path" ]; then
+    log_section "$label"
+    cat "$path"
+    case "$(tail -c 1 "$path" 2>/dev/null || true)" in
+      "") ;;
+      *) printf '\n' ;;
+    esac
+  fi
+}
+
+log_stage_summary() {
+  log_section "Stage Summary"
+  printf 'build=%s\n' "$(stage_status build)"
+  printf 'lint=%s\n' "$(stage_status lint)"
+  printf 'unit-tests=%s\n' "$(stage_status unit-tests)"
+  printf 'deploy=%s\n' "$(stage_status deploy)"
+  printf 'provider-lifecycle=%s\n' "$(stage_status provider-lifecycle)"
+  printf 'integration-tests=%s\n' "$(stage_status integration-tests)"
+  printf 'destroy=%s\n' "$(stage_status destroy)"
+}
+
+append_detailed_execution_log() {
+  log_stage_summary
+  log_file_if_present "Lifecycle Report" "$REPORT_DIR/lifecycle-report.json"
+
+  for stage in build lint unit-tests deploy provider-lifecycle integration-tests destroy; do
+    log_file_if_present "Stage Report: ${stage}" "$REPORT_DIR/stage-${stage}.json"
+  done
+
+  log_file_if_present "Unit Test Stdout" "$REPORT_DIR/unit-tests-task-stdout.log"
+  log_file_if_present "Unit Test Stderr" "$REPORT_DIR/unit-tests-task-stderr.log"
+  log_file_if_present "Integration Test Stdout" "$REPORT_DIR/integration-tests-task-stdout.log"
+  log_file_if_present "Integration Test Stderr" "$REPORT_DIR/integration-tests-task-stderr.log"
+
+  log_file_if_present "Native Deploy Stdout" "$REPORT_DIR/native-stdout.log"
+  log_file_if_present "Native Deploy Stderr" "$REPORT_DIR/native-stderr.log"
+  log_file_if_present "Provider Lifecycle Response" "$REPORT_DIR/provider-lifecycle-response.json"
+  log_file_if_present "Provider Lifecycle Stdout" "$REPORT_DIR/provider-lifecycle-stdout.log"
+  log_file_if_present "Provider Lifecycle Stderr" "$REPORT_DIR/provider-lifecycle-stderr.log"
+  log_file_if_present "Deployment Response" "$REPORT_DIR/deployment-response.json"
+  log_file_if_present "Native Outputs" "$REPORT_DIR/native-outputs.json"
+  log_file_if_present "Resource Group Readback" "$REPORT_DIR/resource-group-get.json"
+  log_file_if_present "Destroy Stdout" "$REPORT_DIR/native-destroy-stdout.log"
+  log_file_if_present "Destroy Stderr" "$REPORT_DIR/native-destroy-stderr.log"
+
+  log_section "Report Files"
+  find "$REPORT_DIR" -maxdepth 1 -type f | sort
 }
 
 final_stage=""
@@ -266,6 +338,8 @@ jq -n \
     provider_lifecycle_ok: $providerLifecycleOk,
     overall_status: $overallStatus
   }' > "$EXECUTION_REPORT_PATH"
+
+append_detailed_execution_log
 
 echo "Execution report written to $EXECUTION_REPORT_PATH"
 echo "Execution log written to $EXECUTION_LOG_PATH"

@@ -430,6 +430,39 @@ function validateCdnName(resourceType, providerRoute) {
     }
   }
 
+  if (resourceType === 'Microsoft.Cdn/profiles/originGroups') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'originGroups');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'Front Door origin group names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/originGroups/origins') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'origins');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'Front Door origin names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints/routes') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'routes');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
+      return invalidCdnName(
+        resourceType,
+        name,
+        'Front Door route names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -594,8 +627,16 @@ function validateContainerRegistryPayload(resourceType, body) {
 function validateAksPayload(resourceType, body) {
   if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
   const properties = body.properties ?? {};
-  if (!properties.servicePrincipalProfile) return aksMissingServicePrincipalProfile();
-  if (typeof properties.servicePrincipalProfile.clientId !== 'string' || properties.servicePrincipalProfile.clientId.trim() === '') {
+  const identityTypes = String(body.identity?.type ?? '')
+    .split(',')
+    .map(value => value.trim())
+    .filter(Boolean);
+  const usesManagedIdentity = identityTypes.some(type => type === 'SystemAssigned' || type === 'UserAssigned');
+  if (!properties.servicePrincipalProfile && !usesManagedIdentity) return aksMissingServicePrincipalProfile();
+  if (
+    properties.servicePrincipalProfile
+    && (typeof properties.servicePrincipalProfile.clientId !== 'string' || properties.servicePrincipalProfile.clientId.trim() === '')
+  ) {
     return envelopedError(
       400,
       'InvalidParameter',
@@ -672,6 +713,13 @@ function validateAksPayload(resourceType, body) {
       400,
       'InvalidIdentityType',
       'AKS identity.type must be SystemAssigned, UserAssigned, SystemAssigned, UserAssigned, or None when provided.',
+    );
+  }
+  if (identityTypes.includes('UserAssigned') && Object.keys(body.identity?.userAssignedIdentities ?? {}).length === 0) {
+    return envelopedError(
+      400,
+      'InvalidIdentityValues',
+      'AKS identity.userAssignedIdentities must include at least one identity when identity.type uses UserAssigned.',
     );
   }
   return null;
@@ -924,13 +972,22 @@ function validateDataMigrationPayload(resourceType, body) {
 
   if (resourceType === 'Microsoft.DataMigration/services/projects') {
     const properties = body.properties ?? {};
-    const platforms = new Set(['SQL', 'MySQL', 'PostgreSQL', 'MongoDb']);
+    const sourcePlatforms = new Set(['SQL', 'MySQL', 'MySql', 'PostgreSql', 'PostgreSQL', 'MongoDb']);
+    const targetPlatforms = new Set([
+      'SQLDB',
+      'SQLMI',
+      'AzureDbForMySql',
+      'AzureDbForMySQL',
+      'AzureDbForPostgreSql',
+      'AzureDbForPostgreSQL',
+      'MongoDb',
+    ]);
     if (!emptyObject(properties)) {
-      if (typeof properties.sourcePlatform !== 'string' || !platforms.has(properties.sourcePlatform)) {
-        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.sourcePlatform must be one of SQL, MySQL, PostgreSQL, or MongoDb.');
+      if (typeof properties.sourcePlatform !== 'string' || !sourcePlatforms.has(properties.sourcePlatform)) {
+        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.sourcePlatform must be one of SQL, MySQL, PostgreSql, or MongoDb.');
       }
-      if (typeof properties.targetPlatform !== 'string' || !platforms.has(properties.targetPlatform)) {
-        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.targetPlatform must be one of SQL, MySQL, PostgreSQL, or MongoDb.');
+      if (typeof properties.targetPlatform !== 'string' || !targetPlatforms.has(properties.targetPlatform)) {
+        return envelopedError(400, 'InvalidProjectProperties', 'Migration project properties.targetPlatform must be one of SQLDB, SQLMI, AzureDbForMySql, AzureDbForPostgreSql, or MongoDb.');
       }
     }
     if (Object.hasOwn(properties, 'sourceConnectionInfo') && typeof properties.sourceConnectionInfo !== 'object') {
@@ -1216,7 +1273,12 @@ function isPort(value) {
 }
 
 function arrayProp(body, name) {
-  return Array.isArray(body.properties?.[name]) ? body.properties[name] : [];
+  if (Array.isArray(body.properties?.[name])) return body.properties[name];
+  return Array.isArray(body[name]) ? body[name] : [];
+}
+
+function nestedProp(item, name) {
+  return item?.properties?.[name] ?? item?.[name];
 }
 
 function refId(value) {
@@ -1235,29 +1297,30 @@ function validateApplicationGatewayPayload(resourceType, body) {
   const gatewayIpConfigurations = arrayProp(body, 'gatewayIPConfigurations');
   const gatewayIpValidation = validateNamedCollection(gatewayIpConfigurations, 'SubnetIsRequired', 'Application Gateway requires gatewayIPConfigurations.');
   if (gatewayIpValidation) return gatewayIpValidation;
-  if (gatewayIpConfigurations.some(item => !refId(item.properties?.subnet))) {
+  if (gatewayIpConfigurations.some(item => !refId(nestedProp(item, 'subnet')))) {
     return envelopedError(400, 'SubnetIsRequired', 'Subnet reference is required for ipconfiguration Application gateway subnet is required.');
   }
 
-  const skuName = body.sku?.name;
+  const sku = body.sku ?? body.properties?.sku;
+  const skuName = sku?.name;
   if (!['Standard_v2', 'WAF_v2'].includes(skuName)) {
     return envelopedError(400, 'ApplicationGatewaySkuNotSupported', 'Application Gateway sku.name must be Standard_v2 or WAF_v2 for this local parity surface.');
   }
-  if (!['Standard_v2', 'WAF_v2'].includes(body.sku?.tier)) {
+  if (!['Standard_v2', 'WAF_v2'].includes(sku?.tier)) {
     return envelopedError(400, 'ApplicationGatewaySkuTierNotSupported', 'Application Gateway sku.tier must be Standard_v2 or WAF_v2 for this local parity surface.');
   }
 
   const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
   const frontendIpValidation = validateNamedCollection(frontendIpConfigurations, 'ApplicationGatewayFrontendIpConfigurationRequired', 'Application Gateway requires frontendIPConfigurations.');
   if (frontendIpValidation) return frontendIpValidation;
-  if (frontendIpConfigurations.some(item => !refId(item.properties?.publicIPAddress) && !refId(item.properties?.subnet))) {
+  if (frontendIpConfigurations.some(item => !refId(nestedProp(item, 'publicIPAddress')) && !refId(nestedProp(item, 'subnet')))) {
     return envelopedError(400, 'ApplicationGatewayFrontendIpConfigurationInvalid', 'Application Gateway frontend IP configurations require publicIPAddress.id or subnet.id.');
   }
 
   const frontendPorts = arrayProp(body, 'frontendPorts');
   const frontendPortValidation = validateNamedCollection(frontendPorts, 'ApplicationGatewayFrontendPortRequired', 'Application Gateway requires frontendPorts.');
   if (frontendPortValidation) return frontendPortValidation;
-  if (frontendPorts.some(item => !isPort(item.properties?.port))) {
+  if (frontendPorts.some(item => !isPort(nestedProp(item, 'port')))) {
     return envelopedError(400, 'ApplicationGatewayFrontendPortInvalid', 'Application Gateway frontendPorts[].properties.port must be between 1 and 65535.');
   }
 
@@ -1268,21 +1331,21 @@ function validateApplicationGatewayPayload(resourceType, body) {
   const backendSettings = arrayProp(body, 'backendHttpSettingsCollection');
   const backendSettingsValidation = validateNamedCollection(backendSettings, 'ApplicationGatewayBackendHttpSettingsRequired', 'Application Gateway requires backendHttpSettingsCollection.');
   if (backendSettingsValidation) return backendSettingsValidation;
-  if (backendSettings.some(item => !isPort(item.properties?.port) || !['Http', 'Https'].includes(item.properties?.protocol))) {
+  if (backendSettings.some(item => !isPort(nestedProp(item, 'port')) || !['Http', 'Https'].includes(nestedProp(item, 'protocol')))) {
     return envelopedError(400, 'ApplicationGatewayBackendHttpSettingsInvalid', 'Application Gateway backend HTTP settings require protocol Http/Https and a port between 1 and 65535.');
   }
 
   const listeners = arrayProp(body, 'httpListeners');
   const listenerValidation = validateNamedCollection(listeners, 'ApplicationGatewayHttpListenerRequired', 'Application Gateway requires httpListeners.');
   if (listenerValidation) return listenerValidation;
-  if (listeners.some(item => !refId(item.properties?.frontendIPConfiguration) || !refId(item.properties?.frontendPort) || !['Http', 'Https'].includes(item.properties?.protocol))) {
+  if (listeners.some(item => !refId(nestedProp(item, 'frontendIPConfiguration')) || !refId(nestedProp(item, 'frontendPort')) || !['Http', 'Https'].includes(nestedProp(item, 'protocol')))) {
     return envelopedError(400, 'ApplicationGatewayHttpListenerInvalid', 'Application Gateway HTTP listeners require frontendIPConfiguration.id, frontendPort.id, and protocol Http/Https.');
   }
 
   const rules = arrayProp(body, 'requestRoutingRules');
   const ruleValidation = validateNamedCollection(rules, 'ApplicationGatewayRequestRoutingRuleRequired', 'Application Gateway requires requestRoutingRules.');
   if (ruleValidation) return ruleValidation;
-  if (rules.some(item => !['Basic', 'PathBasedRouting'].includes(item.properties?.ruleType) || !refId(item.properties?.httpListener) || !refId(item.properties?.backendAddressPool) || !refId(item.properties?.backendHttpSettings))) {
+  if (rules.some(item => !['Basic', 'PathBasedRouting'].includes(nestedProp(item, 'ruleType')) || !refId(nestedProp(item, 'httpListener')) || !refId(nestedProp(item, 'backendAddressPool')) || !refId(nestedProp(item, 'backendHttpSettings')))) {
     return envelopedError(400, 'ApplicationGatewayRequestRoutingRuleInvalid', 'Application Gateway request routing rules require a supported ruleType and listener, backend pool, and backend settings references.');
   }
 
@@ -1570,6 +1633,102 @@ function validateCdnPayload(resourceType, body) {
     }
     if (isHttpsAllowed !== undefined && typeof isHttpsAllowed !== 'boolean') {
       return envelopedError(400, 'BadRequest', 'CDN endpoint properties.isHttpsAllowed must be a boolean.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/originGroups') {
+    const loadBalancingSettings = body.properties?.loadBalancingSettings ?? body.loadBalancingSettings;
+    if (loadBalancingSettings !== undefined) {
+      const sampleSize = loadBalancingSettings?.sampleSize;
+      const successfulSamplesRequired = loadBalancingSettings?.successfulSamplesRequired;
+      if (!Number.isInteger(sampleSize) || sampleSize < 1 || sampleSize > 256) {
+        return envelopedError(400, 'BadRequest', 'Front Door origin groups require loadBalancingSettings.sampleSize to be an integer between 1 and 256.');
+      }
+      if (!Number.isInteger(successfulSamplesRequired) || successfulSamplesRequired < 1 || successfulSamplesRequired > sampleSize) {
+        return envelopedError(400, 'BadRequest', 'Front Door origin groups require loadBalancingSettings.successfulSamplesRequired to be an integer between 1 and sampleSize.');
+      }
+    }
+    const healthProbeSettings = body.properties?.healthProbeSettings ?? body.healthProbeSettings;
+    if (healthProbeSettings !== undefined) {
+      if (!isNonEmptyString(healthProbeSettings?.probePath)) {
+        return envelopedError(400, 'BadRequest', 'Front Door origin groups require healthProbeSettings.probePath when healthProbeSettings is provided.');
+      }
+      if (!['GET', 'HEAD'].includes(String(healthProbeSettings?.probeRequestType ?? ''))) {
+        return envelopedError(400, 'BadRequest', "Front Door origin group healthProbeSettings.probeRequestType must be 'GET' or 'HEAD'.");
+      }
+      if (!['Http', 'Https'].includes(String(healthProbeSettings?.probeProtocol ?? ''))) {
+        return envelopedError(400, 'BadRequest', "Front Door origin group healthProbeSettings.probeProtocol must be 'Http' or 'Https'.");
+      }
+      const interval = healthProbeSettings?.probeIntervalInSeconds;
+      if (!Number.isInteger(interval) || interval < 1 || interval > 255) {
+        return envelopedError(400, 'BadRequest', 'Front Door origin group healthProbeSettings.probeIntervalInSeconds must be an integer between 1 and 255.');
+      }
+    }
+    const sessionAffinityState = body.properties?.sessionAffinityState ?? body.sessionAffinityState;
+    if (sessionAffinityState !== undefined && !['Enabled', 'Disabled'].includes(sessionAffinityState)) {
+      return envelopedError(400, 'BadRequest', "Front Door origin group sessionAffinityState must be 'Enabled' or 'Disabled'.");
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/originGroups/origins') {
+    const hostName = body.properties?.hostName ?? body.hostName;
+    if (!isNonEmptyString(hostName)) {
+      return envelopedError(400, 'BadRequest', 'Front Door origins require hostName.');
+    }
+    const httpPort = body.properties?.httpPort ?? body.httpPort;
+    const httpsPort = body.properties?.httpsPort ?? body.httpsPort;
+    if (httpPort !== undefined && (!Number.isInteger(httpPort) || httpPort < 1 || httpPort > 65535)) {
+      return envelopedError(400, 'BadRequest', 'Front Door origin httpPort must be an integer between 1 and 65535.');
+    }
+    if (httpsPort !== undefined && (!Number.isInteger(httpsPort) || httpsPort < 1 || httpsPort > 65535)) {
+      return envelopedError(400, 'BadRequest', 'Front Door origin httpsPort must be an integer between 1 and 65535.');
+    }
+    const priority = body.properties?.priority ?? body.priority;
+    if (priority !== undefined && (!Number.isInteger(priority) || priority < 1 || priority > 5)) {
+      return envelopedError(400, 'BadRequest', 'Front Door origin priority must be an integer between 1 and 5.');
+    }
+    const weight = body.properties?.weight ?? body.weight;
+    if (weight !== undefined && (!Number.isInteger(weight) || weight < 1 || weight > 1000)) {
+      return envelopedError(400, 'BadRequest', 'Front Door origin weight must be an integer between 1 and 1000.');
+    }
+    const enabledState = body.properties?.enabledState ?? body.enabledState;
+    if (enabledState !== undefined && !['Enabled', 'Disabled'].includes(enabledState)) {
+      return envelopedError(400, 'BadRequest', "Front Door origin enabledState must be 'Enabled' or 'Disabled'.");
+    }
+    const enforceCertificateNameCheck = body.properties?.enforceCertificateNameCheck ?? body.enforceCertificateNameCheck;
+    if (enforceCertificateNameCheck !== undefined && typeof enforceCertificateNameCheck !== 'boolean') {
+      return envelopedError(400, 'BadRequest', 'Front Door origin enforceCertificateNameCheck must be a boolean.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints/routes') {
+    const originGroupId = body.properties?.originGroup?.id ?? body.originGroup?.id;
+    if (!isNonEmptyString(originGroupId)) {
+      return envelopedError(400, 'BadRequest', 'Front Door routes require originGroup.id.');
+    }
+    const patternsToMatch = body.properties?.patternsToMatch ?? body.patternsToMatch;
+    if (!Array.isArray(patternsToMatch) || patternsToMatch.length === 0 || patternsToMatch.some(pattern => !isNonEmptyString(pattern))) {
+      return envelopedError(400, 'BadRequest', 'Front Door routes require at least one patternsToMatch entry.');
+    }
+    const supportedProtocols = body.properties?.supportedProtocols ?? body.supportedProtocols;
+    if (!Array.isArray(supportedProtocols) || supportedProtocols.length === 0 || supportedProtocols.some(protocol => !['Http', 'Https'].includes(protocol))) {
+      return envelopedError(400, 'BadRequest', "Front Door routes require supportedProtocols containing 'Http' and/or 'Https'.");
+    }
+    const enabledState = body.properties?.enabledState ?? body.enabledState;
+    if (enabledState !== undefined && !['Enabled', 'Disabled'].includes(enabledState)) {
+      return envelopedError(400, 'BadRequest', "Front Door route enabledState must be 'Enabled' or 'Disabled'.");
+    }
+    const forwardingProtocol = body.properties?.forwardingProtocol ?? body.forwardingProtocol;
+    if (forwardingProtocol !== undefined && !['MatchRequest', 'HttpOnly', 'HttpsOnly'].includes(forwardingProtocol)) {
+      return envelopedError(400, 'BadRequest', "Front Door route forwardingProtocol must be 'MatchRequest', 'HttpOnly', or 'HttpsOnly'.");
+    }
+    const httpsRedirect = body.properties?.httpsRedirect ?? body.httpsRedirect;
+    if (httpsRedirect !== undefined && !['Enabled', 'Disabled'].includes(httpsRedirect)) {
+      return envelopedError(400, 'BadRequest', "Front Door route httpsRedirect must be 'Enabled' or 'Disabled'.");
+    }
+    const linkToDefaultDomain = body.properties?.linkToDefaultDomain ?? body.linkToDefaultDomain;
+    if (linkToDefaultDomain !== undefined && !['Enabled', 'Disabled'].includes(linkToDefaultDomain)) {
+      return envelopedError(400, 'BadRequest', "Front Door route linkToDefaultDomain must be 'Enabled' or 'Disabled'.");
     }
   }
 
@@ -1896,11 +2055,18 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
   if (method !== 'PUT') return null;
 
   if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
-    return envelopedError(
-      400,
-      'InvalidRequest',
-      'Microsoft.EventGrid is not registered in Azure Subscription <subscription-id>. To resolve this, register the provider in this Azure subscription and retry the operation.',
-    );
+    const destination = body.properties?.destination ?? body.destination;
+    if (!destination || typeof destination !== 'object') {
+      return envelopedError(400, 'InvalidRequest', 'Event Grid event subscriptions require a destination object.');
+    }
+    if (!isNonEmptyString(destination.endpointType)) {
+      return envelopedError(400, 'InvalidRequest', 'Event Grid event subscriptions require destination.endpointType.');
+    }
+    const endpointUrl = destination.endpointUrl ?? destination.properties?.endpointUrl ?? destination.properties?.endpointBaseUrl;
+    if (String(destination.endpointType) === 'WebHook' && !isNonEmptyString(endpointUrl)) {
+      return envelopedError(400, 'InvalidRequest', 'Webhook event subscriptions require destination.endpointUrl.');
+    }
+    return null;
   }
 
   if (resourceType === 'Microsoft.Authorization/roleAssignments') {

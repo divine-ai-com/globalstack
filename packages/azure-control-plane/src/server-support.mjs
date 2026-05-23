@@ -1,5 +1,5 @@
 import { URL } from 'node:url';
-import { allCapabilities } from '../../core/src/azure-tier1-capabilities.mjs';
+import { allCapabilities, supportedCapabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
 export async function readBody(req) {
   let text = '';
@@ -44,9 +44,49 @@ export const localIdentity = {
   subscriptionId: process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000',
   tenantId: process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000',
   clientId: process.env.GLOBALSTACK_AZURE_CLIENT_ID ?? process.env.ARM_CLIENT_ID ?? '11111111-1111-1111-1111-111111111111',
+  objectId: process.env.GLOBALSTACK_AZURE_OBJECT_ID ?? '22222222-2222-2222-2222-222222222222',
   clientSecret: process.env.GLOBALSTACK_AZURE_CLIENT_SECRET ?? process.env.ARM_CLIENT_SECRET ?? 'globalstack',
-  accessToken: process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN ?? 'globalstack-local-token',
 };
+
+function base64UrlEncodeJson(value) {
+  return Buffer.from(JSON.stringify(value))
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+function deterministicJwtAccessToken() {
+  if (process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN) {
+    return process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN;
+  }
+  const header = {
+    alg: 'none',
+    typ: 'JWT',
+  };
+  const payload = {
+    aud: 'https://management.azure.com/',
+    iss: `https://sts.windows.net/${localIdentity.tenantId}/`,
+    iat: 1704067200,
+    nbf: 1704067200,
+    exp: 4070908800,
+    aio: 'globalstack-local-token',
+    app_displayname: 'GlobalStack Local Identity',
+    appid: localIdentity.clientId,
+    appidacr: '1',
+    idtyp: 'app',
+    oid: localIdentity.objectId,
+    rh: 'globalstack-local-identity',
+    sub: localIdentity.objectId,
+    tid: localIdentity.tenantId,
+    uti: 'globalstack-local-uti',
+    ver: '1.0',
+    xms_tcdt: '1704067200',
+  };
+  return `${base64UrlEncodeJson(header)}.${base64UrlEncodeJson(payload)}.`;
+}
+
+localIdentity.accessToken = deterministicJwtAccessToken();
 
 export function requireGlobalStackAuthToken() {
   const token = process.env.GLOBALSTACK_AUTH_TOKEN;
@@ -130,7 +170,11 @@ export function authorizeRequest(req, method, pathname) {
   const auth = String(req.headers.authorization ?? '');
   const match = auth.match(/^Bearer\s+(.+)$/i);
   if (!match) return authenticationFailure();
-  if (match[1] !== localIdentity.accessToken) return authenticationFailure('The access token is not valid for the GlobalStack Azure local identity.');
+  const presentedToken = match[1];
+  const acceptedTokens = new Set([localIdentity.accessToken, 'globalstack-local-token']);
+  if (!acceptedTokens.has(presentedToken)) {
+    return authenticationFailure('The access token is not valid for the GlobalStack Azure local identity.');
+  }
   const subscriptionId = requestSubscriptionId(pathname);
   if (subscriptionId && subscriptionId !== localIdentity.subscriptionId) return authorizationFailure(subscriptionId);
   return null;
@@ -249,13 +293,12 @@ export function azureEnvironmentMetadata(origin) {
 }
 
 export function tokenResponse() {
-  const now = Math.floor(Date.now() / 1000);
   return {
     token_type: 'Bearer',
     expires_in: 3600,
     ext_expires_in: 3600,
-    expires_on: String(now + 3600),
-    access_token: 'globalstack-local-token',
+    expires_on: '4070908800',
+    access_token: localIdentity.accessToken,
   };
 }
 
@@ -280,7 +323,7 @@ export function openIdConfiguration(req, pathname) {
     http_logout_supported: true,
     frontchannel_logout_supported: true,
     end_session_endpoint: `${origin}/${tenant}/oauth2/v2.0/logout`,
-    claims_supported: ['sub', 'iss', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash'],
+    claims_supported: ['sub', 'iss', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash', 'oid', 'appid', 'idtyp'],
     tenant_region_scope: 'NA',
     cloud_instance_name: 'microsoftonline.com',
     cloud_graph_host_name: 'graph.windows.net',
@@ -335,9 +378,165 @@ export function validateTokenRequest(pathname, body) {
 
 export function exactCapabilityForResourceType(type) {
   const normalized = String(type ?? '').toLowerCase();
-  return allCapabilities.find(capability =>
+  return supportedCapabilities.find(capability =>
     capability.resourceTypes.some(resourceType => resourceType.toLowerCase() === normalized)
   ) ?? null;
+}
+
+function stripParentQualifiedName(name, parentName) {
+  const rawName = String(name ?? '');
+  const rawParentName = String(parentName ?? '');
+  if (!rawName || !rawParentName) return rawName;
+  return rawName.startsWith(`${rawParentName}/`) ? rawName.slice(rawParentName.length + 1) : rawName;
+}
+
+export function normalizeProviderRoute(providerRoute) {
+  if (!providerRoute?.typePath) return providerRoute;
+  const parts = providerRoute.typePath.split('/');
+
+  if (providerRoute.providerNamespace === 'Microsoft.DocumentDB') {
+    if (parts[0] !== 'databaseAccounts' || !parts[1]) return providerRoute;
+    const accountName = parts[1];
+    const sqlDatabasesIndex = parts.indexOf('sqlDatabases');
+    if (sqlDatabasesIndex < 0) return providerRoute;
+    const containersIndex = parts.indexOf('containers', sqlDatabasesIndex + 1);
+    const rawDatabaseName = parts
+      .slice(sqlDatabasesIndex + 1, containersIndex < 0 ? parts.length : containersIndex)
+      .join('/');
+    const databaseName = stripParentQualifiedName(rawDatabaseName, accountName);
+    if (!databaseName) return providerRoute;
+
+    if (containersIndex < 0) {
+      return {
+        ...providerRoute,
+        typePath: `databaseAccounts/${accountName}/sqlDatabases/${databaseName}`,
+      };
+    }
+
+    const rawContainerName = parts.slice(containersIndex + 1).join('/');
+    const containerName = stripParentQualifiedName(
+      stripParentQualifiedName(rawContainerName, `${accountName}/${databaseName}`),
+      databaseName,
+    );
+    if (!containerName) return providerRoute;
+    return {
+      ...providerRoute,
+      typePath: `databaseAccounts/${accountName}/sqlDatabases/${databaseName}/containers/${containerName}`,
+    };
+  }
+
+  if (providerRoute.providerNamespace === 'Microsoft.Cdn') {
+    if (parts[0] !== 'profiles' || !parts[1]) return providerRoute;
+    const profileName = parts[1];
+
+    if (parts[2] === 'afdEndpoints' && parts[3]) {
+      const routesIndex = parts.indexOf('routes', 3);
+      const rawEndpointName = parts.slice(3, routesIndex < 0 ? parts.length : routesIndex).join('/');
+      const endpointName = stripParentQualifiedName(rawEndpointName, profileName);
+      if (!endpointName) return providerRoute;
+      if (routesIndex < 0) {
+        return {
+          ...providerRoute,
+          typePath: `profiles/${profileName}/afdEndpoints/${endpointName}`,
+        };
+      }
+      const rawRouteName = parts.slice(routesIndex + 1).join('/');
+      const routeName = stripParentQualifiedName(rawRouteName, endpointName);
+      if (!routeName) return providerRoute;
+      return {
+        ...providerRoute,
+        typePath: `profiles/${profileName}/afdEndpoints/${endpointName}/routes/${routeName}`,
+      };
+    }
+
+    if (parts[2] === 'endpoints' && parts[3]) {
+      const endpointName = stripParentQualifiedName(parts.slice(3).join('/'), profileName);
+      if (!endpointName) return providerRoute;
+      return {
+        ...providerRoute,
+        typePath: `profiles/${profileName}/endpoints/${endpointName}`,
+      };
+    }
+
+    if (parts[2] === 'originGroups' && parts[3]) {
+      const originsIndex = parts.indexOf('origins', 3);
+      const rawOriginGroupName = parts.slice(3, originsIndex < 0 ? parts.length : originsIndex).join('/');
+      const originGroupName = stripParentQualifiedName(rawOriginGroupName, profileName);
+      if (!originGroupName) return providerRoute;
+      if (originsIndex < 0) {
+        return {
+          ...providerRoute,
+          typePath: `profiles/${profileName}/originGroups/${originGroupName}`,
+        };
+      }
+      const rawOriginName = parts.slice(originsIndex + 1).join('/');
+      const originName = stripParentQualifiedName(rawOriginName, originGroupName);
+      if (!originName) return providerRoute;
+      return {
+        ...providerRoute,
+        typePath: `profiles/${profileName}/originGroups/${originGroupName}/origins/${originName}`,
+      };
+    }
+
+    if (parts[2] === 'securityPolicies' && parts[3]) {
+      const securityPolicyName = stripParentQualifiedName(parts.slice(3).join('/'), profileName);
+      if (!securityPolicyName) return providerRoute;
+      return {
+        ...providerRoute,
+        typePath: `profiles/${profileName}/securityPolicies/${securityPolicyName}`,
+      };
+    }
+  }
+
+  if (providerRoute.providerNamespace !== 'Microsoft.ServiceBus') return providerRoute;
+  if (parts[0] !== 'namespaces' || !parts[1]) return providerRoute;
+  const namespaceName = parts[1];
+
+  if (parts.length === 4 && parts[2] === 'queues' && parts[3]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/queues/${stripParentQualifiedName(parts[3], namespaceName)}`,
+    };
+  }
+
+  if (parts.length === 5 && parts[2] === 'queues' && parts[3] && parts[4]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/queues/${stripParentQualifiedName(`${parts[3]}/${parts[4]}`, namespaceName)}`,
+    };
+  }
+
+  if (parts.length === 4 && parts[2] === 'topics' && parts[3]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/topics/${stripParentQualifiedName(parts[3], namespaceName)}`,
+    };
+  }
+
+  if (parts.length === 5 && parts[2] === 'topics' && parts[3] && parts[4]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/topics/${stripParentQualifiedName(`${parts[3]}/${parts[4]}`, namespaceName)}`,
+    };
+  }
+
+  if (parts.length === 6 && parts[2] === 'topics' && parts[4] === 'subscriptions' && parts[3] && parts[5]) {
+    const topicName = stripParentQualifiedName(parts[3], namespaceName);
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/topics/${topicName}/subscriptions/${stripParentQualifiedName(parts[5], topicName)}`,
+    };
+  }
+
+  if (parts.length === 7 && parts[2] === 'topics' && parts[5] === 'subscriptions' && parts[3] && parts[4] && parts[6]) {
+    const topicName = stripParentQualifiedName(`${parts[3]}/${parts[4]}`, namespaceName);
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}/topics/${topicName}/subscriptions/${stripParentQualifiedName(parts[6], topicName)}`,
+    };
+  }
+
+  return providerRoute;
 }
 
 export function parentResourceTypes(resourceType) {
@@ -390,6 +589,18 @@ export function storageAccountParentRoute(providerRoute) {
   };
 }
 
+export function apiManagementProductApiLinkedApiRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ApiManagement') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 6) return null;
+  if (parts[0] !== 'service' || parts[2] !== 'products' || parts[4] !== 'apis') return null;
+  if (!parts[1] || !parts[3] || !parts[5]) return null;
+  return {
+    ...providerRoute,
+    typePath: `service/${parts[1]}/apis/${parts[5]}`,
+  };
+}
+
 export function eventGridTopicListKeysRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.EventGrid') return null;
   const parts = providerRoute.typePath.split('/');
@@ -410,6 +621,55 @@ export function storageAccountListKeysRoute(providerRoute) {
   };
 }
 
+export function storageAccountListServiceSasRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Storage') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'storageAccounts' || parts[2].toLowerCase() !== 'listservicesas') return null;
+  return {
+    ...providerRoute,
+    typePath: `storageAccounts/${parts[1]}`,
+  };
+}
+
+export function operationalInsightsWorkspaceSharedKeysRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.OperationalInsights') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'workspaces' || parts[2].toLowerCase() !== 'sharedkeys') return null;
+  return {
+    ...providerRoute,
+    typePath: `workspaces/${parts[1]}`,
+  };
+}
+
+export function serviceBusNamespaceAuthorizationRuleListKeysRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ServiceBus') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length < 5 || parts[0] !== 'namespaces' || !parts[1]) return null;
+  const authorizationIndex = parts.findIndex((part, index) => index > 1 && part.toLowerCase() === 'authorizationrules');
+  if (authorizationIndex !== 2 || parts.at(-1)?.toLowerCase() !== 'listkeys') return null;
+  const namespaceName = parts[1];
+  const rawAuthorizationRuleName = parts.slice(authorizationIndex + 1, -1).join('/');
+  if (!rawAuthorizationRuleName) return null;
+  const authorizationRuleName = rawAuthorizationRuleName.startsWith(`${namespaceName}/`)
+    ? rawAuthorizationRuleName.slice(namespaceName.length + 1)
+    : rawAuthorizationRuleName;
+  if (!authorizationRuleName) return null;
+  return {
+    namespaceRoute: {
+      ...providerRoute,
+      typePath: `namespaces/${namespaceName}`,
+    },
+    authorizationRuleRoute: {
+      subscriptionId: providerRoute.subscriptionId,
+      resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: providerRoute.providerNamespace,
+      typePath: `namespaces/${namespaceName}/AuthorizationRules/${authorizationRuleName}`,
+    },
+    namespaceName,
+    authorizationRuleName,
+  };
+}
+
 export function scopedDiagnosticSettingsRoute(providerRoute) {
   const marker = '/providers/Microsoft.Insights/diagnosticSettings/';
   const index = providerRoute.typePath.indexOf(marker);
@@ -427,6 +687,27 @@ export function scopedDiagnosticSettingsRoute(providerRoute) {
       resourceGroupName: providerRoute.resourceGroupName,
       providerNamespace: 'Microsoft.Insights',
       typePath: `diagnosticSettings/${diagnosticName}`,
+    },
+  };
+}
+
+export function scopedEventGridEventSubscriptionRoute(providerRoute) {
+  const marker = '/providers/Microsoft.EventGrid/eventSubscriptions/';
+  const index = providerRoute.typePath.indexOf(marker);
+  if (index < 0) return null;
+  const scopeTypePath = providerRoute.typePath.slice(0, index);
+  const subscriptionName = providerRoute.typePath.slice(index + marker.length);
+  if (!scopeTypePath || !subscriptionName) return null;
+  return {
+    scopeRoute: {
+      ...providerRoute,
+      typePath: scopeTypePath,
+    },
+    subscriptionRoute: {
+      subscriptionId: providerRoute.subscriptionId,
+      resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: 'Microsoft.EventGrid',
+      typePath: `eventSubscriptions/${subscriptionName}`,
     },
   };
 }
