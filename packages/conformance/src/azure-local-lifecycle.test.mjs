@@ -258,6 +258,59 @@ test('operational insights workspace sharedKeys action returns deterministic key
   });
 });
 
+test('virtual network create with inline subnets materializes child subnet resources', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-vnet?api-version=2021-04-01`, { location: 'eastus' });
+
+    const create = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-vnet/providers/Microsoft.Network/virtualNetworks/vnet-inline?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        properties: {
+          addressSpace: {
+            addressPrefixes: ['10.44.0.0/16'],
+          },
+          subnets: [
+            {
+              name: 'snet-east',
+              properties: {
+                addressPrefix: '10.44.1.0/24',
+              },
+            },
+            {
+              name: 'snet-west',
+              properties: {
+                addressPrefix: '10.44.2.0/24',
+              },
+            },
+          ],
+        },
+      },
+    );
+    assert.equal(create.status, 201);
+
+    const subnetGet = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-vnet/providers/Microsoft.Network/virtualNetworks/vnet-inline/subnets/snet-east?api-version=2023-09-01`,
+    );
+    assert.equal(subnetGet.status, 200);
+    assert.equal(subnetGet.body.type, 'Microsoft.Network/virtualNetworks/subnets');
+    assert.equal(subnetGet.body.name, 'vnet-inline/snet-east');
+    assert.equal(subnetGet.body.properties.addressPrefix, '10.44.1.0/24');
+
+    const subnetList = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-vnet/providers/Microsoft.Network/virtualNetworks/vnet-inline/subnets?api-version=2023-09-01`,
+    );
+    assert.equal(subnetList.status, 200);
+    assert.equal(subnetList.body.value.length, 2);
+  });
+});
+
 test('application gateway accepts provider-style top-level v2 payloads', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-appgw?api-version=2021-04-01`, { location: 'eastus' });

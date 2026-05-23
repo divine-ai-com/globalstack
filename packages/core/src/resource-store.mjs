@@ -1,4 +1,5 @@
 import { createHash, createHmac } from 'node:crypto';
+import { capabilityForResourceType } from './azure-tier1-capabilities.mjs';
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -29,6 +30,32 @@ function normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName
     ? `${normalizeResourceGroupId(subscriptionId, resourceGroupName)}/providers`
     : `/subscriptions/${subscriptionId}/providers`;
   return `${scope}/Microsoft.Resources/deployments/${deploymentName}`;
+}
+
+function normalizeInlineSubnetProperties(subnet = {}) {
+  const properties = subnet.properties ?? subnet;
+  return {
+    ...(properties.addressPrefix ? { addressPrefix: properties.addressPrefix } : {}),
+    ...(Array.isArray(properties.addressPrefixes) ? { addressPrefixes: deepClone(properties.addressPrefixes) } : {}),
+    ...(Array.isArray(properties.delegations) ? { delegations: deepClone(properties.delegations) } : {}),
+    ...(properties.privateEndpointNetworkPolicies !== undefined
+      ? { privateEndpointNetworkPolicies: properties.privateEndpointNetworkPolicies }
+      : {}),
+    ...(properties.privateLinkServiceNetworkPolicies !== undefined
+      ? { privateLinkServiceNetworkPolicies: properties.privateLinkServiceNetworkPolicies }
+      : {}),
+    ...(Array.isArray(properties.serviceEndpoints) ? { serviceEndpoints: deepClone(properties.serviceEndpoints) } : {}),
+    ...(Array.isArray(properties.serviceEndpointPolicies)
+      ? { serviceEndpointPolicies: deepClone(properties.serviceEndpointPolicies) }
+      : {}),
+    ...(properties.routeTable ? { routeTable: deepClone(properties.routeTable) } : {}),
+    ...(properties.networkSecurityGroup ? { networkSecurityGroup: deepClone(properties.networkSecurityGroup) } : {}),
+    ...(properties.natGateway ? { natGateway: deepClone(properties.natGateway) } : {}),
+    ...(Array.isArray(properties.ipConfigurations) ? { ipConfigurations: deepClone(properties.ipConfigurations) } : {}),
+    ...(Array.isArray(properties.applicationGatewayIpConfigurations)
+      ? { applicationGatewayIpConfigurations: deepClone(properties.applicationGatewayIpConfigurations) }
+      : {}),
+  };
 }
 
 function emulationDepth(capability) {
@@ -829,6 +856,38 @@ export class ResourceStore {
       },
     };
     this.resources.set(key, resource);
+    if (type === 'Microsoft.Network/virtualNetworks') {
+      const inlineSubnets = body.properties?.subnets ?? body.subnets;
+      if (Array.isArray(inlineSubnets)) {
+        const subnetCapability = capabilityForResourceType('Microsoft.Network/virtualNetworks/subnets') ?? capability;
+        const subnetPrefix = `${key}/subnets/`;
+        const expectedSubnetNames = new Set();
+        for (const subnet of inlineSubnets) {
+          const subnetName = String(subnet?.name ?? subnet?.subnetName ?? '').trim();
+          if (!subnetName) continue;
+          expectedSubnetNames.add(subnetName.toLowerCase());
+          this.putResource({
+            subscriptionId,
+            resourceGroupName,
+            providerNamespace,
+            typePath: `${typePath}/subnets/${subnetName}`,
+            scopeId,
+            apiVersion,
+            capability: subnetCapability,
+            body: {
+              location: body.location ?? existing?.location ?? 'global',
+              tags: subnet.tags ?? {},
+              properties: normalizeInlineSubnetProperties(subnet),
+            },
+          });
+        }
+        for (const resourceId of [...this.resources.keys()]) {
+          if (!resourceId.startsWith(subnetPrefix)) continue;
+          const subnetName = resourceId.slice(subnetPrefix.length).split('/')[0];
+          if (!expectedSubnetNames.has(subnetName)) this.resources.delete(resourceId);
+        }
+      }
+    }
     return { resource: deepClone(resource), created: !existing, asyncAccepted: Boolean(lifecycleSequence) };
   }
 
