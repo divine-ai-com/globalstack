@@ -3681,6 +3681,493 @@ export const scenarios = [
       { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-migration-command-91037", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
     ],
   },
+  {
+    poId: "f1c774cb-d8b6-444c-8a7c-e2c789ed6fd0",
+    prId: "Pr91038",
+    scenarioId: "multiregion-serving-governance-ring",
+    title: "Multiregion serving governance ring",
+    prompt: [
+      "Our model-serving governance group needs one Azure deployment that can keep a global control surface live across two regions while preserving explicit promotion and rollback boundaries. They need a global edge in front of regional origins, a managed partner API for release commands, two regional AKS clusters, a shared registry and identity plane, a public DNS handoff for the control endpoint, and durable approval fan-out with the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+      "",
+      "Use one Azure Front Door profile with one endpoint, one origin group, one east origin, one west origin, one route, one security policy, and one WAF policy, one Azure public DNS zone with one CNAME record for the control endpoint, one Azure Container Registry, one user-assigned managed identity, one virtual network in each region with one application gateway subnet and one workload subnet, one public IP address and one Application Gateway in each region, one AKS cluster in each region, one API Management service with one API and one product and one product API association and one `promote-ring` operation with one operation policy, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription and one `rollback` subscription, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, one Log Analytics workspace in each region, and one Application Insights component.",
+      "",
+      "Use these exact resource names: resource group `rg-az-serving-gov-pulumi-91038`, Front Door profile `afd-serving-gov-91038`, Front Door endpoint `serving-gov-endpoint`, Front Door origin group `serving-gov-origins`, Front Door east origin `east-gateway`, Front Door west origin `west-gateway`, Front Door route `serving-gov-route`, Front Door security policy `serving-gov-security-policy`, WAF policy `waf-serving-gov-91038`, public DNS zone `serving91038.contoso.net`, public DNS CNAME record `api.serving91038.contoso.net`, Container Registry `acrservinggov91038`, managed identity `id-serving-gov-91038`, east virtual network `vnet-serving-east-91038`, east application gateway subnet `snet-serving-agw-east-91038`, east workload subnet `snet-serving-aks-east-91038`, east public IP `pip-serving-east-91038`, east Application Gateway `agw-serving-east-91038`, east AKS cluster `aks-serving-east-91038`, west virtual network `vnet-serving-west-91038`, west application gateway subnet `snet-serving-agw-west-91038`, west workload subnet `snet-serving-aks-west-91038`, west public IP `pip-serving-west-91038`, west Application Gateway `agw-serving-west-91038`, west AKS cluster `aks-serving-west-91038`, API Management service `apim-serving-gov-91038`, API Management API `serving-gov-api`, API Management product `serving-gov-product`, API Management operation `promote-ring`, Service Bus namespace `sb-serving-gov-91038`, Service Bus topic `serving-governance`, Service Bus subscription `east`, Service Bus subscription `west`, Service Bus subscription `rollback`, Event Grid topic `eg-serving-gov-91038`, Key Vault `kv-serving-gov-91038`, App Configuration store `cfg-serving-gov-91038`, action group `ag-serving-gov-91038`, metric alert `ma-serving-gov-91038`, activity log alert `ala-serving-gov-91038`, east Log Analytics workspace `log-serving-east-91038`, west Log Analytics workspace `log-serving-west-91038`, and Application Insights component `appi-serving-gov-91038`.",
+      "",
+      "Keep this focused on the serving governance ring. Do not add Functions, Logic Apps, Cosmos DB, MySQL, PostgreSQL, Database Migration Service, Azure Files, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `ServingGovFrontDoorProfileName`, `ServingGovFrontDoorEndpointHostName`, `ServingGovOriginGroupName`, `ServingGovRouteName`, `ServingGovSecurityPolicyName`, `ServingGovPublicDnsZoneName`, `ServingGovPublicDnsRecordName`, `ServingGovRegistryName`, `ServingGovManagedIdentityName`, `ServingGovEastApplicationGatewayName`, `ServingGovEastClusterName`, `ServingGovWestApplicationGatewayName`, `ServingGovWestClusterName`, `ServingGovApiGatewayUrl`, `ServingGovTopicName`, `ServingGovEastSubscriptionName`, `ServingGovWestSubscriptionName`, `ServingGovRollbackSubscriptionName`, `ServingGovEventGridTopicEndpoint`, `ServingGovKeyVaultName`, `ServingGovAppConfigName`, `ServingGovActionGroupName`, `ServingGovMetricAlertName`, `ServingGovActivityLogAlertName`, `ServingGovEastLogAnalyticsWorkspaceName`, `ServingGovWestLogAnalyticsWorkspaceName`, `ServingGovAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "AKS baseline for multiregion clusters",
+        url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster",
+        why: "Grounds the two-cluster regional topology and shared control surfaces.",
+      },
+      {
+        title: "Configure Azure Front Door in front of Azure API Management",
+        url: "https://learn.microsoft.com/en-us/azure/api-management/front-door-api-management",
+        why: "Grounds the managed API gateway behind the global edge layer.",
+      },
+      {
+        title: "What is Azure Web Application Firewall on Azure Front Door?",
+        url: "https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/afds-overview",
+        why: "Grounds the security policy and WAF boundary at the edge.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-serving-gov-pulumi-91038",
+      frontDoorProfile: "afd-serving-gov-91038",
+      frontDoorEndpoint: "serving-gov-endpoint",
+      frontDoorOriginGroup: "serving-gov-origins",
+      frontDoorEastOrigin: "east-gateway",
+      frontDoorWestOrigin: "west-gateway",
+      frontDoorRoute: "serving-gov-route",
+      securityPolicy: "serving-gov-security-policy",
+      wafPolicy: "waf-serving-gov-91038",
+      publicDnsZone: "serving91038.contoso.net",
+      publicDnsRecord: "api",
+      registry: "acrservinggov91038",
+      managedIdentity: "id-serving-gov-91038",
+      eastVirtualNetwork: "vnet-serving-east-91038",
+      eastApplicationGatewaySubnet: "snet-serving-agw-east-91038",
+      eastWorkloadSubnet: "snet-serving-aks-east-91038",
+      eastPublicIp: "pip-serving-east-91038",
+      eastApplicationGateway: "agw-serving-east-91038",
+      eastCluster: "aks-serving-east-91038",
+      westVirtualNetwork: "vnet-serving-west-91038",
+      westApplicationGatewaySubnet: "snet-serving-agw-west-91038",
+      westWorkloadSubnet: "snet-serving-aks-west-91038",
+      westPublicIp: "pip-serving-west-91038",
+      westApplicationGateway: "agw-serving-west-91038",
+      westCluster: "aks-serving-west-91038",
+      apiManagementService: "apim-serving-gov-91038",
+      apiManagementApi: "serving-gov-api",
+      apiManagementProduct: "serving-gov-product",
+      apiManagementOperation: "promote-ring",
+      serviceBusNamespace: "sb-serving-gov-91038",
+      serviceBusTopic: "serving-governance",
+      eastSubscription: "east",
+      westSubscription: "west",
+      rollbackSubscription: "rollback",
+      eventGridTopic: "eg-serving-gov-91038",
+      keyVault: "kv-serving-gov-91038",
+      appConfigStore: "cfg-serving-gov-91038",
+      actionGroup: "ag-serving-gov-91038",
+      metricAlert: "ma-serving-gov-91038",
+      activityLogAlert: "ala-serving-gov-91038",
+      eastLogAnalyticsWorkspace: "log-serving-east-91038",
+      westLogAnalyticsWorkspace: "log-serving-west-91038",
+      applicationInsights: "appi-serving-gov-91038",
+    },
+    expectedOutputKeys: [
+      "ServingGovFrontDoorProfileName",
+      "ServingGovFrontDoorEndpointHostName",
+      "ServingGovOriginGroupName",
+      "ServingGovRouteName",
+      "ServingGovSecurityPolicyName",
+      "ServingGovPublicDnsZoneName",
+      "ServingGovPublicDnsRecordName",
+      "ServingGovRegistryName",
+      "ServingGovManagedIdentityName",
+      "ServingGovEastApplicationGatewayName",
+      "ServingGovEastClusterName",
+      "ServingGovWestApplicationGatewayName",
+      "ServingGovWestClusterName",
+      "ServingGovApiGatewayUrl",
+      "ServingGovTopicName",
+      "ServingGovEastSubscriptionName",
+      "ServingGovWestSubscriptionName",
+      "ServingGovRollbackSubscriptionName",
+      "ServingGovEventGridTopicEndpoint",
+      "ServingGovKeyVaultName",
+      "ServingGovAppConfigName",
+      "ServingGovActionGroupName",
+      "ServingGovMetricAlertName",
+      "ServingGovActivityLogAlertName",
+      "ServingGovEastLogAnalyticsWorkspaceName",
+      "ServingGovWestLogAnalyticsWorkspaceName",
+      "ServingGovAppInsightsName",
+    ],
+    requiredSourceMarkers: [
+      "cdn.",
+      "network.WebApplicationFirewallPolicy",
+      "network.Zone",
+      "network.RecordSet",
+      "containerregistry.",
+      "managedidentity.",
+      "network.PublicIPAddress",
+      "network.VirtualNetwork",
+      "network.ApplicationGateway",
+      "containerservice.",
+      "apimanagement.",
+      "servicebus.",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "insights.ActivityLogAlert",
+      "operationalinsights.",
+      "serving-governance",
+      "promote-ring",
+    ],
+    forbiddenSourceMarkers: ["web.", "logic.", "documentdb", "dbformysql", "dbforpostgresql", "datamigration", "storage.FileShare", "private endpoint"],
+    integrationChecks: [
+      { label: "front-door-profile", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles" },
+      { label: "front-door-endpoint", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/afdEndpoints/serving-gov-endpoint", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints" },
+      { label: "front-door-origin-group", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/originGroups/serving-gov-origins", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups" },
+      { label: "front-door-origin-east", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/originGroups/serving-gov-origins/origins/east-gateway", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups/origins" },
+      { label: "front-door-origin-west", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/originGroups/serving-gov-origins/origins/west-gateway", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups/origins" },
+      { label: "front-door-route", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/afdEndpoints/serving-gov-endpoint/routes/serving-gov-route", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints/routes" },
+      { label: "front-door-security-policy", provider: "Microsoft.Cdn", typePath: "profiles/afd-serving-gov-91038/securityPolicies/serving-gov-security-policy", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/securityPolicies" },
+      { label: "waf-policy", provider: "Microsoft.Network", typePath: "ApplicationGatewayWebApplicationFirewallPolicies/waf-serving-gov-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies" },
+      { label: "public-dns-zone", provider: "Microsoft.Network", typePath: "dnsZones/serving91038.contoso.net", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones" },
+      { label: "public-dns-record", provider: "Microsoft.Network", typePath: "dnsZones/serving91038.contoso.net/CNAME/api", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/CNAME" },
+      { label: "container-registry", provider: "Microsoft.ContainerRegistry", typePath: "registries/acrservinggov91038", apiVersion: "2023-07-01", expectedType: "Microsoft.ContainerRegistry/registries" },
+      { label: "managed-identity", provider: "Microsoft.ManagedIdentity", typePath: "userAssignedIdentities/id-serving-gov-91038", apiVersion: "2023-01-31", expectedType: "Microsoft.ManagedIdentity/userAssignedIdentities" },
+      { label: "east-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-east-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "east-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-east-91038/subnets/snet-serving-agw-east-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "east-workload-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-east-91038/subnets/snet-serving-aks-east-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "east-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-serving-east-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+      { label: "east-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-serving-east-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "east-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-serving-east-91038", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+      { label: "west-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-west-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "west-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-west-91038/subnets/snet-serving-agw-west-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-workload-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-serving-west-91038/subnets/snet-serving-aks-west-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-serving-west-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+      { label: "west-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-serving-west-91038", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "west-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-serving-west-91038", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+      { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+      { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038/apis/serving-gov-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+      { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038/products/serving-gov-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+      { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038/products/serving-gov-product/apis/serving-gov-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+      { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038/apis/serving-gov-api/operations/promote-ring", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+      { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-serving-gov-91038/apis/serving-gov-api/operations/promote-ring/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-serving-gov-91038", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-serving-gov-91038/topics/serving-governance", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-serving-gov-91038/topics/serving-governance/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-serving-gov-91038/topics/serving-governance/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-rollback", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-serving-gov-91038/topics/serving-governance/subscriptions/rollback", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-serving-gov-91038", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-serving-gov-91038", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-serving-gov-91038", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-serving-gov-91038", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-serving-gov-91038", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-serving-gov-91038", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+      { label: "east-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-serving-east-91038", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "west-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-serving-west-91038", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-serving-gov-91038", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
+  {
+    poId: "d2f52191-eba9-4165-a837-0f7bbd53d684",
+    prId: "Pr91039",
+    scenarioId: "dual-engine-cutover-governance-plane",
+    title: "Dual engine cutover governance plane",
+    prompt: [
+      "Our modernization control office needs one Azure deployment that can accept operator cutover requests through a managed API, validate and enrich them on a serverless surface, hold long-running approval state in a workflow, and keep two migration lanes ready at the same time for MySQL and PostgreSQL workloads. They also need durable command fan-out, blob and file-based evidence handoff, and the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+      "",
+      "Use one API Management service with one API and one product and one product API association and one `start-cutover` operation with one operation policy, one Function App with one App Service plan, one Logic App workflow, one Azure Database for MySQL flexible server with one database, one Azure Database for PostgreSQL flexible server with one database, one Database Migration Service with one `mysql-cutover-project` project and one `postgres-cutover-project` project, one Service Bus namespace with one topic and one `ops` subscription and one `audit` subscription, one storage account with one blob container and one Azure Files share, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-dual-cutover-pulumi-91039`, API Management service `apim-dual-cutover-91039`, API Management API `dual-cutover-api`, API Management product `dual-cutover-product`, API Management operation `start-cutover`, Function App plan `plan-dual-cutover-91039`, Function App `func-dual-cutover-91039`, Logic App workflow `la-dual-cutover-91039`, MySQL flexible server `mysql-dual-cutover-91039`, MySQL database `billingdb`, PostgreSQL flexible server `pg-dual-cutover-91039`, PostgreSQL database `ledgerdb`, Database Migration Service `dms-dual-cutover-91039`, Database Migration project `mysql-cutover-project`, Database Migration project `postgres-cutover-project`, Service Bus namespace `sb-dual-cutover-91039`, Service Bus topic `cutover-commands`, Service Bus subscription `ops`, Service Bus subscription `audit`, storage account `azdualcutover91039`, blob container `cutover-staging`, Azure Files share `cutover-evidence`, Event Grid topic `eg-dual-cutover-91039`, Key Vault `kv-dual-cutover-91039`, App Configuration store `cfg-dual-cutover-91039`, action group `ag-dual-cutover-91039`, metric alert `ma-dual-cutover-91039`, activity log alert `ala-dual-cutover-91039`, Log Analytics workspace `log-dual-cutover-91039`, and Application Insights component `appi-dual-cutover-91039`.",
+      "",
+      "Keep this focused on the dual-engine cutover plane. Do not add Front Door, AKS, Cosmos DB, Redis, Synapse, Container Apps, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `DualCutoverApiGatewayUrl`, `DualCutoverFunctionHostName`, `DualCutoverWorkflowName`, `DualCutoverMySqlServerName`, `DualCutoverMySqlDatabaseName`, `DualCutoverPostgresServerName`, `DualCutoverPostgresDatabaseName`, `DualCutoverDmsServiceName`, `DualCutoverMySqlProjectName`, `DualCutoverPostgresProjectName`, `DualCutoverTopicName`, `DualCutoverOpsSubscriptionName`, `DualCutoverAuditSubscriptionName`, `DualCutoverBlobContainerName`, `DualCutoverFileShareName`, `DualCutoverEventGridTopicEndpoint`, `DualCutoverKeyVaultName`, `DualCutoverAppConfigName`, `DualCutoverActionGroupName`, `DualCutoverMetricAlertName`, `DualCutoverActivityLogAlertName`, `DualCutoverAppInsightsName`, `DualCutoverLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "What is the migration service in Azure Database for PostgreSQL?",
+        url: "https://learn.microsoft.com/en-us/azure/postgresql/migrate/migration-service/overview-migration-service-postgresql",
+        why: "Grounds the managed cutover workflow for PostgreSQL migrations.",
+      },
+      {
+        title: "What is Azure Database for MySQL - Flexible Server?",
+        url: "https://learn.microsoft.com/en-us/azure/mysql/single-server/overview",
+        why: "Grounds the MySQL transactional target surface and server hierarchy.",
+      },
+      {
+        title: "Respond to Azure Service Bus events received using Azure Event Grid by using Azure Logic Apps",
+        url: "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-example",
+        why: "Grounds the durable command and workflow handoff pattern.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-dual-cutover-pulumi-91039",
+      apiManagementService: "apim-dual-cutover-91039",
+      apiManagementApi: "dual-cutover-api",
+      apiManagementProduct: "dual-cutover-product",
+      apiManagementOperation: "start-cutover",
+      functionAppPlan: "plan-dual-cutover-91039",
+      functionApp: "func-dual-cutover-91039",
+      logicWorkflow: "la-dual-cutover-91039",
+      mysqlServer: "mysql-dual-cutover-91039",
+      mysqlDatabase: "billingdb",
+      postgresServer: "pg-dual-cutover-91039",
+      postgresDatabase: "ledgerdb",
+      dmsService: "dms-dual-cutover-91039",
+      dmsMySqlProject: "mysql-cutover-project",
+      dmsPostgresProject: "postgres-cutover-project",
+      serviceBusNamespace: "sb-dual-cutover-91039",
+      serviceBusTopic: "cutover-commands",
+      opsSubscription: "ops",
+      auditSubscription: "audit",
+      storageAccount: "azdualcutover91039",
+      blobContainer: "cutover-staging",
+      fileShare: "cutover-evidence",
+      eventGridTopic: "eg-dual-cutover-91039",
+      keyVault: "kv-dual-cutover-91039",
+      appConfigStore: "cfg-dual-cutover-91039",
+      actionGroup: "ag-dual-cutover-91039",
+      metricAlert: "ma-dual-cutover-91039",
+      activityLogAlert: "ala-dual-cutover-91039",
+      logAnalyticsWorkspace: "log-dual-cutover-91039",
+      applicationInsights: "appi-dual-cutover-91039",
+    },
+    expectedOutputKeys: [
+      "DualCutoverApiGatewayUrl",
+      "DualCutoverFunctionHostName",
+      "DualCutoverWorkflowName",
+      "DualCutoverMySqlServerName",
+      "DualCutoverMySqlDatabaseName",
+      "DualCutoverPostgresServerName",
+      "DualCutoverPostgresDatabaseName",
+      "DualCutoverDmsServiceName",
+      "DualCutoverMySqlProjectName",
+      "DualCutoverPostgresProjectName",
+      "DualCutoverTopicName",
+      "DualCutoverOpsSubscriptionName",
+      "DualCutoverAuditSubscriptionName",
+      "DualCutoverBlobContainerName",
+      "DualCutoverFileShareName",
+      "DualCutoverEventGridTopicEndpoint",
+      "DualCutoverKeyVaultName",
+      "DualCutoverAppConfigName",
+      "DualCutoverActionGroupName",
+      "DualCutoverMetricAlertName",
+      "DualCutoverActivityLogAlertName",
+      "DualCutoverAppInsightsName",
+      "DualCutoverLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "apimanagement.",
+      "web.",
+      "logic.",
+      "dbformysql.",
+      "dbforpostgresql.",
+      "datamigration.",
+      "servicebus.",
+      "storage.",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "insights.ActivityLogAlert",
+      "operationalinsights.",
+      "mysql-cutover-project",
+      "postgres-cutover-project",
+      "start-cutover",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "containerservice", "documentdb", "cache.Redis", "synapse.", "app.ManagedEnvironment", "private endpoint"],
+    integrationChecks: [
+      { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+      { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039/apis/dual-cutover-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+      { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039/products/dual-cutover-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+      { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039/products/dual-cutover-product/apis/dual-cutover-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+      { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039/apis/dual-cutover-api/operations/start-cutover", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+      { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-dual-cutover-91039/apis/dual-cutover-api/operations/start-cutover/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+      { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-dual-cutover-91039", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+      { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-dual-cutover-91039", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+      { label: "logic-workflow", provider: "Microsoft.Logic", typePath: "workflows/la-dual-cutover-91039", apiVersion: "2019-05-01", expectedType: "Microsoft.Logic/workflows" },
+      { label: "mysql-server", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-dual-cutover-91039", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers" },
+      { label: "mysql-database", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-dual-cutover-91039/databases/billingdb", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers/databases" },
+      { label: "postgres-server", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-dual-cutover-91039", apiVersion: "2023-06-01-preview", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers" },
+      { label: "postgres-database", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-dual-cutover-91039/databases/ledgerdb", apiVersion: "2023-06-01-preview", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers/databases" },
+      { label: "dms-service", provider: "Microsoft.DataMigration", typePath: "services/dms-dual-cutover-91039", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services" },
+      { label: "dms-project-mysql", provider: "Microsoft.DataMigration", typePath: "services/dms-dual-cutover-91039/projects/mysql-cutover-project", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services/projects" },
+      { label: "dms-project-postgres", provider: "Microsoft.DataMigration", typePath: "services/dms-dual-cutover-91039/projects/postgres-cutover-project", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services/projects" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-dual-cutover-91039", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-dual-cutover-91039/topics/cutover-commands", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-ops", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-dual-cutover-91039/topics/cutover-commands/subscriptions/ops", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-audit", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-dual-cutover-91039/topics/cutover-commands/subscriptions/audit", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azdualcutover91039", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+      { label: "blob-container", provider: "Microsoft.Storage", typePath: "storageAccounts/azdualcutover91039/blobServices/default/containers/cutover-staging", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/blobServices/containers" },
+      { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azdualcutover91039/fileServices/default/shares/cutover-evidence", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-dual-cutover-91039", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-dual-cutover-91039", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-dual-cutover-91039", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-dual-cutover-91039", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-dual-cutover-91039", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-dual-cutover-91039", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-dual-cutover-91039", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-dual-cutover-91039", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
+  {
+    poId: "92775175-6438-468c-9dd0-311de2ea4d48",
+    prId: "Pr91040",
+    scenarioId: "branch-public-private-discovery-plane",
+    title: "Branch public private discovery plane",
+    prompt: [
+      "Our branch operations platform team needs one Azure deployment that can keep east and west regional dispatch surfaces reachable through public and private names at the same time. They need two regional virtual networks, public addresses and load balancers for branch ingress, private discovery records for internal services, regional app environments, a shared file handoff area, fast shared state, and a durable dispatch backbone with the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+      "",
+      "Use one virtual network in each region with one services subnet in each virtual network, one public DNS zone with one `east` A record and one `west` A record, one Azure Private DNS zone linked to both virtual networks with one `gateway.branch.internal` A record and one `workers.branch.internal` A record and one `files.branch.internal` A record, one public IP address and one Load Balancer in each region, one managed Azure Container Apps environment in each region with one gateway app and one worker app in each environment, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription, one storage account with one Azure Files share, one Azure Cache for Redis, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-branch-plane-pulumi-91040`, east virtual network `vnet-branch-east-91040`, west virtual network `vnet-branch-west-91040`, east services subnet `snet-branch-east-91040`, west services subnet `snet-branch-west-91040`, public DNS zone `branch91040.contoso.net`, public DNS A record `east.branch91040.contoso.net`, public DNS A record `west.branch91040.contoso.net`, private DNS zone `branch.internal`, private DNS virtual network link `branch-link-east-91040`, private DNS virtual network link `branch-link-west-91040`, private DNS A record `gateway.branch.internal`, private DNS A record `workers.branch.internal`, private DNS A record `files.branch.internal`, east public IP `pip-branch-east-91040`, west public IP `pip-branch-west-91040`, east Load Balancer `lb-branch-east-91040`, west Load Balancer `lb-branch-west-91040`, east Container Apps environment `cae-branch-east-91040`, west Container Apps environment `cae-branch-west-91040`, east gateway app `ca-branch-gateway-east-91040`, west gateway app `ca-branch-gateway-west-91040`, east worker app `ca-branch-workers-east-91040`, west worker app `ca-branch-workers-west-91040`, Service Bus namespace `sb-branch-plane-91040`, Service Bus topic `branch-dispatch`, Service Bus subscription `east`, Service Bus subscription `west`, storage account `azbranchplane91040`, Azure Files share `branch-drop`, Redis cache `redis-branch-plane-91040`, Event Grid topic `eg-branch-plane-91040`, Key Vault `kv-branch-plane-91040`, App Configuration store `cfg-branch-plane-91040`, action group `ag-branch-plane-91040`, metric alert `ma-branch-plane-91040`, activity log alert `ala-branch-plane-91040`, Log Analytics workspace `log-branch-plane-91040`, and Application Insights component `appi-branch-plane-91040`.",
+      "",
+      "Keep this focused on the branch dispatch plane. Do not add Front Door, API Management, AKS, MySQL, PostgreSQL, Cosmos DB, Database Migration Service, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `BranchPlaneEastVirtualNetworkName`, `BranchPlaneWestVirtualNetworkName`, `BranchPlanePublicDnsZoneName`, `BranchPlanePrivateDnsZoneName`, `BranchPlaneEastPublicIpName`, `BranchPlaneWestPublicIpName`, `BranchPlaneEastLoadBalancerName`, `BranchPlaneWestLoadBalancerName`, `BranchPlaneEastEnvironmentName`, `BranchPlaneWestEnvironmentName`, `BranchPlaneEastGatewayAppName`, `BranchPlaneWestGatewayAppName`, `BranchPlaneEastWorkerAppName`, `BranchPlaneWestWorkerAppName`, `BranchPlaneTopicName`, `BranchPlaneEastSubscriptionName`, `BranchPlaneWestSubscriptionName`, `BranchPlaneFileShareName`, `BranchPlaneRedisName`, `BranchPlaneEventGridTopicEndpoint`, `BranchPlaneKeyVaultName`, `BranchPlaneAppConfigName`, `BranchPlaneActionGroupName`, `BranchPlaneMetricAlertName`, `BranchPlaneActivityLogAlertName`, `BranchPlaneAppInsightsName`, `BranchPlaneLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "Azure enterprise cloud file share",
+        url: "https://learn.microsoft.com/en-us/azure/architecture/hybrid/azure-files-private",
+        why: "Grounds the shared file handoff and private name resolution pattern.",
+      },
+      {
+        title: "Azure Private DNS zone overview",
+        url: "https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone",
+        why: "Grounds the private discovery namespace and virtual network links.",
+      },
+      {
+        title: "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+        url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/n-tier/multi-region-sql-server",
+        why: "Grounds the split public ingress and regional load-balancing model.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-branch-plane-pulumi-91040",
+      eastVirtualNetwork: "vnet-branch-east-91040",
+      westVirtualNetwork: "vnet-branch-west-91040",
+      eastSubnet: "snet-branch-east-91040",
+      westSubnet: "snet-branch-west-91040",
+      publicDnsZone: "branch91040.contoso.net",
+      publicEastRecord: "east",
+      publicWestRecord: "west",
+      privateDnsZone: "branch.internal",
+      privateDnsLinkEast: "branch-link-east-91040",
+      privateDnsLinkWest: "branch-link-west-91040",
+      eastPublicIp: "pip-branch-east-91040",
+      westPublicIp: "pip-branch-west-91040",
+      eastLoadBalancer: "lb-branch-east-91040",
+      westLoadBalancer: "lb-branch-west-91040",
+      eastEnvironment: "cae-branch-east-91040",
+      westEnvironment: "cae-branch-west-91040",
+      eastGatewayApp: "ca-branch-gateway-east-91040",
+      westGatewayApp: "ca-branch-gateway-west-91040",
+      eastWorkerApp: "ca-branch-workers-east-91040",
+      westWorkerApp: "ca-branch-workers-west-91040",
+      serviceBusNamespace: "sb-branch-plane-91040",
+      serviceBusTopic: "branch-dispatch",
+      eastSubscription: "east",
+      westSubscription: "west",
+      storageAccount: "azbranchplane91040",
+      fileShare: "branch-drop",
+      redis: "redis-branch-plane-91040",
+      eventGridTopic: "eg-branch-plane-91040",
+      keyVault: "kv-branch-plane-91040",
+      appConfigStore: "cfg-branch-plane-91040",
+      actionGroup: "ag-branch-plane-91040",
+      metricAlert: "ma-branch-plane-91040",
+      activityLogAlert: "ala-branch-plane-91040",
+      logAnalyticsWorkspace: "log-branch-plane-91040",
+      applicationInsights: "appi-branch-plane-91040",
+    },
+    expectedOutputKeys: [
+      "BranchPlaneEastVirtualNetworkName",
+      "BranchPlaneWestVirtualNetworkName",
+      "BranchPlanePublicDnsZoneName",
+      "BranchPlanePrivateDnsZoneName",
+      "BranchPlaneEastPublicIpName",
+      "BranchPlaneWestPublicIpName",
+      "BranchPlaneEastLoadBalancerName",
+      "BranchPlaneWestLoadBalancerName",
+      "BranchPlaneEastEnvironmentName",
+      "BranchPlaneWestEnvironmentName",
+      "BranchPlaneEastGatewayAppName",
+      "BranchPlaneWestGatewayAppName",
+      "BranchPlaneEastWorkerAppName",
+      "BranchPlaneWestWorkerAppName",
+      "BranchPlaneTopicName",
+      "BranchPlaneEastSubscriptionName",
+      "BranchPlaneWestSubscriptionName",
+      "BranchPlaneFileShareName",
+      "BranchPlaneRedisName",
+      "BranchPlaneEventGridTopicEndpoint",
+      "BranchPlaneKeyVaultName",
+      "BranchPlaneAppConfigName",
+      "BranchPlaneActionGroupName",
+      "BranchPlaneMetricAlertName",
+      "BranchPlaneActivityLogAlertName",
+      "BranchPlaneAppInsightsName",
+      "BranchPlaneLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "network.Zone",
+      "network.RecordSet",
+      "network.PrivateZone",
+      "network.PrivateRecordSet",
+      "network.PublicIPAddress",
+      "network.LoadBalancer",
+      "app.ManagedEnvironment",
+      "app.ContainerApp",
+      "servicebus.",
+      "storage.FileShare",
+      "cache.Redis",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "insights.ActivityLogAlert",
+      "operationalinsights.",
+      "branch-dispatch",
+      "branch-drop",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "apimanagement", "containerservice", "documentdb", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+    integrationChecks: [
+      { label: "east-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-branch-east-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "west-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-branch-west-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "east-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-branch-east-91040/subnets/snet-branch-east-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-branch-west-91040/subnets/snet-branch-west-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "public-dns-zone", provider: "Microsoft.Network", typePath: "dnsZones/branch91040.contoso.net", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones" },
+      { label: "public-dns-east-record", provider: "Microsoft.Network", typePath: "dnsZones/branch91040.contoso.net/A/east", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/A" },
+      { label: "public-dns-west-record", provider: "Microsoft.Network", typePath: "dnsZones/branch91040.contoso.net/A/west", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/A" },
+      { label: "private-dns-zone", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones" },
+      { label: "private-dns-link-east", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal/virtualNetworkLinks/branch-link-east-91040", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+      { label: "private-dns-link-west", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal/virtualNetworkLinks/branch-link-west-91040", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+      { label: "private-gateway-record", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal/A/gateway", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "private-workers-record", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal/A/workers", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "private-files-record", provider: "Microsoft.Network", typePath: "privateDnsZones/branch.internal/A/files", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "east-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-branch-east-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+      { label: "west-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-branch-west-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+      { label: "east-load-balancer", provider: "Microsoft.Network", typePath: "loadBalancers/lb-branch-east-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/loadBalancers" },
+      { label: "west-load-balancer", provider: "Microsoft.Network", typePath: "loadBalancers/lb-branch-west-91040", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/loadBalancers" },
+      { label: "east-managed-environment", provider: "Microsoft.App", typePath: "managedEnvironments/cae-branch-east-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/managedEnvironments" },
+      { label: "west-managed-environment", provider: "Microsoft.App", typePath: "managedEnvironments/cae-branch-west-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/managedEnvironments" },
+      { label: "east-gateway-app", provider: "Microsoft.App", typePath: "containerApps/ca-branch-gateway-east-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "west-gateway-app", provider: "Microsoft.App", typePath: "containerApps/ca-branch-gateway-west-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "east-worker-app", provider: "Microsoft.App", typePath: "containerApps/ca-branch-workers-east-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "west-worker-app", provider: "Microsoft.App", typePath: "containerApps/ca-branch-workers-west-91040", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-branch-plane-91040", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-branch-plane-91040/topics/branch-dispatch", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-branch-plane-91040/topics/branch-dispatch/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-branch-plane-91040/topics/branch-dispatch/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azbranchplane91040", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+      { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azbranchplane91040/fileServices/default/shares/branch-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+      { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-branch-plane-91040", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-branch-plane-91040", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-branch-plane-91040", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-branch-plane-91040", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-branch-plane-91040", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-branch-plane-91040", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-branch-plane-91040", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-branch-plane-91040", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-branch-plane-91040", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
 ];
 
 function validateScenarioDefinitions() {
@@ -3871,7 +4358,7 @@ console.log("unit assertions passed");
 `;
 }
 
-function integrationTest() {
+export function integrationTest() {
   return `import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -3927,10 +4414,20 @@ function expectedArmName(check) {
   if (check.expectedArmName) {
     return check.expectedArmName;
   }
+  if (check.expectedType === "Microsoft.ApiManagement/service/products/apis") {
+    return check.typePath.split("/").filter(Boolean).at(-1);
+  }
   return check.typePath
     .split("/")
     .filter((_, index) => index % 2 === 1)
     .join("/");
+}
+
+function expectedArmType(check) {
+  if (check.expectedType === "Microsoft.ApiManagement/service/products/apis") {
+    return "Microsoft.ApiManagement/service/apis";
+  }
+  return check.expectedType;
 }
 
 for (const check of metadata.integrationChecks) {
@@ -3939,7 +4436,7 @@ for (const check of metadata.integrationChecks) {
   if (payload.name !== expectedArmName(check)) {
     throw new Error(\`unexpected resource name for \${check.label}: \${payload.name}\`);
   }
-  if (payload.type !== check.expectedType) {
+  if (payload.type !== expectedArmType(check)) {
     throw new Error(\`unexpected resource type for \${check.label}: \${payload.type}\`);
   }
 }
@@ -4087,8 +4584,23 @@ function generationHints(scenario) {
     hints.push("For internal load balancers, put the frontend IP configuration on a subnet and use a fixed privateIPAddress.");
   }
 
+  if (scenario.prompt.toLowerCase().includes('public dns')) {
+    hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
+    hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
+  }
+
   if (scenario.prompt.toLowerCase().includes('private dns')) {
     hints.push("For Azure Private DNS, use azure.network.PrivateZone, VirtualNetworkLink, and PrivateRecordSet resources with prompt-fixed zone and record names.");
+  }
+
+  if (scenario.prompt.toLowerCase().includes('public dns')
+    && scenario.prompt.toLowerCase().includes('private dns')) {
+    hints.push("This task uses both Azure public DNS and Azure Private DNS. Keep them separate: use azure.network.Zone plus azure.network.RecordSet only for the public zone, and use azure.network.PrivateZone plus VirtualNetworkLink plus azure.network.PrivateRecordSet only for the private zone.");
+    hints.push("Do not use azure.network.RecordSet against the private zone. Do not use azure.network.PrivateRecordSet against the public zone.");
+  }
+
+  if (scenario.prompt.toLowerCase().includes('public ip')) {
+    hints.push("For Azure Public IP resources, use azure.network.PublicIPAddress with Standard sku and a static allocation method unless the prompt explicitly says otherwise.");
   }
 
   if (scenario.prompt.toLowerCase().includes('aks') || scenario.prompt.toLowerCase().includes('managed cluster')) {
@@ -4135,6 +4647,7 @@ function generationHints(scenario) {
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('apimanagement'))) {
     hints.push("For API Management, use azure.apimanagement.ApiManagementService, Api, Product, and ProductApi. Do not use a nonexistent azure.apimanagement.Service class.");
     hints.push("ApiManagementService requires resourceGroupName, serviceName, location, publisherEmail, publisherName, and sku. Use Developer or Consumption sku names that exist in Azure Native.");
+    hints.push("When the prompt names an explicit API operation, create azure.apimanagement.ApiOperation with the prompt-fixed operationId and add azure.apimanagement.ApiOperationPolicy with policyId set to policy.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('dbformysql.'))) {
@@ -4257,7 +4770,13 @@ async function callOpenAI(scenario, prompt) {
       text: { verbosity: "low" },
     }),
   });
-  const body = await response.json().catch(async () => ({ raw: await response.text() }));
+  const rawBody = await response.text();
+  let body;
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    body = { raw: rawBody };
+  }
   if (!response.ok) {
     throw new Error(`OpenAI Responses API failed with HTTP ${response.status}: ${JSON.stringify(body)}`);
   }
@@ -4265,7 +4784,11 @@ async function callOpenAI(scenario, prompt) {
   return outputText(body);
 }
 
-function validateTapStack(scenario, tapStackText) {
+function promptIncludes(scenario, phrase) {
+  return scenario.prompt.toLowerCase().includes(phrase);
+}
+
+export function validateTapStack(scenario, tapStackText) {
   if (!tapStackText.includes("export function createTapStack")) {
     throw new Error("missing export function createTapStack");
   }
@@ -4292,9 +4815,29 @@ function validateTapStack(scenario, tapStackText) {
       throw new Error(`contains forbidden marker ${forbidden}`);
     }
   }
-  if (scenario.prompt.toLowerCase().includes('private dns')
-    && tapStackText.includes('new azure.network.RecordSet(')) {
-    throw new Error('private DNS scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
+  const hasPublicDns = promptIncludes(scenario, 'public dns');
+  const hasPrivateDns = promptIncludes(scenario, 'private dns');
+  const hasPublicRecordSet = tapStackText.includes('new azure.network.RecordSet(');
+  const hasPrivateRecordSet = tapStackText.includes('new azure.network.PrivateRecordSet(');
+
+  if (hasPrivateDns && !hasPrivateRecordSet) {
+    throw new Error('private DNS scenarios must create azure.network.PrivateRecordSet resources');
+  }
+  if (hasPublicDns && !hasPublicRecordSet) {
+    throw new Error('public DNS scenarios must create azure.network.RecordSet resources');
+  }
+  if (hasPrivateDns && !hasPublicDns && hasPublicRecordSet) {
+    throw new Error('private DNS-only scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
+  }
+  for (const block of tapStackText.match(/new azure\.network\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+    if (/\bprivateZoneName\b/.test(block)) {
+      throw new Error('azure.network.RecordSet must target the public zone with zoneName, not a privateZoneName');
+    }
+  }
+  for (const block of tapStackText.match(/new azure\.network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+    if (/\bzoneName\b/.test(block)) {
+      throw new Error('azure.network.PrivateRecordSet must target the private zone with privateZoneName, not zoneName');
+    }
   }
 }
 
@@ -4346,9 +4889,27 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('Microsoft.Network/dnsZones/A')) {
     extraGuidance.push('You used public DNS record-set semantics against a private DNS zone. Replace azure.network.RecordSet with azure.network.PrivateRecordSet and use privateZoneName instead of zoneName.');
   }
+  if (String(runFailure).includes('RecordSetArgs')
+    && String(runFailure).includes('zoneName')
+    && String(runFailure).includes('relativeRecordSetName')) {
+    extraGuidance.push('For Azure public DNS, keep azure.network.RecordSet on the public zone, use zoneName for the zone, and use relativeRecordSetName values like east or api rather than full FQDNs.');
+  }
+  if (scenario.prompt.toLowerCase().includes('public dns')
+    && scenario.prompt.toLowerCase().includes('private dns')) {
+    extraGuidance.push('This scenario mixes public and private DNS. Keep azure.network.RecordSet only on the public DNS zone and keep azure.network.PrivateRecordSet only on the private DNS zone.');
+  }
+  if (String(runFailure).includes('PublicIPAddress')
+    && String(runFailure).includes('sku')) {
+    extraGuidance.push('For azure.network.PublicIPAddress, use Standard sku and a static allocation method unless the prompt explicitly requires a different shape.');
+  }
   if (String(runFailure).includes('Property \'Service\' does not exist on type')
     && String(runFailure).includes('apimanagement')) {
     extraGuidance.push('Use azure.apimanagement.ApiManagementService instead of any nonexistent Service class.');
+  }
+  if (String(runFailure).includes('ApiOperationPolicy')
+    || (String(runFailure).includes('operationId')
+      && String(runFailure).includes('apimanagement'))) {
+    extraGuidance.push('For API Management operations, use azure.apimanagement.ApiOperation with the prompt-fixed operationId and azure.apimanagement.ApiOperationPolicy with policyId set to policy.');
   }
   if (String(runFailure).includes('Property \'FlexibleServer\' does not exist')
     && String(runFailure).includes('dbformysql')) {
