@@ -918,3 +918,82 @@ export function createTapStack() {
 `;
   assert.doesNotThrow(() => validateTapStack(scenario, tapStack));
 });
+
+test('Pr91056 includes both regional AKS clusters and Front Door security policy checks', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91056');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-serving-east-91056'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-serving-west-91056'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-global-serving-91056/securityPolicies/global-serving-security-policy'),
+  );
+});
+
+test('Pr91057 private DNS record checks use relative private record names', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91057');
+  assert.ok(scenario);
+  const gatewayRecord = scenario.integrationChecks.find((check) => check.label === 'private-gateway-record');
+  const workersRecord = scenario.integrationChecks.find((check) => check.label === 'private-workers-record');
+  const filesRecord = scenario.integrationChecks.find((check) => check.label === 'private-files-record');
+  assert.equal(gatewayRecord.typePath, 'privateDnsZones/mesh91057.internal/A/gateway');
+  assert.equal(workersRecord.typePath, 'privateDnsZones/mesh91057.internal/A/workers');
+  assert.equal(filesRecord.typePath, 'privateDnsZones/mesh91057.internal/A/files');
+});
+
+test('Pr91058 includes both regional IoT hubs and the Synapse SQL pool check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91058');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-fusion-east-91058'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-iot-hub'
+      && check.typePath === 'IotHubs/iot-fusion-west-91058'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-digital-fusion-91058/sqlPools/fusionpool'),
+  );
+});
+
+test('Pr91059 includes both DMS projects and the approve-cutover policy check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91059');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-governance-91059/projects/mysql-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-cutover-governance-91059/projects/postgres-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-approve-policy'
+      && check.typePath === 'service/apim-cutover-governance-91059/apis/cutover-governance-api/operations/approve-cutover/policies/policy'),
+  );
+});
+
+test('Pr91060 includes both regional Event Hubs and the escalation subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91060');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-event-hub'
+      && check.typePath === 'namespaces/eh-replay-east-91060/eventhubs/replay-events-east'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-replay-west-91060/eventhubs/replay-events-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-escalation'
+      && check.typePath === 'namespaces/sb-replay-anomaly-91060/topics/replay-events/subscriptions/escalation'),
+  );
+});

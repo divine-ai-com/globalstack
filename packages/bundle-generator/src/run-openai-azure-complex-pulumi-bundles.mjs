@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import { distPath, verificationRepoRoot, verifiedWorkspacePath, workspaceRoot } from "../../workspace-utils/src/index.mjs";
 import { ultraExpertWave91046to91050 } from "./complex-pulumi-scenarios-wave-91046-91050.mjs";
 import { ultraExpertWave91051to91055 } from "./complex-pulumi-scenarios-wave-91051-91055.mjs";
+import { ultraExpertWave91056to91060 } from "./complex-pulumi-scenarios-wave-91056-91060.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4985,6 +4986,7 @@ scenarios.push({
 
 scenarios.push(...ultraExpertWave91046to91050);
 scenarios.push(...ultraExpertWave91051to91055);
+scenarios.push(...ultraExpertWave91056to91060);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5705,16 +5707,6 @@ export function validateTapStack(scenario, tapStackText) {
       throw new Error(`missing output key ${outputKey}`);
     }
   }
-  for (const marker of scenario.requiredSourceMarkers) {
-    if (!tapStackText.toLowerCase().includes(String(marker).toLowerCase())) {
-      throw new Error(`missing scenario marker ${marker}`);
-    }
-  }
-  for (const forbidden of scenario.forbiddenSourceMarkers) {
-    if (tapStackText.toLowerCase().includes(String(forbidden).toLowerCase())) {
-      throw new Error(`contains forbidden marker ${forbidden}`);
-    }
-  }
   const hasPublicDns = scenarioUsesPublicDns(scenario);
   const hasPrivateDns = scenarioUsesPrivateDns(scenario);
   const usesFrontDoorWafV3 = scenarioUsesFrontDoorWafPolicyResource(scenario);
@@ -5774,6 +5766,16 @@ export function validateTapStack(scenario, tapStackText) {
   for (const block of tapStackText.match(/new\s+(?:azure\.)?network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
     if (/\bzoneName\b/.test(block)) {
       throw new Error('azure.network.PrivateRecordSet must target the private zone with privateZoneName, not zoneName');
+    }
+  }
+  for (const marker of scenario.requiredSourceMarkers) {
+    if (!tapStackText.toLowerCase().includes(String(marker).toLowerCase())) {
+      throw new Error(`missing scenario marker ${marker}`);
+    }
+  }
+  for (const forbidden of scenario.forbiddenSourceMarkers) {
+    if (tapStackText.toLowerCase().includes(String(forbidden).toLowerCase())) {
+      throw new Error(`contains forbidden marker ${forbidden}`);
     }
   }
 }
