@@ -6,6 +6,7 @@ import { distPath, verificationRepoRoot, verifiedWorkspacePath, workspaceRoot } 
 import { ultraExpertWave91046to91050 } from "./complex-pulumi-scenarios-wave-91046-91050.mjs";
 import { ultraExpertWave91051to91055 } from "./complex-pulumi-scenarios-wave-91051-91055.mjs";
 import { ultraExpertWave91056to91060 } from "./complex-pulumi-scenarios-wave-91056-91060.mjs";
+import { ultraExpertWave91061to91065 } from "./complex-pulumi-scenarios-wave-91061-91065.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4987,6 +4988,7 @@ scenarios.push({
 scenarios.push(...ultraExpertWave91046to91050);
 scenarios.push(...ultraExpertWave91051to91055);
 scenarios.push(...ultraExpertWave91056to91060);
+scenarios.push(...ultraExpertWave91061to91065);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5122,6 +5124,23 @@ const pulumiYaml = await readFile(join(root, "Pulumi.yaml"), "utf8");
 const packageJson = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
 const entry = await readFile(join(root, "bin", "tap.ts"), "utf8");
 const stack = await readFile(join(root, "lib", "tap-stack.ts"), "utf8");
+const lowerStack = stack.toLowerCase();
+
+function sourceSatisfiesMarker(marker) {
+  const normalizedMarker = String(marker ?? "").toLowerCase();
+  if (lowerStack.includes(normalizedMarker)) return true;
+  if (normalizedMarker === "applicationinsights." || normalizedMarker === "applicationinsights.component") {
+    return /\\bapplicationinsights\\./.test(lowerStack)
+      || /\\bazure\\.insights\\.component\\b/.test(lowerStack)
+      || /\\binsights\\.component\\b/.test(lowerStack);
+  }
+  if (normalizedMarker === "devices.") {
+    return /\\bdevices\\./.test(lowerStack)
+      || /\\biothub\\./.test(lowerStack)
+      || /\\bazure\\.devices\\./.test(lowerStack);
+  }
+  return false;
+}
 
 for (const marker of ["runtime: nodejs", "main: bin/tap.ts"]) {
   if (!pulumiYaml.includes(marker)) {
@@ -5164,7 +5183,7 @@ for (const outputKey of metadata.expectedOutputKeys) {
 }
 
 for (const marker of metadata.requiredSourceMarkers ?? []) {
-  if (!stack.toLowerCase().includes(String(marker).toLowerCase())) {
+  if (!sourceSatisfiesMarker(marker)) {
     throw new Error(\`lib/tap-stack.ts is missing required scenario marker \${marker}\`);
   }
 }
@@ -5439,6 +5458,7 @@ function generationHints(scenario) {
       hints.push("Do not use azure.network.Zone or azure.network.RecordSet in these v3 tasks. Keep public DNS on the dns submodule only.");
     } else {
       hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
+      hints.push("Azure public DNS zones must use location \"global\".");
       hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
       hints.push("Do not import @pulumi/azure-native/network and then call network.Zone or network.RecordSet. For DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.Zone and azure.network.RecordSet.");
     }
@@ -5475,7 +5495,7 @@ function generationHints(scenario) {
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('devices.'))) {
-    hints.push("For Azure IoT Hub in Azure Native, use azure.devices.IotHubResource with resourceName, location, sku, and properties.");
+    hints.push("For Azure IoT Hub in Azure Native, use IotHubResource. In Front Door / v3-style tasks, import iothub from @pulumi/azure-native/iothub and use iothub.IotHubResource. In top-level v2 tasks, azure.devices.IotHubResource is acceptable.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('digitaltwins'))) {
@@ -5494,6 +5514,7 @@ function generationHints(scenario) {
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('dbforpostgresql.'))) {
     hints.push("For Azure Database for PostgreSQL Flexible Server in Azure Native, use azure.dbforpostgresql.Server and azure.dbforpostgresql.Database. Do not use a nonexistent FlexibleServer class.");
     hints.push("Use resourceGroupName, serverName, location, administratorLogin, administratorLoginPassword, version, sku, storage, and backup on azure.dbforpostgresql.Server.");
+    hints.push("For azure.dbforpostgresql.Database, set both charset and collation explicitly.");
   }
 
   if (scenario.prompt.toLowerCase().includes('action group')
@@ -5502,6 +5523,10 @@ function generationHints(scenario) {
     hints.push("For Azure Monitor alerting, use azure.insights.ActionGroup, azure.insights.MetricAlert, and azure.insights.ActivityLogAlert when the prompt asks for them.");
     hints.push("ActionGroup requires actionGroupName and groupShortName. MetricAlert requires scopes plus a criteria block. ActivityLogAlert requires scopes, condition, an actions block that references the action group, and location set to global.");
     hints.push("For azure.insights.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs.");
+  }
+
+  if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('applicationinsights.'))) {
+    hints.push("This task must include an Application Insights component. In Azure Native v2, azure.insights.Component is acceptable. In v3 Front Door tasks, applicationinsights.Component is also acceptable.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('apimanagement'))) {
@@ -5524,6 +5549,23 @@ function generationHints(scenario) {
   }
 
   return hints;
+}
+
+function sourceSatisfiesMarker(tapStackText, marker) {
+  const source = String(tapStackText ?? '').toLowerCase();
+  const normalizedMarker = String(marker ?? '').toLowerCase();
+  if (source.includes(normalizedMarker)) return true;
+  if (normalizedMarker === 'applicationinsights.' || normalizedMarker === 'applicationinsights.component') {
+    return /\bapplicationinsights\./.test(source)
+      || /\bazure\.insights\.component\b/.test(source)
+      || /\binsights\.component\b/.test(source);
+  }
+  if (normalizedMarker === 'devices.') {
+    return /\bdevices\./.test(source)
+      || /\biothub\./.test(source)
+      || /\bazure\.devices\./.test(source);
+  }
+  return false;
 }
 
 function openAiInput(scenario, prompt) {
@@ -5769,7 +5811,7 @@ export function validateTapStack(scenario, tapStackText) {
     }
   }
   for (const marker of scenario.requiredSourceMarkers) {
-    if (!tapStackText.toLowerCase().includes(String(marker).toLowerCase())) {
+    if (!sourceSatisfiesMarker(tapStackText, marker)) {
       throw new Error(`missing scenario marker ${marker}`);
     }
   }
@@ -5781,11 +5823,19 @@ export function validateTapStack(scenario, tapStackText) {
 }
 
 function repairPrompt(scenario, originalPrompt, error, previousResponse) {
+  const extraGuidance = [];
+  if (String(error).includes('missing scenario marker applicationinsights.')) {
+    extraGuidance.push('This task must declare an Application Insights component. In Azure Native v2, azure.insights.Component is valid. In v3 Front Door tasks, applicationinsights.Component is also valid.');
+  }
+  if (String(error).includes('missing scenario marker devices.')) {
+    extraGuidance.push('This task must declare Azure IoT Hub resources. In Front Door / v3-style tasks, import iothub from @pulumi/azure-native/iothub and use iothub.IotHubResource. In top-level v2 tasks, azure.devices.IotHubResource is valid.');
+  }
   return [
     originalPrompt,
     "",
     "The previous draft did not meet the task contract.",
     `Repair these exact issues: ${error}`,
+    ...(extraGuidance.length > 0 ? ["", ...extraGuidance] : []),
     "Return a complete replacement for lib/tap-stack.ts only.",
     "Do not include any prose, bullets, or explanations.",
     "Your response must contain exactly one fenced TypeScript code block with this header:",
@@ -5911,6 +5961,9 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes("Property 'location' must be 'global'")) {
     extraGuidance.push('For azure.insights.ActivityLogAlert, set location to "global".');
   }
+  if (String(runFailure).includes("DNS zones must use location 'global'")) {
+    extraGuidance.push('For Azure public DNS zones, set location to "global".');
+  }
   if (String(runFailure).includes('Application_Type')
     && String(runFailure).includes('ComponentArgs')) {
     extraGuidance.push('For azure.insights.Component, replace Application_Type with applicationType.');
@@ -5964,6 +6017,22 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('Missing required configuration variable')) {
     extraGuidance.push('Remove Pulumi config usage. Do not use new pulumi.Config(), require(), requireSecret(), or stack config for this task.');
     extraGuidance.push('Replace missing config variables with deterministic, strong, prompt-scoped constants in lib/tap-stack.ts so the bundle is self-contained.');
+  }
+  if (String(runFailure).includes("Parameter 'Charset' must be specified")
+    && String(runFailure).includes('dbforpostgresql')) {
+    extraGuidance.push('For azure.dbforpostgresql.Database, set charset and collation explicitly.');
+  }
+  if (String(runFailure).includes("Parameter 'Collation' must be specified")
+    && String(runFailure).includes('dbforpostgresql')) {
+    extraGuidance.push('For azure.dbforpostgresql.Database, set charset and collation explicitly.');
+  }
+  if (String(runFailure).includes("Parameter 'Charset' must be specified")
+    && String(runFailure).includes('dbformysql')) {
+    extraGuidance.push('For azure.dbformysql.Database, set charset and collation explicitly.');
+  }
+  if (String(runFailure).includes("Parameter 'Collation' must be specified")
+    && String(runFailure).includes('dbformysql')) {
+    extraGuidance.push('For azure.dbformysql.Database, set charset and collation explicitly.');
   }
   return [
     originalPrompt,
@@ -6105,7 +6174,7 @@ async function runShipment(shipmentDir) {
 
 function shouldRepairRun(runResult) {
   const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}\n${runResult.integrationStdout ?? ""}\n${runResult.integrationStderr ?? ""}`;
-  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|invalid URL output|invalid host output|Current Limit \(Total VMs\)|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound|products\/.+\/apis\/.+ResourceNotFound|azure-native:apimanagement:ProductApi[\s\S]*ResourceNotFound)/i.test(evidence);
+  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|DNS zones must use location 'global'|Parameter 'Charset' must be specified|Parameter 'Collation' must be specified|invalid URL output|invalid host output|Current Limit \(Total VMs\)|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound|products\/.+\/apis\/.+ResourceNotFound|azure-native:apimanagement:ProductApi[\s\S]*ResourceNotFound)/i.test(evidence);
 }
 
 function repairEvidence(runResult) {

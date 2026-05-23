@@ -1102,6 +1102,17 @@ function validateVirtualNetworkPayload(resourceType, body, providerRoute = null)
     }
   }
 
+  if (resourceType === 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings') {
+    if (typeof body.properties?.remoteVirtualNetwork?.id !== 'string' || body.properties.remoteVirtualNetwork.id.trim() === '') {
+      return envelopedError(400, 'RemoteVirtualNetworkIdRequired', 'Virtual network peering requires properties.remoteVirtualNetwork.id.');
+    }
+    for (const flag of ['allowVirtualNetworkAccess', 'allowForwardedTraffic', 'allowGatewayTransit', 'useRemoteGateways']) {
+      if (Object.hasOwn(body.properties ?? {}, flag) && typeof body.properties[flag] !== 'boolean') {
+        return envelopedError(400, 'InvalidRequestFormat', `Virtual network peering properties.${flag} must be a boolean when provided.`);
+      }
+    }
+  }
+
   if (resourceType === 'Microsoft.Network/privateEndpoints') {
     const connections = body.properties?.privateLinkServiceConnections;
     if (!Array.isArray(connections) || connections.length === 0) {

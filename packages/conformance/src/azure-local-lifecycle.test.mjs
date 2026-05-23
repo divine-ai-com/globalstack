@@ -258,6 +258,105 @@ test('operational insights workspace sharedKeys action returns deterministic key
   });
 });
 
+test('user-assigned identity reads include deterministic principal, client, and tenant ids', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-mi?api-version=2021-04-01`, { location: 'eastus' });
+
+    const created = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-mi/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-life?api-version=2023-01-31`,
+      { location: 'eastus' },
+    );
+    assert.equal(created.status, 201);
+    assert.equal(created.body.type, 'Microsoft.ManagedIdentity/userAssignedIdentities');
+    assert.ok(created.body.properties.principalId);
+    assert.ok(created.body.properties.clientId);
+    assert.equal(created.body.properties.tenantId, '00000000-0000-0000-0000-000000000000');
+
+    const fetched = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-mi/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-life?api-version=2023-01-31`,
+    );
+    assert.equal(fetched.status, 200);
+    assert.equal(fetched.body.properties.principalId, created.body.properties.principalId);
+    assert.equal(fetched.body.properties.clientId, created.body.properties.clientId);
+    assert.equal(fetched.body.properties.tenantId, created.body.properties.tenantId);
+  });
+});
+
+test('virtual network peering supports create, get, list, and delete', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-net?api-version=2021-04-01`, { location: 'eastus' });
+
+    const eastVnet = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east?api-version=2023-09-01`,
+      { location: 'eastus', properties: { addressSpace: { addressPrefixes: ['10.50.0.0/16'] } } },
+    );
+    assert.equal(eastVnet.status, 201);
+
+    const westVnet = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-west?api-version=2023-09-01`,
+      { location: 'westus2', properties: { addressSpace: { addressPrefixes: ['10.51.0.0/16'] } } },
+    );
+    assert.equal(westVnet.status, 201);
+
+    const peering = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east/virtualNetworkPeerings/peer-east-to-west?api-version=2023-09-01`,
+      {
+        properties: {
+          remoteVirtualNetwork: { id: westVnet.body.id },
+          allowVirtualNetworkAccess: true,
+          allowForwardedTraffic: true,
+        },
+      },
+    );
+    assert.equal(peering.status, 201);
+    assert.equal(peering.body.type, 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings');
+    assert.equal(peering.body.properties.remoteVirtualNetwork.id, westVnet.body.id);
+    assert.equal(peering.body.properties.peeringState, 'Connected');
+    assert.equal(peering.body.properties.provisioningState, 'Succeeded');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east/virtualNetworkPeerings/peer-east-to-west?api-version=2023-09-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.name, 'vnet-east/peer-east-to-west');
+
+    const list = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east/virtualNetworkPeerings?api-version=2023-09-01`,
+    );
+    assert.equal(list.status, 200);
+    assert.equal(list.body.value.length, 1);
+    assert.equal(list.body.value[0].name, 'vnet-east/peer-east-to-west');
+
+    const del = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east/virtualNetworkPeerings/peer-east-to-west?api-version=2023-09-01`,
+    );
+    assert.equal(del.status, 200);
+
+    const getAfterDelete = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-net/providers/Microsoft.Network/virtualNetworks/vnet-east/virtualNetworkPeerings/peer-east-to-west?api-version=2023-09-01`,
+    );
+    assert.equal(getAfterDelete.status, 404);
+  });
+});
+
 test('activity log alert lifecycle supports create/get/list/delete', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-alerts?api-version=2021-04-01`, { location: 'eastus' });

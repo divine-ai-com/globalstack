@@ -299,6 +299,20 @@ function materializeIdentity(identity, resourceId) {
   };
 }
 
+function userAssignedIdentityProperties(existingProperties, resourceId) {
+  return {
+    ...(existingProperties ?? {}),
+    clientId: existingProperties?.clientId ?? deterministicGuid(`${resourceId}:clientId`),
+    principalId: existingProperties?.principalId ?? deterministicGuid(`${resourceId}:principalId`),
+    tenantId:
+      existingProperties?.tenantId
+      ?? process.env.GLOBALSTACK_AZURE_TENANT_ID
+      ?? process.env.ARM_TENANT_ID
+      ?? '00000000-0000-0000-0000-000000000000',
+    provisioningState: existingProperties?.provisioningState ?? 'Succeeded',
+  };
+}
+
 export class ResourceStore {
   constructor({ subscriptionId = '00000000-0000-0000-0000-000000000000' } = {}) {
     this.subscriptionId = subscriptionId;
@@ -575,6 +589,9 @@ export class ResourceStore {
               publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
           }
           : {}),
+        ...(type === 'Microsoft.ManagedIdentity/userAssignedIdentities'
+          ? userAssignedIdentityProperties(existing?.properties, id)
+          : {}),
         ...(type === 'Microsoft.DBforPostgreSQL/flexibleServers'
           ? {
               fullyQualifiedDomainName: existing?.properties?.fullyQualifiedDomainName ?? postgresqlFullyQualifiedDomainName(name),
@@ -628,6 +645,32 @@ export class ResourceStore {
           ? {
               state: body.properties?.state ?? existing?.properties?.state ?? 'Enabled',
               accessEndpoint: existing?.properties?.accessEndpoint ?? `https://logic.azure.com/workflows/${name}`,
+            }
+          : {}),
+        ...(type === 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings'
+          ? {
+              remoteVirtualNetwork:
+                body.properties?.remoteVirtualNetwork
+                ?? existing?.properties?.remoteVirtualNetwork
+                ?? null,
+              allowVirtualNetworkAccess:
+                body.properties?.allowVirtualNetworkAccess
+                ?? existing?.properties?.allowVirtualNetworkAccess
+                ?? true,
+              allowForwardedTraffic:
+                body.properties?.allowForwardedTraffic
+                ?? existing?.properties?.allowForwardedTraffic
+                ?? false,
+              allowGatewayTransit:
+                body.properties?.allowGatewayTransit
+                ?? existing?.properties?.allowGatewayTransit
+                ?? false,
+              useRemoteGateways:
+                body.properties?.useRemoteGateways
+                ?? existing?.properties?.useRemoteGateways
+                ?? false,
+              peeringState: existing?.properties?.peeringState ?? 'Connected',
+              provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
             }
           : {}),
         ...(type === 'Microsoft.Insights/components'

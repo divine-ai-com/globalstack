@@ -997,3 +997,88 @@ test('Pr91060 includes both regional Event Hubs and the escalation subscription 
       && check.typePath === 'namespaces/sb-replay-anomaly-91060/topics/replay-events/subscriptions/escalation'),
   );
 });
+
+test('Pr91061 includes dual function apps and the replay operation check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91061');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-function-app'
+      && check.typePath === 'sites/func-triage-east-91061'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-function-app'
+      && check.typePath === 'sites/func-triage-west-91061'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-acknowledge-operation'
+      && check.typePath === 'service/apim-global-triage-91061/apis/triage-control-api/operations/acknowledge-replay'),
+  );
+});
+
+test('Pr91062 includes bidirectional vnet peerings and the sync private record', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91062');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-peering'
+      && check.typePath === 'virtualNetworks/vnet-regmesh-east-91062/virtualNetworkPeerings/peer-east-to-west-91062'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-peering'
+      && check.typePath === 'virtualNetworks/vnet-regmesh-west-91062/virtualNetworkPeerings/peer-west-to-east-91062'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-sync-record'
+      && check.typePath === 'privateDnsZones/mesh91062.internal/A/sync'),
+  );
+});
+
+test('Pr91063 includes Digital Twins and both regional IoT hubs', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91063');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-fleet-command-91063'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-fleet-east-91063'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-iot-hub'
+      && check.typePath === 'IotHubs/iot-fleet-west-91063'),
+  );
+});
+
+test('Pr91064 includes both DMS projects and the approvals subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91064');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-governed-cutover-91064/projects/postgres-wave-a'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-governed-cutover-91064/projects/mysql-wave-b'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approvals'
+      && check.typePath === 'namespaces/sb-governed-cutover-91064/topics/cutover-governance/subscriptions/approvals'),
+  );
+});
+
+test('Pr91065 includes Synapse, Cosmos, and the escalation subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91065');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-reg-replay-91065/sqlPools/regreplaypool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-reg-replay-91065/sqlDatabases/ReplayAuditDb/containers/ReplayAudit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-escalation'
+      && check.typePath === 'namespaces/sb-reg-replay-91065/topics/reg-replay-events/subscriptions/escalation'),
+  );
+});

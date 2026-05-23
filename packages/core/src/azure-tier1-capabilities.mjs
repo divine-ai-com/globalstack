@@ -543,6 +543,7 @@ export const tier1Capabilities = [
     azureEquivalent: 'Virtual Network / Private Endpoint / Private DNS',
     resourceTypes: [
       'Microsoft.Network/virtualNetworks',
+      'Microsoft.Network/virtualNetworks/virtualNetworkPeerings',
       'Microsoft.Network/privateEndpoints',
       'Microsoft.Network/privateDnsZones',
     ],
@@ -553,6 +554,10 @@ export const tier1Capabilities = [
       'VirtualNetworks.Get',
       'VirtualNetworks.List',
       'VirtualNetworks.Delete',
+      'VirtualNetworkPeerings.CreateOrUpdate',
+      'VirtualNetworkPeerings.Get',
+      'VirtualNetworkPeerings.List',
+      'VirtualNetworkPeerings.Delete',
       'Subnets.CreateOrUpdate',
       'Subnets.Get',
       'Subnets.List',
