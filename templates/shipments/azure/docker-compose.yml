@@ -8,8 +8,6 @@ services:
       io.globalstack.scope: shipment-runtime
       io.globalstack.cloud: azure
       io.globalstack.platform: ${PLATFORM_ID:-unknown}
-    ports:
-      - "127.0.0.1:${GLOBALSTACK_ARM_PORT:-4566}:4566"
     environment:
       GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:?GLOBALSTACK_AUTH_TOKEN must already be exported in the host shell}
       GLOBALSTACK_ARM_HOST: 0.0.0.0

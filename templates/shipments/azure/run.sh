@@ -128,6 +128,35 @@ docker_cmd() {
   "${docker_prefix[@]}" docker "$@"
 }
 
+preclean_compose_project() {
+  local project_network="${COMPOSE_PROJECT_NAME}_default"
+  local deadline=30
+  local elapsed=0
+
+  docker_cmd compose down --remove-orphans --volumes >/dev/null 2>&1 || true
+  docker_cmd network rm "$project_network" >/dev/null 2>&1 || true
+
+  while [ "$elapsed" -lt "$deadline" ]; do
+    local has_network has_containers
+    has_network=0
+    has_containers=0
+    if docker_cmd network inspect "$project_network" >/dev/null 2>&1; then
+      has_network=1
+    fi
+    if [ -n "$(docker_cmd ps -aq --filter "label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}" 2>/dev/null)" ]; then
+      has_containers=1
+    fi
+    if [ "$has_network" -eq 0 ] && [ "$has_containers" -eq 0 ]; then
+      return 0
+    fi
+    sleep 1
+    elapsed=$((elapsed + 1))
+  done
+
+  echo "Error: compose project ${COMPOSE_PROJECT_NAME} did not clean up within ${deadline}s" >&2
+  return 1
+}
+
 maybe_source_root() {
   if [ -n "${GLOBALSTACK_SOURCE_ROOT:-}" ] && [ -f "${GLOBALSTACK_SOURCE_ROOT}/package.json" ]; then
     printf '%s\n' "${GLOBALSTACK_SOURCE_ROOT}"
@@ -195,6 +224,10 @@ cd "$SHIPMENT_DOCKER_DIR" || exit 1
 
 exec 1> >(tee "$EXECUTION_LOG_PATH")
 exec 2>&1
+
+if ! preclean_compose_project; then
+  exit 1
+fi
 
 compose_exit_code=0
 docker_cmd compose up --abort-on-container-exit --exit-code-from runner runner || compose_exit_code=$?
