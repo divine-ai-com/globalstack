@@ -90,6 +90,7 @@
     "shipment:export": "node packages/bundle-runtime/src/export-azure-shipment-bundle.mjs",
     "trial:openai-arm-json": "node scripts/verified/run-openai-azure-arm-json-trial.mjs",
     "trial:openai-platforms": "node scripts/verified/run-openai-azure-platform-trials.mjs",
+    "trial:openai-complex-pulumi-bundles": "node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs",
     "trial:openai-verified-bundles": "node scripts/verified/run-openai-azure-verified-bundles.mjs",
     "native:bicep": "node scripts/runtime/native-deploy-bicep-cli.mjs",
     "native:terraform": "node scripts/runtime/native-deploy-hcl-cli.mjs terraform",

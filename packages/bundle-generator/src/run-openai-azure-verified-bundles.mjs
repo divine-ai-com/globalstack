@@ -890,10 +890,16 @@ rg_url = f"{endpoint}/subscriptions/{subscription_id}/resourcegroups/{resource_g
 resource_group_payload = get_json(rg_url)
 assert resource_group_payload["name"] == resource_group
 
+def expected_arm_name(check: dict) -> str:
+    if "expectedArmName" in check:
+        return check["expectedArmName"]
+    segments = check["typePath"].split("/")
+    return "/".join(segment for index, segment in enumerate(segments) if index % 2 == 1)
+
 for check in metadata["integrationChecks"]:
     url = f"{endpoint}/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/{check['provider']}/{check['typePath']}?api-version={check['apiVersion']}"
     payload = get_json(url)
-    assert payload["name"] == check["expectedName"], f"unexpected resource name for {check['label']}"
+    assert payload["name"] == expected_arm_name(check), f"unexpected resource name for {check['label']}: {payload['name']}"
     assert payload["type"] == check["expectedType"], f"unexpected resource type for {check['label']}: {payload['type']}"
 
 print("integration assertions passed")
@@ -1048,10 +1054,20 @@ if (rgPayload.name !== resourceGroup) {
   throw new Error("resource group readback mismatch");
 }
 
+function expectedArmName(check) {
+  if (check.expectedArmName) {
+    return check.expectedArmName;
+  }
+  return check.typePath
+    .split("/")
+    .filter((_, index) => index % 2 === 1)
+    .join("/");
+}
+
 for (const check of metadata.integrationChecks) {
   const url = \`\${endpoint}/subscriptions/\${subscriptionId}/resourceGroups/\${resourceGroup}/providers/\${check.provider}/\${check.typePath}?api-version=\${check.apiVersion}\`;
   const payload = await getJson(url);
-  if (payload.name !== check.expectedName) {
+  if (payload.name !== expectedArmName(check)) {
     throw new Error(\`unexpected resource name for \${check.label}: \${payload.name}\`);
   }
   if (payload.type !== check.expectedType) {

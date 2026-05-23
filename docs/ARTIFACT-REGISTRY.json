@@ -729,6 +729,7 @@
     "render",
     "repo:clean-runtime",
     "repo:clean-runtime:dry-run",
+    "shipment:export",
     "smoke",
     "smoke:bicep-runner",
     "smoke:deploy",

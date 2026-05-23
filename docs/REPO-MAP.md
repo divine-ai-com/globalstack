@@ -111,6 +111,7 @@ flowchart TD
 - `packages/conformance/src/azure-lifecycle-local-expectations.test.mjs`
 - `packages/conformance/src/azure-local-lifecycle.test.mjs`
 - `packages/conformance/src/azure-storage-data-plane-expectations.test.mjs`
+- `packages/conformance/src/azure-storage-hoststyle.test.mjs`
 - `packages/conformance/src/azure-storage-normalizer.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
@@ -119,6 +120,7 @@ flowchart TD
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
 - `packages/bundle-runtime/src/docker-globalstack-janitor.mjs`
+- `packages/bundle-runtime/src/export-azure-shipment-bundle.mjs`
 - `packages/bundle-runtime/src/native-deploy-bicep-cli.mjs`
 - `packages/bundle-runtime/src/native-deploy-hcl-cli.mjs`
 - `packages/bundle-runtime/src/smoke-bicep-runner-lifecycle.mjs`
@@ -270,6 +272,7 @@ flowchart TD
 - `npm run render`
 - `npm run repo:clean-runtime`
 - `npm run repo:clean-runtime:dry-run`
+- `npm run shipment:export`
 - `npm run smoke`
 - `npm run smoke:bicep-runner`
 - `npm run smoke:deploy`
