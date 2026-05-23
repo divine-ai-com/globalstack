@@ -788,8 +788,7 @@ test('validateTapStack rejects application gateway subnet ids derived from virtu
   const tapStack = `
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native";
-import * as monitor from "@pulumi/azure-native/monitor";
-// frontdoor.Policy cdn. dns.Zone dns.RecordSet privatedns.PrivateRecordSet managedidentity. containerregistry. network.PublicIPAddress network.VirtualNetwork network.ApplicationGateway containerservice. apimanagement. storage.BlobContainer servicebus. eventgrid. keyvault. appconfiguration. monitor.ActionGroup monitor.MetricAlert monitor.ActivityLogAlert operationalinsights.
+// frontdoor.Policy cdn. managedidentity. containerregistry. network.PublicIPAddress network.VirtualNetwork network.ApplicationGateway containerservice. apimanagement. storage.BlobContainer servicebus. eventgrid. keyvault. appconfiguration. monitor.ActionGroup monitor.MetricAlert monitor.ActivityLogAlert operationalinsights.
 // east-rollout-origin west-rollout-origin rollout-mesh-route rollout-mesh-security-policy waf-rollout-mesh-91049 rollout91049.contoso.net api id-rollout-mesh-91049 acrrolloutmesh91049 vnet-rollout-west-91049 snet-rollout-agw-west-91049 snet-rollout-aks-east-91049 snet-rollout-aks-west-91049 pip-rollout-east-91049 pip-rollout-west-91049 agw-rollout-west-91049 aks-rollout-east-91049 aks-rollout-west-91049 apim-rollout-mesh-91049 rollout-mesh-api rollout-mesh-product promote-model azrollout91049 model-artifacts sb-rollout-mesh-91049 model-rollouts east west rollback eg-rollout-mesh-91049 kv-rollout-mesh-91049 cfg-rollout-mesh-91049 ag-rollout-mesh-91049 ma-rollout-mesh-91049 ala-rollout-mesh-91049 log-rollout-east-91049 log-rollout-west-91049 appi-rollout-mesh-91049
 
 export function createTapStack() {
@@ -808,12 +807,17 @@ export function createTapStack() {
     subnets: [{ name: "snet-rollout-agw-east-91049", addressPrefix: "10.10.1.0/24" }],
   });
   const subnetId = vnet.subnets.apply(items => items?.[0]?.id ?? "");
-  const privateZone = new azure.privatedns.PrivateZone("rollout91049.internal", {
+  const privateZone = new azure.network.PrivateZone("rollout91049.internal", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     privateZoneName: "rollout91049.internal",
     location: "global",
   });
-  new azure.dns.RecordSet("api.rollout91049.contoso.net", {
+  new azure.network.Zone("rollout91049.contoso.net", {
+    resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
+    zoneName: "rollout91049.contoso.net",
+    location: "global",
+  });
+  new azure.network.RecordSet("api.rollout91049.contoso.net", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     zoneName: "rollout91049.contoso.net",
     relativeRecordSetName: "api",
@@ -821,7 +825,7 @@ export function createTapStack() {
     ttl: 300,
     cnameRecord: { cname: "rollout-mesh-endpoint.azurefd.net" },
   });
-  new azure.privatedns.PrivateRecordSet("api.rollout91049.internal", {
+  new azure.network.PrivateRecordSet("api.rollout91049.internal", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     privateZoneName: privateZone.name,
     relativeRecordSetName: "api",
@@ -881,7 +885,7 @@ export function createTapStack() {
   );
 });
 
-test('validateTapStack rejects DNS resources imported from the network submodule', () => {
+test('validateTapStack rejects dns and privatedns module usage in Azure Native 2.x bundles', () => {
   const scenario = {
     prompt: 'Use one public DNS zone and one private DNS zone',
     resourceNames: {},
@@ -898,7 +902,7 @@ import * as pulumi from "@pulumi/pulumi";
 // dns.RecordSet privatedns.PrivateRecordSet
 
 export function createTapStack() {
-  const privateZone = new privatedns.PrivateZone("edge91051.internal", {
+  const privateZone = new network.PrivateZone("edge91051.internal", {
     resourceGroupName: "rg",
     privateZoneName: "edge91051.internal",
     location: "global",
@@ -911,12 +915,28 @@ export function createTapStack() {
   new dns.RecordSet("api.edge91051.contoso.net", {
     resourceGroupName: "rg",
     zoneName: "edge91051.contoso.net",
+    relativeRecordSetName: "api-dns",
+    recordType: "CNAME",
+    ttl: 300,
+    cnameRecord: { cname: "edge.azurefd.net" },
+  });
+  new network.RecordSet("api.edge91051.contoso.net", {
+    resourceGroupName: "rg",
+    zoneName: "edge91051.contoso.net",
     relativeRecordSetName: "api",
     recordType: "CNAME",
     ttl: 300,
     cnameRecord: { cname: "edge.azurefd.net" },
   });
   new privatedns.PrivateRecordSet("api.edge91051.internal", {
+    resourceGroupName: "rg",
+    privateZoneName: "edge91051.internal",
+    relativeRecordSetName: "api-dns",
+    recordType: "A",
+    ttl: 300,
+    aRecords: [{ ipv4Address: "10.0.0.11" }],
+  }, { dependsOn: [privateZone] });
+  new network.PrivateRecordSet("api.edge91051.internal", {
     resourceGroupName: "rg",
     privateZoneName: privateZone.name,
     relativeRecordSetName: "api",
@@ -929,26 +949,26 @@ export function createTapStack() {
 `;
   assert.throws(
     () => validateTapStack(scenario, tapStack),
-    /must not use network\.Zone, network\.RecordSet, network\.PrivateZone, network\.VirtualNetworkLink, or network\.PrivateRecordSet/,
+    /This bundle uses the Azure Native 2.x surface\. Use azure\.network\.Zone and azure\.network\.RecordSet for public DNS, and use azure\.network\.PrivateZone, azure\.network\.VirtualNetworkLink, and azure\.network\.PrivateRecordSet for private DNS\./,
   );
 });
 
-test('validateTapStack accepts top-level azure.dns and azure.privatedns resources in Front Door WAF scenarios', () => {
+test('validateTapStack accepts azure.network DNS resources in Front Door WAF scenarios on the Azure Native 2.x surface', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91051');
   assert.ok(scenario);
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
-// frontdoor.Policy dns.Zone dns.RecordSet privatedns.PrivateZone privatedns.VirtualNetworkLink privatedns.PrivateRecordSet network.VirtualNetwork app.ManagedEnvironment app.ContainerApp servicebus. storage.BlobContainer storage.FileShare eventgrid. keyvault. appconfiguration. monitor.ActionGroup monitor.MetricAlert monitor.ActivityLogAlert operationalinsights. edge-commands replay audit
+// frontdoor.Policy network.VirtualNetwork app.ManagedEnvironment app.ContainerApp servicebus. storage.BlobContainer storage.FileShare eventgrid. keyvault. appconfiguration. insights.ActionGroup insights.MetricAlert insights.ActivityLogAlert operationalinsights. edge-commands replay audit
 // afd-private-edge-91051 private-edge-endpoint private-edge-origins private-edge-origin-east private-edge-origin-west private-edge-route private-edge-security-policy waf-private-edge-91051 edge91051.contoso.net api ops edge91051.internal edge-link-east-91051 edge-link-west-91051 vnet-edge-east-91051 vnet-edge-west-91051 cae-edge-east-91051 cae-edge-west-91051 ca-edge-api-east-91051 ca-edge-api-west-91051 ca-edge-worker-east-91051 ca-edge-worker-west-91051 ca-edge-supervisor-91051 sb-private-edge-91051 edge-commands east west replay audit azprivateedge91051 edge-drop edge-archive edge-files eg-private-edge-91051 kv-private-edge-91051 cfg-private-edge-91051 ag-private-edge-91051 ma-private-edge-91051 ala-private-edge-91051 log-private-edge-east-91051 log-private-edge-west-91051 appi-private-edge-91051
 
 export function createTapStack() {
   new azure.network.WebApplicationFirewallPolicy("waf-private-edge-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", policyName: "waf-private-edge-91051", location: "global", policySettings: { state: "Enabled", mode: "Prevention", requestBodyCheck: "Enabled" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });
-  new azure.dns.Zone("edge91051.contoso.net", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", location: "global" });
-  new azure.dns.RecordSet("api", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", relativeRecordSetName: "api", recordType: "CNAME", ttl: 300, cnameRecord: { cname: "edge.azurefd.net" } });
-  const privateZone = new azure.privatedns.PrivateZone("edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", location: "global" });
+  new azure.network.Zone("edge91051.contoso.net", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", location: "global" });
+  new azure.network.RecordSet("api", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", relativeRecordSetName: "api", recordType: "CNAME", ttl: 300, cnameRecord: { cname: "edge.azurefd.net" } });
+  const privateZone = new azure.network.PrivateZone("edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", location: "global" });
   const eastVnet = { id: "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet-edge-east-91051" } as any;
-  new azure.privatedns.VirtualNetworkLink("edge-link-east-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, virtualNetworkLinkName: "edge-link-east-91051", location: "global", virtualNetwork: { id: eastVnet.id }, registrationEnabled: false }, { dependsOn: [privateZone, eastVnet] });
-  new azure.privatedns.PrivateRecordSet("api.edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, relativeRecordSetName: "api", recordType: "A", ttl: 300, aRecords: [{ ipv4Address: "10.0.0.10" }] }, { dependsOn: [privateZone] });
+  new azure.network.VirtualNetworkLink("edge-link-east-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, virtualNetworkLinkName: "edge-link-east-91051", location: "global", virtualNetwork: { id: eastVnet.id }, registrationEnabled: false }, { dependsOn: [privateZone, eastVnet] });
+  new azure.network.PrivateRecordSet("api.edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, relativeRecordSetName: "api", recordType: "A", ttl: 300, aRecords: [{ ipv4Address: "10.0.0.10" }] }, { dependsOn: [privateZone] });
   return {
     PrivateEdgeFabricPublicDnsZoneName: "edge91051.contoso.net",
     PrivateEdgeFabricPrivateDnsZoneName: "edge91051.internal",
@@ -1910,6 +1930,116 @@ test('Pr91090 includes IoT hubs, Digital Twins, Synapse, and the investigate sub
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-investigate'
       && check.typePath === 'namespaces/sb-command-ring-91090/topics/command-events/subscriptions/investigate'),
+  );
+});
+
+test('Pr91091 includes PostgreSQL, workflow, function app, and the release subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91091');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('logic.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'logic-workflow'
+      && check.typePath === 'workflows/la-clinical-release-91091'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'function-app'
+      && check.typePath === 'sites/func-clinical-release-91091'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-clinical-release-91091/databases/releaseledger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-release'
+      && check.typePath === 'namespaces/sb-clinical-release-91091/topics/clinical-events/subscriptions/release'),
+  );
+});
+
+test('Pr91092 includes Front Door, managed identity, registry, dual managed environments, and the delivery subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91092');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-media-admission-91092/securityPolicies/media-admission-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-media-east-91092'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-media-west-91092'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-delivery'
+      && check.typePath === 'namespaces/sb-media-admission-91092/topics/media-events/subscriptions/delivery'),
+  );
+});
+
+test('Pr91093 includes Front Door, Synapse, Cosmos, and the warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91093');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-claims-analytics-91093/sqlPools/claimspool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-claims-analytics-91093/sqlDatabases/ClaimsStateDb/containers/ClaimsState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-claims-analytics-91093/topics/claims-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91094 includes Front Door, both DMS projects, both relational engines, and Redis', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91094');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-mysql-project'
+      && check.typePath === 'services/dms-sovereign-cutover-91094/projects/mysql-sovereign-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-postgres-project'
+      && check.typePath === 'services/dms-sovereign-cutover-91094/projects/postgres-sovereign-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-sovereign-cutover-91094/databases/cutoverdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-sovereign-cutover-91094/databases/cutoverledger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'redis-cache'
+      && check.typePath === 'Redis/redis-sovereign-cutover-91094'),
+  );
+});
+
+test('Pr91095 includes Front Door, both IoT hubs, Digital Twins, and the investigate subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91095');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-plant-east-91095'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-iot-hub'
+      && check.typePath === 'IotHubs/iot-plant-west-91095'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-plant-thread-91095'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-investigate'
+      && check.typePath === 'namespaces/sb-plant-thread-91095/topics/plant-events/subscriptions/investigate'),
   );
 });
 

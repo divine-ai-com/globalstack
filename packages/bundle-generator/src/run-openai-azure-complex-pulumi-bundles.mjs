@@ -12,6 +12,7 @@ import { ultraExpertWave91071to91075 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91076to91080 } from "./complex-pulumi-scenarios-wave-91076-91080.mjs";
 import { ultraExpertWave91081to91085 } from "./complex-pulumi-scenarios-wave-91081-91085.mjs";
 import { ultraExpertWave91086to91090 } from "./complex-pulumi-scenarios-wave-91086-91090.mjs";
+import { ultraExpertWave91091to91095 } from "./complex-pulumi-scenarios-wave-91091-91095.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4999,6 +5000,7 @@ scenarios.push(...ultraExpertWave91071to91075);
 scenarios.push(...ultraExpertWave91076to91080);
 scenarios.push(...ultraExpertWave91081to91085);
 scenarios.push(...ultraExpertWave91086to91090);
+scenarios.push(...ultraExpertWave91091to91095);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5065,7 +5067,12 @@ function solutionFiles() {
 }
 
 function scenarioUsesAzureNativeV3(scenario) {
-  return scenarioUsesFrontDoorWafPolicyResource(scenario);
+  // Keep the complex-bundle generator on the same Azure Native surface that the
+  // runner, validator, and historical verified corpus already exercise heavily.
+  // The v3 split introduced inconsistent guidance for Cosmos and IoT families
+  // without buying us meaningful coverage.
+  void scenario;
+  return false;
 }
 
 function pulumiYaml() {
