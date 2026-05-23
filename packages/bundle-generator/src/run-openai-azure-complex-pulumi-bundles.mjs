@@ -3028,6 +3028,659 @@ export const scenarios = [
       { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-replay-91032", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
     ],
   },
+  {
+    poId: "ce2ba817-70bb-4934-8c98-5b2fb5ed2b22",
+    prId: "Pr91033",
+    scenarioId: "command-governance-fabric",
+    title: "Command governance fabric",
+    prompt: [
+      "Our command governance team needs one Azure deployment that can accept controlled partner traffic through a managed gateway, run the command handler on a serverless surface, keep a long-lived review workflow, persist mutable state in a globally distributed document store, and retain operational coordination in a durable queue and cache. They also need the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+      "",
+      "Use one Azure API Management service with one API and one product, one Function App with one App Service plan, one Logic App workflow, one Service Bus namespace with one queue, one Azure Cosmos DB account with one SQL database and one SQL container, one Azure Cache for Redis, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor activity log alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-command-fabric-pulumi-91033`, API Management service `apim-command-fabric-91033`, API Management API `command-fabric-api`, API Management product `command-fabric-product`, Function App plan `plan-command-fabric-91033`, Function App `func-command-fabric-91033`, Logic App workflow `la-command-fabric-91033`, Service Bus namespace `sb-command-fabric-91033`, Service Bus queue `command-review`, Cosmos DB account `cosmos-command-fabric-91033`, Cosmos SQL database `CommandStateDb`, Cosmos SQL container `CommandState`, Redis cache `redis-command-fabric-91033`, Event Grid topic `eg-command-fabric-91033`, Key Vault `kv-command-fabric-91033`, App Configuration store `cfg-command-fabric-91033`, action group `ag-command-fabric-91033`, activity log alert `ala-command-fabric-91033`, Log Analytics workspace `log-command-fabric-91033`, and Application Insights component `appi-command-fabric-91033`.",
+      "",
+      "Keep this focused on the command governance plane. Do not add Front Door, AKS, MySQL, PostgreSQL, Database Migration Service, Azure Files, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `CommandFabricApiGatewayUrl`, `CommandFabricFunctionHostName`, `CommandFabricWorkflowName`, `CommandFabricQueueName`, `CommandFabricCosmosAccountName`, `CommandFabricCosmosDatabaseName`, `CommandFabricCosmosContainerName`, `CommandFabricRedisName`, `CommandFabricEventGridTopicEndpoint`, `CommandFabricKeyVaultName`, `CommandFabricAppConfigName`, `CommandFabricActionGroupName`, `CommandFabricActivityLogAlertName`, `CommandFabricAppInsightsName`, `CommandFabricLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "API Management landing zone accelerator",
+        url: "https://learn.microsoft.com/en-us/azure/api-management/landing-zone-accelerator",
+        why: "Grounds the managed API gateway and governance boundary.",
+      },
+      {
+        title: "Azure Cosmos DB overview",
+        url: "https://learn.microsoft.com/en-us/azure/cosmos-db/overview",
+        why: "Grounds the globally distributed document store used for mutable command state.",
+      },
+      {
+        title: "Azure Logic Apps overview",
+        url: "https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview",
+        why: "Grounds the long-running review workflow surface.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-command-fabric-pulumi-91033",
+      apiManagementService: "apim-command-fabric-91033",
+      apiManagementApi: "command-fabric-api",
+      apiManagementProduct: "command-fabric-product",
+      functionAppPlan: "plan-command-fabric-91033",
+      functionApp: "func-command-fabric-91033",
+      logicWorkflow: "la-command-fabric-91033",
+      serviceBusNamespace: "sb-command-fabric-91033",
+      serviceBusQueue: "command-review",
+      cosmosAccount: "cosmos-command-fabric-91033",
+      cosmosDatabase: "CommandStateDb",
+      cosmosContainer: "CommandState",
+      redis: "redis-command-fabric-91033",
+      eventGridTopic: "eg-command-fabric-91033",
+      keyVault: "kv-command-fabric-91033",
+      appConfigStore: "cfg-command-fabric-91033",
+      actionGroup: "ag-command-fabric-91033",
+      activityLogAlert: "ala-command-fabric-91033",
+      logAnalyticsWorkspace: "log-command-fabric-91033",
+      applicationInsights: "appi-command-fabric-91033",
+    },
+    expectedOutputKeys: [
+      "CommandFabricApiGatewayUrl",
+      "CommandFabricFunctionHostName",
+      "CommandFabricWorkflowName",
+      "CommandFabricQueueName",
+      "CommandFabricCosmosAccountName",
+      "CommandFabricCosmosDatabaseName",
+      "CommandFabricCosmosContainerName",
+      "CommandFabricRedisName",
+      "CommandFabricEventGridTopicEndpoint",
+      "CommandFabricKeyVaultName",
+      "CommandFabricAppConfigName",
+      "CommandFabricActionGroupName",
+      "CommandFabricActivityLogAlertName",
+      "CommandFabricAppInsightsName",
+      "CommandFabricLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "apimanagement.",
+      "web.",
+      "logic.",
+      "servicebus.Queue",
+      "documentdb.",
+      "cache.Redis",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.ActivityLogAlert",
+      "operationalinsights.",
+      "command-review",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "containerservice", "dbformysql", "dbforpostgresql", "datamigration", "storage.FileShare", "private endpoint"],
+    integrationChecks: [
+      { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-command-fabric-91033", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+      { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-command-fabric-91033/apis/command-fabric-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+      { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-command-fabric-91033/products/command-fabric-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+      { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-command-fabric-91033", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+      { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-command-fabric-91033", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+      { label: "logic-workflow", provider: "Microsoft.Logic", typePath: "workflows/la-command-fabric-91033", apiVersion: "2019-05-01", expectedType: "Microsoft.Logic/workflows" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-command-fabric-91033", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-queue", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-command-fabric-91033/queues/command-review", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/queues" },
+      { label: "cosmos-account", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-command-fabric-91033", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts" },
+      { label: "cosmos-database", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-command-fabric-91033/sqlDatabases/CommandStateDb", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases" },
+      { label: "cosmos-container", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-command-fabric-91033/sqlDatabases/CommandStateDb/containers/CommandState", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers" },
+      { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-command-fabric-91033", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-command-fabric-91033", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-command-fabric-91033", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-command-fabric-91033", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-command-fabric-91033", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-command-fabric-91033", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-command-fabric-91033", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-command-fabric-91033", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
+  {
+    poId: "bbe5b485-ce4b-430d-9859-71bdb2cfab28",
+    prId: "Pr91034",
+    scenarioId: "private-discovery-handoff-fabric",
+    title: "Private discovery handoff fabric",
+    prompt: [
+      "Our internal networking and operations teams need one Azure deployment that can keep two regional service fabrics private, route branch traffic through regional application gateways, resolve internal service names through shared discovery records, hand off file-based artifacts, and keep a durable coordination backbone across both regions. They also need the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+      "",
+      "Use one virtual network in `eastus`, one virtual network in `westus2`, one services subnet in each virtual network, one Azure Private DNS zone linked to both virtual networks, one private DNS A record for `gateway.handoff.internal`, one for `workers.handoff.internal`, and one for `files.handoff.internal`, one Application Gateway in each region, one managed Azure Container Apps environment in each region with one gateway app and one worker app in each environment, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription, one storage account with one Azure Files share, one Azure Cache for Redis, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-discovery-handoff-pulumi-91034`, east virtual network `vnet-handoff-east-91034`, west virtual network `vnet-handoff-west-91034`, east services subnet `snet-handoff-east-91034`, west services subnet `snet-handoff-west-91034`, private DNS zone `handoff.internal`, private DNS virtual network link `handoff-link-east-91034`, private DNS virtual network link `handoff-link-west-91034`, private DNS A record `gateway.handoff.internal`, private DNS A record `workers.handoff.internal`, private DNS A record `files.handoff.internal`, east Application Gateway `agw-handoff-east-91034`, west Application Gateway `agw-handoff-west-91034`, east Container Apps environment `cae-handoff-east-91034`, west Container Apps environment `cae-handoff-west-91034`, east gateway app `ca-handoff-gateway-east-91034`, west gateway app `ca-handoff-gateway-west-91034`, east worker app `ca-handoff-workers-east-91034`, west worker app `ca-handoff-workers-west-91034`, Service Bus namespace `sb-handoff-91034`, Service Bus topic `handoff-jobs`, Service Bus subscription `east`, Service Bus subscription `west`, storage account `azhandoff91034`, Azure Files share `handoff-drop`, Redis cache `redis-handoff-91034`, Event Grid topic `eg-handoff-91034`, Key Vault `kv-handoff-91034`, App Configuration store `cfg-handoff-91034`, action group `ag-handoff-91034`, metric alert `ma-handoff-91034`, Log Analytics workspace `log-handoff-91034`, and Application Insights component `appi-handoff-91034`.",
+      "",
+      "Keep everything internal-only in this task. Do not add Front Door, API Management, AKS, MySQL, PostgreSQL, Cosmos DB, Database Migration Service, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `HandoffEastVirtualNetworkName`, `HandoffWestVirtualNetworkName`, `HandoffPrivateDnsZoneName`, `HandoffEastApplicationGatewayName`, `HandoffWestApplicationGatewayName`, `HandoffEastEnvironmentName`, `HandoffWestEnvironmentName`, `HandoffEastGatewayAppName`, `HandoffWestGatewayAppName`, `HandoffEastWorkerAppName`, `HandoffWestWorkerAppName`, `HandoffTopicName`, `HandoffEastSubscriptionName`, `HandoffWestSubscriptionName`, `HandoffFileShareName`, `HandoffRedisName`, `HandoffEventGridTopicEndpoint`, `HandoffKeyVaultName`, `HandoffAppConfigName`, `HandoffActionGroupName`, `HandoffMetricAlertName`, `HandoffAppInsightsName`, `HandoffLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "Azure Private DNS zone overview",
+        url: "https://learn.microsoft.com/en-us/azure/dns/private-dns-privatednszone",
+        why: "Grounds the private discovery namespace and virtual network linking model.",
+      },
+      {
+        title: "What is Azure Application Gateway",
+        url: "https://learn.microsoft.com/en-us/azure/application-gateway/overview",
+        why: "Grounds the regional layer-7 routing surface for internal traffic.",
+      },
+      {
+        title: "Azure Container Apps overview",
+        url: "https://learn.microsoft.com/en-us/azure/container-apps/overview",
+        why: "Grounds the internal application environments and private service discovery behavior.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-discovery-handoff-pulumi-91034",
+      eastVirtualNetwork: "vnet-handoff-east-91034",
+      westVirtualNetwork: "vnet-handoff-west-91034",
+      eastServicesSubnet: "snet-handoff-east-91034",
+      westServicesSubnet: "snet-handoff-west-91034",
+      privateZone: "handoff.internal",
+      privateLinkEast: "handoff-link-east-91034",
+      privateLinkWest: "handoff-link-west-91034",
+      gatewayRecord: "gateway.handoff.internal",
+      workersRecord: "workers.handoff.internal",
+      filesRecord: "files.handoff.internal",
+      eastApplicationGateway: "agw-handoff-east-91034",
+      westApplicationGateway: "agw-handoff-west-91034",
+      eastManagedEnvironment: "cae-handoff-east-91034",
+      westManagedEnvironment: "cae-handoff-west-91034",
+      eastGatewayApp: "ca-handoff-gateway-east-91034",
+      westGatewayApp: "ca-handoff-gateway-west-91034",
+      eastWorkerApp: "ca-handoff-workers-east-91034",
+      westWorkerApp: "ca-handoff-workers-west-91034",
+      serviceBusNamespace: "sb-handoff-91034",
+      serviceBusTopic: "handoff-jobs",
+      eastSubscription: "east",
+      westSubscription: "west",
+      storageAccount: "azhandoff91034",
+      fileShare: "handoff-drop",
+      redis: "redis-handoff-91034",
+      eventGridTopic: "eg-handoff-91034",
+      keyVault: "kv-handoff-91034",
+      appConfigStore: "cfg-handoff-91034",
+      actionGroup: "ag-handoff-91034",
+      metricAlert: "ma-handoff-91034",
+      logAnalyticsWorkspace: "log-handoff-91034",
+      applicationInsights: "appi-handoff-91034",
+    },
+    expectedOutputKeys: [
+      "HandoffEastVirtualNetworkName",
+      "HandoffWestVirtualNetworkName",
+      "HandoffPrivateDnsZoneName",
+      "HandoffEastApplicationGatewayName",
+      "HandoffWestApplicationGatewayName",
+      "HandoffEastEnvironmentName",
+      "HandoffWestEnvironmentName",
+      "HandoffEastGatewayAppName",
+      "HandoffWestGatewayAppName",
+      "HandoffEastWorkerAppName",
+      "HandoffWestWorkerAppName",
+      "HandoffTopicName",
+      "HandoffEastSubscriptionName",
+      "HandoffWestSubscriptionName",
+      "HandoffFileShareName",
+      "HandoffRedisName",
+      "HandoffEventGridTopicEndpoint",
+      "HandoffKeyVaultName",
+      "HandoffAppConfigName",
+      "HandoffActionGroupName",
+      "HandoffMetricAlertName",
+      "HandoffAppInsightsName",
+      "HandoffLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "network.VirtualNetwork",
+      "network.PrivateZone",
+      "network.VirtualNetworkLink",
+      "network.ApplicationGateway",
+      "app.ManagedEnvironment",
+      "app.ContainerApp",
+      "servicebus.",
+      "storage.FileShare",
+      "cache.Redis",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "operationalinsights.",
+      "handoff.internal",
+      "handoff-jobs",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "apimanagement", "containerservice", "documentdb", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+    integrationChecks: [
+      { label: "east-virtual-network", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-handoff-east-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "west-virtual-network", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-handoff-west-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "east-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-handoff-east-91034/subnets/snet-handoff-east-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-handoff-west-91034/subnets/snet-handoff-west-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "private-dns-zone", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones" },
+      { label: "private-dns-link-east", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal/virtualNetworkLinks/handoff-link-east-91034", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+      { label: "private-dns-link-west", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal/virtualNetworkLinks/handoff-link-west-91034", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+      { label: "gateway-record", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal/A/gateway", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "workers-record", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal/A/workers", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "files-record", provider: "Microsoft.Network", typePath: "privateDnsZones/handoff.internal/A/files", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+      { label: "east-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-handoff-east-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "west-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-handoff-west-91034", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "east-environment", provider: "Microsoft.App", typePath: "managedEnvironments/cae-handoff-east-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/managedEnvironments" },
+      { label: "west-environment", provider: "Microsoft.App", typePath: "managedEnvironments/cae-handoff-west-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/managedEnvironments" },
+      { label: "east-gateway-app", provider: "Microsoft.App", typePath: "containerApps/ca-handoff-gateway-east-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "west-gateway-app", provider: "Microsoft.App", typePath: "containerApps/ca-handoff-gateway-west-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "east-worker-app", provider: "Microsoft.App", typePath: "containerApps/ca-handoff-workers-east-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "west-worker-app", provider: "Microsoft.App", typePath: "containerApps/ca-handoff-workers-west-91034", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-handoff-91034", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-handoff-91034/topics/handoff-jobs", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-handoff-91034/topics/handoff-jobs/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-handoff-91034/topics/handoff-jobs/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azhandoff91034", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+      { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azhandoff91034/fileServices/default/shares/handoff-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+      { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-handoff-91034", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-handoff-91034", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-handoff-91034", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-handoff-91034", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-handoff-91034", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-handoff-91034", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-handoff-91034", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-handoff-91034", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
+  {
+    poId: "e4ed0df0-ea2e-43c5-945a-ee1cc05d00ba",
+    prId: "Pr91035",
+    scenarioId: "global-release-governance-ring",
+    title: "Global release governance ring",
+    prompt: [
+      "Our platform release engineering group needs one Azure deployment that can keep a global release ring online across two regions while preserving regional rollback boundaries. They need two AKS clusters, one shared registry, one regional application gateway per cluster, one global edge in front of those gateways, one shared approval topic with regional and canary subscriptions, and the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+      "",
+      "Use one Azure Front Door profile and endpoint with one security policy and one WAF policy, one Azure Container Registry, one App Configuration store, one virtual network in each region with an application gateway subnet and a workload subnet, one Application Gateway in each region, one AKS cluster in each region, one Key Vault in each region, one Log Analytics workspace in each region, one Application Insights component, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription and one `canary` subscription, one Event Grid topic, one Azure Monitor action group, and one Azure Monitor activity log alert.",
+      "",
+      "Use these exact resource names: resource group `rg-az-release-ring-pulumi-91035`, Front Door profile `afd-release-ring-91035`, Front Door endpoint `release-ring-endpoint`, Front Door security policy `release-ring-security-policy`, WAF policy `waf-release-ring-91035`, Container Registry `acrreleasering91035`, App Configuration store `cfg-release-ring-91035`, east virtual network `vnet-release-east-91035`, east application gateway subnet `snet-release-agw-east-91035`, east workload subnet `snet-release-aks-east-91035`, east Application Gateway `agw-release-east-91035`, east AKS cluster `aks-release-east-91035`, east Key Vault `kv-release-east-91035`, east Log Analytics workspace `log-release-east-91035`, west virtual network `vnet-release-west-91035`, west application gateway subnet `snet-release-agw-west-91035`, west workload subnet `snet-release-aks-west-91035`, west Application Gateway `agw-release-west-91035`, west AKS cluster `aks-release-west-91035`, west Key Vault `kv-release-west-91035`, west Log Analytics workspace `log-release-west-91035`, Application Insights component `appi-release-ring-91035`, Service Bus namespace `sb-release-ring-91035`, Service Bus topic `release-approvals`, Service Bus subscription `east`, Service Bus subscription `west`, Service Bus subscription `canary`, Event Grid topic `eg-release-ring-91035`, action group `ag-release-ring-91035`, and activity log alert `ala-release-ring-91035`.",
+      "",
+      "Keep this focused on the release governance ring. Do not add API Management, Functions, Logic Apps, Cosmos DB, MySQL, PostgreSQL, Database Migration Service, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `ReleaseRingFrontDoorProfileName`, `ReleaseRingFrontDoorEndpointHostName`, `ReleaseRingRegistryName`, `ReleaseRingAppConfigName`, `ReleaseRingEastVirtualNetworkName`, `ReleaseRingEastApplicationGatewayName`, `ReleaseRingEastClusterName`, `ReleaseRingEastKeyVaultName`, `ReleaseRingEastLogAnalyticsWorkspaceName`, `ReleaseRingWestVirtualNetworkName`, `ReleaseRingWestApplicationGatewayName`, `ReleaseRingWestClusterName`, `ReleaseRingWestKeyVaultName`, `ReleaseRingWestLogAnalyticsWorkspaceName`, `ReleaseRingAppInsightsName`, `ReleaseRingTopicName`, `ReleaseRingEastSubscriptionName`, `ReleaseRingWestSubscriptionName`, `ReleaseRingCanarySubscriptionName`, `ReleaseRingEventGridTopicEndpoint`, `ReleaseRingActionGroupName`, `ReleaseRingActivityLogAlertName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "AKS baseline for multiregion clusters",
+        url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster",
+        why: "Grounds the two-cluster regional release topology.",
+      },
+      {
+        title: "Architecture best practices for Azure Front Door",
+        url: "https://learn.microsoft.com/en-us/azure/well-architected/service-guides/azure-front-door",
+        why: "Grounds the global edge routing and failover boundary in front of regional origins.",
+      },
+      {
+        title: "Introduction to Azure Container Registry",
+        url: "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-intro",
+        why: "Grounds the shared image distribution surface for both clusters.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-release-ring-pulumi-91035",
+      frontDoorProfile: "afd-release-ring-91035",
+      frontDoorEndpoint: "release-ring-endpoint",
+      securityPolicy: "release-ring-security-policy",
+      wafPolicy: "waf-release-ring-91035",
+      registry: "acrreleasering91035",
+      appConfigStore: "cfg-release-ring-91035",
+      eastVirtualNetwork: "vnet-release-east-91035",
+      eastApplicationGatewaySubnet: "snet-release-agw-east-91035",
+      eastWorkloadSubnet: "snet-release-aks-east-91035",
+      eastApplicationGateway: "agw-release-east-91035",
+      eastCluster: "aks-release-east-91035",
+      eastKeyVault: "kv-release-east-91035",
+      eastLogAnalyticsWorkspace: "log-release-east-91035",
+      westVirtualNetwork: "vnet-release-west-91035",
+      westApplicationGatewaySubnet: "snet-release-agw-west-91035",
+      westWorkloadSubnet: "snet-release-aks-west-91035",
+      westApplicationGateway: "agw-release-west-91035",
+      westCluster: "aks-release-west-91035",
+      westKeyVault: "kv-release-west-91035",
+      westLogAnalyticsWorkspace: "log-release-west-91035",
+      applicationInsights: "appi-release-ring-91035",
+      serviceBusNamespace: "sb-release-ring-91035",
+      serviceBusTopic: "release-approvals",
+      eastSubscription: "east",
+      westSubscription: "west",
+      canarySubscription: "canary",
+      eventGridTopic: "eg-release-ring-91035",
+      actionGroup: "ag-release-ring-91035",
+      activityLogAlert: "ala-release-ring-91035",
+    },
+    expectedOutputKeys: [
+      "ReleaseRingFrontDoorProfileName",
+      "ReleaseRingFrontDoorEndpointHostName",
+      "ReleaseRingRegistryName",
+      "ReleaseRingAppConfigName",
+      "ReleaseRingEastVirtualNetworkName",
+      "ReleaseRingEastApplicationGatewayName",
+      "ReleaseRingEastClusterName",
+      "ReleaseRingEastKeyVaultName",
+      "ReleaseRingEastLogAnalyticsWorkspaceName",
+      "ReleaseRingWestVirtualNetworkName",
+      "ReleaseRingWestApplicationGatewayName",
+      "ReleaseRingWestClusterName",
+      "ReleaseRingWestKeyVaultName",
+      "ReleaseRingWestLogAnalyticsWorkspaceName",
+      "ReleaseRingAppInsightsName",
+      "ReleaseRingTopicName",
+      "ReleaseRingEastSubscriptionName",
+      "ReleaseRingWestSubscriptionName",
+      "ReleaseRingCanarySubscriptionName",
+      "ReleaseRingEventGridTopicEndpoint",
+      "ReleaseRingActionGroupName",
+      "ReleaseRingActivityLogAlertName",
+    ],
+    requiredSourceMarkers: [
+      "cdn.",
+      "network.WebApplicationFirewallPolicy",
+      "containerregistry.",
+      "network.VirtualNetwork",
+      "network.ApplicationGateway",
+      "containerservice.",
+      "servicebus.",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.ActivityLogAlert",
+      "operationalinsights.",
+      "release-approvals",
+    ],
+    forbiddenSourceMarkers: ["apimanagement", "web.", "logic.", "documentdb", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+    integrationChecks: [
+      { label: "front-door-profile", provider: "Microsoft.Cdn", typePath: "profiles/afd-release-ring-91035", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles" },
+      { label: "front-door-endpoint", provider: "Microsoft.Cdn", typePath: "profiles/afd-release-ring-91035/afdEndpoints/release-ring-endpoint", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints" },
+      { label: "front-door-security-policy", provider: "Microsoft.Cdn", typePath: "profiles/afd-release-ring-91035/securityPolicies/release-ring-security-policy", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/securityPolicies" },
+      { label: "waf-policy", provider: "Microsoft.Network", typePath: "ApplicationGatewayWebApplicationFirewallPolicies/waf-release-ring-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies" },
+      { label: "container-registry", provider: "Microsoft.ContainerRegistry", typePath: "registries/acrreleasering91035", apiVersion: "2023-07-01", expectedType: "Microsoft.ContainerRegistry/registries" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-release-ring-91035", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "east-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-east-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "east-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-east-91035/subnets/snet-release-agw-east-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "east-workload-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-east-91035/subnets/snet-release-aks-east-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "east-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-release-east-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "east-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-release-east-91035", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+      { label: "east-key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-release-east-91035", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "east-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-release-east-91035", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "west-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-west-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+      { label: "west-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-west-91035/subnets/snet-release-agw-west-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-workload-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-release-west-91035/subnets/snet-release-aks-west-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+      { label: "west-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-release-west-91035", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+      { label: "west-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-release-west-91035", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+      { label: "west-key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-release-west-91035", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "west-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-release-west-91035", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-release-ring-91035", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-release-ring-91035", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-release-ring-91035/topics/release-approvals", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-release-ring-91035/topics/release-approvals/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-release-ring-91035/topics/release-approvals/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-canary", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-release-ring-91035/topics/release-approvals/subscriptions/canary", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-release-ring-91035", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-release-ring-91035", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-release-ring-91035", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    ],
+  },
+  {
+    poId: "90c8cf44-2fef-4916-89d3-a0e37f9a8e14",
+    prId: "Pr91036",
+    scenarioId: "realtime-warehouse-bridge",
+    title: "Realtime warehouse bridge",
+    prompt: [
+      "Our analytics engineering group needs one Azure deployment that can accept realtime operational events, enrich them on a serverless surface, persist hot state in a globally distributed document store, replay review signals through durable subscriptions, and land curated data into a warehouse lane with both blob and file-based evidence. They also need the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+      "",
+      "Use one Event Hubs namespace with one event hub, one Function App with one App Service plan, one Synapse workspace with one SQL pool, one Azure Cosmos DB account with one SQL database and one SQL container, one Service Bus namespace with one topic and one `analytics` subscription and one `compliance` subscription, one storage account with one blob container and one Azure Files share, one Azure Cache for Redis, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-warehouse-bridge-pulumi-91036`, Event Hubs namespace `eh-warehouse-91036`, Event Hub `warehouse-ingest`, Function App plan `plan-warehouse-91036`, Function App `func-warehouse-91036`, Synapse workspace `syn-warehouse-91036`, Synapse SQL pool `warehousepool`, Cosmos DB account `cosmos-warehouse-91036`, Cosmos SQL database `WarehouseStateDb`, Cosmos SQL container `WarehouseState`, Service Bus namespace `sb-warehouse-91036`, Service Bus topic `warehouse-review`, Service Bus subscription `analytics`, Service Bus subscription `compliance`, storage account `azwarehouse91036`, blob container `warehouse-stage`, Azure Files share `warehouse-drop`, Redis cache `redis-warehouse-91036`, Event Grid topic `eg-warehouse-91036`, Key Vault `kv-warehouse-91036`, App Configuration store `cfg-warehouse-91036`, action group `ag-warehouse-91036`, metric alert `ma-warehouse-91036`, Log Analytics workspace `log-warehouse-91036`, and Application Insights component `appi-warehouse-91036`.",
+      "",
+      "Keep this focused on the warehouse bridge. Do not add Front Door, API Management, AKS, MySQL, PostgreSQL, Database Migration Service, Logic Apps, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `WarehouseEventHubNamespaceName`, `WarehouseEventHubName`, `WarehouseFunctionHostName`, `WarehouseSynapseWorkspaceName`, `WarehouseSqlPoolName`, `WarehouseCosmosAccountName`, `WarehouseCosmosDatabaseName`, `WarehouseCosmosContainerName`, `WarehouseTopicName`, `WarehouseAnalyticsSubscriptionName`, `WarehouseComplianceSubscriptionName`, `WarehouseBlobContainerName`, `WarehouseFileShareName`, `WarehouseRedisName`, `WarehouseEventGridTopicEndpoint`, `WarehouseKeyVaultName`, `WarehouseAppConfigName`, `WarehouseActionGroupName`, `WarehouseMetricAlertName`, `WarehouseAppInsightsName`, `WarehouseLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "Azure Synapse Analytics overview",
+        url: "https://learn.microsoft.com/en-us/azure/synapse-analytics/overview-what-is",
+        why: "Grounds the warehouse surface and SQL pool hierarchy.",
+      },
+      {
+        title: "Azure Event Hubs overview",
+        url: "https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-about",
+        why: "Grounds the realtime ingress and durable streaming surface.",
+      },
+      {
+        title: "Azure Cosmos DB overview",
+        url: "https://learn.microsoft.com/en-us/azure/cosmos-db/overview",
+        why: "Grounds the globally distributed hot-state store.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-warehouse-bridge-pulumi-91036",
+      eventHubNamespace: "eh-warehouse-91036",
+      eventHub: "warehouse-ingest",
+      functionAppPlan: "plan-warehouse-91036",
+      functionApp: "func-warehouse-91036",
+      synapseWorkspace: "syn-warehouse-91036",
+      synapseSqlPool: "warehousepool",
+      cosmosAccount: "cosmos-warehouse-91036",
+      cosmosDatabase: "WarehouseStateDb",
+      cosmosContainer: "WarehouseState",
+      serviceBusNamespace: "sb-warehouse-91036",
+      serviceBusTopic: "warehouse-review",
+      analyticsSubscription: "analytics",
+      complianceSubscription: "compliance",
+      storageAccount: "azwarehouse91036",
+      blobContainer: "warehouse-stage",
+      fileShare: "warehouse-drop",
+      redis: "redis-warehouse-91036",
+      eventGridTopic: "eg-warehouse-91036",
+      keyVault: "kv-warehouse-91036",
+      appConfigStore: "cfg-warehouse-91036",
+      actionGroup: "ag-warehouse-91036",
+      metricAlert: "ma-warehouse-91036",
+      logAnalyticsWorkspace: "log-warehouse-91036",
+      applicationInsights: "appi-warehouse-91036",
+    },
+    expectedOutputKeys: [
+      "WarehouseEventHubNamespaceName",
+      "WarehouseEventHubName",
+      "WarehouseFunctionHostName",
+      "WarehouseSynapseWorkspaceName",
+      "WarehouseSqlPoolName",
+      "WarehouseCosmosAccountName",
+      "WarehouseCosmosDatabaseName",
+      "WarehouseCosmosContainerName",
+      "WarehouseTopicName",
+      "WarehouseAnalyticsSubscriptionName",
+      "WarehouseComplianceSubscriptionName",
+      "WarehouseBlobContainerName",
+      "WarehouseFileShareName",
+      "WarehouseRedisName",
+      "WarehouseEventGridTopicEndpoint",
+      "WarehouseKeyVaultName",
+      "WarehouseAppConfigName",
+      "WarehouseActionGroupName",
+      "WarehouseMetricAlertName",
+      "WarehouseAppInsightsName",
+      "WarehouseLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "eventhub.",
+      "web.",
+      "synapse.",
+      "documentdb.",
+      "servicebus.",
+      "storage.",
+      "cache.Redis",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "operationalinsights.",
+      "warehouse-stage",
+      "warehouse-drop",
+      "warehouse-review",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "apimanagement", "containerservice", "dbformysql", "dbforpostgresql", "datamigration", "logic.", "private endpoint"],
+    integrationChecks: [
+      { label: "event-hub-namespace", provider: "Microsoft.EventHub", typePath: "namespaces/eh-warehouse-91036", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces" },
+      { label: "event-hub", provider: "Microsoft.EventHub", typePath: "namespaces/eh-warehouse-91036/eventhubs/warehouse-ingest", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces/eventhubs" },
+      { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-warehouse-91036", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+      { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-warehouse-91036", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+      { label: "synapse-workspace", provider: "Microsoft.Synapse", typePath: "workspaces/syn-warehouse-91036", apiVersion: "2021-06-01", expectedType: "Microsoft.Synapse/workspaces" },
+      { label: "synapse-sql-pool", provider: "Microsoft.Synapse", typePath: "workspaces/syn-warehouse-91036/sqlPools/warehousepool", apiVersion: "2021-06-01", expectedType: "Microsoft.Synapse/workspaces/sqlPools" },
+      { label: "cosmos-account", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-warehouse-91036", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts" },
+      { label: "cosmos-database", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-warehouse-91036/sqlDatabases/WarehouseStateDb", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases" },
+      { label: "cosmos-container", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-warehouse-91036/sqlDatabases/WarehouseStateDb/containers/WarehouseState", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-warehouse-91036", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-warehouse-91036/topics/warehouse-review", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-analytics", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-warehouse-91036/topics/warehouse-review/subscriptions/analytics", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-compliance", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-warehouse-91036/topics/warehouse-review/subscriptions/compliance", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azwarehouse91036", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+      { label: "blob-container", provider: "Microsoft.Storage", typePath: "storageAccounts/azwarehouse91036/blobServices/default/containers/warehouse-stage", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/blobServices/containers" },
+      { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azwarehouse91036/fileServices/default/shares/warehouse-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+      { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-warehouse-91036", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-warehouse-91036", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-warehouse-91036", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-warehouse-91036", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-warehouse-91036", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-warehouse-91036", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-warehouse-91036", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-warehouse-91036", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
+  {
+    poId: "93a5c89e-b4f5-45a2-9fa3-99dbcab1e7e0",
+    prId: "Pr91037",
+    scenarioId: "migration-command-handoff-plane",
+    title: "Migration command handoff plane",
+    prompt: [
+      "Our migration command team needs one Azure deployment that can accept controlled migration requests through a managed API surface, hand execution to containerized workers, keep migration state in a transactional store, run one migration control plane, and preserve both durable fan-out and file-based handoff artifacts. They also need the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+      "",
+      "Use one Azure API Management service with one API and one product, one managed Azure Container Apps environment with one command app and one worker app, one Azure Database for MySQL flexible server with one database, one Azure Database Migration Service with one project, one Service Bus namespace with one topic and one `ops` subscription and one `audit` subscription, one storage account with one Azure Files share, one Azure Cache for Redis, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, and Log Analytics plus Application Insights for telemetry.",
+      "",
+      "Use these exact resource names: resource group `rg-az-migration-command-pulumi-91037`, API Management service `apim-migration-command-91037`, API Management API `migration-command-api`, API Management product `migration-command-product`, managed environment `cae-migration-command-91037`, command app `ca-migration-command-91037`, worker app `ca-migration-worker-91037`, MySQL flexible server `mysql-migration-command-91037`, MySQL database `migrationdb`, Database Migration Service `dms-migration-command-91037`, Database Migration project `migration-command-project`, Service Bus namespace `sb-migration-command-91037`, Service Bus topic `migration-command`, Service Bus subscription `ops`, Service Bus subscription `audit`, storage account `azmigration91037`, Azure Files share `migration-command-drop`, Redis cache `redis-migration-command-91037`, Event Grid topic `eg-migration-command-91037`, Key Vault `kv-mig-cmd-91037`, App Configuration store `cfg-migration-command-91037`, action group `ag-migration-command-91037`, metric alert `ma-migration-command-91037`, Log Analytics workspace `log-migration-command-91037`, and Application Insights component `appi-migration-command-91037`.",
+      "",
+      "Keep this focused on the migration command handoff plane. Do not add Front Door, AKS, PostgreSQL, Cosmos DB, Logic Apps, or private endpoints.",
+      "",
+      "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `MigrationCommandApiGatewayUrl`, `MigrationCommandEnvironmentName`, `MigrationCommandAppName`, `MigrationWorkerAppName`, `MigrationCommandMySqlServerName`, `MigrationCommandDatabaseName`, `MigrationCommandDmsServiceName`, `MigrationCommandDmsProjectName`, `MigrationCommandTopicName`, `MigrationCommandOpsSubscriptionName`, `MigrationCommandAuditSubscriptionName`, `MigrationCommandFileShareName`, `MigrationCommandRedisName`, `MigrationCommandEventGridTopicEndpoint`, `MigrationCommandKeyVaultName`, `MigrationCommandAppConfigName`, `MigrationCommandActionGroupName`, `MigrationCommandMetricAlertName`, `MigrationCommandAppInsightsName`, `MigrationCommandLogAnalyticsWorkspaceName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+    ].join("\n"),
+    fieldReferences: [
+      {
+        title: "Azure Database Migration Service overview",
+        url: "https://learn.microsoft.com/en-us/azure/dms/dms-overview",
+        why: "Grounds the migration control-plane surface and project hierarchy.",
+      },
+      {
+        title: "Azure Database for MySQL flexible server overview",
+        url: "https://learn.microsoft.com/en-us/azure/mysql/flexible-server/overview",
+        why: "Grounds the transactional migration state store.",
+      },
+      {
+        title: "Azure Container Apps overview",
+        url: "https://learn.microsoft.com/en-us/azure/container-apps/overview",
+        why: "Grounds the containerized command and worker execution surfaces.",
+      },
+    ],
+    resourceNames: {
+      resourceGroup: "rg-az-migration-command-pulumi-91037",
+      apiManagementService: "apim-migration-command-91037",
+      apiManagementApi: "migration-command-api",
+      apiManagementProduct: "migration-command-product",
+      managedEnvironment: "cae-migration-command-91037",
+      commandApp: "ca-migration-command-91037",
+      workerApp: "ca-migration-worker-91037",
+      mysqlServer: "mysql-migration-command-91037",
+      mysqlDatabase: "migrationdb",
+      dmsService: "dms-migration-command-91037",
+      dmsProject: "migration-command-project",
+      serviceBusNamespace: "sb-migration-command-91037",
+      serviceBusTopic: "migration-command",
+      opsSubscription: "ops",
+      auditSubscription: "audit",
+      storageAccount: "azmigration91037",
+      fileShare: "migration-command-drop",
+      redis: "redis-migration-command-91037",
+      eventGridTopic: "eg-migration-command-91037",
+      keyVault: "kv-mig-cmd-91037",
+      appConfigStore: "cfg-migration-command-91037",
+      actionGroup: "ag-migration-command-91037",
+      metricAlert: "ma-migration-command-91037",
+      logAnalyticsWorkspace: "log-migration-command-91037",
+      applicationInsights: "appi-migration-command-91037",
+    },
+    expectedOutputKeys: [
+      "MigrationCommandApiGatewayUrl",
+      "MigrationCommandEnvironmentName",
+      "MigrationCommandAppName",
+      "MigrationWorkerAppName",
+      "MigrationCommandMySqlServerName",
+      "MigrationCommandDatabaseName",
+      "MigrationCommandDmsServiceName",
+      "MigrationCommandDmsProjectName",
+      "MigrationCommandTopicName",
+      "MigrationCommandOpsSubscriptionName",
+      "MigrationCommandAuditSubscriptionName",
+      "MigrationCommandFileShareName",
+      "MigrationCommandRedisName",
+      "MigrationCommandEventGridTopicEndpoint",
+      "MigrationCommandKeyVaultName",
+      "MigrationCommandAppConfigName",
+      "MigrationCommandActionGroupName",
+      "MigrationCommandMetricAlertName",
+      "MigrationCommandAppInsightsName",
+      "MigrationCommandLogAnalyticsWorkspaceName",
+    ],
+    requiredSourceMarkers: [
+      "apimanagement.",
+      "app.ManagedEnvironment",
+      "app.ContainerApp",
+      "dbformysql.",
+      "datamigration.",
+      "servicebus.",
+      "storage.FileShare",
+      "cache.Redis",
+      "eventgrid.",
+      "keyvault.",
+      "appconfiguration.",
+      "insights.ActionGroup",
+      "insights.MetricAlert",
+      "operationalinsights.",
+      "migration-command",
+      "migration-command-drop",
+    ],
+    forbiddenSourceMarkers: ["frontdoor", "containerservice", "dbforpostgresql", "documentdb", "logic.", "private endpoint"],
+    integrationChecks: [
+      { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-migration-command-91037", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+      { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-migration-command-91037/apis/migration-command-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+      { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-migration-command-91037/products/migration-command-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+      { label: "managed-environment", provider: "Microsoft.App", typePath: "managedEnvironments/cae-migration-command-91037", apiVersion: "2024-03-01", expectedType: "Microsoft.App/managedEnvironments" },
+      { label: "command-app", provider: "Microsoft.App", typePath: "containerApps/ca-migration-command-91037", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "worker-app", provider: "Microsoft.App", typePath: "containerApps/ca-migration-worker-91037", apiVersion: "2024-03-01", expectedType: "Microsoft.App/containerApps" },
+      { label: "mysql-server", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-migration-command-91037", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers" },
+      { label: "mysql-database", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-migration-command-91037/databases/migrationdb", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers/databases" },
+      { label: "dms-service", provider: "Microsoft.DataMigration", typePath: "services/dms-migration-command-91037", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services" },
+      { label: "dms-project", provider: "Microsoft.DataMigration", typePath: "services/dms-migration-command-91037/projects/migration-command-project", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services/projects" },
+      { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-migration-command-91037", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+      { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-migration-command-91037/topics/migration-command", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+      { label: "service-bus-subscription-ops", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-migration-command-91037/topics/migration-command/subscriptions/ops", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "service-bus-subscription-audit", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-migration-command-91037/topics/migration-command/subscriptions/audit", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+      { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azmigration91037", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+      { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azmigration91037/fileServices/default/shares/migration-command-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+      { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-migration-command-91037", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+      { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-migration-command-91037", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+      { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-mig-cmd-91037", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+      { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-migration-command-91037", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+      { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-migration-command-91037", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+      { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-migration-command-91037", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+      { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-migration-command-91037", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+      { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-migration-command-91037", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+    ],
+  },
 ];
 
 function validateScenarioDefinitions() {
@@ -3411,6 +4064,7 @@ function generationHints(scenario) {
     "For azure.insights.Component, use applicationType rather than ARM-style Application_Type.",
     "For output keys ending in Url or Endpoint, emit a single well-formed https URL. Do not prepend https:// if the Azure Native property already includes the scheme.",
     "For output keys ending in HostName, emit the bare hostname without http:// or https://.",
+    "For output keys ending in Name, emit the exact leaf resource name from the prompt rather than an ARM id, parent-qualified name, or path-like composite value.",
   ];
 
   if (scenario.prompt.toLowerCase().includes('front door')) {
@@ -3506,12 +4160,62 @@ function openAiInput(scenario, prompt) {
   ].join("\n");
 }
 
-function extractTapStack(markdown) {
-  const match = markdown.match(/```[^\n]*path=["']lib\/tap-stack\.ts["'][^\n]*\n([\s\S]*?)```/i);
-  if (!match) {
-    throw new Error("model response did not include a fenced code block for lib/tap-stack.ts");
+function extractCodeBlocks(markdown) {
+  const blocks = [];
+  const pattern = /```([^\n]*)\n([\s\S]*?)```/g;
+  let match;
+  while ((match = pattern.exec(markdown)) !== null) {
+    blocks.push({
+      header: match[1] ?? "",
+      content: match[2] ?? "",
+    });
   }
-  return match[1].trimEnd() + "\n";
+  return blocks;
+}
+
+function normalizeTapStack(text) {
+  return text.trim().replace(/^\uFEFF/, "").trimEnd() + "\n";
+}
+
+function looksLikeTapStack(content) {
+  return /export\s+function\s+createTapStack\b/.test(content)
+    || (/from\s+['"]@pulumi\/azure-native['"]/.test(content)
+      && /createTapStack/.test(content));
+}
+
+function scoreTapStackBlock(block) {
+  let score = 0;
+  if (/path=["']lib\/tap-stack\.ts["']/i.test(block.header)) score += 100;
+  if (/lib\/tap-stack\.ts/i.test(block.header)) score += 40;
+  if (/\b(ts|typescript)\b/i.test(block.header)) score += 10;
+  if (looksLikeTapStack(block.content)) score += 60;
+  if (/from\s+['"]@pulumi\/pulumi['"]/.test(block.content)) score += 10;
+  if (/from\s+['"]@pulumi\/azure-native['"]/.test(block.content)) score += 10;
+  return score;
+}
+
+export function extractTapStack(markdown) {
+  const exactPathMatch = markdown.match(/```[^\n]*path=["']lib\/tap-stack\.ts["'][^\n]*\n([\s\S]*?)```/i);
+  if (exactPathMatch) {
+    return normalizeTapStack(exactPathMatch[1]);
+  }
+
+  const codeBlocks = extractCodeBlocks(markdown);
+  const candidates = codeBlocks
+    .map((block) => ({ ...block, score: scoreTapStackBlock(block) }))
+    .filter((block) => block.score >= 60)
+    .sort((left, right) => right.score - left.score || right.content.length - left.content.length);
+
+  if (candidates.length > 0) {
+    return normalizeTapStack(candidates[0].content);
+  }
+
+  const raw = markdown.trim();
+  if (looksLikeTapStack(raw)) {
+    return normalizeTapStack(raw);
+  }
+
+  throw new Error("model response did not include a usable lib/tap-stack.ts code block");
 }
 
 function outputText(response) {
@@ -3525,12 +4229,19 @@ function outputText(response) {
   return parts.join("\n");
 }
 
+function maxOutputTokensForScenario(scenario) {
+  const integrationCheckBudget = (scenario.integrationChecks?.length ?? 0) * 120;
+  const outputKeyBudget = (scenario.expectedOutputKeys?.length ?? 0) * 25;
+  return Math.min(12000, Math.max(5000, 5000 + integrationCheckBudget + outputKeyBudget));
+}
+
 async function callOpenAI(scenario, prompt) {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is required.");
   }
   const startedAt = Date.now();
-  console.log(`calling ${model}...`);
+  const maxOutputTokens = maxOutputTokensForScenario(scenario);
+  console.log(`calling ${model} with max_output_tokens=${maxOutputTokens}...`);
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -3542,7 +4253,7 @@ async function callOpenAI(scenario, prompt) {
       model,
       input: openAiInput(scenario, prompt),
       reasoning: { effort: "low" },
-      max_output_tokens: 4000,
+      max_output_tokens: maxOutputTokens,
       text: { verbosity: "low" },
     }),
   });
@@ -3594,6 +4305,10 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
     "The previous draft did not meet the task contract.",
     `Repair these exact issues: ${error}`,
     "Return a complete replacement for lib/tap-stack.ts only.",
+    "Do not include any prose, bullets, or explanations.",
+    "Your response must contain exactly one fenced TypeScript code block with this header:",
+    "```ts path=\"lib/tap-stack.ts\"",
+    "Put the full file contents inside that fence and nothing else.",
     "",
     "Previous draft:",
     previousResponse,
@@ -3672,6 +4387,10 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('invalid host output')) {
     extraGuidance.push('For output keys ending in HostName, export the bare hostname without an http:// or https:// prefix.');
   }
+  if (String(runFailure).includes('Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers')
+    && String(runFailure).includes('ResourceNotFound')) {
+    extraGuidance.push('Ensure every azure.documentdb.SqlResourceSqlContainer has an explicit dependsOn: [sqlDatabase] option so the container is created only after its SQL database exists.');
+  }
   if (String(runFailure).includes('publicNetworkAccess')
     && String(runFailure).includes('ServerArgs')
     && String(runFailure).includes('dbformysql')) {
@@ -3717,6 +4436,9 @@ async function generateTapStack(scenario) {
     console.log(`generating ${scenario.prId} attempt ${attempt}/3`);
     const response = await callOpenAI(scenario, prompt);
     lastResponse = response;
+    const responsePath = path.join(distPath(root, "complex-pulumi-bundles"), "raw-responses", scenario.prId, `generation-attempt-${attempt}.md`);
+    await mkdir(path.dirname(responsePath), { recursive: true });
+    await writeFile(responsePath, response);
     try {
       const tapStackText = extractTapStack(response);
       validateTapStack(scenario, tapStackText);
@@ -3796,6 +4518,8 @@ async function runShipment(shipmentDir) {
   const reportsDir = path.join(shipmentDir, "docker", "reports");
   const nativeStdoutPath = path.join(reportsDir, "native-stdout.log");
   const nativeStderrPath = path.join(reportsDir, "native-stderr.log");
+  const integrationStdoutPath = path.join(reportsDir, "integration-tests-task-stdout.log");
+  const integrationStderrPath = path.join(reportsDir, "integration-tests-task-stderr.log");
   for (const stage of ["build", "lint", "unit-tests", "deploy", "provider-lifecycle", "integration-tests", "destroy"]) {
     const stagePath = path.join(reportsDir, `stage-${stage}.json`);
     try {
@@ -3810,6 +4534,8 @@ async function runShipment(shipmentDir) {
   }
   const nativeStdout = await readFile(nativeStdoutPath, "utf8").catch(() => "");
   const nativeStderr = await readFile(nativeStderrPath, "utf8").catch(() => "");
+  const integrationStdout = await readFile(integrationStdoutPath, "utf8").catch(() => "");
+  const integrationStderr = await readFile(integrationStderrPath, "utf8").catch(() => "");
   return {
     exitCode: result.code,
     report,
@@ -3817,18 +4543,20 @@ async function runShipment(shipmentDir) {
     failingMessage,
     nativeStdout,
     nativeStderr,
+    integrationStdout,
+    integrationStderr,
     executionLogPath: path.join(shipmentDir, "execution.log"),
     executionReportPath: reportPath,
   };
 }
 
 function shouldRepairRun(runResult) {
-  const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}`;
-  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|invalid URL output|invalid host output)/i.test(evidence);
+  const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}\n${runResult.integrationStdout ?? ""}\n${runResult.integrationStderr ?? ""}`;
+  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|invalid URL output|invalid host output|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound)/i.test(evidence);
 }
 
 function repairEvidence(runResult) {
-  const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}`.trim();
+  const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}\n${runResult.integrationStdout ?? ""}\n${runResult.integrationStderr ?? ""}`.trim();
   if (evidence.length <= 4000) {
     return evidence;
   }
