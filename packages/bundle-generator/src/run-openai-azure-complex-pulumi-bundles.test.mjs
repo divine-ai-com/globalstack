@@ -661,14 +661,27 @@ test('validateTapStack accepts mixed public and private DNS usage when each reso
     'import * as azure from "@pulumi/azure-native";',
     'export function createTapStack() {',
     '  const ExampleOutput = "ok";',
+    '  const privateZone = new azure.network.PrivateZone("private.internal", {',
+    '    resourceGroupName: "rg-example",',
+    '    privateZoneName: "private.internal",',
+    '    location: "global",',
+    '  });',
     '  new azure.network.RecordSet("public", {',
+    '    resourceGroupName: "rg-example",',
     '    zoneName: "public.example.com",',
     '    relativeRecordSetName: "api",',
+    '    recordType: "CNAME",',
+    '    ttl: 300,',
+    '    cnameRecord: { cname: "origin.example.net" },',
     '  });',
     '  new azure.network.PrivateRecordSet("private", {',
-    '    privateZoneName: "private.internal",',
+    '    resourceGroupName: "rg-example",',
+    '    privateZoneName: privateZone.name,',
     '    relativeRecordSetName: "api",',
-    '  });',
+    '    recordType: "A",',
+    '    ttl: 300,',
+    '    aRecords: [{ ipv4Address: "10.0.0.10" }],',
+    '  }, { dependsOn: [privateZone] });',
     '  return { ExampleOutput };',
     '}',
   ].join('\n');
@@ -795,6 +808,11 @@ export function createTapStack() {
     subnets: [{ name: "snet-rollout-agw-east-91049", addressPrefix: "10.10.1.0/24" }],
   });
   const subnetId = vnet.subnets.apply(items => items?.[0]?.id ?? "");
+  const privateZone = new azure.privatedns.PrivateZone("rollout91049.internal", {
+    resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
+    privateZoneName: "rollout91049.internal",
+    location: "global",
+  });
   new azure.dns.RecordSet("api.rollout91049.contoso.net", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     zoneName: "rollout91049.contoso.net",
@@ -805,12 +823,12 @@ export function createTapStack() {
   });
   new azure.privatedns.PrivateRecordSet("api.rollout91049.internal", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
-    privateZoneName: "rollout91049.internal",
+    privateZoneName: privateZone.name,
     relativeRecordSetName: "api",
     recordType: "A",
     ttl: 300,
     aRecords: [{ ipv4Address: "10.10.1.10" }],
-  });
+  }, { dependsOn: [privateZone] });
   new azure.network.ApplicationGateway("agw-rollout-east-91049", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     applicationGatewayName: "agw-rollout-east-91049",
@@ -880,6 +898,11 @@ import * as pulumi from "@pulumi/pulumi";
 // dns.RecordSet privatedns.PrivateRecordSet
 
 export function createTapStack() {
+  const privateZone = new privatedns.PrivateZone("edge91051.internal", {
+    resourceGroupName: "rg",
+    privateZoneName: "edge91051.internal",
+    location: "global",
+  });
   new network.Zone("edge91051.contoso.net", {
     resourceGroupName: "rg",
     zoneName: "edge91051.contoso.net",
@@ -893,19 +916,14 @@ export function createTapStack() {
     ttl: 300,
     cnameRecord: { cname: "edge.azurefd.net" },
   });
-  new privatedns.PrivateZone("edge91051.internal", {
-    resourceGroupName: "rg",
-    privateZoneName: "edge91051.internal",
-    location: "global",
-  });
   new privatedns.PrivateRecordSet("api.edge91051.internal", {
     resourceGroupName: "rg",
-    privateZoneName: "edge91051.internal",
+    privateZoneName: privateZone.name,
     relativeRecordSetName: "api",
     recordType: "A",
     ttl: 300,
     aRecords: [{ ipv4Address: "10.0.0.10" }],
-  });
+  }, { dependsOn: [privateZone] });
   return {};
 }
 `;
@@ -927,9 +945,10 @@ export function createTapStack() {
   new azure.network.WebApplicationFirewallPolicy("waf-private-edge-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", policyName: "waf-private-edge-91051", location: "global", policySettings: { state: "Enabled", mode: "Prevention", requestBodyCheck: "Enabled" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });
   new azure.dns.Zone("edge91051.contoso.net", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", location: "global" });
   new azure.dns.RecordSet("api", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", relativeRecordSetName: "api", recordType: "CNAME", ttl: 300, cnameRecord: { cname: "edge.azurefd.net" } });
-  new azure.privatedns.PrivateZone("edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", location: "global" });
-  new azure.privatedns.VirtualNetworkLink("edge-link-east-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", virtualNetworkLinkName: "edge-link-east-91051", location: "global", virtualNetwork: { id: "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet-edge-east-91051" }, registrationEnabled: false });
-  new azure.privatedns.PrivateRecordSet("api.edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", relativeRecordSetName: "api", recordType: "A", ttl: 300, aRecords: [{ ipv4Address: "10.0.0.10" }] });
+  const privateZone = new azure.privatedns.PrivateZone("edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", location: "global" });
+  const eastVnet = { id: "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet-edge-east-91051" } as any;
+  new azure.privatedns.VirtualNetworkLink("edge-link-east-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, virtualNetworkLinkName: "edge-link-east-91051", location: "global", virtualNetwork: { id: eastVnet.id }, registrationEnabled: false }, { dependsOn: [privateZone, eastVnet] });
+  new azure.privatedns.PrivateRecordSet("api.edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: privateZone.name, relativeRecordSetName: "api", recordType: "A", ttl: 300, aRecords: [{ ipv4Address: "10.0.0.10" }] }, { dependsOn: [privateZone] });
   return {
     PrivateEdgeFabricPublicDnsZoneName: "edge91051.contoso.net",
     PrivateEdgeFabricPrivateDnsZoneName: "edge91051.internal",
@@ -1693,6 +1712,108 @@ test('Pr91080 includes Synapse, Cosmos, both DMS projects, and the escalation su
   );
 });
 
+test('Pr91081 includes Front Door, private DNS, PostgreSQL, and the regulatory subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91081');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-pharma-response-91081/securityPolicies/pharma-response-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-zone'
+      && check.typePath === 'privateDnsZones/pharma91081.internal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-pharma-response-91081/databases/pharmacovigilance'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-regulatory'
+      && check.typePath === 'namespaces/sb-pharma-response-91081/topics/pharma-response-events/subscriptions/regulatory'),
+  );
+});
+
+test('Pr91082 includes dual AKS clusters, private DNS, and the shadow subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91082');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-model-east-91082'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-model-west-91082'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-registry-record'
+      && check.typePath === 'privateDnsZones/modelring91082.internal/A/registry'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-shadow'
+      && check.typePath === 'namespaces/sb-model-ring-91082/topics/model-ring-events/subscriptions/shadow'),
+  );
+});
+
+test('Pr91083 includes dual IoT hubs, Digital Twins, Cosmos, and the escalation subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91083');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-maint-east-91083'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-asset-maintenance-91083'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-asset-maintenance-91083/sqlDatabases/MaintenanceDb/containers/MaintenanceState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-escalation'
+      && check.typePath === 'namespaces/sb-asset-maintenance-91083/topics/asset-maintenance-events/subscriptions/escalation'),
+  );
+});
+
+test('Pr91084 includes private DNS, both DMS projects, and both relational engines', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91084');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-zone'
+      && check.typePath === 'privateDnsZones/cutover91084.internal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-ring-91084/projects/mysql-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-cutover-ring-91084/databases/cutoverdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-cutover-ring-91084/databases/cutoverledger'),
+  );
+});
+
+test('Pr91085 includes Front Door, dual managed environments, and the admit subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91085');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-tenant-fabric-91085/securityPolicies/tenant-fabric-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-tenant-east-91085'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-admit'
+      && check.typePath === 'namespaces/sb-tenant-fabric-91085/topics/tenant-fabric-events/subscriptions/admit'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);
@@ -1812,6 +1933,122 @@ test('validateTapStack rejects Cosmos SQL containers without explicit dependsOn 
       ].join('\n'),
     ),
     /SqlResourceSqlContainer must include an explicit dependsOn option/,
+  );
+});
+
+test('validateTapStack rejects private DNS virtual network links without explicit dependsOn on the private zone', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91084');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-cutover-ring-pulumi-91084" } as any;',
+        '  new azure.network.RecordSet("api", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    zoneName: "cutover91084.contoso.net",',
+        '    relativeRecordSetName: "api",',
+        '    recordType: "CNAME",',
+        '    ttl: 300,',
+        '    cnameRecord: { cname: "cutover.example.net" },',
+        '  });',
+        '  const privateZone = new azure.network.PrivateZone("cutover91084.internal", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: "cutover91084.internal",',
+        '    location: "global",',
+        '  });',
+        '  const mysqlRecord = new azure.network.PrivateRecordSet("mysql", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: privateZone.name,',
+        '    relativeRecordSetName: "mysql",',
+        '    recordType: "A",',
+        '    ttl: 300,',
+        '    aRecords: [{ ipv4Address: "10.42.0.10" }],',
+        '  }, { dependsOn: [privateZone] });',
+        '  const eastVnet = { id: "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet-cutover-east-91084" } as any;',
+        '  const link = new azure.network.VirtualNetworkLink("cutover-link-east-91084", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: privateZone.name,',
+        '    virtualNetworkLinkName: "cutover-link-east-91084",',
+        '    location: "global",',
+        '    virtualNetwork: { id: eastVnet.id },',
+        '    registrationEnabled: false,',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure private DNS virtual network links must include an explicit dependsOn option/,
+  );
+});
+
+test('validateTapStack rejects private DNS record sets without explicit dependsOn on the private zone', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91084');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-cutover-ring-pulumi-91084" } as any;',
+        '  new azure.network.RecordSet("api", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    zoneName: "cutover91084.contoso.net",',
+        '    relativeRecordSetName: "api",',
+        '    recordType: "CNAME",',
+        '    ttl: 300,',
+        '    cnameRecord: { cname: "cutover.example.net" },',
+        '  });',
+        '  const privateZone = new azure.network.PrivateZone("cutover91084.internal", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: "cutover91084.internal",',
+        '    location: "global",',
+        '  });',
+        '  const eastVnet = { id: "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet-cutover-east-91084" } as any;',
+        '  const link = new azure.network.VirtualNetworkLink("cutover-link-east-91084", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: privateZone.name,',
+        '    virtualNetworkLinkName: "cutover-link-east-91084",',
+        '    location: "global",',
+        '    virtualNetwork: { id: eastVnet.id },',
+        '    registrationEnabled: false,',
+        '  }, { dependsOn: [privateZone, eastVnet] });',
+        '  const record = new azure.network.PrivateRecordSet("mysql", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    privateZoneName: privateZone.name,',
+        '    relativeRecordSetName: "mysql",',
+        '    recordType: "A",',
+        '    ttl: 300,',
+        '    aRecords: [{ ipv4Address: "10.42.0.10" }],',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure private DNS record sets must include an explicit dependsOn option/,
   );
 });
 

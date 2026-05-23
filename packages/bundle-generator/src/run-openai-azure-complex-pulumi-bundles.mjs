@@ -10,6 +10,7 @@ import { ultraExpertWave91061to91065 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91066to91070 } from "./complex-pulumi-scenarios-wave-91066-91070.mjs";
 import { ultraExpertWave91071to91075 } from "./complex-pulumi-scenarios-wave-91071-91075.mjs";
 import { ultraExpertWave91076to91080 } from "./complex-pulumi-scenarios-wave-91076-91080.mjs";
+import { ultraExpertWave91081to91085 } from "./complex-pulumi-scenarios-wave-91081-91085.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4995,6 +4996,7 @@ scenarios.push(...ultraExpertWave91061to91065);
 scenarios.push(...ultraExpertWave91066to91070);
 scenarios.push(...ultraExpertWave91071to91075);
 scenarios.push(...ultraExpertWave91076to91080);
+scenarios.push(...ultraExpertWave91081to91085);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5471,6 +5473,7 @@ function generationHints(scenario) {
     "For StorageAccount, use enableHttpsTrafficOnly rather than supportsHttpsTrafficOnly.",
     "For Azure Storage child resources such as BlobContainer, FileShare, Queue, and Table, do not pass the raw storage account name string. Use the created storage account resource output, for example accountName: storage.name, so Pulumi waits for the account to exist.",
     "When calling azure.storage.listStorageAccountKeysOutput, use accountName: storage.name rather than the raw prompt-fixed string so the invoke waits for the storage account resource.",
+    "For Azure private DNS child resources such as VirtualNetworkLink and PrivateRecordSet, do not rely on a raw privateZoneName string to order creation. Add explicit dependsOn: [privateZone] to every private DNS link and private DNS record set.",
     "Do not invent unsupported convenience properties on Azure Database for PostgreSQL Flexible Server.",
     "When using azure.apimanagement.ProductApi, pass the prompt-fixed productId and apiId string identifiers directly; do not read .productId or .apiId from created resources.",
     "If a constructor input expects a fixed Azure identifier like apiId, productId, endpointName, queueName, or topicName, prefer the prompt-fixed string instead of reading a non-existent output property.",
@@ -5938,6 +5941,8 @@ export function validateTapStack(scenario, tapStackText) {
   const keyVaultPattern = /new\s+(?:azure\.)?keyvault\.Vault\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const cosmosContainerPattern = /new\s+(?:azure\.)?documentdb\.SqlResourceSqlContainer\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const storageChildPattern = /new\s+(?:azure\.)?storage\.(?:BlobContainer|FileShare|Queue|Table)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const privateDnsLinkPattern = /new\s+(?:azure\.)?(?:privatedns\.VirtualNetworkLink|network\.VirtualNetworkLink)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const privateDnsRecordPattern = /new\s+(?:azure\.)?(?:privatedns\.PrivateRecordSet|network\.PrivateRecordSet)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
 
   if (hasPrivateDns && !hasPrivateRecordSet) {
     throw new Error(usesAzureNativeV3
@@ -5969,6 +5974,16 @@ export function validateTapStack(scenario, tapStackText) {
   for (const block of tapStackText.match(cosmosContainerPattern) ?? []) {
     if (!/\bdependsOn\s*:/.test(block)) {
       throw new Error('azure.documentdb.SqlResourceSqlContainer must include an explicit dependsOn option that waits for its SQL database resource');
+    }
+  }
+  for (const block of tapStackText.match(privateDnsLinkPattern) ?? []) {
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure private DNS virtual network links must include an explicit dependsOn option that waits for the private zone resource');
+    }
+  }
+  for (const block of tapStackText.match(privateDnsRecordPattern) ?? []) {
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure private DNS record sets must include an explicit dependsOn option that waits for the private zone resource');
     }
   }
   for (const block of tapStackText.match(storageChildPattern) ?? []) {
@@ -6113,6 +6128,14 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
     extraGuidance.push('Every azure.documentdb.SqlResourceSqlContainer must be created with a third-argument resource options object that includes dependsOn: [sqlDatabase].');
     extraGuidance.push('Keep the prompt-fixed accountName, databaseName, and containerName, and wire the container after the Azure Cosmos SQL database resource variable.');
   }
+  if (String(error).includes('azure private DNS virtual network links must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure private DNS VirtualNetworkLink must include a third-argument resource options object with dependsOn: [privateZone, virtualNetwork] or at least dependsOn: [privateZone].');
+    extraGuidance.push('Do not rely on raw privateZoneName strings to order private DNS links.');
+  }
+  if (String(error).includes('azure private DNS record sets must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure private DNS PrivateRecordSet must include a third-argument resource options object with dependsOn: [privateZone].');
+    extraGuidance.push('Do not rely on raw privateZoneName strings to order private DNS record sets.');
+  }
   if (String(error).includes('azure.storage child resources must use accountName from the created storage resource output')) {
     extraGuidance.push('For azure.storage.BlobContainer, FileShare, Queue, and Table, use accountName: storage.name instead of the raw prompt-fixed storage account string.');
     extraGuidance.push('If you cannot use storage.name directly, then add an explicit dependsOn: [storage] resource option to each storage child resource.');
@@ -6218,6 +6241,14 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push(usesAzureNativeV3
       ? 'For private DNS records, use azure.privatedns.PrivateRecordSet instead of azure.dns.RecordSet.'
       : 'For private DNS records, use azure.network.PrivateRecordSet instead of azure.network.RecordSet.');
+  }
+  if (String(runFailure).includes('ParentResourceNotFound')
+    && (String(runFailure).includes('Microsoft.Network/privateDnsZones/A')
+      || String(runFailure).includes('Microsoft.Network/privateDnsZones/virtualNetworkLinks'))) {
+    extraGuidance.push(usesAzureNativeV3
+      ? 'Your private DNS child resources raced the private zone. Keep the zone in a variable like privateZone and add explicit resource options: { dependsOn: [privateZone] } to every azure.privatedns.PrivateRecordSet and { dependsOn: [privateZone, vnet] } to every azure.privatedns.VirtualNetworkLink.'
+      : 'Your private DNS child resources raced the private zone. Keep the zone in a variable like privateZone and add explicit resource options: { dependsOn: [privateZone] } to every azure.network.PrivateRecordSet and { dependsOn: [privateZone, vnet] } to every azure.network.VirtualNetworkLink.');
+    extraGuidance.push('Do not rely on the raw prompt-fixed privateZoneName string to establish ordering.');
   }
   if (!usesAzureNativeV3
     && (String(runFailure).includes("Property 'dns' does not exist")
