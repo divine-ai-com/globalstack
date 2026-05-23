@@ -830,6 +830,102 @@ test('ARM facade supports Front Door origin group, origin, and route child resou
   });
 });
 
+test('ARM facade supports Front Door WAF policy lifecycle', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-frontdoor-waf';
+
+    await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+
+    const create = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+      {
+        location: 'global',
+        sku: {
+          name: 'Standard_AzureFrontDoor',
+        },
+        properties: {
+          policySettings: {
+            enabledState: 'Enabled',
+            mode: 'Prevention',
+            requestBodyCheck: 'Enabled',
+          },
+          customRules: {
+            rules: [],
+          },
+          managedRules: {
+            managedRuleSets: [{
+              ruleSetType: 'Microsoft_DefaultRuleSet',
+              ruleSetVersion: '2.1',
+            }],
+          },
+        },
+      },
+    );
+    assert.equal(create.status, 201);
+    assert.equal(create.body.type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+    assert.equal(create.body.name, 'waf-frontdoor-sample');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+    assert.equal(get.body.properties.policySettings.mode, 'Prevention');
+    assert.equal(get.body.properties.resourceState, 'Enabled');
+
+    const head = await httpJson(
+      port,
+      'HEAD',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+    );
+    assert.equal(head.status, 204);
+
+    const list = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies?api-version=2023-09-01`,
+    );
+    assert.equal(list.status, 200);
+    assert.equal(list.body.value.length, 1);
+    assert.equal(list.body.value[0].type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+
+    const invalid = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-invalid?api-version=2023-09-01`,
+      {
+        location: 'global',
+        properties: {
+          policySettings: {
+            enabledState: 'Maybe',
+            mode: 'Prevention',
+            requestBodyCheck: 'Enabled',
+          },
+          managedRules: {
+            managedRuleSets: [{
+              ruleSetType: 'Microsoft_DefaultRuleSet',
+              ruleSetVersion: '2.1',
+            }],
+          },
+        },
+      },
+    );
+    assert.equal(invalid.status, 400);
+    assert.equal(invalid.body.error.code, 'InvalidRequestFormat');
+    assert.match(invalid.body.error.message, /policySettings\.enabledState/);
+  });
+});
+
 test('ARM facade accepts AKS managed identity clusters without forcing servicePrincipalProfile', async () => {
   await withServer(async (port) => {
     await httpJson(
@@ -972,6 +1068,33 @@ test('ARM facade exposes Function App web config child for Pulumi refresh', asyn
       { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
       { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
     ]);
+  });
+});
+
+test('ARM facade accepts a minimal consumption App Service plan payload for function workloads', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-web-plan-minimal';
+
+    const rg = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+    assert.equal(rg.status, 201);
+
+    const plan = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-minimal-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Y1', tier: 'Dynamic' },
+      },
+    );
+    assert.equal(plan.status, 201);
+    assert.equal(plan.body.type, 'Microsoft.Web/serverfarms');
   });
 });
 

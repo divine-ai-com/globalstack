@@ -41,6 +41,7 @@ export const defaultApiVersions = {
   'Microsoft.ManagedIdentity/userAssignedIdentities': '2023-01-31',
   'Microsoft.NetApp/netAppAccounts/capacityPools/volumes': '2023-11-01',
   'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies': '2023-09-01',
+  'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies': '2023-09-01',
   'Microsoft.Network/applicationGateways': '2023-09-01',
   'Microsoft.Network/publicIPAddresses': '2023-09-01',
   'Microsoft.Network/dnsZones': '2018-05-01',
@@ -255,7 +256,41 @@ function bodyFor(resourceType) {
   if (lower === 'microsoft.cdn/profiles') return { location: '{location}', sku: { name: 'Standard_AzureFrontDoor' }, properties: {} };
   if (lower === 'microsoft.cdn/profiles/afdendpoints') return { location: '{location}', properties: { enabledState: 'Enabled' } };
   if (lower === 'microsoft.cdn/profiles/endpoints') return { location: '{location}', properties: { origins: [{ name: 'origin1', properties: { hostName: 'example.org', httpPort: 80, httpsPort: 443 } }], isHttpAllowed: true, isHttpsAllowed: true } };
-  if (lower === 'microsoft.network/applicationgatewaywebapplicationfirewallpolicies') return { location: '{location}', properties: { policySettings: { state: 'Enabled', mode: 'Prevention', requestBodyCheck: true, maxRequestBodySizeInKb: 128 }, managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] } } };
+  if (lower === 'microsoft.network/applicationgatewaywebapplicationfirewallpolicies') {
+    return {
+      location: '{location}',
+      properties: {
+        policySettings: {
+          state: 'Enabled',
+          mode: 'Prevention',
+          requestBodyCheck: true,
+          maxRequestBodySizeInKb: 128,
+        },
+        managedRules: {
+          managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }],
+        },
+      },
+    };
+  }
+  if (lower === 'microsoft.network/frontdoorwebapplicationfirewallpolicies') {
+    return {
+      location: 'global',
+      sku: { name: 'Standard_AzureFrontDoor' },
+      properties: {
+        policySettings: {
+          enabledState: 'Enabled',
+          mode: 'Prevention',
+          requestBodyCheck: 'Enabled',
+        },
+        customRules: {
+          rules: [],
+        },
+        managedRules: {
+          managedRuleSets: [{ ruleSetType: 'Microsoft_DefaultRuleSet', ruleSetVersion: '2.1' }],
+        },
+      },
+    };
+  }
   if (lower === 'microsoft.cdn/profiles/securitypolicies') return { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: '{wafPolicyId}' }, associations: [{ domains: [{ id: '{endpointId}' }], patternsToMatch: ['/*'] }] } } };
   if (lower === 'microsoft.appconfiguration/configurationstores') return { location: '{location}', sku: { name: 'free' }, properties: { disableLocalAuth: false, publicNetworkAccess: 'Enabled' } };
   if (lower === 'microsoft.network/virtualnetworks') {
@@ -383,7 +418,7 @@ function bodyFor(resourceType) {
       },
     };
   }
-  if (lower.includes('webapplicationfirewallpolicies')) return { location: '{location}', properties: { policySettings: { enabledState: 'Enabled', mode: 'Prevention' }, managedRules: { managedRuleSets: [] } } };
+  if (lower.includes('webapplicationfirewallpolicies')) return { location: '{location}', properties: { policySettings: { state: 'Enabled', mode: 'Prevention' }, managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] } } };
   if (lower.includes('microsoft.appconfiguration/configurationstores')) return { location: '{location}', sku: { name: 'free' }, properties: { disableLocalAuth: false } };
   if (lower.includes('microsoft.operationalinsights/workspaces')) return { location: '{location}', properties: { retentionInDays: 30 }, sku: { name: 'PerGB2018' } };
   if (lower.includes('microsoft.web/serverfarms')) return { location: '{location}', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} };

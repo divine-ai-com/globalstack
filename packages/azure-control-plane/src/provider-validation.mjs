@@ -478,6 +478,17 @@ function validateWafName(resourceType, providerRoute) {
     }
   }
 
+  if (resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'FrontDoorWebApplicationFirewallPolicies');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9_.-]{0,78}[A-Za-z0-9])?$/.test(name)) {
+      return invalidWafName(
+        resourceType,
+        name,
+        'Front Door WAF policy names must be 1 through 80 characters, use alphanumerics, underscore, period, or hyphen, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+
   if (resourceType === 'Microsoft.Cdn/profiles/securityPolicies') {
     const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'securityPolicies');
     if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
@@ -1806,50 +1817,119 @@ function validateCdnPayload(resourceType, body) {
 
 function validateWafPayload(resourceType, body) {
   if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
-    const policySettings = body.properties?.policySettings;
+    const policyLabel = 'Application Gateway WAF';
+    const policySettings = body.properties?.policySettings ?? body.policySettings;
     if (!policySettings || typeof policySettings !== 'object' || Array.isArray(policySettings)) {
-      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policies require properties.policySettings.');
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policies require properties.policySettings.`);
     }
     const state = policySettings.state;
     const mode = policySettings.mode;
     if (!['Enabled', 'Disabled'].includes(state)) {
-      return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF policySettings.state must be 'Enabled' or 'Disabled'.");
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.state must be 'Enabled' or 'Disabled'.`);
     }
     if (!['Detection', 'Prevention'].includes(mode)) {
-      return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF policySettings.mode must be 'Detection' or 'Prevention'.");
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.mode must be 'Detection' or 'Prevention'.`);
     }
     if (Object.hasOwn(policySettings, 'requestBodyCheck') && typeof policySettings.requestBodyCheck !== 'boolean') {
-      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policySettings.requestBodyCheck must be a boolean.');
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.requestBodyCheck must be a boolean.`);
     }
     if (Object.hasOwn(policySettings, 'maxRequestBodySizeInKb') && (!Number.isInteger(policySettings.maxRequestBodySizeInKb) || policySettings.maxRequestBodySizeInKb < 8 || policySettings.maxRequestBodySizeInKb > 2000)) {
-      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policySettings.maxRequestBodySizeInKb must be an integer between 8 and 2000.');
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.maxRequestBodySizeInKb must be an integer between 8 and 2000.`);
     }
-    const managedRuleSets = body.properties?.managedRules?.managedRuleSets;
+    const managedRuleSets = (body.properties?.managedRules ?? body.managedRules)?.managedRuleSets;
     if (!Array.isArray(managedRuleSets) || managedRuleSets.length === 0) {
-      return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF policies require at least one managed rule set.');
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policies require at least one managed rule set.`);
     }
     for (const ruleSet of managedRuleSets) {
       if (!isNonEmptyString(ruleSet?.ruleSetType) || !isNonEmptyString(ruleSet?.ruleSetVersion)) {
-        return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF managed rule sets require ruleSetType and ruleSetVersion.');
+        return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} managed rule sets require ruleSetType and ruleSetVersion.`);
       }
     }
-    const customRules = body.properties?.customRules;
+    const customRules = body.properties?.customRules ?? body.customRules;
     if (customRules !== undefined) {
       if (!Array.isArray(customRules)) {
-        return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF customRules must be an array.');
+        return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules must be an array.`);
       }
       for (const rule of customRules) {
         if (!isNonEmptyString(rule?.name) || !Number.isInteger(rule?.priority) || rule.priority < 1 || rule.priority > 1000) {
-          return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF custom rules require a name and priority between 1 and 1000.');
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} custom rules require a name and priority between 1 and 1000.`);
         }
         if (!['MatchRule', 'RateLimitRule'].includes(rule.ruleType)) {
-          return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF customRules[].ruleType must be 'MatchRule' or 'RateLimitRule'.");
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules[].ruleType must be 'MatchRule' or 'RateLimitRule'.`);
         }
         if (!['Allow', 'Block', 'Log'].includes(rule.action)) {
-          return envelopedError(400, 'InvalidRequestFormat', "Application Gateway WAF customRules[].action must be 'Allow', 'Block', or 'Log'.");
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules[].action must be 'Allow', 'Block', or 'Log'.`);
         }
         if (!Array.isArray(rule.matchConditions) || rule.matchConditions.length === 0) {
-          return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway WAF custom rules require at least one match condition.');
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} custom rules require at least one match condition.`);
+        }
+      }
+    }
+  }
+
+  if (resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+    const policyLabel = 'Front Door WAF';
+    const policySettings = body.properties?.policySettings ?? body.policySettings;
+    if (!policySettings || typeof policySettings !== 'object' || Array.isArray(policySettings)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policies require properties.policySettings.`);
+    }
+    const enabledState = policySettings.enabledState;
+    const mode = policySettings.mode;
+    if (enabledState !== undefined && !['Enabled', 'Disabled'].includes(enabledState)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.enabledState must be 'Enabled' or 'Disabled'.`);
+    }
+    if (mode !== undefined && !['Detection', 'Prevention'].includes(mode)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.mode must be 'Detection' or 'Prevention'.`);
+    }
+    if (Object.hasOwn(policySettings, 'requestBodyCheck')
+      && !['Enabled', 'Disabled'].includes(policySettings.requestBodyCheck)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.requestBodyCheck must be 'Enabled' or 'Disabled'.`);
+    }
+    if (Object.hasOwn(policySettings, 'captchaExpirationInMinutes')
+      && (!Number.isInteger(policySettings.captchaExpirationInMinutes)
+        || policySettings.captchaExpirationInMinutes < 5
+        || policySettings.captchaExpirationInMinutes > 1440)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.captchaExpirationInMinutes must be an integer between 5 and 1440.`);
+    }
+    if (Object.hasOwn(policySettings, 'javascriptChallengeExpirationInMinutes')
+      && (!Number.isInteger(policySettings.javascriptChallengeExpirationInMinutes)
+        || policySettings.javascriptChallengeExpirationInMinutes < 5
+        || policySettings.javascriptChallengeExpirationInMinutes > 1440)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} policySettings.javascriptChallengeExpirationInMinutes must be an integer between 5 and 1440.`);
+    }
+    const skuName = body.sku?.name;
+    if (skuName !== undefined && !['Classic_AzureFrontDoor', 'Standard_AzureFrontDoor', 'Premium_AzureFrontDoor'].includes(skuName)) {
+      return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} sku.name must be Classic_AzureFrontDoor, Standard_AzureFrontDoor, or Premium_AzureFrontDoor.`);
+    }
+    const managedRuleSets = (body.properties?.managedRules ?? body.managedRules)?.managedRuleSets;
+    if (managedRuleSets !== undefined) {
+      if (!Array.isArray(managedRuleSets)) {
+        return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} managedRules.managedRuleSets must be an array when provided.`);
+      }
+      for (const ruleSet of managedRuleSets) {
+        if (!isNonEmptyString(ruleSet?.ruleSetType) || !isNonEmptyString(ruleSet?.ruleSetVersion)) {
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} managed rule sets require ruleSetType and ruleSetVersion.`);
+        }
+      }
+    }
+    const customRules = body.properties?.customRules ?? body.customRules;
+    if (customRules !== undefined) {
+      const rules = customRules?.rules;
+      if (typeof customRules !== 'object' || Array.isArray(customRules) || !Array.isArray(rules)) {
+        return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules must be an object with a rules array.`);
+      }
+      for (const rule of rules) {
+        if (!isNonEmptyString(rule?.name) || !Number.isInteger(rule?.priority) || rule.priority < 1 || rule.priority > 1000) {
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} custom rules require a name and priority between 1 and 1000.`);
+        }
+        if (!['MatchRule', 'RateLimitRule'].includes(rule.ruleType)) {
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules.rules[].ruleType must be 'MatchRule' or 'RateLimitRule'.`);
+        }
+        if (!['Allow', 'AnomalyScoring', 'Block', 'CAPTCHA', 'JSChallenge', 'Log', 'Redirect'].includes(rule.action)) {
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} customRules.rules[].action is invalid.`);
+        }
+        if (!Array.isArray(rule.matchConditions) || rule.matchConditions.length === 0) {
+          return envelopedError(400, 'InvalidRequestFormat', `${policyLabel} custom rules require at least one match condition.`);
         }
       }
     }
@@ -1957,11 +2037,12 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
       return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
     }
+    const reserved = body.properties?.reserved ?? body.reserved;
     const localSupportedConsumptionPlan =
-      isFunctionAppKind(body.kind)
-      && body.sku?.name === 'Y1'
+      body.sku?.name === 'Y1'
       && body.sku?.tier === 'Dynamic'
-      && typeof body.properties?.reserved === 'boolean';
+      && (body.kind == null || isFunctionAppKind(body.kind))
+      && (reserved == null || typeof reserved === 'boolean');
     if (!localSupportedConsumptionPlan) {
       return appServiceError(
         401,

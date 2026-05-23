@@ -1173,6 +1173,7 @@ export function createArmRequestHandler({
             || resourceType.startsWith('Microsoft.Network/applicationGateways/')
             || resourceType.startsWith('Microsoft.Network/loadBalancers/')
             || resourceType.startsWith('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/')
+            || resourceType.startsWith('Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/')
           )
           && !exactCapabilityForResourceType(resourceType)
         ) {

@@ -717,7 +717,9 @@ export class ResourceStore {
                 ?? 'Enabled',
             }
           : {}),
-        ...(type === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
+        ...(
+          (type === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
+            || type === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies')
           ? {
               provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
               resourceState: existing?.properties?.resourceState ?? 'Enabled',

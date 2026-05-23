@@ -853,7 +853,11 @@ export const tier2Capabilities = [
     tier: 2,
     awsAnalogue: 'WAF',
     azureEquivalent: 'Azure Web Application Firewall policy',
-    resourceTypes: ['Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', 'Microsoft.Cdn/profiles/securityPolicies'],
+    resourceTypes: [
+      'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies',
+      'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies',
+      'Microsoft.Cdn/profiles/securityPolicies',
+    ],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-waf-metadata'],
     implementedOperations: [
