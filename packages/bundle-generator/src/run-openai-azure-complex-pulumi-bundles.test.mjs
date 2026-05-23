@@ -257,11 +257,157 @@ test('Pr91040 includes public and private DNS record checks plus regional public
   );
 });
 
+test('Pr91041 includes both IoT Hubs, both Event Hubs, and the Digital Twins check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91041');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-digital-east-91041'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-digital-west-91041/eventhubs/telemetry-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-digital-command-91041'),
+  );
+});
+
+test('Pr91042 includes Synapse, Cosmos, and replay subscriptions', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91042');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-workspace'
+      && check.typePath === 'workspaces/syn-replay-warehouse-91042'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-replay-warehouse-91042/sqlDatabases/ReplayStateDb/containers/ReplayState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-reconcile'
+      && check.typePath === 'namespaces/sb-replay-warehouse-91042/topics/replay-commands/subscriptions/reconcile'),
+  );
+});
+
+test('Pr91043 includes Front Door, both DMS projects, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91043');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-route'
+      && check.typePath === 'profiles/afd-cutover-edge-91043/afdEndpoints/cutover-edge-endpoint/routes/cutover-edge-route'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-edge-91043/projects/mysql-cutover-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-cutover-edge-91043/topics/cutover-approvals/subscriptions/rollback'),
+  );
+});
+
+test('Pr91044 includes both AKS clusters, private DNS files record, and Azure Files share', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91044');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-robotics-east-91044'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-files-record'
+      && check.typePath === 'privateDnsZones/robotics.internal/A/files'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'file-share'
+      && check.typePath === 'storageAccounts/azrobotics91044/fileServices/default/shares/robotics-drop'),
+  );
+});
+
+test('Pr91045 includes Front Door security policy, Logic App, PostgreSQL database, and all topic subscriptions', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91045');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dns.Zone'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dns.RecordSet'));
+  assert.ok(scenario.requiredSourceMarkers.includes('redis.Redis'));
+  assert.ok(scenario.requiredSourceMarkers.includes('monitor.ActionGroup'));
+  assert.ok(scenario.requiredSourceMarkers.includes('applicationinsights.Component'));
+  assert.ok(scenario.forbiddenSourceMarkers.includes('network.WebApplicationFirewallPolicy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-exception-governance-91045/securityPolicies/exception-governance-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'waf-policy'
+      && check.expectedType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'logic-workflow'
+      && check.typePath === 'workflows/la-exception-governance-91045'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-exception-governance-91045/databases/exceptiondb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-risk'
+      && check.typePath === 'namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/risk'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-finance'
+      && check.typePath === 'namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/finance'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-ops'
+      && check.typePath === 'namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/ops'),
+  );
+});
+
 test('integration test template expects APIM product-api ARM names and types as the API contract', () => {
   const generated = integrationTest();
   assert.match(generated, /check\.expectedType === "Microsoft\.ApiManagement\/service\/products\/apis"/);
   assert.match(generated, /return check\.typePath\.split\("\/"\)\.filter\(Boolean\)\.at\(-1\);/);
   assert.match(generated, /return "Microsoft\.ApiManagement\/service\/apis";/);
+});
+
+test('validateTapStack rejects Application Gateway WAF resources when the scenario expects Front Door WAF', () => {
+  const scenario = {
+    prompt: 'Use Azure Front Door with a Front Door WAF policy.',
+    resourceNames: {
+      resourceGroup: 'rg-frontdoor-waf',
+      frontDoorWaf: 'waf-frontdoor-sample',
+    },
+    expectedOutputKeys: ['FrontDoorHostName'],
+    requiredSourceMarkers: ['frontdoor.Policy'],
+    forbiddenSourceMarkers: ['network.WebApplicationFirewallPolicy'],
+    integrationChecks: [
+      {
+        expectedType: 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies',
+      },
+    ],
+  };
+
+  const tapStack = [
+    'import * as azure from "@pulumi/azure-native";',
+    'export function createTapStack() {',
+    '  const FrontDoorHostName = "example.azurefd.net";',
+    '  new azure.network.WebApplicationFirewallPolicy("waf", {',
+    '    policyName: "waf-frontdoor-sample",',
+    '    resourceGroupName: "rg-frontdoor-waf",',
+    '    location: "global",',
+    '    managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },',
+    '    policySettings: { state: "Enabled", mode: "Prevention" },',
+    '  });',
+    '  return { FrontDoorHostName };',
+    '}',
+  ].join('\n');
+
+  assert.throws(
+    () => validateTapStack(scenario, tapStack),
+    /Front Door WAF scenarios must use azure\.frontdoor\.Policy|missing scenario marker frontdoor\.Policy/,
+  );
 });
 
 test('validateTapStack accepts mixed public and private DNS usage when each resource targets the right zone type', () => {
@@ -286,6 +432,35 @@ test('validateTapStack accepts mixed public and private DNS usage when each reso
     '  });',
     '  new azure.network.PrivateRecordSet("private", {',
     '    privateZoneName: "private.internal",',
+    '    relativeRecordSetName: "api",',
+    '  });',
+    '  return { ExampleOutput };',
+    '}',
+  ].join('\n');
+
+  assert.doesNotThrow(() => validateTapStack(scenario, tapStack));
+});
+
+test('validateTapStack does not infer private DNS requirements from a forbidden phrase alone', () => {
+  const scenario = {
+    prompt: 'Do not add private DNS or private endpoints.',
+    expectedOutputKeys: ['ExampleOutput'],
+    requiredSourceMarkers: ['network.RecordSet'],
+    forbiddenSourceMarkers: ['privateDnsZones'],
+    integrationChecks: [
+      { typePath: 'dnsZones/example.contoso.net/CNAME/api' },
+    ],
+    resourceNames: {
+      publicDnsZone: 'example.contoso.net',
+    },
+  };
+
+  const tapStack = [
+    'import * as azure from "@pulumi/azure-native";',
+    'export function createTapStack() {',
+    '  const ExampleOutput = "ok";',
+    '  new azure.network.RecordSet("public", {',
+    '    zoneName: "example.contoso.net",',
     '    relativeRecordSetName: "api",',
     '  });',
     '  return { ExampleOutput };',

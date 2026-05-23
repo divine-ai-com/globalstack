@@ -4170,6 +4170,817 @@ export const scenarios = [
   },
 ];
 
+scenarios.push({
+  poId: "caf2508c-d758-4c8a-8e50-e0c926e20be1",
+  prId: "Pr91041",
+  scenarioId: "multiregion-digital-command-mesh",
+  title: "Multiregion digital command mesh",
+  prompt: [
+    "Our autonomous operations group wants one Azure deployment that can keep fleet command and telemetry alive across two regions without turning the control plane into a pile of disconnected services. They need regional device ingress, regional hot streams, one managed command API, one digital-thread layer, one transactional state store, durable command fan-out, downstream notification plumbing, and the usual secret, configuration, and observability services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+    "",
+    "Use one IoT Hub in each region, one Event Hubs namespace in each region with one event hub in each namespace, one shared Function App as the command processor surface, one Azure Cosmos DB account with one SQL database and one container for command state, one Azure Digital Twins instance, one API Management service with one API and one product and one product API association and one `dispatch-command` operation with one operation policy, one Service Bus namespace with one topic and one `east-commands` subscription and one `west-commands` subscription, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, one Log Analytics workspace in each region, and one Application Insights component.",
+    "",
+    "Use these exact resource names: resource group `rg-az-digital-command-pulumi-91041`, east IoT Hub `iot-digital-east-91041`, west IoT Hub `iot-digital-west-91041`, east Event Hubs namespace `eh-digital-east-91041`, west Event Hubs namespace `eh-digital-west-91041`, east event hub `telemetry-east`, west event hub `telemetry-west`, Function App plan `plan-digital-command-91041`, Function App `func-digital-command-91041`, Cosmos DB account `cosmos-digital-command-91041`, Cosmos SQL database `CommandStateDb`, Cosmos SQL container `CommandState`, Azure Digital Twins instance `adt-digital-command-91041`, API Management service `apim-digital-command-91041`, API Management API `digital-command-api`, API Management product `digital-command-product`, API Management operation `dispatch-command`, Service Bus namespace `sb-digital-command-91041`, Service Bus topic `digital-commands`, Service Bus subscription `east-commands`, Service Bus subscription `west-commands`, Event Grid topic `eg-digital-command-91041`, Key Vault `kv-digital-command-91041`, App Configuration store `cfg-digital-command-91041`, action group `ag-digital-command-91041`, metric alert `ma-digital-command-91041`, activity log alert `ala-digital-command-91041`, east Log Analytics workspace `log-digital-east-91041`, west Log Analytics workspace `log-digital-west-91041`, and Application Insights component `appi-digital-command-91041`.",
+    "",
+    "Keep this limited to the digital command mesh. Do not add Front Door, Application Gateway, AKS, private endpoints, custom domains, MySQL, PostgreSQL, or Database Migration Service.",
+    "",
+    "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `DigitalCommandApiGatewayUrl`, `DigitalCommandEastIotHubName`, `DigitalCommandWestIotHubName`, `DigitalCommandEastEventHubNamespaceName`, `DigitalCommandWestEventHubNamespaceName`, `DigitalCommandEastEventHubName`, `DigitalCommandWestEventHubName`, `DigitalCommandFunctionHostName`, `DigitalCommandCosmosAccountName`, `DigitalCommandCosmosDatabaseName`, `DigitalCommandCosmosContainerName`, `DigitalCommandDigitalTwinsName`, `DigitalCommandTopicName`, `DigitalCommandEastCommandSubscriptionName`, `DigitalCommandWestCommandSubscriptionName`, `DigitalCommandKeyVaultName`, `DigitalCommandAppConfigName`, `DigitalCommandActionGroupName`, `DigitalCommandMetricAlertName`, `DigitalCommandActivityLogAlertName`, `DigitalCommandEastLogAnalyticsWorkspaceName`, `DigitalCommandWestLogAnalyticsWorkspaceName`, `DigitalCommandAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+  ].join("\n"),
+  fieldReferences: [
+    {
+      title: "Introduction to Azure IoT",
+      url: "https://learn.microsoft.com/en-us/azure/iot/iot-introduction",
+      why: "Grounds the regional device-ingress and telemetry landing pattern.",
+    },
+    {
+      title: "Integrate Event Hubs with serverless functions on Azure",
+      url: "https://learn.microsoft.com/en-us/azure/architecture/serverless/event-hubs-functions/event-hubs-functions",
+      why: "Grounds the hot-stream processing surface and runtime expectations for Event Hubs plus Functions.",
+    },
+    {
+      title: "Create endpoints in Azure Digital Twins",
+      url: "https://learn.microsoft.com/en-us/azure/digital-twins/how-to-create-endpoints",
+      why: "Grounds the digital-thread layer and downstream event-routing model.",
+    },
+  ],
+  resourceNames: {
+    resourceGroup: "rg-az-digital-command-pulumi-91041",
+    eastIotHub: "iot-digital-east-91041",
+    westIotHub: "iot-digital-west-91041",
+    eastEventHubNamespace: "eh-digital-east-91041",
+    westEventHubNamespace: "eh-digital-west-91041",
+    eastEventHub: "telemetry-east",
+    westEventHub: "telemetry-west",
+    functionAppPlan: "plan-digital-command-91041",
+    functionApp: "func-digital-command-91041",
+    cosmosAccount: "cosmos-digital-command-91041",
+    cosmosDatabase: "CommandStateDb",
+    cosmosContainer: "CommandState",
+    digitalTwins: "adt-digital-command-91041",
+    apiManagementService: "apim-digital-command-91041",
+    apiManagementApi: "digital-command-api",
+    apiManagementProduct: "digital-command-product",
+    apiManagementOperation: "dispatch-command",
+    serviceBusNamespace: "sb-digital-command-91041",
+    serviceBusTopic: "digital-commands",
+    eastCommandSubscription: "east-commands",
+    westCommandSubscription: "west-commands",
+    eventGridTopic: "eg-digital-command-91041",
+    keyVault: "kv-digital-command-91041",
+    appConfigStore: "cfg-digital-command-91041",
+    actionGroup: "ag-digital-command-91041",
+    metricAlert: "ma-digital-command-91041",
+    activityLogAlert: "ala-digital-command-91041",
+    eastLogAnalyticsWorkspace: "log-digital-east-91041",
+    westLogAnalyticsWorkspace: "log-digital-west-91041",
+    applicationInsights: "appi-digital-command-91041",
+  },
+  expectedOutputKeys: [
+    "DigitalCommandApiGatewayUrl",
+    "DigitalCommandEastIotHubName",
+    "DigitalCommandWestIotHubName",
+    "DigitalCommandEastEventHubNamespaceName",
+    "DigitalCommandWestEventHubNamespaceName",
+    "DigitalCommandEastEventHubName",
+    "DigitalCommandWestEventHubName",
+    "DigitalCommandFunctionHostName",
+    "DigitalCommandCosmosAccountName",
+    "DigitalCommandCosmosDatabaseName",
+    "DigitalCommandCosmosContainerName",
+    "DigitalCommandDigitalTwinsName",
+    "DigitalCommandTopicName",
+    "DigitalCommandEastCommandSubscriptionName",
+    "DigitalCommandWestCommandSubscriptionName",
+    "DigitalCommandKeyVaultName",
+    "DigitalCommandAppConfigName",
+    "DigitalCommandActionGroupName",
+    "DigitalCommandMetricAlertName",
+    "DigitalCommandActivityLogAlertName",
+    "DigitalCommandEastLogAnalyticsWorkspaceName",
+    "DigitalCommandWestLogAnalyticsWorkspaceName",
+    "DigitalCommandAppInsightsName",
+  ],
+  requiredSourceMarkers: [
+    "devices.",
+    "eventhub.",
+    "web.",
+    "documentdb.",
+    "digitaltwins",
+    "apimanagement.",
+    "servicebus.",
+    "eventgrid.",
+    "keyvault.",
+    "appconfiguration.",
+    "insights.ActionGroup",
+    "insights.MetricAlert",
+    "insights.ActivityLogAlert",
+    "operationalinsights.",
+    "dispatch-command",
+    "digital-commands",
+  ],
+  forbiddenSourceMarkers: ["frontdoor", "containerservice", "network.ApplicationGateway", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+  integrationChecks: [
+    { label: "east-iot-hub", provider: "Microsoft.Devices", typePath: "IotHubs/iot-digital-east-91041", apiVersion: "2023-06-30", expectedType: "Microsoft.Devices/IotHubs" },
+    { label: "west-iot-hub", provider: "Microsoft.Devices", typePath: "IotHubs/iot-digital-west-91041", apiVersion: "2023-06-30", expectedType: "Microsoft.Devices/IotHubs" },
+    { label: "east-event-hub-namespace", provider: "Microsoft.EventHub", typePath: "namespaces/eh-digital-east-91041", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces" },
+    { label: "west-event-hub-namespace", provider: "Microsoft.EventHub", typePath: "namespaces/eh-digital-west-91041", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces" },
+    { label: "east-event-hub", provider: "Microsoft.EventHub", typePath: "namespaces/eh-digital-east-91041/eventhubs/telemetry-east", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces/eventhubs" },
+    { label: "west-event-hub", provider: "Microsoft.EventHub", typePath: "namespaces/eh-digital-west-91041/eventhubs/telemetry-west", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces/eventhubs" },
+    { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-digital-command-91041", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+    { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-digital-command-91041", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+    { label: "cosmos-account", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-digital-command-91041", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts" },
+    { label: "cosmos-database", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-digital-command-91041/sqlDatabases/CommandStateDb", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases" },
+    { label: "cosmos-container", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-digital-command-91041/sqlDatabases/CommandStateDb/containers/CommandState", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers" },
+    { label: "digital-twins", provider: "Microsoft.DigitalTwins", typePath: "digitalTwinsInstances/adt-digital-command-91041", apiVersion: "2023-01-31", expectedType: "Microsoft.DigitalTwins/digitalTwinsInstances" },
+    { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+    { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041/apis/digital-command-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+    { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041/products/digital-command-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+    { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041/products/digital-command-product/apis/digital-command-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+    { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041/apis/digital-command-api/operations/dispatch-command", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+    { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-digital-command-91041/apis/digital-command-api/operations/dispatch-command/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+    { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-digital-command-91041", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+    { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-digital-command-91041/topics/digital-commands", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+    { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-digital-command-91041/topics/digital-commands/subscriptions/east-commands", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-digital-command-91041/topics/digital-commands/subscriptions/west-commands", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-digital-command-91041", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+    { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-digital-command-91041", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+    { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-digital-command-91041", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+    { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-digital-command-91041", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+    { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-digital-command-91041", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+    { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-digital-command-91041", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    { label: "east-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-digital-east-91041", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "west-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-digital-west-91041", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-digital-command-91041", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+  ],
+});
+
+scenarios.push({
+  poId: "b170f471-d3fb-4b79-b284-2daff6fe7ca5",
+  prId: "Pr91043",
+  scenarioId: "dual-region-cutover-edge-plane",
+  title: "Dual-region cutover edge plane",
+  prompt: [
+    "Our release modernization office wants one Azure deployment that can run a supervised database cutover program across two regions without forcing operators to stitch together separate stacks for edge ingress, approval workflows, migration services, and rollback signaling. They need a global edge, two regional ingress origins, one managed API surface for approvals, one function-backed control hook, one workflow layer, dual database engines, migration projects, durable cutover fan-out, public DNS for the control endpoint, and the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+    "",
+    "Use one Azure Front Door profile with one endpoint, one origin group, one east origin, one west origin, one route, one security policy, and one WAF policy, one Azure public DNS zone with one CNAME record for the control endpoint, one virtual network in each region with one application gateway subnet and one workload subnet, one public IP address and one Application Gateway in each region, one API Management service with one API and one product and one product API association and one `approve-cutover` operation with one operation policy, one Function App plan and one Function App, one Logic App workflow, one Database Migration Service with one MySQL project and one PostgreSQL project, one MySQL flexible server with one database, one PostgreSQL flexible server with one database, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription and one `rollback` subscription, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, one Log Analytics workspace in each region, and one Application Insights component.",
+    "",
+    "Use these exact resource names: resource group `rg-az-cutover-edge-pulumi-91043`, Front Door profile `afd-cutover-edge-91043`, Front Door endpoint `cutover-edge-endpoint`, Front Door origin group `cutover-edge-origins`, Front Door east origin `east-cutover-origin`, Front Door west origin `west-cutover-origin`, Front Door route `cutover-edge-route`, Front Door security policy `cutover-edge-security-policy`, WAF policy `waf-cutover-edge-91043`, public DNS zone `cutover91043.contoso.net`, public DNS CNAME record `api.cutover91043.contoso.net`, east virtual network `vnet-cutover-east-91043`, west virtual network `vnet-cutover-west-91043`, east application gateway subnet `snet-cutover-agw-east-91043`, west application gateway subnet `snet-cutover-agw-west-91043`, east workload subnet `snet-cutover-work-east-91043`, west workload subnet `snet-cutover-work-west-91043`, east public IP `pip-cutover-east-91043`, west public IP `pip-cutover-west-91043`, east Application Gateway `agw-cutover-east-91043`, west Application Gateway `agw-cutover-west-91043`, API Management service `apim-cutover-edge-91043`, API Management API `cutover-edge-api`, API Management product `cutover-edge-product`, API Management operation `approve-cutover`, Function App plan `plan-cutover-edge-91043`, Function App `func-cutover-edge-91043`, Logic App workflow `la-cutover-edge-91043`, Database Migration Service `dms-cutover-edge-91043`, MySQL flexible server `mysql-cutover-edge-91043`, MySQL database `billingdb`, PostgreSQL flexible server `pg-cutover-edge-91043`, PostgreSQL database `ledgerdb`, Database Migration Service project `mysql-cutover-project`, Database Migration Service project `postgres-cutover-project`, Service Bus namespace `sb-cutover-edge-91043`, Service Bus topic `cutover-approvals`, Service Bus subscription `east`, Service Bus subscription `west`, Service Bus subscription `rollback`, Event Grid topic `eg-cutover-edge-91043`, Key Vault `kv-cutover-edge-91043`, App Configuration store `cfg-cutover-edge-91043`, action group `ag-cutover-edge-91043`, metric alert `ma-cutover-edge-91043`, activity log alert `ala-cutover-edge-91043`, east Log Analytics workspace `log-cutover-east-91043`, west Log Analytics workspace `log-cutover-west-91043`, and Application Insights component `appi-cutover-edge-91043`.",
+    "",
+    "Keep this limited to the cutover edge plane. Do not add AKS, Container Apps, Cosmos DB, Synapse, Azure Files, or private endpoints.",
+    "",
+    "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `CutoverEdgeFrontDoorEndpointHostName`, `CutoverEdgeRouteName`, `CutoverEdgePublicDnsZoneName`, `CutoverEdgePublicDnsRecordName`, `CutoverEdgeEastApplicationGatewayName`, `CutoverEdgeWestApplicationGatewayName`, `CutoverEdgeApiGatewayUrl`, `CutoverEdgeFunctionHostName`, `CutoverEdgeWorkflowName`, `CutoverEdgeDmsServiceName`, `CutoverEdgeMySqlServerName`, `CutoverEdgeMySqlDatabaseName`, `CutoverEdgePostgresServerName`, `CutoverEdgePostgresDatabaseName`, `CutoverEdgeMySqlProjectName`, `CutoverEdgePostgresProjectName`, `CutoverEdgeTopicName`, `CutoverEdgeEastSubscriptionName`, `CutoverEdgeWestSubscriptionName`, `CutoverEdgeRollbackSubscriptionName`, `CutoverEdgeEventGridTopicEndpoint`, `CutoverEdgeKeyVaultName`, `CutoverEdgeAppConfigName`, `CutoverEdgeActionGroupName`, `CutoverEdgeMetricAlertName`, `CutoverEdgeActivityLogAlertName`, `CutoverEdgeEastLogAnalyticsWorkspaceName`, `CutoverEdgeWestLogAnalyticsWorkspaceName`, `CutoverEdgeAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+  ].join("\n"),
+  fieldReferences: [
+    {
+      title: "Configure Azure Front Door in front of Azure API Management",
+      url: "https://learn.microsoft.com/en-us/azure/api-management/front-door-api-management",
+      why: "Grounds the managed API surface behind a global edge.",
+    },
+    {
+      title: "What is Azure Database Migration Service?",
+      url: "https://learn.microsoft.com/en-us/azure/dms/dms-overview",
+      why: "Grounds the cutover and migration project layer for the dual-engine workflow.",
+    },
+    {
+      title: "Basic enterprise integration on Azure",
+      url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/enterprise-integration/basic-enterprise-integration",
+      why: "Grounds the API, workflow, and messaging coordination pattern around the cutover plane.",
+    },
+  ],
+  resourceNames: {
+    resourceGroup: "rg-az-cutover-edge-pulumi-91043",
+    frontDoorProfile: "afd-cutover-edge-91043",
+    frontDoorEndpoint: "cutover-edge-endpoint",
+    frontDoorOriginGroup: "cutover-edge-origins",
+    frontDoorEastOrigin: "east-cutover-origin",
+    frontDoorWestOrigin: "west-cutover-origin",
+    frontDoorRoute: "cutover-edge-route",
+    securityPolicy: "cutover-edge-security-policy",
+    wafPolicy: "waf-cutover-edge-91043",
+    publicDnsZone: "cutover91043.contoso.net",
+    publicDnsRecord: "api",
+    eastVirtualNetwork: "vnet-cutover-east-91043",
+    westVirtualNetwork: "vnet-cutover-west-91043",
+    eastApplicationGatewaySubnet: "snet-cutover-agw-east-91043",
+    westApplicationGatewaySubnet: "snet-cutover-agw-west-91043",
+    eastWorkloadSubnet: "snet-cutover-work-east-91043",
+    westWorkloadSubnet: "snet-cutover-work-west-91043",
+    eastPublicIp: "pip-cutover-east-91043",
+    westPublicIp: "pip-cutover-west-91043",
+    eastApplicationGateway: "agw-cutover-east-91043",
+    westApplicationGateway: "agw-cutover-west-91043",
+    apiManagementService: "apim-cutover-edge-91043",
+    apiManagementApi: "cutover-edge-api",
+    apiManagementProduct: "cutover-edge-product",
+    apiManagementOperation: "approve-cutover",
+    functionAppPlan: "plan-cutover-edge-91043",
+    functionApp: "func-cutover-edge-91043",
+    logicWorkflow: "la-cutover-edge-91043",
+    dmsService: "dms-cutover-edge-91043",
+    mySqlServer: "mysql-cutover-edge-91043",
+    mySqlDatabase: "billingdb",
+    postgresServer: "pg-cutover-edge-91043",
+    postgresDatabase: "ledgerdb",
+    mySqlProject: "mysql-cutover-project",
+    postgresProject: "postgres-cutover-project",
+    serviceBusNamespace: "sb-cutover-edge-91043",
+    serviceBusTopic: "cutover-approvals",
+    eastSubscription: "east",
+    westSubscription: "west",
+    rollbackSubscription: "rollback",
+    eventGridTopic: "eg-cutover-edge-91043",
+    keyVault: "kv-cutover-edge-91043",
+    appConfigStore: "cfg-cutover-edge-91043",
+    actionGroup: "ag-cutover-edge-91043",
+    metricAlert: "ma-cutover-edge-91043",
+    activityLogAlert: "ala-cutover-edge-91043",
+    eastLogAnalyticsWorkspace: "log-cutover-east-91043",
+    westLogAnalyticsWorkspace: "log-cutover-west-91043",
+    applicationInsights: "appi-cutover-edge-91043",
+  },
+  expectedOutputKeys: [
+    "CutoverEdgeFrontDoorEndpointHostName",
+    "CutoverEdgeRouteName",
+    "CutoverEdgePublicDnsZoneName",
+    "CutoverEdgePublicDnsRecordName",
+    "CutoverEdgeEastApplicationGatewayName",
+    "CutoverEdgeWestApplicationGatewayName",
+    "CutoverEdgeApiGatewayUrl",
+    "CutoverEdgeFunctionHostName",
+    "CutoverEdgeWorkflowName",
+    "CutoverEdgeDmsServiceName",
+    "CutoverEdgeMySqlServerName",
+    "CutoverEdgeMySqlDatabaseName",
+    "CutoverEdgePostgresServerName",
+    "CutoverEdgePostgresDatabaseName",
+    "CutoverEdgeMySqlProjectName",
+    "CutoverEdgePostgresProjectName",
+    "CutoverEdgeTopicName",
+    "CutoverEdgeEastSubscriptionName",
+    "CutoverEdgeWestSubscriptionName",
+    "CutoverEdgeRollbackSubscriptionName",
+    "CutoverEdgeEventGridTopicEndpoint",
+    "CutoverEdgeKeyVaultName",
+    "CutoverEdgeAppConfigName",
+    "CutoverEdgeActionGroupName",
+    "CutoverEdgeMetricAlertName",
+    "CutoverEdgeActivityLogAlertName",
+    "CutoverEdgeEastLogAnalyticsWorkspaceName",
+    "CutoverEdgeWestLogAnalyticsWorkspaceName",
+    "CutoverEdgeAppInsightsName",
+  ],
+  requiredSourceMarkers: [
+    "cdn.",
+    "network.WebApplicationFirewallPolicy",
+    "network.Zone",
+    "network.RecordSet",
+    "network.PublicIPAddress",
+    "network.VirtualNetwork",
+    "network.ApplicationGateway",
+    "apimanagement.",
+    "web.",
+    "logic.",
+    "datamigration.",
+    "dbformysql.",
+    "dbforpostgresql.",
+    "servicebus.",
+    "eventgrid.",
+    "keyvault.",
+    "appconfiguration.",
+    "insights.ActionGroup",
+    "insights.MetricAlert",
+    "insights.ActivityLogAlert",
+    "operationalinsights.",
+    "approve-cutover",
+    "cutover-approvals",
+  ],
+  forbiddenSourceMarkers: ["containerservice", "app.ManagedEnvironment", "documentdb", "synapse.", "storage.FileShare", "private endpoint"],
+  integrationChecks: [
+    { label: "front-door-profile", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles" },
+    { label: "front-door-endpoint", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/afdEndpoints/cutover-edge-endpoint", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints" },
+    { label: "front-door-origin-group", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/originGroups/cutover-edge-origins", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups" },
+    { label: "front-door-origin-east", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/originGroups/cutover-edge-origins/origins/east-cutover-origin", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups/origins" },
+    { label: "front-door-origin-west", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/originGroups/cutover-edge-origins/origins/west-cutover-origin", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/originGroups/origins" },
+    { label: "front-door-route", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/afdEndpoints/cutover-edge-endpoint/routes/cutover-edge-route", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints/routes" },
+    { label: "front-door-security-policy", provider: "Microsoft.Cdn", typePath: "profiles/afd-cutover-edge-91043/securityPolicies/cutover-edge-security-policy", apiVersion: "2024-02-01", expectedType: "Microsoft.Cdn/profiles/securityPolicies" },
+    { label: "waf-policy", provider: "Microsoft.Network", typePath: "ApplicationGatewayWebApplicationFirewallPolicies/waf-cutover-edge-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies" },
+    { label: "public-dns-zone", provider: "Microsoft.Network", typePath: "dnsZones/cutover91043.contoso.net", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones" },
+    { label: "public-dns-record", provider: "Microsoft.Network", typePath: "dnsZones/cutover91043.contoso.net/CNAME/api", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/CNAME" },
+    { label: "east-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-east-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+    { label: "west-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-west-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+    { label: "east-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-east-91043/subnets/snet-cutover-agw-east-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "west-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-west-91043/subnets/snet-cutover-agw-west-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "east-work-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-east-91043/subnets/snet-cutover-work-east-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "west-work-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-cutover-west-91043/subnets/snet-cutover-work-west-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "east-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-cutover-east-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+    { label: "west-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-cutover-west-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+    { label: "east-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-cutover-east-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+    { label: "west-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-cutover-west-91043", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+    { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+    { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043/apis/cutover-edge-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+    { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043/products/cutover-edge-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+    { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043/products/cutover-edge-product/apis/cutover-edge-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+    { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043/apis/cutover-edge-api/operations/approve-cutover", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+    { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-cutover-edge-91043/apis/cutover-edge-api/operations/approve-cutover/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+    { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-cutover-edge-91043", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+    { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-cutover-edge-91043", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+    { label: "logic-workflow", provider: "Microsoft.Logic", typePath: "workflows/la-cutover-edge-91043", apiVersion: "2019-05-01", expectedType: "Microsoft.Logic/workflows" },
+    { label: "dms-service", provider: "Microsoft.DataMigration", typePath: "services/dms-cutover-edge-91043", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services" },
+    { label: "mysql-server", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-cutover-edge-91043", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers" },
+    { label: "mysql-database", provider: "Microsoft.DBforMySQL", typePath: "flexibleServers/mysql-cutover-edge-91043/databases/billingdb", apiVersion: "2023-12-30", expectedType: "Microsoft.DBforMySQL/flexibleServers/databases" },
+    { label: "postgres-server", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-cutover-edge-91043", apiVersion: "2023-06-01-preview", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers" },
+    { label: "postgres-database", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-cutover-edge-91043/databases/ledgerdb", apiVersion: "2023-06-01-preview", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers/databases" },
+    { label: "dms-project-mysql", provider: "Microsoft.DataMigration", typePath: "services/dms-cutover-edge-91043/projects/mysql-cutover-project", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services/projects" },
+    { label: "dms-project-postgres", provider: "Microsoft.DataMigration", typePath: "services/dms-cutover-edge-91043/projects/postgres-cutover-project", apiVersion: "2022-03-30-preview", expectedType: "Microsoft.DataMigration/services/projects" },
+    { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-cutover-edge-91043", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+    { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-cutover-edge-91043/topics/cutover-approvals", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+    { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-cutover-edge-91043/topics/cutover-approvals/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-cutover-edge-91043/topics/cutover-approvals/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-rollback", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-cutover-edge-91043/topics/cutover-approvals/subscriptions/rollback", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-cutover-edge-91043", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+    { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-cutover-edge-91043", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+    { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-cutover-edge-91043", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+    { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-cutover-edge-91043", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+    { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-cutover-edge-91043", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+    { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-cutover-edge-91043", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    { label: "east-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-cutover-east-91043", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "west-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-cutover-west-91043", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-cutover-edge-91043", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+  ],
+});
+
+scenarios.push({
+  poId: "cb430cc9-db41-44d3-8b32-460d233c7b72",
+  prId: "Pr91044",
+  scenarioId: "private-robotics-aks-discovery-plane",
+  title: "Private robotics AKS discovery plane",
+  prompt: [
+    "Our robotics platform team wants one Azure deployment that can keep private service discovery, regional ingress, and workload orchestration coherent across two regions. They need public and private DNS, regional ingress gateways, two AKS clusters, one registry and identity plane, a durable job channel, shared file evidence, fast session state, downstream event signaling, and the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript using `eastus` and `westus2`.",
+    "",
+    "Use one Azure public DNS zone with one A record for `east` and one A record for `west`, one Azure Private DNS zone linked to both regional virtual networks with one private A record for `gateway` and one for `workers` and one for `files`, one user-assigned managed identity, one Azure Container Registry, one virtual network in each region with one application gateway subnet and one workload subnet, one public IP address and one Application Gateway in each region, one AKS cluster in each region, one Service Bus namespace with one topic and one `east` subscription and one `west` subscription, one storage account with one Azure Files share, one Redis cache, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, one Log Analytics workspace in each region, and one Application Insights component.",
+    "",
+    "Use these exact resource names: resource group `rg-az-robotics-discovery-pulumi-91044`, public DNS zone `robotics91044.contoso.net`, public DNS A record `east.robotics91044.contoso.net`, public DNS A record `west.robotics91044.contoso.net`, private DNS zone `robotics.internal`, private DNS virtual network link `robotics-link-east-91044`, private DNS virtual network link `robotics-link-west-91044`, private DNS A record `gateway.robotics.internal`, private DNS A record `workers.robotics.internal`, private DNS A record `files.robotics.internal`, managed identity `id-robotics-91044`, Container Registry `acrrobotics91044`, east virtual network `vnet-robotics-east-91044`, west virtual network `vnet-robotics-west-91044`, east application gateway subnet `snet-robotics-agw-east-91044`, west application gateway subnet `snet-robotics-agw-west-91044`, east workload subnet `snet-robotics-work-east-91044`, west workload subnet `snet-robotics-work-west-91044`, east public IP `pip-robotics-east-91044`, west public IP `pip-robotics-west-91044`, east Application Gateway `agw-robotics-east-91044`, west Application Gateway `agw-robotics-west-91044`, east AKS cluster `aks-robotics-east-91044`, west AKS cluster `aks-robotics-west-91044`, Service Bus namespace `sb-robotics-91044`, Service Bus topic `robotics-jobs`, Service Bus subscription `east`, Service Bus subscription `west`, storage account `azrobotics91044`, Azure Files share `robotics-drop`, Redis cache `redis-robotics-91044`, Event Grid topic `eg-robotics-91044`, Key Vault `kv-robotics-91044`, App Configuration store `cfg-robotics-91044`, action group `ag-robotics-91044`, metric alert `ma-robotics-91044`, activity log alert `ala-robotics-91044`, east Log Analytics workspace `log-robotics-east-91044`, west Log Analytics workspace `log-robotics-west-91044`, and Application Insights component `appi-robotics-91044`.",
+    "",
+    "Keep this limited to the robotics discovery plane. Do not add Front Door, API Management, Functions, Logic Apps, Cosmos DB, Synapse, MySQL, PostgreSQL, Database Migration Service, or private endpoints.",
+    "",
+    "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `RoboticsPublicDnsZoneName`, `RoboticsPrivateDnsZoneName`, `RoboticsRegistryName`, `RoboticsManagedIdentityName`, `RoboticsEastApplicationGatewayName`, `RoboticsWestApplicationGatewayName`, `RoboticsEastClusterName`, `RoboticsWestClusterName`, `RoboticsTopicName`, `RoboticsEastSubscriptionName`, `RoboticsWestSubscriptionName`, `RoboticsFileShareName`, `RoboticsRedisName`, `RoboticsEventGridTopicEndpoint`, `RoboticsKeyVaultName`, `RoboticsAppConfigName`, `RoboticsActionGroupName`, `RoboticsMetricAlertName`, `RoboticsActivityLogAlertName`, `RoboticsEastLogAnalyticsWorkspaceName`, `RoboticsWestLogAnalyticsWorkspaceName`, `RoboticsAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+  ].join("\n"),
+  fieldReferences: [
+    {
+      title: "AKS baseline for multiregion clusters",
+      url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster",
+      why: "Grounds the regional cluster and shared control-surface topology.",
+    },
+    {
+      title: "Private DNS zones",
+      url: "https://learn.microsoft.com/en-us/azure/dns/private-dns-overview",
+      why: "Grounds the internal service-discovery layer across linked virtual networks.",
+    },
+    {
+      title: "Multi-region load balancing with Traffic Manager and Application Gateway",
+      url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/n-tier/multi-region-sql-server",
+      why: "Grounds the dual-region ingress shape with public IPs and application gateways.",
+    },
+  ],
+  resourceNames: {
+    resourceGroup: "rg-az-robotics-discovery-pulumi-91044",
+    publicDnsZone: "robotics91044.contoso.net",
+    publicDnsEastRecord: "east",
+    publicDnsWestRecord: "west",
+    privateDnsZone: "robotics.internal",
+    privateDnsLinkEast: "robotics-link-east-91044",
+    privateDnsLinkWest: "robotics-link-west-91044",
+    managedIdentity: "id-robotics-91044",
+    registry: "acrrobotics91044",
+    eastVirtualNetwork: "vnet-robotics-east-91044",
+    westVirtualNetwork: "vnet-robotics-west-91044",
+    eastApplicationGatewaySubnet: "snet-robotics-agw-east-91044",
+    westApplicationGatewaySubnet: "snet-robotics-agw-west-91044",
+    eastWorkloadSubnet: "snet-robotics-work-east-91044",
+    westWorkloadSubnet: "snet-robotics-work-west-91044",
+    eastPublicIp: "pip-robotics-east-91044",
+    westPublicIp: "pip-robotics-west-91044",
+    eastApplicationGateway: "agw-robotics-east-91044",
+    westApplicationGateway: "agw-robotics-west-91044",
+    eastCluster: "aks-robotics-east-91044",
+    westCluster: "aks-robotics-west-91044",
+    serviceBusNamespace: "sb-robotics-91044",
+    serviceBusTopic: "robotics-jobs",
+    eastSubscription: "east",
+    westSubscription: "west",
+    storageAccount: "azrobotics91044",
+    fileShare: "robotics-drop",
+    redisCache: "redis-robotics-91044",
+    eventGridTopic: "eg-robotics-91044",
+    keyVault: "kv-robotics-91044",
+    appConfigStore: "cfg-robotics-91044",
+    actionGroup: "ag-robotics-91044",
+    metricAlert: "ma-robotics-91044",
+    activityLogAlert: "ala-robotics-91044",
+    eastLogAnalyticsWorkspace: "log-robotics-east-91044",
+    westLogAnalyticsWorkspace: "log-robotics-west-91044",
+    applicationInsights: "appi-robotics-91044",
+  },
+  expectedOutputKeys: [
+    "RoboticsPublicDnsZoneName",
+    "RoboticsPrivateDnsZoneName",
+    "RoboticsRegistryName",
+    "RoboticsManagedIdentityName",
+    "RoboticsEastApplicationGatewayName",
+    "RoboticsWestApplicationGatewayName",
+    "RoboticsEastClusterName",
+    "RoboticsWestClusterName",
+    "RoboticsTopicName",
+    "RoboticsEastSubscriptionName",
+    "RoboticsWestSubscriptionName",
+    "RoboticsFileShareName",
+    "RoboticsRedisName",
+    "RoboticsEventGridTopicEndpoint",
+    "RoboticsKeyVaultName",
+    "RoboticsAppConfigName",
+    "RoboticsActionGroupName",
+    "RoboticsMetricAlertName",
+    "RoboticsActivityLogAlertName",
+    "RoboticsEastLogAnalyticsWorkspaceName",
+    "RoboticsWestLogAnalyticsWorkspaceName",
+    "RoboticsAppInsightsName",
+  ],
+  requiredSourceMarkers: [
+    "network.Zone",
+    "network.RecordSet",
+    "network.PrivateZone",
+    "network.PrivateRecordSet",
+    "managedidentity.",
+    "containerregistry.",
+    "network.VirtualNetwork",
+    "network.PublicIPAddress",
+    "network.ApplicationGateway",
+    "containerservice.",
+    "servicebus.",
+    "storage.FileShare",
+    "cache.Redis",
+    "eventgrid.",
+    "keyvault.",
+    "appconfiguration.",
+    "insights.ActionGroup",
+    "insights.MetricAlert",
+    "insights.ActivityLogAlert",
+    "operationalinsights.",
+    "robotics-jobs",
+  ],
+  forbiddenSourceMarkers: ["frontdoor", "apimanagement", "web.", "logic.", "documentdb", "synapse.", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+  integrationChecks: [
+    { label: "public-dns-zone", provider: "Microsoft.Network", typePath: "dnsZones/robotics91044.contoso.net", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones" },
+    { label: "public-dns-east-record", provider: "Microsoft.Network", typePath: "dnsZones/robotics91044.contoso.net/A/east", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/A" },
+    { label: "public-dns-west-record", provider: "Microsoft.Network", typePath: "dnsZones/robotics91044.contoso.net/A/west", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/A" },
+    { label: "private-dns-zone", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones" },
+    { label: "private-dns-link-east", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal/virtualNetworkLinks/robotics-link-east-91044", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+    { label: "private-dns-link-west", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal/virtualNetworkLinks/robotics-link-west-91044", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/virtualNetworkLinks" },
+    { label: "private-gateway-record", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal/A/gateway", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+    { label: "private-workers-record", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal/A/workers", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+    { label: "private-files-record", provider: "Microsoft.Network", typePath: "privateDnsZones/robotics.internal/A/files", apiVersion: "2020-06-01", expectedType: "Microsoft.Network/privateDnsZones/A" },
+    { label: "managed-identity", provider: "Microsoft.ManagedIdentity", typePath: "userAssignedIdentities/id-robotics-91044", apiVersion: "2023-01-31", expectedType: "Microsoft.ManagedIdentity/userAssignedIdentities" },
+    { label: "container-registry", provider: "Microsoft.ContainerRegistry", typePath: "registries/acrrobotics91044", apiVersion: "2023-07-01", expectedType: "Microsoft.ContainerRegistry/registries" },
+    { label: "east-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-east-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+    { label: "west-vnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-west-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks" },
+    { label: "east-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-east-91044/subnets/snet-robotics-agw-east-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "west-appgw-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-west-91044/subnets/snet-robotics-agw-west-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "east-work-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-east-91044/subnets/snet-robotics-work-east-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "west-work-subnet", provider: "Microsoft.Network", typePath: "virtualNetworks/vnet-robotics-west-91044/subnets/snet-robotics-work-west-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/virtualNetworks/subnets" },
+    { label: "east-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-robotics-east-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+    { label: "west-public-ip", provider: "Microsoft.Network", typePath: "publicIPAddresses/pip-robotics-west-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/publicIPAddresses" },
+    { label: "east-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-robotics-east-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+    { label: "west-application-gateway", provider: "Microsoft.Network", typePath: "applicationGateways/agw-robotics-west-91044", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/applicationGateways" },
+    { label: "east-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-robotics-east-91044", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+    { label: "west-aks", provider: "Microsoft.ContainerService", typePath: "managedClusters/aks-robotics-west-91044", apiVersion: "2024-01-01", expectedType: "Microsoft.ContainerService/managedClusters" },
+    { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-robotics-91044", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+    { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-robotics-91044/topics/robotics-jobs", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+    { label: "service-bus-subscription-east", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-robotics-91044/topics/robotics-jobs/subscriptions/east", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-west", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-robotics-91044/topics/robotics-jobs/subscriptions/west", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azrobotics91044", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+    { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azrobotics91044/fileServices/default/shares/robotics-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+    { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-robotics-91044", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+    { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-robotics-91044", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+    { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-robotics-91044", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+    { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-robotics-91044", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+    { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-robotics-91044", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+    { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-robotics-91044", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+    { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-robotics-91044", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    { label: "east-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-robotics-east-91044", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "west-log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-robotics-west-91044", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-robotics-91044", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+  ],
+});
+
+scenarios.push({
+  poId: "2680382d-cd3c-4553-951c-20f102ebe606",
+  prId: "Pr91042",
+  scenarioId: "regulated-replay-warehouse-fabric",
+  title: "Regulated replay warehouse fabric",
+  prompt: [
+    "Our regulated operations analytics team wants one Azure deployment that can ingest replay traffic, keep near-real-time operational state, expose a governed replay command surface, and retain a warehouse-grade query plane without splitting the environment into disconnected stacks. They need hot ingest, replay orchestration, a state store, an analytical warehouse, durable command channels, staging storage, and the normal secret, configuration, and telemetry services. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+    "",
+    "Use one Event Hubs namespace with one event hub, one Function App, one Azure Cosmos DB account with one SQL database and one container, one Azure Synapse workspace with one SQL pool, one API Management service with one API and one product and one product API association and one `replay-batch` operation with one operation policy, one Service Bus namespace with one topic and one `ingest` subscription and one `reconcile` subscription, one Blob Storage account with one blob container and one Azure Files share, one Event Grid topic, one Key Vault, one App Configuration store, one Azure Monitor action group, one Azure Monitor metric alert, one Azure Monitor activity log alert, one Log Analytics workspace, and one Application Insights component.",
+    "",
+    "Use these exact resource names: resource group `rg-az-replay-warehouse-pulumi-91042`, Event Hubs namespace `eh-replay-warehouse-91042`, Event Hub `replay-ingest`, Function App plan `plan-replay-warehouse-91042`, Function App `func-replay-warehouse-91042`, Cosmos DB account `cosmos-replay-warehouse-91042`, Cosmos SQL database `ReplayStateDb`, Cosmos SQL container `ReplayState`, Synapse workspace `syn-replay-warehouse-91042`, Synapse SQL pool `replaypool`, API Management service `apim-replay-warehouse-91042`, API Management API `replay-warehouse-api`, API Management product `replay-warehouse-product`, API Management operation `replay-batch`, Service Bus namespace `sb-replay-warehouse-91042`, Service Bus topic `replay-commands`, Service Bus subscription `ingest`, Service Bus subscription `reconcile`, storage account `azreplaywh91042`, blob container `replay-drop`, Azure Files share `replay-stage`, Event Grid topic `eg-replay-warehouse-91042`, Key Vault `kv-rply-wh-91042`, App Configuration store `cfg-replay-warehouse-91042`, action group `ag-replay-warehouse-91042`, metric alert `ma-replay-warehouse-91042`, activity log alert `ala-replay-warehouse-91042`, Log Analytics workspace `log-replay-warehouse-91042`, and Application Insights component `appi-replay-warehouse-91042`.",
+    "",
+    "Keep this focused on the replay warehouse fabric. Do not add Front Door, AKS, Application Gateway, private endpoints, custom domains, MySQL, PostgreSQL, or Database Migration Service.",
+    "",
+    "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `ReplayWarehouseApiGatewayUrl`, `ReplayWarehouseEventHubNamespaceName`, `ReplayWarehouseEventHubName`, `ReplayWarehouseFunctionHostName`, `ReplayWarehouseCosmosAccountName`, `ReplayWarehouseCosmosDatabaseName`, `ReplayWarehouseCosmosContainerName`, `ReplayWarehouseSynapseWorkspaceName`, `ReplayWarehouseSynapseSqlPoolName`, `ReplayWarehouseTopicName`, `ReplayWarehouseIngestSubscriptionName`, `ReplayWarehouseReconcileSubscriptionName`, `ReplayWarehouseStorageAccountName`, `ReplayWarehouseBlobContainerName`, `ReplayWarehouseFileShareName`, `ReplayWarehouseEventGridTopicEndpoint`, `ReplayWarehouseKeyVaultName`, `ReplayWarehouseAppConfigName`, `ReplayWarehouseActionGroupName`, `ReplayWarehouseMetricAlertName`, `ReplayWarehouseActivityLogAlertName`, `ReplayWarehouseLogAnalyticsWorkspaceName`, `ReplayWarehouseAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+  ].join("\n"),
+  fieldReferences: [
+    {
+      title: "Integrate Event Hubs with serverless functions on Azure",
+      url: "https://learn.microsoft.com/en-us/azure/architecture/serverless/event-hubs-functions/event-hubs-functions",
+      why: "Grounds the hot-ingest and replay processing surface.",
+    },
+    {
+      title: "What is Azure Cosmos DB analytical store?",
+      url: "https://learn.microsoft.com/en-us/azure/cosmos-db/analytical-store-introduction",
+      why: "Grounds the separation between operational state and analytical query workloads around Cosmos-backed replay state.",
+    },
+    {
+      title: "Azure Synapse Analytics",
+      url: "https://learn.microsoft.com/en-us/azure/synapse-analytics/overview-what-is",
+      why: "Grounds the warehouse and SQL pool layer for replay analysis.",
+    },
+  ],
+  resourceNames: {
+    resourceGroup: "rg-az-replay-warehouse-pulumi-91042",
+    eventHubNamespace: "eh-replay-warehouse-91042",
+    eventHub: "replay-ingest",
+    functionAppPlan: "plan-replay-warehouse-91042",
+    functionApp: "func-replay-warehouse-91042",
+    cosmosAccount: "cosmos-replay-warehouse-91042",
+    cosmosDatabase: "ReplayStateDb",
+    cosmosContainer: "ReplayState",
+    synapseWorkspace: "syn-replay-warehouse-91042",
+    synapseSqlPool: "replaypool",
+    apiManagementService: "apim-replay-warehouse-91042",
+    apiManagementApi: "replay-warehouse-api",
+    apiManagementProduct: "replay-warehouse-product",
+    apiManagementOperation: "replay-batch",
+    serviceBusNamespace: "sb-replay-warehouse-91042",
+    serviceBusTopic: "replay-commands",
+    ingestSubscription: "ingest",
+    reconcileSubscription: "reconcile",
+    storageAccount: "azreplaywh91042",
+    blobContainer: "replay-drop",
+    fileShare: "replay-stage",
+    eventGridTopic: "eg-replay-warehouse-91042",
+    keyVault: "kv-rply-wh-91042",
+    appConfigStore: "cfg-replay-warehouse-91042",
+    actionGroup: "ag-replay-warehouse-91042",
+    metricAlert: "ma-replay-warehouse-91042",
+    activityLogAlert: "ala-replay-warehouse-91042",
+    logAnalyticsWorkspace: "log-replay-warehouse-91042",
+    applicationInsights: "appi-replay-warehouse-91042",
+  },
+  expectedOutputKeys: [
+    "ReplayWarehouseApiGatewayUrl",
+    "ReplayWarehouseEventHubNamespaceName",
+    "ReplayWarehouseEventHubName",
+    "ReplayWarehouseFunctionHostName",
+    "ReplayWarehouseCosmosAccountName",
+    "ReplayWarehouseCosmosDatabaseName",
+    "ReplayWarehouseCosmosContainerName",
+    "ReplayWarehouseSynapseWorkspaceName",
+    "ReplayWarehouseSynapseSqlPoolName",
+    "ReplayWarehouseTopicName",
+    "ReplayWarehouseIngestSubscriptionName",
+    "ReplayWarehouseReconcileSubscriptionName",
+    "ReplayWarehouseStorageAccountName",
+    "ReplayWarehouseBlobContainerName",
+    "ReplayWarehouseFileShareName",
+    "ReplayWarehouseEventGridTopicEndpoint",
+    "ReplayWarehouseKeyVaultName",
+    "ReplayWarehouseAppConfigName",
+    "ReplayWarehouseActionGroupName",
+    "ReplayWarehouseMetricAlertName",
+    "ReplayWarehouseActivityLogAlertName",
+    "ReplayWarehouseLogAnalyticsWorkspaceName",
+    "ReplayWarehouseAppInsightsName",
+  ],
+  requiredSourceMarkers: [
+    "eventhub.",
+    "web.",
+    "documentdb.",
+    "synapse.",
+    "apimanagement.",
+    "servicebus.",
+    "storage.",
+    "eventgrid.",
+    "keyvault.",
+    "appconfiguration.",
+    "insights.ActionGroup",
+    "insights.MetricAlert",
+    "insights.ActivityLogAlert",
+    "operationalinsights.",
+    "replay-batch",
+    "replay-commands",
+  ],
+  forbiddenSourceMarkers: ["frontdoor", "containerservice", "network.ApplicationGateway", "dbformysql", "dbforpostgresql", "datamigration", "private endpoint"],
+  integrationChecks: [
+    { label: "event-hub-namespace", provider: "Microsoft.EventHub", typePath: "namespaces/eh-replay-warehouse-91042", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces" },
+    { label: "event-hub", provider: "Microsoft.EventHub", typePath: "namespaces/eh-replay-warehouse-91042/eventhubs/replay-ingest", apiVersion: "2024-01-01", expectedType: "Microsoft.EventHub/namespaces/eventhubs" },
+    { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-replay-warehouse-91042", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+    { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-replay-warehouse-91042", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+    { label: "cosmos-account", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-replay-warehouse-91042", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts" },
+    { label: "cosmos-database", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-replay-warehouse-91042/sqlDatabases/ReplayStateDb", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases" },
+    { label: "cosmos-container", provider: "Microsoft.DocumentDB", typePath: "databaseAccounts/cosmos-replay-warehouse-91042/sqlDatabases/ReplayStateDb/containers/ReplayState", apiVersion: "2024-05-15", expectedType: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers" },
+    { label: "synapse-workspace", provider: "Microsoft.Synapse", typePath: "workspaces/syn-replay-warehouse-91042", apiVersion: "2021-06-01", expectedType: "Microsoft.Synapse/workspaces" },
+    { label: "synapse-sql-pool", provider: "Microsoft.Synapse", typePath: "workspaces/syn-replay-warehouse-91042/sqlPools/replaypool", apiVersion: "2021-06-01", expectedType: "Microsoft.Synapse/workspaces/sqlPools" },
+    { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+    { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042/apis/replay-warehouse-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+    { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042/products/replay-warehouse-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+    { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042/products/replay-warehouse-product/apis/replay-warehouse-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+    { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042/apis/replay-warehouse-api/operations/replay-batch", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+    { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-replay-warehouse-91042/apis/replay-warehouse-api/operations/replay-batch/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+    { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-replay-warehouse-91042", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+    { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-replay-warehouse-91042/topics/replay-commands", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+    { label: "service-bus-subscription-ingest", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-replay-warehouse-91042/topics/replay-commands/subscriptions/ingest", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-reconcile", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-replay-warehouse-91042/topics/replay-commands/subscriptions/reconcile", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azreplaywh91042", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+    { label: "blob-container", provider: "Microsoft.Storage", typePath: "storageAccounts/azreplaywh91042/blobServices/default/containers/replay-drop", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/blobServices/containers" },
+    { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azreplaywh91042/fileServices/default/shares/replay-stage", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+    { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-replay-warehouse-91042", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+    { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-rply-wh-91042", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+    { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-replay-warehouse-91042", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+    { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-replay-warehouse-91042", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+    { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-replay-warehouse-91042", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+    { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-replay-warehouse-91042", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-replay-warehouse-91042", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-replay-warehouse-91042", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+  ],
+});
+
+scenarios.push({
+  poId: "adff7aa8-2fd8-4170-b802-63164f6d3485",
+  prId: "Pr91045",
+  scenarioId: "global-exception-governance-ring",
+  title: "Global exception governance ring",
+  prompt: [
+    "Our regulated partner governance team wants one Azure deployment that can take exception requests from a global edge, route them through one governed API surface, execute a long-running approval workflow, hold hot entitlement state, keep mutable case state, persist evidence packages, publish downstream command notifications, and keep all of the shared secret, configuration, and observability services in the same environment. The project skeleton already exists and I only need the infrastructure implementation in `lib/tap-stack.ts`. Write this in Pulumi Azure TypeScript for `eastus`.",
+    "",
+    "Put Azure Front Door in front of Azure API Management, attach a WAF policy to the Front Door surface through a security policy, back the approval API with one Azure Function App, add one Azure Logic App workflow for escalations and audit fan-out, use Azure Database for PostgreSQL Flexible Server for mutable case state, use Azure Cache for Redis for hot decision state, use one Service Bus namespace with one topic and one `risk` subscription and one `finance` subscription and one `ops` subscription for downstream command processing, use one Blob Storage account with one blob container and one Azure Files share for evidence retention, publish downstream business notifications through one Event Grid topic, keep one public DNS zone with one CNAME record for the API edge, store shared secrets in one Key Vault, keep runtime configuration in one App Configuration store, and route diagnostics into one Log Analytics workspace and one Application Insights component.",
+    "",
+    "Use these exact resource names: resource group `rg-az-exception-governance-pulumi-91045`, Front Door profile `afd-exception-governance-91045`, Front Door endpoint `exception-governance-endpoint`, Front Door origin group `exception-governance-origins`, Front Door origin `exception-governance-origin`, Front Door route `exception-governance-route`, Front Door security policy `exception-governance-security-policy`, WAF policy `waf-exception-governance-91045`, public DNS zone `exception91045.contoso.net`, public DNS CNAME record `api`, API Management service `apim-exception-governance-91045`, API Management API `exception-governance-api`, API Management product `exception-governance-product`, API Management operation `approve-exception`, Function App plan `plan-exception-governance-91045`, Function App `func-exception-governance-91045`, Logic App workflow `la-exception-governance-91045`, PostgreSQL server `pg-exception-governance-91045`, PostgreSQL database `exceptiondb`, Redis cache `redis-exception-governance-91045`, Service Bus namespace `sb-exception-governance-91045`, Service Bus topic `exception-events`, Service Bus subscriptions `risk`, `finance`, and `ops`, storage account `azexceptiongov91045`, blob container `exception-evidence`, Azure Files share `exception-archive`, Event Grid topic `eg-exception-governance-91045`, Key Vault `kv-exc-gov-91045`, App Configuration store `cfg-exception-governance-91045`, action group `ag-exception-governance-91045`, metric alert `ma-exception-governance-91045`, activity log alert `ala-exception-governance-91045`, Log Analytics workspace `log-exception-governance-91045`, and Application Insights component `appi-exception-governance-91045`.",
+    "",
+    "Keep this limited to the exception governance ring. Do not add AKS, Application Gateway, private DNS, private endpoints, MySQL, Cosmos DB, Synapse, or Database Migration Service.",
+    "",
+    "The Pulumi entry point, project files, tests, and shipment wiring already exist. I only need `lib/tap-stack.ts`. The implementation must export `createTapStack` and it must export exactly these output keys: `ExceptionGovernanceFrontDoorHostName`, `ExceptionGovernancePublicDnsZoneName`, `ExceptionGovernanceApiGatewayUrl`, `ExceptionGovernanceFunctionHostName`, `ExceptionGovernanceLogicWorkflowName`, `ExceptionGovernancePostgresServerName`, `ExceptionGovernancePostgresDatabaseName`, `ExceptionGovernanceRedisName`, `ExceptionGovernanceTopicName`, `ExceptionGovernanceRiskSubscriptionName`, `ExceptionGovernanceFinanceSubscriptionName`, `ExceptionGovernanceOpsSubscriptionName`, `ExceptionGovernanceStorageAccountName`, `ExceptionGovernanceBlobContainerName`, `ExceptionGovernanceFileShareName`, `ExceptionGovernanceEventGridTopicEndpoint`, `ExceptionGovernanceKeyVaultName`, `ExceptionGovernanceAppConfigName`, `ExceptionGovernanceActionGroupName`, `ExceptionGovernanceMetricAlertName`, `ExceptionGovernanceActivityLogAlertName`, `ExceptionGovernanceLogAnalyticsWorkspaceName`, `ExceptionGovernanceAppInsightsName`. Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\" and no prose before or after it.",
+  ].join("\n"),
+  fieldReferences: [
+    {
+      title: "Configure Azure Front Door in front of Azure API Management",
+      url: "https://learn.microsoft.com/en-us/azure/api-management/front-door-api-management",
+      why: "Grounds the secure global API edge with Front Door, API Management, and WAF.",
+    },
+    {
+      title: "Respond to Azure Service Bus events received using Azure Event Grid by using Azure Logic Apps",
+      url: "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-example",
+      why: "Grounds the long-running approval workflow and event-driven escalation path across Service Bus, Event Grid, and Logic Apps.",
+    },
+    {
+      title: "Connect to Azure Service Bus from workflows in Azure Logic Apps",
+      url: "https://learn.microsoft.com/en-us/azure/connectors/connectors-create-api-servicebus",
+      why: "Grounds workflow-side Service Bus interactions for downstream approval and escalation handling.",
+    },
+  ],
+  resourceNames: {
+    resourceGroup: "rg-az-exception-governance-pulumi-91045",
+    frontDoorProfile: "afd-exception-governance-91045",
+    frontDoorEndpoint: "exception-governance-endpoint",
+    frontDoorOriginGroup: "exception-governance-origins",
+    frontDoorOrigin: "exception-governance-origin",
+    frontDoorRoute: "exception-governance-route",
+    frontDoorSecurityPolicy: "exception-governance-security-policy",
+    wafPolicy: "waf-exception-governance-91045",
+    publicDnsZone: "exception91045.contoso.net",
+    publicDnsRecord: "api",
+    apiManagementService: "apim-exception-governance-91045",
+    apiManagementApi: "exception-governance-api",
+    apiManagementProduct: "exception-governance-product",
+    apiManagementOperation: "approve-exception",
+    functionAppPlan: "plan-exception-governance-91045",
+    functionApp: "func-exception-governance-91045",
+    logicWorkflow: "la-exception-governance-91045",
+    postgresServer: "pg-exception-governance-91045",
+    postgresDatabase: "exceptiondb",
+    redisCache: "redis-exception-governance-91045",
+    serviceBusNamespace: "sb-exception-governance-91045",
+    serviceBusTopic: "exception-events",
+    riskSubscription: "risk",
+    financeSubscription: "finance",
+    opsSubscription: "ops",
+    storageAccount: "azexceptiongov91045",
+    blobContainer: "exception-evidence",
+    fileShare: "exception-archive",
+    eventGridTopic: "eg-exception-governance-91045",
+    keyVault: "kv-exc-gov-91045",
+    appConfigStore: "cfg-exception-governance-91045",
+    actionGroup: "ag-exception-governance-91045",
+    metricAlert: "ma-exception-governance-91045",
+    activityLogAlert: "ala-exception-governance-91045",
+    logAnalyticsWorkspace: "log-exception-governance-91045",
+    applicationInsights: "appi-exception-governance-91045",
+  },
+  expectedOutputKeys: [
+    "ExceptionGovernanceFrontDoorHostName",
+    "ExceptionGovernancePublicDnsZoneName",
+    "ExceptionGovernanceApiGatewayUrl",
+    "ExceptionGovernanceFunctionHostName",
+    "ExceptionGovernanceLogicWorkflowName",
+    "ExceptionGovernancePostgresServerName",
+    "ExceptionGovernancePostgresDatabaseName",
+    "ExceptionGovernanceRedisName",
+    "ExceptionGovernanceTopicName",
+    "ExceptionGovernanceRiskSubscriptionName",
+    "ExceptionGovernanceFinanceSubscriptionName",
+    "ExceptionGovernanceOpsSubscriptionName",
+    "ExceptionGovernanceStorageAccountName",
+    "ExceptionGovernanceBlobContainerName",
+    "ExceptionGovernanceFileShareName",
+    "ExceptionGovernanceEventGridTopicEndpoint",
+    "ExceptionGovernanceKeyVaultName",
+    "ExceptionGovernanceAppConfigName",
+    "ExceptionGovernanceActionGroupName",
+    "ExceptionGovernanceMetricAlertName",
+    "ExceptionGovernanceActivityLogAlertName",
+    "ExceptionGovernanceLogAnalyticsWorkspaceName",
+    "ExceptionGovernanceAppInsightsName",
+  ],
+  requiredSourceMarkers: [
+    "cdn.Profile",
+    "cdn.AFDEndpoint",
+    "cdn.AFDOriginGroup",
+    "cdn.AFDOrigin",
+    "cdn.Route",
+    "cdn.SecurityPolicy",
+    "frontdoor.Policy",
+    "dns.Zone",
+    "dns.RecordSet",
+    "apimanagement.",
+    "web.",
+    "logic.",
+    "dbforpostgresql.",
+    "redis.Redis",
+    "servicebus.",
+    "storage.BlobContainer",
+    "storage.FileShare",
+    "eventgrid.",
+    "keyvault.",
+    "appconfiguration.",
+    "monitor.ActionGroup",
+    "monitor.MetricAlert",
+    "monitor.ActivityLogAlert",
+    "operationalinsights.",
+    "applicationinsights.Component",
+    "approve-exception",
+    "exception-events",
+  ],
+  forbiddenSourceMarkers: ["containerservice", "network.ApplicationGateway", "network.WebApplicationFirewallPolicy", "privateDnsZones", "private endpoint", "dbformysql", "documentdb", "synapse.", "datamigration"],
+  integrationChecks: [
+    { label: "front-door-profile", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles" },
+    { label: "front-door-endpoint", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/afdEndpoints/exception-governance-endpoint", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints" },
+    { label: "front-door-origin-group", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/originGroups/exception-governance-origins", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/originGroups" },
+    { label: "front-door-origin", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/originGroups/exception-governance-origins/origins/exception-governance-origin", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/originGroups/origins" },
+    { label: "front-door-route", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/afdEndpoints/exception-governance-endpoint/routes/exception-governance-route", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/afdEndpoints/routes" },
+    { label: "front-door-security-policy", provider: "Microsoft.Cdn", typePath: "profiles/afd-exception-governance-91045/securityPolicies/exception-governance-security-policy", apiVersion: "2024-09-01", expectedType: "Microsoft.Cdn/profiles/securityPolicies" },
+    { label: "waf-policy", provider: "Microsoft.Network", typePath: "FrontDoorWebApplicationFirewallPolicies/waf-exception-governance-91045", apiVersion: "2023-09-01", expectedType: "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies" },
+    { label: "public-dns-zone", provider: "Microsoft.Network", typePath: "dnsZones/exception91045.contoso.net", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones" },
+    { label: "public-dns-record", provider: "Microsoft.Network", typePath: "dnsZones/exception91045.contoso.net/CNAME/api", apiVersion: "2018-05-01", expectedType: "Microsoft.Network/dnsZones/CNAME" },
+    { label: "api-management-service", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service" },
+    { label: "api-management-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045/apis/exception-governance-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis" },
+    { label: "api-management-product", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045/products/exception-governance-product", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products" },
+    { label: "api-management-product-api", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045/products/exception-governance-product/apis/exception-governance-api", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/products/apis" },
+    { label: "api-management-operation", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045/apis/exception-governance-api/operations/approve-exception", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations" },
+    { label: "api-management-operation-policy", provider: "Microsoft.ApiManagement", typePath: "service/apim-exception-governance-91045/apis/exception-governance-api/operations/approve-exception/policies/policy", apiVersion: "2022-08-01", expectedType: "Microsoft.ApiManagement/service/apis/operations/policies" },
+    { label: "function-plan", provider: "Microsoft.Web", typePath: "serverfarms/plan-exception-governance-91045", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/serverfarms" },
+    { label: "function-app", provider: "Microsoft.Web", typePath: "sites/func-exception-governance-91045", apiVersion: "2023-12-01", expectedType: "Microsoft.Web/sites" },
+    { label: "logic-workflow", provider: "Microsoft.Logic", typePath: "workflows/la-exception-governance-91045", apiVersion: "2019-05-01", expectedType: "Microsoft.Logic/workflows" },
+    { label: "postgres-server", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-exception-governance-91045", apiVersion: "2022-12-01", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers" },
+    { label: "postgres-database", provider: "Microsoft.DBforPostgreSQL", typePath: "flexibleServers/pg-exception-governance-91045/databases/exceptiondb", apiVersion: "2022-12-01", expectedType: "Microsoft.DBforPostgreSQL/flexibleServers/databases" },
+    { label: "redis-cache", provider: "Microsoft.Cache", typePath: "redis/redis-exception-governance-91045", apiVersion: "2023-08-01", expectedType: "Microsoft.Cache/redis" },
+    { label: "service-bus-namespace", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-exception-governance-91045", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces" },
+    { label: "service-bus-topic", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-exception-governance-91045/topics/exception-events", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics" },
+    { label: "service-bus-subscription-risk", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/risk", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-finance", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/finance", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "service-bus-subscription-ops", provider: "Microsoft.ServiceBus", typePath: "namespaces/sb-exception-governance-91045/topics/exception-events/subscriptions/ops", apiVersion: "2021-11-01", expectedType: "Microsoft.ServiceBus/namespaces/topics/subscriptions" },
+    { label: "storage-account", provider: "Microsoft.Storage", typePath: "storageAccounts/azexceptiongov91045", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts" },
+    { label: "blob-container", provider: "Microsoft.Storage", typePath: "storageAccounts/azexceptiongov91045/blobServices/default/containers/exception-evidence", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/blobServices/containers" },
+    { label: "file-share", provider: "Microsoft.Storage", typePath: "storageAccounts/azexceptiongov91045/fileServices/default/shares/exception-archive", apiVersion: "2023-01-01", expectedType: "Microsoft.Storage/storageAccounts/fileServices/shares" },
+    { label: "event-grid-topic", provider: "Microsoft.EventGrid", typePath: "topics/eg-exception-governance-91045", apiVersion: "2022-06-15", expectedType: "Microsoft.EventGrid/topics" },
+    { label: "key-vault", provider: "Microsoft.KeyVault", typePath: "vaults/kv-exc-gov-91045", apiVersion: "2023-07-01", expectedType: "Microsoft.KeyVault/vaults" },
+    { label: "app-config", provider: "Microsoft.AppConfiguration", typePath: "configurationStores/cfg-exception-governance-91045", apiVersion: "2023-03-01", expectedType: "Microsoft.AppConfiguration/configurationStores" },
+    { label: "action-group", provider: "Microsoft.Insights", typePath: "actionGroups/ag-exception-governance-91045", apiVersion: "2023-01-01", expectedType: "Microsoft.Insights/actionGroups" },
+    { label: "metric-alert", provider: "Microsoft.Insights", typePath: "metricAlerts/ma-exception-governance-91045", apiVersion: "2018-03-01", expectedType: "Microsoft.Insights/metricAlerts" },
+    { label: "activity-log-alert", provider: "Microsoft.Insights", typePath: "activityLogAlerts/ala-exception-governance-91045", apiVersion: "2020-10-01", expectedType: "Microsoft.Insights/activityLogAlerts" },
+    { label: "log-analytics", provider: "Microsoft.OperationalInsights", typePath: "workspaces/log-exception-governance-91045", apiVersion: "2022-10-01", expectedType: "Microsoft.OperationalInsights/workspaces" },
+    { label: "application-insights", provider: "Microsoft.Insights", typePath: "components/appi-exception-governance-91045", apiVersion: "2020-02-02", expectedType: "Microsoft.Insights/components" },
+  ],
+});
+
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
     const keyVaultName = scenario.resourceNames?.keyVault;
@@ -4238,14 +5049,17 @@ function pulumiYaml() {
   return `name: tap-stack\nruntime: nodejs\nmain: bin/tap.ts\n`;
 }
 
-function packageJson() {
+function packageJson(scenario) {
+  const azureNativeVersion = scenarioUsesFrontDoorWafPolicyResource(scenario)
+    ? "^3.18.0"
+    : "^2.80.0";
   return `${JSON.stringify(
     {
       name: "tap-stack",
       private: true,
       main: "bin/tap.ts",
       dependencies: {
-        "@pulumi/azure-native": "^2.80.0",
+        "@pulumi/azure-native": azureNativeVersion,
         "@pulumi/pulumi": "^3.122.0",
         "@types/node": "^20.0.0",
         "ts-node": "^10.9.2",
@@ -4351,6 +5165,15 @@ for (const marker of metadata.requiredSourceMarkers ?? []) {
 for (const forbidden of metadata.forbiddenSourceMarkers ?? []) {
   if (stack.toLowerCase().includes(String(forbidden).toLowerCase())) {
     throw new Error(\`lib/tap-stack.ts contains forbidden marker \${forbidden}\`);
+  }
+}
+
+if (metadata.integrationChecks?.some((check) => check.expectedType === "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies")) {
+  if (!stack.includes("frontdoor.Policy")) {
+    throw new Error("Front Door WAF scenarios must use azure.frontdoor.Policy");
+  }
+  if (stack.includes("network.WebApplicationFirewallPolicy")) {
+    throw new Error("Front Door WAF scenarios must not use azure.network.WebApplicationFirewallPolicy");
   }
 }
 
@@ -4541,6 +5364,8 @@ function armParameters(scenario) {
 }
 
 function generationHints(scenario) {
+  const hasPublicDns = scenarioUsesPublicDns(scenario);
+  const hasPrivateDns = scenarioUsesPrivateDns(scenario);
   const hints = [
     "You are generating the missing Pulumi implementation for an Azure IaC task.",
     "Return exactly one Markdown fenced code block with path=\"lib/tap-stack.ts\".",
@@ -4558,18 +5383,31 @@ function generationHints(scenario) {
     "When creating azure.servicebus.Subscription resources for a topic, add an explicit dependsOn: [topic] option so subscriptions are created only after the topic exists.",
     "For Event Grid custom topics in Azure Native, do not set a top-level sku unless the exact generated TopicArgs type proves it is accepted.",
     "For API Management Product in Azure Native, do not use a nonexistent published property. Use displayName and state, and only include properties that exist on ProductArgs.",
+    "For API Management child resources, add explicit dependency edges: ProductApi should depend on both the Api and the Product, ApiOperation should depend on the Api, and ApiOperationPolicy should depend on the ApiOperation.",
     "For azure.insights.Component, use applicationType rather than ARM-style Application_Type.",
+    "For azure.insights.Component, set kind to web and set applicationType to web unless the prompt explicitly requires a different exact shape.",
     "For output keys ending in Url or Endpoint, emit a single well-formed https URL. Do not prepend https:// if the Azure Native property already includes the scheme.",
     "For output keys ending in HostName, emit the bare hostname without http:// or https://.",
     "For output keys ending in Name, emit the exact leaf resource name from the prompt rather than an ARM id, parent-qualified name, or path-like composite value.",
+    "When an Azure Native property or invoke result is typed as pulumi.Output<string | undefined>, do not pass it directly to string-only inputs or outputs. Normalize it first with .apply((value: string | undefined) => value ?? \"\") or pulumi.interpolate so strict TypeScript accepts the code.",
+    "For Function App consumption plans, create azure.web.AppServicePlan with sku Y1 / Dynamic. If you set kind, use functionapp. If you set reserved, use a boolean value. Do not invent unsupported plan properties.",
   ];
 
   if (scenario.prompt.toLowerCase().includes('front door')) {
     hints.push("For Azure Front Door, use azure.cdn.Profile, AFDEndpoint, AFDOriginGroup, AFDOrigin, Route, and SecurityPolicy.");
-    hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
-    hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
     hints.push("For azure.cdn.Route, use originGroup, not origins. Keep enabledState, supportedProtocols, patternsToMatch, forwardingProtocol, httpsRedirect, and linkToDefaultDomain on the route.");
-    hints.push("For Front Door WAF and security policy, create azure.network.WebApplicationFirewallPolicy and then attach it through azure.cdn.SecurityPolicy.");
+    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
+      hints.push("This task installs @pulumi/azure-native v3. Use namespace-specific imports such as import * as cdn from \"@pulumi/azure-native/cdn\", import * as frontdoor from \"@pulumi/azure-native/frontdoor\", import * as network from \"@pulumi/azure-native/network\", and similar subpath imports for the other Azure namespaces you use.");
+      hints.push("When using @pulumi/azure-native v3, do not rely on a single top-level import like import * as azure from \"@pulumi/azure-native\" for service namespaces such as frontdoor, monitor, applicationinsights, redis, dns, or network.");
+      hints.push("For this v3 task, use these module families directly: cdn from @pulumi/azure-native/cdn, frontdoor from @pulumi/azure-native/frontdoor, dns from @pulumi/azure-native/dns, redis from @pulumi/azure-native/redis, monitor from @pulumi/azure-native/monitor, applicationinsights from @pulumi/azure-native/applicationinsights, operationalinsights from @pulumi/azure-native/operationalinsights, plus the other service subpaths you need.");
+      hints.push("This task expects the Azure Front Door WAF resource family. Use azure.frontdoor.Policy, not azure.network.WebApplicationFirewallPolicy.");
+      hints.push("For azure.frontdoor.Policy, set sku.name to Standard_AzureFrontDoor or Premium_AzureFrontDoor, and configure policySettings.enabledState, policySettings.mode, requestBodyCheck, customRules, and managedRules as needed.");
+      hints.push("Attach the resulting Front Door WAF policy id through azure.cdn.SecurityPolicy.");
+    } else {
+      hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
+      hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
+      hints.push("If the task uses a non-Front-Door WAF policy, create azure.network.WebApplicationFirewallPolicy and attach it through the appropriate downstream resource.");
+    }
   }
 
   if (scenario.prompt.toLowerCase().includes('application gateway')) {
@@ -4584,17 +5422,16 @@ function generationHints(scenario) {
     hints.push("For internal load balancers, put the frontend IP configuration on a subnet and use a fixed privateIPAddress.");
   }
 
-  if (scenario.prompt.toLowerCase().includes('public dns')) {
+  if (hasPublicDns) {
     hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
     hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
   }
 
-  if (scenario.prompt.toLowerCase().includes('private dns')) {
+  if (hasPrivateDns) {
     hints.push("For Azure Private DNS, use azure.network.PrivateZone, VirtualNetworkLink, and PrivateRecordSet resources with prompt-fixed zone and record names.");
   }
 
-  if (scenario.prompt.toLowerCase().includes('public dns')
-    && scenario.prompt.toLowerCase().includes('private dns')) {
+  if (hasPublicDns && hasPrivateDns) {
     hints.push("This task uses both Azure public DNS and Azure Private DNS. Keep them separate: use azure.network.Zone plus azure.network.RecordSet only for the public zone, and use azure.network.PrivateZone plus VirtualNetworkLink plus azure.network.PrivateRecordSet only for the private zone.");
     hints.push("Do not use azure.network.RecordSet against the private zone. Do not use azure.network.PrivateRecordSet against the public zone.");
   }
@@ -4748,44 +5585,69 @@ function maxOutputTokensForScenario(scenario) {
   return Math.min(12000, Math.max(5000, 5000 + integrationCheckBudget + outputKeyBudget));
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function callOpenAI(scenario, prompt) {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is required.");
   }
-  const startedAt = Date.now();
   const maxOutputTokens = maxOutputTokensForScenario(scenario);
-  console.log(`calling ${model} with max_output_tokens=${maxOutputTokens}...`);
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "content-type": "application/json",
-    },
-    signal: AbortSignal.timeout(180000),
-    body: JSON.stringify({
-      model,
-      input: openAiInput(scenario, prompt),
-      reasoning: { effort: "low" },
-      max_output_tokens: maxOutputTokens,
-      text: { verbosity: "low" },
-    }),
-  });
-  const rawBody = await response.text();
-  let body;
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    body = { raw: rawBody };
-  }
-  if (!response.ok) {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const startedAt = Date.now();
+    console.log(`calling ${model} with max_output_tokens=${maxOutputTokens}...`);
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "content-type": "application/json",
+      },
+      signal: AbortSignal.timeout(180000),
+      body: JSON.stringify({
+        model,
+        input: openAiInput(scenario, prompt),
+        reasoning: { effort: "low" },
+        max_output_tokens: maxOutputTokens,
+        text: { verbosity: "low" },
+      }),
+    });
+    const rawBody = await response.text();
+    let body;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      body = { raw: rawBody };
+    }
+    if (response.ok) {
+      console.log(`model response received in ${Math.round((Date.now() - startedAt) / 1000)}s`);
+      return outputText(body);
+    }
+    const isRetriable = response.status === 429 || response.status >= 500;
+    if (isRetriable && attempt < 3) {
+      console.log(`OpenAI Responses API transient failure on attempt ${attempt}/3: HTTP ${response.status}. Retrying...`);
+      await sleep(2000 * attempt);
+      continue;
+    }
     throw new Error(`OpenAI Responses API failed with HTTP ${response.status}: ${JSON.stringify(body)}`);
   }
-  console.log(`model response received in ${Math.round((Date.now() - startedAt) / 1000)}s`);
-  return outputText(body);
+  throw new Error('OpenAI Responses API retries exhausted');
 }
 
-function promptIncludes(scenario, phrase) {
-  return scenario.prompt.toLowerCase().includes(phrase);
+function scenarioUsesPublicDns(scenario) {
+  return (scenario.requiredSourceMarkers ?? []).some((marker) => String(marker).includes('network.RecordSet'))
+    || (scenario.integrationChecks ?? []).some((check) => String(check.typePath ?? '').startsWith('dnsZones/'));
+}
+
+function scenarioUsesPrivateDns(scenario) {
+  return (scenario.requiredSourceMarkers ?? []).some((marker) => String(marker).includes('network.PrivateRecordSet'))
+    || (scenario.integrationChecks ?? []).some((check) => String(check.typePath ?? '').startsWith('privateDnsZones/'));
+}
+
+function scenarioUsesFrontDoorWafPolicyResource(scenario) {
+  return (scenario.integrationChecks ?? []).some(
+    (check) => check.expectedType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies',
+  );
 }
 
 export function validateTapStack(scenario, tapStackText) {
@@ -4815,10 +5677,10 @@ export function validateTapStack(scenario, tapStackText) {
       throw new Error(`contains forbidden marker ${forbidden}`);
     }
   }
-  const hasPublicDns = promptIncludes(scenario, 'public dns');
-  const hasPrivateDns = promptIncludes(scenario, 'private dns');
-  const hasPublicRecordSet = tapStackText.includes('new azure.network.RecordSet(');
-  const hasPrivateRecordSet = tapStackText.includes('new azure.network.PrivateRecordSet(');
+  const hasPublicDns = scenarioUsesPublicDns(scenario);
+  const hasPrivateDns = scenarioUsesPrivateDns(scenario);
+  const hasPublicRecordSet = /new\s+(?:(?:azure\.)?network|dns)\.RecordSet\(/.test(tapStackText);
+  const hasPrivateRecordSet = /new\s+(?:azure\.)?network\.PrivateRecordSet\(/.test(tapStackText);
 
   if (hasPrivateDns && !hasPrivateRecordSet) {
     throw new Error('private DNS scenarios must create azure.network.PrivateRecordSet resources');
@@ -4829,12 +5691,20 @@ export function validateTapStack(scenario, tapStackText) {
   if (hasPrivateDns && !hasPublicDns && hasPublicRecordSet) {
     throw new Error('private DNS-only scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
   }
-  for (const block of tapStackText.match(/new azure\.network\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
-    if (/\bprivateZoneName\b/.test(block)) {
-      throw new Error('azure.network.RecordSet must target the public zone with zoneName, not a privateZoneName');
+  if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
+    if (!tapStackText.includes('frontdoor.Policy')) {
+      throw new Error('Front Door WAF scenarios must use azure.frontdoor.Policy.');
+    }
+    if (tapStackText.includes('network.WebApplicationFirewallPolicy')) {
+      throw new Error('Front Door WAF scenarios must not use azure.network.WebApplicationFirewallPolicy.');
     }
   }
-  for (const block of tapStackText.match(/new azure\.network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+  for (const block of tapStackText.match(/new\s+(?:(?:azure\.)?network|dns)\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
+    if (/\bprivateZoneName\b/.test(block)) {
+      throw new Error('public DNS RecordSet resources must target the public zone with zoneName, not a privateZoneName');
+    }
+  }
+  for (const block of tapStackText.match(/new\s+(?:azure\.)?network\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
     if (/\bzoneName\b/.test(block)) {
       throw new Error('azure.network.PrivateRecordSet must target the private zone with privateZoneName, not zoneName');
     }
@@ -4894,8 +5764,8 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('relativeRecordSetName')) {
     extraGuidance.push('For Azure public DNS, keep azure.network.RecordSet on the public zone, use zoneName for the zone, and use relativeRecordSetName values like east or api rather than full FQDNs.');
   }
-  if (scenario.prompt.toLowerCase().includes('public dns')
-    && scenario.prompt.toLowerCase().includes('private dns')) {
+  if (scenarioUsesPublicDns(scenario)
+    && scenarioUsesPrivateDns(scenario)) {
     extraGuidance.push('This scenario mixes public and private DNS. Keep azure.network.RecordSet only on the public DNS zone and keep azure.network.PrivateRecordSet only on the private DNS zone.');
   }
   if (String(runFailure).includes('PublicIPAddress')
@@ -4910,6 +5780,11 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     || (String(runFailure).includes('operationId')
       && String(runFailure).includes('apimanagement'))) {
     extraGuidance.push('For API Management operations, use azure.apimanagement.ApiOperation with the prompt-fixed operationId and azure.apimanagement.ApiOperationPolicy with policyId set to policy.');
+  }
+  if (String(runFailure).includes('ResourceNotFound')
+    && String(runFailure).includes('products/')
+    && String(runFailure).includes('/apis/')) {
+    extraGuidance.push('Ensure the API is created before ProductApi and API operations run. Add explicit dependsOn edges so azure.apimanagement.ProductApi depends on both the Api and the Product, and azure.apimanagement.ApiOperation depends on the Api.');
   }
   if (String(runFailure).includes('Property \'FlexibleServer\' does not exist')
     && String(runFailure).includes('dbformysql')) {
@@ -4937,6 +5812,17 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('Application_Type')
     && String(runFailure).includes('ComponentArgs')) {
     extraGuidance.push('For azure.insights.Component, replace Application_Type with applicationType.');
+  }
+  if ((String(runFailure).includes('kind')
+      && String(runFailure).includes('ComponentArgs'))
+    || (String(runFailure).includes("Property 'kind' is missing")
+      && String(runFailure).includes('Component'))) {
+    extraGuidance.push('For azure.insights.Component, set both kind: "web" and applicationType: "web" unless the prompt explicitly requires a different exact shape.');
+  }
+  if ((String(runFailure).includes('TS2322')
+      || String(runFailure).includes('is not assignable to type'))
+    && String(runFailure).includes('Output<string | undefined>')) {
+    extraGuidance.push('Do not pass Output<string | undefined> directly into string-only Azure Native args or output exports. Normalize it with .apply(value => value ?? "") or pulumi.interpolate before use.');
   }
   if (String(runFailure).includes('odata.type')
     && String(runFailure).includes('MetricAlert')) {
@@ -4968,6 +5854,10 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('ResourceGroupNotFound')) {
     extraGuidance.push('Create the ResourceGroup first and pass resourceGroup.name to every downstream Azure resource instead of the raw resource group string.');
     extraGuidance.push('If a resource uses a fixed resource group name string while the ResourceGroup is being created in the same stack, replace it with the ResourceGroup output so Pulumi builds the dependency graph correctly.');
+  }
+  if (String(runFailure).includes('Current Limit (Total VMs)')
+    && String(runFailure).includes('Microsoft.Web/serverfarms')) {
+    extraGuidance.push('For the Function App plan, use a consumption App Service plan shape: sku.name Y1, sku.tier Dynamic, and include a functionapp-compatible plan body. If you set kind, use functionapp. If you set reserved, use a boolean.');
   }
   if (String(runFailure).includes('Missing required configuration variable')) {
     extraGuidance.push('Remove Pulumi config usage. Do not use new pulumi.Config(), require(), requireSecret(), or stack config for this task.');
@@ -5032,7 +5922,7 @@ async function writeBundle(scenario, tapStackText) {
 
   await Promise.all([
     writeFile(path.join(bundleDir, "Pulumi.yaml"), pulumiYaml()),
-    writeFile(path.join(bundleDir, "package.json"), packageJson()),
+    writeFile(path.join(bundleDir, "package.json"), packageJson(scenario)),
     writeFile(path.join(bundleDir, "tsconfig.json"), tsconfigJson()),
     writeFile(path.join(bundleDir, "bin", "tap.ts"), entrypoint(scenario.expectedOutputKeys)),
     writeFile(path.join(bundleDir, "lib", "PROMPT.md"), `${scenario.prompt}\n`),
@@ -5113,7 +6003,7 @@ async function runShipment(shipmentDir) {
 
 function shouldRepairRun(runResult) {
   const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}\n${runResult.integrationStdout ?? ""}\n${runResult.integrationStderr ?? ""}`;
-  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|invalid URL output|invalid host output|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound)/i.test(evidence);
+  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|invalid URL output|invalid host output|Current Limit \(Total VMs\)|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound|products\/.+\/apis\/.+ResourceNotFound|azure-native:apimanagement:ProductApi[\s\S]*ResourceNotFound)/i.test(evidence);
 }
 
 function repairEvidence(runResult) {
