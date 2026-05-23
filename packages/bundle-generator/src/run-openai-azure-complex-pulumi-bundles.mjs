@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { distPath, verificationRepoRoot, verifiedWorkspacePath, workspaceRoot } from "../../workspace-utils/src/index.mjs";
 import { ultraExpertWave91046to91050 } from "./complex-pulumi-scenarios-wave-91046-91050.mjs";
+import { ultraExpertWave91051to91055 } from "./complex-pulumi-scenarios-wave-91051-91055.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4983,6 +4984,7 @@ scenarios.push({
 });
 
 scenarios.push(...ultraExpertWave91046to91050);
+scenarios.push(...ultraExpertWave91051to91055);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5396,9 +5398,11 @@ function generationHints(scenario) {
     "For Function App consumption plans, create azure.web.AppServicePlan with sku Y1 / Dynamic. If you set kind, use functionapp. If you set reserved, use a boolean value. Do not invent unsupported plan properties.",
   ];
 
-  if (scenario.prompt.toLowerCase().includes('front door')) {
+  if (scenarioUsesFrontDoor(scenario)) {
     hints.push("For Azure Front Door, use azure.cdn.Profile, AFDEndpoint, AFDOriginGroup, AFDOrigin, Route, and SecurityPolicy.");
     hints.push("For azure.cdn.Route, use originGroup, not origins. Keep enabledState, supportedProtocols, patternsToMatch, forwardingProtocol, httpsRedirect, and linkToDefaultDomain on the route.");
+    hints.push("Azure Front Door child resources keyed only by profileName, endpointName, or originGroupName do not automatically create Pulumi graph dependencies. Add explicit dependsOn edges: AFDEndpoint and AFDOriginGroup depend on the Profile, each AFDOrigin depends on the AFDOriginGroup, Route depends on the AFDEndpoint plus its Origins, and SecurityPolicy depends on the endpoint or route plus the WAF policy.");
+    hints.push("Do not rely on string parent names to order Azure Front Door resources. Use explicit dependsOn for the real parent-child creation sequence.");
     if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
       hints.push("This task installs @pulumi/azure-native v3. Use namespace-specific imports such as import * as cdn from \"@pulumi/azure-native/cdn\", import * as frontdoor from \"@pulumi/azure-native/frontdoor\", import * as network from \"@pulumi/azure-native/network\", and similar subpath imports for the other Azure namespaces you use.");
       hints.push("When using @pulumi/azure-native v3, do not rely on a single top-level import like import * as azure from \"@pulumi/azure-native\" for service namespaces such as frontdoor, monitor, applicationinsights, redis, dns, or network.");
@@ -5413,7 +5417,7 @@ function generationHints(scenario) {
     }
   }
 
-  if (scenario.prompt.toLowerCase().includes('application gateway')) {
+  if (scenarioUsesApplicationGateway(scenario)) {
     hints.push("For Azure Application Gateway, use azure.network.ApplicationGateway and include frontendIPConfigurations, frontendPorts, backendAddressPools, backendHttpSettingsCollection, httpListeners, and requestRoutingRules.");
     hints.push("For internal-only Application Gateway deployments, use subnet.id on the frontend IP configuration instead of a public IP resource.");
     hints.push("Use Application Gateway v2 SKUs for production-grade deployments. Set sku.name and sku.tier to Standard_v2 or WAF_v2.");
@@ -5428,12 +5432,24 @@ function generationHints(scenario) {
   }
 
   if (hasPublicDns) {
-    hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
-    hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
+    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
+      hints.push("For Azure public DNS in these Azure Native v3 Front Door tasks, import dns from @pulumi/azure-native/dns and use dns.Zone plus dns.RecordSet.");
+      hints.push("Do not use azure.network.Zone or azure.network.RecordSet in these v3 tasks. Keep public DNS on the dns submodule only.");
+    } else {
+      hints.push("For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
+      hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
+      hints.push("Do not import @pulumi/azure-native/network and then call network.Zone or network.RecordSet. For DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.Zone and azure.network.RecordSet.");
+    }
   }
 
   if (hasPrivateDns) {
-    hints.push("For Azure Private DNS, use azure.network.PrivateZone, VirtualNetworkLink, and PrivateRecordSet resources with prompt-fixed zone and record names.");
+    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
+      hints.push("For Azure Private DNS in these Azure Native v3 Front Door tasks, import privatedns from @pulumi/azure-native/privatedns and use privatedns.PrivateZone, privatedns.VirtualNetworkLink, and privatedns.PrivateRecordSet.");
+      hints.push("Do not use azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet in these v3 tasks. Keep private DNS on the privatedns submodule only.");
+    } else {
+      hints.push("For Azure Private DNS, use azure.network.PrivateZone, VirtualNetworkLink, and PrivateRecordSet resources with prompt-fixed zone and record names.");
+      hints.push("Do not import @pulumi/azure-native/network and then call network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet. For private DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet.");
+    }
   }
 
   if (hasPublicDns && hasPrivateDns) {
@@ -5655,6 +5671,23 @@ function scenarioUsesFrontDoorWafPolicyResource(scenario) {
   );
 }
 
+function scenarioUsesFrontDoor(scenario) {
+  return (scenario.requiredSourceMarkers ?? []).some(
+    (marker) => /cdn\.(AFDEndpoint|AFDOriginGroup|AFDOrigin|Route|SecurityPolicy)/i.test(String(marker)),
+  ) || (scenario.integrationChecks ?? []).some(
+    (check) => String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/afdEndpoints')
+      || String(check.expectedType ?? '').startsWith('Microsoft.Cdn/profiles/originGroups'),
+  );
+}
+
+function scenarioUsesApplicationGateway(scenario) {
+  return (scenario.requiredSourceMarkers ?? []).some((marker) => String(marker).includes('network.ApplicationGateway'))
+    || Object.keys(scenario.resourceNames ?? {}).some((key) => key.toLowerCase().includes('applicationgateway'))
+    || (scenario.integrationChecks ?? []).some(
+      (check) => check.expectedType === 'Microsoft.Network/applicationGateways',
+    );
+}
+
 export function validateTapStack(scenario, tapStackText) {
   if (!tapStackText.includes("export function createTapStack")) {
     throw new Error("missing export function createTapStack");
@@ -5684,14 +5717,29 @@ export function validateTapStack(scenario, tapStackText) {
   }
   const hasPublicDns = scenarioUsesPublicDns(scenario);
   const hasPrivateDns = scenarioUsesPrivateDns(scenario);
+  const usesFrontDoorWafV3 = scenarioUsesFrontDoorWafPolicyResource(scenario);
   const hasPublicRecordSet = /new\s+(?:(?:azure\.)?network|dns)\.RecordSet\(/.test(tapStackText);
-  const hasPrivateRecordSet = /new\s+(?:azure\.)?network\.PrivateRecordSet\(/.test(tapStackText);
+  const hasPrivateRecordSet = /new\s+(?:(?:azure\.)?network\.PrivateRecordSet|privatedns\.PrivateRecordSet)\(/.test(tapStackText);
+  const usesNetworkSubmoduleForDns = /from\s+["']@pulumi\/azure-native\/network["']/.test(tapStackText)
+    && /\bnetwork\.(?:Zone|RecordSet|PrivateZone|VirtualNetworkLink|PrivateRecordSet)\b/.test(tapStackText);
 
   if (hasPrivateDns && !hasPrivateRecordSet) {
     throw new Error('private DNS scenarios must create azure.network.PrivateRecordSet resources');
   }
   if (hasPublicDns && !hasPublicRecordSet) {
     throw new Error('public DNS scenarios must create azure.network.RecordSet resources');
+  }
+  if ((hasPublicDns || hasPrivateDns) && usesNetworkSubmoduleForDns) {
+    if (usesFrontDoorWafV3) {
+      throw new Error('Front Door WAF v3 DNS scenarios must not use @pulumi/azure-native/network for DNS resources; use @pulumi/azure-native/dns for public DNS and @pulumi/azure-native/privatedns for private DNS');
+    }
+    throw new Error('DNS scenarios must not use @pulumi/azure-native/network for Zone, RecordSet, PrivateZone, VirtualNetworkLink, or PrivateRecordSet; use a top-level azure import and call azure.network.* instead');
+  }
+  if (usesFrontDoorWafV3 && hasPublicDns && /\b(?:azure\.)?network\.(?:Zone|RecordSet)\b/.test(tapStackText)) {
+    throw new Error('Front Door WAF v3 DNS scenarios must use @pulumi/azure-native/dns for public DNS resources, not azure.network.Zone or azure.network.RecordSet');
+  }
+  if (usesFrontDoorWafV3 && hasPrivateDns && /\b(?:azure\.)?network\.(?:PrivateZone|VirtualNetworkLink|PrivateRecordSet)\b/.test(tapStackText)) {
+    throw new Error('Front Door WAF v3 DNS scenarios must use @pulumi/azure-native/privatedns for private DNS resources, not azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet');
   }
   if (hasPrivateDns && !hasPublicDns && hasPublicRecordSet) {
     throw new Error('private DNS-only scenarios must use azure.network.PrivateRecordSet, not azure.network.RecordSet');
@@ -5710,11 +5758,11 @@ export function validateTapStack(scenario, tapStackText) {
       throw new Error('Front Door WAF v3 scenarios must import @pulumi/azure-native/monitor for ActionGroup, MetricAlert, and ActivityLogAlert');
     }
   }
-  if (scenario.prompt.toLowerCase().includes('application gateway')
+  if (scenarioUsesApplicationGateway(scenario)
     && /\.subnets\.apply\s*\(/.test(tapStackText)) {
     throw new Error('application gateway scenarios must not derive subnet ids from virtualNetwork.subnets.apply(...); build deterministic subnet ARM ids from the fixed VNet and subnet names');
   }
-  if (scenario.prompt.toLowerCase().includes('application gateway')
+  if (scenarioUsesApplicationGateway(scenario)
     && !/\bgatewayIPConfigurations\b/.test(tapStackText)) {
     throw new Error('application gateway scenarios must declare gatewayIPConfigurations with subnet references');
   }
@@ -5776,12 +5824,36 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('RouteArgs')) {
     extraGuidance.push('For azure.cdn.Route, remove origins and use originGroup instead.');
   }
+  if (String(runFailure).includes('Microsoft.Cdn/profiles/afdEndpoints')
+    && String(runFailure).includes('ParentResourceNotFound')) {
+    extraGuidance.push('Azure Front Door child resources do not infer dependencies from profileName strings. Make every cdn.AFDEndpoint and cdn.AFDOriginGroup depend explicitly on the cdn.Profile.');
+    extraGuidance.push('Make each cdn.AFDOrigin depend on the cdn.AFDOriginGroup, make the cdn.Route depend on the AFDEndpoint plus its AFDOrigins, and make the cdn.SecurityPolicy depend on the endpoint or route plus the Front Door WAF policy.');
+  }
+  if (String(runFailure).includes('Microsoft.Cdn/profiles/originGroups')
+    && String(runFailure).includes('ParentResourceNotFound')) {
+    extraGuidance.push('Your Azure Front Door origin group raced the parent profile. Add dependsOn: [profile] to each cdn.AFDOriginGroup and then depend child origins on that origin group.');
+  }
   if (String(runFailure).includes('CdnWebApplicationFirewallPolicy')) {
     extraGuidance.push('Use azure.network.WebApplicationFirewallPolicy for Front Door WAF, then attach it with azure.cdn.SecurityPolicy.');
   }
   if (String(runFailure).includes('privateZoneName')
     && String(runFailure).includes('RecordSetArgs')) {
     extraGuidance.push('For private DNS records, use azure.network.PrivateRecordSet instead of azure.network.RecordSet.');
+  }
+  if (String(runFailure).includes("Property 'Zone' does not exist")
+    || String(runFailure).includes("Property 'PrivateZone' does not exist")
+    || String(runFailure).includes("Property 'RecordSet' does not exist")
+    || String(runFailure).includes("Property 'PrivateRecordSet' does not exist")
+    || String(runFailure).includes("Property 'VirtualNetworkLink' does not exist")) {
+    if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
+      extraGuidance.push('This task uses Azure Native v3 because it includes Front Door WAF resources.');
+      extraGuidance.push('For public DNS in these v3 tasks, import dns from "@pulumi/azure-native/dns" and use dns.Zone plus dns.RecordSet.');
+      extraGuidance.push('For private DNS in these v3 tasks, import privatedns from "@pulumi/azure-native/privatedns" and use privatedns.PrivateZone, privatedns.VirtualNetworkLink, and privatedns.PrivateRecordSet.');
+      extraGuidance.push('Do not use azure.network.Zone, azure.network.RecordSet, azure.network.PrivateZone, azure.network.VirtualNetworkLink, or azure.network.PrivateRecordSet in this v3 task.');
+    } else {
+      extraGuidance.push('Do not import @pulumi/azure-native/network and then call network.Zone, network.RecordSet, network.PrivateZone, network.VirtualNetworkLink, or network.PrivateRecordSet.');
+      extraGuidance.push('For DNS resources in this repo, prefer import * as azure from "@pulumi/azure-native" and then create azure.network.Zone, azure.network.RecordSet, azure.network.PrivateZone, azure.network.VirtualNetworkLink, and azure.network.PrivateRecordSet.');
+    }
   }
   if (String(runFailure).includes('ParentResourceNotFound')
     && String(runFailure).includes('Microsoft.Network/dnsZones/A')) {
