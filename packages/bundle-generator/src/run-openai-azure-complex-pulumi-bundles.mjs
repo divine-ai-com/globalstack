@@ -3,6 +3,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { distPath, verificationRepoRoot, verifiedWorkspacePath, workspaceRoot } from "../../workspace-utils/src/index.mjs";
+import { ultraExpertWave91046to91050 } from "./complex-pulumi-scenarios-wave-91046-91050.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -4981,6 +4982,8 @@ scenarios.push({
   ],
 });
 
+scenarios.push(...ultraExpertWave91046to91050);
+
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
     const keyVaultName = scenario.resourceNames?.keyVault;
@@ -5415,6 +5418,8 @@ function generationHints(scenario) {
     hints.push("For internal-only Application Gateway deployments, use subnet.id on the frontend IP configuration instead of a public IP resource.");
     hints.push("Use Application Gateway v2 SKUs for production-grade deployments. Set sku.name and sku.tier to Standard_v2 or WAF_v2.");
     hints.push("Do not reference the ApplicationGateway resource variable inside its own constructor. Precompute child resource IDs from the fixed gateway name, subscription ID, and resource group name.");
+    hints.push("Do not derive Application Gateway subnet ids from virtualNetwork.subnets.apply(...). When the prompt gives fixed VNet and subnet names, build deterministic subnet ARM ids from subscription id, resource group name, VNet name, and subnet name, then pass those ids into gatewayIPConfigurations.");
+    hints.push("Application Gateway requires gatewayIPConfigurations with a subnet id that points at the prompt-fixed application gateway subnet. If that subnet reference is omitted or empty, Azure rejects the deployment.");
   }
 
   if (scenario.prompt.toLowerCase().includes('load balancer')) {
@@ -5698,6 +5703,20 @@ export function validateTapStack(scenario, tapStackText) {
     if (tapStackText.includes('network.WebApplicationFirewallPolicy')) {
       throw new Error('Front Door WAF scenarios must not use azure.network.WebApplicationFirewallPolicy.');
     }
+    if (tapStackText.includes('@pulumi/azure-native/insights')) {
+      throw new Error('Front Door WAF v3 scenarios must not import @pulumi/azure-native/insights; use @pulumi/azure-native/monitor and @pulumi/azure-native/applicationinsights instead');
+    }
+    if (!tapStackText.includes('@pulumi/azure-native/monitor')) {
+      throw new Error('Front Door WAF v3 scenarios must import @pulumi/azure-native/monitor for ActionGroup, MetricAlert, and ActivityLogAlert');
+    }
+  }
+  if (scenario.prompt.toLowerCase().includes('application gateway')
+    && /\.subnets\.apply\s*\(/.test(tapStackText)) {
+    throw new Error('application gateway scenarios must not derive subnet ids from virtualNetwork.subnets.apply(...); build deterministic subnet ARM ids from the fixed VNet and subnet names');
+  }
+  if (scenario.prompt.toLowerCase().includes('application gateway')
+    && !/\bgatewayIPConfigurations\b/.test(tapStackText)) {
+    throw new Error('application gateway scenarios must declare gatewayIPConfigurations with subnet references');
   }
   for (const block of tapStackText.match(/new\s+(?:(?:azure\.)?network|dns)\.RecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
     if (/\bprivateZoneName\b/.test(block)) {
@@ -5739,6 +5758,15 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   }
   if (String(runFailure).includes('ApplicationGatewaySkuNotSupported')) {
     extraGuidance.push('Use Azure Application Gateway v2. Set sku.name and sku.tier to Standard_v2 or WAF_v2.');
+  }
+  if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/insights'")) {
+    extraGuidance.push('Do not import @pulumi/azure-native/insights. In these v3 Front Door scenarios, import monitor from @pulumi/azure-native/monitor and import applicationinsights from @pulumi/azure-native/applicationinsights.');
+  }
+  if (String(runFailure).includes('SubnetIsRequired')
+    && String(runFailure).includes('Application gateway subnet is required')) {
+    extraGuidance.push('Your Application Gateway payload did not provide a valid subnet id in gatewayIPConfigurations.');
+    extraGuidance.push('Do not read gateway subnet ids from virtualNetwork.subnets.apply(...). Build deterministic subnet ARM ids from subscription id, resource group name, virtual network name, and the prompt-fixed application gateway subnet name, then pass that id into gatewayIPConfigurations[0].subnet.id.');
+    extraGuidance.push('Keep the application gateway subnet as a real subnet in the VNet, but do not depend on inline subnets exposing child ids back through Pulumi outputs.');
   }
   if ((String(runFailure).includes('used before its declaration') || String(runFailure).includes('referenced directly or indirectly in its own initializer'))
     && (String(runFailure).includes('eastAgw') || String(runFailure).includes('westAgw'))) {
