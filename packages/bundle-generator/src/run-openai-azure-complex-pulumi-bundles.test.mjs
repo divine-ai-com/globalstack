@@ -1814,6 +1814,105 @@ test('Pr91085 includes Front Door, dual managed environments, and the admit subs
   );
 });
 
+test('Pr91086 includes Front Door, dual AKS clusters, and the clearing subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91086');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-fraud-east-91086'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'redis-cache'
+      && check.typePath === 'Redis/redis-fraud-mesh-91086'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-clearing'
+      && check.typePath === 'namespaces/sb-fraud-mesh-91086/topics/fraud-decisions/subscriptions/clearing'),
+  );
+});
+
+test('Pr91087 includes Front Door, dual managed environments, and the pack subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91087');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-fulfill-east-91087'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-orders-app'
+      && check.typePath === 'containerApps/ca-fulfill-orders-east-91087'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-pack'
+      && check.typePath === 'namespaces/sb-fulfillment-fabric-91087/topics/fulfillment-events/subscriptions/pack'),
+  );
+});
+
+test('Pr91088 includes private DNS, Synapse, Cosmos, and the warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91088');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-zone'
+      && check.typePath === 'privateDnsZones/ledger91088.internal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-ledger-warehouse-91088/sqlPools/ledgerpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-ledger-warehouse-91088/sqlDatabases/LedgerStateDb/containers/LedgerState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-ledger-warehouse-91088/topics/ledger-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91089 includes private DNS, both DMS projects, both relational engines, and Redis', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91089');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-zone'
+      && check.typePath === 'privateDnsZones/migrate91089.internal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-migration-arbitration-91089/projects/postgres-arbitration-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-migration-arbitration-91089/databases/arbitrationdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'redis-cache'
+      && check.typePath === 'Redis/redis-migration-arbitration-91089'),
+  );
+});
+
+test('Pr91090 includes IoT hubs, Digital Twins, Synapse, and the investigate subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91090');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-command-east-91090'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-command-ring-91090'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-command-ring-91090/sqlPools/commandpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-investigate'
+      && check.typePath === 'namespaces/sb-command-ring-91090/topics/command-events/subscriptions/investigate'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);
