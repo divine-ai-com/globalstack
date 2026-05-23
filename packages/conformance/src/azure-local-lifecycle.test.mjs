@@ -481,6 +481,97 @@ test('application gateway accepts provider-style top-level v2 payloads', async (
   });
 });
 
+test('public IP lifecycle supports dns label metadata and application gateway references', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-pip?api-version=2021-04-01`, { location: 'eastus' });
+
+    const publicIp = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/publicIPAddresses/pip-life?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard' },
+        properties: {
+          publicIPAllocationMethod: 'Static',
+          publicIPAddressVersion: 'IPv4',
+          dnsSettings: {
+            domainNameLabel: 'pip-life',
+          },
+        },
+      },
+    );
+    assert.equal(publicIp.status, 201);
+    assert.equal(publicIp.body.type, 'Microsoft.Network/publicIPAddresses');
+    assert.equal(publicIp.body.name, 'pip-life');
+    assert.match(publicIp.body.properties.ipAddress, /^20\./);
+    assert.equal(publicIp.body.properties.dnsSettings.fqdn, 'pip-life.eastus.cloudapp.azure.com');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/publicIPAddresses/pip-life?api-version=2023-09-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.properties.publicIPAllocationMethod, 'Static');
+
+    const gateway = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard_v2', tier: 'Standard_v2', capacity: 1 },
+        gatewayIPConfigurations: [{
+          name: 'appGatewayIpConfig',
+          subnet: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/virtualNetworks/vnet-life/subnets/agw-snet`,
+          },
+        }],
+        frontendIPConfigurations: [{
+          name: 'publicFrontend',
+          publicIPAddress: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/publicIPAddresses/pip-life`,
+          },
+        }],
+        frontendPorts: [{ name: 'httpPort', port: 80 }],
+        backendAddressPools: [{ name: 'backend' }],
+        backendHttpSettingsCollection: [{
+          name: 'httpSettings',
+          port: 80,
+          protocol: 'Http',
+          cookieBasedAffinity: 'Disabled',
+        }],
+        httpListeners: [{
+          name: 'httpListener',
+          frontendIPConfiguration: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life/frontendIPConfigurations/publicFrontend`,
+          },
+          frontendPort: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life/frontendPorts/httpPort`,
+          },
+          protocol: 'Http',
+        }],
+        requestRoutingRules: [{
+          name: 'defaultRule',
+          ruleType: 'Basic',
+          httpListener: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life/httpListeners/httpListener`,
+          },
+          backendAddressPool: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life/backendAddressPools/backend`,
+          },
+          backendHttpSettings: {
+            id: `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/applicationGateways/agw-public-life/backendHttpSettingsCollection/httpSettings`,
+          },
+        }],
+      },
+    );
+    assert.equal(gateway.status, 201);
+    assert.equal(gateway.body.properties.frontendIPConfigurations[0].publicIPAddress.id, `${subscriptionPath}/resourceGroups/rg-pip/providers/Microsoft.Network/publicIPAddresses/pip-life`);
+  });
+});
+
 test('scoped diagnostic settings PUT persists scope without server error', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-diag?api-version=2021-04-01`, { location: 'eastus' });

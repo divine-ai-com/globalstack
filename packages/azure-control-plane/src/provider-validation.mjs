@@ -1389,6 +1389,38 @@ function validateApplicationGatewayPayload(resourceType, body) {
   return null;
 }
 
+function validatePublicIpPayload(resourceType, body) {
+  if (resourceType !== 'Microsoft.Network/publicIPAddresses') return null;
+
+  const properties = body.properties ?? body;
+  const allocationMethod = properties.publicIPAllocationMethod;
+  if (!['Static', 'Dynamic'].includes(allocationMethod)) {
+    return envelopedError(400, 'PublicIPAddressAllocationMethodInvalid', 'Public IP address properties.publicIPAllocationMethod must be Static or Dynamic.');
+  }
+
+  const ipVersion = properties.publicIPAddressVersion ?? 'IPv4';
+  if (!['IPv4', 'IPv6'].includes(ipVersion)) {
+    return envelopedError(400, 'PublicIPAddressVersionInvalid', 'Public IP address properties.publicIPAddressVersion must be IPv4 or IPv6.');
+  }
+
+  const skuName = body.sku?.name ?? properties.sku?.name ?? null;
+  if (skuName && !['Basic', 'Standard'].includes(skuName)) {
+    return envelopedError(400, 'PublicIPAddressSkuNotSupported', 'Public IP address sku.name must be Basic or Standard.');
+  }
+
+  const domainNameLabel = properties.dnsSettings?.domainNameLabel;
+  if (domainNameLabel !== undefined) {
+    if (!isNonEmptyString(domainNameLabel)) {
+      return envelopedError(400, 'DnsRecordLabelInvalid', 'Public IP address dnsSettings.domainNameLabel must be a non-empty string when provided.');
+    }
+    if (!/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])?$/.test(domainNameLabel)) {
+      return envelopedError(400, 'DnsRecordLabelInvalid', 'Public IP address dnsSettings.domainNameLabel must be 3-63 characters of lowercase letters, digits, or hyphens and must start and end with a letter or digit.');
+    }
+  }
+
+  return null;
+}
+
 function validateLoadBalancerPayload(resourceType, body) {
   if (resourceType !== 'Microsoft.Network/loadBalancers') return null;
 
@@ -2212,6 +2244,9 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   const dnsPayloadValidation = validateDnsPayload(resourceType, body, providerRoute);
   if (dnsPayloadValidation) return dnsPayloadValidation;
+
+  const publicIpPayloadValidation = validatePublicIpPayload(resourceType, body);
+  if (publicIpPayloadValidation) return publicIpPayloadValidation;
 
   const applicationGatewayPayloadValidation = validateApplicationGatewayPayload(resourceType, body);
   if (applicationGatewayPayloadValidation) return applicationGatewayPayloadValidation;

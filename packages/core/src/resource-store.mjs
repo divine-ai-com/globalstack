@@ -208,6 +208,17 @@ function redisHostName(name) {
   return `${name}.redis.cache.windows.net`;
 }
 
+function publicIpAddress(id) {
+  const digest = createHash('sha256')
+    .update(`globalstack:network:publicip:${id.toLowerCase()}`)
+    .digest();
+  return `20.${(digest[0] % 200) + 20}.${digest[1]}.${(digest[2] % 254) + 1}`;
+}
+
+function publicIpFqdn(label, location = 'eastus') {
+  return `${label}.${location}.cloudapp.azure.com`;
+}
+
 function aksFqdn(name, location, dnsPrefix) {
   const digest = createHash('sha256')
     .update(`globalstack:aks:${name}:${location}:${dnsPrefix}`)
@@ -754,6 +765,41 @@ export class ResourceStore {
           ? {
               nameServers: existing?.properties?.nameServers ?? dnsNameServers(name),
               numberOfRecordSets: existing?.properties?.numberOfRecordSets ?? 2,
+            }
+          : {}),
+        ...(type === 'Microsoft.Network/publicIPAddresses'
+          ? {
+              publicIPAllocationMethod:
+                body.properties?.publicIPAllocationMethod
+                ?? body.publicIPAllocationMethod
+                ?? existing?.properties?.publicIPAllocationMethod
+                ?? 'Static',
+              publicIPAddressVersion:
+                body.properties?.publicIPAddressVersion
+                ?? body.publicIPAddressVersion
+                ?? existing?.properties?.publicIPAddressVersion
+                ?? 'IPv4',
+              idleTimeoutInMinutes:
+                body.properties?.idleTimeoutInMinutes
+                ?? body.idleTimeoutInMinutes
+                ?? existing?.properties?.idleTimeoutInMinutes
+                ?? 4,
+              ipAddress: existing?.properties?.ipAddress ?? publicIpAddress(id),
+              dnsSettings: (() => {
+                const existingDns = existing?.properties?.dnsSettings ?? {};
+                const inputDns = deepClone(body.properties?.dnsSettings ?? body.dnsSettings ?? {});
+                const label = inputDns.domainNameLabel ?? existingDns.domainNameLabel;
+                if (!label && Object.keys(existingDns).length === 0 && Object.keys(inputDns).length === 0) {
+                  return undefined;
+                }
+                return {
+                  ...existingDns,
+                  ...inputDns,
+                  ...(label ? { domainNameLabel: label, fqdn: publicIpFqdn(label, body.location ?? existing?.location ?? 'eastus') } : {}),
+                };
+              })(),
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
+              resourceGuid: existing?.properties?.resourceGuid ?? createHash('sha256').update(`globalstack:pip:${id}`).digest('hex').slice(0, 32),
             }
           : {}),
         ...(type === 'Microsoft.Network/applicationGateways'

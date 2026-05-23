@@ -42,6 +42,7 @@ export const defaultApiVersions = {
   'Microsoft.NetApp/netAppAccounts/capacityPools/volumes': '2023-11-01',
   'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies': '2023-09-01',
   'Microsoft.Network/applicationGateways': '2023-09-01',
+  'Microsoft.Network/publicIPAddresses': '2023-09-01',
   'Microsoft.Network/dnsZones': '2018-05-01',
   'Microsoft.Network/dnsZones/A': '2018-05-01',
   'Microsoft.Network/dnsZones/AAAA': '2018-05-01',
@@ -295,6 +296,19 @@ function bodyFor(resourceType) {
     };
   }
   if (lower.includes('microsoft.network/privatednszones') || lower.includes('microsoft.network/dnszones')) return { location: 'global', properties: {} };
+  if (lower === 'microsoft.network/publicipaddresses') {
+    return {
+      location: '{location}',
+      sku: { name: 'Standard' },
+      properties: {
+        publicIPAllocationMethod: 'Static',
+        publicIPAddressVersion: 'IPv4',
+        dnsSettings: {
+          domainNameLabel: 'pip-local',
+        },
+      },
+    };
+  }
   if (lower === 'microsoft.network/applicationgateways') {
     return {
       location: '{location}',
