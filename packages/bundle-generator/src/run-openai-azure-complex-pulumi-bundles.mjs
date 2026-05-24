@@ -33,6 +33,7 @@ import { ultraExpertWave91176to91180 } from "./complex-pulumi-scenarios-wave-911
 import { ultraExpertWave91181to91185 } from "./complex-pulumi-scenarios-wave-91181-91185.mjs";
 import { ultraExpertWave91186to91190 } from "./complex-pulumi-scenarios-wave-91186-91190.mjs";
 import { ultraExpertWave91191to91195 } from "./complex-pulumi-scenarios-wave-91191-91195.mjs";
+import { ultraExpertWave91196to91200 } from "./complex-pulumi-scenarios-wave-91196-91200.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5041,6 +5042,7 @@ scenarios.push(...ultraExpertWave91176to91180);
 scenarios.push(...ultraExpertWave91181to91185);
 scenarios.push(...ultraExpertWave91186to91190);
 scenarios.push(...ultraExpertWave91191to91195);
+scenarios.push(...ultraExpertWave91196to91200);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5673,6 +5675,9 @@ export function generationHints(scenario) {
     hints.push(usesAzureNativeV3
       ? "For a single-resource azure.monitor.MetricAlert, set criteria.odataType to \"Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria\" and then put the static thresholds inside criteria.allOf."
       : "For a single-resource azure.insights.MetricAlert, set criteria.odataType to \"Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria\" and then put the static thresholds inside criteria.allOf.");
+    hints.push(usesAzureNativeV3
+      ? "Inside every static threshold object in azure.monitor.MetricAlert criteria.allOf, include criterionType: \"StaticThresholdCriterion\". Do not omit criterionType."
+      : "Inside every static threshold object in azure.insights.MetricAlert criteria.allOf, include criterionType: \"StaticThresholdCriterion\". Do not omit criterionType.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('applicationinsights.'))) {
@@ -6426,6 +6431,12 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push(usesAzureNativeV3
       ? 'For azure.monitor.MetricAlert criteria on a single resource, set criteria.odataType to "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria" and keep the thresholds inside criteria.allOf.'
       : 'For azure.insights.MetricAlert criteria on a single resource, set criteria.odataType to "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria" and keep the thresholds inside criteria.allOf.');
+  }
+  if (String(runFailure).includes("Property 'criterionType' is missing")
+    && String(runFailure).includes('MetricAlert')) {
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For every static threshold entry in azure.monitor.MetricAlert criteria.allOf, add criterionType: "StaticThresholdCriterion".'
+      : 'For every static threshold entry in azure.insights.MetricAlert criteria.allOf, add criterionType: "StaticThresholdCriterion".');
   }
   if (String(runFailure).includes('invalid URL output')) {
     extraGuidance.push('For output keys ending in Url or Endpoint, emit exactly one https:// scheme. If the Azure Native property already includes https://, export it directly without prepending another scheme.');

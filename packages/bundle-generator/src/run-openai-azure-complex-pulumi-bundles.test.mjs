@@ -4416,3 +4416,108 @@ test('Pr91195 includes Front Door security policy, dual managed environments, Po
       && check.typePath === 'namespaces/sb-fulfillment-mesh-91195/topics/fulfillment-events/subscriptions/replay'),
   );
 });
+
+test('Pr91196 includes Front Door security policy, dual AKS clusters, PostgreSQL database, and warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91196');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-pharma-release-91196/securityPolicies/pharma-release-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-pharma-east-91196'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-pharma-release-91196/databases/releaselog'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-pharma-release-91196/topics/release-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91197 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and analytics subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91197');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-refinery-east-91197'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-refinery-91197'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-refinery-91197/sqlPools/shutdownsqldw'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-analytics'
+      && check.typePath === 'namespaces/sb-refinery-91197/topics/refinery-events/subscriptions/analytics'),
+  );
+});
+
+test('Pr91198 includes Front Door security policy, DMS projects, Synapse SQL pool, and rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91198');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-tribunal-migration-91198/securityPolicies/tribunal-migration-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres-archive-b'
+      && check.typePath === 'services/dms-tribunal-91198/projects/postgres-archive-b'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-tribunal-91198/sqlPools/tribunalsqldw'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-tribunal-91198/topics/tribunal-events/subscriptions/rollback'),
+  );
+});
+
+test('Pr91199 includes public IPs, dual AKS clusters, Cosmos container, and billing subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91199');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-public-ip'
+      && check.typePath === 'publicIPAddresses/pip-telecom-east-91199'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-telecom-east-91199'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/costelecom91199/sqlDatabases/RolloutStateDb/containers/RolloutState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-billing'
+      && check.typePath === 'namespaces/sb-telecom-91199/topics/rollout-events/subscriptions/billing'),
+  );
+});
+
+test('Pr91200 includes Front Door security policy, dual managed environments, PostgreSQL database, and replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91200');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-returns-nerve-91200/securityPolicies/returns-nerve-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-returns-east-91200'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-returns-nerve-91200/databases/returnsdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-returns-91200/topics/returns-events/subscriptions/replay'),
+  );
+});
