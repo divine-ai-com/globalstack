@@ -35,6 +35,7 @@ import { ultraExpertWave91186to91190 } from "./complex-pulumi-scenarios-wave-911
 import { ultraExpertWave91191to91195 } from "./complex-pulumi-scenarios-wave-91191-91195.mjs";
 import { ultraExpertWave91196to91200 } from "./complex-pulumi-scenarios-wave-91196-91200.mjs";
 import { ultraExpertWave91201to91205 } from "./complex-pulumi-scenarios-wave-91201-91205.mjs";
+import { ultraExpertWave91206to91210 } from "./complex-pulumi-scenarios-wave-91206-91210.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5045,6 +5046,7 @@ scenarios.push(...ultraExpertWave91186to91190);
 scenarios.push(...ultraExpertWave91191to91195);
 scenarios.push(...ultraExpertWave91196to91200);
 scenarios.push(...ultraExpertWave91201to91205);
+scenarios.push(...ultraExpertWave91206to91210);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5592,6 +5594,7 @@ export function generationHints(scenario) {
       : "For Azure public DNS, use azure.network.Zone for the DNS zone and azure.network.RecordSet for public DNS records.");
     hints.push("Azure public DNS zones must use location \"global\".");
     hints.push("For public DNS record sets, use the prompt-fixed zone name, relative record names like east or api, and the correct public record type such as A or CNAME.");
+    hints.push("For Azure public DNS RecordSet resources, do not rely on a raw zoneName string to order creation. Add explicit dependsOn: [publicZone] to every public DNS record set.");
     hints.push(usesAzureNativeV3
       ? "Do not import @pulumi/azure-native/network and then call network.Zone or network.RecordSet. For DNS resources, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.dns.Zone and azure.dns.RecordSet."
       : "For this bundle's Azure Native 2.x surface, prefer a single top-level import like import * as azure from \"@pulumi/azure-native\" and then use azure.network.Zone and azure.network.RecordSet for public DNS.");
@@ -6117,6 +6120,9 @@ export function validateTapStack(scenario, tapStackText) {
     if (/\bprivateZoneName\b/.test(block)) {
       throw new Error('public DNS RecordSet resources must target the public zone with zoneName, not a privateZoneName');
     }
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure public DNS record sets must include an explicit dependsOn option that waits for the public zone resource');
+    }
   }
   const privateRecordSetPattern = usesAzureNativeV3
     ? /new\s+(?:azure\.)?privatedns\.PrivateRecordSet\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g
@@ -6183,6 +6189,10 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   if (String(error).includes('azure private DNS record sets must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure private DNS PrivateRecordSet must include a third-argument resource options object with dependsOn: [privateZone].');
     extraGuidance.push('Do not rely on raw privateZoneName strings to order private DNS record sets.');
+  }
+  if (String(error).includes('azure public DNS record sets must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure public DNS RecordSet must include a third-argument resource options object with dependsOn: [publicZone].');
+    extraGuidance.push('Keep the public zone in a variable such as publicZone and do not rely on a raw zoneName string to establish creation order.');
   }
   if (String(error).includes('azure.storage child resources must use accountName from the created storage resource output')) {
     extraGuidance.push('For azure.storage.BlobContainer, FileShare, Queue, and Table, use accountName: storage.name instead of the raw prompt-fixed storage account string.');
@@ -6319,10 +6329,12 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     }
   }
   if (String(runFailure).includes('ParentResourceNotFound')
-    && String(runFailure).includes('Microsoft.Network/dnsZones/A')) {
+    && (String(runFailure).includes('Microsoft.Network/dnsZones/A')
+      || String(runFailure).includes('Microsoft.Network/dnsZones/CNAME'))) {
     extraGuidance.push(usesAzureNativeV3
-      ? 'You used public DNS record-set semantics against a private DNS zone. Replace azure.dns.RecordSet with azure.privatedns.PrivateRecordSet and use privateZoneName instead of zoneName.'
-      : 'You used public DNS record-set semantics against a private DNS zone. Replace azure.network.RecordSet with azure.network.PrivateRecordSet and use privateZoneName instead of zoneName.');
+      ? 'Your Azure public DNS record sets raced the public zone. Keep the zone in a variable like publicZone and add explicit resource options: { dependsOn: [publicZone] } to every azure.dns.RecordSet.'
+      : 'Your Azure public DNS record sets raced the public zone. Keep the zone in a variable like publicZone and add explicit resource options: { dependsOn: [publicZone] } to every azure.network.RecordSet.');
+    extraGuidance.push('Do not rely on the raw prompt-fixed zoneName string to establish ordering for public DNS records.');
   }
   if (String(runFailure).includes('RecordSetArgs')
     && String(runFailure).includes('zoneName')

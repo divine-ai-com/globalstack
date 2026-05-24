@@ -683,6 +683,11 @@ test('validateTapStack accepts mixed public and private DNS usage when each reso
     'import * as azure from "@pulumi/azure-native";',
     'export function createTapStack() {',
     '  const ExampleOutput = "ok";',
+    '  const publicZone = new azure.network.Zone("public.example.com", {',
+    '    resourceGroupName: "rg-example",',
+    '    zoneName: "public.example.com",',
+    '    location: "global",',
+    '  });',
     '  const privateZone = new azure.network.PrivateZone("private.internal", {',
     '    resourceGroupName: "rg-example",',
     '    privateZoneName: "private.internal",',
@@ -690,12 +695,12 @@ test('validateTapStack accepts mixed public and private DNS usage when each reso
     '  });',
     '  new azure.network.RecordSet("public", {',
     '    resourceGroupName: "rg-example",',
-    '    zoneName: "public.example.com",',
+    '    zoneName: publicZone.name,',
     '    relativeRecordSetName: "api",',
     '    recordType: "CNAME",',
     '    ttl: 300,',
     '    cnameRecord: { cname: "origin.example.net" },',
-    '  });',
+    '  }, { dependsOn: [publicZone] });',
     '  new azure.network.PrivateRecordSet("private", {',
     '    resourceGroupName: "rg-example",',
     '    privateZoneName: privateZone.name,',
@@ -729,10 +734,19 @@ test('validateTapStack does not infer private DNS requirements from a forbidden 
     'import * as azure from "@pulumi/azure-native";',
     'export function createTapStack() {',
     '  const ExampleOutput = "ok";',
-    '  new azure.network.RecordSet("public", {',
+    '  const publicZone = new azure.network.Zone("example.contoso.net", {',
+    '    resourceGroupName: "rg-example",',
     '    zoneName: "example.contoso.net",',
-    '    relativeRecordSetName: "api",',
+    '    location: "global",',
     '  });',
+    '  new azure.network.RecordSet("public", {',
+    '    resourceGroupName: "rg-example",',
+    '    zoneName: publicZone.name,',
+    '    relativeRecordSetName: "api",',
+    '    recordType: "CNAME",',
+    '    ttl: 300,',
+    '    cnameRecord: { cname: "origin.example.net" },',
+    '  }, { dependsOn: [publicZone] });',
     '  return { ExampleOutput };',
     '}',
   ].join('\n');
@@ -1077,19 +1091,19 @@ test('validateTapStack accepts azure.network public DNS resources when the scena
 import * as azure from "@pulumi/azure-native";
 
 export function createTapStack() {
-  new azure.network.Zone("example.contoso.net", {
+  const publicZone = new azure.network.Zone("example.contoso.net", {
     resourceGroupName: "rg-example",
     zoneName: "example.contoso.net",
     location: "global",
   });
   new azure.network.RecordSet("east", {
     resourceGroupName: "rg-example",
-    zoneName: "example.contoso.net",
+    zoneName: publicZone.name,
     relativeRecordSetName: "east",
     recordType: "A",
     ttl: 60,
     aRecords: [{ ipv4Address: "10.0.0.4" }],
-  });
+  }, { dependsOn: [publicZone] });
   return {};
 }
 `;
@@ -2896,6 +2910,50 @@ test('validateTapStack rejects private DNS virtual network links without explici
   );
 });
 
+test('validateTapStack rejects public DNS record sets without explicit dependsOn on the public zone', () => {
+  const scenario = {
+    prompt: 'Use one public DNS zone and one public DNS A record.',
+    resourceNames: {
+      publicZone: 'yardops91207.contoso.net',
+    },
+    expectedOutputKeys: ['ExampleOutput'],
+    requiredSourceMarkers: ['network.Zone', 'network.RecordSet'],
+    forbiddenSourceMarkers: [],
+    integrationChecks: [{ typePath: 'dnsZones/yardops91207.contoso.net/A/east-api' }],
+  };
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        'import * as pulumi from "@pulumi/pulumi";',
+        '',
+        'export function createTapStack() {',
+        '  const resourceGroup = { name: "rg-az-yard-robotics-twin-command-lattice-pulumi-91207" } as any;',
+        '  const publicZone = new azure.network.Zone("yardops91207.contoso.net", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    zoneName: "yardops91207.contoso.net",',
+        '    location: "global",',
+        '  });',
+        '  const apiRecord = new azure.network.RecordSet("east-api", {',
+        '    resourceGroupName: resourceGroup.name,',
+        '    zoneName: publicZone.name,',
+        '    relativeRecordSetName: "east-api",',
+        '    recordType: "A",',
+        '    ttl: 300,',
+        '    aRecords: [{ ipv4Address: "10.20.0.10" }],',
+        '  });',
+        '  return {',
+        '    ExampleOutput: "ok",',
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure public DNS record sets must include an explicit dependsOn option/,
+  );
+});
+
 test('validateTapStack rejects private DNS record sets without explicit dependsOn on the private zone', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91084');
   assert.ok(scenario);
@@ -4624,5 +4682,90 @@ test('Pr91205 includes Front Door security policy, dual managed environments, Po
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
       && check.typePath === 'namespaces/sb-claims-91205/topics/claims-events/subscriptions/replay'),
+  );
+});
+
+test('Pr91206 includes both regional AKS clusters, PostgreSQL, and the west-drain subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91206');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91206'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-inference-ring-91206/databases/inferencedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-west-drain'
+      && check.typePath === 'namespaces/sb-inference-ring-91206/topics/inference-commands/subscriptions/west-drain'),
+  );
+});
+
+test('Pr91207 includes dual IoT hubs, Digital Twins, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91207');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-yard-east-91207'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-yard-command-91207'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-yard-command-91207/topics/yard-commands/subscriptions/replay'),
+  );
+});
+
+test('Pr91208 includes all DMS projects and the promote subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91208');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-grid-91208/projects/mysql-stage'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-cutover-grid-91208/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promote'
+      && check.typePath === 'namespaces/sb-cutover-grid-91208/topics/cutover-grid-commands/subscriptions/promote'),
+  );
+});
+
+test('Pr91209 includes front door security policy, dual managed environments, and the green subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91209');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-revision-mesh-91209/securityPolicies/revision-mesh-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-revision-east-91209'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-green'
+      && check.typePath === 'namespaces/sb-revision-mesh-91209/topics/revision-commands/subscriptions/green'),
+  );
+});
+
+test('Pr91210 includes Synapse SQL pool, Cosmos container, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91210');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synreplay91210/sqlPools/replayringpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosreplay91210/sqlDatabases/ReplayRingDb/containers/ReplayRingLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-replay-ring-91210/topics/replay-ring-commands/subscriptions/approve'),
   );
 });
