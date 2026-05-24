@@ -3487,3 +3487,88 @@ test('Pr91150 includes both regional AKS clusters, Digital Twins, and the wareho
       && check.typePath === 'namespaces/sb-robotics-command-91150/topics/robotics-commands/subscriptions/warehouse'),
   );
 });
+
+test('Pr91151 includes both relational engines, the replay DMS project, and the treasury subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91151');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-server'
+      && check.typePath === 'flexibleServers/mysql-settlement-lattice-91151'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-replay-drill'
+      && check.typePath === 'services/dms-settlement-lattice-91151/projects/replay-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-treasury'
+      && check.typePath === 'namespaces/sb-settlement-lattice-91151/topics/settlement-batches/subscriptions/treasury'),
+  );
+});
+
+test('Pr91152 includes Digital Twins, both IoT hubs, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91152');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-twin-arbitration-91152'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-twin-east-91152'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-twin-arbitration-91152/topics/twin-commands/subscriptions/approve'),
+  );
+});
+
+test('Pr91153 includes both regional AKS clusters, Synapse SQL pool, and the catalog subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91153');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91153'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syninference91153/sqlPools/inferencepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-catalog'
+      && check.typePath === 'namespaces/sb-inference-marketplace-91153/topics/rollout-commands/subscriptions/catalog'),
+  );
+});
+
+test('Pr91154 includes all DMS projects, Synapse SQL pool, and the rollback subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91154');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-migration-exchange-91154/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synmigration91154/sqlPools/exchangepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-migration-exchange-91154/topics/migration-exchange/subscriptions/rollback'),
+  );
+});
+
+test('Pr91155 includes both regional AKS clusters, Digital Twins, and the dispatch subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91155');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-robotics-east-91155'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-robotics-verdict-91155'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch'
+      && check.typePath === 'namespaces/sb-robotics-verdict-91155/topics/robotics-verdicts/subscriptions/dispatch'),
+  );
+});
