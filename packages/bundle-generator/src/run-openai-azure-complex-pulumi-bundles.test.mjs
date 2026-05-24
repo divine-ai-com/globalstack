@@ -4311,3 +4311,108 @@ test('Pr91190 includes front door security policy, dual AKS clusters, Synapse SQ
       && check.typePath === 'namespaces/sb-merch-release-91190/topics/merch-events/subscriptions/promotion'),
   );
 });
+
+test('Pr91191 includes Front Door security policy, both Event Hubs namespaces, PostgreSQL database, and tower subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91191');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-aviation-slot-91191/securityPolicies/aviation-slot-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-event-hub-namespace'
+      && check.typePath === 'namespaces/eh-aviation-east-91191'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-aviation-slot-91191/databases/slotcontrol'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-tower'
+      && check.typePath === 'namespaces/sb-aviation-slot-91191/topics/slot-events/subscriptions/tower'),
+  );
+});
+
+test('Pr91192 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and the dispatch subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91192');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-factory-east-91192'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-factory-twin-91192'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-factory-91192/sqlPools/factorysqldw'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch'
+      && check.typePath === 'namespaces/sb-factory-91192/topics/factory-alerts/subscriptions/dispatch'),
+  );
+});
+
+test('Pr91193 includes Front Door security policy, DMS projects, Synapse SQL pool, and rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91193');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-customs-observatory-91193/securityPolicies/customs-observatory-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres-source-b'
+      && check.typePath === 'services/dms-customs-observatory-91193/projects/postgres-source-b'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-customs-observatory-91193/sqlPools/customssqldw'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-customs-observatory-91193/topics/customs-cutover/subscriptions/rollback'),
+  );
+});
+
+test('Pr91194 includes public IPs, dual AKS clusters, Cosmos container, and billing subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91194');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-public-ip'
+      && check.typePath === 'publicIPAddresses/pip-seaport-east-91194'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-seaport-east-91194'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosseaport91194/sqlDatabases/YardStateDb/containers/YardState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-billing'
+      && check.typePath === 'namespaces/sb-seaport-yard-91194/topics/yard-commands/subscriptions/billing'),
+  );
+});
+
+test('Pr91195 includes Front Door security policy, dual managed environments, PostgreSQL database, and replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91195');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-fulfillment-mesh-91195/securityPolicies/fulfillment-mesh-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-fulfillment-east-91195'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-fulfillment-mesh-91195/databases/fulfillmentdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-fulfillment-mesh-91195/topics/fulfillment-events/subscriptions/replay'),
+  );
+});
