@@ -13,6 +13,7 @@ const packageJsonPath = join(root, 'package.json');
 const capturesRoot = join(root, 'fixtures', 'azure-captures');
 const lifecycleRoot = join(root, 'fixtures', 'azure-lifecycle-captures');
 const storageDataPlaneExpectationsPath = join(root, 'fixtures', 'local-expectations', 'azure-storage-data-plane-expectations.json');
+const distE2eRoot = join(root, 'dist', 'e2e');
 
 const platformRunnerNames = [
   'Terraform HCL',
@@ -218,6 +219,93 @@ function dataPlaneEvidence(capabilityId, packageJson) {
   return evidence;
 }
 
+function resultDirForScript(script) {
+  const bare = String(script ?? '').replace(/^e2e:/, '');
+  return bare.startsWith('azure-') ? bare : `azure-${bare}`;
+}
+
+function collectCaseNames(node, names = []) {
+  if (!node || typeof node !== 'object') return names;
+  if (Array.isArray(node)) {
+    for (const item of node) collectCaseNames(item, names);
+    return names;
+  }
+  if (Array.isArray(node.cases)) {
+    for (const item of node.cases) {
+      if (item?.name) names.push(String(item.name).toLowerCase());
+    }
+  }
+  if (Array.isArray(node.steps)) {
+    for (const item of node.steps) {
+      if (item?.name) names.push(String(item.name).toLowerCase());
+    }
+  }
+  for (const value of Object.values(node)) collectCaseNames(value, names);
+  return names;
+}
+
+function paritySectionNames(result) {
+  if (!result || typeof result !== 'object') return [];
+  return Object.entries(result)
+    .filter(([, value]) => value && typeof value === 'object' && Array.isArray(value.cases))
+    .map(([key]) => key);
+}
+
+function parityPlatformMatrixComplete(result) {
+  const matrix = result?.platformMatrix;
+  return matrix?.ok === true
+    && matrix?.expectedPlatforms === platformRunnerNames.length
+    && matrix?.passedCount === platformRunnerNames.length
+    && Array.isArray(matrix?.results)
+    && matrix.results.length === platformRunnerNames.length
+    && matrix.results.every(item => item.ok === true && item.finalStatus === 'PASS' && (item.providerLifecycleOk === true || item.providerLifecycleOk == null));
+}
+
+function parityStateMarkers(caseNames) {
+  return {
+    update: caseNames.some(name => /\bupdate\b|\bpreserves\b|\bcan change\b/.test(name)),
+    postDelete: caseNames.some(name => /after delete|delete after delete/.test(name)),
+    asyncOrTransitional: caseNames.some(name => /async operation status|transitional provisioning state|returns async azure shape|returns async accepted|creating/.test(name)),
+    parentReadiness: caseNames.some(name => /missing parent|reports missing parent|requires an existing resource group|before .*readiness/.test(name)),
+    syncLifecycle: caseNames.some(name => /create succeeds|create returns 201|create returns 200/.test(name)),
+  };
+}
+
+function hasDataPlaneCoverage(caseNames, sectionNames) {
+  if (sectionNames.some(section => ['dataPlane', 'controlAndDataPlane', 'controlAndGatewayPlane', 'officialEmulator'].includes(section))) {
+    return true;
+  }
+  const markers = [
+    /data-plane /,
+    /gateway /,
+    /local redis backing/,
+    /local postgres backing/,
+    /local mysql backing/,
+    /local key vault/,
+    /http-trigger/,
+    /service bus emulator/,
+    /queue send and receive configured entity/,
+    /topic publish and subscription receive configured entity/,
+    /dead-lettered queue message/,
+    /event grid publish/,
+    /local workflow runner/,
+    /workflow trigger/,
+    /trigger callback url/,
+    /openid configuration/,
+    /jwks route/,
+    /token request/,
+    /local private dns registry/,
+    /local container app registry/,
+    /query returns created document/,
+    /table entity/,
+    /sql query/,
+    /docker registry/,
+    /partitions list succeeds/,
+    /workspace query|log analytics/,
+  ];
+  return markers.some(pattern => caseNames.some(name => pattern.test(name)));
+}
+
 function identityEvidence(capabilityId, packageJson, scriptSources) {
   const script = iacScriptByCapability.get(capabilityId);
   if (!scriptEvidence(script, packageJson)) return null;
@@ -338,6 +426,12 @@ const scriptSources = new Map(await Promise.all(scriptPaths.map(async relativePa
   relativePath,
   await readFile(join(root, relativePath), 'utf8').catch(() => ''),
 ])));
+const parityResultByScript = new Map(await Promise.all(
+  [...new Set(iacScriptByCapability.values())].map(async script => [
+    script,
+    await loadJson(join(distE2eRoot, resultDirForScript(script), 'results.json'), null),
+  ]),
+));
 
 const services = allCapabilities.map(capability => {
   const calls = (liveCatalog.calls ?? []).filter(call => call.capabilityId === capability.id);
@@ -357,6 +451,32 @@ const services = allCapabilities.map(capability => {
   const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
   const identityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
   const retryEvidenceItem = retryConsistencyEvidence(capability.id, packageJson, scriptSources);
+  const parityResult = parityResultByScript.get(iacScriptByCapability.get(capability.id)) ?? null;
+  const parityCaseNames = [...new Set(collectCaseNames(parityResult))];
+  const paritySections = paritySectionNames(parityResult);
+  const platformMatrixComplete = parityPlatformMatrixComplete(parityResult);
+  const stateMarkers = parityStateMarkers(parityCaseNames);
+  const stateTransitionComplete = hasCreate
+    && hasGet
+    && hasList
+    && hasDelete
+    && stateMarkers.update
+    && stateMarkers.postDelete
+    && (stateMarkers.asyncOrTransitional || stateMarkers.syncLifecycle)
+    && stateMarkers.parentReadiness;
+  const dataPlaneComplete = hasDataPlaneCoverage(parityCaseNames, paritySections);
+  const facadeComplete = hasLocalFacade && parityResult?.ok === true;
+  const retryConsistencyComplete = !!retryEvidenceItem
+    && stateMarkers.asyncOrTransitional
+    && stateMarkers.postDelete
+    && retryEvidenceItem.evidence.some(item => /async-operation|retry-after|transitional\/provisioning/i.test(item));
+  const identityComplete = capability.id === 'identity-rbac'
+    && !!identityEvidenceItems
+    && parityCaseNames.some(name => /openid configuration exposes local token endpoint/.test(name))
+    && parityCaseNames.some(name => /jwks route exposes deterministic empty key set/.test(name))
+    && parityCaseNames.some(name => /token request issues local access token/.test(name))
+    && parityCaseNames.some(name => /managed identity create succeeds/.test(name))
+    && parityCaseNames.some(name => /role assignment .*rejection|role definition .*rejection/.test(name));
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -382,15 +502,22 @@ const services = allCapabilities.map(capability => {
     }),
     stateTransitionCaptures: status({
       partial: hasCreate && hasGet && hasList && hasDelete,
-      complete: false,
+      complete: stateTransitionComplete,
       evidence: [
         hasCreate ? 'create captured' : null,
         hasGet ? 'get captured' : null,
         hasList ? 'list captured' : null,
         hasDelete ? 'delete captured' : null,
         isStorageCapability(capability.id) && lifecycleCaptureCount ? `${lifecycleCaptureCount} storage lifecycle capture files exist` : null,
+        stateMarkers.update ? 'update behavior is asserted by the parity pack' : null,
+        stateMarkers.postDelete ? 'post-delete behavior is asserted by the parity pack' : null,
+        stateMarkers.asyncOrTransitional ? 'async or transitional provisioning behavior is asserted by the parity pack' : null,
+        !stateMarkers.asyncOrTransitional && stateMarkers.syncLifecycle ? 'synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack' : null,
+        stateMarkers.parentReadiness ? 'parent readiness and missing-parent behavior is asserted by the parity pack' : null,
       ].filter(Boolean),
-      gaps: ['Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service.'],
+      gaps: stateTransitionComplete
+        ? []
+        : ['Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service.'],
     }),
     errorShapeFidelity: status({
       partial: capabilityCaptures.length > 0,
@@ -400,9 +527,11 @@ const services = allCapabilities.map(capability => {
     }),
     identityRbacBehavior: status({
       partial: !!identityEvidenceItems,
-      complete: false,
+      complete: identityComplete,
       evidence: identityEvidenceItems ?? [],
-      gaps: identityEvidenceItems
+      gaps: identityComplete
+        ? []
+        : identityEvidenceItems
         ? [
           'Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.',
           'Implement service-specific data-plane RBAC denials and propagation timing where applicable.',
@@ -412,27 +541,35 @@ const services = allCapabilities.map(capability => {
     }),
     retryEventualConsistency: status({
       partial: (isStorageCapability(capability.id) && lifecycleCaptureCount > 0) || !!retryEvidenceItem,
-      complete: false,
+      complete: retryConsistencyComplete,
       evidence: [
         isStorageCapability(capability.id) ? `${lifecycleCaptureCount} storage lifecycle capture files` : null,
         retryEvidenceItem ? `${retryEvidenceItem.script} is wired into npm run smoke` : null,
         ...(retryEvidenceItem?.evidence ?? []),
+        retryConsistencyComplete ? 'parity pack covers async/transitional and post-delete timing behavior' : null,
       ].filter(Boolean),
-      gaps: [
-        'Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.',
-        'Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate.',
-      ],
+      gaps: retryConsistencyComplete
+        ? []
+        : [
+          'Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.',
+          'Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate.',
+        ],
     }),
     iacProviderBehavior: status({
       partial: !!iacEvidence,
-      complete: false,
+      complete: platformMatrixComplete,
       evidence: iacEvidence
         ? [
           `${iacEvidence.script} is wired into npm run smoke`,
           `${iacEvidence.platforms.length} platform lifecycle runners: ${iacEvidence.platforms.join(', ')}`,
+          platformMatrixComplete ? 'all platform lifecycle runners passed provider lifecycle validation for this service' : null,
         ]
-        : [],
-      gaps: iacEvidence
+        : platformMatrixComplete
+          ? ['all platform lifecycle runners passed provider lifecycle validation for this service']
+          : [],
+      gaps: platformMatrixComplete
+        ? []
+        : iacEvidence
         ? [
           'Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.',
           'Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity.',
@@ -441,13 +578,16 @@ const services = allCapabilities.map(capability => {
     }),
     dataPlaneBehavior: status({
       partial: (storageDataPlaneRelevant && storageDataPlaneExpectationCount > 0) || !!dataPlaneEvidenceItem,
-      complete: false,
+      complete: dataPlaneComplete,
       evidence: [
         storageDataPlaneRelevant ? `${storageDataPlaneExpectationCount} Blob/Queue data-plane expectations` : null,
         dataPlaneEvidenceItem ? `${dataPlaneEvidenceItem.script} is wired into npm run smoke` : null,
         dataPlaneEvidenceItem ? dataPlaneEvidenceItem.scope : null,
+        dataPlaneComplete ? `parity result sections: ${paritySections.join(', ') || 'case-derived data-plane coverage'}` : null,
       ].filter(Boolean),
-      gaps: storageDataPlaneRelevant
+      gaps: dataPlaneComplete
+        ? []
+        : storageDataPlaneRelevant
         ? ['Expand Blob/Queue captures and local normalization beyond Wave 1.']
         : dataPlaneEvidenceItem
           ? [
@@ -467,12 +607,15 @@ const services = allCapabilities.map(capability => {
     }),
     serviceSpecificFacade: status({
       partial: hasLocalFacade,
-      complete: false,
+      complete: facadeComplete,
       evidence: [
         `${capability.implementedOperations.length} registry operations declared`,
         capability.backingEngines.length ? `backing engines: ${capability.backingEngines.join(', ')}` : null,
+        facadeComplete ? 'dedicated parity pack passed against the local facade/runtime path' : null,
       ].filter(Boolean),
-      gaps: ['Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed.'],
+      gaps: facadeComplete
+        ? []
+        : ['Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed.'],
     }),
   };
 

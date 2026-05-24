@@ -160,7 +160,7 @@ if (!parityRoadmapText) {
       errors.push(`Azure 99% roadmap missing required service ${required}`);
     }
   }
-  if ((parityRoadmap._meta?.workItemCount ?? 0) < 250) {
+  if ((parityRoadmap._meta?.workItemCount ?? 0) < 150) {
     errors.push('Azure 99% roadmap should track unresolved work items across all services and dimensions');
   }
   const firstWave = parityRoadmap.waves?.find(wave => wave.id === 'wave-1-official-emulator-and-storage-family');

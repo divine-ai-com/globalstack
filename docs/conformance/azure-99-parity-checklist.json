@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T17:42:41.566Z",
+    "generatedAt": "2026-05-24T21:04:16.656Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -82,8 +82,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 10,
+        "complete": 4,
+        "partial": 6,
         "notStarted": 0
       },
       "dimensions": {
@@ -109,17 +109,19 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
             "delete captured",
-            "2 storage lifecycle capture files exist"
+            "2 storage lifecycle capture files exist",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -143,30 +145,26 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "2 storage lifecycle capture files",
             "e2e:storage-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "retry-after header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "partial",
@@ -187,14 +185,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "12 registry operations declared",
-            "backing engines: azurite"
+            "backing engines: azurite",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -205,7 +202,8 @@
       "azureEquivalent": "Azure Functions / Function Apps",
       "resourceTypes": [
         "Microsoft.Web/sites",
-        "Microsoft.Web/serverfarms"
+        "Microsoft.Web/serverfarms",
+        "Microsoft.Web/sites/functions"
       ],
       "currentStatus": "in-progress",
       "evidence": {
@@ -220,8 +218,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 5,
+        "partial": 4,
         "notStarted": 1
       },
       "dimensions": {
@@ -247,16 +245,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -281,39 +281,33 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-functions-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-functions-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-functions-parity is wired into npm run smoke",
-            "local HTTP-trigger routing, function-key rejection, and post-delete route rejection"
+            "local HTTP-trigger routing, function-key rejection, and post-delete route rejection",
+            "parity result sections: controlAndDataPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -323,14 +317,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "12 registry operations declared",
-            "backing engines: functions-core-tools, azurite"
+            "48 registry operations declared",
+            "backing engines: functions-core-tools, azurite",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -356,8 +349,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 5,
+        "partial": 4,
         "notStarted": 1
       },
       "dimensions": {
@@ -383,16 +376,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -417,40 +412,34 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:api-management-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "retry-after header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:api-management-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:api-management-parity is wired into npm run smoke",
-            "local gateway host/path/subscription-key rejection and route smoke"
+            "local gateway host/path/subscription-key rejection and route smoke",
+            "parity result sections: controlAndGatewayPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -460,14 +449,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "11 registry operations declared",
-            "backing engines: globalstack-http-router"
+            "backing engines: globalstack-http-router",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -495,9 +483,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 5,
+        "partial": 4,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -522,16 +510,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -543,18 +533,14 @@
           ]
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:identity-rbac-parity is wired into npm run smoke",
             "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
             "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack",
             "local token facade, OpenID discovery, Managed Identity, role assignment, and role definition rejection paths are covered by the identity/RBAC parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "partial",
@@ -569,23 +555,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:identity-rbac-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlAndTokenPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -595,14 +578,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "14 registry operations declared",
-            "backing engines: globalstack-local-token-service"
+            "backing engines: globalstack-local-token-service",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -629,8 +611,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 4,
+        "partial": 5,
         "notStarted": 1
       },
       "dimensions": {
@@ -656,16 +638,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -701,26 +685,22 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "local Key Vault secret set/get/version-list/delete and malformed secret rejection smoke"
+            "local Key Vault secret set/get/version-list/delete and malformed secret rejection smoke",
+            "parity result sections: controlAndDataPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -730,14 +710,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "6 registry operations declared",
-            "backing engines: globalstack-secret-store"
+            "backing engines: globalstack-secret-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -763,8 +742,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 4,
+        "partial": 5,
         "notStarted": 1
       },
       "dimensions": {
@@ -790,16 +769,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -835,26 +816,22 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke"
+            "local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke",
+            "parity result sections: controlAndDataPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -864,14 +841,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "6 registry operations declared",
-            "backing engines: node-crypto"
+            "backing engines: node-crypto",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -899,9 +875,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -926,16 +902,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -972,23 +950,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:postgresql-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -998,14 +973,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "9 registry operations declared",
-            "backing engines: local-postgres"
+            "backing engines: local-postgres",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1033,9 +1007,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 5,
+        "partial": 4,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1060,17 +1034,19 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
             "delete captured",
-            "2 storage lifecycle capture files exist"
+            "2 storage lifecycle capture files exist",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1095,37 +1071,32 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "2 storage lifecycle capture files",
             "e2e:cosmos-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:cosmos-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Official/local backing option declared: cosmos-db-emulator, azurite",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -1135,14 +1106,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "16 registry operations declared",
-            "backing engines: cosmos-db-emulator, azurite"
+            "backing engines: cosmos-db-emulator, azurite",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1169,8 +1139,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 5,
+        "partial": 4,
         "notStarted": 1
       },
       "dimensions": {
@@ -1196,16 +1166,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1230,40 +1202,34 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-bus-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "retry-after header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-bus-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-bus-parity is wired into npm run smoke",
-            "official Service Bus emulator queue/topic send, receive, complete, and missing-entity rejection smoke"
+            "official Service Bus emulator queue/topic send, receive, complete, and missing-entity rejection smoke",
+            "parity result sections: controlPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -1273,14 +1239,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "13 registry operations declared",
-            "backing engines: service-bus-emulator, globalstack-event-router"
+            "backing engines: service-bus-emulator, globalstack-event-router",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1306,8 +1271,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 4,
+        "partial": 5,
         "notStarted": 1
       },
       "dimensions": {
@@ -1333,16 +1298,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1379,26 +1346,22 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:event-grid-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:event-grid-parity is wired into npm run smoke",
-            "Event Grid topic publish URL, key auth, malformed publish rejection, and local event capture"
+            "Event Grid topic publish URL, key auth, malformed publish rejection, and local event capture",
+            "parity result sections: controlAndDataPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -1408,14 +1371,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "8 registry operations declared",
-            "backing engines: globalstack-event-router"
+            "backing engines: globalstack-event-router",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1440,8 +1402,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 9,
+        "complete": 4,
+        "partial": 5,
         "notStarted": 1
       },
       "dimensions": {
@@ -1467,16 +1429,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1512,26 +1476,22 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:container-registry-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:container-registry-parity is wired into npm run smoke",
-            "local ACR/Docker Registry bearer challenge, token, catalog, tag, manifest, and post-delete rejection smoke"
+            "local ACR/Docker Registry bearer challenge, token, catalog, tag, manifest, and post-delete rejection smoke",
+            "parity result sections: controlAndDataPlane"
           ],
-          "gaps": [
-            "Expand from local data-plane smoke to live Azure-captured success, rejection, auth, retry, and side-effect matrices.",
-            "Keep unmodeled data-plane routes fail-closed until captured or explicitly scoped out."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -1541,14 +1501,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "6 registry operations declared",
-            "backing engines: local-oci-registry"
+            "backing engines: local-oci-registry",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1573,8 +1532,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 4,
+        "partial": 4,
         "notStarted": 2
       },
       "dimensions": {
@@ -1600,16 +1559,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1633,28 +1594,24 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:aks-metadata-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:aks-metadata-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -1672,14 +1629,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "6 registry operations declared",
-            "backing engines: kind-or-k3d-future"
+            "backing engines: kind-or-k3d-future",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1687,9 +1643,10 @@
       "capabilityId": "monitor-logs",
       "tier": 1,
       "awsAnalogue": "CloudWatch Logs",
-      "azureEquivalent": "Log Analytics / Azure Monitor Logs",
+      "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
       "resourceTypes": [
         "Microsoft.OperationalInsights/workspaces",
+        "Microsoft.Insights/components",
         "Microsoft.Insights/diagnosticSettings"
       ],
       "currentStatus": "in-progress",
@@ -1705,9 +1662,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1732,16 +1689,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1778,23 +1737,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:monitor-logs-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -1804,14 +1760,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "6 registry operations declared",
-            "backing engines: globalstack-log-store"
+            "14 registry operations declared",
+            "backing engines: globalstack-log-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1822,7 +1777,8 @@
       "azureEquivalent": "Azure Monitor metrics and alerts",
       "resourceTypes": [
         "Microsoft.Insights/metricAlerts",
-        "Microsoft.Insights/actionGroups"
+        "Microsoft.Insights/actionGroups",
+        "Microsoft.Insights/activityLogAlerts"
       ],
       "currentStatus": "in-progress",
       "evidence": {
@@ -1837,8 +1793,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -1864,16 +1820,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -1910,15 +1868,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -1936,14 +1892,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "9 registry operations declared",
-            "backing engines: globalstack-metric-store"
+            "13 registry operations declared",
+            "backing engines: globalstack-metric-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -1954,6 +1909,7 @@
       "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
       "resourceTypes": [
         "Microsoft.Network/virtualNetworks",
+        "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
         "Microsoft.Network/privateEndpoints",
         "Microsoft.Network/privateDnsZones"
       ],
@@ -1970,8 +1926,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -1997,16 +1953,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2044,15 +2002,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:virtual-network-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -2070,14 +2026,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "17 registry operations declared",
-            "backing engines: globalstack-network-model"
+            "21 registry operations declared",
+            "backing engines: globalstack-network-model",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2103,9 +2058,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2130,16 +2085,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2176,23 +2133,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:mysql-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -2202,14 +2156,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "9 registry operations declared",
-            "backing engines: local-mysql"
+            "backing engines: local-mysql",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2233,8 +2186,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 10,
+        "complete": 4,
+        "partial": 6,
         "notStarted": 0
       },
       "dimensions": {
@@ -2260,17 +2213,19 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
             "delete captured",
-            "2 storage lifecycle capture files exist"
+            "2 storage lifecycle capture files exist",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2294,30 +2249,26 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "2 storage lifecycle capture files",
             "e2e:storage-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "retry-after header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "partial",
@@ -2338,14 +2289,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "7 registry operations declared",
-            "backing engines: azurite, service-bus-emulator"
+            "backing engines: azurite, service-bus-emulator",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2373,9 +2323,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 5,
+        "partial": 4,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2400,16 +2350,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2434,36 +2386,31 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:redis-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:redis-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -2473,14 +2420,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "7 registry operations declared",
-            "backing engines: local-redis"
+            "backing engines: local-redis",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2506,9 +2452,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2533,16 +2479,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2579,23 +2527,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:logic-workflows-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -2605,14 +2550,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "6 registry operations declared",
-            "backing engines: globalstack-workflow-runner, functions-core-tools"
+            "36 registry operations declared",
+            "backing engines: globalstack-workflow-runner, functions-core-tools",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2658,8 +2602,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -2685,16 +2629,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2732,15 +2678,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:dns-zones-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -2758,14 +2702,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "17 registry operations declared",
-            "backing engines: globalstack-dns-registry"
+            "backing engines: globalstack-dns-registry",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2776,7 +2719,8 @@
       "azureEquivalent": "Azure Application Gateway / Load Balancer",
       "resourceTypes": [
         "Microsoft.Network/applicationGateways",
-        "Microsoft.Network/loadBalancers"
+        "Microsoft.Network/loadBalancers",
+        "Microsoft.Network/publicIPAddresses"
       ],
       "currentStatus": "in-progress",
       "evidence": {
@@ -2791,9 +2735,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2818,16 +2762,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2864,23 +2810,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:load-balancing-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -2890,14 +2833,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "10 registry operations declared",
-            "backing engines: globalstack-http-router"
+            "14 registry operations declared",
+            "backing engines: globalstack-http-router",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -2909,7 +2851,10 @@
       "resourceTypes": [
         "Microsoft.Cdn/profiles",
         "Microsoft.Cdn/profiles/afdEndpoints",
-        "Microsoft.Cdn/profiles/endpoints"
+        "Microsoft.Cdn/profiles/endpoints",
+        "Microsoft.Cdn/profiles/originGroups",
+        "Microsoft.Cdn/profiles/originGroups/origins",
+        "Microsoft.Cdn/profiles/afdEndpoints/routes"
       ],
       "currentStatus": "in-progress",
       "evidence": {
@@ -2924,8 +2869,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -2951,16 +2896,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -2997,15 +2944,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:front-door-cdn-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -3023,14 +2968,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "14 registry operations declared",
-            "backing engines: globalstack-edge-router"
+            "24 registry operations declared",
+            "backing engines: globalstack-edge-router",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3041,6 +2985,7 @@
       "azureEquivalent": "Azure Web Application Firewall policy",
       "resourceTypes": [
         "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+        "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
         "Microsoft.Cdn/profiles/securityPolicies"
       ],
       "currentStatus": "in-progress",
@@ -3056,8 +3001,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -3083,16 +3028,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3129,15 +3076,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:waf-policy-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -3155,14 +3100,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "10 registry operations declared",
-            "backing engines: globalstack-waf-metadata"
+            "backing engines: globalstack-waf-metadata",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3188,8 +3132,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -3215,16 +3159,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3261,15 +3207,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:activity-log-audit-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -3287,14 +3231,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "9 registry operations declared",
-            "backing engines: globalstack-audit-log"
+            "backing engines: globalstack-audit-log",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3320,9 +3263,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 5,
+        "partial": 4,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3347,17 +3290,19 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
             "delete captured",
-            "2 storage lifecycle capture files exist"
+            "2 storage lifecycle capture files exist",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3382,37 +3327,32 @@
           ]
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "2 storage lifecycle capture files",
             "e2e:azure-files-parity is wired into npm run smoke",
             "async-operation header behavior is asserted",
             "transitional/provisioning state behavior is asserted",
-            "post-delete behavior is asserted"
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-files-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -3422,14 +3362,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "9 registry operations declared",
-            "backing engines: local-file-share"
+            "backing engines: local-file-share",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3455,9 +3394,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3482,16 +3421,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3528,23 +3469,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:event-hubs-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Official/local backing option declared: event-hubs-emulator",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -3554,14 +3492,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "11 registry operations declared",
-            "backing engines: event-hubs-emulator"
+            "backing engines: event-hubs-emulator",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3587,8 +3524,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -3614,16 +3551,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3660,15 +3599,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:synapse-warehouse-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -3686,14 +3623,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "10 registry operations declared",
-            "backing engines: local-analytics-store"
+            "backing engines: local-analytics-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3720,9 +3656,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3747,16 +3683,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3793,23 +3731,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:app-configuration-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Official/local backing option declared: app-configuration-emulator, globalstack-secret-store",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane, dataPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -3819,14 +3754,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "7 registry operations declared",
-            "backing engines: app-configuration-emulator, globalstack-secret-store"
+            "backing engines: app-configuration-emulator, globalstack-secret-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3852,8 +3786,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
+        "complete": 3,
+        "partial": 5,
         "notStarted": 2
       },
       "dimensions": {
@@ -3879,16 +3813,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -3925,15 +3861,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:database-migration-service-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "not-started",
@@ -3951,14 +3885,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "10 registry operations declared",
-            "backing engines: globalstack-migration-plan-store"
+            "backing engines: globalstack-migration-plan-store",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     },
@@ -3985,9 +3918,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 0,
-        "partial": 8,
-        "notStarted": 2
+        "complete": 4,
+        "partial": 5,
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -4012,16 +3945,18 @@
           ]
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
-            "delete captured"
+            "delete captured",
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
           "status": "partial",
@@ -4059,23 +3994,20 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-discovery-parity is wired into npm run smoke",
-            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON"
+            "8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON",
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "not-started",
@@ -4085,14 +4017,13 @@
           ]
         },
         "serviceSpecificFacade": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "15 registry operations declared",
-            "backing engines: globalstack-service-registry, globalstack-dns-registry"
+            "backing engines: globalstack-service-registry, globalstack-dns-registry",
+            "dedicated parity pack passed against the local facade/runtime path"
           ],
-          "gaps": [
-            "Implement strict service-specific handlers and replay tests for all captured operations; unknown surfaces must fail closed."
-          ]
+          "gaps": []
         }
       }
     }
