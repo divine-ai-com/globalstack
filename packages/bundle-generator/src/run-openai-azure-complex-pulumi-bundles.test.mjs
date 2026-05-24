@@ -3402,3 +3402,88 @@ test('Pr91145 includes Synapse SQL pool, Cosmos container, and the approve subsc
       && check.typePath === 'namespaces/sb-replay-ring-91145/topics/replay-ring-commands/subscriptions/approve'),
   );
 });
+
+test('Pr91146 includes both regional AKS clusters, Cosmos container, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91146');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-release-east-91146'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosrelease91146/sqlDatabases/ReleaseVerdictDb/containers/ReleaseVerdicts'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-release-fabric-91146/topics/release-verdicts/subscriptions/replay'),
+  );
+});
+
+test('Pr91147 includes dual IoT hubs, Synapse SQL pool, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91147');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-twins-east-91147'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syntwins91147/sqlPools/twinops'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-twin-observatory-91147/topics/twin-commands/subscriptions/approve'),
+  );
+});
+
+test('Pr91148 includes the freeze-audit DMS project, Synapse SQL pool, and the rollback subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91148');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-migration-tribunal-91148/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synmigration91148/sqlPools/migrationpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-migration-tribunal-91148/topics/migration-commands/subscriptions/rollback'),
+  );
+});
+
+test('Pr91149 includes front door security policy, dual managed environments, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91149');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-container-exchange-91149/securityPolicies/container-exchange-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-exchange-east-91149'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-container-exchange-91149/topics/exchange-commands/subscriptions/approve'),
+  );
+});
+
+test('Pr91150 includes both regional AKS clusters, Digital Twins, and the warehouse subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91150');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-robotics-east-91150'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-robotics-command-91150'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-robotics-command-91150/topics/robotics-commands/subscriptions/warehouse'),
+  );
+});
