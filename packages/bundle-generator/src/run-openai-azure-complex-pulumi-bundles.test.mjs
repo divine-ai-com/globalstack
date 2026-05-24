@@ -2591,6 +2591,131 @@ test('Pr91120 includes both managed environments, both event hubs, and the repla
   );
 });
 
+test('Pr91121 includes Front Door, Function App, workflow, and the audit subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91121');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('web.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-route'
+      && check.typePath === 'profiles/afd-payments-grid-91121/afdEndpoints/payments-grid-endpoint/routes/payments-grid-route'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'function-app'
+      && check.typePath === 'sites/fn-payments-grid-91121'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'logic-workflow'
+      && check.typePath === 'workflows/logic-payments-grid-91121'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-audit'
+      && check.typePath === 'namespaces/sb-payments-grid-91121/topics/payments-events/subscriptions/audit'),
+  );
+});
+
+test('Pr91122 includes both managed environments, both load balancers, and the reconcile subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91122');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(scenario.requiredSourceMarkers.includes('network.LoadBalancer'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-branch-east-91122'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-branch-east-91122'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-load-balancer'
+      && check.typePath === 'loadBalancers/lb-branch-west-91122'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-reconcile'
+      && check.typePath === 'namespaces/sb-branch-reconcile-91122/topics/branch-events/subscriptions/reconcile'),
+  );
+});
+
+test('Pr91123 includes both IoT hubs, Digital Twins, Synapse, and the replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91123');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-robotics-east-91123'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/dt-robotics-91123'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-robotics-91123/sqlPools/roboticspool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-robotics-lattice-91123/topics/robotics-events/subscriptions/replay'),
+  );
+});
+
+test('Pr91124 includes Front Door, both database engines, DMS projects, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91124');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-route'
+      && check.typePath === 'profiles/afd-cutover-fabric-91124/afdEndpoints/cutover-fabric-endpoint/routes/cutover-fabric-route'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-cutover-91124/databases/cutoverdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-cutover-91124/databases/cutoverdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-reconciliation'
+      && check.typePath === 'services/dms-cutover-fabric-91124/projects/reconciliation-project'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-cutover-fabric-91124/topics/cutover-events/subscriptions/rollback'),
+  );
+});
+
+test('Pr91125 includes both AKS clusters, both event hubs, Cosmos, and the quarantine subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91125');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('eventhub.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('documentdb.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91125'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-inference-west-91125/eventhubs/prompts-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmosinference91125/sqlDatabases/InferenceDb/containers/PromptLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-quarantine'
+      && check.typePath === 'namespaces/sb-inference-ring-91125/topics/inference-events/subscriptions/quarantine'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);

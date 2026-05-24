@@ -7,7 +7,7 @@ const arm = (label, provider, typePath, apiVersion, expectedType) => ({
   expectedType,
 });
 
-const frontDoorChecks = ({
+export const frontDoorChecks = ({
   profile,
   endpoint,
   originGroup,
@@ -27,19 +27,19 @@ const frontDoorChecks = ({
   arm("waf-policy", "Microsoft.Network", `FrontDoorWebApplicationFirewallPolicies/${wafPolicy}`, "2024-05-01", "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies"),
 ];
 
-const publicDnsChecks = ({ zone, cnameRecords = [], aRecords = [] }) => [
+export const publicDnsChecks = ({ zone, cnameRecords = [], aRecords = [] }) => [
   arm("public-dns-zone", "Microsoft.Network", `dnsZones/${zone}`, "2018-05-01", "Microsoft.Network/dnsZones"),
   ...cnameRecords.map((record) => arm(`public-dns-${record}`, "Microsoft.Network", `dnsZones/${zone}/CNAME/${record}`, "2018-05-01", "Microsoft.Network/dnsZones/CNAME")),
   ...aRecords.map((record) => arm(`public-dns-${record}`, "Microsoft.Network", `dnsZones/${zone}/A/${record}`, "2018-05-01", "Microsoft.Network/dnsZones/A")),
 ];
 
-const privateDnsChecks = ({ zone, links = [], aRecords = [] }) => [
+export const privateDnsChecks = ({ zone, links = [], aRecords = [] }) => [
   arm("private-dns-zone", "Microsoft.Network", `privateDnsZones/${zone}`, "2020-06-01", "Microsoft.Network/privateDnsZones"),
   ...links.map((link) => arm(`private-dns-${link.label}`, "Microsoft.Network", `privateDnsZones/${zone}/virtualNetworkLinks/${link.name}`, "2020-06-01", "Microsoft.Network/privateDnsZones/virtualNetworkLinks")),
   ...aRecords.map((record) => arm(`private-dns-${record}`, "Microsoft.Network", `privateDnsZones/${zone}/A/${record}`, "2020-06-01", "Microsoft.Network/privateDnsZones/A")),
 ];
 
-const vnetChecks = ({ vnets = [], peerings = [], publicIps = [], loadBalancers = [], applicationGateways = [] }) => [
+export const vnetChecks = ({ vnets = [], peerings = [], publicIps = [], loadBalancers = [], applicationGateways = [] }) => [
   ...vnets.map((vnet) => arm(`${vnet.label}-vnet`, "Microsoft.Network", `virtualNetworks/${vnet.name}`, "2024-05-01", "Microsoft.Network/virtualNetworks")),
   ...peerings.map((peering) => arm(peering.label, "Microsoft.Network", `virtualNetworks/${peering.vnet}/virtualNetworkPeerings/${peering.name}`, "2024-05-01", "Microsoft.Network/virtualNetworks/virtualNetworkPeerings")),
   ...publicIps.map((pip) => arm(pip.label, "Microsoft.Network", `publicIPAddresses/${pip.name}`, "2024-05-01", "Microsoft.Network/publicIPAddresses")),
@@ -47,37 +47,37 @@ const vnetChecks = ({ vnets = [], peerings = [], publicIps = [], loadBalancers =
   ...applicationGateways.map((agw) => arm(agw.label, "Microsoft.Network", `applicationGateways/${agw.name}`, "2024-05-01", "Microsoft.Network/applicationGateways")),
 ];
 
-const apiManagementChecks = ({ service, api, product, operations }) => [
+export const apiManagementChecks = ({ service, api, product, operations }) => [
   arm("api-management-service", "Microsoft.ApiManagement", `service/${service}`, "2023-05-01-preview", "Microsoft.ApiManagement/service"),
   arm("api-management-product-api", "Microsoft.ApiManagement", `service/${service}/products/${product}/apis/${api}`, "2023-05-01-preview", "Microsoft.ApiManagement/service/products/apis"),
   ...operations.map((operation) => arm(operation.label, "Microsoft.ApiManagement", `service/${service}/apis/${api}/operations/${operation.name}/policies/policy`, "2023-05-01-preview", "Microsoft.ApiManagement/service/apis/operations/policies")),
 ];
 
-const appServiceChecks = ({ plan, functionApp, workflow }) => [
+export const appServiceChecks = ({ plan, functionApp, workflow }) => [
   arm("app-service-plan", "Microsoft.Web", `serverfarms/${plan}`, "2023-12-01", "Microsoft.Web/serverfarms"),
   arm("function-app", "Microsoft.Web", `sites/${functionApp}`, "2023-12-01", "Microsoft.Web/sites"),
   ...(workflow ? [arm("logic-workflow", "Microsoft.Logic", `workflows/${workflow}`, "2019-05-01", "Microsoft.Logic/workflows")] : []),
 ];
 
-const managedEnvironmentChecks = ({ environments = [], apps = [] }) => [
+export const managedEnvironmentChecks = ({ environments = [], apps = [] }) => [
   ...environments.map((env) => arm(env.label, "Microsoft.App", `managedEnvironments/${env.name}`, "2024-03-01", "Microsoft.App/managedEnvironments")),
   ...apps.map((app) => arm(app.label, "Microsoft.App", `containerApps/${app.name}`, "2024-03-01", "Microsoft.App/containerApps")),
 ];
 
-const aksChecks = (clusters) => clusters.map((cluster) => arm(cluster.label, "Microsoft.ContainerService", `managedClusters/${cluster.name}`, "2024-09-01", "Microsoft.ContainerService/managedClusters"));
+export const aksChecks = (clusters) => clusters.map((cluster) => arm(cluster.label, "Microsoft.ContainerService", `managedClusters/${cluster.name}`, "2024-09-01", "Microsoft.ContainerService/managedClusters"));
 
-const identityAndRegistryChecks = ({ identity, registry }) => [
+export const identityAndRegistryChecks = ({ identity, registry }) => [
   arm("managed-identity", "Microsoft.ManagedIdentity", `userAssignedIdentities/${identity}`, "2023-01-31", "Microsoft.ManagedIdentity/userAssignedIdentities"),
   arm("container-registry", "Microsoft.ContainerRegistry", `registries/${registry}`, "2023-11-01-preview", "Microsoft.ContainerRegistry/registries"),
 ];
 
-const cosmosChecks = ({ account, database, container }) => [
+export const cosmosChecks = ({ account, database, container }) => [
   arm("cosmos-account", "Microsoft.DocumentDB", `databaseAccounts/${account}`, "2024-05-15", "Microsoft.DocumentDB/databaseAccounts"),
   arm("cosmos-database", "Microsoft.DocumentDB", `databaseAccounts/${account}/sqlDatabases/${database}`, "2024-05-15", "Microsoft.DocumentDB/databaseAccounts/sqlDatabases"),
   arm("cosmos-container", "Microsoft.DocumentDB", `databaseAccounts/${account}/sqlDatabases/${database}/containers/${container}`, "2024-05-15", "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers"),
 ];
 
-const relationalChecks = ({ mysql, postgres }) => [
+export const relationalChecks = ({ mysql, postgres }) => [
   ...(mysql
     ? [
         arm("mysql-server", "Microsoft.DBforMySQL", `flexibleServers/${mysql.server}`, "2023-12-30", "Microsoft.DBforMySQL/flexibleServers"),
@@ -92,36 +92,36 @@ const relationalChecks = ({ mysql, postgres }) => [
     : []),
 ];
 
-const serviceBusTopicChecks = ({ namespace, topic, subscriptions = [] }) => [
+export const serviceBusTopicChecks = ({ namespace, topic, subscriptions = [] }) => [
   arm("service-bus-namespace", "Microsoft.ServiceBus", `namespaces/${namespace}`, "2024-01-01", "Microsoft.ServiceBus/namespaces"),
   arm("service-bus-topic", "Microsoft.ServiceBus", `namespaces/${namespace}/topics/${topic}`, "2024-01-01", "Microsoft.ServiceBus/namespaces/topics"),
   ...subscriptions.map((subscription) => arm(subscription.label, "Microsoft.ServiceBus", `namespaces/${namespace}/topics/${topic}/subscriptions/${subscription.name}`, "2024-01-01", "Microsoft.ServiceBus/namespaces/topics/subscriptions")),
 ];
 
-const eventHubChecks = ({ hubs = [] }) => [
+export const eventHubChecks = ({ hubs = [] }) => [
   ...hubs.flatMap((hub) => [
     arm(hub.namespaceLabel, "Microsoft.EventHub", `namespaces/${hub.namespace}`, "2024-01-01", "Microsoft.EventHub/namespaces"),
     arm(hub.eventHubLabel, "Microsoft.EventHub", `namespaces/${hub.namespace}/eventhubs/${hub.eventHub}`, "2024-01-01", "Microsoft.EventHub/namespaces/eventhubs"),
   ]),
 ];
 
-const iotChecks = (hubs) => hubs.map((hub) => arm(hub.label, "Microsoft.Devices", `IotHubs/${hub.name}`, "2023-06-30", "Microsoft.Devices/IotHubs"));
+export const iotChecks = (hubs) => hubs.map((hub) => arm(hub.label, "Microsoft.Devices", `IotHubs/${hub.name}`, "2023-06-30", "Microsoft.Devices/IotHubs"));
 
-const digitalTwinChecks = ({ instance }) => [
+export const digitalTwinChecks = ({ instance }) => [
   arm("digital-twins-instance", "Microsoft.DigitalTwins", `digitalTwinsInstances/${instance}`, "2023-01-31", "Microsoft.DigitalTwins/digitalTwinsInstances"),
 ];
 
-const synapseChecks = ({ workspace, sqlPool }) => [
+export const synapseChecks = ({ workspace, sqlPool }) => [
   arm("synapse-workspace", "Microsoft.Synapse", `workspaces/${workspace}`, "2021-06-01", "Microsoft.Synapse/workspaces"),
   arm("synapse-sql-pool", "Microsoft.Synapse", `workspaces/${workspace}/sqlPools/${sqlPool}`, "2021-06-01", "Microsoft.Synapse/workspaces/sqlPools"),
 ];
 
-const dmsChecks = ({ service, projects = [] }) => [
+export const dmsChecks = ({ service, projects = [] }) => [
   arm("dms-service", "Microsoft.DataMigration", `services/${service}`, "2022-03-30-preview", "Microsoft.DataMigration/services"),
   ...projects.map((project) => arm(project.label, "Microsoft.DataMigration", `services/${service}/projects/${project.name}`, "2022-03-30-preview", "Microsoft.DataMigration/services/projects")),
 ];
 
-const storageChecks = ({ account, containers = [], queue, table, share }) => [
+export const storageChecks = ({ account, containers = [], queue, table, share }) => [
   arm("storage-account", "Microsoft.Storage", `storageAccounts/${account}`, "2023-05-01", "Microsoft.Storage/storageAccounts"),
   ...containers.map((container) => arm(container.label, "Microsoft.Storage", `storageAccounts/${account}/blobServices/default/containers/${container.name}`, "2023-05-01", "Microsoft.Storage/storageAccounts/blobServices/containers")),
   ...(queue ? [arm("storage-queue", "Microsoft.Storage", `storageAccounts/${account}/queueServices/default/queues/${queue}`, "2023-05-01", "Microsoft.Storage/storageAccounts/queueServices/queues")] : []),
@@ -129,16 +129,16 @@ const storageChecks = ({ account, containers = [], queue, table, share }) => [
   ...(share ? [arm("storage-file-share", "Microsoft.Storage", `storageAccounts/${account}/fileServices/default/shares/${share}`, "2023-05-01", "Microsoft.Storage/storageAccounts/fileServices/shares")] : []),
 ];
 
-const redisChecks = (name) => [arm("redis-cache", "Microsoft.Cache", `Redis/${name}`, "2024-03-01", "Microsoft.Cache/redis")];
+export const redisChecks = (name) => [arm("redis-cache", "Microsoft.Cache", `Redis/${name}`, "2024-03-01", "Microsoft.Cache/redis")];
 
-const eventGridChecks = (topic) => [arm("event-grid-topic", "Microsoft.EventGrid", `topics/${topic}`, "2022-06-15", "Microsoft.EventGrid/topics")];
+export const eventGridChecks = (topic) => [arm("event-grid-topic", "Microsoft.EventGrid", `topics/${topic}`, "2022-06-15", "Microsoft.EventGrid/topics")];
 
-const secretConfigChecks = ({ keyVault, appConfig }) => [
+export const secretConfigChecks = ({ keyVault, appConfig }) => [
   arm("key-vault", "Microsoft.KeyVault", `vaults/${keyVault}`, "2023-07-01", "Microsoft.KeyVault/vaults"),
   arm("app-config", "Microsoft.AppConfiguration", `configurationStores/${appConfig}`, "2024-05-01", "Microsoft.AppConfiguration/configurationStores"),
 ];
 
-const monitorChecks = ({ actionGroup, metricAlert, activityLogAlert, eastLog, westLog, appInsights }) => [
+export const monitorChecks = ({ actionGroup, metricAlert, activityLogAlert, eastLog, westLog, appInsights }) => [
   arm("action-group", "Microsoft.Insights", `actionGroups/${actionGroup}`, "2023-01-01", "Microsoft.Insights/actionGroups"),
   arm("metric-alert", "Microsoft.Insights", `metricAlerts/${metricAlert}`, "2018-03-01", "Microsoft.Insights/metricAlerts"),
   arm("activity-log-alert", "Microsoft.Insights", `activityLogAlerts/${activityLogAlert}`, "2020-10-01", "Microsoft.Insights/activityLogAlerts"),
