@@ -460,7 +460,9 @@ pulumi_configure_stack() {
 pulumi_install_dependencies() {
   case "${PLATFORM_ID}" in
     azure-pulumi-ts)
-      npm --prefix "${PLATFORM_WORK_DIR}" install >"${REPORT_DIR}/pulumi-install-stdout.log" 2>"${REPORT_DIR}/pulumi-install-stderr.log"
+      local npm_cache_dir="${PLATFORM_WORK_DIR}/.npm-cache"
+      mkdir -p "${npm_cache_dir}"
+      npm --prefix "${PLATFORM_WORK_DIR}" --cache "${npm_cache_dir}" install >"${REPORT_DIR}/pulumi-install-stdout.log" 2>"${REPORT_DIR}/pulumi-install-stderr.log"
       ;;
     azure-pulumi-py)
       python3 -m pip install --break-system-packages -r "${PLATFORM_WORK_DIR}/requirements.txt" >"${REPORT_DIR}/pulumi-install-stdout.log" 2>"${REPORT_DIR}/pulumi-install-stderr.log"
