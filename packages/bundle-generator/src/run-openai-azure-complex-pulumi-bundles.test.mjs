@@ -3833,6 +3833,107 @@ test('Pr91165 includes dual application gateways, managed identity, PostgreSQL d
   );
 });
 
+test('Pr91211 includes front door security policy, dual AKS clusters, Synapse SQL pool, and the promote-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91211');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-genomics-release-91211/securityPolicies/genomics-release-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-genomics-east-91211'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syngenomics91211/sqlPools/releasepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promote-west'
+      && check.typePath === 'namespaces/sb-genomics-release-91211/topics/genomics-release-events/subscriptions/promote-west'),
+  );
+});
+
+test('Pr91212 includes dual load balancers, MySQL database, and the compliance subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91212');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-branch-east-91212'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-branch-exchange-91212/databases/branchexchange'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-compliance'
+      && check.typePath === 'namespaces/sb-branch-exchange-91212/topics/branch-exchange-events/subscriptions/compliance'),
+  );
+});
+
+test('Pr91213 includes all DMS projects, both relational ledgers, and the treasury subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91213');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-rollback-drill'
+      && check.typePath === 'services/dms-payments-cutover-91213/projects/rollback-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-payments-cutover-91213/databases/paymentsdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-payments-cutover-91213/databases/settlementdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-treasury'
+      && check.typePath === 'namespaces/sb-payments-cutover-91213/topics/payments-cutover-events/subscriptions/treasury'),
+  );
+});
+
+test('Pr91214 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and the analytics subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91214');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-outage-east-91214'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-outage-twin-91214'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synoutage91214/sqlPools/outagepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-analytics'
+      && check.typePath === 'namespaces/sb-outage-twin-91214/topics/outage-commands/subscriptions/analytics'),
+  );
+});
+
+test('Pr91215 includes dual application gateways, managed identity, PostgreSQL database, and the dispatch-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91215');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-application-gateway'
+      && check.typePath === 'applicationGateways/agw-warehouse-east-91215'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'managed-identity'
+      && check.typePath === 'userAssignedIdentities/id-warehouse-lattice-91215'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-warehouse-lattice-91215/databases/warehousedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch-west'
+      && check.typePath === 'namespaces/sb-warehouse-lattice-91215/topics/warehouse-verdicts/subscriptions/dispatch-west'),
+  );
+});
+
 test('Pr91166 includes dual load balancers, MySQL database, and the compliance subscription check', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91166');
   assert.ok(scenario);
