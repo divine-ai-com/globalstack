@@ -17,6 +17,7 @@ import { ultraExpertWave91096to91100 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91101to91105 } from "./complex-pulumi-scenarios-wave-91101-91105.mjs";
 import { ultraExpertWave91106to91110 } from "./complex-pulumi-scenarios-wave-91106-91110.mjs";
 import { ultraExpertWave91111to91115 } from "./complex-pulumi-scenarios-wave-91111-91115.mjs";
+import { ultraExpertWave91116to91120 } from "./complex-pulumi-scenarios-wave-91116-91120.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5009,6 +5010,7 @@ scenarios.push(...ultraExpertWave91096to91100);
 scenarios.push(...ultraExpertWave91101to91105);
 scenarios.push(...ultraExpertWave91106to91110);
 scenarios.push(...ultraExpertWave91111to91115);
+scenarios.push(...ultraExpertWave91116to91120);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5474,7 +5476,7 @@ function armParameters(scenario) {
   };
 }
 
-function generationHints(scenario) {
+export function generationHints(scenario) {
   const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   const hasPublicDns = scenarioUsesPublicDns(scenario);
   const hasPrivateDns = scenarioUsesPrivateDns(scenario);
@@ -5546,6 +5548,8 @@ function generationHints(scenario) {
   if (scenario.prompt.toLowerCase().includes('load balancer')) {
     hints.push("For Azure Load Balancer, use azure.network.LoadBalancer with frontendIPConfigurations, backendAddressPools, loadBalancingRules, and probes.");
     hints.push("For internal load balancers, put the frontend IP configuration on a subnet and use a fixed privateIPAddress.");
+    hints.push("Do not reference the LoadBalancer resource variable inside its own constructor. If a nested load balancer child needs an id or a reference to the parent, build that ARM id from the fixed load balancer name, resource group name, subscription id, and child name instead of using eastLb.id, westLb.id, or similar self-references during initialization.");
+    hints.push("For multi-region load balancers, apply the same non-self-referential pattern to every regional load balancer. Do not let east and west load balancer declarations capture themselves in frontendIPConfigurations, backendAddressPools, loadBalancingRules, or probes.");
   }
 
   if (hasPublicDns) {
@@ -5632,6 +5636,7 @@ function generationHints(scenario) {
       ? "For Azure Monitor alerting, use azure.monitor.ActionGroup, azure.monitor.MetricAlert, and azure.monitor.ActivityLogAlert when the prompt asks for them."
       : "For Azure Monitor alerting in this bundle's Azure Native 2.x surface, use azure.insights.ActionGroup, azure.insights.MetricAlert, and azure.insights.ActivityLogAlert.");
     hints.push("ActionGroup requires actionGroupName and groupShortName. MetricAlert requires scopes plus a criteria block. ActivityLogAlert requires scopes, condition, an actions block that references the action group, and location set to global.");
+    hints.push("ActionGroup also requires enabled: true in this repo's Azure Native surface. Do not omit enabled when creating azure.monitor.ActionGroup or azure.insights.ActionGroup.");
     hints.push(usesAzureNativeV3
       ? "For azure.monitor.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs."
       : "For azure.insights.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs.");

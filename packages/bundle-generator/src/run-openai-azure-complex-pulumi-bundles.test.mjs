@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   extractTapStack,
+  generationHints,
   integrationTest,
   scenarios,
   validateTapStack,
@@ -271,6 +272,27 @@ test('Pr91041 includes both IoT Hubs, both Event Hubs, and the Digital Twins che
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'digital-twins'
       && check.typePath === 'digitalTwinsInstances/adt-digital-command-91041'),
+  );
+});
+
+test('Pr91119 generation hints require ActionGroup enabled', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91119');
+  assert.ok(scenario);
+  const hints = generationHints(scenario);
+  assert.ok(
+    hints.some((hint) => hint.includes('ActionGroup also requires enabled: true')),
+  );
+});
+
+test('Pr91120 generation hints forbid load balancer self-reference', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91120');
+  assert.ok(scenario);
+  const hints = generationHints(scenario);
+  assert.ok(
+    hints.some((hint) => hint.includes('Do not reference the LoadBalancer resource variable inside its own constructor.')),
+  );
+  assert.ok(
+    hints.some((hint) => hint.includes('Do not let east and west load balancer declarations capture themselves')),
   );
 });
 
@@ -2466,6 +2488,106 @@ test('Pr91115 includes Synapse, both DMS engines, queue/table storage, and the r
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-reconcile'
       && check.typePath === 'namespaces/sb-handoff-mesh-91115/topics/handoff-events/subscriptions/reconcile'),
+  );
+});
+
+test('Pr91116 includes both AKS clusters, Cosmos, and the archive subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91116');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('documentdb.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-claims-east-91116'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmosclaims91116/sqlDatabases/ClaimsDb/containers/ClaimsLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-archive'
+      && check.typePath === 'namespaces/sb-claims-ring-91116/topics/claims-events/subscriptions/archive'),
+  );
+});
+
+test('Pr91117 includes both managed environments, queue/table storage, and the carrier subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91117');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(scenario.requiredSourceMarkers.includes('storage.Queue'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-tenant-east-91117'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-table'
+      && check.typePath === 'storageAccounts/aztenant91117/tableServices/default/tables/orderstatus'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-carrier'
+      && check.typePath === 'namespaces/sb-tenant-mesh-91117/topics/orders-events/subscriptions/carrier'),
+  );
+});
+
+test('Pr91118 includes both IoT hubs, the replay workflow, and the warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91118');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-robotics-east-91118'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'logic-workflow'
+      && check.typePath === 'workflows/la-robotics-replay-91118'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-robotics-replay-91118/topics/robotics-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91119 includes both relational engines, the replay DMS project, and the cutover queue/table', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91119');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-replay-project'
+      && check.typePath === 'services/dms-cutover-arb-91119/projects/replay-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-queue'
+      && check.typePath === 'storageAccounts/azcutover91119/queueServices/default/queues/cutover-jobs'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-table'
+      && check.typePath === 'storageAccounts/azcutover91119/tableServices/default/tables/cutoverstatus'),
+  );
+});
+
+test('Pr91120 includes both managed environments, both event hubs, and the replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91120');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('network.LoadBalancer'));
+  assert.ok(scenario.requiredSourceMarkers.includes('eventhub.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-dispatch-east-91120'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-dispatch-west-91120/eventhubs/dispatch-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-dispatch-signal-91120/topics/dispatch-events/subscriptions/replay'),
   );
 });
 
