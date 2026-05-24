@@ -737,6 +737,7 @@ test('validateTapStack accepts azure.monitor alerting resources in Front Door WA
 
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 
 export function createTapStack() {
   const actionGroup = new azure.monitor.ActionGroup("ag-frontdoor-monitor", {
@@ -746,12 +747,13 @@ export function createTapStack() {
     groupShortName: "fdmon",
     enabled: true,
   });
-  new azure.network.WebApplicationFirewallPolicy("waf-frontdoor-monitor", {
+  new networkv20240201.Policy("waf-frontdoor-monitor", {
     policyName: "waf-frontdoor-monitor",
     resourceGroupName: "rg-frontdoor-monitor",
     location: "global",
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
+    sku: { name: "Premium_AzureFrontDoor" },
   });
   new azure.monitor.MetricAlert("ma-frontdoor-monitor", {
     ruleName: "ma-frontdoor-monitor",
@@ -788,16 +790,18 @@ test('validateTapStack rejects application gateway subnet ids derived from virtu
   const tapStack = `
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 // frontdoor.Policy cdn. managedidentity. containerregistry. network.PublicIPAddress network.VirtualNetwork network.ApplicationGateway containerservice. apimanagement. storage.BlobContainer servicebus. eventgrid. keyvault. appconfiguration. monitor.ActionGroup monitor.MetricAlert monitor.ActivityLogAlert operationalinsights.
 // east-rollout-origin west-rollout-origin rollout-mesh-route rollout-mesh-security-policy waf-rollout-mesh-91049 rollout91049.contoso.net api id-rollout-mesh-91049 acrrolloutmesh91049 vnet-rollout-west-91049 snet-rollout-agw-west-91049 snet-rollout-aks-east-91049 snet-rollout-aks-west-91049 pip-rollout-east-91049 pip-rollout-west-91049 agw-rollout-west-91049 aks-rollout-east-91049 aks-rollout-west-91049 apim-rollout-mesh-91049 rollout-mesh-api rollout-mesh-product promote-model azrollout91049 model-artifacts sb-rollout-mesh-91049 model-rollouts east west rollback eg-rollout-mesh-91049 kv-rollout-mesh-91049 cfg-rollout-mesh-91049 ag-rollout-mesh-91049 ma-rollout-mesh-91049 ala-rollout-mesh-91049 log-rollout-east-91049 log-rollout-west-91049 appi-rollout-mesh-91049
 
 export function createTapStack() {
-  new azure.network.WebApplicationFirewallPolicy("waf-rollout-mesh-91049", {
+  new networkv20240201.Policy("waf-rollout-mesh-91049", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
     policyName: "waf-rollout-mesh-91049",
     location: "global",
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
+    sku: { name: "Premium_AzureFrontDoor" },
   });
   const vnet = new azure.network.VirtualNetwork("vnet-rollout-east-91049", {
     resourceGroupName: "rg-az-rollout-mesh-pulumi-91049",
@@ -958,11 +962,12 @@ test('validateTapStack accepts azure.network DNS resources in Front Door WAF sce
   assert.ok(scenario);
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 // frontdoor.Policy network.VirtualNetwork app.ManagedEnvironment app.ContainerApp servicebus. storage.BlobContainer storage.FileShare eventgrid. keyvault. appconfiguration. insights.ActionGroup insights.MetricAlert insights.ActivityLogAlert operationalinsights. edge-commands replay audit
 // afd-private-edge-91051 private-edge-endpoint private-edge-origins private-edge-origin-east private-edge-origin-west private-edge-route private-edge-security-policy waf-private-edge-91051 edge91051.contoso.net api ops edge91051.internal edge-link-east-91051 edge-link-west-91051 vnet-edge-east-91051 vnet-edge-west-91051 cae-edge-east-91051 cae-edge-west-91051 ca-edge-api-east-91051 ca-edge-api-west-91051 ca-edge-worker-east-91051 ca-edge-worker-west-91051 ca-edge-supervisor-91051 sb-private-edge-91051 edge-commands east west replay audit azprivateedge91051 edge-drop edge-archive edge-files eg-private-edge-91051 kv-private-edge-91051 cfg-private-edge-91051 ag-private-edge-91051 ma-private-edge-91051 ala-private-edge-91051 log-private-edge-east-91051 log-private-edge-west-91051 appi-private-edge-91051
 
 export function createTapStack() {
-  new azure.network.WebApplicationFirewallPolicy("waf-private-edge-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", policyName: "waf-private-edge-91051", location: "global", policySettings: { state: "Enabled", mode: "Prevention", requestBodyCheck: "Enabled" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });
+  new networkv20240201.Policy("waf-private-edge-91051", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", policyName: "waf-private-edge-91051", location: "global", policySettings: { enabledState: "Enabled", mode: "Prevention", requestBodyCheck: "Enabled" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] }, sku: { name: "Premium_AzureFrontDoor" } });
   new azure.network.Zone("edge91051.contoso.net", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", location: "global" });
   new azure.network.RecordSet("api", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", zoneName: "edge91051.contoso.net", relativeRecordSetName: "api", recordType: "CNAME", ttl: 300, cnameRecord: { cname: "edge.azurefd.net" } });
   const privateZone = new azure.network.PrivateZone("edge91051.internal", { resourceGroupName: "rg-az-private-edge-fabric-pulumi-91051", privateZoneName: "edge91051.internal", location: "global" });
@@ -1015,14 +1020,16 @@ test('validateTapStack accepts Azure Native private DNS submodule imports', () =
   const tapStack = `
 import * as privatedns from "@pulumi/azure-native/privatedns";
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 
 export function createTapStack() {
-  new azure.network.WebApplicationFirewallPolicy("waf-sample", {
+  new networkv20240201.Policy("waf-sample", {
     resourceGroupName: "rg-example",
     policyName: "waf-sample",
     location: "global",
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
+    sku: { name: "Premium_AzureFrontDoor" },
   });
   new privatedns.PrivateZone("example.internal", {
     privateZoneName: "example.internal",
@@ -1067,7 +1074,7 @@ export function createTapStack() {
   assert.doesNotThrow(() => validateTapStack(scenario, tapStack));
 });
 
-test('validateTapStack rejects Front Door WAF payloads that use policySettings.enabledState', () => {
+test('validateTapStack rejects top-level azure.network.WebApplicationFirewallPolicy in Front Door scenarios', () => {
   const scenario = {
     prompt: 'Use one Front Door WAF policy and one security policy.',
     resourceNames: {},
@@ -1084,7 +1091,7 @@ export function createTapStack() {
     resourceGroupName: "rg-example",
     policyName: "waf-sample",
     location: "global",
-    policySettings: { enabledState: "Enabled", mode: "Prevention" },
+    policySettings: { state: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
   });
   return {};
@@ -1092,11 +1099,11 @@ export function createTapStack() {
 `;
   assert.throws(
     () => validateTapStack(scenario, tapStack),
-    /must use policySettings\.state, not policySettings\.enabledState/i,
+    /must use @pulumi\/azure-native\/network\/v20240201 Policy/i,
   );
 });
 
-test('validateTapStack rejects Front Door WAF payloads with top-level sku or as any casts', () => {
+test('validateTapStack rejects Front Door WAF versioned Policy payloads cast with as any', () => {
   const scenario = {
     prompt: 'Use one Front Door WAF policy and one security policy.',
     resourceNames: {},
@@ -1107,14 +1114,15 @@ test('validateTapStack rejects Front Door WAF payloads with top-level sku or as 
   };
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 
 export function createTapStack() {
-  new azure.network.WebApplicationFirewallPolicy("waf-sample", {
+  new networkv20240201.Policy("waf-sample", {
     resourceGroupName: "rg-example",
     policyName: "waf-sample",
     location: "global",
-    sku: { name: "Standard_AzureFrontDoor" },
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    sku: { name: "Premium_AzureFrontDoor" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
   } as any);
   return {};
@@ -1122,7 +1130,7 @@ export function createTapStack() {
 `;
   assert.throws(
     () => validateTapStack(scenario, tapStack),
-    /must not set a top-level sku on azure\.network\.WebApplicationFirewallPolicy|must not cast azure\.network\.WebApplicationFirewallPolicy payloads with "as any"/i,
+    /must not cast network\/v20240201 Policy payloads with "as any"/i,
   );
 });
 
@@ -1137,6 +1145,7 @@ test('validateTapStack rejects legacy Front Door WAF classes and RouteArgs.origi
   };
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 
 export function createTapStack() {
   const endpoint = new azure.cdn.AFDEndpoint("endpoint", {
@@ -1146,12 +1155,13 @@ export function createTapStack() {
     location: "global",
     enabledState: "Enabled",
   });
-  new azure.network.WebApplicationFirewallPolicy("typed-waf", {
+  new networkv20240201.Policy("typed-waf", {
     resourceGroupName: "rg-example",
     policyName: "typed-waf",
     location: "global",
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
+    sku: { name: "Premium_AzureFrontDoor" },
   });
   new azure.network.FrontDoorWebApplicationFirewallPolicy("waf-sample", {
     policyName: "waf-sample",
@@ -1176,11 +1186,11 @@ export function createTapStack() {
 `;
   assert.throws(
     () => validateTapStack(scenario, tapStack),
-    /must use azure\.network\.WebApplicationFirewallPolicy, not FrontDoorWebApplicationFirewallPolicy|RouteArgs must use originGroup, not origins/i,
+    /must use @pulumi\/azure-native\/network\/v20240201 Policy|RouteArgs must use originGroup, not origins/i,
   );
 });
 
-test('validateTapStack accepts typed Front Door WAF payloads that use policySettings.state', () => {
+test('validateTapStack accepts typed Front Door WAF payloads that use the versioned Policy surface', () => {
   const scenario = {
     prompt: 'Use one Front Door WAF policy and one security policy.',
     resourceNames: {},
@@ -1191,14 +1201,16 @@ test('validateTapStack accepts typed Front Door WAF payloads that use policySett
   };
   const tapStack = `
 import * as azure from "@pulumi/azure-native";
+import * as networkv20240201 from "@pulumi/azure-native/network/v20240201";
 
 export function createTapStack() {
-  new azure.network.WebApplicationFirewallPolicy("waf-sample", {
+  new networkv20240201.Policy("waf-sample", {
     resourceGroupName: "rg-example",
     policyName: "waf-sample",
     location: "global",
-    policySettings: { state: "Enabled", mode: "Prevention" },
+    policySettings: { enabledState: "Enabled", mode: "Prevention" },
     managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] },
+    sku: { name: "Premium_AzureFrontDoor" },
   });
   return {};
 }
@@ -2354,6 +2366,106 @@ test('Pr91110 includes both AKS clusters, Cosmos container, and the replicate su
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replicate'
       && check.typePath === 'namespaces/sb-claims-ring-91110/topics/claims-events/subscriptions/replicate'),
+  );
+});
+
+test('Pr91111 includes both DMS engines, both relational databases, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91111');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-rollback-project'
+      && check.typePath === 'services/dms-trade-plane-91111/projects/rollback-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-trade-plane-91111/databases/tradedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-trade-plane-91111/topics/trade-events/subscriptions/rollback'),
+  );
+});
+
+test('Pr91112 includes both IoT hubs, the twin ledger container, and the warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91112');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmosthread91112/sqlDatabases/FactoryThreadDb/containers/TwinLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'container-registry'
+      && check.typePath === 'registries/acrthread91112'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-thread-plane-91112/topics/thread-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91113 includes both AKS clusters, the APIM reserve policy, and the ship subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91113');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('apimanagement.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-fulfillment-east-91113'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-reserve-policy'
+      && check.typePath === 'service/apim-fulfillment-mesh-91113/apis/fulfillment-mesh-api/operations/reserve-stock/policies/policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-ship'
+      && check.typePath === 'namespaces/sb-fulfillment-mesh-91113/topics/fulfillment-events/subscriptions/ship'),
+  );
+});
+
+test('Pr91114 includes both managed environments, the container apps, and the close subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91114');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ContainerApp'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-container-app'
+      && check.typePath === 'containerApps/ca-incident-east-91114'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-incident-west-91114'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-close'
+      && check.typePath === 'namespaces/sb-incident-fabric-91114/topics/incident-events/subscriptions/close'),
+  );
+});
+
+test('Pr91115 includes Synapse, both DMS engines, queue/table storage, and the reconcile subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91115');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('storage.Queue'));
+  assert.ok(scenario.requiredSourceMarkers.includes('storage.Table'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-replay-project'
+      && check.typePath === 'services/dms-handoff-mesh-91115/projects/replay-handoff'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-table'
+      && check.typePath === 'storageAccounts/azhandoff91115/tableServices/default/tables/handoffstatus'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-reconcile'
+      && check.typePath === 'namespaces/sb-handoff-mesh-91115/topics/handoff-events/subscriptions/reconcile'),
   );
 });
 

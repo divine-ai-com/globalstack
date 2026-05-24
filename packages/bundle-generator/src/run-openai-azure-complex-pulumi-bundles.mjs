@@ -16,6 +16,7 @@ import { ultraExpertWave91091to91095 } from "./complex-pulumi-scenarios-wave-910
 import { ultraExpertWave91096to91100 } from "./complex-pulumi-scenarios-wave-91096-91100.mjs";
 import { ultraExpertWave91101to91105 } from "./complex-pulumi-scenarios-wave-91101-91105.mjs";
 import { ultraExpertWave91106to91110 } from "./complex-pulumi-scenarios-wave-91106-91110.mjs";
+import { ultraExpertWave91111to91115 } from "./complex-pulumi-scenarios-wave-91111-91115.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -2738,7 +2739,7 @@ export const scenarios = [
       "managedidentity.",
       "containerservice.",
       "cdn.",
-      "network.WebApplicationFirewallPolicy",
+      "frontdoor.Policy",
       "apimanagement.",
       "servicebus.Queue",
       "eventgrid.",
@@ -3390,7 +3391,7 @@ export const scenarios = [
     ],
     requiredSourceMarkers: [
       "cdn.",
-      "network.WebApplicationFirewallPolicy",
+      "frontdoor.Policy",
       "containerregistry.",
       "network.VirtualNetwork",
       "network.ApplicationGateway",
@@ -3803,7 +3804,7 @@ export const scenarios = [
     ],
     requiredSourceMarkers: [
       "cdn.",
-      "network.WebApplicationFirewallPolicy",
+      "frontdoor.Policy",
       "network.Zone",
       "network.RecordSet",
       "containerregistry.",
@@ -4444,7 +4445,7 @@ scenarios.push({
   ],
   requiredSourceMarkers: [
     "cdn.",
-    "network.WebApplicationFirewallPolicy",
+    "frontdoor.Policy",
     "network.Zone",
     "network.RecordSet",
     "network.PublicIPAddress",
@@ -5007,6 +5008,7 @@ scenarios.push(...ultraExpertWave91091to91095);
 scenarios.push(...ultraExpertWave91096to91100);
 scenarios.push(...ultraExpertWave91101to91105);
 scenarios.push(...ultraExpertWave91106to91110);
+scenarios.push(...ultraExpertWave91111to91115);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -5153,13 +5155,17 @@ const entry = await readFile(join(root, "bin", "tap.ts"), "utf8");
 const stack = await readFile(join(root, "lib", "tap-stack.ts"), "utf8");
 const lowerStack = stack.toLowerCase();
 const usesAzureNativeV3 = /^\\^?3\\./.test(String(packageJson.dependencies?.["@pulumi/azure-native"] ?? ""));
+function hasFrontDoorWafPolicySource() {
+  return /\\b(?:azure\\.)?network\\.v20240201\\.policy\\b/.test(lowerStack)
+    || (/from\\s+["']@pulumi\\/azure-native\\/network\\/v20240201["']/.test(lowerStack)
+      && /new\\s+[a-z0-9_$.]+\\.policy\\(/.test(lowerStack));
+}
 
 function sourceSatisfiesMarker(marker) {
   const normalizedMarker = String(marker ?? "").toLowerCase();
   if (lowerStack.includes(normalizedMarker)) return true;
   if (normalizedMarker === "frontdoor.policy") {
-    return /\\bnetwork\\.webapplicationfirewallpolicy\\b/.test(lowerStack)
-      || /\\bazure\\.network\\.webapplicationfirewallpolicy\\b/.test(lowerStack);
+    return hasFrontDoorWafPolicySource();
   }
   if (normalizedMarker === "dns.zone") {
     return usesAzureNativeV3
@@ -5277,9 +5283,7 @@ for (const forbidden of metadata.forbiddenSourceMarkers ?? []) {
 }
 
 if (metadata.integrationChecks?.some((check) => check.expectedType === "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies")) {
-  const hasFrontDoorWaf = stack.includes("network.WebApplicationFirewallPolicy")
-    || stack.includes("azure.network.WebApplicationFirewallPolicy");
-  if (!hasFrontDoorWaf) {
+  if (!hasFrontDoorWafPolicySource()) {
     throw new Error("Front Door WAF scenarios must declare a Front Door WAF policy resource");
   }
 }
@@ -5518,13 +5522,11 @@ function generationHints(scenario) {
     hints.push("Azure Front Door child resources keyed only by profileName, endpointName, or originGroupName do not automatically create Pulumi graph dependencies. Add explicit dependsOn edges: AFDEndpoint and AFDOriginGroup depend on the Profile, each AFDOrigin depends on the AFDOriginGroup, Route depends on the AFDEndpoint plus its Origins, and SecurityPolicy depends on the endpoint or route plus the WAF policy.");
     hints.push("Do not rely on string parent names to order Azure Front Door resources. Use explicit dependsOn for the real parent-child creation sequence.");
     if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-      hints.push("This repo's shipped Azure Native runner uses the top-level azure import surface for these resources.");
-      hints.push("For Front Door WAF in this runner, use azure.network.WebApplicationFirewallPolicy and attach it through azure.cdn.SecurityPolicy.");
+      hints.push("For Front Door WAF in this runner, import the versioned network module with import * as networkv20240201 from \"@pulumi/azure-native/network/v20240201\" and declare the WAF as new networkv20240201.Policy(...).");
+      hints.push("Do not use azure.network.WebApplicationFirewallPolicy for Front Door WAF in this repo. That maps to the Application Gateway WAF surface and breaks Front Door integration readback.");
       hints.push("Do not import nonexistent modules like @pulumi/azure-native/frontdoor in this repo.");
-      hints.push("For azure.network.WebApplicationFirewallPolicy, keep managedRules, customRules, and policySettings. Do not add a top-level sku unless the generated WebApplicationFirewallPolicyArgs type explicitly accepts it.");
-      hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
-      hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
-      hints.push("Copy this Front Door WAF shape exactly in this repo unless the generated SDK types prove otherwise: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: \"global\", policySettings: { state: \"Enabled\", mode: \"Prevention\" }, managedRules: { managedRuleSets: [{ ruleSetType: \"Microsoft_DefaultRuleSet\", ruleSetVersion: \"2.1\" }] } }); Do not add sku, enabledState, or legacy Front Door WAF classes.");
+      hints.push("For networkv20240201.Policy, keep policyName, resourceGroupName, location, policySettings, managedRules, customRules, and optional sku. Use policySettings.enabledState on this versioned Front Door policy surface.");
+      hints.push("Copy this Front Door WAF shape exactly in this repo unless the generated SDK types prove otherwise: new networkv20240201.Policy(name, { policyName: name, resourceGroupName: rg.name, location: \"global\", policySettings: { enabledState: \"Enabled\", mode: \"Prevention\" }, managedRules: { managedRuleSets: [{ ruleSetType: \"Microsoft_DefaultRuleSet\", ruleSetVersion: \"2.1\" }] }, sku: { name: \"Premium_AzureFrontDoor\" } });");
     } else {
       hints.push("For azure.network.WebApplicationFirewallPolicy, use policySettings.state, not policySettings.enabledState.");
       hints.push("Do not set a top-level sku on azure.network.WebApplicationFirewallPolicy unless the generated WebApplicationFirewallPolicyArgs type accepts it. Prefer policySettings, customRules, and managedRules.");
@@ -5633,6 +5635,9 @@ function generationHints(scenario) {
     hints.push(usesAzureNativeV3
       ? "For azure.monitor.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs."
       : "For azure.insights.MetricAlert criteria in Azure Native, do not pass raw ARM fields like \"odata.type\". Use the typed criteria shape accepted by MetricAlertArgs.");
+    hints.push(usesAzureNativeV3
+      ? "For a single-resource azure.monitor.MetricAlert, set criteria.odataType to \"Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria\" and then put the static thresholds inside criteria.allOf."
+      : "For a single-resource azure.insights.MetricAlert, set criteria.odataType to \"Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria\" and then put the static thresholds inside criteria.allOf.");
   }
 
   if (scenario.requiredSourceMarkers.some(marker => String(marker).toLowerCase().includes('applicationinsights.'))) {
@@ -5669,8 +5674,9 @@ function sourceSatisfiesMarker(tapStackText, marker) {
   const usesAzureNativeV3 = scenarioUsesAzureNativeV3ByText(source);
   if (source.includes(normalizedMarker)) return true;
   if (normalizedMarker === 'frontdoor.policy') {
-    return /\bnetwork\.webapplicationfirewallpolicy\b/.test(source)
-      || /\bazure\.network\.webapplicationfirewallpolicy\b/.test(source);
+    return /\b(?:azure\.)?network\.v20240201\.policy\b/.test(source)
+      || (/from\s+["']@pulumi\/azure-native\/network\/v20240201["']/.test(source)
+        && /new\s+[a-z0-9_$.]+\.policy\(/.test(source));
   }
   if (normalizedMarker === 'dns.zone') {
     return usesAzureNativeV3
@@ -5970,7 +5976,7 @@ export function validateTapStack(scenario, tapStackText) {
       : 'public DNS scenarios must create azure.network.RecordSet resources');
   }
   if (usesUnsupportedAzureNativeModules) {
-    throw new Error('This repo\'s shipped Azure Native version does not expose @pulumi/azure-native/frontdoor; use azure.cdn.* plus azure.network.WebApplicationFirewallPolicy instead');
+    throw new Error('This repo\'s shipped Azure Native version does not expose @pulumi/azure-native/frontdoor; use azure.cdn.* plus @pulumi/azure-native/network/v20240201 Policy instead');
   }
   for (const block of tapStackText.match(keyVaultPattern) ?? []) {
     const topLevelTenantIdIndex = block.indexOf('tenantId:');
@@ -6039,23 +6045,18 @@ export function validateTapStack(scenario, tapStackText) {
     throw new Error('Azure Front Door RouteArgs must use originGroup, not origins, in this repo\'s shipped Azure Native version.');
   }
   if (scenarioUsesFrontDoorWafPolicyResource(scenario)) {
-    if (/(?:azure\.)?(?:cdn\.(?:WebApplicationFirewallPolicy|FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy)|network\.(?:FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy))\b/.test(tapStackText)) {
-      throw new Error('Front Door WAF scenarios must use azure.network.WebApplicationFirewallPolicy, not FrontDoorWebApplicationFirewallPolicy or azure.cdn.* WebApplicationFirewallPolicy resources, in this repo\'s shipped Azure Native version.');
+    if (/(?:azure\.)?(?:cdn\.(?:WebApplicationFirewallPolicy|FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy)|network\.(?:WebApplicationFirewallPolicy|FrontDoorWebApplicationFirewallPolicy|AfdWebApplicationFirewallPolicy))\b/.test(tapStackText)) {
+      throw new Error('Front Door WAF scenarios must use @pulumi/azure-native/network/v20240201 Policy, not azure.network.WebApplicationFirewallPolicy, FrontDoorWebApplicationFirewallPolicy, or azure.cdn.* WebApplicationFirewallPolicy resources, in this repo\'s shipped Azure Native version.');
     }
-    const hasFrontDoorWaf = tapStackText.includes('network.WebApplicationFirewallPolicy')
-      || tapStackText.includes('azure.network.WebApplicationFirewallPolicy');
+    const hasFrontDoorWaf = /\b(?:azure\.)?network\.v20240201\.Policy\b/.test(tapStackText)
+      || (/from\s+["']@pulumi\/azure-native\/network\/v20240201["']/.test(tapStackText)
+        && /new\s+[A-Za-z0-9_$.]+\.Policy\(/.test(tapStackText));
     if (!hasFrontDoorWaf) {
       throw new Error('Front Door WAF scenarios must declare a Front Door WAF policy resource.');
     }
-    for (const block of tapStackText.match(/new\s+(?:azure\.)?network\.WebApplicationFirewallPolicy\([\s\S]*?\n\s*}\s*(?:as\s+any)?\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
-      if (/\bpolicySettings\s*:\s*{[\s\S]*?\benabledState\b/.test(block)) {
-        throw new Error('Front Door WAF scenarios must use policySettings.state, not policySettings.enabledState, on azure.network.WebApplicationFirewallPolicy.');
-      }
-      if (/\bsku\s*:/.test(block)) {
-        throw new Error('Front Door WAF scenarios must not set a top-level sku on azure.network.WebApplicationFirewallPolicy in this repo\'s shipped Azure Native version.');
-      }
+    for (const block of tapStackText.match(/new\s+[A-Za-z0-9_$.]+\.Policy\([\s\S]*?\n\s*}\s*(?:as\s+any)?\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g) ?? []) {
       if (/}\s*as\s+any\s*(?:,\s*\{[\s\S]*?\})?\s*\);/.test(block)) {
-        throw new Error('Front Door WAF scenarios must not cast azure.network.WebApplicationFirewallPolicy payloads with "as any". Use the typed WebApplicationFirewallPolicyArgs shape.');
+        throw new Error('Front Door WAF scenarios must not cast network/v20240201 Policy payloads with "as any". Use the typed PolicyArgs shape.');
       }
     }
   }
@@ -6101,27 +6102,17 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   const usesAzureNativeV3 = scenarioUsesAzureNativeV3(scenario);
   const extraGuidance = [];
   if (String(error).includes('missing scenario marker frontdoor.policy')) {
-    extraGuidance.push('This task must declare an Azure Front Door WAF policy using azure.network.WebApplicationFirewallPolicy in the shipped Azure Native version for this repo.');
-    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. Attach the WAF policy id through azure.cdn.SecurityPolicy.');
-    extraGuidance.push('Keep the policy name fixed to the prompt and use managedRules, customRules, and policySettings only unless the generated SDK type proves additional fields are accepted.');
+    extraGuidance.push('This task must declare an Azure Front Door WAF policy using import * as networkv20240201 from "@pulumi/azure-native/network/v20240201" and new networkv20240201.Policy(...).');
+    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. Attach the versioned Policy id through azure.cdn.SecurityPolicy.');
+    extraGuidance.push('Keep the policy name fixed to the prompt and use managedRules, customRules, policySettings.enabledState, and optional sku unless the generated SDK type proves otherwise.');
   }
-  if (String(error).includes('must use azure.network.WebApplicationFirewallPolicy, not FrontDoorWebApplicationFirewallPolicy')) {
+  if (String(error).includes('must use @pulumi/azure-native/network/v20240201 Policy')) {
     extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
-    extraGuidance.push('Do not use azure.network.FrontDoorWebApplicationFirewallPolicy, azure.network.AfdWebApplicationFirewallPolicy, azure.cdn.WebApplicationFirewallPolicy, azure.cdn.FrontDoorWebApplicationFirewallPolicy, or azure.cdn.AfdWebApplicationFirewallPolicy. In this repo, Front Door WAF must be azure.network.WebApplicationFirewallPolicy.');
-    extraGuidance.push('Rewrite it exactly as: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
+    extraGuidance.push('Do not use azure.network.WebApplicationFirewallPolicy, azure.network.FrontDoorWebApplicationFirewallPolicy, azure.network.AfdWebApplicationFirewallPolicy, azure.cdn.WebApplicationFirewallPolicy, azure.cdn.FrontDoorWebApplicationFirewallPolicy, or azure.cdn.AfdWebApplicationFirewallPolicy.');
+    extraGuidance.push('Rewrite it exactly as: import * as networkv20240201 from "@pulumi/azure-native/network/v20240201"; new networkv20240201.Policy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { enabledState: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] }, sku: { name: "Premium_AzureFrontDoor" } });');
   }
-  if (String(error).includes('policySettings.state, not policySettings.enabledState')) {
-    extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
-    extraGuidance.push('For azure.network.WebApplicationFirewallPolicy, set policySettings.state: "Enabled" or "Disabled". Do not use policySettings.enabledState.');
-    extraGuidance.push('Use this exact WAF resource shape and only substitute the prompt-fixed name variables: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
-  }
-  if (String(error).includes('must not set a top-level sku on azure.network.WebApplicationFirewallPolicy')) {
-    extraGuidance.push('Delete the existing Front Door WAF declaration and rewrite it from scratch.');
-    extraGuidance.push('Remove the top-level sku from azure.network.WebApplicationFirewallPolicy. Keep location, policyName, policySettings, managedRules, and customRules only.');
-    extraGuidance.push('Use this exact WAF resource shape and do not add any extra top-level fields: new azure.network.WebApplicationFirewallPolicy(name, { policyName: name, resourceGroupName: rg.name, location: "global", policySettings: { state: "Enabled", mode: "Prevention" }, managedRules: { managedRuleSets: [{ ruleSetType: "Microsoft_DefaultRuleSet", ruleSetVersion: "2.1" }] } });');
-  }
-  if (String(error).includes('must not cast azure.network.WebApplicationFirewallPolicy payloads with "as any"')) {
-    extraGuidance.push('Do not cast azure.network.WebApplicationFirewallPolicy with "as any". Use the typed payload shape so invalid properties fail before deploy.');
+  if (String(error).includes('must not cast network/v20240201 Policy payloads with "as any"')) {
+    extraGuidance.push('Do not cast network/v20240201 Policy with "as any". Use the typed payload shape so invalid properties fail before deploy.');
   }
   if (String(error).includes('RouteArgs must use originGroup, not origins')) {
     extraGuidance.push('For azure.cdn.Route in this repo, use the originGroup property only. Do not set origins on the route payload.');
@@ -6202,7 +6193,7 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push('Use Azure Application Gateway v2. Set sku.name and sku.tier to Standard_v2 or WAF_v2.');
   }
   if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/frontdoor'")) {
-    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. In this repo, declare Front Door WAF with azure.network.WebApplicationFirewallPolicy and keep Front Door profile, endpoints, routes, and security policy on azure.cdn.');
+    extraGuidance.push('Do not import @pulumi/azure-native/frontdoor. In this repo, declare Front Door WAF with import * as networkv20240201 from "@pulumi/azure-native/network/v20240201" and new networkv20240201.Policy(...), then keep Front Door profile, endpoints, routes, and security policy on azure.cdn.');
   }
   if (String(runFailure).includes("Cannot find module '@pulumi/azure-native/applicationinsights'")) {
     extraGuidance.push(usesAzureNativeV3
@@ -6247,9 +6238,11 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
   if (String(runFailure).includes('CdnWebApplicationFirewallPolicy')
     || String(runFailure).includes('FrontDoorWebApplicationFirewallPolicy')
     || String(runFailure).includes('AfdWebApplicationFirewallPolicy')
+    || String(runFailure).includes('ApplicationGatewayWebApplicationFirewallPolicies')
+    || String(runFailure).includes('FrontDoorWebApplicationFirewallPolicies')
     || (String(runFailure).includes("Property 'WebApplicationFirewallPolicy' does not exist") && String(runFailure).includes('/cdn/index'))) {
-    extraGuidance.push('Use azure.network.WebApplicationFirewallPolicy for Azure Front Door WAF in this repo, then attach it with azure.cdn.SecurityPolicy.');
-    extraGuidance.push('Do not use nonexistent Front Door WAF classes from azure.cdn or @pulumi/azure-native/frontdoor in this runner image.');
+    extraGuidance.push('Use import * as networkv20240201 from "@pulumi/azure-native/network/v20240201" and create Front Door WAF with new networkv20240201.Policy(...), then attach it with azure.cdn.SecurityPolicy.');
+    extraGuidance.push('Do not use azure.network.WebApplicationFirewallPolicy or any nonexistent Front Door WAF classes from azure.cdn or @pulumi/azure-native/frontdoor in this runner image.');
   }
   if (String(runFailure).includes('privateZoneName')
     && String(runFailure).includes('RecordSetArgs')) {
@@ -6336,13 +6329,9 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     && String(runFailure).includes('ProductArgs')) {
     extraGuidance.push('Remove published from azure.apimanagement.Product. Use displayName and state instead of nonexistent ProductArgs fields.');
   }
-  if (String(runFailure).includes('sku')
-    && String(runFailure).includes('WebApplicationFirewallPolicyArgs')) {
-    extraGuidance.push('Remove the top-level sku property from azure.network.WebApplicationFirewallPolicy. Keep policySettings, customRules, and managedRules only.');
-  }
-  if (String(runFailure).includes('Application Gateway WAF policySettings.state must be')) {
-    extraGuidance.push('For azure.network.WebApplicationFirewallPolicy, set policySettings.state to "Enabled" or "Disabled". Do not use policySettings.enabledState.');
-    extraGuidance.push('Do not cast the WebApplicationFirewallPolicy payload with "as any", because that can hide the wrong policySettings shape until deploy time.');
+  if (String(runFailure).includes('PolicyArgs')
+    && String(runFailure).includes('network/v20240201')) {
+    extraGuidance.push('Keep the Front Door WAF resource on the versioned network/v20240201 Policy surface and make sure policySettings.enabledState is used with the typed PolicyArgs payload.');
   }
   if (usesAzureNativeV3
     && String(runFailure).includes("Property 'insights' does not exist")) {
@@ -6396,6 +6385,12 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push(usesAzureNativeV3
       ? 'For azure.monitor.MetricAlert criteria, remove raw ARM fields like "odata.type" and use the typed Azure Native criteria shape only.'
       : 'For azure.insights.MetricAlert criteria, remove raw ARM fields like "odata.type" and use the typed Azure Native criteria shape only.');
+  }
+  if (String(runFailure).includes("Property 'odataType' is missing")
+    && String(runFailure).includes('MetricAlert')) {
+    extraGuidance.push(usesAzureNativeV3
+      ? 'For azure.monitor.MetricAlert criteria on a single resource, set criteria.odataType to "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria" and keep the thresholds inside criteria.allOf.'
+      : 'For azure.insights.MetricAlert criteria on a single resource, set criteria.odataType to "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria" and keep the thresholds inside criteria.allOf.');
   }
   if (String(runFailure).includes('invalid URL output')) {
     extraGuidance.push('For output keys ending in Url or Endpoint, emit exactly one https:// scheme. If the Azure Native property already includes https://, export it directly without prepending another scheme.');
