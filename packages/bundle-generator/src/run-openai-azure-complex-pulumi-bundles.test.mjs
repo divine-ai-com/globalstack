@@ -3317,3 +3317,88 @@ test('Pr91140 includes Synapse SQL pool, Cosmos container, and the warehouse sub
       && check.typePath === 'namespaces/sb-replay-warehouse-91140/topics/replay-commands/subscriptions/warehouse'),
   );
 });
+
+test('Pr91141 includes both regional AKS clusters, PostgreSQL, and the west-drain subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91141');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91141'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-inference-ring-91141/databases/inferencedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-west-drain'
+      && check.typePath === 'namespaces/sb-inference-ring-91141/topics/inference-commands/subscriptions/west-drain'),
+  );
+});
+
+test('Pr91142 includes dual IoT hubs, Digital Twins, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91142');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-yard-east-91142'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-yard-command-91142'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-yard-command-91142/topics/yard-commands/subscriptions/replay'),
+  );
+});
+
+test('Pr91143 includes all DMS projects and the promote subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91143');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-grid-91143/projects/mysql-stage'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-cutover-grid-91143/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promote'
+      && check.typePath === 'namespaces/sb-cutover-grid-91143/topics/cutover-grid-commands/subscriptions/promote'),
+  );
+});
+
+test('Pr91144 includes front door security policy, dual managed environments, and the green subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91144');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-revision-mesh-91144/securityPolicies/revision-mesh-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-revision-east-91144'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-green'
+      && check.typePath === 'namespaces/sb-revision-mesh-91144/topics/revision-commands/subscriptions/green'),
+  );
+});
+
+test('Pr91145 includes Synapse SQL pool, Cosmos container, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91145');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synreplay91145/sqlPools/replayringpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosreplay91145/sqlDatabases/ReplayRingDb/containers/ReplayRingLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-replay-ring-91145/topics/replay-ring-commands/subscriptions/approve'),
+  );
+});
