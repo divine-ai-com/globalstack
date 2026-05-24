@@ -2043,6 +2043,107 @@ test('Pr91095 includes Front Door, both IoT hubs, Digital Twins, and the investi
   );
 });
 
+test('Pr91096 includes Front Door, dual AKS clusters, and the resume subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91096');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-robotics-east-91096'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-robotics-west-91096'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-resume-policy'
+      && check.typePath === 'service/apim-robotics-ring-91096/apis/robotics-ring-api/operations/resume-mission/policies/policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-resume'
+      && check.typePath === 'namespaces/sb-robotics-ring-91096/topics/robotics-commands/subscriptions/resume'),
+  );
+});
+
+test('Pr91097 includes Front Door, Synapse, Cosmos, and the replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91097');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('documentdb.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmos-claims-lattice-91097/sqlDatabases/ClaimsReplayDb/containers/ReplayState'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-claims-lattice-91097/sqlPools/claimspool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-claims-lattice-91097/topics/claims-events/subscriptions/replay'),
+  );
+});
+
+test('Pr91098 includes dual IoT hubs, Digital Twins, and the resume subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91098');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-store-east-91098'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-store-twin-91098'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-resume'
+      && check.typePath === 'namespaces/sb-store-twin-91098/topics/store-commands/subscriptions/resume'),
+  );
+});
+
+test('Pr91099 includes DMS service, both relational engines, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91099');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-rollback-project'
+      && check.typePath === 'services/dms-cutover-mesh-91099/projects/rollback-rehearsal'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-cutover-mesh-91099/databases/ledgerdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-cutover-mesh-91099/topics/cutover-commands/subscriptions/rollback'),
+  );
+});
+
+test('Pr91100 includes Front Door, dual managed environments, and the drift subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91100');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-release-east-91100'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-release-west-91100'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-drift'
+      && check.typePath === 'namespaces/sb-release-lattice-91100/topics/release-events/subscriptions/drift'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);
