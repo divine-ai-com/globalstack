@@ -57,16 +57,33 @@ const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
 const modelFacingRuntimeTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 const errors = [];
+const runtimeWalkSkips = [
+  /\/dist\/platform-images\/[^/]+\/(?:work|reports|volume)(?:\/|$)/,
+];
 const azureCaptureFixtureCount = (await readdir(azureCaptureFixtureRoot).catch(() => []))
   .filter(name => name.endsWith('.json'))
   .length;
 
+function shouldSkipWalkPath(absPath) {
+  return runtimeWalkSkips.some(pattern => pattern.test(absPath));
+}
+
 async function walk(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
+  if (shouldSkipWalkPath(dir)) return [];
+  let entries = [];
+  try {
+    entries = await readdir(dir, { withFileTypes: true });
+  } catch (error) {
+    if (['EACCES', 'EPERM', 'ENOENT'].includes(error?.code)) {
+      return [];
+    }
+    throw error;
+  }
   const files = [];
   for (const entry of entries) {
     const abs = join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (shouldSkipWalkPath(abs)) continue;
       files.push(...await walk(abs));
     } else if (entry.isFile()) {
       files.push(abs);
@@ -2020,9 +2037,8 @@ if (!loadBalancingParityText) {
     'application gateway missing backend settings is rejected',
     'application gateway invalid listener is rejected',
     'application gateway invalid routing rule is rejected',
-    'load balancer missing frontend ip is rejected',
-    'load balancer missing backend pool is rejected',
-    'load balancer missing probe is rejected',
+    'load balancer minimal create succeeds',
+    'load balancer empty rule collection is accepted',
     'load balancer invalid probe is rejected',
     'load balancer invalid rule is rejected',
     'application gateway create succeeds',

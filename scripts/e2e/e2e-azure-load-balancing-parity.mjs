@@ -272,6 +272,8 @@ async function runControlPlaneMatrix() {
   const vnetName = `vnet-lb-${suffix}`.slice(0, 40);
   const gatewayName = `agw-${suffix}`.slice(0, 40);
   const loadBalancerName = `lb-${suffix}`.slice(0, 40);
+  const minimalLoadBalancerName = `lb-min-${suffix}`.slice(0, 40);
+  const emptyRulesLoadBalancerName = `lb-rules-${suffix}`.slice(0, 40);
   const missingGatewayName = `agw-missing-${suffix}`.slice(0, 40);
   const missingLoadBalancerName = `lb-missing-${suffix}`.slice(0, 40);
   let subnetId = null;
@@ -424,6 +426,24 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('load balancer minimal create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, minimalLoadBalancerName), { location: 'eastus', properties: {} });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.sku.name, 'Basic');
+      assert.equal(result.body.sku.tier, 'Regional');
+      assert.deepEqual(result.body.properties.frontendIPConfigurations, []);
+      assert.deepEqual(result.body.properties.backendAddressPools, []);
+      assert.deepEqual(result.body.properties.loadBalancingRules, []);
+      assert.deepEqual(result.body.properties.probes, []);
+      return { status: result.status };
+    });
+
+    await record('load balancer minimal delete succeeds', async () => {
+      const result = await httpJson(armPort, 'DELETE', loadBalancerPath(resourceGroup, minimalLoadBalancerName));
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
     await record('virtual network create succeeds for load balancing references', async () => {
       const result = await httpJson(armPort, 'PUT', virtualNetworkPath(resourceGroup, vnetName), vnetBody());
       assert.equal(result.status, 201);
@@ -473,25 +493,20 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('load balancer missing frontend ip is rejected', async () => {
-      const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, loadBalancerName), loadBalancerBody({ resourceGroup, loadBalancerName, overrides: { properties: { frontendIPConfigurations: [] } } }));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'LoadBalancerFrontendIpConfigurationRequired');
-      return { status: result.status, errorCode: errorCode(result) };
+    await record('load balancer empty rule collection is accepted', async () => {
+      const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, emptyRulesLoadBalancerName), loadBalancerBody({ resourceGroup, loadBalancerName: emptyRulesLoadBalancerName, overrides: { properties: { loadBalancingRules: [] } } }));
+      assert.equal(result.status, 201);
+      assert.deepEqual(result.body.properties.loadBalancingRules, []);
+      assert.equal(result.body.properties.frontendIPConfigurations.length, 1);
+      assert.equal(result.body.properties.backendAddressPools.length, 1);
+      assert.equal(result.body.properties.probes.length, 1);
+      return { status: result.status };
     });
 
-    await record('load balancer missing backend pool is rejected', async () => {
-      const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, loadBalancerName), loadBalancerBody({ resourceGroup, loadBalancerName, overrides: { properties: { backendAddressPools: [] } } }));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'LoadBalancerBackendPoolRequired');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
-
-    await record('load balancer missing probe is rejected', async () => {
-      const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, loadBalancerName), loadBalancerBody({ resourceGroup, loadBalancerName, overrides: { properties: { probes: [] } } }));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'LoadBalancerProbeRequired');
-      return { status: result.status, errorCode: errorCode(result) };
+    await record('load balancer empty rule collection delete succeeds', async () => {
+      const result = await httpJson(armPort, 'DELETE', loadBalancerPath(resourceGroup, emptyRulesLoadBalancerName));
+      assert.equal(result.status, 200);
+      return { status: result.status };
     });
 
     await record('load balancer invalid probe is rejected', async () => {

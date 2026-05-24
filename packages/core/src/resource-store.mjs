@@ -416,7 +416,16 @@ export class ResourceStore {
       ...(providerNamespace === 'Microsoft.ApiManagement' ? apiManagementIdentityFields(typePath) : {}),
       location: body.location ?? existing?.location ?? 'global',
       tags: body.tags ?? existing?.tags ?? {},
-      sku: type === 'Microsoft.Cache/redis' ? undefined : (body.sku ?? body.properties?.sku),
+      sku:
+        type === 'Microsoft.Cache/redis'
+          ? undefined
+          : type === 'Microsoft.Network/loadBalancers'
+            ? {
+                ...(body.sku ?? body.properties?.sku ?? existing?.sku ?? {}),
+                name: (body.sku ?? body.properties?.sku ?? existing?.sku)?.name ?? 'Basic',
+                tier: (body.sku ?? body.properties?.sku ?? existing?.sku)?.tier ?? 'Regional',
+              }
+            : (body.sku ?? body.properties?.sku),
       kind: body.kind,
       identity: materializeIdentity(body.identity ?? existing?.identity, id),
       properties: {
@@ -890,6 +899,42 @@ export class ResourceStore {
           : {}),
         ...(type === 'Microsoft.Network/loadBalancers'
           ? {
+              frontendIPConfigurations:
+                body.properties?.frontendIPConfigurations
+                ?? body.frontendIPConfigurations
+                ?? existing?.properties?.frontendIPConfigurations
+                ?? [],
+              backendAddressPools:
+                body.properties?.backendAddressPools
+                ?? body.backendAddressPools
+                ?? existing?.properties?.backendAddressPools
+                ?? [],
+              loadBalancingRules:
+                body.properties?.loadBalancingRules
+                ?? body.loadBalancingRules
+                ?? existing?.properties?.loadBalancingRules
+                ?? [],
+              probes:
+                body.properties?.probes
+                ?? body.probes
+                ?? existing?.properties?.probes
+                ?? [],
+              inboundNatRules:
+                body.properties?.inboundNatRules
+                ?? body.inboundNatRules
+                ?? existing?.properties?.inboundNatRules
+                ?? [],
+              inboundNatPools:
+                body.properties?.inboundNatPools
+                ?? body.inboundNatPools
+                ?? existing?.properties?.inboundNatPools
+                ?? [],
+              outboundRules:
+                body.properties?.outboundRules
+                ?? body.outboundRules
+                ?? existing?.properties?.outboundRules
+                ?? [],
+              provisioningState: lifecycleSequence ? 'Creating' : existing?.properties?.provisioningState ?? 'Succeeded',
               resourceGuid: existing?.properties?.resourceGuid ?? createHash('sha256').update(`globalstack:lb:${id}`).digest('hex').slice(0, 32),
             }
           : {}),

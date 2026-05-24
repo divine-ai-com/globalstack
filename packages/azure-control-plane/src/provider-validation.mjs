@@ -1447,31 +1447,23 @@ function validateLoadBalancerPayload(resourceType, body) {
   if (resourceType !== 'Microsoft.Network/loadBalancers') return null;
 
   const skuName = body.sku?.name;
-  if (!['Basic', 'Standard'].includes(skuName)) {
+  if (skuName !== undefined && !['Basic', 'Standard'].includes(skuName)) {
     return envelopedError(400, 'LoadBalancerSkuNotSupported', 'Load Balancer sku.name must be Basic or Standard for this local parity surface.');
   }
 
   const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
-  const frontendIpValidation = validateNamedCollection(frontendIpConfigurations, 'LoadBalancerFrontendIpConfigurationRequired', 'Load Balancer requires frontendIPConfigurations.');
-  if (frontendIpValidation) return frontendIpValidation;
   if (frontendIpConfigurations.some(item => !refId(item.properties?.publicIPAddress) && !refId(item.properties?.subnet))) {
     return envelopedError(400, 'LoadBalancerFrontendIpConfigurationInvalid', 'Load Balancer frontend IP configurations require publicIPAddress.id or subnet.id.');
   }
 
   const backendPools = arrayProp(body, 'backendAddressPools');
-  const backendPoolValidation = validateNamedCollection(backendPools, 'LoadBalancerBackendPoolRequired', 'Load Balancer requires backendAddressPools.');
-  if (backendPoolValidation) return backendPoolValidation;
 
   const probes = arrayProp(body, 'probes');
-  const probeValidation = validateNamedCollection(probes, 'LoadBalancerProbeRequired', 'Load Balancer requires probes for this local parity surface.');
-  if (probeValidation) return probeValidation;
   if (probes.some(item => !['Tcp', 'Http', 'Https'].includes(item.properties?.protocol) || !isPort(item.properties?.port))) {
     return envelopedError(400, 'LoadBalancerProbeInvalid', 'Load Balancer probes require protocol Tcp/Http/Https and a port between 1 and 65535.');
   }
 
   const rules = arrayProp(body, 'loadBalancingRules');
-  const ruleValidation = validateNamedCollection(rules, 'LoadBalancerRuleRequired', 'Load Balancer requires loadBalancingRules.');
-  if (ruleValidation) return ruleValidation;
   if (rules.some(item => !['Tcp', 'Udp', 'All'].includes(item.properties?.protocol) || !isPort(item.properties?.frontendPort) || !isPort(item.properties?.backendPort) || !refId(item.properties?.frontendIPConfiguration) || !refId(item.properties?.backendAddressPool) || !refId(item.properties?.probe))) {
     return envelopedError(400, 'LoadBalancerRuleInvalid', 'Load Balancer rules require protocol, frontend/backend ports, frontend IP, backend pool, and probe references.');
   }

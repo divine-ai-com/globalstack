@@ -186,6 +186,73 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
   });
 });
 
+test('load balancer minimal lifecycle matches Azure empty-collection normalization', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-lb?api-version=2021-04-01`, { location: 'eastus' });
+
+    const minimal = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-lb/providers/Microsoft.Network/loadBalancers/life-min-lb?api-version=2023-09-01`,
+      { location: 'eastus', properties: {} },
+    );
+    assert.equal(minimal.status, 201);
+    assert.equal(minimal.body.sku.name, 'Basic');
+    assert.equal(minimal.body.sku.tier, 'Regional');
+    assert.deepEqual(minimal.body.properties.frontendIPConfigurations, []);
+    assert.deepEqual(minimal.body.properties.backendAddressPools, []);
+    assert.deepEqual(minimal.body.properties.loadBalancingRules, []);
+    assert.deepEqual(minimal.body.properties.probes, []);
+    assert.equal(minimal.body.properties.provisioningState, 'Succeeded');
+
+    const deleted = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-lb/providers/Microsoft.Network/loadBalancers/life-min-lb?api-version=2023-09-01`,
+    );
+    assert.equal(deleted.status, 200);
+  });
+});
+
+test('load balancer accepts empty loadBalancingRules with populated frontend backend and probe collections', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-lb-rules?api-version=2021-04-01`, { location: 'eastus' });
+
+    const publicIp = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-lb-rules/providers/Microsoft.Network/publicIPAddresses/lb-pip?api-version=2023-09-01`,
+      { location: 'eastus', sku: { name: 'Standard' }, properties: { publicIPAllocationMethod: 'Static' } },
+    );
+    assert.equal(publicIp.status, 201);
+
+    const lb = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-lb-rules/providers/Microsoft.Network/loadBalancers/life-rules-lb?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard' },
+        properties: {
+          frontendIPConfigurations: [
+            { name: 'frontend', properties: { publicIPAddress: { id: publicIp.body.id } } },
+          ],
+          backendAddressPools: [{ name: 'backend', properties: {} }],
+          probes: [{ name: 'tcpProbe', properties: { protocol: 'Tcp', port: 80, intervalInSeconds: 5, numberOfProbes: 2 } }],
+          loadBalancingRules: [],
+        },
+      },
+    );
+    assert.equal(lb.status, 201);
+    assert.equal(lb.body.sku.name, 'Standard');
+    assert.equal(lb.body.sku.tier, 'Regional');
+    assert.deepEqual(lb.body.properties.loadBalancingRules, []);
+    assert.equal(lb.body.properties.frontendIPConfigurations.length, 1);
+    assert.equal(lb.body.properties.backendAddressPools.length, 1);
+    assert.equal(lb.body.properties.probes.length, 1);
+  });
+});
+
 test('service bus namespace listKeys supports encoded authorization rule names', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-sb?api-version=2021-04-01`, { location: 'eastus' });
