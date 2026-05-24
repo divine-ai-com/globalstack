@@ -2248,6 +2248,115 @@ test('Pr91105 includes Queue Storage, Table Storage, PostgreSQL, and the approva
   );
 });
 
+test('Pr91106 includes Front Door, both DMS engines, and the rollback subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91106');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-rollback-project'
+      && check.typePath === 'services/dms-cutover-fabric-91106/projects/rollback-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-cutover-fabric-91106/databases/ledgerdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-cutover-fabric-91106/topics/cutover-events/subscriptions/rollback'),
+  );
+});
+
+test('Pr91107 includes IoT Hub, Digital Twins, Cosmos container, and the replay subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91107');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(scenario.requiredSourceMarkers.includes('documentdb.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmosfleet91107/sqlDatabases/FleetTwinDb/containers/TwinProjection'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-fleet-mesh-91107/sqlPools/fleetpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-fleet-mesh-91107/topics/fleet-events/subscriptions/replay'),
+  );
+});
+
+test('Pr91108 includes Front Door, both managed environments, and the resume subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91108');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ManagedEnvironment'));
+  assert.ok(scenario.requiredSourceMarkers.includes('app.ContainerApp'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-container-east-91108'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-container-west-91108'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-resume'
+      && check.typePath === 'namespaces/sb-container-mesh-91108/topics/container-events/subscriptions/resume'),
+  );
+});
+
+test('Pr91109 includes API Management, both relational databases, DMS, and the migration subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91109');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('apimanagement.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('datamigration.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbformysql.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-postgres-project'
+      && check.typePath === 'services/dms-adjudication-91109/projects/postgres-review-sync'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-migration'
+      && check.typePath === 'namespaces/sb-adjudication-91109/topics/adjudication-events/subscriptions/migration'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-queue'
+      && check.typePath === 'storageAccounts/azadjudication91109/queueServices/default/queues/adjudication-jobs'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-table'
+      && check.typePath === 'storageAccounts/azadjudication91109/tableServices/default/tables/adjudicationstatus'),
+  );
+});
+
+test('Pr91110 includes both AKS clusters, Cosmos container, and the replicate subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91110');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('documentdb.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-claims-east-91110'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-claims-west-91110'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosmosclaims91110/sqlDatabases/ClaimsDb/containers/ClaimsLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replicate'
+      && check.typePath === 'namespaces/sb-claims-ring-91110/topics/claims-events/subscriptions/replicate'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);
