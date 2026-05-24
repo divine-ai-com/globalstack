@@ -3143,3 +3143,92 @@ test('Pr91130 includes dual load balancers, Event Hubs, and the replay subscript
       && check.typePath === 'namespaces/sb-dispatch-91130/topics/dispatch-commands/subscriptions/replay'),
   );
 });
+
+test('Pr91131 includes east and west worker subscriptions and private workflow DNS', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91131');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-worker-east'
+      && check.typePath === 'namespaces/sb-routing-fabric-91131/topics/routing-events/subscriptions/worker-east'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-worker-west'
+      && check.typePath === 'namespaces/sb-routing-fabric-91131/topics/routing-events/subscriptions/worker-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-workflow'
+      && check.typePath === 'privateDnsZones/routing91131.internal/A/workflow'),
+  );
+});
+
+test('Pr91132 includes dual IoT hubs, Digital Twins, and Synapse SQL pool checks', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91132');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-thread-east-91132'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/dt-thread-grid-91132'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synthread91132/sqlPools/threadpool'),
+  );
+});
+
+test('Pr91133 includes all DMS projects and the rollback operation policy check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91133');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-clinical-cutover-91133/projects/mysql-cutover'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-clinical-cutover-91133/projects/postgres-cutover'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-replay'
+      && check.typePath === 'services/dms-clinical-cutover-91133/projects/replay-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-rollback-policy'
+      && check.typePath === 'service/apim-clinical-cutover-91133/apis/clinical-cutover-api/operations/rollback-cutover/policies/policy'),
+  );
+});
+
+test('Pr91134 includes front door security policy, dual Event Hubs, and Cosmos container checks', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91134');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-compliance-ring-91134/securityPolicies/compliance-ring-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-compliance-west-91134/eventhubs/screening-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/coscompliance91134/sqlDatabases/ComplianceStateDb/containers/ComplianceState'),
+  );
+});
+
+test('Pr91135 includes both regional AKS clusters, Synapse SQL pool, and the billing subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91135');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-rollout-east-91135'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synrollout91135/sqlPools/rolloutpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-billing'
+      && check.typePath === 'namespaces/sb-rollout-ring-91135/topics/rollout-events/subscriptions/billing'),
+  );
+});
