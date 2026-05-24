@@ -3058,3 +3058,88 @@ test('validateTapStack rejects listStorageAccountKeysOutput calls that use raw a
     /azure\.storage\.listStorageAccountKeysOutput must use accountName from the created storage resource output/,
   );
 });
+
+test('Pr91126 includes east and west worker topic subscriptions and private workflow DNS', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91126');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-worker-east'
+      && check.typePath === 'namespaces/sb-tenant-recovery-91126/topics/tenant-events/subscriptions/worker-east'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-worker-west'
+      && check.typePath === 'namespaces/sb-tenant-recovery-91126/topics/tenant-events/subscriptions/worker-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-dns-workflow'
+      && check.typePath === 'privateDnsZones/tenant91126.internal/A/workflow'),
+  );
+});
+
+test('Pr91127 includes dual IoT hubs, Digital Twins, and Synapse SQL pool checks', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91127');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-campus-east-91127'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/dt-campus-91127'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syncampus91127/sqlPools/campuspool'),
+  );
+});
+
+test('Pr91128 includes both DMS projects and the rollback operation policy check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91128');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-grid-91128/projects/mysql-cutover-plan'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-postgres'
+      && check.typePath === 'services/dms-cutover-grid-91128/projects/postgres-cutover-plan'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-rollback-policy'
+      && check.typePath === 'service/apim-cutover-grid-91128/apis/cutover-grid-api/operations/rollback-cutover/policies/policy'),
+  );
+});
+
+test('Pr91129 includes both regional AKS clusters and the billing subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91129');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91129'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-inference-west-91129'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-billing'
+      && check.typePath === 'namespaces/sb-inference-ring-91129/topics/inference-events/subscriptions/billing'),
+  );
+});
+
+test('Pr91130 includes dual load balancers, Event Hubs, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91130');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-dispatch-east-91130'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'event-hub'
+      && check.typePath === 'namespaces/eh-dispatch-91130/eventhubs/dispatch-events'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-dispatch-91130/topics/dispatch-commands/subscriptions/replay'),
+  );
+});

@@ -19,6 +19,7 @@ import { ultraExpertWave91106to91110 } from "./complex-pulumi-scenarios-wave-911
 import { ultraExpertWave91111to91115 } from "./complex-pulumi-scenarios-wave-91111-91115.mjs";
 import { ultraExpertWave91116to91120 } from "./complex-pulumi-scenarios-wave-91116-91120.mjs";
 import { ultraExpertWave91121to91125 } from "./complex-pulumi-scenarios-wave-91121-91125.mjs";
+import { ultraExpertWave91126to91130 } from "./complex-pulumi-scenarios-wave-91126-91130.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5013,6 +5014,7 @@ scenarios.push(...ultraExpertWave91106to91110);
 scenarios.push(...ultraExpertWave91111to91115);
 scenarios.push(...ultraExpertWave91116to91120);
 scenarios.push(...ultraExpertWave91121to91125);
+scenarios.push(...ultraExpertWave91126to91130);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
