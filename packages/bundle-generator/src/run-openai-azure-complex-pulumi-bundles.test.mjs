@@ -3875,3 +3875,112 @@ test('Pr91170 includes dual load balancers, dual managed environments, MySQL dat
       && check.typePath === 'namespaces/sb-carrier-returns-91170/topics/carrier-return-events/subscriptions/dispatch-west'),
   );
 });
+
+test('Pr91171 includes front door security policy, dual AKS clusters, PostgreSQL database, and the compliance subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91171');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-fare-clearing-91171/securityPolicies/fare-clearing-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-fare-east-91171'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-fare-clearing-91171/databases/faresettlement'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-compliance'
+      && check.typePath === 'namespaces/sb-fare-clearing-91171/topics/fare-clearing-events/subscriptions/compliance'),
+  );
+});
+
+test('Pr91172 includes dual IoT hubs, Digital Twins, Cosmos container, and the safety subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91172');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-offshore-east-91172'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-offshore-twin-91172'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosoffshore91172/sqlDatabases/OffshoreTwinDb/containers/OffshoreLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-safety'
+      && check.typePath === 'namespaces/sb-offshore-twin-91172/topics/offshore-twin-events/subscriptions/safety'),
+  );
+});
+
+test('Pr91173 includes front door security policy, all DMS projects, both relational ledgers, and the rollback subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91173');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-securities-cutover-91173/securityPolicies/securities-cutover-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-securities-cutover-91173/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-securities-91173/databases/securitiesdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-securities-91173/databases/ledgerdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-securities-cutover-91173/topics/securities-cutover-events/subscriptions/rollback'),
+  );
+});
+
+test('Pr91174 includes dual load balancers, dual managed environments, PostgreSQL database, and the dispatch-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91174');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-supply-east-91174'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-supply-east-91174'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-supply-returns-91174/databases/supplyreturns'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch-west'
+      && check.typePath === 'namespaces/sb-supply-returns-91174/topics/supply-return-events/subscriptions/dispatch-west'),
+  );
+});
+
+test('Pr91175 includes front door security policy, dual managed environments, PostgreSQL database, and the compliance subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91175');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-appeals-edge-91175/securityPolicies/appeals-edge-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-appeals-east-91175'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-appeals-edge-91175/databases/appealsdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-compliance'
+      && check.typePath === 'namespaces/sb-appeals-edge-91175/topics/appeals-events/subscriptions/compliance'),
+  );
+});
