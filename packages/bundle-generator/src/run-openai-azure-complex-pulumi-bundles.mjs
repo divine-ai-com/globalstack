@@ -38,6 +38,7 @@ import { ultraExpertWave91201to91205 } from "./complex-pulumi-scenarios-wave-912
 import { ultraExpertWave91206to91210 } from "./complex-pulumi-scenarios-wave-91206-91210.mjs";
 import { ultraExpertWave91211to91215 } from "./complex-pulumi-scenarios-wave-91211-91215.mjs";
 import { ultraExpertWave91216to91220 } from "./complex-pulumi-scenarios-wave-91216-91220.mjs";
+import { ultraExpertWave91221to91225 } from "./complex-pulumi-scenarios-wave-91221-91225.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5051,6 +5052,7 @@ scenarios.push(...ultraExpertWave91201to91205);
 scenarios.push(...ultraExpertWave91206to91210);
 scenarios.push(...ultraExpertWave91211to91215);
 scenarios.push(...ultraExpertWave91216to91220);
+scenarios.push(...ultraExpertWave91221to91225);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -6010,6 +6012,8 @@ export function validateTapStack(scenario, tapStackText) {
   const usesUnsupportedAzureNativeModules = /from\s+["']@pulumi\/azure-native\/frontdoor["']/.test(tapStackText);
   const keyVaultPattern = /new\s+(?:azure\.)?keyvault\.Vault\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const cosmosContainerPattern = /new\s+(?:azure\.)?documentdb\.SqlResourceSqlContainer\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const postgresDatabasePattern = /new\s+(?:azure\.)?dbforpostgresql\.Database\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const mysqlDatabasePattern = /new\s+(?:azure\.)?dbformysql\.Database\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const storageChildPattern = /new\s+(?:azure\.)?storage\.(?:BlobContainer|FileShare|Queue|Table)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsLinkPattern = /new\s+(?:azure\.)?(?:privatedns\.VirtualNetworkLink|network\.VirtualNetworkLink)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsRecordPattern = /new\s+(?:azure\.)?(?:privatedns\.PrivateRecordSet|network\.PrivateRecordSet)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
@@ -6044,6 +6048,16 @@ export function validateTapStack(scenario, tapStackText) {
   for (const block of tapStackText.match(cosmosContainerPattern) ?? []) {
     if (!/\bdependsOn\s*:/.test(block)) {
       throw new Error('azure.documentdb.SqlResourceSqlContainer must include an explicit dependsOn option that waits for its SQL database resource');
+    }
+  }
+  for (const block of tapStackText.match(postgresDatabasePattern) ?? []) {
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure.dbforpostgresql.Database must include an explicit dependsOn option that waits for the PostgreSQL server resource');
+    }
+  }
+  for (const block of tapStackText.match(mysqlDatabasePattern) ?? []) {
+    if (!/\bdependsOn\s*:/.test(block)) {
+      throw new Error('azure.dbformysql.Database must include an explicit dependsOn option that waits for the MySQL server resource');
     }
   }
   for (const block of tapStackText.match(privateDnsLinkPattern) ?? []) {
@@ -6185,6 +6199,14 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   if (String(error).includes('SqlResourceSqlContainer must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure.documentdb.SqlResourceSqlContainer must be created with a third-argument resource options object that includes dependsOn: [sqlDatabase].');
     extraGuidance.push('Keep the prompt-fixed accountName, databaseName, and containerName, and wire the container after the Azure Cosmos SQL database resource variable.');
+  }
+  if (String(error).includes('azure.dbforpostgresql.Database must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure.dbforpostgresql.Database must include a third-argument resource options object with dependsOn: [postgresServer].');
+    extraGuidance.push('Create the PostgreSQL server first, keep it in a variable like postgresServer, and then create the database with serverName: postgresServer.name plus dependsOn: [postgresServer].');
+  }
+  if (String(error).includes('azure.dbformysql.Database must include an explicit dependsOn option')) {
+    extraGuidance.push('Every azure.dbformysql.Database must include a third-argument resource options object with dependsOn: [mysqlServer].');
+    extraGuidance.push('Create the MySQL server first, keep it in a variable like mysqlServer, and then create the database with serverName: mysqlServer.name plus dependsOn: [mysqlServer].');
   }
   if (String(error).includes('azure private DNS virtual network links must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure private DNS VirtualNetworkLink must include a third-argument resource options object with dependsOn: [privateZone, virtualNetwork] or at least dependsOn: [privateZone].');
@@ -6467,6 +6489,12 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
     extraGuidance.push('Your Cosmos SQL container raced its parent database. Declare the SQL database resource first, keep a variable for it, and then create the container with a third-argument options object: { dependsOn: [sqlDatabase] }.');
     extraGuidance.push('Do not rely on accountName/databaseName strings to order Cosmos SQL resources. The container must depend explicitly on the SqlResourceSqlDatabase resource instance.');
   }
+  if ((String(runFailure).includes('Microsoft.DBforPostgreSQL/flexibleServers/databases')
+      || String(runFailure).includes('Microsoft.DBforMySQL/flexibleServers/databases'))
+    && String(runFailure).includes('ResourceNotFound')) {
+    extraGuidance.push('Your relational database child resource raced its parent flexible server. Declare the server first, keep it in a variable, and create the database with serverName: server.name plus an explicit third-argument options object with dependsOn: [server].');
+    extraGuidance.push('Do not rely on raw prompt-fixed serverName strings to order Azure Database for PostgreSQL or Azure Database for MySQL database resources.');
+  }
   if ((String(runFailure).includes('Microsoft.Storage/storageAccounts/blobServices/containers')
       || String(runFailure).includes('Microsoft.Storage/storageAccounts/fileServices/shares'))
     && String(runFailure).includes('ParentResourceNotFound')) {
@@ -6658,7 +6686,7 @@ async function runShipment(shipmentDir) {
 
 function shouldRepairRun(runResult) {
   const evidence = `${runResult.failingMessage ?? ""}\n${runResult.nativeStdout ?? ""}\n${runResult.nativeStderr ?? ""}\n${runResult.integrationStdout ?? ""}\n${runResult.integrationStderr ?? ""}`;
-  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|DNS zones must use location 'global'|Parameter 'Charset' must be specified|Parameter 'Collation' must be specified|invalid URL output|invalid host output|Current Limit \(Total VMs\)|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound|products\/.+\/apis\/.+ResourceNotFound|azure-native:apimanagement:ProductApi[\s\S]*ResourceNotFound)/i.test(evidence);
+  return /(Unable to compile TypeScript|TSError|error TS\d+|Cannot find module|Property '.+' does not exist on type|No overload matches this call|is not assignable to type|Missing required configuration variable|Property 'location' must be 'global'|DNS zones must use location 'global'|Parameter 'Charset' must be specified|Parameter 'Collation' must be specified|invalid URL output|invalid host output|Current Limit \(Total VMs\)|Microsoft\.DocumentDB\/databaseAccounts\/sqlDatabases\/containers[\s\S]*ResourceNotFound|Microsoft\.DBfor(?:PostgreSQL|MySQL)\/flexibleServers\/databases[\s\S]*ResourceNotFound|products\/.+\/apis\/.+ResourceNotFound|azure-native:apimanagement:ProductApi[\s\S]*ResourceNotFound)/i.test(evidence);
 }
 
 function repairEvidence(runResult) {

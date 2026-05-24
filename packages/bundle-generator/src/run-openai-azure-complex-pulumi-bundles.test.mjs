@@ -2852,6 +2852,132 @@ test('validateTapStack rejects Cosmos SQL containers without explicit dependsOn 
   );
 });
 
+test('validateTapStack rejects PostgreSQL databases without explicit dependsOn on the server', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91223');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const rg = { name: "rg-az-cutover-grid-pulumi-91223" } as any;',
+        '  const publicZone = { name: "cutover91223.contoso.net" } as any;',
+        '  const privateZone = { name: "cutover91223.internal" } as any;',
+        '  new azure.network.RecordSet("api", {',
+        '    resourceGroupName: rg.name,',
+        '    zoneName: publicZone.name,',
+        '    relativeRecordSetName: "api",',
+        '    recordType: "CNAME",',
+        '    ttl: 300,',
+        '    cnameRecord: { cname: "example.contoso.net" },',
+        '  }, { dependsOn: [publicZone] });',
+        '  new azure.network.PrivateRecordSet("ledger", {',
+        '    resourceGroupName: rg.name,',
+        '    privateZoneName: privateZone.name,',
+        '    relativeRecordSetName: "ledger",',
+        '    recordType: "A",',
+        '    ttl: 300,',
+        '    aRecords: [{ ipv4Address: "10.0.0.10" }],',
+        '  }, { dependsOn: [privateZone] });',
+        '  const postgresServer = new azure.dbforpostgresql.Server("pg-cutover-grid-91223", {',
+        '    resourceGroupName: rg.name,',
+        '    serverName: "pg-cutover-grid-91223",',
+        '    location: "eastus",',
+        '    administratorLogin: "cutoveradmin",',
+        '    administratorLoginPassword: "P@ssword1234!",',
+        '    version: "14",',
+        '    sku: { name: "Standard_B1ms", tier: "Burstable" },',
+        '    storage: { storageSizeGB: 32 },',
+        '    backup: { backupRetentionDays: 7 },',
+        '  });',
+        '  new azure.dbforpostgresql.Database("pg-cutoverdb", {',
+        '    resourceGroupName: rg.name,',
+        '    serverName: postgresServer.name,',
+        '    databaseName: "cutoverdb",',
+        '    charset: "UTF8",',
+        '    collation: "en_US.utf8",',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure\.dbforpostgresql\.Database must include an explicit dependsOn option/,
+  );
+});
+
+test('validateTapStack rejects MySQL databases without explicit dependsOn on the server', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91223');
+  assert.ok(scenario);
+  const fixedNames = Object.values(scenario.resourceNames).map((value) => `// ${value}`);
+  const requiredMarkers = (scenario.requiredSourceMarkers ?? []).map((marker) => `// ${marker}`);
+  assert.throws(
+    () => validateTapStack(
+      scenario,
+      [
+        'import * as azure from "@pulumi/azure-native";',
+        '',
+        ...fixedNames,
+        ...requiredMarkers,
+        '',
+        'export function createTapStack() {',
+        '  const rg = { name: "rg-az-cutover-grid-pulumi-91223" } as any;',
+        '  const publicZone = { name: "cutover91223.contoso.net" } as any;',
+        '  const privateZone = { name: "cutover91223.internal" } as any;',
+        '  new azure.network.RecordSet("api", {',
+        '    resourceGroupName: rg.name,',
+        '    zoneName: publicZone.name,',
+        '    relativeRecordSetName: "api",',
+        '    recordType: "CNAME",',
+        '    ttl: 300,',
+        '    cnameRecord: { cname: "example.contoso.net" },',
+        '  }, { dependsOn: [publicZone] });',
+        '  new azure.network.PrivateRecordSet("ledger", {',
+        '    resourceGroupName: rg.name,',
+        '    privateZoneName: privateZone.name,',
+        '    relativeRecordSetName: "ledger",',
+        '    recordType: "A",',
+        '    ttl: 300,',
+        '    aRecords: [{ ipv4Address: "10.0.0.10" }],',
+        '  }, { dependsOn: [privateZone] });',
+        '  const mysqlServer = new azure.dbformysql.Server("mysql-cutover-grid-91223", {',
+        '    resourceGroupName: rg.name,',
+        '    serverName: "mysql-cutover-grid-91223",',
+        '    location: "eastus",',
+        '    administratorLogin: "cutoveradmin",',
+        '    administratorLoginPassword: "P@ssword1234!",',
+        '    version: "8.0.21",',
+        '    sku: { name: "Standard_B1ms", tier: "Burstable" },',
+        '    storage: { storageSizeGB: 32 },',
+        '    backup: { backupRetentionDays: 7 },',
+        '  });',
+        '  new azure.dbformysql.Database("mysql-cutoverdb", {',
+        '    resourceGroupName: rg.name,',
+        '    serverName: mysqlServer.name,',
+        '    databaseName: "cutoverdb",',
+        '    charset: "utf8mb4",',
+        '    collation: "utf8mb4_unicode_ci",',
+        '  });',
+        '  return {',
+        ...scenario.expectedOutputKeys.map((key) => `    ${key}: "${key}",`),
+        '  };',
+        '}',
+        '',
+      ].join('\n'),
+    ),
+    /azure\.dbformysql\.Database must include an explicit dependsOn option/,
+  );
+});
+
 test('validateTapStack rejects private DNS virtual network links without explicit dependsOn on the private zone', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91084');
   assert.ok(scenario);
@@ -4973,5 +5099,98 @@ test('Pr91220 includes Front Door security policy, dual managed environments, Po
   assert.ok(
     scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
       && check.typePath === 'namespaces/sb-returns-91220/topics/returns-events/subscriptions/replay'),
+  );
+});
+
+test('Pr91221 includes both regional AKS clusters, PostgreSQL, and the west-drain subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91221');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-inference-east-91221'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-inference-west-91221'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-inference-ring-91221/databases/inferencedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-west-drain'
+      && check.typePath === 'namespaces/sb-inference-ring-91221/topics/inference-commands/subscriptions/west-drain'),
+  );
+});
+
+test('Pr91222 includes dual IoT hubs, Digital Twins, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91222');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-yard-east-91222'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-iot-hub'
+      && check.typePath === 'IotHubs/iot-yard-west-91222'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-yard-command-91222'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-yard-command-91222/topics/yard-commands/subscriptions/replay'),
+  );
+});
+
+test('Pr91223 includes all DMS projects and the promote subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91223');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-grid-91223/projects/mysql-stage'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-cutover-grid-91223/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promote'
+      && check.typePath === 'namespaces/sb-cutover-grid-91223/topics/cutover-grid-commands/subscriptions/promote'),
+  );
+});
+
+test('Pr91224 includes front door security policy, dual managed environments, and the green subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91224');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-revision-mesh-91224/securityPolicies/revision-mesh-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-revision-east-91224'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-green'
+      && check.typePath === 'namespaces/sb-revision-mesh-91224/topics/revision-commands/subscriptions/green'),
+  );
+});
+
+test('Pr91225 includes Synapse SQL pool, Cosmos container, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91225');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synreplay91225/sqlPools/replayringpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosreplay91225/sqlDatabases/ReplayRingDb/containers/ReplayRingLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-replay-ring-91225/topics/replay-ring-commands/subscriptions/approve'),
   );
 });
