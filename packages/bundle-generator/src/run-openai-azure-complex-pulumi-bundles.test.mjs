@@ -3774,3 +3774,104 @@ test('Pr91165 includes dual application gateways, managed identity, PostgreSQL d
       && check.typePath === 'namespaces/sb-warehouse-lattice-91165/topics/warehouse-verdicts/subscriptions/dispatch-west'),
   );
 });
+
+test('Pr91166 includes dual load balancers, MySQL database, and the compliance subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91166');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-branch-east-91166'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-branch-liquidity-91166/databases/branchsettlement'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-compliance'
+      && check.typePath === 'namespaces/sb-branch-liquidity-91166/topics/branch-settlement-events/subscriptions/compliance'),
+  );
+});
+
+test('Pr91167 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and the safety subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91167');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-refinery-east-91167'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-refinery-twin-91167'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synrefinery91167/sqlPools/refinerypool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-safety'
+      && check.typePath === 'namespaces/sb-refinery-twin-91167/topics/refinery-twin-events/subscriptions/safety'),
+  );
+});
+
+test('Pr91168 includes all DMS projects, both relational ledgers, and the treasury subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91168');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-merchant-cutover-91168/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-merchant-cutover-91168/databases/merchantdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-merchant-cutover-91168/databases/ledgerdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-treasury'
+      && check.typePath === 'namespaces/sb-merchant-cutover-91168/topics/merchant-cutover-events/subscriptions/treasury'),
+  );
+});
+
+test('Pr91169 includes front door security policy, dual AKS clusters, Synapse SQL pool, and the promotion subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91169');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-clinical-imaging-91169/securityPolicies/clinical-imaging-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-imaging-east-91169'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synimaging91169/sqlPools/reviewpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promotion'
+      && check.typePath === 'namespaces/sb-clinical-imaging-91169/topics/clinical-imaging-events/subscriptions/promotion'),
+  );
+});
+
+test('Pr91170 includes dual load balancers, dual managed environments, MySQL database, and the dispatch-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91170');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-carriers-east-91170'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-carriers-east-91170'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-carriers-91170/databases/carrierreturns'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch-west'
+      && check.typePath === 'namespaces/sb-carrier-returns-91170/topics/carrier-return-events/subscriptions/dispatch-west'),
+  );
+});
