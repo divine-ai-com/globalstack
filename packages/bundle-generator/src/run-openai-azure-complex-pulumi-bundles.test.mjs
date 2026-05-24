@@ -2144,6 +2144,110 @@ test('Pr91100 includes Front Door, dual managed environments, and the drift subs
   );
 });
 
+test('Pr91101 includes Front Door, PostgreSQL, and the finance subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91101');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('frontdoor.Policy'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-exception-ring-91101/securityPolicies/exception-ring-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-exception-ring-91101/databases/exceptionsdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-finance'
+      && check.typePath === 'namespaces/sb-exception-ring-91101/topics/exception-events/subscriptions/finance'),
+  );
+});
+
+test('Pr91102 includes Synapse, Event Hubs, and the warehouse subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91102');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('eventhub.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('synapse.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'event-hub'
+      && check.typePath === 'namespaces/eh-anomaly-fabric-91102/eventhubs/anomaly-stream'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syn-anomaly-fabric-91102/sqlPools/anomalypool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-anomaly-fabric-91102/topics/anomaly-events/subscriptions/warehouse'),
+  );
+});
+
+test('Pr91103 includes both AKS clusters, the private registry record, and the canary subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91103');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('containerservice.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('privatedns.PrivateZone'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-release-east-91103'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-aks'
+      && check.typePath === 'managedClusters/aks-release-west-91103'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'private-registry-record'
+      && check.typePath === 'privateDnsZones/release91103.internal/A/registry'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-canary'
+      && check.typePath === 'namespaces/sb-release-governance-91103/topics/release-governance/subscriptions/canary'),
+  );
+});
+
+test('Pr91104 includes both IoT hubs, Digital Twins, and the restore subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91104');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('devices.'));
+  assert.ok(scenario.requiredSourceMarkers.includes('digitaltwins'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-remediation-east-91104'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins'
+      && check.typePath === 'digitalTwinsInstances/adt-remediation-thread-91104'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-restore'
+      && check.typePath === 'namespaces/sb-remediation-thread-91104/topics/remediation-commands/subscriptions/restore'),
+  );
+});
+
+test('Pr91105 includes Queue Storage, Table Storage, PostgreSQL, and the approvals subscription', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91105');
+  assert.ok(scenario);
+  assert.ok(scenario.requiredSourceMarkers.includes('storage.Queue'));
+  assert.ok(scenario.requiredSourceMarkers.includes('storage.Table'));
+  assert.ok(scenario.requiredSourceMarkers.includes('dbforpostgresql.'));
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-queue'
+      && check.typePath === 'storageAccounts/azreview91105/queueServices/default/queues/review-jobs'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'storage-table'
+      && check.typePath === 'storageAccounts/azreview91105/tableServices/default/tables/batchstatus'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-review-plane-91105/databases/reviewdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approvals'
+      && check.typePath === 'namespaces/sb-review-plane-91105/topics/review-events/subscriptions/approvals'),
+  );
+});
+
 test('validateTapStack rejects top-level tenantId on Key Vault VaultArgs', () => {
   const scenario = scenarios.find((item) => item.prId === 'Pr91080');
   assert.ok(scenario);
