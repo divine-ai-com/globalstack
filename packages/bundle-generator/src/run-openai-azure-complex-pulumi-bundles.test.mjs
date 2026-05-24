@@ -3232,3 +3232,88 @@ test('Pr91135 includes both regional AKS clusters, Synapse SQL pool, and the bil
       && check.typePath === 'namespaces/sb-rollout-ring-91135/topics/rollout-events/subscriptions/billing'),
   );
 });
+
+test('Pr91136 includes both regional AKS clusters, Synapse SQL pool, and the release-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91136');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-mlgov-east-91136'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synmlgov91136/sqlPools/governancepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-release-west'
+      && check.typePath === 'namespaces/sb-ml-gov-91136/topics/model-governance/subscriptions/release-west'),
+  );
+});
+
+test('Pr91137 includes dual IoT hubs, Digital Twins, and the safety subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91137');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-industry-east-91137'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-industry-exchange-91137'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-safety'
+      && check.typePath === 'namespaces/sb-industry-exchange-91137/topics/industry-incidents/subscriptions/safety'),
+  );
+});
+
+test('Pr91138 includes all DMS projects and the seal-window policy check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91138');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-mysql'
+      && check.typePath === 'services/dms-cutover-nerve-91138/projects/mysql-stage'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-cutover-nerve-91138/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'api-management-seal-policy'
+      && check.typePath === 'service/apim-cutover-nerve-91138/apis/cutover-nerve-api/operations/seal-window/policies/policy'),
+  );
+});
+
+test('Pr91139 includes dual managed environments, dual Event Hubs, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91139');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-resilience-east-91139'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'west-event-hub'
+      && check.typePath === 'namespaces/eh-resilience-west-91139/eventhubs/resilience-west'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-resilience-grid-91139/topics/resilience-commands/subscriptions/replay'),
+  );
+});
+
+test('Pr91140 includes Synapse SQL pool, Cosmos container, and the warehouse subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91140');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synreplay91140/sqlPools/replaypool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'cosmos-container'
+      && check.typePath === 'databaseAccounts/cosreplay91140/sqlDatabases/ReplayDb/containers/ReplayLedger'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-warehouse'
+      && check.typePath === 'namespaces/sb-replay-warehouse-91140/topics/replay-commands/subscriptions/warehouse'),
+  );
+});
