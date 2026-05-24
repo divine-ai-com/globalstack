@@ -3572,3 +3572,205 @@ test('Pr91155 includes both regional AKS clusters, Digital Twins, and the dispat
       && check.typePath === 'namespaces/sb-robotics-verdict-91155/topics/robotics-verdicts/subscriptions/dispatch'),
   );
 });
+
+test('Pr91156 includes dual application gateways, workflow, and the replay subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91156');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-application-gateway'
+      && check.typePath === 'applicationGateways/agw-cargo-east-91156'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'logic-workflow'
+      && check.typePath === 'workflows/logic-cargo-disruption-91156'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-replay'
+      && check.typePath === 'namespaces/sb-cargo-disruption-91156/topics/cargo-disruptions/subscriptions/replay'),
+  );
+});
+
+test('Pr91157 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91157');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-substation-east-91157'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-substation-twin-91157'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synsubstation91157/sqlPools/twinpool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-safety'
+      && check.typePath === 'namespaces/sb-substation-twin-91157/topics/substation-remediations/subscriptions/safety'),
+  );
+});
+
+test('Pr91158 includes front door security policy, dual AKS, dual managed environments, and the promotion subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91158');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-biologics-release-91158/securityPolicies/biologics-release-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-biologics-east-91158'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-managed-environment'
+      && check.typePath === 'managedEnvironments/cae-biologics-east-91158'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promotion'
+      && check.typePath === 'namespaces/sb-biologics-release-91158/topics/release-commands/subscriptions/promotion'),
+  );
+});
+
+test('Pr91159 includes all DMS projects, Synapse SQL pool, and the rollback subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91159');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-freeze-audit'
+      && check.typePath === 'services/dms-cutover-triage-91159/projects/freeze-audit'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syncutover91159/sqlPools/triagepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-rollback'
+      && check.typePath === 'namespaces/sb-cutover-triage-91159/topics/cutover-commands/subscriptions/rollback'),
+  );
+});
+
+test('Pr91160 includes front door security policy, dual IoT hubs, Digital Twins, Synapse SQL pool, and the approve subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91160');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-robotics-safety-91160/securityPolicies/robotics-safety-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-robotics-east-91160'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-robotics-safety-91160'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synrobotics91160/sqlPools/safetypool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-approve'
+      && check.typePath === 'namespaces/sb-robotics-safety-91160/topics/robotics-overrides/subscriptions/approve'),
+  );
+});
+
+test('Pr91161 includes front door security policy, dual AKS clusters, Synapse SQL pool, and the promote-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91161');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'front-door-security-policy'
+      && check.typePath === 'profiles/afd-genomics-release-91161/securityPolicies/genomics-release-security-policy'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-aks'
+      && check.typePath === 'managedClusters/aks-genomics-east-91161'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/syngenomics91161/sqlPools/releasepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-promote-west'
+      && check.typePath === 'namespaces/sb-genomics-release-91161/topics/genomics-release-events/subscriptions/promote-west'),
+  );
+});
+
+test('Pr91162 includes dual load balancers, MySQL database, and the compliance subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91162');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-load-balancer'
+      && check.typePath === 'loadBalancers/lb-branch-east-91162'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-branch-exchange-91162/databases/branchexchange'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-compliance'
+      && check.typePath === 'namespaces/sb-branch-exchange-91162/topics/branch-exchange-events/subscriptions/compliance'),
+  );
+});
+
+test('Pr91163 includes all DMS projects, both relational ledgers, and the treasury subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91163');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'dms-project-rollback-drill'
+      && check.typePath === 'services/dms-payments-cutover-91163/projects/rollback-drill'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'mysql-database'
+      && check.typePath === 'flexibleServers/mysql-payments-cutover-91163/databases/paymentsdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-payments-cutover-91163/databases/settlementdb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-treasury'
+      && check.typePath === 'namespaces/sb-payments-cutover-91163/topics/payments-cutover-events/subscriptions/treasury'),
+  );
+});
+
+test('Pr91164 includes dual IoT hubs, Digital Twins, Synapse SQL pool, and the analytics subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91164');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-iot-hub'
+      && check.typePath === 'IotHubs/iot-outage-east-91164'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'digital-twins-instance'
+      && check.typePath === 'digitalTwinsInstances/adt-outage-twin-91164'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'synapse-sql-pool'
+      && check.typePath === 'workspaces/synoutage91164/sqlPools/outagepool'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-analytics'
+      && check.typePath === 'namespaces/sb-outage-twin-91164/topics/outage-commands/subscriptions/analytics'),
+  );
+});
+
+test('Pr91165 includes dual application gateways, managed identity, PostgreSQL database, and the dispatch-west subscription check', () => {
+  const scenario = scenarios.find((item) => item.prId === 'Pr91165');
+  assert.ok(scenario);
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'east-application-gateway'
+      && check.typePath === 'applicationGateways/agw-warehouse-east-91165'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'managed-identity'
+      && check.typePath === 'userAssignedIdentities/id-warehouse-lattice-91165'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'postgres-database'
+      && check.typePath === 'flexibleServers/pg-warehouse-lattice-91165/databases/warehousedb'),
+  );
+  assert.ok(
+    scenario.integrationChecks.some((check) => check.label === 'service-bus-subscription-dispatch-west'
+      && check.typePath === 'namespaces/sb-warehouse-lattice-91165/topics/warehouse-verdicts/subscriptions/dispatch-west'),
+  );
+});
