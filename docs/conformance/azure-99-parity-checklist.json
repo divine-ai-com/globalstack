@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T11:29:29.005Z",
+    "generatedAt": "2026-05-25T12:03:38.557Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -68,7 +68,7 @@
         "Microsoft.Storage/storageAccounts",
         "Microsoft.Storage/storageAccounts/blobServices/containers"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 232,
@@ -82,21 +82,19 @@
         }
       },
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "8 candidate catalog calls",
-            "232 provider operations matched"
+            "232 provider operations matched",
+            "ARM/provider inventory is reconciled and any scoped data-plane inventory is present"
           ],
-          "gaps": [
-            "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-            "Add data-plane surface inventory where the service has data-plane APIs."
-          ]
+          "gaps": []
         },
         "parameterVarianceCaptures": {
           "status": "complete",
@@ -126,21 +124,19 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, subscription-or-provider-readiness=1, provider-accepted=3",
-            "e2e:storage-parity asserts 23 status checks, 10 error-code checks, 3 header checks"
+            "e2e:storage-parity asserts 26 status checks, 13 error-code checks, 3 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack",
+            "official-emulator Blob data-plane create/get/delete/auth plus GlobalStack normalization coverage includes explicit data-plane authorization rejection coverage"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -165,22 +161,24 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "32 Blob/Queue data-plane expectations"
+            "32 Blob/Queue data-plane expectations",
+            "e2e:storage-parity is wired into npm run smoke",
+            "official-emulator Blob data-plane create/get/delete/auth plus GlobalStack normalization coverage",
+            "18 official-emulator data-plane hardening checks",
+            "6 normalization checks",
+            "no service-specific repeat caveat is currently recorded for this storage surface",
+            "parity result sections: controlPlane"
           ],
-          "gaps": [
-            "Expand Blob/Queue captures and local normalization beyond Wave 1."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "queue-peek-after-delete is explicitly marked needs-repeat-capture"
+            "no blob-specific repeat gap remains in the storage normalizer caveat set"
           ],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -588,8 +586,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "dimensions": {
@@ -631,21 +629,18 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=6, arm-surface=2, provider-validation=3, subscription-or-provider-readiness=1, provider-accepted=3",
-            "e2e:key-vault-parity asserts 87 status checks, 45 error-code checks, 0 header checks"
+            "e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -715,8 +710,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "dimensions": {
@@ -758,21 +753,18 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=6, arm-surface=2, provider-validation=3, provider-accepted=3",
-            "e2e:key-vault-parity asserts 87 status checks, 45 error-code checks, 0 header checks"
+            "e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -1337,8 +1329,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "dimensions": {
@@ -1380,21 +1372,18 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1",
-            "e2e:container-registry-parity asserts 40 status checks, 19 error-code checks, 1 header checks"
+            "e2e:container-registry-parity asserts 43 status checks, 22 error-code checks, 1 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:container-registry-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -1463,8 +1452,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "dimensions": {
@@ -1506,21 +1495,18 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1",
-            "e2e:aks-metadata-parity asserts 49 status checks, 27 error-code checks, 2 header checks"
+            "e2e:aks-metadata-parity asserts 52 status checks, 30 error-code checks, 2 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:aks-metadata-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -2075,21 +2061,19 @@
         }
       },
       "dimensionCounts": {
-        "complete": 5,
-        "partial": 5,
+        "complete": 8,
+        "partial": 2,
         "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "8 candidate catalog calls",
-            "22 provider operations matched"
+            "22 provider operations matched",
+            "ARM/provider inventory is reconciled and any scoped data-plane inventory is present"
           ],
-          "gaps": [
-            "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-            "Add data-plane surface inventory where the service has data-plane APIs."
-          ]
+          "gaps": []
         },
         "parameterVarianceCaptures": {
           "status": "partial",
@@ -2121,21 +2105,19 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=12, arm-surface=2",
-            "e2e:storage-parity asserts 23 status checks, 10 error-code checks, 3 header checks"
+            "e2e:storage-parity asserts 26 status checks, 13 error-code checks, 3 header checks"
           ],
           "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack",
+            "official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage includes explicit data-plane authorization rejection coverage"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
           "status": "complete",
@@ -2160,13 +2142,17 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
-            "32 Blob/Queue data-plane expectations"
+            "32 Blob/Queue data-plane expectations",
+            "e2e:storage-parity is wired into npm run smoke",
+            "official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage",
+            "15 official-emulator data-plane hardening checks",
+            "6 normalization checks",
+            "queue peek-after-delete remains an explicit normalization/repeat gap",
+            "parity result sections: controlPlane"
           ],
-          "gaps": [
-            "Expand Blob/Queue captures and local normalization beyond Wave 1."
-          ]
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "partial",

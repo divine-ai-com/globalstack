@@ -72,6 +72,7 @@ async function httpJson(port, method, path, body, options = {}) {
     headers: {
       ...(options.auth === false ? {} : { authorization: authHeader }),
       'content-type': 'application/json',
+      ...(options.headers ?? {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -289,6 +290,43 @@ async function runControlAndDataPlaneMatrix() {
         const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, { auth: false });
         assert.equal(result.status, 401);
         assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('malformed bearer token is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.KeyVault', vaultPath),
+          undefined,
+          { headers: { authorization: 'Bearer' } },
+        );
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('wrong bearer token is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          providerPath(resourceGroup, 'Microsoft.KeyVault', vaultPath),
+          undefined,
+          { headers: { authorization: 'Bearer not-the-globalstack-local-token' } },
+        );
+        assert.equal(result.status, 401);
+        assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('subscription mismatch is rejected', async () => {
+        const result = await httpJson(
+          armPort,
+          'GET',
+          `/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/${resourceGroup}/providers/Microsoft.KeyVault/${vaultPath}?api-version=2023-07-01`,
+        );
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'AuthorizationFailed');
         return { status: result.status, errorCode: errorCode(result) };
       });
 

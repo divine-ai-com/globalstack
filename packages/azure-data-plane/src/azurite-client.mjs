@@ -242,6 +242,15 @@ export class AzuriteClient {
     });
   }
 
+  async getQueueMetadataWithoutAuthorization(queue) {
+    return azuriteFetch({
+      method: 'GET',
+      url: this.queueUrl(queue, '', '?comp=metadata'),
+      account: this.account,
+      authorize: false,
+    });
+  }
+
   async listQueues() {
     const accountPrefix = this.pathStyle ? `/${this.account.name}` : '';
     return azuriteFetch({

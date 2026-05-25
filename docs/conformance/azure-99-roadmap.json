@@ -1,17 +1,17 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T11:29:28.874Z",
+    "generatedAt": "2026-05-25T12:03:38.628Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 102,
+    "workItemCount": 18,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 84.2,
-      "displayRange": "80-85%",
+      "percent": 96.8,
+      "displayRange": "95-100%",
       "methodology": "status-derived average across all services and dimensions"
     },
     "azureFunctionsDurable": {
@@ -117,129 +117,21 @@
       "objective": "Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests.",
       "services": [
         {
-          "serviceId": "blob-storage",
-          "tier": 1,
-          "awsAnalogue": "S3",
-          "azureEquivalent": "Azure Blob Storage / Storage Account",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
-            "notStarted": 0
-          },
-          "score": 0.8107,
-          "priority": 62,
-          "workItemCount": 4,
-          "nextDimensions": [
-            "dataPlaneBehavior",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "blob-storage.dataPlaneBehavior",
-              "serviceId": "blob-storage",
-              "dimensionId": "dataPlaneBehavior",
-              "dimension": "Data-plane behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "32 Blob/Queue data-plane expectations"
-              ],
-              "gaps": [
-                "Expand Blob/Queue captures and local normalization beyond Wave 1."
-              ],
-              "commands": [
-                "npm run e2e:storage-hardening",
-                "npm run e2e:storage-normalizer",
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane",
-                "npm run storage:expectations"
-              ],
-              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
-            },
-            {
-              "id": "blob-storage.identityRbacBehavior",
-              "serviceId": "blob-storage",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:storage-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "blob-storage.liveApiSurfaceInventory",
-              "serviceId": "blob-storage",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "232 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "blob-storage.ambiguousRepeatCaptures",
-              "serviceId": "blob-storage",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "queue-peek-after-delete is explicitly marked needs-repeat-capture"
-              ],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane",
-                "npm run storage:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
           "serviceId": "event-grid",
           "tier": 1,
           "awsAnalogue": "EventBridge",
           "azureEquivalent": "Event Grid",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 61,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 46,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -262,70 +154,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "event-grid.identityRbacBehavior",
-              "serviceId": "event-grid",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-grid-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "event-grid.liveApiSurfaceInventory",
-              "serviceId": "event-grid",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "35 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "event-grid.retryEventualConsistency",
-              "serviceId": "event-grid",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-grid-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -334,62 +162,86 @@
           "tier": 1,
           "awsAnalogue": "DynamoDB",
           "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 8,
-            "partial": 2,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9008,
-          "priority": 54,
-          "workItemCount": 2,
+          "score": 1,
+          "priority": 44,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "blob-storage",
+          "tier": 1,
+          "awsAnalogue": "S3",
+          "azureEquivalent": "Azure Blob Storage / Storage Account",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 43,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "service-bus-topics",
+          "tier": 1,
+          "awsAnalogue": "SNS",
+          "azureEquivalent": "Service Bus topics / Event Grid topics",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 42,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "azure-files",
+          "tier": 2,
+          "awsAnalogue": "EFS",
+          "azureEquivalent": "Azure Files / Azure NetApp Files",
+          "currentStatus": "not-started",
+          "dimensionCounts": {
+            "complete": 9,
+            "partial": 0,
+            "notStarted": 1
+          },
+          "score": 0.9508,
+          "priority": 39,
+          "workItemCount": 1,
           "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
+            "ambiguousRepeatCaptures"
           ],
           "workItems": [
             {
-              "id": "cosmos-nosql-table.identityRbacBehavior",
-              "serviceId": "cosmos-nosql-table",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:cosmos-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
+              "id": "azure-files.ambiguousRepeatCaptures",
+              "serviceId": "azure-files",
+              "dimensionId": "ambiguousRepeatCaptures",
+              "dimension": "Repeat captures for ambiguous behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
               "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+                "Repeat timing-sensitive captures and record stabilization rules before normalization."
               ],
               "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
               ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "cosmos-nosql-table.liveApiSurfaceInventory",
-              "serviceId": "cosmos-nosql-table",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "16 candidate catalog calls",
-                "366 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
             }
           ]
         },
@@ -400,41 +252,18 @@
           "azureEquivalent": "Azure Queue Storage / Service Bus queues",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 5,
-            "partial": 5,
+            "complete": 8,
+            "partial": 2,
             "notStarted": 0
           },
-          "score": 0.7566,
-          "priority": 53,
-          "workItemCount": 5,
+          "score": 0.9189,
+          "priority": 37,
+          "workItemCount": 2,
           "nextDimensions": [
-            "dataPlaneBehavior",
             "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
+            "ambiguousRepeatCaptures"
           ],
           "workItems": [
-            {
-              "id": "queue-storage.dataPlaneBehavior",
-              "serviceId": "queue-storage",
-              "dimensionId": "dataPlaneBehavior",
-              "dimension": "Data-plane behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "32 Blob/Queue data-plane expectations"
-              ],
-              "gaps": [
-                "Expand Blob/Queue captures and local normalization beyond Wave 1."
-              ],
-              "commands": [
-                "npm run e2e:storage-hardening",
-                "npm run e2e:storage-normalizer",
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane",
-                "npm run storage:expectations"
-              ],
-              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
-            },
             {
               "id": "queue-storage.parameterVarianceCaptures",
               "serviceId": "queue-storage",
@@ -455,48 +284,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "queue-storage.identityRbacBehavior",
-              "serviceId": "queue-storage",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:storage-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "queue-storage.liveApiSurfaceInventory",
-              "serviceId": "queue-storage",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "22 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
             },
             {
               "id": "queue-storage.ambiguousRepeatCaptures",
@@ -520,325 +307,41 @@
           ]
         },
         {
-          "serviceId": "service-bus-topics",
-          "tier": 1,
-          "awsAnalogue": "SNS",
-          "azureEquivalent": "Service Bus topics / Event Grid topics",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 8,
-            "partial": 2,
-            "notStarted": 0
-          },
-          "score": 0.9008,
-          "priority": 52,
-          "workItemCount": 2,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
-          ],
-          "workItems": [
-            {
-              "id": "service-bus-topics.identityRbacBehavior",
-              "serviceId": "service-bus-topics",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:service-bus-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "service-bus-topics.liveApiSurfaceInventory",
-              "serviceId": "service-bus-topics",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "116 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            }
-          ]
-        },
-        {
-          "serviceId": "azure-files",
-          "tier": 2,
-          "awsAnalogue": "EFS",
-          "azureEquivalent": "Azure Files / Azure NetApp Files",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 7,
-            "partial": 2,
-            "notStarted": 1
-          },
-          "score": 0.8516,
-          "priority": 49,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "azure-files.identityRbacBehavior",
-              "serviceId": "azure-files",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:azure-files-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "azure-files.liveApiSurfaceInventory",
-              "serviceId": "azure-files",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "70 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "azure-files.ambiguousRepeatCaptures",
-              "serviceId": "azure-files",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
           "serviceId": "event-hubs-streams",
           "tier": 2,
           "awsAnalogue": "Kinesis Data Streams",
           "azureEquivalent": "Azure Event Hubs",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 43,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "event-hubs-streams.identityRbacBehavior",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-hubs-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "event-hubs-streams.liveApiSurfaceInventory",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "93 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "event-hubs-streams.retryEventualConsistency",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-hubs-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "app-configuration-parameters",
           "tier": 2,
           "awsAnalogue": "SSM Parameter Store",
           "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 43,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "app-configuration-parameters.identityRbacBehavior",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:app-configuration-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "app-configuration-parameters.liveApiSurfaceInventory",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "57 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "app-configuration-parameters.retryEventualConsistency",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:app-configuration-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 26
+      "workItemCount": 4
     },
     {
       "id": "wave-2-identity-security-and-secrets",
@@ -852,18 +355,15 @@
           "azureEquivalent": "Key Vault keys / Managed HSM",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 59,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 44,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -886,69 +386,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "key-vault-keys.identityRbacBehavior",
-              "serviceId": "key-vault-keys",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "key-vault-keys.liveApiSurfaceInventory",
-              "serviceId": "key-vault-keys",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "105 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "key-vault-keys.retryEventualConsistency",
-              "serviceId": "key-vault-keys",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -959,18 +396,15 @@
           "azureEquivalent": "Key Vault secrets",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 58,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 43,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -993,71 +427,25 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "key-vault-secrets.identityRbacBehavior",
-              "serviceId": "key-vault-secrets",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "key-vault-secrets.liveApiSurfaceInventory",
-              "serviceId": "key-vault-secrets",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "96 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "key-vault-secrets.retryEventualConsistency",
-              "serviceId": "key-vault-secrets",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
+        },
+        {
+          "serviceId": "identity-rbac",
+          "tier": 1,
+          "awsAnalogue": "IAM/STS",
+          "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "waf-policy",
@@ -1066,18 +454,15 @@
           "azureEquivalent": "Azure Web Application Firewall policy",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 46,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 31,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1100,70 +485,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "waf-policy.identityRbacBehavior",
-              "serviceId": "waf-policy",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:waf-policy-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "waf-policy.liveApiSurfaceInventory",
-              "serviceId": "waf-policy",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "9 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "waf-policy.retryEventualConsistency",
-              "serviceId": "waf-policy",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:waf-policy-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=waf-policy --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -1174,18 +495,15 @@
           "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 46,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 31,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1208,116 +526,11 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "activity-log-audit.identityRbacBehavior",
-              "serviceId": "activity-log-audit",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:activity-log-audit-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "activity-log-audit.liveApiSurfaceInventory",
-              "serviceId": "activity-log-audit",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "15 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "activity-log-audit.retryEventualConsistency",
-              "serviceId": "activity-log-audit",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:activity-log-audit-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
-        },
-        {
-          "serviceId": "identity-rbac",
-          "tier": 1,
-          "awsAnalogue": "IAM/STS",
-          "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9549,
-          "priority": 43,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "liveApiSurfaceInventory"
-          ],
-          "workItems": [
-            {
-              "id": "identity-rbac.liveApiSurfaceInventory",
-              "serviceId": "identity-rbac",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "15 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
             }
           ]
         }
       ],
-      "workItemCount": 17
+      "workItemCount": 4
     },
     {
       "id": "wave-3-compute-api-and-edge",
@@ -1325,128 +538,39 @@
       "objective": "Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.",
       "services": [
         {
-          "serviceId": "container-registry",
+          "serviceId": "azure-functions",
           "tier": 1,
-          "awsAnalogue": "ECR",
-          "azureEquivalent": "Azure Container Registry",
-          "currentStatus": "in-progress",
+          "awsAnalogue": "Lambda",
+          "azureEquivalent": "Azure Functions / Function Apps",
+          "currentStatus": "not-started",
           "dimensionCounts": {
-            "complete": 5,
-            "partial": 5,
-            "notStarted": 0
+            "complete": 9,
+            "partial": 0,
+            "notStarted": 1
           },
-          "score": 0.7475,
-          "priority": 61,
-          "workItemCount": 5,
+          "score": 0.9508,
+          "priority": 49,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "errorShapeFidelity",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
+            "ambiguousRepeatCaptures"
           ],
           "workItems": [
             {
-              "id": "container-registry.parameterVarianceCaptures",
-              "serviceId": "container-registry",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "7 live ARM captures",
-                "variance cases: empty-body=1, invalid-location=1, missing-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
-                null
-              ],
+              "id": "azure-functions.ambiguousRepeatCaptures",
+              "serviceId": "azure-functions",
+              "dimensionId": "ambiguousRepeatCaptures",
+              "dimension": "Repeat captures for ambiguous behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
               "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
+                "Repeat timing-sensitive captures and record stabilization rules before normalization."
               ],
               "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0",
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true",
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "container-registry.errorShapeFidelity",
-              "serviceId": "container-registry",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1",
-                "e2e:container-registry-parity asserts 40 status checks, 19 error-code checks, 1 header checks"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=container-registry"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "container-registry.identityRbacBehavior",
-              "serviceId": "container-registry",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:container-registry-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "container-registry.liveApiSurfaceInventory",
-              "serviceId": "container-registry",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "4 candidate catalog calls",
-                "118 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "container-registry.retryEventualConsistency",
-              "serviceId": "container-registry",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:container-registry-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
+              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
             }
           ]
         },
@@ -1457,18 +581,15 @@
           "azureEquivalent": "Azure Kubernetes Service",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.7926,
-          "priority": 60,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 44,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "errorShapeFidelity",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1491,149 +612,47 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "aks-metadata.errorShapeFidelity",
-              "serviceId": "aks-metadata",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1",
-                "e2e:aks-metadata-parity asserts 49 status checks, 27 error-code checks, 2 header checks"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=aks-metadata"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "aks-metadata.identityRbacBehavior",
-              "serviceId": "aks-metadata",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:aks-metadata-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "aks-metadata.liveApiSurfaceInventory",
-              "serviceId": "aks-metadata",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "4 candidate catalog calls",
-                "453 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
             }
           ]
         },
         {
-          "serviceId": "azure-functions",
+          "serviceId": "container-registry",
           "tier": 1,
-          "awsAnalogue": "Lambda",
-          "azureEquivalent": "Azure Functions / Function Apps",
+          "awsAnalogue": "ECR",
+          "azureEquivalent": "Azure Container Registry",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 2,
-            "notStarted": 1
+            "complete": 9,
+            "partial": 1,
+            "notStarted": 0
           },
-          "score": 0.8516,
-          "priority": 59,
-          "workItemCount": 3,
+          "score": 0.9459,
+          "priority": 41,
+          "workItemCount": 1,
           "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "ambiguousRepeatCaptures"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
-              "id": "azure-functions.identityRbacBehavior",
-              "serviceId": "azure-functions",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
+              "id": "container-registry.parameterVarianceCaptures",
+              "serviceId": "container-registry",
+              "dimensionId": "parameterVarianceCaptures",
+              "dimension": "Parameter variance captures",
               "status": "partial",
               "action": "complete",
               "evidence": [
-                "e2e:azure-functions-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+                "7 live ARM captures",
+                "variance cases: empty-body=1, invalid-location=1, missing-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
+                null
               ],
               "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
               ],
               "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "azure-functions.liveApiSurfaceInventory",
-              "serviceId": "azure-functions",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "418 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "azure-functions.ambiguousRepeatCaptures",
-              "serviceId": "azure-functions",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true",
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0",
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
+              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
             }
           ]
         },
@@ -1642,64 +661,17 @@
           "tier": 1,
           "awsAnalogue": "API Gateway",
           "azureEquivalent": "Azure API Management",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 8,
-            "partial": 2,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9008,
-          "priority": 50,
-          "workItemCount": 2,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
-          ],
-          "workItems": [
-            {
-              "id": "api-management.identityRbacBehavior",
-              "serviceId": "api-management",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:api-management-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "api-management.liveApiSurfaceInventory",
-              "serviceId": "api-management",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "511 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            }
-          ]
+          "score": 1,
+          "priority": 40,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "logic-workflows",
@@ -1708,18 +680,15 @@
           "azureEquivalent": "Azure Logic Apps / Durable Functions",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 47,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 32,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1742,70 +711,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "logic-workflows.identityRbacBehavior",
-              "serviceId": "logic-workflows",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:logic-workflows-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "logic-workflows.liveApiSurfaceInventory",
-              "serviceId": "logic-workflows",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "425 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "logic-workflows.retryEventualConsistency",
-              "serviceId": "logic-workflows",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:logic-workflows-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -1816,18 +721,15 @@
           "azureEquivalent": "Azure Front Door / Azure CDN",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 44,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 29,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1850,70 +752,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "front-door-cdn.identityRbacBehavior",
-              "serviceId": "front-door-cdn",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:front-door-cdn-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "front-door-cdn.liveApiSurfaceInventory",
-              "serviceId": "front-door-cdn",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "133 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "front-door-cdn.retryEventualConsistency",
-              "serviceId": "front-door-cdn",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:front-door-cdn-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=front-door-cdn --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -1924,18 +762,15 @@
           "azureEquivalent": "Azure Application Gateway / Load Balancer",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 43,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 28,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -1958,70 +793,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "load-balancing.identityRbacBehavior",
-              "serviceId": "load-balancing",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:load-balancing-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "load-balancing.liveApiSurfaceInventory",
-              "serviceId": "load-balancing",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "67 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "load-balancing.retryEventualConsistency",
-              "serviceId": "load-balancing",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:load-balancing-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -2030,90 +801,20 @@
           "tier": 2,
           "awsAnalogue": "Service Discovery / Cloud Map",
           "azureEquivalent": "Azure Private DNS / Container Apps service discovery",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 38,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "service-discovery.identityRbacBehavior",
-              "serviceId": "service-discovery",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:service-discovery-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "service-discovery.liveApiSurfaceInventory",
-              "serviceId": "service-discovery",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "131 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "service-discovery.retryEventualConsistency",
-              "serviceId": "service-discovery",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:service-discovery-parity is wired into npm run smoke",
-                "async-operation header behavior is asserted",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-discovery --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 29
+      "workItemCount": 6
     },
     {
       "id": "wave-4-data-platforms",
@@ -2125,84 +826,52 @@
           "tier": 1,
           "awsAnalogue": "RDS PostgreSQL",
           "azureEquivalent": "Azure Database for PostgreSQL Flexible Server",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 46,
-          "workItemCount": 3,
+          "score": 1,
+          "priority": 32,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "redis-cache",
+          "tier": 2,
+          "awsAnalogue": "ElastiCache Redis",
+          "azureEquivalent": "Azure Cache for Redis",
+          "currentStatus": "not-started",
+          "dimensionCounts": {
+            "complete": 9,
+            "partial": 0,
+            "notStarted": 1
+          },
+          "score": 0.9508,
+          "priority": 30,
+          "workItemCount": 1,
           "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "ambiguousRepeatCaptures"
           ],
           "workItems": [
             {
-              "id": "postgresql-flexible-server.identityRbacBehavior",
-              "serviceId": "postgresql-flexible-server",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:postgresql-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
+              "id": "redis-cache.ambiguousRepeatCaptures",
+              "serviceId": "redis-cache",
+              "dimensionId": "ambiguousRepeatCaptures",
+              "dimension": "Repeat captures for ambiguous behavior",
+              "status": "not-started",
+              "action": "start",
+              "evidence": [],
               "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+                "Repeat timing-sensitive captures and record stabilization rules before normalization."
               ],
               "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true",
+                "npm run conformance:classify && npm run conformance:expectations"
               ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "postgresql-flexible-server.liveApiSurfaceInventory",
-              "serviceId": "postgresql-flexible-server",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "89 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "postgresql-flexible-server.retryEventualConsistency",
-              "serviceId": "postgresql-flexible-server",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:postgresql-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=postgresql-flexible-server --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
+              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
             }
           ]
         },
@@ -2213,18 +882,15 @@
           "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 42,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 27,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -2247,152 +913,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "synapse-warehouse.identityRbacBehavior",
-              "serviceId": "synapse-warehouse",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:synapse-warehouse-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "synapse-warehouse.liveApiSurfaceInventory",
-              "serviceId": "synapse-warehouse",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "244 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "synapse-warehouse.retryEventualConsistency",
-              "serviceId": "synapse-warehouse",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:synapse-warehouse-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=synapse-warehouse --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
-        },
-        {
-          "serviceId": "redis-cache",
-          "tier": 2,
-          "awsAnalogue": "ElastiCache Redis",
-          "azureEquivalent": "Azure Cache for Redis",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 7,
-            "partial": 2,
-            "notStarted": 1
-          },
-          "score": 0.8516,
-          "priority": 40,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "redis-cache.identityRbacBehavior",
-              "serviceId": "redis-cache",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:redis-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "redis-cache.liveApiSurfaceInventory",
-              "serviceId": "redis-cache",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "73 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "redis-cache.ambiguousRepeatCaptures",
-              "serviceId": "redis-cache",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
             }
           ]
         },
@@ -2403,18 +923,15 @@
           "azureEquivalent": "Azure Database Migration Service",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 40,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 25,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -2437,70 +954,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "database-migration-service.identityRbacBehavior",
-              "serviceId": "database-migration-service",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:database-migration-service-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "database-migration-service.liveApiSurfaceInventory",
-              "serviceId": "database-migration-service",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "34 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "database-migration-service.retryEventualConsistency",
-              "serviceId": "database-migration-service",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:database-migration-service-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -2509,89 +962,20 @@
           "tier": 2,
           "awsAnalogue": "RDS MySQL",
           "azureEquivalent": "Azure Database for MySQL Flexible Server",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 34,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "mysql-flexible-server.identityRbacBehavior",
-              "serviceId": "mysql-flexible-server",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:mysql-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "mysql-flexible-server.liveApiSurfaceInventory",
-              "serviceId": "mysql-flexible-server",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "67 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "mysql-flexible-server.retryEventualConsistency",
-              "serviceId": "mysql-flexible-server",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:mysql-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=mysql-flexible-server --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 17
+      "workItemCount": 3
     },
     {
       "id": "wave-5-networking-observability-and-dns",
@@ -2603,86 +987,17 @@
           "tier": 1,
           "awsAnalogue": "CloudWatch Logs",
           "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 53,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "monitor-logs.identityRbacBehavior",
-              "serviceId": "monitor-logs",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-logs-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "monitor-logs.liveApiSurfaceInventory",
-              "serviceId": "monitor-logs",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "1013 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "monitor-logs.retryEventualConsistency",
-              "serviceId": "monitor-logs",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-logs-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-logs --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "monitor-metrics-alerts",
@@ -2691,18 +1006,15 @@
           "azureEquivalent": "Azure Monitor metrics and alerts",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 6,
-            "partial": 4,
+            "complete": 9,
+            "partial": 1,
             "notStarted": 0
           },
-          "score": 0.8016,
-          "priority": 49,
-          "workItemCount": 4,
+          "score": 0.9459,
+          "priority": 34,
+          "workItemCount": 1,
           "nextDimensions": [
-            "parameterVarianceCaptures",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
+            "parameterVarianceCaptures"
           ],
           "workItems": [
             {
@@ -2725,70 +1037,6 @@
                 "npm run conformance:classify && npm run conformance:expectations"
               ],
               "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "monitor-metrics-alerts.identityRbacBehavior",
-              "serviceId": "monitor-metrics-alerts",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "monitor-metrics-alerts.liveApiSurfaceInventory",
-              "serviceId": "monitor-metrics-alerts",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "12 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "monitor-metrics-alerts.retryEventualConsistency",
-              "serviceId": "monitor-metrics-alerts",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-metrics-alerts --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
         },
@@ -2797,196 +1045,53 @@
           "tier": 1,
           "awsAnalogue": "VPC",
           "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 44,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "virtual-network.identityRbacBehavior",
-              "serviceId": "virtual-network",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:virtual-network-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "virtual-network.liveApiSurfaceInventory",
-              "serviceId": "virtual-network",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "110 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "virtual-network.retryEventualConsistency",
-              "serviceId": "virtual-network",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:virtual-network-parity is wired into npm run smoke",
-                "async-operation header behavior is asserted",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=virtual-network --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 30,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "dns-zones",
           "tier": 2,
           "awsAnalogue": "Route 53",
           "azureEquivalent": "Azure DNS / Private DNS Zones",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 7,
-            "partial": 3,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.8557,
-          "priority": 32,
-          "workItemCount": 3,
-          "nextDimensions": [
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "dns-zones.identityRbacBehavior",
-              "serviceId": "dns-zones",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:dns-zones-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "dns-zones.liveApiSurfaceInventory",
-              "serviceId": "dns-zones",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "84 candidate catalog calls",
-                "136 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "dns-zones.retryEventualConsistency",
-              "serviceId": "dns-zones",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:dns-zones-parity is wired into npm run smoke",
-                "async-operation header behavior is asserted",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=dns-zones --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
+          "score": 1,
+          "priority": 18,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 13
+      "workItemCount": 1
     }
   ],
   "prioritizedServices": [
     {
       "rank": 1,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "blob-storage",
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "azure-functions",
       "tier": 1,
-      "score": 0.8107,
-      "priority": 62,
+      "score": 0.9508,
+      "priority": 49,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
+        "complete": 9,
+        "partial": 0,
+        "notStarted": 1
       },
       "nextDimensions": [
-        "dataPlaneBehavior",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
         "ambiguousRepeatCaptures"
       ]
     },
@@ -2995,393 +1100,83 @@
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-grid",
       "tier": 1,
-      "score": 0.8016,
-      "priority": 61,
+      "score": 0.9459,
+      "priority": 46,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
+        "parameterVarianceCaptures"
       ]
     },
     {
       "rank": 3,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "container-registry",
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "cosmos-nosql-table",
       "tier": 1,
-      "score": 0.7475,
-      "priority": 61,
+      "score": 1,
+      "priority": 44,
       "dimensionCounts": {
-        "complete": 5,
-        "partial": 5,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "errorShapeFidelity",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 4,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "aks-metadata",
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-keys",
       "tier": 1,
-      "score": 0.7926,
-      "priority": 60,
+      "score": 0.9459,
+      "priority": 44,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "errorShapeFidelity",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
+        "parameterVarianceCaptures"
       ]
     },
     {
       "rank": 5,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-keys",
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "aks-metadata",
       "tier": 1,
-      "score": 0.8016,
-      "priority": 59,
+      "score": 0.9459,
+      "priority": 44,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
+        "parameterVarianceCaptures"
       ]
     },
     {
       "rank": 6,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "azure-functions",
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "blob-storage",
       "tier": 1,
-      "score": 0.8516,
-      "priority": 59,
+      "score": 1,
+      "priority": 43,
       "dimensionCounts": {
-        "complete": 7,
-        "partial": 2,
-        "notStarted": 1
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
       },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "ambiguousRepeatCaptures"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 7,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-secrets",
       "tier": 1,
-      "score": 0.8016,
-      "priority": 58,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 8,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "cosmos-nosql-table",
-      "tier": 1,
-      "score": 0.9008,
-      "priority": 54,
-      "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
-    },
-    {
-      "rank": 9,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "queue-storage",
-      "tier": 2,
-      "score": 0.7566,
-      "priority": 53,
-      "dimensionCounts": {
-        "complete": 5,
-        "partial": 5,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "dataPlaneBehavior",
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
-    },
-    {
-      "rank": 10,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-logs",
-      "tier": 1,
-      "score": 0.8557,
-      "priority": 53,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 11,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "service-bus-topics",
-      "tier": 1,
-      "score": 0.9008,
-      "priority": 52,
-      "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
-    },
-    {
-      "rank": 12,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "api-management",
-      "tier": 1,
-      "score": 0.9008,
-      "priority": 50,
-      "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
-    },
-    {
-      "rank": 13,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "azure-files",
-      "tier": 2,
-      "score": 0.8516,
-      "priority": 49,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 2,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "ambiguousRepeatCaptures"
-      ]
-    },
-    {
-      "rank": 14,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-metrics-alerts",
-      "tier": 1,
-      "score": 0.8016,
-      "priority": 49,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 15,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "logic-workflows",
-      "tier": 2,
-      "score": 0.8016,
-      "priority": 47,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 16,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "waf-policy",
-      "tier": 2,
-      "score": 0.8016,
-      "priority": 46,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 17,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "activity-log-audit",
-      "tier": 2,
-      "score": 0.8016,
-      "priority": 46,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 18,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "postgresql-flexible-server",
-      "tier": 1,
-      "score": 0.8557,
-      "priority": 46,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 19,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "front-door-cdn",
-      "tier": 2,
-      "score": 0.8016,
-      "priority": 44,
-      "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 20,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "virtual-network",
-      "tier": 1,
-      "score": 0.8557,
-      "priority": 44,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 21,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "event-hubs-streams",
-      "tier": 2,
-      "score": 0.8557,
-      "priority": 43,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 22,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "app-configuration-parameters",
-      "tier": 2,
-      "score": 0.8557,
-      "priority": 43,
-      "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 23,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "identity-rbac",
-      "tier": 1,
-      "score": 0.9549,
+      "score": 0.9459,
       "priority": 43,
       "dimensionCounts": {
         "complete": 9,
@@ -3389,63 +1184,296 @@
         "notStarted": 0
       },
       "nextDimensions": [
-        "liveApiSurfaceInventory"
+        "parameterVarianceCaptures"
       ]
+    },
+    {
+      "rank": 8,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "service-bus-topics",
+      "tier": 1,
+      "score": 1,
+      "priority": 42,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 9,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "container-registry",
+      "tier": 1,
+      "score": 0.9459,
+      "priority": 41,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures"
+      ]
+    },
+    {
+      "rank": 10,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "api-management",
+      "tier": 1,
+      "score": 1,
+      "priority": 40,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 11,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "azure-files",
+      "tier": 2,
+      "score": 0.9508,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 0,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "ambiguousRepeatCaptures"
+      ]
+    },
+    {
+      "rank": 12,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-logs",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 13,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "identity-rbac",
+      "tier": 1,
+      "score": 1,
+      "priority": 38,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 14,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "queue-storage",
+      "tier": 2,
+      "score": 0.9189,
+      "priority": 37,
+      "dimensionCounts": {
+        "complete": 8,
+        "partial": 2,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures",
+        "ambiguousRepeatCaptures"
+      ]
+    },
+    {
+      "rank": 15,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-metrics-alerts",
+      "tier": 1,
+      "score": 0.9459,
+      "priority": 34,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures"
+      ]
+    },
+    {
+      "rank": 16,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "logic-workflows",
+      "tier": 2,
+      "score": 0.9459,
+      "priority": 32,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures"
+      ]
+    },
+    {
+      "rank": 17,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "postgresql-flexible-server",
+      "tier": 1,
+      "score": 1,
+      "priority": 32,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 18,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "waf-policy",
+      "tier": 2,
+      "score": 0.9459,
+      "priority": 31,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures"
+      ]
+    },
+    {
+      "rank": 19,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "activity-log-audit",
+      "tier": 2,
+      "score": 0.9459,
+      "priority": 31,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures"
+      ]
+    },
+    {
+      "rank": 20,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "redis-cache",
+      "tier": 2,
+      "score": 0.9508,
+      "priority": 30,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 0,
+        "notStarted": 1
+      },
+      "nextDimensions": [
+        "ambiguousRepeatCaptures"
+      ]
+    },
+    {
+      "rank": 21,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "virtual-network",
+      "tier": 1,
+      "score": 1,
+      "priority": 30,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-hubs-streams",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 23,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "app-configuration-parameters",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
     },
     {
       "rank": 24,
       "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "load-balancing",
+      "serviceId": "front-door-cdn",
       "tier": 2,
-      "score": 0.8016,
-      "priority": 43,
+      "score": 0.9459,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
+        "parameterVarianceCaptures"
       ]
     },
     {
       "rank": 25,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "synapse-warehouse",
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
       "tier": 2,
-      "score": 0.8016,
-      "priority": 42,
+      "score": 0.9459,
+      "priority": 28,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
+        "parameterVarianceCaptures"
       ]
     },
     {
       "rank": 26,
       "waveId": "wave-4-data-platforms",
-      "serviceId": "redis-cache",
+      "serviceId": "synapse-warehouse",
       "tier": 2,
-      "score": 0.8516,
-      "priority": 40,
+      "score": 0.9459,
+      "priority": 27,
       "dimensionCounts": {
-        "complete": 7,
-        "partial": 2,
-        "notStarted": 1
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
       },
       "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "ambiguousRepeatCaptures"
+        "parameterVarianceCaptures"
       ]
     },
     {
@@ -3453,18 +1481,15 @@
       "waveId": "wave-4-data-platforms",
       "serviceId": "database-migration-service",
       "tier": 2,
-      "score": 0.8016,
-      "priority": 40,
+      "score": 0.9459,
+      "priority": 25,
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 9,
+        "partial": 1,
         "notStarted": 0
       },
       "nextDimensions": [
-        "parameterVarianceCaptures",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
+        "parameterVarianceCaptures"
       ]
     },
     {
@@ -3472,69 +1497,52 @@
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "service-discovery",
       "tier": 2,
-      "score": 0.8557,
-      "priority": 38,
+      "score": 1,
+      "priority": 24,
       "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 29,
       "waveId": "wave-4-data-platforms",
       "serviceId": "mysql-flexible-server",
       "tier": 2,
-      "score": 0.8557,
-      "priority": 34,
+      "score": 1,
+      "priority": 20,
       "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 30,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "dns-zones",
       "tier": 2,
-      "score": 0.8557,
-      "priority": 32,
+      "score": 1,
+      "priority": 18,
       "dimensionCounts": {
-        "complete": 7,
-        "partial": 3,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
+      "nextDimensions": []
     }
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 99,
+      "complete": 15,
       "start": 3
     },
     "byDimension": {
-      "dataPlaneBehavior": 2,
-      "identityRbacBehavior": 29,
-      "liveApiSurfaceInventory": 30,
-      "ambiguousRepeatCaptures": 5,
       "parameterVarianceCaptures": 14,
-      "retryEventualConsistency": 20,
-      "errorShapeFidelity": 2
+      "ambiguousRepeatCaptures": 4
     }
   }
 }

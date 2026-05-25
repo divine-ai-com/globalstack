@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-25T11:29:28.874Z
+Generated: 2026-05-25T12:03:38.628Z
 
 ## Guardrails
 
@@ -13,7 +13,7 @@ Generated: 2026-05-25T11:29:28.874Z
 
 ## Dynamic Estimate Snapshot
 
-- Overall 30-service Azure program: 84.2% (80-85%)
+- Overall 30-service Azure program: 96.8% (95-100%)
 - Azure Functions / Durable cluster: 99% (95-100%)
 - Azure Logic Apps cluster: 99% (95-100%)
 
@@ -40,132 +40,110 @@ These items remain open across the whole Azure program even when a service-speci
 
 | Wave | Services | Work Items | Objective |
 |---|---:|---:|---|
-| Wave 1: official emulator and storage-family depth | 8 | 26 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
-| Wave 2: identity, security, secrets, and encryption | 5 | 17 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
-| Wave 3: compute, API, containers, and edge routing | 8 | 29 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
-| Wave 4: relational, cache, migration, and analytics platforms | 5 | 17 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
-| Wave 5: networking, DNS, and observability | 4 | 13 | Harden cross-cutting dependencies that most other services reference during deployment. |
+| Wave 1: official emulator and storage-family depth | 8 | 4 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
+| Wave 2: identity, security, secrets, and encryption | 5 | 4 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
+| Wave 3: compute, API, containers, and edge routing | 8 | 6 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
+| Wave 4: relational, cache, migration, and analytics platforms | 5 | 3 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
+| Wave 5: networking, DNS, and observability | 4 | 1 | Harden cross-cutting dependencies that most other services reference during deployment. |
 
 ## Service Priority
 
 | Rank | Service | Tier | Wave | Score | Priority | Complete | Partial | Not Started | Next Dimensions |
 |---:|---|---:|---|---:|---:|---:|---:|---:|---|
-| 1 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 0.8107 | 62 | 6 | 4 | 0 | dataPlaneBehavior<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
-| 2 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 0.8016 | 61 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 3 | container-registry | 1 | wave-3-compute-api-and-edge | 0.7475 | 61 | 5 | 5 | 0 | parameterVarianceCaptures<br>errorShapeFidelity<br>identityRbacBehavior<br>liveApiSurfaceInventory |
-| 4 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.7926 | 60 | 6 | 4 | 0 | parameterVarianceCaptures<br>errorShapeFidelity<br>identityRbacBehavior<br>liveApiSurfaceInventory |
-| 5 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 0.8016 | 59 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 6 | azure-functions | 1 | wave-3-compute-api-and-edge | 0.8516 | 59 | 7 | 2 | 1 | identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
-| 7 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.8016 | 58 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 8 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.9008 | 54 | 8 | 2 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory |
-| 9 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 0.7566 | 53 | 5 | 5 | 0 | dataPlaneBehavior<br>parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory |
-| 10 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 0.8557 | 53 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 11 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 0.9008 | 52 | 8 | 2 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory |
-| 12 | api-management | 1 | wave-3-compute-api-and-edge | 0.9008 | 50 | 8 | 2 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory |
-| 13 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 0.8516 | 49 | 7 | 2 | 1 | identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
-| 14 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.8016 | 49 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 15 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.8016 | 47 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 16 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 17 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 18 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.8557 | 46 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 19 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.8016 | 44 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 20 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.8557 | 44 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 21 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 22 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 23 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.9549 | 43 | 9 | 1 | 0 | liveApiSurfaceInventory |
-| 24 | load-balancing | 2 | wave-3-compute-api-and-edge | 0.8016 | 43 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 25 | synapse-warehouse | 2 | wave-4-data-platforms | 0.8016 | 42 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 26 | redis-cache | 2 | wave-4-data-platforms | 0.8516 | 40 | 7 | 2 | 1 | identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
-| 27 | database-migration-service | 2 | wave-4-data-platforms | 0.8016 | 40 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 28 | service-discovery | 2 | wave-3-compute-api-and-edge | 0.8557 | 38 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 29 | mysql-flexible-server | 2 | wave-4-data-platforms | 0.8557 | 34 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 30 | dns-zones | 2 | wave-5-networking-observability-and-dns | 0.8557 | 32 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 1 | azure-functions | 1 | wave-3-compute-api-and-edge | 0.9508 | 49 | 9 | 0 | 1 | ambiguousRepeatCaptures |
+| 2 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 0.9459 | 46 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 3 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 1 | 44 | 10 | 0 | 0 |  |
+| 4 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 0.9459 | 44 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 5 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.9459 | 44 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 6 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 1 | 43 | 10 | 0 | 0 |  |
+| 7 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.9459 | 43 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 8 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 1 | 42 | 10 | 0 | 0 |  |
+| 9 | container-registry | 1 | wave-3-compute-api-and-edge | 0.9459 | 41 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 10 | api-management | 1 | wave-3-compute-api-and-edge | 1 | 40 | 10 | 0 | 0 |  |
+| 11 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 0.9508 | 39 | 9 | 0 | 1 | ambiguousRepeatCaptures |
+| 12 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 1 | 39 | 10 | 0 | 0 |  |
+| 13 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
+| 14 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 0.9189 | 37 | 8 | 2 | 0 | parameterVarianceCaptures<br>ambiguousRepeatCaptures |
+| 15 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.9459 | 34 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 16 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.9459 | 32 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 17 | postgresql-flexible-server | 1 | wave-4-data-platforms | 1 | 32 | 10 | 0 | 0 |  |
+| 18 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.9459 | 31 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 19 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.9459 | 31 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 20 | redis-cache | 2 | wave-4-data-platforms | 0.9508 | 30 | 9 | 0 | 1 | ambiguousRepeatCaptures |
+| 21 | virtual-network | 1 | wave-5-networking-observability-and-dns | 1 | 30 | 10 | 0 | 0 |  |
+| 22 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 23 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 24 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.9459 | 29 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 25 | load-balancing | 2 | wave-3-compute-api-and-edge | 0.9459 | 28 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 26 | synapse-warehouse | 2 | wave-4-data-platforms | 0.9459 | 27 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 27 | database-migration-service | 2 | wave-4-data-platforms | 0.9459 | 25 | 9 | 1 | 0 | parameterVarianceCaptures |
+| 28 | service-discovery | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
+| 29 | mysql-flexible-server | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
+| 30 | dns-zones | 2 | wave-5-networking-observability-and-dns | 1 | 18 | 10 | 0 | 0 |  |
 
 ## Wave 1: official emulator and storage-family depth
 
 Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests.
 
-### blob-storage
-
-Priority: 62; current score: 0.8107; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| Data-plane behavior | partial | complete | `npm run e2e:storage-hardening`<br>`npm run e2e:storage-normalizer`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane`<br>`npm run storage:expectations` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Repeat captures for ambiguous behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane`<br>`npm run storage:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
-
 ### event-grid
 
-Priority: 61; current score: 0.8016; current status: in-progress.
+Priority: 46; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### cosmos-nosql-table
 
-Priority: 54; current score: 0.9008; current status: in-progress.
+Priority: 44; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
-### queue-storage
+### blob-storage
 
-Priority: 53; current score: 0.7566; current status: in-progress.
+Priority: 43; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Data-plane behavior | partial | complete | `npm run e2e:storage-hardening`<br>`npm run e2e:storage-normalizer`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane`<br>`npm run storage:expectations` | Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics. |
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Repeat captures for ambiguous behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane`<br>`npm run storage:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### service-bus-topics
 
-Priority: 52; current score: 0.9008; current status: in-progress.
+Priority: 42; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
 ### azure-files
 
-Priority: 49; current score: 0.8516; current status: in-progress.
+Priority: 39; current score: 0.9508; current status: not-started.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### queue-storage
+
+Priority: 37; current score: 0.9189; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
+| Repeat captures for ambiguous behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane`<br>`npm run storage:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### event-hubs-streams
 
-Priority: 43; current score: 0.8557; current status: in-progress.
+Priority: 29; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-hubs-streams --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### app-configuration-parameters
 
-Priority: 43; current score: 0.8557; current status: in-progress.
+Priority: 29; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=app-configuration-parameters --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 
 ## Wave 2: identity, security, secrets, and encryption
@@ -174,145 +152,109 @@ Make authorization, denial, audit, and secure configuration behavior credible ac
 
 ### key-vault-keys
 
-Priority: 59; current score: 0.8016; current status: in-progress.
+Priority: 44; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-keys --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### key-vault-secrets
 
-Priority: 58; current score: 0.8016; current status: in-progress.
+Priority: 43; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+
+### identity-rbac
+
+Priority: 38; current score: 1; current status: 99-ready.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
 
 ### waf-policy
 
-Priority: 46; current score: 0.8016; current status: in-progress.
+Priority: 31; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=waf-policy --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=waf-policy --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### activity-log-audit
 
-Priority: 46; current score: 0.8016; current status: in-progress.
+Priority: 31; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-
-### identity-rbac
-
-Priority: 43; current score: 0.9549; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
 
 ## Wave 3: compute, API, containers, and edge routing
 
 Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.
 
-### container-registry
+### azure-functions
 
-Priority: 61; current score: 0.7475; current status: in-progress.
+Priority: 49; current score: 0.9508; current status: not-started.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=container-registry` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### aks-metadata
 
-Priority: 60; current score: 0.7926; current status: in-progress.
+Priority: 44; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=aks-metadata` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
-### azure-functions
+### container-registry
 
-Priority: 59; current score: 0.8516; current status: in-progress.
+Priority: 41; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+| Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
 
 ### api-management
 
-Priority: 50; current score: 0.9008; current status: in-progress.
+Priority: 40; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
 ### logic-workflows
 
-Priority: 47; current score: 0.8016; current status: in-progress.
+Priority: 32; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### front-door-cdn
 
-Priority: 44; current score: 0.8016; current status: in-progress.
+Priority: 29; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=front-door-cdn --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=front-door-cdn --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### load-balancing
 
-Priority: 43; current score: 0.8016; current status: in-progress.
+Priority: 28; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### service-discovery
 
-Priority: 38; current score: 0.8557; current status: in-progress.
+Priority: 24; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=service-discovery --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 
 ## Wave 4: relational, cache, migration, and analytics platforms
@@ -321,55 +263,41 @@ Validate managed-data-service control planes and wire local protocol engines wit
 
 ### postgresql-flexible-server
 
-Priority: 46; current score: 0.8557; current status: in-progress.
+Priority: 32; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=postgresql-flexible-server --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+
+### redis-cache
+
+Priority: 30; current score: 0.9508; current status: not-started.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### synapse-warehouse
 
-Priority: 42; current score: 0.8016; current status: in-progress.
+Priority: 27; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=synapse-warehouse --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=synapse-warehouse --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-
-### redis-cache
-
-Priority: 40; current score: 0.8516; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### database-migration-service
 
-Priority: 40; current score: 0.8016; current status: in-progress.
+Priority: 25; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### mysql-flexible-server
 
-Priority: 34; current score: 0.8557; current status: in-progress.
+Priority: 20; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=mysql-flexible-server --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 
 ## Wave 5: networking, DNS, and observability
@@ -378,44 +306,32 @@ Harden cross-cutting dependencies that most other services reference during depl
 
 ### monitor-logs
 
-Priority: 53; current score: 0.8557; current status: in-progress.
+Priority: 39; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-logs --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### monitor-metrics-alerts
 
-Priority: 49; current score: 0.8016; current status: in-progress.
+Priority: 34; current score: 0.9459; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
 | Parameter variance captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-metrics-alerts --limit=0`<br>`npm run conformance:classify && npm run conformance:expectations` | Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-metrics-alerts --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### virtual-network
 
-Priority: 44; current score: 0.8557; current status: in-progress.
+Priority: 30; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=virtual-network --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ### dns-zones
 
-Priority: 32; current score: 0.8557; current status: in-progress.
+Priority: 18; current score: 1; current status: 99-ready.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=dns-zones --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
 ## Verification Loop
 

@@ -288,6 +288,13 @@ try {
     return response;
   });
 
+  await record('queue metadata without authorization rejected', async () => {
+    const response = await client.getQueueMetadataWithoutAuthorization(queue);
+    assertStatus(response, 403, 'queue metadata without authorization');
+    assert.equal(errorCode(response), 'AuthenticationFailed');
+    return response;
+  });
+
   await record('queue duplicate create is idempotent', async () => {
     const response = await client.createQueue(queue);
     assertStatus(response, 204, 'duplicate queue');

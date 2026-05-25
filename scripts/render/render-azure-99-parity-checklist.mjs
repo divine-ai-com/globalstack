@@ -14,6 +14,8 @@ const capturesRoot = join(root, 'fixtures', 'azure-captures');
 const lifecycleRoot = join(root, 'fixtures', 'azure-lifecycle-captures');
 const storageDataPlaneExpectationsPath = join(root, 'fixtures', 'local-expectations', 'azure-storage-data-plane-expectations.json');
 const distE2eRoot = join(root, 'dist', 'e2e');
+const storageHardeningResultsPath = join(distE2eRoot, 'azure-storage-hardening', 'results.json');
+const storageNormalizerResultsPath = join(distE2eRoot, 'azure-storage-normalizer', 'results.json');
 
 const platformRunnerNames = [
   'Terraform HCL',
@@ -217,6 +219,80 @@ function dataPlaneEvidence(capabilityId, packageJson) {
   const evidence = dataPlaneEvidenceByCapability.get(capabilityId);
   if (!evidence || !scriptEvidence(evidence.script, packageJson)) return null;
   return evidence;
+}
+
+function storageStepMatchers(capabilityId) {
+  if (capabilityId === 'blob-storage') {
+    return [/^blob /i, /blob /i, /unauthenticated blob/i];
+  }
+  if (capabilityId === 'queue-storage') {
+    return [/^queue /i, /queue /i];
+  }
+  return [];
+}
+
+function storageRelevantSteps(capabilityId, ...results) {
+  const matchers = storageStepMatchers(capabilityId);
+  if (!matchers.length) return [];
+  return results.flatMap(result => (result?.steps ?? []).filter(step => {
+    const name = String(step?.name ?? '');
+    return matchers.some(pattern => pattern.test(name));
+  }));
+}
+
+function storageEvidenceSummary(capabilityId, hardeningResult, normalizerResult) {
+  if (!['blob-storage', 'queue-storage'].includes(capabilityId)) return null;
+  const hardeningSteps = storageRelevantSteps(capabilityId, hardeningResult);
+  const normalizerSteps = storageRelevantSteps(capabilityId, normalizerResult);
+  const allSteps = [...hardeningSteps, ...normalizerSteps];
+  if (!allSteps.length) return null;
+
+  const caseNames = allSteps.map(step => String(step.name).toLowerCase());
+  const hasName = pattern => caseNames.some(name => pattern.test(name));
+  const hardeningOk = hardeningSteps.length > 0 && hardeningSteps.every(step => step.ok === true);
+  const normalizerOk = normalizerSteps.length > 0 ? normalizerSteps.every(step => step.ok === true) : true;
+  const queueRepeatGap = /queue peek-after-delete/i.test(String(normalizerResult?.caveat ?? ''));
+
+  const complete = capabilityId === 'blob-storage'
+    ? hardeningOk
+      && normalizerOk
+      && hasName(/blob create container/)
+      && hasName(/blob get payload/)
+      && hasName(/blob delete blob/)
+      && hasName(/blob get after delete rejected/)
+      && (hasName(/blob get without authorization rejected/) || hasName(/unauthenticated blob get/))
+      && hasName(/normalizes missing blob type/)
+    : hardeningOk
+      && normalizerOk
+      && hasName(/^queue create$/)
+      && hasName(/queue put message/)
+      && hasName(/queue peek message/)
+      && hasName(/queue delete/)
+      && hasName(/queue peek after delete rejected/)
+      && hasName(/queue metadata without authorization rejected/)
+      && hasName(/normalizes malformed queue xml/);
+
+  return {
+    script: 'e2e:storage-parity',
+    scope: capabilityId === 'blob-storage'
+      ? 'official-emulator Blob data-plane create/get/delete/auth plus GlobalStack normalization coverage'
+      : 'official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage',
+    hardeningCount: hardeningSteps.length,
+    normalizerCount: normalizerSteps.length,
+    complete,
+    authRejectCovered: capabilityId === 'blob-storage'
+      ? hasName(/blob get without authorization rejected/) || hasName(/unauthenticated blob get/)
+      : hasName(/queue metadata without authorization rejected/),
+    repeatGap: capabilityId === 'queue-storage' && queueRepeatGap,
+    repeatComplete: capabilityId === 'blob-storage' || (capabilityId === 'queue-storage' && !queueRepeatGap),
+    evidence: [
+      `${hardeningSteps.length} official-emulator data-plane hardening checks`,
+      normalizerSteps.length ? `${normalizerSteps.length} normalization checks` : null,
+      capabilityId === 'queue-storage' && queueRepeatGap
+        ? 'queue peek-after-delete remains an explicit normalization/repeat gap'
+        : 'no service-specific repeat caveat is currently recorded for this storage surface',
+    ].filter(Boolean),
+  };
 }
 
 function resultDirForScript(script) {
@@ -476,11 +552,15 @@ const [
   providerSurface,
   packageJson,
   storageDataPlaneExpectations,
+  storageHardeningResult,
+  storageNormalizerResult,
 ] = await Promise.all([
   loadJson(liveCatalogPath, { calls: [] }),
   loadJson(providerSurfacePath, null),
   loadJson(packageJsonPath, { scripts: {} }),
   loadJson(storageDataPlaneExpectationsPath, { expectations: [] }),
+  loadJson(storageHardeningResultsPath, null),
+  loadJson(storageNormalizerResultsPath, null),
 ]);
 
 const captureFiles = (await readdir(capturesRoot).catch(() => [])).filter(name => name.endsWith('.json'));
@@ -522,9 +602,16 @@ const services = allCapabilities.map(capability => {
   const hasLocalFacade = capability.implementedOperations.length > 0;
   const hasOfficialEmulator = capability.primaryModes.includes('official-emulator');
   const storageDataPlaneRelevant = ['blob-storage', 'queue-storage'].includes(capability.id);
+  const storageEvidenceItem = storageEvidenceSummary(capability.id, storageHardeningResult, storageNormalizerResult);
   const iacEvidence = iacProviderEvidence(capability.id, packageJson);
-  const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
-  const identityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
+  const dataPlaneEvidenceItem = storageEvidenceItem ?? dataPlaneEvidence(capability.id, packageJson);
+  const baseIdentityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
+  const identityEvidenceItems = storageEvidenceItem?.authRejectCovered
+    ? [
+        ...(baseIdentityEvidenceItems ?? []),
+        `${storageEvidenceItem.scope} includes explicit data-plane authorization rejection coverage`,
+      ]
+    : baseIdentityEvidenceItems;
   const retryEvidenceItem = retryConsistencyEvidence(capability.id, packageJson, scriptSources);
   const errorShapeItem = errorShapeEvidence(capability.id, packageJson, scriptSources);
   const parityResult = parityResultByScript.get(iacScriptByCapability.get(capability.id)) ?? null;
@@ -560,6 +647,7 @@ const services = allCapabilities.map(capability => {
     && errorShapeItem.statusAssertions >= 8
     && errorShapeItem.errorAssertions >= 4
     && (errorShapeItem.headerAssertions > 0 || hasNegativeVariance);
+  const effectiveDataPlaneComplete = storageEvidenceItem?.complete ?? dataPlaneComplete;
   const identityComplete = capability.id === 'identity-rbac'
     ? !!identityEvidenceItems
       && parityCaseNames.some(name => /openid configuration exposes local token endpoint/.test(name))
@@ -569,10 +657,10 @@ const services = allCapabilities.map(capability => {
       && parityCaseNames.some(name => /role assignment .*rejection|role definition .*rejection/.test(name))
     : !!identityEvidenceItems
       && authMarkers.armRejects
-      && (!dataPlaneComplete || authMarkers.dataPlaneRejects);
+      && (!effectiveDataPlaneComplete || storageEvidenceItem?.authRejectCovered || authMarkers.dataPlaneRejects);
   const liveApiInventoryComplete = calls.length > 0
     && !!provider?.operationCount
-    && (!dataPlaneScoped || dataPlaneComplete);
+    && (!dataPlaneScoped || effectiveDataPlaneComplete);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
@@ -689,14 +777,15 @@ const services = allCapabilities.map(capability => {
     }),
     dataPlaneBehavior: status({
       partial: (storageDataPlaneRelevant && storageDataPlaneExpectationCount > 0) || !!dataPlaneEvidenceItem,
-      complete: dataPlaneComplete,
+      complete: storageEvidenceItem?.complete ?? dataPlaneComplete,
       evidence: [
         storageDataPlaneRelevant ? `${storageDataPlaneExpectationCount} Blob/Queue data-plane expectations` : null,
         dataPlaneEvidenceItem ? `${dataPlaneEvidenceItem.script} is wired into npm run smoke` : null,
         dataPlaneEvidenceItem ? dataPlaneEvidenceItem.scope : null,
-        dataPlaneComplete ? `parity result sections: ${paritySections.join(', ') || 'case-derived data-plane coverage'}` : null,
+        ...(storageEvidenceItem?.evidence ?? []),
+        effectiveDataPlaneComplete ? `parity result sections: ${paritySections.join(', ') || 'case-derived data-plane coverage'}` : null,
       ].filter(Boolean),
-      gaps: dataPlaneComplete
+      gaps: effectiveDataPlaneComplete
         ? []
         : storageDataPlaneRelevant
         ? ['Expand Blob/Queue captures and local normalization beyond Wave 1.']
@@ -711,13 +800,20 @@ const services = allCapabilities.map(capability => {
           ],
     }),
     ambiguousRepeatCaptures: status({
-      partial: storageDataPlaneRelevant || repeatMarkers.repeatedBehavior,
-      complete: repeatMarkers.repeatedBehavior,
+      partial: capability.id === 'queue-storage'
+        ? !!storageEvidenceItem || repeatMarkers.repeatedBehavior
+        : storageDataPlaneRelevant || repeatMarkers.repeatedBehavior,
+      complete: storageEvidenceItem ? storageEvidenceItem.repeatComplete : repeatMarkers.repeatedBehavior,
       evidence: [
-        storageDataPlaneRelevant ? 'queue-peek-after-delete is explicitly marked needs-repeat-capture' : null,
+        capability.id === 'queue-storage' && storageEvidenceItem?.repeatGap
+          ? 'queue-peek-after-delete is explicitly marked needs-repeat-capture'
+          : null,
+        capability.id === 'blob-storage' && storageEvidenceItem?.repeatComplete
+          ? 'no blob-specific repeat gap remains in the storage normalizer caveat set'
+          : null,
         repeatMarkers.repeatedBehavior ? 'parity pack asserts repeated or timing-sensitive behavior remains stable across reruns' : null,
       ].filter(Boolean),
-      gaps: repeatMarkers.repeatedBehavior
+      gaps: (storageEvidenceItem ? storageEvidenceItem.repeatComplete : repeatMarkers.repeatedBehavior)
         ? []
         : ['Repeat timing-sensitive captures and record stabilization rules before normalization.'],
     }),
