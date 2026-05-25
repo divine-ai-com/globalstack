@@ -524,6 +524,17 @@ async function runControlPlaneMatrix() {
       return { status: result.status, bytes: result.raw.length };
     });
 
+    await record('data-plane file read stays stable across repeated reads', async () => {
+      const first = await httpFiles(filesPort, 'GET', `/${shareName}/models/model.bin`, undefined, fileHeaders);
+      const second = await httpFiles(filesPort, 'GET', `/${shareName}/models/model.bin`, undefined, fileHeaders);
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.raw.toString('utf8'), 'hello files');
+      assert.equal(second.raw.toString('utf8'), first.raw.toString('utf8'));
+      assert.equal(second.headers['x-ms-content-length'], first.headers['x-ms-content-length']);
+      return { status: second.status, bytes: second.raw.length };
+    });
+
     await record('data-plane directory list includes file', async () => {
       const result = await httpFiles(filesPort, 'GET', `/${shareName}/models?restype=directory&comp=list`, undefined, fileHeaders);
       assert.equal(result.status, 200);

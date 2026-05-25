@@ -773,6 +773,36 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.containerservice/managedclusters') {
+    cases.push(
+      realAzureVariance(
+        'invalid-cluster-name',
+        'Create/update with a managed cluster name that violates naming rules.',
+        createBody,
+        'AKS managed cluster validation error for invalid cluster name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/Bad_Cluster',
+        },
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.containerregistry/registries') {
+    cases.push(
+      realAzureVariance(
+        'invalid-registry-name',
+        'Create/update with a registry name that violates naming rules.',
+        createBody,
+        'Container Registry validation error for invalid registry name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/BadRegistry',
+        },
+      ),
+    );
+  }
+
   if (lower === 'microsoft.servicebus/namespaces/topics') {
     cases.push(
       realAzureVariance(
@@ -790,6 +820,17 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.servicebus/namespaces/queues') {
+    cases.push(
+      realAzureVariance(
+        'invalid-max-delivery-count',
+        'Create/update with properties.maxDeliveryCount set to an invalid non-positive value.',
+        withProperties(createBody, { maxDeliveryCount: 0 }),
+        'Service Bus queue validation error for invalid maxDeliveryCount.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.servicebus/namespaces/topics/subscriptions') {
     cases.push(
       realAzureVariance(
@@ -797,6 +838,17 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         'Create/update with properties.maxDeliveryCount set to an invalid non-positive value.',
         withProperties(createBody, { maxDeliveryCount: 0 }),
         'Service Bus subscription validation error for invalid maxDeliveryCount.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.eventgrid/topics') {
+    cases.push(
+      realAzureVariance(
+        'invalid-input-schema',
+        'Create/update with an unsupported inputSchema value.',
+        withProperties(createBody, { inputSchema: 'BadSchema' }),
+        'Event Grid topic validation error for invalid inputSchema.',
       ),
     );
   }
@@ -936,6 +988,37 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
     );
   }
 
+  if (lower === 'microsoft.network/applicationgatewaywebapplicationfirewallpolicies') {
+    cases.push(
+      realAzureVariance(
+        'invalid-policy-mode',
+        'Create/update with policySettings.mode set to an unsupported value.',
+        {
+          ...createBody,
+          properties: {
+            ...(createBody.properties ?? {}),
+            policySettings: {
+              ...(createBody.properties?.policySettings ?? {}),
+              mode: 'Enforce',
+            },
+          },
+        },
+        'Application Gateway WAF policy validation error for invalid mode.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.network/publicipaddresses') {
+    cases.push(
+      realAzureVariance(
+        'invalid-ip-version',
+        'Create/update with an unsupported publicIPAddressVersion value.',
+        withProperties(createBody, { publicIPAddressVersion: 'IPv7' }),
+        'Public IP validation error for invalid publicIPAddressVersion.',
+      ),
+    );
+  }
+
   if (lower === 'microsoft.network/privatednszones/virtualnetworklinks') {
     cases.push(
       realAzureVariance(
@@ -949,6 +1032,112 @@ function serviceSpecificVarianceCases(resourceType, createBody) {
         'Create/update with properties.registrationEnabled set to a non-boolean shape.',
         withProperties(createBody, { registrationEnabled: 'false' }),
         'Private DNS virtual network link validation error for invalid registrationEnabled type.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.insights/actiongroups') {
+    cases.push(
+      realAzureVariance(
+        'invalid-group-short-name',
+        'Create/update with a groupShortName that exceeds the supported length.',
+        {
+          location: '{location}',
+          properties: {
+            enabled: true,
+            groupShortName: 'globalstack-action-group-too-long',
+          },
+        },
+        'Action Group validation error for an invalid groupShortName.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.insights/diagnosticsettings') {
+    cases.push(
+      realAzureVariance(
+        'invalid-logs-shape',
+        'Create/update with properties.logs set to an invalid non-array shape.',
+        {
+          ...createBody,
+          properties: {
+            logs: 'invalid',
+          },
+        },
+        'Diagnostic settings validation error for invalid logs shape.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.logic/workflows') {
+    cases.push(
+      realAzureVariance(
+        'invalid-state',
+        'Create/update with properties.state set to an unsupported value.',
+        withProperties(createBody, { state: 'Broken' }),
+        'Logic Apps workflow validation error for invalid state.',
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.cdn/profiles') {
+    cases.push(
+      realAzureVariance(
+        'invalid-profile-name',
+        'Create/update with a CDN/Front Door profile name that violates naming rules.',
+        createBody,
+        'CDN profile validation error for invalid profile name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/Bad_Profile',
+        },
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.keyvault/vaults/secrets') {
+    cases.push(
+      realAzureVariance(
+        'invalid-secret-name',
+        'Create/update with a secret name that violates naming rules.',
+        createBody,
+        'Key Vault secret validation error for invalid secret name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultsName}/secrets/bad_secret',
+        },
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.synapse/workspaces') {
+    cases.push(
+      realAzureVariance(
+        'invalid-workspace-name',
+        'Create/update with a Synapse workspace name that violates naming rules.',
+        createBody,
+        'Synapse workspace validation error for invalid workspace name shape.',
+        {
+          pathTemplateOverride:
+            '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/Bad_Workspace',
+        },
+      ),
+    );
+  }
+
+  if (lower === 'microsoft.datamigration/services/projects') {
+    cases.push(
+      realAzureVariance(
+        'invalid-source-platform',
+        'Create/update with an unsupported properties.sourcePlatform value.',
+        {
+          location: '{location}',
+          properties: {
+            sourcePlatform: 'Oracle',
+            targetPlatform: 'PostgreSQL',
+          },
+        },
+        'Database Migration Service project validation error for invalid sourcePlatform.',
       ),
     );
   }

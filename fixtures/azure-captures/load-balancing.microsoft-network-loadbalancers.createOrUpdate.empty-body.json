@@ -1,6 +1,6 @@
 {
   "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:33:55.866Z",
+  "capturedAt": "2026-05-25T13:40:13.374Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-58c0e14842/providers/Microsoft.Network/loadBalancers/lb-58c0e14842?api-version=2023-09-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "715abf4b-40e0-4154-bd09-2731e6bd1ea4",
-      "x-ms-request-id": "715abf4b-40e0-4154-bd09-2731e6bd1ea4",
-      "x-ms-routing-request-id": "EASTUS:20260516T163354Z:715abf4b-40e0-4154-bd09-2731e6bd1ea4"
+      "x-ms-correlation-request-id": "a241e6cc-8169-44a6-ad3a-9a29c4c01449",
+      "x-ms-request-id": "a241e6cc-8169-44a6-ad3a-9a29c4c01449",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T134009Z:a241e6cc-8169-44a6-ad3a-9a29c4c01449"
     },
     "body": {
       "error": {

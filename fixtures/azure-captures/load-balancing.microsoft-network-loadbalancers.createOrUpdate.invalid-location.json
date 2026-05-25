@@ -1,6 +1,6 @@
 {
   "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T16:33:52.901Z",
+  "capturedAt": "2026-05-25T13:40:04.993Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,67 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3579ed7b4/providers/Microsoft.Network/loadBalancers/lb-a3579ed7b4?api-version=2023-09-01",
     "body": {
       "location": "globalstack-invalid-location",
-      "properties": {}
-    }
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "backend",
+            "properties": {}
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "httpRule",
+            "properties": {
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "frontendIPConfiguration": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+              },
+              "backendAddressPool": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+              },
+              "probe": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "757d7fd6-8443-41f5-97c5-39e7cdc83a32",
-      "x-ms-request-id": "757d7fd6-8443-41f5-97c5-39e7cdc83a32",
-      "x-ms-routing-request-id": "EASTUS:20260516T163351Z:757d7fd6-8443-41f5-97c5-39e7cdc83a32"
+      "x-ms-correlation-request-id": "e7dfd752-18c1-405f-a5a5-86c284311d18",
+      "x-ms-request-id": "e7dfd752-18c1-405f-a5a5-86c284311d18",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133958Z:e7dfd752-18c1-405f-a5a5-86c284311d18"
     },
     "body": {
       "error": {

@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T16:12:41.107Z",
+  "capturedAt": "2026-05-25T13:33:43.640Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,20 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b1bcd94c4b/providers/Microsoft.Cdn/profiles/cdn-b1bcd94c4b?api-version=2024-02-01",
     "body": {
       "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "fb879f73-a7d8-42e7-8dc3-390dd02c1ea7",
-      "x-ms-request-id": "fb879f73-a7d8-42e7-8dc3-390dd02c1ea7",
-      "x-ms-routing-request-id": "WESTINDIA:20260516T161235Z:fb879f73-a7d8-42e7-8dc3-390dd02c1ea7"
+      "x-ms-correlation-request-id": "4643a0ca-8739-485c-9a7e-f5d49c436202",
+      "x-ms-request-id": "4643a0ca-8739-485c-9a7e-f5d49c436202",
+      "x-ms-routing-request-id": "EASTUS:20260525T133342Z:4643a0ca-8739-485c-9a7e-f5d49c436202"
     },
     "body": {
       "error": {

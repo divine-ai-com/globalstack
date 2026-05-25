@@ -855,6 +855,18 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, host: functionHost };
       });
 
+      await record('function app metadata stays stable across repeated reads', async () => {
+        const first = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', appPath));
+        const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Web', appPath));
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.equal(first.body.properties.provisioningState, 'Succeeded');
+        assert.equal(second.body.properties.provisioningState, 'Succeeded');
+        assert.equal(second.body.properties.defaultHostName, first.body.properties.defaultHostName);
+        assert.deepEqual(second.body.properties.hostNames, first.body.properties.hostNames);
+        return { status: second.status, host: second.body.properties.defaultHostName };
+      });
+
       await record('function app update preserves host metadata', async () => {
         const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.Web', appPath), functionAppBody(resourceGroup, planName, {
           tags: { workload: 'genai-batch-ingestion' },

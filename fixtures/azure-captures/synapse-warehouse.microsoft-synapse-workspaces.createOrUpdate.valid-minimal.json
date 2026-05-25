@@ -1,6 +1,6 @@
 {
   "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T19:54:59.782Z",
+  "capturedAt": "2026-05-25T13:43:22.838Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "1737ca78-cdbf-4a02-ae96-bf1416d2af19",
-      "x-ms-request-id": "3d1dd8f3-ac4a-4f33-89f2-1bb73bb4ca87",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T195453Z:1737ca78-cdbf-4a02-ae96-bf1416d2af19"
+      "x-ms-correlation-request-id": "319e4db7-fd51-4053-88ca-29412e4e546b",
+      "x-ms-request-id": "1b66e9c4-5ba3-4bb3-9271-e05079da69d6",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260525T134320Z:319e4db7-fd51-4053-88ca-29412e4e546b"
     },
     "body": {
       "error": {

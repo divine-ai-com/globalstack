@@ -1,0 +1,48 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-activitylogalerts.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T13:19:52.826Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/activityLogAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-561f7e724d/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertsName}?api-version=2020-10-01",
+    "body": {
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1755057e-8164-4f28-a9c5-90e26773318b",
+      "x-ms-request-id": "1755057e-8164-4f28-a9c5-90e26773318b",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T131945Z:1755057e-8164-4f28-a9c5-90e26773318b"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-561f7e724d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

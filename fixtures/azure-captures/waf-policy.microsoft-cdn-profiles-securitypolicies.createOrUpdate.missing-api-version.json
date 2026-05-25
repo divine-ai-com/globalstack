@@ -1,6 +1,6 @@
 {
   "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T15:46:23.194Z",
+  "capturedAt": "2026-05-25T13:29:02.512Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,17 +13,36 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-47ea97dbab/providers/Microsoft.Cdn/profiles/cdn-47ea97dbab/securityPolicies/security-47ea97dbab",
     "body": {
-      "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "parameters": {
+          "type": "WebApplicationFirewall",
+          "wafPolicy": {
+            "id": "{wafPolicyId}"
+          },
+          "associations": [
+            {
+              "domains": [
+                {
+                  "id": "{endpointId}"
+                }
+              ],
+              "patternsToMatch": [
+                "/*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80",
-      "x-ms-request-id": "27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80",
-      "x-ms-routing-request-id": "EASTUS:20260516T154615Z:27ee9f5b-3c06-4a58-95f1-dd73bcdcbc80"
+      "x-ms-correlation-request-id": "3d1792e0-5a61-4053-87a9-60fb99df1073",
+      "x-ms-request-id": "3d1792e0-5a61-4053-87a9-60fb99df1073",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T132900Z:3d1792e0-5a61-4053-87a9-60fb99df1073"
     },
     "body": {
       "error": {

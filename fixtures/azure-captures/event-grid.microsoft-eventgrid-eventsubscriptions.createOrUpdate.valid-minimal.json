@@ -1,6 +1,6 @@
 {
   "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T14:24:57.603Z",
+  "capturedAt": "2026-05-25T13:00:26.285Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "ce1d0244-ca75-49e9-adf8-9930383ab250",
-      "x-ms-request-id": "40037abf-0008-f600-b63f-84710c7967bb",
-      "x-ms-routing-request-id": "EASTUS:20260516T142450Z:ce1d0244-ca75-49e9-adf8-9930383ab250"
+      "x-ms-correlation-request-id": "63fd13c9-e835-4090-a8dc-f064f8926175",
+      "x-ms-request-id": "400021d8-000c-ed00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260525T130019Z:63fd13c9-e835-4090-a8dc-f064f8926175"
     },
     "body": {
       "error": {

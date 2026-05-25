@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.invalid-tags-shape",
-  "capturedAt": "2026-05-25T12:16:45.685Z",
+  "capturedAt": "2026-05-25T13:30:46.052Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -23,9 +23,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "7b94b028-6e17-4a9f-9ab9-59d76497b3fb",
+      "x-ms-correlation-request-id": "c60c4657-472f-40ef-81cf-44e60e147149",
       "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
-      "x-ms-routing-request-id": "EASTUS:20260525T121643Z:7b94b028-6e17-4a9f-9ab9-59d76497b3fb"
+      "x-ms-routing-request-id": "EASTUS:20260525T133045Z:c60c4657-472f-40ef-81cf-44e60e147149"
     },
     "body": {
       "code": "UnsupportedRequestContent",

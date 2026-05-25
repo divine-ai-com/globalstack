@@ -1,6 +1,6 @@
 {
   "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T14:25:16.006Z",
+  "capturedAt": "2026-05-25T13:01:50.369Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "e1c12f9e-163d-40a0-b14d-13ca0ad48ef8",
-      "x-ms-request-id": "400038fb-0002-ea00-b63f-84710c7967bb",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260516T142509Z:e1c12f9e-163d-40a0-b14d-13ca0ad48ef8"
+      "x-ms-correlation-request-id": "7d41ecde-2e2b-4213-a263-be9295e3594a",
+      "x-ms-request-id": "4000045c-000b-fe00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260525T130143Z:7d41ecde-2e2b-4213-a263-be9295e3594a"
     },
     "body": {
       "error": {

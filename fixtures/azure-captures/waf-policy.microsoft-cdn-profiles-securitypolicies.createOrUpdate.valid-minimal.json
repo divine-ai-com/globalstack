@@ -1,6 +1,6 @@
 {
   "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T15:46:11.926Z",
+  "capturedAt": "2026-05-25T13:28:56.234Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -13,22 +13,41 @@
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3becf33c1/providers/Microsoft.Cdn/profiles/cdn-a3becf33c1/securityPolicies/security-a3becf33c1?api-version=2024-02-01",
     "body": {
-      "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "parameters": {
+          "type": "WebApplicationFirewall",
+          "wafPolicy": {
+            "id": "{wafPolicyId}"
+          },
+          "associations": [
+            {
+              "domains": [
+                {
+                  "id": "{endpointId}"
+                }
+              ],
+              "patternsToMatch": [
+                "/*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 404,
+    "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "6a1caecb-d1d6-4737-b61b-af44ddfe8e09",
-      "x-ms-request-id": "6a1caecb-d1d6-4737-b61b-af44ddfe8e09",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T154604Z:6a1caecb-d1d6-4737-b61b-af44ddfe8e09"
+      "x-ms-correlation-request-id": "46dd2b1f-18b6-4097-8c08-d943b00edaaa",
+      "x-ms-request-id": "46dd2b1f-18b6-4097-8c08-d943b00edaaa",
+      "x-ms-routing-request-id": "EASTUS:20260525T132855Z:46dd2b1f-18b6-4097-8c08-d943b00edaaa"
     },
     "body": {
       "error": {
-        "code": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'profiles/securitypolicies', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3becf33c1/providers/Microsoft.Cdn/profiles/cdn-a3becf33c1' could not be found."
+        "code": "LinkedInvalidPropertyId",
+        "message": "Property id '{wafPolicyId}' at path 'properties.parameters.wafPolicy.id' is invalid. Expect fully qualified resource Id that start with '/subscriptions/{subscriptionId}' or '/providers/{resourceProviderNamespace}/'."
       }
     }
   },
@@ -40,9 +59,9 @@
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-routing-or-parent-validation",
+    "validationDepth": "provider-validation",
     "cloudValidated": false,
-    "providerRegistered": null,
-    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
   }
 }

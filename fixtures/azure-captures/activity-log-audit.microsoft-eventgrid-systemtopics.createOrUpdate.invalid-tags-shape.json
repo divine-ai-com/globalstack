@@ -1,0 +1,50 @@
+{
+  "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:33:08.975Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.EventGrid/systemTopics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-467952af54/providers/Microsoft.EventGrid/systemTopics/system-467952af54?api-version=2022-06-15",
+    "body": {
+      "location": "{location}",
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "1b9069d6-7608-4f2e-bc13-46db1e1e95ff",
+      "x-ms-request-id": "1b9069d6-7608-4f2e-bc13-46db1e1e95ff",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T133302Z:1b9069d6-7608-4f2e-bc13-46db1e1e95ff"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-467952af54",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

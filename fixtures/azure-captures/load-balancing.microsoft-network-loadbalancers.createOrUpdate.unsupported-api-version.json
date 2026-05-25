@@ -1,0 +1,99 @@
+{
+  "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:39:54.218Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/loadBalancers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a96e45e663/providers/Microsoft.Network/loadBalancers/lb-a96e45e663?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "backend",
+            "properties": {}
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "httpRule",
+            "properties": {
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "frontendIPConfiguration": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+              },
+              "backendAddressPool": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+              },
+              "probe": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "558515a0-468f-44e7-b949-bb06e0d87e58",
+      "x-ms-request-id": "558515a0-468f-44e7-b949-bb06e0d87e58",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T133947Z:558515a0-468f-44e7-b949-bb06e0d87e58"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'loadBalancers'. The supported api-versions are '2014-12-01-preview, 2015-05-01-preview, 2015-06-15, 2016-03-30, 2016-06-01, 2016-07-01, 2016-08-01, 2016-09-01, 2016-10-01, 2016-11-01, 2016-12-01, 2017-03-01, 2017-04-01, 2017-06-01, 2017-08-01, 2017-09-01, 2017-10-01, 2017-11-01, 2018-01-01, 2018-02-01, 2018-03-01, 2018-04-01, 2018-05-01, 2018-06-01, 2018-07-01, 2018-08-01, 2018-10-01, 2018-11-01, 2018-12-01, 2019-02-01, 2019-04-01, 2019-06-01, 2019-07-01, 2019-08-01, 2019-09-01, 2019-11-01, 2019-12-01, 2020-01-01, 2020-03-01, 2020-04-01, 2020-05-01, 2020-06-01, 2020-07-01, 2020-08-01, 2020-11-01, 2021-01-01, 2021-02-01, 2021-03-01, 2021-04-01, 2021-05-01, 2021-06-01, 2021-08-01, 2021-12-01, 2022-01-01, 2022-05-01, 2022-07-01, 2022-09-01, 2022-11-01, 2023-02-01, 2023-04-01, 2023-05-01, 2023-06-01, 2023-09-01, 2023-11-01, 2024-01-01, 2024-03-01, 2024-05-01, 2024-07-01, 2024-10-01, 2025-01-01, 2025-03-01, 2025-05-01, 2025-07-01, 2025-09-01'. The supported locations are 'westus, eastus, northeurope, westeurope, eastasia, southeastasia, northcentralus, southcentralus, centralus, eastus2, japaneast, japanwest, brazilsouth, australiaeast, australiasoutheast, centralindia, southindia, westindia, canadacentral, canadaeast, westcentralus, westus2, ukwest, uksouth, koreacentral, koreasouth, francecentral, australiacentral, southafricanorth, uaenorth, switzerlandnorth, germanywestcentral, norwayeast, westus3, jioindiawest, swedencentral, qatarcentral, polandcentral, italynorth, israelcentral, mexicocentral, spaincentral, newzealandnorth, indonesiacentral, chilecentral, malaysiawest, austriaeast, belgiumcentral, denmarkeast'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-a96e45e663",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

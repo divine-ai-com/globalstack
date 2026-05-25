@@ -1,6 +1,6 @@
 {
   "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:01:52.502Z",
+  "capturedAt": "2026-05-25T13:21:53.415Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-60d3d51cb3/providers/Microsoft.Logic/workflows/workflow-60d3d51cb3?api-version=2019-05-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "638035f9-b0fd-4e6f-b644-64aec4fb901f",
-      "x-ms-request-id": "638035f9-b0fd-4e6f-b644-64aec4fb901f",
-      "x-ms-routing-request-id": "EASTUS:20260516T160144Z:638035f9-b0fd-4e6f-b644-64aec4fb901f"
+      "x-ms-correlation-request-id": "96bb7228-11cf-44f5-ac83-b51475d25ab7",
+      "x-ms-request-id": "96bb7228-11cf-44f5-ac83-b51475d25ab7",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T132152Z:96bb7228-11cf-44f5-ac83-b51475d25ab7"
     },
     "body": {
       "error": {

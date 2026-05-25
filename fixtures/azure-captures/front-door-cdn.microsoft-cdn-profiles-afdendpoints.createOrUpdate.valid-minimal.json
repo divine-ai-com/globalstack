@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:12:53.838Z",
+  "capturedAt": "2026-05-25T13:35:04.442Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,19 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-df35cb29b7/providers/Microsoft.Cdn/profiles/cdn-df35cb29b7/afdEndpoints/afd-df35cb29b7?api-version=2024-02-01",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "enabledState": "Enabled"
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "98abdbec-e2e1-4cbd-a3da-ec9c5fdfbb7c",
-      "x-ms-request-id": "98abdbec-e2e1-4cbd-a3da-ec9c5fdfbb7c",
-      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T161252Z:98abdbec-e2e1-4cbd-a3da-ec9c5fdfbb7c"
+      "x-ms-correlation-request-id": "3eba2471-7b88-4d69-8173-59bbcae83aa5",
+      "x-ms-request-id": "3eba2471-7b88-4d69-8173-59bbcae83aa5",
+      "x-ms-routing-request-id": "EASTUS:20260525T133457Z:3eba2471-7b88-4d69-8173-59bbcae83aa5"
     },
     "body": {
       "error": {

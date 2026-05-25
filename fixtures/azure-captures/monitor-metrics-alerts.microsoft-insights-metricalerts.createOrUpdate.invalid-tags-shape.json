@@ -1,0 +1,50 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:16:29.881Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/metricAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c93951317e/providers/Microsoft.Insights/metricAlerts/alert-c93951317e?api-version=2018-03-01",
+    "body": {
+      "location": "{location}",
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "012262ba-fc42-452d-82ea-d62c7350a17f",
+      "x-ms-request-id": "012262ba-fc42-452d-82ea-d62c7350a17f",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T131623Z:012262ba-fc42-452d-82ea-d62c7350a17f"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c93951317e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

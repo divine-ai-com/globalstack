@@ -1,0 +1,47 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T13:16:17.750Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/metricAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-42911d5abc/providers/Microsoft.Insights/metricAlerts/alert-42911d5abc?api-version=2018-03-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "744ee8b2-a683-4f38-a5f8-db8839fba6e8",
+      "x-ms-request-id": "744ee8b2-a683-4f38-a5f8-db8839fba6e8",
+      "x-ms-routing-request-id": "EASTUS:20260525T131616Z:744ee8b2-a683-4f38-a5f8-db8839fba6e8"
+    },
+    "body": {
+      "code": "BadRequest",
+      "message": "Required property 'Properties' not found in JSON Activity ID: 744ee8b2-a683-4f38-a5f8-db8839fba6e8."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-42911d5abc",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

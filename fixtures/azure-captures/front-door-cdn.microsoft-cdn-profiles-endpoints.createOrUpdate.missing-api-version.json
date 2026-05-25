@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:13:38.515Z",
+  "capturedAt": "2026-05-25T13:36:22.529Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,30 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7581951fc6/providers/Microsoft.Cdn/profiles/cdn-7581951fc6/endpoints/endpoint-7581951fc6",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "origins": [
+          {
+            "name": "origin1",
+            "properties": {
+              "hostName": "example.org",
+              "httpPort": 80,
+              "httpsPort": 443
+            }
+          }
+        ],
+        "isHttpAllowed": true,
+        "isHttpsAllowed": true
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "93536b49-34e8-4656-af15-29738ea4555c",
-      "x-ms-request-id": "93536b49-34e8-4656-af15-29738ea4555c",
-      "x-ms-routing-request-id": "EASTUS:20260516T161331Z:93536b49-34e8-4656-af15-29738ea4555c"
+      "x-ms-correlation-request-id": "7a45b4e3-5ebe-45aa-a073-92253c9a573f",
+      "x-ms-request-id": "7a45b4e3-5ebe-45aa-a073-92253c9a573f",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260525T133620Z:7a45b4e3-5ebe-45aa-a073-92253c9a573f"
     },
     "body": {
       "error": {

@@ -1,3 +1,8 @@
+import {
+  queueDeleteStaleReadObservedGoneByMs,
+  queueDeleteStaleReadObservedThroughMs,
+} from './queue-delete-window.mjs';
+
 const sourceFixture = 'fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json';
 
 export const storageNormalizationRules = [
@@ -39,7 +44,9 @@ export const storageNormalizationRules = [
     azureErrorCode: null,
     azuriteStatus: 404,
     azuriteErrorCode: 'QueueNotFound',
-    status: 'needs-repeat-capture',
+    status: 'implemented',
+    observedContinueThroughMs: queueDeleteStaleReadObservedThroughMs,
+    observedGoneByMs: queueDeleteStaleReadObservedGoneByMs,
   },
 ];
 

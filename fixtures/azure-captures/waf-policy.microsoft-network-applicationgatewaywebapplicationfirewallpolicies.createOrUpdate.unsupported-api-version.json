@@ -1,0 +1,64 @@
+{
+  "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:26:38.007Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3bab83474a/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-3bab83474a?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "policySettings": {
+          "state": "Enabled",
+          "mode": "Prevention",
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.2"
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "486429d8-6b60-4b2e-8d2b-a51db719f589",
+      "x-ms-request-id": "486429d8-6b60-4b2e-8d2b-a51db719f589",
+      "x-ms-routing-request-id": "EASTUS:20260525T132636Z:486429d8-6b60-4b2e-8d2b-a51db719f589"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'applicationGatewayWebApplicationFirewallPolicies'. The supported api-versions are '2018-12-01, 2019-02-01, 2019-04-01, 2019-06-01, 2019-07-01, 2019-08-01, 2019-09-01, 2019-11-01, 2019-12-01, 2020-01-01, 2020-03-01, 2020-04-01, 2020-05-01, 2020-06-01, 2020-07-01, 2020-08-01, 2020-11-01, 2021-01-01, 2021-02-01, 2021-03-01, 2021-04-01, 2021-05-01, 2021-06-01, 2021-08-01, 2021-12-01, 2022-01-01, 2022-05-01, 2022-07-01, 2022-09-01, 2022-11-01, 2023-02-01, 2023-04-01, 2023-05-01, 2023-06-01, 2023-09-01, 2023-11-01, 2024-01-01, 2024-03-01, 2024-05-01, 2024-07-01, 2024-10-01, 2025-01-01, 2025-03-01, 2025-05-01, 2025-07-01, 2025-09-01'. The supported locations are 'westus, eastus, northeurope, westeurope, eastasia, southeastasia, northcentralus, southcentralus, centralus, eastus2, japaneast, japanwest, brazilsouth, australiaeast, australiasoutheast, centralindia, southindia, westindia, canadacentral, canadaeast, westcentralus, westus2, ukwest, uksouth, koreacentral, koreasouth, francecentral, australiacentral, southafricanorth, uaenorth, switzerlandnorth, germanywestcentral, norwayeast, westus3, jioindiawest, swedencentral, qatarcentral, polandcentral, italynorth, israelcentral, mexicocentral, spaincentral, newzealandnorth, indonesiacentral, denmarkeast, chilecentral, malaysiawest, austriaeast, belgiumcentral'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3bab83474a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

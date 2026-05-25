@@ -1,6 +1,6 @@
 {
   "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T19:56:02.384Z",
+  "capturedAt": "2026-05-25T13:45:13.434Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "a452bd64-28ee-423e-a3a7-b8e15b7b9084",
-      "x-ms-request-id": "a452bd64-28ee-423e-a3a7-b8e15b7b9084",
-      "x-ms-routing-request-id": "EASTUS:20260516T195555Z:a452bd64-28ee-423e-a3a7-b8e15b7b9084"
+      "x-ms-correlation-request-id": "8ad268af-689d-4523-96b4-b6d1535ea020",
+      "x-ms-request-id": "8ad268af-689d-4523-96b4-b6d1535ea020",
+      "x-ms-routing-request-id": "EASTUS:20260525T134507Z:8ad268af-689d-4523-96b4-b6d1535ea020"
     },
     "body": {
       "error": {

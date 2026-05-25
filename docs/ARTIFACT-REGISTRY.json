@@ -748,7 +748,7 @@
     "workspace:validate"
   ],
   "counts": {
-    "azureCaptures": 771,
+    "azureCaptures": 889,
     "azureLifecycleCaptures": 2,
     "azureStorageDataPlaneCaptures": 1
   }

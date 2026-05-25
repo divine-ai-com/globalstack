@@ -1,6 +1,6 @@
 {
   "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T20:03:29.838Z",
+  "capturedAt": "2026-05-25T13:47:27.784Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "db2cbb11-d724-413c-85ad-b2d9a5575f5a",
-      "x-ms-request-id": "db2cbb11-d724-413c-85ad-b2d9a5575f5a",
-      "x-ms-routing-request-id": "EASTUS:20260516T200224Z:db2cbb11-d724-413c-85ad-b2d9a5575f5a"
+      "x-ms-correlation-request-id": "206ca5d9-0c46-4da4-977c-de9f13c3aaa2",
+      "x-ms-request-id": "206ca5d9-0c46-4da4-977c-de9f13c3aaa2",
+      "x-ms-routing-request-id": "EASTUS:20260525T134621Z:206ca5d9-0c46-4da4-977c-de9f13c3aaa2"
     },
     "body": {
       "error": {

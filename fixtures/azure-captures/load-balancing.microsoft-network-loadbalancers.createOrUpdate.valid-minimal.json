@@ -1,6 +1,6 @@
 {
   "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:33:34.422Z",
+  "capturedAt": "2026-05-25T13:39:33.054Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,37 +14,78 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-19874f259d/providers/Microsoft.Network/loadBalancers/lb-19874f259d?api-version=2023-09-01",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "backend",
+            "properties": {}
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "httpRule",
+            "properties": {
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "frontendIPConfiguration": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+              },
+              "backendAddressPool": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+              },
+              "probe": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 201,
+    "status": 400,
     "headers": {
-      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.Network/locations/eastus/operations/e563d801-b547-43ec-8247-1d49c7522606?api-version=2023-09-01&redacted=true",
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2e991653-7e22-4ad5-a3ec-95884d409f24",
-      "x-ms-request-id": "e563d801-b547-43ec-8247-1d49c7522606",
-      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T163233Z:2e991653-7e22-4ad5-a3ec-95884d409f24"
+      "x-ms-correlation-request-id": "76939198-644e-42fa-b842-77e97d7539e8",
+      "x-ms-request-id": "1c6421f7-8b39-4d27-898e-705d9c4a2f99",
+      "x-ms-routing-request-id": "EASTUS:20260525T133931Z:76939198-644e-42fa-b842-77e97d7539e8"
     },
     "body": {
-      "name": "lb-19874f259d",
-      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-19874f259d/providers/Microsoft.Network/loadBalancers/lb-19874f259d",
-      "etag": "W/\"188a12f3-7242-4f9e-9489-4c24a4c6c658\"",
-      "type": "Microsoft.Network/loadBalancers",
-      "location": "eastus",
-      "properties": {
-        "provisioningState": "Succeeded",
-        "resourceGuid": "0c7d8eb0-0f86-4030-8307-f1f95128279e",
-        "frontendIPConfigurations": [],
-        "backendAddressPools": [],
-        "loadBalancingRules": [],
-        "probes": [],
-        "inboundNatRules": [],
-        "inboundNatPools": []
-      },
-      "sku": {
-        "name": "Basic",
-        "tier": "Regional"
+      "error": {
+        "code": "InvalidResourceReference",
+        "message": "Resource /subscriptions/<subscription-id>/resourceGroups/RG-GS-CONF-19874F259D/providers/Microsoft.Network/publicIPAddresses/PIP-LOCAL referenced by resource /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-19874f259d/providers/Microsoft.Network/loadBalancers/lb-19874f259d was not found. Please make sure that the referenced resource exists, and that both resources are in the same region.",
+        "details": [
+          {
+            "code": "NotFound",
+            "message": "Resource /subscriptions/<subscription-id>/resourceGroups/RG-GS-CONF-19874F259D/providers/Microsoft.Network/publicIPAddresses/PIP-LOCAL not found."
+          }
+        ]
       }
     }
   },
@@ -56,9 +97,9 @@
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-accepted",
+    "validationDepth": "provider-validation",
     "cloudValidated": false,
     "providerRegistered": true,
-    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
   }
 }

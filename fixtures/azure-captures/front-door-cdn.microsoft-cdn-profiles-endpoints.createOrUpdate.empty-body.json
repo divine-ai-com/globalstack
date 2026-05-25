@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:14:02.069Z",
+  "capturedAt": "2026-05-25T13:36:42.375Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4302dabf75/providers/Microsoft.Cdn/profiles/cdn-4302dabf75/endpoints/endpoint-4302dabf75?api-version=2024-02-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "e516ebe8-285d-484c-85f2-14994cf407f0",
-      "x-ms-request-id": "e516ebe8-285d-484c-85f2-14994cf407f0",
-      "x-ms-routing-request-id": "EASTUS:20260516T161355Z:e516ebe8-285d-484c-85f2-14994cf407f0"
+      "x-ms-correlation-request-id": "e1299b35-dc41-46d5-bc8f-5a8c889ca2dc",
+      "x-ms-request-id": "e1299b35-dc41-46d5-bc8f-5a8c889ca2dc",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133641Z:e1299b35-dc41-46d5-bc8f-5a8c889ca2dc"
     },
     "body": {
       "error": {

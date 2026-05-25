@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-25T12:05:42.920Z",
+  "capturedAt": "2026-05-25T13:09:05.366Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -22,9 +22,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "af8e6282-8317-46f7-b178-301822f64f1e",
-      "x-ms-request-id": "af8e6282-8317-46f7-b178-301822f64f1e",
-      "x-ms-routing-request-id": "EASTUS:20260525T120534Z:af8e6282-8317-46f7-b178-301822f64f1e"
+      "x-ms-correlation-request-id": "f036c470-454a-4b2a-ad21-da7546f4188e",
+      "x-ms-request-id": "f036c470-454a-4b2a-ad21-da7546f4188e",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T130903Z:f036c470-454a-4b2a-ad21-da7546f4188e"
     },
     "body": {
       "error": {

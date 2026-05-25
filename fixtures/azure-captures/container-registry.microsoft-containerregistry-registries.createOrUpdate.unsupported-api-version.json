@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.unsupported-api-version",
-  "capturedAt": "2026-05-25T12:05:51.516Z",
+  "capturedAt": "2026-05-25T13:09:18.800Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -22,9 +22,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "954d3748-9fc5-48b2-be00-c04167e0932d",
-      "x-ms-request-id": "954d3748-9fc5-48b2-be00-c04167e0932d",
-      "x-ms-routing-request-id": "EASTUS:20260525T120548Z:954d3748-9fc5-48b2-be00-c04167e0932d"
+      "x-ms-correlation-request-id": "74d95000-c4b9-4886-a0e1-91afaba71374",
+      "x-ms-request-id": "74d95000-c4b9-4886-a0e1-91afaba71374",
+      "x-ms-routing-request-id": "EASTUS:20260525T130911Z:74d95000-c4b9-4886-a0e1-91afaba71374"
     },
     "body": {
       "error": {

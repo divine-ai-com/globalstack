@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.invalid-tags-shape",
-  "capturedAt": "2026-05-25T12:06:38.854Z",
+  "capturedAt": "2026-05-25T13:10:02.382Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -23,9 +23,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "9550702e-101c-4fc8-b2ed-0eeecfbe8cc9",
-      "x-ms-request-id": "9550702e-101c-4fc8-b2ed-0eeecfbe8cc9",
-      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T120637Z:9550702e-101c-4fc8-b2ed-0eeecfbe8cc9"
+      "x-ms-correlation-request-id": "26c175e1-8c55-411d-8d16-5ee1c36af073",
+      "x-ms-request-id": "26c175e1-8c55-411d-8d16-5ee1c36af073",
+      "x-ms-routing-request-id": "EASTUS:20260525T131001Z:26c175e1-8c55-411d-8d16-5ee1c36af073"
     },
     "body": {
       "error": {

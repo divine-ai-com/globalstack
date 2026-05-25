@@ -88,6 +88,7 @@ test('Azure Storage data-plane expectations mark only captured safe mismatches a
     'blob-missing-blob-type-header',
     'blob-get-without-authorization',
     'queue-malformed-message',
+    'queue-peek-after-delete',
   ]) {
     const item = cases.get(caseId);
     assert.equal(item.globalstackNormalization?.status, 'implemented', caseId);
@@ -97,7 +98,9 @@ test('Azure Storage data-plane expectations mark only captured safe mismatches a
   }
 
   const postDelete = cases.get('queue-peek-after-delete');
-  assert.equal(postDelete.globalstackNormalization?.status, 'needs-repeat-capture');
+  assert.equal(postDelete.globalstackNormalization?.status, 'implemented');
   assert.equal(postDelete.expected.status, 200);
   assert.equal(postDelete.azurite.status, 404);
+  assert.equal(postDelete.globalstackNormalization?.observedContinueThroughMs, 2000);
+  assert.equal(postDelete.globalstackNormalization?.observedGoneByMs, 2500);
 });

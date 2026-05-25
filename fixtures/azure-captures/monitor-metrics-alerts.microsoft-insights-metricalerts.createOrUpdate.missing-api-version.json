@@ -1,6 +1,6 @@
 {
   "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T20:15:09.385Z",
+  "capturedAt": "2026-05-25T13:15:36.999Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "d0dd812d-d027-42a6-bae3-b74835df30cb",
-      "x-ms-request-id": "d0dd812d-d027-42a6-bae3-b74835df30cb",
-      "x-ms-routing-request-id": "EASTUS:20260516T201502Z:d0dd812d-d027-42a6-bae3-b74835df30cb"
+      "x-ms-correlation-request-id": "a58dbde0-3aec-4f52-a9ed-2af1826e03ee",
+      "x-ms-request-id": "a58dbde0-3aec-4f52-a9ed-2af1826e03ee",
+      "x-ms-routing-request-id": "EASTUS:20260525T131535Z:a58dbde0-3aec-4f52-a9ed-2af1826e03ee"
     },
     "body": {
       "error": {

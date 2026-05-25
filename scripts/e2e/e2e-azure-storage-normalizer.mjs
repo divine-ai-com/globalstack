@@ -262,15 +262,33 @@ try {
     return response;
   });
 
+  await record('queue peek message through proxy seeds stale-read snapshot', async () => {
+    const response = await normalized.peekQueueMessages(queue);
+    assert.equal(response.status, 200);
+    assert.match(response.body, /<QueueMessagesList>/);
+    return response;
+  });
+
   await record('queue delete through proxy', async () => {
     const response = await normalized.deleteQueue(queue);
     assert.equal(response.status, 204);
     return response;
   });
 
-  await record('queue peek after delete remains unnormalized gap', async () => {
+  await record('proxy normalizes queue peek after delete to bounded Azure stale-read window', async () => {
     const response = await normalized.peekQueueMessages(queue);
-    assertStatusAndCode(response, 404, 'QueueNotFound', 'peek deleted queue');
+    assert.equal(response.status, 200, 'peek deleted queue stale read');
+    assert.equal(errorCode(response), null, 'peek deleted queue stale read x-ms-error-code');
+    assert.equal(response.headers['x-globalstack-normalization-rule'], 'queue-peek-after-delete');
+    assert.match(response.body, /<QueueMessagesList>/);
+    return response;
+  });
+
+  await new Promise(resolve => setTimeout(resolve, 3000));
+
+  await record('queue peek after bounded stale-read window expires', async () => {
+    const response = await normalized.peekQueueMessages(queue);
+    assertStatusAndCode(response, 404, 'QueueNotFound', 'peek deleted queue after stale-read window');
     assert.equal(response.headers['x-globalstack-normalization-rule'], undefined);
     return response;
   });
@@ -288,7 +306,7 @@ const report = {
   ok,
   generatedAt: new Date().toISOString(),
   scope: 'GlobalStack Azure Storage proxy normalization for real Azure captured Blob/Queue mismatches.',
-  caveat: 'Only implemented for captured safe mismatches. Queue peek-after-delete is deliberately unnormalized until repeat Azure capture.',
+  caveat: 'Only implemented for captured safe mismatches. Queue delete now uses a bounded stale-read window from repeat Azure captures: stale 200 observed through 2000ms, QueueNotFound observed by 2500ms.',
   steps,
 };
 

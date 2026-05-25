@@ -108,7 +108,7 @@ The normalizer is intentionally narrow. It only rewrites cases where Wave 1 capt
 | `blob-missing-blob-type-header` | `400 MissingRequiredHeader` | `400` without `x-ms-error-code` | normalized to Azure status/error code |
 | `blob-get-without-authorization` | `401 NoAuthenticationInformation` | `403 AuthorizationFailure` | normalized to Azure status/error code |
 | `queue-malformed-message` | `400 InvalidXmlDocument` | `400` without `x-ms-error-code` | normalized to Azure status/error code |
-| `queue-peek-after-delete` | `200` in the captured immediate post-delete state | `404 QueueNotFound` | not normalized; needs repeat Azure capture |
+| `queue-peek-after-delete` | `200` through the observed stale-read window, then `404 QueueNotFound` | `404 QueueNotFound` immediately | normalized to a bounded Azure stale-read window |
 
 ### Wave 1 Azurite Mismatches
 
@@ -117,9 +117,9 @@ The normalizer is intentionally narrow. It only rewrites cases where Wave 1 capt
 | `blob-missing-blob-type-header` | `400 MissingRequiredHeader` | `400` without `x-ms-error-code` | Status matches; local error-code parity gap. |
 | `blob-get-without-authorization` | `401 NoAuthenticationInformation` | `403 AuthorizationFailure` | Auth failure semantics differ. |
 | `queue-malformed-message` | `400 InvalidXmlDocument` | `400` without `x-ms-error-code` | Status matches; local error-code parity gap. |
-| `queue-peek-after-delete` | `200` in the captured immediate post-delete state | `404 QueueNotFound` | Queue delete/read-after-delete timing differs and needs repeat capture before normalizing. |
+| `queue-peek-after-delete` | `200` through the observed stale-read window, then `404 QueueNotFound` | `404 QueueNotFound` immediately | Queue delete propagation is eventually consistent in Azure and must be modeled explicitly. |
 
-These mismatches must not be hidden by broad success criteria. The first three are now normalized by the GlobalStack storage proxy. `queue-peek-after-delete` remains a repeat-capture target because the captured `200` may reflect timing semantics rather than a stable post-delete contract.
+These mismatches must not be hidden by broad success criteria. The first three are normalized by the GlobalStack storage proxy. `queue-peek-after-delete` is also normalized now, but only as a bounded stale-read window backed by repeat Azure captures: stale `200` was observed through `2000ms`, and `QueueNotFound` was observed by `2500ms`.
 
 ## Real Azure Capture Backlog
 

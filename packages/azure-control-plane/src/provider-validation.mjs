@@ -2059,7 +2059,7 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     const localSupportedConsumptionPlan =
       body.sku?.name === 'Y1'
       && body.sku?.tier === 'Dynamic'
-      && (body.kind == null || isFunctionAppKind(body.kind))
+      && isFunctionAppKind(body.kind)
       && (reserved == null || typeof reserved === 'boolean');
     if (!localSupportedConsumptionPlan) {
       return appServiceError(

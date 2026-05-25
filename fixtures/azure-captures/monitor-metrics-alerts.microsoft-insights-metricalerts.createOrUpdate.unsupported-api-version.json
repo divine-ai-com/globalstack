@@ -1,0 +1,49 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:15:43.531Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/metricAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3430d7c98d/providers/Microsoft.Insights/metricAlerts/alert-3430d7c98d?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5f4319b2-850f-4b46-bbf4-002e9c6dd3ad",
+      "x-ms-request-id": "5f4319b2-850f-4b46-bbf4-002e9c6dd3ad",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T131542Z:5f4319b2-850f-4b46-bbf4-002e9c6dd3ad"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'metricalerts'. The supported api-versions are '2017-09-01-preview, 2018-03-01, 2024-01-01-preview, 2024-03-01-preview'. The supported locations are 'global, westeurope, eastus, northeurope, swedencentral, germanywestcentral, westcentralus, northcentralus, eastus2, centralus, westus2, uksouth, southeastasia, centralindia, westus, japaneast, canadacentral, southcentralus, eastasia, australiaeast, switzerlandnorth, francecentral, uaenorth, norwayeast, koreacentral, brazilsouth, westus3, australiasoutheast, southafricanorth'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3430d7c98d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

@@ -1,16 +1,16 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T12:17:24.651Z",
+    "generatedAt": "2026-05-25T14:58:00.839Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 17,
+    "workItemCount": 0,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 97,
+      "percent": 100,
       "displayRange": "95-100%",
       "methodology": "status-derived average across all services and dimensions"
     },
@@ -19,7 +19,7 @@
       "displayRange": "95-100%",
       "methodology": "status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack",
       "evidence": {
-        "total": 99,
+        "total": 100,
         "platformOk": true
       }
     },
@@ -117,47 +117,6 @@
       "objective": "Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests.",
       "services": [
         {
-          "serviceId": "event-grid",
-          "tier": 1,
-          "awsAnalogue": "EventBridge",
-          "azureEquivalent": "Event Grid",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 46,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "event-grid.parameterVarianceCaptures",
-              "serviceId": "event-grid",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
-        {
           "serviceId": "cosmos-nosql-table",
           "tier": 1,
           "awsAnalogue": "DynamoDB",
@@ -209,102 +168,55 @@
           "workItems": []
         },
         {
-          "serviceId": "azure-files",
-          "tier": 2,
-          "awsAnalogue": "EFS",
-          "azureEquivalent": "Azure Files / Azure NetApp Files",
-          "currentStatus": "not-started",
+          "serviceId": "event-grid",
+          "tier": 1,
+          "awsAnalogue": "EventBridge",
+          "azureEquivalent": "Event Grid",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
+            "complete": 10,
             "partial": 0,
-            "notStarted": 1
+            "notStarted": 0
           },
-          "score": 0.9508,
-          "priority": 39,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "azure-files.ambiguousRepeatCaptures",
-              "serviceId": "azure-files",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-files --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
+          "score": 1,
+          "priority": 41,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "queue-storage",
           "tier": 2,
           "awsAnalogue": "SQS",
           "azureEquivalent": "Azure Queue Storage / Service Bus queues",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 8,
-            "partial": 2,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9189,
-          "priority": 37,
-          "workItemCount": 2,
-          "nextDimensions": [
-            "parameterVarianceCaptures",
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "queue-storage.parameterVarianceCaptures",
-              "serviceId": "queue-storage",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "queue-storage.ambiguousRepeatCaptures",
-              "serviceId": "queue-storage",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "queue-peek-after-delete is explicitly marked needs-repeat-capture"
-              ],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run storage:capture:data-plane",
-                "npm run storage:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "azure-files",
+          "tier": 2,
+          "awsAnalogue": "EFS",
+          "azureEquivalent": "Azure Files / Azure NetApp Files",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "event-hubs-streams",
@@ -341,54 +253,13 @@
           "workItems": []
         }
       ],
-      "workItemCount": 4
+      "workItemCount": 0
     },
     {
       "id": "wave-2-identity-security-and-secrets",
       "label": "Wave 2: identity, security, secrets, and encryption",
       "objective": "Make authorization, denial, audit, and secure configuration behavior credible across the emulator.",
       "services": [
-        {
-          "serviceId": "key-vault-secrets",
-          "tier": 1,
-          "awsAnalogue": "Secrets Manager",
-          "azureEquivalent": "Key Vault secrets",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 43,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "key-vault-secrets.parameterVarianceCaptures",
-              "serviceId": "key-vault-secrets",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "15 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, unsupported-api-version=1",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
         {
           "serviceId": "key-vault-keys",
           "tier": 1,
@@ -424,214 +295,64 @@
           "workItems": []
         },
         {
+          "serviceId": "key-vault-secrets",
+          "tier": 1,
+          "awsAnalogue": "Secrets Manager",
+          "azureEquivalent": "Key Vault secrets",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
           "serviceId": "waf-policy",
           "tier": 2,
           "awsAnalogue": "WAF",
           "azureEquivalent": "Azure Web Application Firewall policy",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9459,
-          "priority": 31,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "waf-policy.parameterVarianceCaptures",
-              "serviceId": "waf-policy",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=waf-policy --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "activity-log-audit",
           "tier": 2,
           "awsAnalogue": "CloudTrail",
           "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9459,
-          "priority": 31,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "activity-log-audit.parameterVarianceCaptures",
-              "serviceId": "activity-log-audit",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 3
+      "workItemCount": 0
     },
     {
       "id": "wave-3-compute-api-and-edge",
       "label": "Wave 3: compute, API, containers, and edge routing",
       "objective": "Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.",
       "services": [
-        {
-          "serviceId": "azure-functions",
-          "tier": 1,
-          "awsAnalogue": "Lambda",
-          "azureEquivalent": "Azure Functions / Function Apps",
-          "currentStatus": "not-started",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 0,
-            "notStarted": 1
-          },
-          "score": 0.9508,
-          "priority": 49,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "azure-functions.ambiguousRepeatCaptures",
-              "serviceId": "azure-functions",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=azure-functions --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
-          "serviceId": "aks-metadata",
-          "tier": 1,
-          "awsAnalogue": "EKS",
-          "azureEquivalent": "Azure Kubernetes Service",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 44,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "aks-metadata.parameterVarianceCaptures",
-              "serviceId": "aks-metadata",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "11 live ARM captures",
-                "variance cases: empty-body=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
-        {
-          "serviceId": "container-registry",
-          "tier": 1,
-          "awsAnalogue": "ECR",
-          "azureEquivalent": "Azure Container Registry",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 41,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "container-registry.parameterVarianceCaptures",
-              "serviceId": "container-registry",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "11 live ARM captures",
-                "variance cases: empty-body=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=container-registry --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
         {
           "serviceId": "api-management",
           "tier": 1,
@@ -650,127 +371,89 @@
           "workItems": []
         },
         {
+          "serviceId": "azure-functions",
+          "tier": 1,
+          "awsAnalogue": "Lambda",
+          "azureEquivalent": "Azure Functions / Function Apps",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "aks-metadata",
+          "tier": 1,
+          "awsAnalogue": "EKS",
+          "azureEquivalent": "Azure Kubernetes Service",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "container-registry",
+          "tier": 1,
+          "awsAnalogue": "ECR",
+          "azureEquivalent": "Azure Container Registry",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 36,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
           "serviceId": "logic-workflows",
           "tier": 2,
           "awsAnalogue": "Step Functions",
           "azureEquivalent": "Azure Logic Apps / Durable Functions",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9459,
-          "priority": 32,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "logic-workflows.parameterVarianceCaptures",
-              "serviceId": "logic-workflows",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
+          "score": 1,
+          "priority": 27,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "front-door-cdn",
           "tier": 2,
           "awsAnalogue": "CloudFront",
           "azureEquivalent": "Azure Front Door / Azure CDN",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9459,
-          "priority": 29,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "front-door-cdn.parameterVarianceCaptures",
-              "serviceId": "front-door-cdn",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "21 live ARM captures",
-                "variance cases: empty-body=3, invalid-location=3, missing-api-version=3, valid-minimal=3, not-found=6, empty-list=3",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=front-door-cdn --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
-        {
-          "serviceId": "load-balancing",
-          "tier": 2,
-          "awsAnalogue": "ALB/NLB",
-          "azureEquivalent": "Azure Application Gateway / Load Balancer",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 28,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "load-balancing.parameterVarianceCaptures",
-              "serviceId": "load-balancing",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "service-discovery",
@@ -788,9 +471,26 @@
           "workItemCount": 0,
           "nextDimensions": [],
           "workItems": []
+        },
+        {
+          "serviceId": "load-balancing",
+          "tier": 2,
+          "awsAnalogue": "ALB/NLB",
+          "azureEquivalent": "Azure Application Gateway / Load Balancer",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 23,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 6
+      "workItemCount": 0
     },
     {
       "id": "wave-4-data-platforms",
@@ -815,123 +515,21 @@
           "workItems": []
         },
         {
-          "serviceId": "redis-cache",
-          "tier": 2,
-          "awsAnalogue": "ElastiCache Redis",
-          "azureEquivalent": "Azure Cache for Redis",
-          "currentStatus": "not-started",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 0,
-            "notStarted": 1
-          },
-          "score": 0.9508,
-          "priority": 30,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "ambiguousRepeatCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "redis-cache.ambiguousRepeatCaptures",
-              "serviceId": "redis-cache",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=redis-cache --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
           "serviceId": "synapse-warehouse",
           "tier": 2,
           "awsAnalogue": "Redshift",
           "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9459,
-          "priority": 27,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "synapse-warehouse.parameterVarianceCaptures",
-              "serviceId": "synapse-warehouse",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=synapse-warehouse --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
-        {
-          "serviceId": "database-migration-service",
-          "tier": 2,
-          "awsAnalogue": "DMS",
-          "azureEquivalent": "Azure Database Migration Service",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 25,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "database-migration-service.parameterVarianceCaptures",
-              "serviceId": "database-migration-service",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
+          "score": 1,
+          "priority": 22,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "mysql-flexible-server",
@@ -949,9 +547,43 @@
           "workItemCount": 0,
           "nextDimensions": [],
           "workItems": []
+        },
+        {
+          "serviceId": "redis-cache",
+          "tier": 2,
+          "awsAnalogue": "ElastiCache Redis",
+          "azureEquivalent": "Azure Cache for Redis",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "database-migration-service",
+          "tier": 2,
+          "awsAnalogue": "DMS",
+          "azureEquivalent": "Azure Database Migration Service",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 3
+      "workItemCount": 0
     },
     {
       "id": "wave-5-networking-observability-and-dns",
@@ -976,47 +608,6 @@
           "workItems": []
         },
         {
-          "serviceId": "monitor-metrics-alerts",
-          "tier": 1,
-          "awsAnalogue": "CloudWatch Metrics/Alarms",
-          "azureEquivalent": "Azure Monitor metrics and alerts",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
-            "notStarted": 0
-          },
-          "score": 0.9459,
-          "priority": 34,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "parameterVarianceCaptures"
-          ],
-          "workItems": [
-            {
-              "id": "monitor-metrics-alerts.parameterVarianceCaptures",
-              "serviceId": "monitor-metrics-alerts",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2",
-                null
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=monitor-metrics-alerts --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            }
-          ]
-        },
-        {
           "serviceId": "virtual-network",
           "tier": 1,
           "awsAnalogue": "VPC",
@@ -1029,6 +620,23 @@
           },
           "score": 1,
           "priority": 30,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "monitor-metrics-alerts",
+          "tier": 1,
+          "awsAnalogue": "CloudWatch Metrics/Alarms",
+          "azureEquivalent": "Azure Monitor metrics and alerts",
+          "currentStatus": "99-ready",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
           "workItemCount": 0,
           "nextDimensions": [],
           "workItems": []
@@ -1051,44 +659,12 @@
           "workItems": []
         }
       ],
-      "workItemCount": 1
+      "workItemCount": 0
     }
   ],
   "prioritizedServices": [
     {
       "rank": 1,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "azure-functions",
-      "tier": 1,
-      "score": 0.9508,
-      "priority": 49,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 0,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "ambiguousRepeatCaptures"
-      ]
-    },
-    {
-      "rank": 2,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "event-grid",
-      "tier": 1,
-      "score": 0.9459,
-      "priority": 46,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 3,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "cosmos-nosql-table",
       "tier": 1,
@@ -1102,23 +678,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 4,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "aks-metadata",
-      "tier": 1,
-      "score": 0.9459,
-      "priority": 44,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 5,
+      "rank": 2,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "blob-storage",
       "tier": 1,
@@ -1132,23 +692,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 6,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "key-vault-secrets",
-      "tier": 1,
-      "score": 0.9459,
-      "priority": 43,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 7,
+      "rank": 3,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "service-bus-topics",
       "tier": 1,
@@ -1162,23 +706,21 @@
       "nextDimensions": []
     },
     {
-      "rank": 8,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "container-registry",
+      "rank": 4,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-grid",
       "tier": 1,
-      "score": 0.9459,
+      "score": 1,
       "priority": 41,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
+      "nextDimensions": []
     },
     {
-      "rank": 9,
+      "rank": 5,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "api-management",
       "tier": 1,
@@ -1192,23 +734,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 10,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "azure-files",
-      "tier": 2,
-      "score": 0.9508,
-      "priority": 39,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 0,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "ambiguousRepeatCaptures"
-      ]
-    },
-    {
-      "rank": 11,
+      "rank": 6,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-keys",
       "tier": 1,
@@ -1222,7 +748,35 @@
       "nextDimensions": []
     },
     {
-      "rank": 12,
+      "rank": 7,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "azure-functions",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 8,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "aks-metadata",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 9,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-logs",
       "tier": 1,
@@ -1236,7 +790,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 13,
+      "rank": 10,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "identity-rbac",
       "tier": 1,
@@ -1250,56 +804,35 @@
       "nextDimensions": []
     },
     {
-      "rank": 14,
-      "waveId": "wave-1-official-emulator-and-storage-family",
-      "serviceId": "queue-storage",
-      "tier": 2,
-      "score": 0.9189,
-      "priority": 37,
-      "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "ambiguousRepeatCaptures"
-      ]
-    },
-    {
-      "rank": 15,
-      "waveId": "wave-5-networking-observability-and-dns",
-      "serviceId": "monitor-metrics-alerts",
+      "rank": 11,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-secrets",
       "tier": 1,
-      "score": 0.9459,
-      "priority": 34,
+      "score": 1,
+      "priority": 38,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
+      "nextDimensions": []
     },
     {
-      "rank": 16,
+      "rank": 12,
       "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "logic-workflows",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 32,
+      "serviceId": "container-registry",
+      "tier": 1,
+      "score": 1,
+      "priority": 36,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
+      "nextDimensions": []
     },
     {
-      "rank": 17,
+      "rank": 13,
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
@@ -1313,55 +846,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 18,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "waf-policy",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 31,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 19,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "activity-log-audit",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 31,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 20,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "redis-cache",
-      "tier": 2,
-      "score": 0.9508,
-      "priority": 30,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 0,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "ambiguousRepeatCaptures"
-      ]
-    },
-    {
-      "rank": 21,
+      "rank": 14,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "virtual-network",
       "tier": 1,
@@ -1375,7 +860,35 @@
       "nextDimensions": []
     },
     {
-      "rank": 22,
+      "rank": 15,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "queue-storage",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 16,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "azure-files",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 17,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-hubs-streams",
       "tier": 2,
@@ -1389,7 +902,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 23,
+      "rank": 18,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "app-configuration-parameters",
       "tier": 2,
@@ -1403,71 +916,77 @@
       "nextDimensions": []
     },
     {
-      "rank": 24,
+      "rank": 19,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-metrics-alerts",
+      "tier": 1,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 20,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "logic-workflows",
+      "tier": 2,
+      "score": 1,
+      "priority": 27,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 21,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "waf-policy",
+      "tier": 2,
+      "score": 1,
+      "priority": 26,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "activity-log-audit",
+      "tier": 2,
+      "score": 1,
+      "priority": 26,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 23,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "front-door-cdn",
       "tier": 2,
-      "score": 0.9459,
-      "priority": 29,
+      "score": 1,
+      "priority": 24,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
+      "nextDimensions": []
     },
     {
-      "rank": 25,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "load-balancing",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 28,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 26,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "synapse-warehouse",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 27,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 27,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "database-migration-service",
-      "tier": 2,
-      "score": 0.9459,
-      "priority": 25,
-      "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures"
-      ]
-    },
-    {
-      "rank": 28,
+      "rank": 24,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "service-discovery",
       "tier": 2,
@@ -1481,9 +1000,65 @@
       "nextDimensions": []
     },
     {
-      "rank": 29,
+      "rank": 25,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
+      "tier": 2,
+      "score": 1,
+      "priority": 23,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 26,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "synapse-warehouse",
+      "tier": 2,
+      "score": 1,
+      "priority": 22,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 27,
       "waveId": "wave-4-data-platforms",
       "serviceId": "mysql-flexible-server",
+      "tier": 2,
+      "score": 1,
+      "priority": 20,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 28,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "redis-cache",
+      "tier": 2,
+      "score": 1,
+      "priority": 20,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 29,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "database-migration-service",
       "tier": 2,
       "score": 1,
       "priority": 20,
@@ -1510,13 +1085,7 @@
     }
   ],
   "workItemSummary": {
-    "byAction": {
-      "complete": 14,
-      "start": 3
-    },
-    "byDimension": {
-      "parameterVarianceCaptures": 13,
-      "ambiguousRepeatCaptures": 4
-    }
+    "byAction": {},
+    "byDimension": {}
   }
 }

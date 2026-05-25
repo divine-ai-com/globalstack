@@ -1,6 +1,6 @@
 {
   "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T16:01:43.959Z",
+  "capturedAt": "2026-05-25T13:21:47.851Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,35 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d031115367/providers/Microsoft.Logic/workflows/workflow-d031115367?api-version=2019-05-01",
     "body": {
       "location": "globalstack-invalid-location",
-      "properties": {}
-    }
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {}
+              }
+            }
+          },
+          "actions": {},
+          "outputs": {}
+        },
+        "parameters": {}
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "04929667-e992-476e-b188-02ee4004fbee",
-      "x-ms-request-id": "04929667-e992-476e-b188-02ee4004fbee",
-      "x-ms-routing-request-id": "EASTUS:20260516T160142Z:04929667-e992-476e-b188-02ee4004fbee"
+      "x-ms-correlation-request-id": "43f177bc-6a67-4d62-aeaf-6f3a7d2b86f1",
+      "x-ms-request-id": "43f177bc-6a67-4d62-aeaf-6f3a7d2b86f1",
+      "x-ms-routing-request-id": "EASTUS:20260525T132141Z:43f177bc-6a67-4d62-aeaf-6f3a7d2b86f1"
     },
     "body": {
       "error": {

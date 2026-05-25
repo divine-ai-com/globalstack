@@ -1,6 +1,6 @@
 # Azure Storage Data-Plane Capture Wave 1
 
-Captured: 2026-05-16T13:11:15.656Z
+Captured: 2026-05-25T14:39:01.155Z
 Cleanup verified: yes
 
 This report records real Azure Blob/Queue data-plane behavior for the first storage hardening wave. It does not mark storage as `cloudValidated`; mismatches remain explicit gaps until normalized into local expectations.

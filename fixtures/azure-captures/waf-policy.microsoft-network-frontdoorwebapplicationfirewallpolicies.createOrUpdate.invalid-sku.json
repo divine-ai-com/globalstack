@@ -1,0 +1,69 @@
+{
+  "id": "waf-policy.microsoft-network-frontdoorwebapplicationfirewallpolicies.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-25T13:28:54.219Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-97ddccf936/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{FrontDoorWebApplicationFirewallPoliciesName}?api-version=2023-09-01",
+    "body": {
+      "location": "global",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "policySettings": {
+          "enabledState": "Enabled",
+          "mode": "Prevention",
+          "requestBodyCheck": "Enabled"
+        },
+        "customRules": {
+          "rules": []
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "Microsoft_DefaultRuleSet",
+              "ruleSetVersion": "2.1"
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9c886953-3efc-49b0-82da-1c934fb39704",
+      "x-ms-request-id": "9c886953-3efc-49b0-82da-1c934fb39704",
+      "x-ms-routing-request-id": "EASTUS:20260525T132853Z:9c886953-3efc-49b0-82da-1c934fb39704"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'global' and API version '2023-09-01' for type 'frontdoorWebApplicationFirewallPolicies'. The supported api-versions are '2018-08-01, 2019-03-01, 2019-10-01, 2020-04-01, 2020-11-01, 2022-05-01, 2024-02-01, 2025-01-01-preview, 2025-03-01, 2025-05-16-preview, 2025-10-01, 2025-11-01'. The supported locations are 'global, centralus, eastus, eastus2, northcentralus, southcentralus, westus, northeurope, westeurope, eastasia, southeastasia, japaneast, japanwest, brazilsouth, australiaeast, australiasoutheast'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-97ddccf936",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

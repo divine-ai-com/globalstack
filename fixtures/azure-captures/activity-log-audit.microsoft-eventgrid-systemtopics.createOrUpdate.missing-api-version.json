@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T15:50:35.843Z",
+  "capturedAt": "2026-05-25T13:31:06.302Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "8c9511e2-b39d-4abc-88f8-3c64cc7c237e",
-      "x-ms-request-id": "8c9511e2-b39d-4abc-88f8-3c64cc7c237e",
-      "x-ms-routing-request-id": "EASTUS:20260516T155029Z:8c9511e2-b39d-4abc-88f8-3c64cc7c237e"
+      "x-ms-correlation-request-id": "cc5e53eb-6063-4cc5-b222-c38c6b424639",
+      "x-ms-request-id": "cc5e53eb-6063-4cc5-b222-c38c6b424639",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133104Z:cc5e53eb-6063-4cc5-b222-c38c6b424639"
     },
     "body": {
       "error": {

@@ -1,6 +1,6 @@
 {
   "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T15:45:48.132Z",
+  "capturedAt": "2026-05-25T13:26:43.572Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -16,22 +16,30 @@
       "location": "globalstack-invalid-location",
       "properties": {
         "policySettings": {
-          "enabledState": "Enabled",
-          "mode": "Prevention"
+          "state": "Enabled",
+          "mode": "Prevention",
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128
         },
         "managedRules": {
-          "managedRuleSets": []
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.2"
+            }
+          ]
         }
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "61d509ce-0cfc-49b3-a4c6-269b3e150864",
-      "x-ms-request-id": "61d509ce-0cfc-49b3-a4c6-269b3e150864",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T154541Z:61d509ce-0cfc-49b3-a4c6-269b3e150864"
+      "x-ms-correlation-request-id": "2009c525-f624-45ad-9bc7-5abcb0604ac1",
+      "x-ms-request-id": "2009c525-f624-45ad-9bc7-5abcb0604ac1",
+      "x-ms-routing-request-id": "EASTUS:20260525T132641Z:2009c525-f624-45ad-9bc7-5abcb0604ac1"
     },
     "body": {
       "error": {

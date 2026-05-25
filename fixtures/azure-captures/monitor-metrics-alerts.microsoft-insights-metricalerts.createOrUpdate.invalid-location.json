@@ -1,6 +1,6 @@
 {
   "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T20:15:14.798Z",
+  "capturedAt": "2026-05-25T13:15:51.861Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "b6cd108f-3aef-4094-b9b3-777f3353dc79",
-      "x-ms-request-id": "b6cd108f-3aef-4094-b9b3-777f3353dc79",
-      "x-ms-routing-request-id": "EASTUS:20260516T201513Z:b6cd108f-3aef-4094-b9b3-777f3353dc79"
+      "x-ms-correlation-request-id": "0157e087-4552-4655-bdeb-2c4d845f1da2",
+      "x-ms-request-id": "0157e087-4552-4655-bdeb-2c4d845f1da2",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T131545Z:0157e087-4552-4655-bdeb-2c4d845f1da2"
     },
     "body": {
       "error": {

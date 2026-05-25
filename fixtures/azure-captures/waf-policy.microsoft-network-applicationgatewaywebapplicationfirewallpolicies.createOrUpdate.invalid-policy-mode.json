@@ -1,0 +1,70 @@
+{
+  "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.invalid-policy-mode",
+  "capturedAt": "2026-05-25T13:27:35.771Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-policy-mode",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4afdd0046c/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-4afdd0046c?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "policySettings": {
+          "state": "Enabled",
+          "mode": "Enforce",
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.2"
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "218210d0-a58e-46bf-9cb0-c9024b5108ed",
+      "x-ms-request-id": "e3a4a13b-8a7a-45a9-8f61-55e0f1627575",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T132729Z:218210d0-a58e-46bf-9cb0-c9024b5108ed"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestFormat",
+        "message": "Cannot parse the request.",
+        "details": [
+          {
+            "code": "InvalidJson",
+            "message": "Error converting value \"Enforce\" to type 'Microsoft.WindowsAzure.Networking.Nrp.Frontend.Contract.Csm.Public.ApplicationGatewayWebApplicationFirewallPolicyMode'. Path 'properties.policySettings.mode', line 1, position 87."
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4afdd0046c",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

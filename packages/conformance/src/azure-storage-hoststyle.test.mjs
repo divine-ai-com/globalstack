@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { request } from 'node:http';
 import { test } from 'node:test';
-import { createBlobStorageServer, createStorageDataPlaneRouter } from '../../azure-data-plane/src/storage-router.mjs';
+import {
+  createBlobStorageServer,
+  createQueueStorageServer,
+  createStorageDataPlaneRouter,
+} from '../../azure-data-plane/src/storage-router.mjs';
 
 function canonicalizedHeaders(headers) {
   return Object.entries(headers)
@@ -255,6 +259,61 @@ test('blob server accepts service SAS reads on host-style package paths', async 
     });
     assert.equal(head.status, 200);
     assert.equal(head.headers['x-ms-blob-type'], 'BlockBlob');
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+});
+
+test('queue server preserves a bounded stale-read window after delete on host-style paths', async () => {
+  const router = createStorageDataPlaneRouter();
+  const accountName = 'queuestaleacct';
+  const accountKey = 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==';
+  router.registerStorageAccount({ accountName, accountKey });
+  router.registerQueue({ accountName, queueName: 'jobs' });
+  const server = createQueueStorageServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+
+  try {
+    const put = await storageRequest(port, {
+      method: 'POST',
+      host: `${accountName}.queue.core.windows.net`,
+      path: '/jobs/messages',
+      accountName,
+      accountKey,
+      body: '<QueueMessage><MessageText>cmVhZHk=</MessageText></QueueMessage>',
+      extraHeaders: { 'content-type': 'application/xml' },
+    });
+    assert.equal(put.status, 201);
+
+    const peek = await storageRequest(port, {
+      method: 'GET',
+      host: `${accountName}.queue.core.windows.net`,
+      path: '/jobs/messages?peekonly=true&numofmessages=1',
+      accountName,
+      accountKey,
+    });
+    assert.equal(peek.status, 200);
+    assert.match(peek.body.toString('utf8'), /QueueMessagesList/);
+
+    const del = await storageRequest(port, {
+      method: 'DELETE',
+      host: `${accountName}.queue.core.windows.net`,
+      path: '/jobs',
+      accountName,
+      accountKey,
+    });
+    assert.equal(del.status, 204);
+
+    const stalePeek = await storageRequest(port, {
+      method: 'GET',
+      host: `${accountName}.queue.core.windows.net`,
+      path: '/jobs/messages?peekonly=true&numofmessages=1',
+      accountName,
+      accountKey,
+    });
+    assert.equal(stalePeek.status, 200);
+    assert.match(stalePeek.body.toString('utf8'), /QueueMessagesList/);
   } finally {
     await new Promise(resolve => server.close(resolve));
   }

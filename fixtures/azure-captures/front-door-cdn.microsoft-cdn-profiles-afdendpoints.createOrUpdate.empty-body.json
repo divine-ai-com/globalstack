@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:13:16.072Z",
+  "capturedAt": "2026-05-25T13:35:39.781Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ba526a325f/providers/Microsoft.Cdn/profiles/cdn-ba526a325f/afdEndpoints/afd-ba526a325f?api-version=2024-02-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "d90af1f3-ce93-4c10-8687-c439ff7aad49",
-      "x-ms-request-id": "d90af1f3-ce93-4c10-8687-c439ff7aad49",
-      "x-ms-routing-request-id": "EASTUS:20260516T161309Z:d90af1f3-ce93-4c10-8687-c439ff7aad49"
+      "x-ms-correlation-request-id": "b1dec01f-70f0-4fd3-8556-5722284a4292",
+      "x-ms-request-id": "b1dec01f-70f0-4fd3-8556-5722284a4292",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T133533Z:b1dec01f-70f0-4fd3-8556-5722284a4292"
     },
     "body": {
       "error": {

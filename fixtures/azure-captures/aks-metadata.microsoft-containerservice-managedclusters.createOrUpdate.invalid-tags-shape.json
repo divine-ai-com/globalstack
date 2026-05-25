@@ -1,6 +1,6 @@
 {
   "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.invalid-tags-shape",
-  "capturedAt": "2026-05-25T12:08:06.903Z",
+  "capturedAt": "2026-05-25T13:03:28.330Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -23,9 +23,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "4d134d34-f781-4d61-88e8-f134ccc19ea7",
-      "x-ms-request-id": "4d134d34-f781-4d61-88e8-f134ccc19ea7",
-      "x-ms-routing-request-id": "WESTINDIA:20260525T120805Z:4d134d34-f781-4d61-88e8-f134ccc19ea7"
+      "x-ms-correlation-request-id": "cb93ddef-45a3-4a88-9f34-dd6b226522a9",
+      "x-ms-request-id": "cb93ddef-45a3-4a88-9f34-dd6b226522a9",
+      "x-ms-routing-request-id": "EASTUS:20260525T130321Z:cb93ddef-45a3-4a88-9f34-dd6b226522a9"
     },
     "body": {
       "error": {

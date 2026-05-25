@@ -1,6 +1,6 @@
 {
   "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T15:45:28.602Z",
+  "capturedAt": "2026-05-25T13:26:22.540Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -16,33 +16,61 @@
       "location": "{location}",
       "properties": {
         "policySettings": {
-          "enabledState": "Enabled",
-          "mode": "Prevention"
+          "state": "Enabled",
+          "mode": "Prevention",
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128
         },
         "managedRules": {
-          "managedRuleSets": []
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.2"
+            }
+          ]
         }
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
-    "status": 400,
+    "status": 201,
     "headers": {
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.Network/locations/eastus/operations/95160398-bad1-43d9-80fd-3741c6cbd316?api-version=2023-09-01&redacted=true",
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "2705bfb9-a43c-4caf-a83a-39ca76684dcd",
-      "x-ms-request-id": "5aecdff9-0845-415c-bb76-ae34f879c740",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260516T154527Z:2705bfb9-a43c-4caf-a83a-39ca76684dcd"
+      "x-ms-correlation-request-id": "0466afd5-05ea-4af2-b5af-ee06059b7a4a",
+      "x-ms-request-id": "95160398-bad1-43d9-80fd-3741c6cbd316",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T132519Z:0466afd5-05ea-4af2-b5af-ee06059b7a4a"
     },
     "body": {
-      "error": {
-        "code": "InvalidRequestFormat",
-        "message": "Cannot parse the request.",
-        "details": [
-          {
-            "code": "InvalidJson",
-            "message": "Could not find member 'enabledState' on object of type 'ApplicationGatewayWebApplicationFirewallPolicySettings'. Path 'properties.policySettings.enabledState', line 1, position 68."
-          }
-        ]
+      "name": "waf-f6cf77d66b",
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f6cf77d66b/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-f6cf77d66b",
+      "etag": "W/\"64751e58-898e-4e8b-8217-eea9e107f098\"",
+      "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "location": "eastus",
+      "properties": {
+        "provisioningState": "Updating",
+        "customRules": [],
+        "policySettings": {
+          "requestBodyCheck": true,
+          "maxRequestBodySizeInKb": 128,
+          "fileUploadLimitInMb": 100,
+          "state": "Enabled",
+          "mode": "Prevention",
+          "requestBodyInspectLimitInKB": 128,
+          "fileUploadEnforcement": true,
+          "requestBodyEnforcement": true
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "OWASP",
+              "ruleSetVersion": "3.2",
+              "ruleGroupOverrides": []
+            }
+          ],
+          "exclusions": []
+        }
       }
     }
   },
@@ -54,9 +82,9 @@
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "provider-accepted",
     "cloudValidated": false,
     "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
   }
 }

@@ -5,7 +5,7 @@
   "fixtureSummaries": [
     {
       "id": "storage-data-plane-blob-queue-wave-1",
-      "capturedAt": "2026-05-16T13:11:15.656Z",
+      "capturedAt": "2026-05-25T14:39:01.155Z",
       "caseCount": 32,
       "mismatchCount": 4,
       "cleanupVerified": true
@@ -201,7 +201,9 @@
         "azureStatus": 400,
         "azureErrorCode": "MissingRequiredHeader",
         "azuriteStatus": 400,
-        "azuriteErrorCode": null
+        "azuriteErrorCode": null,
+        "observedContinueThroughMs": null,
+        "observedGoneByMs": null
       }
     },
     {
@@ -241,7 +243,9 @@
         "azureStatus": 401,
         "azureErrorCode": "NoAuthenticationInformation",
         "azuriteStatus": 403,
-        "azuriteErrorCode": "AuthorizationFailure"
+        "azuriteErrorCode": "AuthorizationFailure",
+        "observedContinueThroughMs": null,
+        "observedGoneByMs": null
       }
     },
     {
@@ -503,7 +507,9 @@
         "azureStatus": 400,
         "azureErrorCode": "InvalidXmlDocument",
         "azuriteStatus": 400,
-        "azuriteErrorCode": null
+        "azuriteErrorCode": null,
+        "observedContinueThroughMs": null,
+        "observedGoneByMs": null
       }
     },
     {
@@ -580,12 +586,14 @@
         "matchesErrorCode": false
       },
       "globalstackNormalization": {
-        "status": "needs-repeat-capture",
+        "status": "implemented",
         "sourceFixture": "fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json",
         "azureStatus": 200,
         "azureErrorCode": null,
         "azuriteStatus": 404,
-        "azuriteErrorCode": "QueueNotFound"
+        "azuriteErrorCode": "QueueNotFound",
+        "observedContinueThroughMs": 2000,
+        "observedGoneByMs": 2500
       }
     }
   ],

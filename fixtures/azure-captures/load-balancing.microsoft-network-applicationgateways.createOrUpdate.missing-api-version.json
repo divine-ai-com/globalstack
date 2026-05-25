@@ -1,6 +1,6 @@
 {
   "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:32:12.725Z",
+  "capturedAt": "2026-05-25T13:38:29.471Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,105 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3a16bc6d54/providers/Microsoft.Network/applicationGateways/agw-3a16bc6d54",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "sku": {
+        "name": "Standard_v2",
+        "tier": "Standard_v2",
+        "capacity": 1
+      },
+      "properties": {
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "http",
+            "properties": {
+              "port": 80
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "backend",
+            "properties": {
+              "backendAddresses": [
+                {
+                  "ipAddress": "10.73.1.10"
+                }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "httpSettings",
+            "properties": {
+              "port": 80,
+              "protocol": "Http",
+              "cookieBasedAffinity": "Disabled"
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "listener",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+              },
+              "frontendPort": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+              },
+              "protocol": "Http"
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "name": "rule",
+            "properties": {
+              "ruleType": "Basic",
+              "priority": 100,
+              "httpListener": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+              },
+              "backendAddressPool": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+              },
+              "backendHttpSettings": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "98df4dfb-296c-4d91-b134-c52b3c65e229",
-      "x-ms-request-id": "98df4dfb-296c-4d91-b134-c52b3c65e229",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T163205Z:98df4dfb-296c-4d91-b134-c52b3c65e229"
+      "x-ms-correlation-request-id": "d2a08742-9417-45b6-b5ef-2ff7defa8c17",
+      "x-ms-request-id": "d2a08742-9417-45b6-b5ef-2ff7defa8c17",
+      "x-ms-routing-request-id": "EASTUS:20260525T133822Z:d2a08742-9417-45b6-b5ef-2ff7defa8c17"
     },
     "body": {
       "error": {

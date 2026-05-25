@@ -1,6 +1,7 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 
 function nowUtc() {
   return new Date().toUTCString();
@@ -262,6 +263,7 @@ function queueMessagesXml(messages) {
 export class StorageDataPlaneRouter {
   constructor() {
     this.accounts = new Map();
+    this.queueDeleteTracker = new QueueDeleteStaleReadTracker();
   }
 
   account(accountName) {
@@ -303,6 +305,7 @@ export class StorageDataPlaneRouter {
   registerQueue({ accountName, queueName }) {
     const account = this.account(accountName);
     if (!account) throw new Error(`Storage account ${accountName} is not registered.`);
+    this.queueDeleteTracker.clear({ accountName, queueName });
     if (!account.queues.has(lower(queueName))) {
       account.queues.set(lower(queueName), { queueName, messages: [] });
     }
@@ -310,6 +313,7 @@ export class StorageDataPlaneRouter {
 
   unregisterQueue({ accountName, queueName }) {
     const account = this.account(accountName);
+    this.queueDeleteTracker.clear({ accountName, queueName });
     account?.queues.delete(lower(queueName));
   }
 
@@ -427,7 +431,20 @@ export class StorageDataPlaneRouter {
       const segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
       const queueName = segments[0];
       const queue = account.queues.get(lower(queueName));
-      if (!queue) return sendXmlError(res, 404, 'QueueNotFound', 'The specified queue does not exist.', requestId);
+      if (!queue) {
+        if (req.method === 'GET' && segments[1]?.toLowerCase() === 'messages' && url.searchParams.get('peekonly') === 'true') {
+          const staleBody = this.queueDeleteTracker.readAfterDelete({ accountName, queueName });
+          if (staleBody !== null) {
+            return send(res, 200, staleBody, {
+              'content-type': 'application/xml',
+              'x-ms-request-id': requestId,
+              'x-ms-version': '2023-11-03',
+              date: nowUtc(),
+            });
+          }
+        }
+        return sendXmlError(res, 404, 'QueueNotFound', 'The specified queue does not exist.', requestId);
+      }
 
       if (req.method === 'POST' && segments[1]?.toLowerCase() === 'messages') {
         const body = await readBody(req);
@@ -453,8 +470,24 @@ export class StorageDataPlaneRouter {
       }
 
       if (req.method === 'GET' && segments[1]?.toLowerCase() === 'messages' && url.searchParams.get('peekonly') === 'true') {
-        return send(res, 200, queueMessagesXml(queue.messages.slice(0, Number(url.searchParams.get('numofmessages') ?? 1))), {
+        const responseBody = queueMessagesXml(queue.messages.slice(0, Number(url.searchParams.get('numofmessages') ?? 1)));
+        this.queueDeleteTracker.recordPeek({ accountName, queueName, body: responseBody });
+        return send(res, 200, responseBody, {
           'content-type': 'application/xml',
+          'x-ms-request-id': requestId,
+          'x-ms-version': '2023-11-03',
+          date: nowUtc(),
+        });
+      }
+
+      if (req.method === 'DELETE' && segments.length === 1) {
+        this.queueDeleteTracker.armDelete({
+          accountName,
+          queueName,
+          body: queue.messages.length > 0 ? queueMessagesXml(queue.messages.slice(0, 1)) : null,
+        });
+        account.queues.delete(lower(queueName));
+        return send(res, 204, '', {
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),

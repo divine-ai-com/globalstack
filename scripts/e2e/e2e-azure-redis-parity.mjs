@@ -104,7 +104,7 @@ async function withLocalRedis(fn) {
 
   try {
     for (let attempt = 0; attempt < 60; attempt += 1) {
-      const ready = await redis(containerName, ['PING'], { timeoutMs: 10000 });
+      const ready = await redis(containerName, ['PING'], { timeoutMs: 10000, expectCode: 1 });
       if (ready.stdout.trim() === 'PONG') return await fn({ containerName });
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
@@ -354,6 +354,14 @@ async function runControlPlaneMatrix() {
       const result = await redis(containerName, ['GET', 'robot:arm:1']);
       assert.equal(result.stdout.trim(), 'ready');
       return { status: 0, value: result.stdout.trim() };
+    });
+
+    await record('local redis backing string get stays stable across repeated reads', async () => {
+      const first = await redis(containerName, ['GET', 'robot:arm:1']);
+      const second = await redis(containerName, ['GET', 'robot:arm:1']);
+      assert.equal(first.stdout.trim(), 'ready');
+      assert.equal(second.stdout.trim(), first.stdout.trim());
+      return { status: 0, value: second.stdout.trim() };
     });
 
     await record('local redis backing integer increment succeeds', async () => {

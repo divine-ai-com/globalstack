@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:13:27.492Z",
+  "capturedAt": "2026-05-25T13:36:17.076Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,30 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-22be411fd8/providers/Microsoft.Cdn/profiles/cdn-22be411fd8/endpoints/endpoint-22be411fd8?api-version=2024-02-01",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "origins": [
+          {
+            "name": "origin1",
+            "properties": {
+              "hostName": "example.org",
+              "httpPort": 80,
+              "httpsPort": 443
+            }
+          }
+        ],
+        "isHttpAllowed": true,
+        "isHttpsAllowed": true
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "a3ac6ec0-6887-4887-bf57-ab9936b5086e",
-      "x-ms-request-id": "a3ac6ec0-6887-4887-bf57-ab9936b5086e",
-      "x-ms-routing-request-id": "WESTINDIA:20260516T161320Z:a3ac6ec0-6887-4887-bf57-ab9936b5086e"
+      "x-ms-correlation-request-id": "4ec0ea99-371b-4acf-b71c-7fe01cd6bc83",
+      "x-ms-request-id": "4ec0ea99-371b-4acf-b71c-7fe01cd6bc83",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T133610Z:4ec0ea99-371b-4acf-b71c-7fe01cd6bc83"
     },
     "body": {
       "error": {

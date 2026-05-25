@@ -1,6 +1,6 @@
 {
   "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:12:59.508Z",
+  "capturedAt": "2026-05-25T13:35:10.385Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -14,16 +14,19 @@
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-45929a0ea9/providers/Microsoft.Cdn/profiles/cdn-45929a0ea9/afdEndpoints/afd-45929a0ea9",
     "body": {
       "location": "{location}",
-      "properties": {}
-    }
+      "properties": {
+        "enabledState": "Enabled"
+      }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "f348c897-76af-4499-92ff-39aaccdda682",
-      "x-ms-request-id": "f348c897-76af-4499-92ff-39aaccdda682",
-      "x-ms-routing-request-id": "WESTINDIA:20260516T161257Z:f348c897-76af-4499-92ff-39aaccdda682"
+      "x-ms-correlation-request-id": "358f0360-1177-47d9-930d-e8d1410ecd66",
+      "x-ms-request-id": "358f0360-1177-47d9-930d-e8d1410ecd66",
+      "x-ms-routing-request-id": "EASTUS:20260525T133509Z:358f0360-1177-47d9-930d-e8d1410ecd66"
     },
     "body": {
       "error": {

@@ -164,7 +164,7 @@ if (!parityRoadmapText) {
     (sum, value) => sum + Number(value ?? 0),
     0,
   );
-  if (unresolvedWorkItemCount <= 0 || (parityRoadmap._meta?.workItemCount ?? 0) < unresolvedWorkItemCount) {
+  if ((parityRoadmap._meta?.workItemCount ?? 0) !== unresolvedWorkItemCount) {
     errors.push('Azure 99% roadmap should track unresolved work items across all services and dimensions');
   }
   const firstWave = parityRoadmap.waves?.find(wave => wave.id === 'wave-1-official-emulator-and-storage-family');
@@ -538,8 +538,11 @@ if (!storageDataPlaneExpectationsText) {
     }
   }
   const postDelete = storageDataPlaneExpectations.expectations?.find(expectation => expectation.caseId === 'queue-peek-after-delete');
-  if (postDelete?.globalstackNormalization?.status !== 'needs-repeat-capture') {
-    errors.push('Azure Storage data-plane expectation must keep queue-peek-after-delete as needs-repeat-capture');
+  if (postDelete?.globalstackNormalization?.status !== 'implemented') {
+    errors.push('Azure Storage data-plane expectation must mark queue-peek-after-delete as implemented by the GlobalStack normalizer');
+  }
+  if (postDelete?.globalstackNormalization?.observedContinueThroughMs !== 2000 || postDelete?.globalstackNormalization?.observedGoneByMs !== 2500) {
+    errors.push('Azure Storage data-plane expectation must preserve the observed queue delete stale-read window (2000ms stale, 2500ms gone)');
   }
 }
 
@@ -616,15 +619,16 @@ if (!storageNormalizerText) {
     'proxy normalizes missing blob type to Azure',
     'proxy normalizes unauthenticated blob get to Azure',
     'proxy normalizes malformed queue XML to Azure',
-    'queue peek after delete remains unnormalized gap',
+    'proxy normalizes queue peek after delete to bounded Azure stale-read window',
+    'queue peek after bounded stale-read window expires',
   ];
   for (const step of requiredNormalizerSteps) {
     if (!storageNormalizer.steps?.some(item => item.name === step && item.ok === true)) {
       errors.push(`Azure Storage normalizer E2E missing passing step: ${step}`);
     }
   }
-  if (!storageNormalizer.caveat?.includes('Queue peek-after-delete is deliberately unnormalized')) {
-    errors.push('Azure Storage normalizer E2E must preserve the repeat-capture caveat');
+  if (!storageNormalizer.caveat?.includes('bounded stale-read window')) {
+    errors.push('Azure Storage normalizer E2E must preserve the Azure-backed stale-read window caveat');
   }
 }
 

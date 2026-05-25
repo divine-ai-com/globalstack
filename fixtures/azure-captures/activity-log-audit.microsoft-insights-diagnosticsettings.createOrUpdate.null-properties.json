@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.null-properties",
-  "capturedAt": "2026-05-25T12:16:39.234Z",
+  "capturedAt": "2026-05-25T13:30:40.954Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -22,9 +22,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "5cb0b453-2c57-42f5-a264-9aabebd03fe6",
+      "x-ms-correlation-request-id": "3c3c4206-7204-4de0-8f66-7cf5b532cc9f",
       "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260525T121637Z:5cb0b453-2c57-42f5-a264-9aabebd03fe6"
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T133033Z:3c3c4206-7204-4de0-8f66-7cf5b532cc9f"
     },
     "body": {
       "code": "BadRequest",

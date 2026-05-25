@@ -1,0 +1,49 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-activitylogalerts.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:18:54.273Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/activityLogAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-aaced62c4b/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertsName}?api-version=2020-10-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "773543c6-fd7c-4b7e-9918-a37beb781953",
+      "x-ms-request-id": "773543c6-fd7c-4b7e-9918-a37beb781953",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T131853Z:773543c6-fd7c-4b7e-9918-a37beb781953"
+    },
+    "body": {
+      "error": {
+        "code": "LocationNotAvailableForResourceType",
+        "message": "The provided location 'eastus' is not available for resource type 'microsoft.insights/activityLogAlerts'. List of available regions for the resource type is 'global,westeurope,northeurope'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-aaced62c4b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

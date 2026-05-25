@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  QueueDeleteStaleReadTracker,
+  queueDeleteStaleReadObservedGoneByMs,
+  queueDeleteStaleReadObservedThroughMs,
+} from '../../azure-data-plane/src/queue-delete-window.mjs';
+import {
   normalizationRuleById,
   normalizeStorageResponse,
   storageNormalizationRules,
@@ -29,12 +34,15 @@ test('storage normalizer only implements real Azure captured safe mismatch rules
     'blob-get-without-authorization',
     'blob-missing-blob-type-header',
     'queue-malformed-message',
+    'queue-peek-after-delete',
   ]);
 
   const repeatCapture = normalizationRuleById('queue-peek-after-delete');
-  assert.equal(repeatCapture.status, 'needs-repeat-capture');
+  assert.equal(repeatCapture.status, 'implemented');
   assert.equal(repeatCapture.azureStatus, 200);
   assert.equal(repeatCapture.azuriteStatus, 404);
+  assert.equal(repeatCapture.observedContinueThroughMs, queueDeleteStaleReadObservedThroughMs);
+  assert.equal(repeatCapture.observedGoneByMs, queueDeleteStaleReadObservedGoneByMs);
 });
 
 test('blob missing x-ms-blob-type is normalized to the captured Azure error code', () => {
@@ -90,7 +98,24 @@ test('malformed queue message XML is normalized to Azure InvalidXmlDocument', ()
   assert.equal(normalized.response.headers['x-ms-error-code'], 'InvalidXmlDocument');
 });
 
-test('queue peek after delete remains an explicit gap until repeat Azure capture', () => {
+test('queue delete tracker models the bounded Azure stale-read window', () => {
+  let now = 10_000;
+  const tracker = new QueueDeleteStaleReadTracker({ now: () => now });
+  tracker.recordPeek({
+    accountName: 'account',
+    queueName: 'jobs',
+    body: '<QueueMessagesList><QueueMessage><MessageText>cmVhZHk=</MessageText></QueueMessage></QueueMessagesList>',
+  });
+  tracker.armDelete({ accountName: 'account', queueName: 'jobs' });
+
+  now += queueDeleteStaleReadObservedThroughMs;
+  assert.match(tracker.readAfterDelete({ accountName: 'account', queueName: 'jobs' }) ?? '', /QueueMessagesList/);
+
+  now += queueDeleteStaleReadObservedGoneByMs - queueDeleteStaleReadObservedThroughMs;
+  assert.equal(tracker.readAfterDelete({ accountName: 'account', queueName: 'jobs' }), null);
+});
+
+test('queue peek after delete is no longer treated as an unresolved normalization gap', () => {
   const normalized = normalizeStorageResponse({
     service: 'queue',
     request: request({

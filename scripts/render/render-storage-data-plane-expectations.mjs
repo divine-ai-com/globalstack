@@ -63,6 +63,8 @@ for (const entry of entries.filter(name => name.endsWith('.json')).sort()) {
             azureErrorCode: normalizationRule.azureErrorCode,
             azuriteStatus: normalizationRule.azuriteStatus,
             azuriteErrorCode: normalizationRule.azuriteErrorCode,
+            observedContinueThroughMs: normalizationRule.observedContinueThroughMs ?? null,
+            observedGoneByMs: normalizationRule.observedGoneByMs ?? null,
           }
         : null,
     });

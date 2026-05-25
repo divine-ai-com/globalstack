@@ -1,6 +1,6 @@
 {
   "id": "logic-workflows.microsoft-web-sites.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:02:06.474Z",
+  "capturedAt": "2026-05-25T13:24:29.494Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -19,15 +19,16 @@
         "serverFarmId": "{serverFarmId}",
         "httpsOnly": true
       }
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "f70a5528-d7b3-4c7a-ab63-8ddc2cc46756",
-      "x-ms-request-id": "f70a5528-d7b3-4c7a-ab63-8ddc2cc46756",
-      "x-ms-routing-request-id": "EASTUS:20260516T160205Z:f70a5528-d7b3-4c7a-ab63-8ddc2cc46756"
+      "x-ms-correlation-request-id": "4bb8e675-40be-4fae-bec6-a2d7564fc0bd",
+      "x-ms-request-id": "4bb8e675-40be-4fae-bec6-a2d7564fc0bd",
+      "x-ms-routing-request-id": "EASTUS:20260525T132427Z:4bb8e675-40be-4fae-bec6-a2d7564fc0bd"
     },
     "body": {
       "error": {

@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-25T12:17:24.803Z
+Generated: 2026-05-25T14:58:00.677Z
 
 ## Dimensions
 
@@ -24,34 +24,34 @@ Generated: 2026-05-25T12:17:24.803Z
 | Service | Tier | Current Status | Complete | Partial | Not Started | Candidate Calls | Live Captures | Provider Ops |
 |---|---:|---|---:|---:|---:|---:|---:|---:|
 | blob-storage | 1 | 99-ready | 10 | 0 | 0 | 8 | 16 | 232 |
-| azure-functions | 1 | not-started | 9 | 0 | 1 | 8 | 15 | 418 |
+| azure-functions | 1 | 99-ready | 10 | 0 | 0 | 8 | 15 | 418 |
 | api-management | 1 | 99-ready | 10 | 0 | 0 | 8 | 28 | 511 |
 | identity-rbac | 1 | 99-ready | 10 | 0 | 0 | 12 | 39 | 15 |
-| key-vault-secrets | 1 | in-progress | 9 | 1 | 0 | 8 | 15 | 96 |
+| key-vault-secrets | 1 | 99-ready | 10 | 0 | 0 | 8 | 20 | 96 |
 | key-vault-keys | 1 | 99-ready | 10 | 0 | 0 | 8 | 19 | 105 |
 | postgresql-flexible-server | 1 | 99-ready | 10 | 0 | 0 | 8 | 31 | 89 |
 | cosmos-nosql-table | 1 | 99-ready | 10 | 0 | 0 | 16 | 41 | 366 |
 | service-bus-topics | 1 | 99-ready | 10 | 0 | 0 | 12 | 33 | 116 |
-| event-grid | 1 | in-progress | 9 | 1 | 0 | 8 | 14 | 35 |
-| container-registry | 1 | in-progress | 9 | 1 | 0 | 4 | 11 | 118 |
-| aks-metadata | 1 | in-progress | 9 | 1 | 0 | 4 | 11 | 453 |
+| event-grid | 1 | 99-ready | 10 | 0 | 0 | 8 | 20 | 35 |
+| container-registry | 1 | 99-ready | 10 | 0 | 0 | 4 | 12 | 118 |
+| aks-metadata | 1 | 99-ready | 10 | 0 | 0 | 4 | 12 | 453 |
 | monitor-logs | 1 | 99-ready | 10 | 0 | 0 | 8 | 15 | 1013 |
-| monitor-metrics-alerts | 1 | in-progress | 9 | 1 | 0 | 8 | 14 | 12 |
+| monitor-metrics-alerts | 1 | 99-ready | 10 | 0 | 0 | 8 | 31 | 12 |
 | virtual-network | 1 | 99-ready | 10 | 0 | 0 | 12 | 41 | 110 |
 | mysql-flexible-server | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 67 |
-| queue-storage | 2 | in-progress | 8 | 2 | 0 | 8 | 14 | 22 |
-| redis-cache | 2 | not-started | 9 | 0 | 1 | 8 | 17 | 73 |
-| logic-workflows | 2 | in-progress | 9 | 1 | 0 | 8 | 14 | 425 |
+| queue-storage | 2 | 99-ready | 10 | 0 | 0 | 8 | 16 | 22 |
+| redis-cache | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 73 |
+| logic-workflows | 2 | 99-ready | 10 | 0 | 0 | 8 | 20 | 425 |
 | dns-zones | 2 | 99-ready | 10 | 0 | 0 | 84 | 168 | 136 |
-| load-balancing | 2 | in-progress | 9 | 1 | 0 | 8 | 14 | 67 |
-| front-door-cdn | 2 | in-progress | 9 | 1 | 0 | 12 | 21 | 133 |
-| waf-policy | 2 | in-progress | 9 | 1 | 0 | 8 | 14 | 9 |
-| activity-log-audit | 2 | in-progress | 9 | 1 | 0 | 8 | 18 | 15 |
-| azure-files | 2 | not-started | 9 | 0 | 1 | 8 | 17 | 70 |
+| load-balancing | 2 | 99-ready | 10 | 0 | 0 | 8 | 34 | 67 |
+| front-door-cdn | 2 | 99-ready | 10 | 0 | 0 | 12 | 41 | 133 |
+| waf-policy | 2 | 99-ready | 10 | 0 | 0 | 8 | 31 | 9 |
+| activity-log-audit | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 15 |
+| azure-files | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 70 |
 | event-hubs-streams | 2 | 99-ready | 10 | 0 | 0 | 8 | 31 | 93 |
-| synapse-warehouse | 2 | in-progress | 9 | 1 | 0 | 8 | 14 | 244 |
+| synapse-warehouse | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 244 |
 | app-configuration-parameters | 2 | 99-ready | 10 | 0 | 0 | 8 | 18 | 57 |
-| database-migration-service | 2 | in-progress | 9 | 1 | 0 | 8 | 14 | 34 |
+| database-migration-service | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 34 |
 | service-discovery | 2 | 99-ready | 10 | 0 | 0 | 12 | 37 | 131 |
 
 ## blob-storage
@@ -80,7 +80,7 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: Lambda
 - Azure equivalent: Azure Functions / Function Apps
-- Current status: not-started
+- Current status: 99-ready
 - Resource types: Microsoft.Web/sites, Microsoft.Web/serverfarms, Microsoft.Web/sites/functions
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -88,12 +88,12 @@ Generated: 2026-05-25T12:17:24.803Z
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>418 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
 | Parameter variance captures | complete | 15 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-sku=1, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br>service-specific negative variance ids: invalid-sku |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>async or transitional provisioning behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=7, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2<br>e2e:azure-functions-parity asserts 126 status checks, 38 error-code checks, 4 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=7, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2<br>e2e:azure-functions-parity asserts 128 status checks, 38 error-code checks, 4 header checks |  |
 | Identity/RBAC behavior | complete | e2e:azure-functions-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:azure-functions-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:azure-functions-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | e2e:azure-functions-parity is wired into npm run smoke<br>local HTTP-trigger routing, function-key rejection, and post-delete route rejection<br>parity result sections: controlAndDataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 48 registry operations declared<br>backing engines: functions-core-tools, azurite<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## api-management
@@ -143,15 +143,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: Secrets Manager
 - Azure equivalent: Key Vault secrets
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.KeyVault/vaults, Microsoft.KeyVault/vaults/secrets
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>96 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 15 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, unsupported-api-version=1<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 20 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-secret-name=1, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-sku=1, invalid-tags-shape=1, missing-location=1, null-properties=1, unsupported-api-version=1<br>service-specific negative variance ids: invalid-secret-name, invalid-sku |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=6, arm-surface=2, provider-validation=3, subscription-or-provider-readiness=1, provider-accepted=3<br>e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=5, provider-validation=9, arm-surface=2, subscription-or-provider-readiness=1, provider-accepted=3<br>e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -248,15 +248,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: EventBridge
 - Azure equivalent: Event Grid
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.EventGrid/topics, Microsoft.EventGrid/eventSubscriptions
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>35 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 20 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-input-schema=1, invalid-tags-shape=1, missing-location=1, null-properties=1<br>service-specific negative variance ids: invalid-input-schema |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2<br>e2e:event-grid-parity asserts 46 status checks, 29 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=8, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=6, provider-routing-or-parent-validation=2<br>e2e:event-grid-parity asserts 46 status checks, 29 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:event-grid-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:event-grid-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:event-grid-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -269,15 +269,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: ECR
 - Azure equivalent: Azure Container Registry
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.ContainerRegistry/registries
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 4 candidate catalog calls<br>118 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 11 live ARM captures<br>variance cases: empty-body=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 12 live ARM captures<br>variance cases: empty-body=1, invalid-location=1, invalid-registry-name=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1<br>service-specific negative variance ids: invalid-registry-name |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=6, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1<br>e2e:container-registry-parity asserts 43 status checks, 22 error-code checks, 1 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=7, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1<br>e2e:container-registry-parity asserts 43 status checks, 22 error-code checks, 1 header checks |  |
 | Identity/RBAC behavior | complete | e2e:container-registry-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:container-registry-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:container-registry-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -290,15 +290,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: EKS
 - Azure equivalent: Azure Kubernetes Service
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.ContainerService/managedClusters
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 4 candidate catalog calls<br>453 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 11 live ARM captures<br>variance cases: empty-body=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 12 live ARM captures<br>variance cases: empty-body=1, invalid-cluster-name=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1<br>service-specific negative variance ids: invalid-cluster-name |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>async or transitional provisioning behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=6, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1<br>e2e:aks-metadata-parity asserts 52 status checks, 30 error-code checks, 2 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=7, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1<br>e2e:aks-metadata-parity asserts 52 status checks, 30 error-code checks, 2 header checks |  |
 | Identity/RBAC behavior | complete | e2e:aks-metadata-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:aks-metadata-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:aks-metadata-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -332,15 +332,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 1
 - AWS analogue: CloudWatch Metrics/Alarms
 - Azure equivalent: Azure Monitor metrics and alerts
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Insights/metricAlerts, Microsoft.Insights/actionGroups, Microsoft.Insights/activityLogAlerts
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>12 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 31 live ARM captures<br>variance cases: empty-body=3, invalid-group-short-name=1, invalid-location=3, invalid-tags-shape=3, missing-api-version=3, missing-location=3, null-properties=3, unsupported-api-version=3, valid-minimal=3, not-found=4, empty-list=2<br>service-specific negative variance ids: invalid-group-short-name |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2<br>e2e:monitor-metrics-alerts-parity asserts 53 status checks, 22 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=20, arm-surface=3, subscription-or-provider-readiness=2, provider-accepted=4, provider-routing-or-parent-validation=2<br>e2e:monitor-metrics-alerts-parity asserts 53 status checks, 22 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:monitor-metrics-alerts-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:monitor-metrics-alerts-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:monitor-metrics-alerts-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -395,20 +395,20 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: SQS
 - Azure equivalent: Azure Queue Storage / Service Bus queues
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Storage/storageAccounts/queueServices/queues, Microsoft.ServiceBus/namespaces/queues
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>22 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 16 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-max-delivery-count=1, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, unsupported-api-version=1<br>service-specific negative variance ids: invalid-max-delivery-count |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>2 storage lifecycle capture files exist<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>async or transitional provisioning behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=12, arm-surface=2<br>e2e:storage-parity asserts 26 status checks, 13 error-code checks, 3 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=10, provider-validation=3, arm-surface=2, subscription-or-provider-readiness=1<br>e2e:storage-parity asserts 26 status checks, 13 error-code checks, 3 header checks |  |
 | Identity/RBAC behavior | complete | e2e:storage-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack<br>official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage includes explicit data-plane authorization rejection coverage |  |
 | Retry/eventual consistency behavior | complete | 2 storage lifecycle capture files<br>e2e:storage-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>retry-after header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:storage-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | complete | 32 Blob/Queue data-plane expectations<br>e2e:storage-parity is wired into npm run smoke<br>official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage<br>15 official-emulator data-plane hardening checks<br>6 normalization checks<br>queue peek-after-delete remains an explicit normalization/repeat gap<br>parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | partial | queue-peek-after-delete is explicitly marked needs-repeat-capture | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | 32 Blob/Queue data-plane expectations<br>e2e:storage-parity is wired into npm run smoke<br>official-emulator Queue data-plane create/peek/delete/auth plus GlobalStack normalization coverage<br>15 official-emulator data-plane hardening checks<br>8 normalization checks<br>no service-specific repeat caveat is currently recorded for this storage surface<br>parity result sections: controlPlane |  |
+| Repeat captures for ambiguous behavior | complete |  |  |
 | Service-specific local facade/emulator integration | complete | 7 registry operations declared<br>backing engines: azurite, service-bus-emulator<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## redis-cache
@@ -416,7 +416,7 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: ElastiCache Redis
 - Azure equivalent: Azure Cache for Redis
-- Current status: not-started
+- Current status: 99-ready
 - Resource types: Microsoft.Cache/redis, Microsoft.Cache/redisEnterprise
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -429,7 +429,7 @@ Generated: 2026-05-25T12:17:24.803Z
 | Retry/eventual consistency behavior | complete | e2e:redis-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:redis-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 7 registry operations declared<br>backing engines: local-redis<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## logic-workflows
@@ -437,15 +437,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: Step Functions
 - Azure equivalent: Azure Logic Apps / Durable Functions
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Logic/workflows, Microsoft.Web/sites
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>425 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 20 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-state=1, invalid-tags-shape=1, missing-api-version=2, missing-location=1, null-properties=1, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br>service-specific negative variance ids: invalid-state |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=6, arm-surface=2, provider-accepted=4, provider-routing-or-parent-validation=2<br>e2e:logic-workflows-parity asserts 98 status checks, 11 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=9, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=5, provider-routing-or-parent-validation=2<br>e2e:logic-workflows-parity asserts 98 status checks, 11 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:logic-workflows-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:logic-workflows-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:logic-workflows-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -479,15 +479,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: ALB/NLB
 - Azure equivalent: Azure Application Gateway / Load Balancer
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Network/applicationGateways, Microsoft.Network/loadBalancers, Microsoft.Network/publicIPAddresses
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>67 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 34 live ARM captures<br>variance cases: empty-body=3, invalid-location=3, invalid-sku=3, invalid-tags-shape=3, missing-api-version=3, missing-location=3, null-properties=3, unsupported-api-version=3, valid-minimal=3, not-found=4, empty-list=2, invalid-ip-version=1<br>service-specific negative variance ids: invalid-sku, invalid-ip-version |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2<br>e2e:load-balancing-parity asserts 60 status checks, 29 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=21, arm-surface=3, subscription-or-provider-readiness=3, provider-accepted=5, provider-routing-or-parent-validation=2<br>e2e:load-balancing-parity asserts 60 status checks, 29 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:load-balancing-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:load-balancing-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:load-balancing-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -500,15 +500,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: CloudFront
 - Azure equivalent: Azure Front Door / Azure CDN
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Cdn/profiles, Microsoft.Cdn/profiles/afdEndpoints, Microsoft.Cdn/profiles/endpoints, Microsoft.Cdn/profiles/originGroups, Microsoft.Cdn/profiles/originGroups/origins, Microsoft.Cdn/profiles/afdEndpoints/routes
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 12 candidate catalog calls<br>133 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 21 live ARM captures<br>variance cases: empty-body=3, invalid-location=3, missing-api-version=3, valid-minimal=3, not-found=6, empty-list=3<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 41 live ARM captures<br>variance cases: empty-body=4, invalid-location=4, invalid-tags-shape=3, missing-api-version=4, missing-location=4, null-properties=3, unsupported-api-version=4, valid-minimal=4, not-found=6, empty-list=3, invalid-profile-name=1, invalid-sku=1<br>service-specific negative variance ids: invalid-profile-name, invalid-sku |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=7, arm-surface=3, provider-routing-or-parent-validation=7, provider-accepted=4<br>e2e:front-door-cdn-parity asserts 48 status checks, 17 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=16, arm-surface=4, provider-routing-or-parent-validation=14, subscription-or-provider-readiness=3, provider-accepted=4<br>e2e:front-door-cdn-parity asserts 48 status checks, 17 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:front-door-cdn-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:front-door-cdn-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:front-door-cdn-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -521,15 +521,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: WAF
 - Azure equivalent: Azure Web Application Firewall policy
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies, Microsoft.Network/FrontDoorWebApplicationFirewallPolicies, Microsoft.Cdn/profiles/securityPolicies
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>9 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 31 live ARM captures<br>variance cases: empty-body=3, invalid-location=3, invalid-tags-shape=3, missing-api-version=3, null-properties=3, unsupported-api-version=3, valid-minimal=3, not-found=4, empty-list=2, invalid-policy-mode=1, missing-location=2, invalid-sku=1<br>service-specific negative variance ids: invalid-policy-mode, invalid-sku |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=7, arm-surface=2, provider-validation=3, provider-accepted=2<br>e2e:waf-policy-parity asserts 34 status checks, 16 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-routing-or-parent-validation=6, provider-validation=14, arm-surface=3, subscription-or-provider-readiness=5, provider-accepted=3<br>e2e:waf-policy-parity asserts 34 status checks, 16 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:waf-policy-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:waf-policy-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:waf-policy-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -542,15 +542,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: CloudTrail
 - Azure equivalent: Azure Activity Log / Diagnostic Settings
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Insights/diagnosticSettings, Microsoft.EventGrid/systemTopics
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>15 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 18 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-tags-shape=1, missing-location=1, null-properties=1, unsupported-api-version=1<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 23 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-tags-shape=2, missing-api-version=2, missing-location=2, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-logs-shape=1<br>service-specific negative variance ids: invalid-logs-shape |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=12, arm-surface=2, provider-accepted=2, provider-routing-or-parent-validation=1, subscription-or-provider-readiness=1<br>e2e:activity-log-audit-parity asserts 21 status checks, 10 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=16, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=2, provider-routing-or-parent-validation=1<br>e2e:activity-log-audit-parity asserts 21 status checks, 10 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:activity-log-audit-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:activity-log-audit-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:activity-log-audit-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -563,7 +563,7 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: EFS
 - Azure equivalent: Azure Files / Azure NetApp Files
-- Current status: not-started
+- Current status: 99-ready
 - Resource types: Microsoft.Storage/storageAccounts/fileServices/shares, Microsoft.NetApp/netAppAccounts/capacityPools/volumes
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -571,12 +571,12 @@ Generated: 2026-05-25T12:17:24.803Z
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>70 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
 | Parameter variance captures | complete | 17 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-enabled-protocols=1, invalid-share-quota=1, unsupported-api-version=1<br>service-specific negative variance ids: invalid-enabled-protocols, invalid-share-quota |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>2 storage lifecycle capture files exist<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>async or transitional provisioning behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=4, arm-surface=2, provider-routing-or-parent-validation=10, provider-accepted=1<br>e2e:azure-files-parity asserts 46 status checks, 25 error-code checks, 2 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=4, arm-surface=2, provider-routing-or-parent-validation=10, provider-accepted=1<br>e2e:azure-files-parity asserts 48 status checks, 25 error-code checks, 2 header checks |  |
 | Identity/RBAC behavior | complete | e2e:azure-files-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | 2 storage lifecycle capture files<br>e2e:azure-files-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:azure-files-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 9 registry operations declared<br>backing engines: local-file-share<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## event-hubs-streams
@@ -605,15 +605,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: Redshift
 - Azure equivalent: Azure Synapse Analytics dedicated SQL pool
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.Synapse/workspaces, Microsoft.Synapse/workspaces/sqlPools
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>244 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 23 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-tags-shape=2, missing-api-version=2, missing-location=2, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2, invalid-workspace-name=1<br>service-specific negative variance ids: invalid-workspace-name |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=5, arm-surface=2, provider-routing-or-parent-validation=4, provider-accepted=3<br>e2e:synapse-warehouse-parity asserts 43 status checks, 13 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=11, arm-surface=2, provider-routing-or-parent-validation=5, subscription-or-provider-readiness=2, provider-accepted=3<br>e2e:synapse-warehouse-parity asserts 43 status checks, 13 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:synapse-warehouse-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:synapse-warehouse-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:synapse-warehouse-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
@@ -647,15 +647,15 @@ Generated: 2026-05-25T12:17:24.803Z
 - Tier: 2
 - AWS analogue: DMS
 - Azure equivalent: Azure Database Migration Service
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.DataMigration/services, Microsoft.DataMigration/services/projects
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>34 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
-| Parameter variance captures | partial | 14 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br> | Expand service-specific positive and negative parameter matrix beyond the current generic variance cases. |
+| Parameter variance captures | complete | 23 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-source-platform=1, invalid-tags-shape=2, missing-api-version=2, missing-location=2, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br>service-specific negative variance ids: invalid-source-platform |  |
 | State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
-| Error-shape fidelity | complete | validation depths: provider-validation=5, arm-surface=2, provider-routing-or-parent-validation=4, provider-accepted=3<br>e2e:database-migration-service-parity asserts 43 status checks, 13 error-code checks, 0 header checks |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3<br>e2e:database-migration-service-parity asserts 43 status checks, 13 error-code checks, 0 header checks |  |
 | Identity/RBAC behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
 | Retry/eventual consistency behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers repeated stability and post-delete behavior for synchronous service paths |  |
 | IaC-provider behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |

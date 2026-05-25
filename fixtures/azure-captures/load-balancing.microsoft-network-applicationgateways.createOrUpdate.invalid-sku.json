@@ -1,0 +1,141 @@
+{
+  "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-25T13:39:30.323Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/applicationGateways",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2f8e1531b1/providers/Microsoft.Network/applicationGateways/agw-2f8e1531b1?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "http",
+            "properties": {
+              "port": 80
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "backend",
+            "properties": {
+              "backendAddresses": [
+                {
+                  "ipAddress": "10.73.1.10"
+                }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "httpSettings",
+            "properties": {
+              "port": 80,
+              "protocol": "Http",
+              "cookieBasedAffinity": "Disabled"
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "listener",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+              },
+              "frontendPort": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+              },
+              "protocol": "Http"
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "name": "rule",
+            "properties": {
+              "ruleType": "Basic",
+              "priority": 100,
+              "httpListener": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+              },
+              "backendAddressPool": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+              },
+              "backendHttpSettings": {
+                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "dadfb3f7-8b18-4dbb-8d30-3d5b5d6670e7",
+      "x-ms-request-id": "3ac65a37-0fac-45fa-9d47-a97a66bb7547",
+      "x-ms-routing-request-id": "EASTUS:20260525T133923Z:dadfb3f7-8b18-4dbb-8d30-3d5b5d6670e7"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestFormat",
+        "message": "Cannot parse the request.",
+        "details": [
+          {
+            "code": "InvalidJson",
+            "message": "Could not find member 'sku' on object of type 'ApplicationGateway'. Path 'sku', line 1, position 27."
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-2f8e1531b1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}
