@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-25T12:17:13.622Z",
+  "generatedAt": "2026-05-25T13:53:42.381Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 385,
+  "expectationCount": 440,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -51,6 +51,29 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "activity-log-audit",
+      "resourceType": "Microsoft.EventGrid/systemTopics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-467952af54/providers/Microsoft.EventGrid/systemTopics/system-467952af54?api-version=2022-06-15",
+        "body": {
+          "location": "{location}",
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.missing-api-version",
       "capabilityId": "activity-log-audit",
       "resourceType": "Microsoft.EventGrid/systemTopics",
@@ -71,6 +94,49 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.missing-location",
+      "capabilityId": "activity-log-audit",
+      "resourceType": "Microsoft.EventGrid/systemTopics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3e79b77ad9/providers/Microsoft.EventGrid/systemTopics/system-3e79b77ad9?api-version=2022-06-15",
+        "body": {
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.null-properties",
+      "capabilityId": "activity-log-audit",
+      "resourceType": "Microsoft.EventGrid/systemTopics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequest",
+        "message": "The argument systemTopic.Properties is null. (Parameter 'systemTopic.Properties')"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-214dddd90e/providers/Microsoft.EventGrid/systemTopics/system-214dddd90e?api-version=2022-06-15",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "activity-log-audit.microsoft-eventgrid-systemtopics.delete.not-found",
@@ -166,6 +232,30 @@
         "body": {
           "location": "globalstack-invalid-location",
           "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.invalid-logs-shape",
+      "capabilityId": "activity-log-audit",
+      "resourceType": "Microsoft.Insights/diagnosticSettings",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-logs-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "UnsupportedRequestContent",
+        "message": "Request content is not well formed or supported."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-747e2fca15/providers/Microsoft.Insights/diagnosticSettings/diag-747e2fca15?api-version=2021-05-01-preview",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "logs": "invalid"
+          }
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -331,6 +421,28 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-42a3a01fff/providers/Microsoft.ContainerService/managedClusters/aks-42a3a01fff?api-version=2024-02-01",
         "body": {}
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.invalid-cluster-name",
+      "capabilityId": "aks-metadata",
+      "resourceType": "Microsoft.ContainerService/managedClusters",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-cluster-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidParameter",
+        "message": "Required parameter servicePrincipalProfile is missing (null)."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6a7c55f64b/providers/Microsoft.ContainerService/managedClusters/Bad_Cluster?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "properties": {}
+        }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
@@ -2034,6 +2146,28 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.invalid-registry-name",
+      "capabilityId": "container-registry",
+      "resourceType": "Microsoft.ContainerRegistry/registries",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-registry-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": null,
+        "message": null
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c07f84354c/providers/Microsoft.ContainerRegistry/registries/BadRegistry?api-version=2023-07-01",
+        "body": {
+          "location": "{location}",
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.invalid-tags-shape",
       "capabilityId": "container-registry",
       "resourceType": "Microsoft.ContainerRegistry/registries",
@@ -3258,6 +3392,31 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.invalid-input-schema",
+      "capabilityId": "event-grid",
+      "resourceType": "Microsoft.EventGrid/topics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-input-schema",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequest",
+        "message": "Error converting value \"BadSchema\" to type 'System.Nullable`1[Microsoft.Azure.Events.ResourceProvider.Common.Contracts.InputSchema]'. Path 'properties.inputSchema', line 1, position 60."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8a733b8842/providers/Microsoft.EventGrid/topics/topic-8a733b8842?api-version=2022-06-15",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "inputSchema": "BadSchema",
+            "publicNetworkAccess": "Enabled"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.invalid-location",
       "capabilityId": "event-grid",
       "resourceType": "Microsoft.EventGrid/topics",
@@ -3274,7 +3433,36 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-90e6daeb81/providers/Microsoft.EventGrid/topics/topic-90e6daeb81?api-version=2022-06-15",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "inputSchema": "EventGridSchema",
+            "publicNetworkAccess": "Enabled"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "event-grid",
+      "resourceType": "Microsoft.EventGrid/topics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 133.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-de2da41aa1/providers/Microsoft.EventGrid/topics/topic-de2da41aa1?api-version=2022-06-15",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "inputSchema": "EventGridSchema",
+            "publicNetworkAccess": "Enabled"
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -3296,10 +3484,37 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f963b5aa37/providers/Microsoft.EventGrid/topics/topic-f963b5aa37",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "inputSchema": "EventGridSchema",
+            "publicNetworkAccess": "Enabled"
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.missing-location",
+      "capabilityId": "event-grid",
+      "resourceType": "Microsoft.EventGrid/topics",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c05ed32494/providers/Microsoft.EventGrid/topics/topic-c05ed32494?api-version=2022-06-15",
+        "body": {
+          "properties": {
+            "inputSchema": "EventGridSchema",
+            "publicNetworkAccess": "Enabled"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "event-grid.microsoft-eventgrid-topics.delete.not-found",
@@ -3584,7 +3799,34 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-854cd2c6fd/providers/Microsoft.Cdn/profiles/cdn-854cd2c6fd/afdEndpoints/afd-854cd2c6fd?api-version=2024-02-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "enabledState": "Enabled"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 94.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-63d09b3fa5/providers/Microsoft.Cdn/profiles/cdn-63d09b3fa5/afdEndpoints/afd-63d09b3fa5?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "enabledState": "Enabled"
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -3606,10 +3848,57 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-45929a0ea9/providers/Microsoft.Cdn/profiles/cdn-45929a0ea9/afdEndpoints/afd-45929a0ea9",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "enabledState": "Enabled"
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.missing-location",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0ff71fe558/providers/Microsoft.Cdn/profiles/cdn-0ff71fe558/afdEndpoints/afd-0ff71fe558?api-version=2024-02-01",
+        "body": {
+          "properties": {
+            "enabledState": "Enabled"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.null-properties",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-routing-or-parent-validation",
+      "expected": {
+        "status": 404,
+        "errorCode": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'profiles/afdendpoints', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d2b6ddeb27/providers/Microsoft.Cdn/profiles/cdn-d2b6ddeb27' could not be found."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d2b6ddeb27/providers/Microsoft.Cdn/profiles/cdn-d2b6ddeb27/afdEndpoints/afd-d2b6ddeb27?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.valid-minimal",
@@ -3628,7 +3917,9 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-df35cb29b7/providers/Microsoft.Cdn/profiles/cdn-df35cb29b7/afdEndpoints/afd-df35cb29b7?api-version=2024-02-01",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "enabledState": "Enabled"
+          }
         }
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
@@ -3726,7 +4017,56 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bafd0f3c1b/providers/Microsoft.Cdn/profiles/cdn-bafd0f3c1b/endpoints/endpoint-bafd0f3c1b?api-version=2024-02-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "example.org",
+                  "httpPort": 80,
+                  "httpsPort": 443
+                }
+              }
+            ],
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/endpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 213.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3b52151f93/providers/Microsoft.Cdn/profiles/cdn-3b52151f93/endpoints/endpoint-3b52151f93?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "example.org",
+                  "httpPort": 80,
+                  "httpsPort": 443
+                }
+              }
+            ],
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -3748,10 +4088,79 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7581951fc6/providers/Microsoft.Cdn/profiles/cdn-7581951fc6/endpoints/endpoint-7581951fc6",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "example.org",
+                  "httpPort": 80,
+                  "httpsPort": 443
+                }
+              }
+            ],
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.missing-location",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/endpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8f2fc237ca/providers/Microsoft.Cdn/profiles/cdn-8f2fc237ca/endpoints/endpoint-8f2fc237ca?api-version=2024-02-01",
+        "body": {
+          "properties": {
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "example.org",
+                  "httpPort": 80,
+                  "httpsPort": 443
+                }
+              }
+            ],
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.null-properties",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles/endpoints",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-routing-or-parent-validation",
+      "expected": {
+        "status": 404,
+        "errorCode": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'profiles/endpoints', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6405d05f66/providers/Microsoft.Cdn/profiles/cdn-6405d05f66' could not be found."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6405d05f66/providers/Microsoft.Cdn/profiles/cdn-6405d05f66/endpoints/endpoint-6405d05f66?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.valid-minimal",
@@ -3770,7 +4179,20 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-22be411fd8/providers/Microsoft.Cdn/profiles/cdn-22be411fd8/endpoints/endpoint-22be411fd8?api-version=2024-02-01",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "example.org",
+                  "httpPort": 80,
+                  "httpsPort": 443
+                }
+              }
+            ],
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
+          }
         }
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
@@ -3868,7 +4290,86 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b1bcd94c4b/providers/Microsoft.Cdn/profiles/cdn-b1bcd94c4b?api-version=2024-02-01",
         "body": {
           "location": "globalstack-invalid-location",
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
           "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-profile-name",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-profile-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "Property 'ProfileEntityKey.ProfileName' cannot be set to 'Bad_Profile'. "
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9ff33a5796/providers/Microsoft.Cdn/profiles/Bad_Profile?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-sku",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-sku",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "\"Value 'GlobalStack_InvalidSku_For_Conformance' is not allowed for property 'name'\""
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a63f55c65c/providers/Microsoft.Cdn/profiles/cdn-a63f55c65c?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "GlobalStack_InvalidSku_For_Conformance"
+          },
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 111.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c0c94b31b5/providers/Microsoft.Cdn/profiles/cdn-c0c94b31b5?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -3890,10 +4391,62 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a20fcaadcb/providers/Microsoft.Cdn/profiles/cdn-a20fcaadcb",
         "body": {
           "location": "{location}",
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
           "properties": {}
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.missing-location",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-75afa9ed5f/providers/Microsoft.Cdn/profiles/cdn-75afa9ed5f?api-version=2024-02-01",
+        "body": {
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.null-properties",
+      "capabilityId": "front-door-cdn",
+      "resourceType": "Microsoft.Cdn/profiles",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "Free Trial and Student account is forbidden for Azure Frontdoor resources."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9c4e18cfea/providers/Microsoft.Cdn/profiles/cdn-9c4e18cfea?api-version=2024-02-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_AzureFrontDoor"
+          },
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "front-door-cdn.microsoft-cdn-profiles.delete.not-found",
@@ -4593,6 +5146,35 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
+      "id": "key-vault-secrets.microsoft-keyvault-vaults-secrets.createOrUpdate.invalid-secret-name",
+      "capabilityId": "key-vault-secrets",
+      "resourceType": "Microsoft.KeyVault/vaults/secrets",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-secret-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 404,
+        "errorCode": null,
+        "message": null
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d372ababc8/providers/Microsoft.KeyVault/vaults/kv-d372ababc8/secrets/bad_secret?api-version=2023-07-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "tenantId": "{tenantId}",
+            "sku": {
+              "family": "A",
+              "name": "standard"
+            },
+            "accessPolicies": []
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "key-vault-secrets.microsoft-keyvault-vaults-secrets.createOrUpdate.missing-api-version",
       "capabilityId": "key-vault-secrets",
       "resourceType": "Microsoft.KeyVault/vaults/secrets",
@@ -4620,35 +5202,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "key-vault-secrets.microsoft-keyvault-vaults-secrets.createOrUpdate.valid-minimal",
-      "capabilityId": "key-vault-secrets",
-      "resourceType": "Microsoft.KeyVault/vaults/secrets",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'vaults/secrets', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7e08996252/providers/Microsoft.KeyVault/vaults/kv-7e08996252' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7e08996252/providers/Microsoft.KeyVault/vaults/kv-7e08996252/secrets/secret-7e08996252?api-version=2023-07-01",
-        "body": {
-          "location": "{location}",
-          "properties": {
-            "tenantId": "{tenantId}",
-            "sku": {
-              "family": "A",
-              "name": "standard"
-            },
-            "accessPolicies": []
-          }
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "key-vault-secrets.microsoft-keyvault-vaults-secrets.delete.not-found",
@@ -4756,6 +5309,64 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "key-vault-secrets.microsoft-keyvault-vaults.createOrUpdate.invalid-sku",
+      "capabilityId": "key-vault-secrets",
+      "resourceType": "Microsoft.KeyVault/vaults",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-sku",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "The key vault sku is invalid."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5c66bc0482/providers/Microsoft.KeyVault/vaults/kv-5c66bc0482?api-version=2023-07-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "tenantId": "{tenantId}",
+            "sku": {
+              "name": "GlobalStack_InvalidSku_For_Conformance"
+            },
+            "accessPolicies": []
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "key-vault-secrets.microsoft-keyvault-vaults.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "key-vault-secrets",
+      "resourceType": "Microsoft.KeyVault/vaults",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 178.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-98442d3dc2/providers/Microsoft.KeyVault/vaults/kv-98442d3dc2?api-version=2023-07-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "tenantId": "{tenantId}",
+            "sku": {
+              "family": "A",
+              "name": "standard"
+            },
+            "accessPolicies": []
+          },
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "key-vault-secrets.microsoft-keyvault-vaults.createOrUpdate.missing-api-version",
       "capabilityId": "key-vault-secrets",
       "resourceType": "Microsoft.KeyVault/vaults",
@@ -4783,6 +5394,56 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "key-vault-secrets.microsoft-keyvault-vaults.createOrUpdate.missing-location",
+      "capabilityId": "key-vault-secrets",
+      "resourceType": "Microsoft.KeyVault/vaults",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0bd80b6485/providers/Microsoft.KeyVault/vaults/kv-0bd80b6485?api-version=2023-07-01",
+        "body": {
+          "properties": {
+            "tenantId": "{tenantId}",
+            "sku": {
+              "family": "A",
+              "name": "standard"
+            },
+            "accessPolicies": []
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "key-vault-secrets.microsoft-keyvault-vaults.createOrUpdate.null-properties",
+      "capabilityId": "key-vault-secrets",
+      "resourceType": "Microsoft.KeyVault/vaults",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "The vault properties are missing."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-cbfd3ded50/providers/Microsoft.KeyVault/vaults/kv-cbfd3ded50?api-version=2023-07-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "key-vault-secrets.microsoft-keyvault-vaults.delete.not-found",
@@ -4877,7 +5538,314 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4f1fdd5c2b/providers/Microsoft.Network/applicationGateways/agw-4f1fdd5c2b?api-version=2023-09-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "sku": {
+            "name": "Standard_v2",
+            "tier": "Standard_v2",
+            "capacity": 1
+          },
+          "properties": {
+            "gatewayIPConfigurations": [
+              {
+                "name": "appGatewayIpConfig",
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                  }
+                }
+              }
+            ],
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "frontendPorts": [
+              {
+                "name": "http",
+                "properties": {
+                  "port": 80
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "10.73.1.10"
+                    }
+                  ]
+                }
+              }
+            ],
+            "backendHttpSettingsCollection": [
+              {
+                "name": "httpSettings",
+                "properties": {
+                  "port": 80,
+                  "protocol": "Http",
+                  "cookieBasedAffinity": "Disabled"
+                }
+              }
+            ],
+            "httpListeners": [
+              {
+                "name": "listener",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                  },
+                  "frontendPort": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                  },
+                  "protocol": "Http"
+                }
+              }
+            ],
+            "requestRoutingRules": [
+              {
+                "name": "rule",
+                "properties": {
+                  "ruleType": "Basic",
+                  "priority": 100,
+                  "httpListener": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                  },
+                  "backendHttpSettings": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.invalid-sku",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/applicationGateways",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-sku",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestFormat",
+        "message": "Cannot parse the request."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-2f8e1531b1/providers/Microsoft.Network/applicationGateways/agw-2f8e1531b1?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "GlobalStack_InvalidSku_For_Conformance"
+          },
+          "properties": {
+            "gatewayIPConfigurations": [
+              {
+                "name": "appGatewayIpConfig",
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                  }
+                }
+              }
+            ],
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "frontendPorts": [
+              {
+                "name": "http",
+                "properties": {
+                  "port": 80
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "10.73.1.10"
+                    }
+                  ]
+                }
+              }
+            ],
+            "backendHttpSettingsCollection": [
+              {
+                "name": "httpSettings",
+                "properties": {
+                  "port": 80,
+                  "protocol": "Http",
+                  "cookieBasedAffinity": "Disabled"
+                }
+              }
+            ],
+            "httpListeners": [
+              {
+                "name": "listener",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                  },
+                  "frontendPort": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                  },
+                  "protocol": "Http"
+                }
+              }
+            ],
+            "requestRoutingRules": [
+              {
+                "name": "rule",
+                "properties": {
+                  "ruleType": "Basic",
+                  "priority": 100,
+                  "httpListener": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                  },
+                  "backendHttpSettings": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/applicationGateways",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 2134.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6d3e9c5ef6/providers/Microsoft.Network/applicationGateways/agw-6d3e9c5ef6?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_v2",
+            "tier": "Standard_v2",
+            "capacity": 1
+          },
+          "properties": {
+            "gatewayIPConfigurations": [
+              {
+                "name": "appGatewayIpConfig",
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                  }
+                }
+              }
+            ],
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "frontendPorts": [
+              {
+                "name": "http",
+                "properties": {
+                  "port": 80
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "10.73.1.10"
+                    }
+                  ]
+                }
+              }
+            ],
+            "backendHttpSettingsCollection": [
+              {
+                "name": "httpSettings",
+                "properties": {
+                  "port": 80,
+                  "protocol": "Http",
+                  "cookieBasedAffinity": "Disabled"
+                }
+              }
+            ],
+            "httpListeners": [
+              {
+                "name": "listener",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                  },
+                  "frontendPort": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                  },
+                  "protocol": "Http"
+                }
+              }
+            ],
+            "requestRoutingRules": [
+              {
+                "name": "rule",
+                "properties": {
+                  "ruleType": "Basic",
+                  "priority": 100,
+                  "httpListener": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                  },
+                  "backendHttpSettings": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                  }
+                }
+              }
+            ]
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -4899,10 +5867,234 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3a16bc6d54/providers/Microsoft.Network/applicationGateways/agw-3a16bc6d54",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "sku": {
+            "name": "Standard_v2",
+            "tier": "Standard_v2",
+            "capacity": 1
+          },
+          "properties": {
+            "gatewayIPConfigurations": [
+              {
+                "name": "appGatewayIpConfig",
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                  }
+                }
+              }
+            ],
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "frontendPorts": [
+              {
+                "name": "http",
+                "properties": {
+                  "port": 80
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "10.73.1.10"
+                    }
+                  ]
+                }
+              }
+            ],
+            "backendHttpSettingsCollection": [
+              {
+                "name": "httpSettings",
+                "properties": {
+                  "port": 80,
+                  "protocol": "Http",
+                  "cookieBasedAffinity": "Disabled"
+                }
+              }
+            ],
+            "httpListeners": [
+              {
+                "name": "listener",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                  },
+                  "frontendPort": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                  },
+                  "protocol": "Http"
+                }
+              }
+            ],
+            "requestRoutingRules": [
+              {
+                "name": "rule",
+                "properties": {
+                  "ruleType": "Basic",
+                  "priority": 100,
+                  "httpListener": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                  },
+                  "backendHttpSettings": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                  }
+                }
+              }
+            ]
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.missing-location",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/applicationGateways",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4242fe7bbc/providers/Microsoft.Network/applicationGateways/agw-4242fe7bbc?api-version=2023-09-01",
+        "body": {
+          "sku": {
+            "name": "Standard_v2",
+            "tier": "Standard_v2",
+            "capacity": 1
+          },
+          "properties": {
+            "gatewayIPConfigurations": [
+              {
+                "name": "appGatewayIpConfig",
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworksName}/subnets/default"
+                  }
+                }
+              }
+            ],
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "frontendPorts": [
+              {
+                "name": "http",
+                "properties": {
+                  "port": 80
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "10.73.1.10"
+                    }
+                  ]
+                }
+              }
+            ],
+            "backendHttpSettingsCollection": [
+              {
+                "name": "httpSettings",
+                "properties": {
+                  "port": 80,
+                  "protocol": "Http",
+                  "cookieBasedAffinity": "Disabled"
+                }
+              }
+            ],
+            "httpListeners": [
+              {
+                "name": "listener",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendIPConfigurations/frontend"
+                  },
+                  "frontendPort": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/frontendPorts/http"
+                  },
+                  "protocol": "Http"
+                }
+              }
+            ],
+            "requestRoutingRules": [
+              {
+                "name": "rule",
+                "properties": {
+                  "ruleType": "Basic",
+                  "priority": 100,
+                  "httpListener": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/httpListeners/listener"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendAddressPools/backend"
+                  },
+                  "backendHttpSettings": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewaysName}/backendHttpSettingsCollection/httpSettings"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "load-balancing.microsoft-network-applicationgateways.createOrUpdate.null-properties",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/applicationGateways",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestFormat",
+        "message": "Cannot parse the request."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e2fb482fe8/providers/Microsoft.Network/applicationGateways/agw-e2fb482fe8?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard_v2",
+            "tier": "Standard_v2",
+            "capacity": 1
+          },
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "load-balancing.microsoft-network-applicationgateways.delete.not-found",
@@ -4997,7 +6189,202 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3579ed7b4/providers/Microsoft.Network/loadBalancers/lb-a3579ed7b4?api-version=2023-09-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "sku": {
+            "name": "Standard"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {}
+              }
+            ],
+            "probes": [
+              {
+                "name": "tcpProbe",
+                "properties": {
+                  "protocol": "Tcp",
+                  "port": 80,
+                  "intervalInSeconds": 5,
+                  "numberOfProbes": 2
+                }
+              }
+            ],
+            "loadBalancingRules": [
+              {
+                "name": "httpRule",
+                "properties": {
+                  "protocol": "Tcp",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                  },
+                  "probe": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.invalid-sku",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/loadBalancers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-sku",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestFormat",
+        "message": "Cannot parse the request."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-52d6aed06a/providers/Microsoft.Network/loadBalancers/lb-52d6aed06a?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "GlobalStack_InvalidSku_For_Conformance"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {}
+              }
+            ],
+            "probes": [
+              {
+                "name": "tcpProbe",
+                "properties": {
+                  "protocol": "Tcp",
+                  "port": 80,
+                  "intervalInSeconds": 5,
+                  "numberOfProbes": 2
+                }
+              }
+            ],
+            "loadBalancingRules": [
+              {
+                "name": "httpRule",
+                "properties": {
+                  "protocol": "Tcp",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                  },
+                  "probe": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/loadBalancers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 1209.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3056415161/providers/Microsoft.Network/loadBalancers/lb-3056415161?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "sku": {
+            "name": "Standard"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {}
+              }
+            ],
+            "probes": [
+              {
+                "name": "tcpProbe",
+                "properties": {
+                  "protocol": "Tcp",
+                  "port": 80,
+                  "intervalInSeconds": 5,
+                  "numberOfProbes": 2
+                }
+              }
+            ],
+            "loadBalancingRules": [
+              {
+                "name": "httpRule",
+                "properties": {
+                  "protocol": "Tcp",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                  },
+                  "probe": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                  }
+                }
+              }
+            ]
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -5019,10 +6406,131 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-427f5d78eb/providers/Microsoft.Network/loadBalancers/lb-427f5d78eb",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "sku": {
+            "name": "Standard"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {}
+              }
+            ],
+            "probes": [
+              {
+                "name": "tcpProbe",
+                "properties": {
+                  "protocol": "Tcp",
+                  "port": 80,
+                  "intervalInSeconds": 5,
+                  "numberOfProbes": 2
+                }
+              }
+            ],
+            "loadBalancingRules": [
+              {
+                "name": "httpRule",
+                "properties": {
+                  "protocol": "Tcp",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                  },
+                  "probe": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                  }
+                }
+              }
+            ]
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "load-balancing.microsoft-network-loadbalancers.createOrUpdate.missing-location",
+      "capabilityId": "load-balancing",
+      "resourceType": "Microsoft.Network/loadBalancers",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-321cb2971e/providers/Microsoft.Network/loadBalancers/lb-321cb2971e?api-version=2023-09-01",
+        "body": {
+          "sku": {
+            "name": "Standard"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": "frontend",
+                "properties": {
+                  "publicIPAddress": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/pip-local"
+                  }
+                }
+              }
+            ],
+            "backendAddressPools": [
+              {
+                "name": "backend",
+                "properties": {}
+              }
+            ],
+            "probes": [
+              {
+                "name": "tcpProbe",
+                "properties": {
+                  "protocol": "Tcp",
+                  "port": 80,
+                  "intervalInSeconds": 5,
+                  "numberOfProbes": 2
+                }
+              }
+            ],
+            "loadBalancingRules": [
+              {
+                "name": "httpRule",
+                "properties": {
+                  "protocol": "Tcp",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "frontendIPConfiguration": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/frontendIPConfigurations/frontend"
+                  },
+                  "backendAddressPool": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/backendAddressPools/backend"
+                  },
+                  "probe": {
+                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancersName}/probes/tcpProbe"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "load-balancing.microsoft-network-loadbalancers.delete.not-found",
@@ -5117,7 +6625,106 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d031115367/providers/Microsoft.Logic/workflows/workflow-d031115367?api-version=2019-05-01",
         "body": {
           "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "state": "Enabled",
+            "definition": {
+              "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+              "contentVersion": "1.0.0.0",
+              "triggers": {
+                "manual": {
+                  "type": "Request",
+                  "kind": "Http",
+                  "inputs": {
+                    "schema": {}
+                  }
+                }
+              },
+              "actions": {},
+              "outputs": {}
+            },
+            "parameters": {}
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.invalid-state",
+      "capabilityId": "logic-workflows",
+      "resourceType": "Microsoft.Logic/workflows",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-state",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content is not valid and could not be deserialized: 'Error converting value \"Broken\" to type 'System.Nullable`1[Microsoft.Azure.Workflows.Data.Entities.FlowState]'. Path 'properties.state', line 1, position 51.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3486629f70/providers/Microsoft.Logic/workflows/workflow-3486629f70?api-version=2019-05-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "state": "Broken",
+            "definition": {
+              "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+              "contentVersion": "1.0.0.0",
+              "triggers": {
+                "manual": {
+                  "type": "Request",
+                  "kind": "Http",
+                  "inputs": {
+                    "schema": {}
+                  }
+                }
+              },
+              "actions": {},
+              "outputs": {}
+            },
+            "parameters": {}
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "logic-workflows",
+      "resourceType": "Microsoft.Logic/workflows",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 367.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-68c5cba51f/providers/Microsoft.Logic/workflows/workflow-68c5cba51f?api-version=2019-05-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "state": "Enabled",
+            "definition": {
+              "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+              "contentVersion": "1.0.0.0",
+              "triggers": {
+                "manual": {
+                  "type": "Request",
+                  "kind": "Http",
+                  "inputs": {
+                    "schema": {}
+                  }
+                }
+              },
+              "actions": {},
+              "outputs": {}
+            },
+            "parameters": {}
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -5139,10 +6746,89 @@
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-37bb89e69d/providers/Microsoft.Logic/workflows/workflow-37bb89e69d",
         "body": {
           "location": "{location}",
-          "properties": {}
+          "properties": {
+            "state": "Enabled",
+            "definition": {
+              "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+              "contentVersion": "1.0.0.0",
+              "triggers": {
+                "manual": {
+                  "type": "Request",
+                  "kind": "Http",
+                  "inputs": {
+                    "schema": {}
+                  }
+                }
+              },
+              "actions": {},
+              "outputs": {}
+            },
+            "parameters": {}
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.missing-location",
+      "capabilityId": "logic-workflows",
+      "resourceType": "Microsoft.Logic/workflows",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7d58844fa2/providers/Microsoft.Logic/workflows/workflow-7d58844fa2?api-version=2019-05-01",
+        "body": {
+          "properties": {
+            "state": "Enabled",
+            "definition": {
+              "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+              "contentVersion": "1.0.0.0",
+              "triggers": {
+                "manual": {
+                  "type": "Request",
+                  "kind": "Http",
+                  "inputs": {
+                    "schema": {}
+                  }
+                }
+              },
+              "actions": {},
+              "outputs": {}
+            },
+            "parameters": {}
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.null-properties",
+      "capabilityId": "logic-workflows",
+      "resourceType": "Microsoft.Logic/workflows",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidWorkflow",
+        "message": "The provided workflow definition is not valid."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d30b52c076/providers/Microsoft.Logic/workflows/workflow-d30b52c076?api-version=2019-05-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "logic-workflows.microsoft-logic-workflows.delete.not-found",
@@ -5599,6 +7285,31 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.invalid-group-short-name",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/actionGroups",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-group-short-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "GroupShortNameIsTooLong",
+        "message": "The action group short name 'globalstack-action-group-too-long' is too long. Please specify a short name with '12' or less characters."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e2538ca2/providers/Microsoft.Insights/actionGroups/ag-b8e2538ca2?api-version=2023-01-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "enabled": true,
+            "groupShortName": "globalstack-action-group-too-long"
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.invalid-location",
       "capabilityId": "monitor-metrics-alerts",
       "resourceType": "Microsoft.Insights/actionGroups",
@@ -5616,6 +7327,29 @@
         "body": {
           "location": "globalstack-invalid-location",
           "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/actionGroups",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-162408452b/providers/Microsoft.Insights/actionGroups/ag-162408452b?api-version=2023-01-01",
+        "body": {
+          "location": "{location}",
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -5641,6 +7375,49 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.missing-location",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/actionGroups",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-20207625d7/providers/Microsoft.Insights/actionGroups/ag-20207625d7?api-version=2023-01-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.null-properties",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/actionGroups",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "PropertiesIsNull",
+        "message": "PropertiesIsNull"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d02a8a23df/providers/Microsoft.Insights/actionGroups/ag-d02a8a23df?api-version=2023-01-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.delete.not-found",
@@ -5741,6 +7518,29 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/metricAlerts",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c93951317e/providers/Microsoft.Insights/metricAlerts/alert-c93951317e?api-version=2018-03-01",
+        "body": {
+          "location": "{location}",
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.missing-api-version",
       "capabilityId": "monitor-metrics-alerts",
       "resourceType": "Microsoft.Insights/metricAlerts",
@@ -5761,6 +7561,49 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.missing-location",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/metricAlerts",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ffe260fea5/providers/Microsoft.Insights/metricAlerts/alert-ffe260fea5?api-version=2018-03-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.null-properties",
+      "capabilityId": "monitor-metrics-alerts",
+      "resourceType": "Microsoft.Insights/metricAlerts",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "BadRequest",
+        "message": "Required property 'Properties' not found in JSON Activity ID: 744ee8b2-a683-4f38-a5f8-db8839fba6e8."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-42911d5abc/providers/Microsoft.Insights/metricAlerts/alert-42911d5abc?api-version=2018-03-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.delete.not-found",
@@ -6688,6 +8531,29 @@
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
+      "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.invalid-max-delivery-count",
+      "capabilityId": "queue-storage",
+      "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-max-delivery-count",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 429,
+        "errorCode": "NamespaceInTransition",
+        "message": "The namespace ns-3aff289695 in subscription <subscription-id> is in transitioning state, its current state is Creating."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3aff289695/providers/Microsoft.ServiceBus/namespaces/ns-3aff289695/queues/q3aff289695?api-version=2021-11-01",
+        "body": {
+          "properties": {
+            "maxDeliveryCount": 0
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.missing-api-version",
       "capabilityId": "queue-storage",
       "resourceType": "Microsoft.ServiceBus/namespaces/queues",
@@ -6811,11 +8677,11 @@
       "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "validationDepth": "provider-routing-or-parent-validation",
+      "validationDepth": "provider-validation",
       "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/queueServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-11eefe8f8d/providers/Microsoft.Storage/storageAccounts/gs11eefe8f8d' could not be found."
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
       },
       "request": {
         "method": "PUT",
@@ -6825,7 +8691,7 @@
           "location": "globalstack-invalid-location"
         }
       },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.createOrUpdate.missing-api-version",
@@ -6847,27 +8713,6 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
-    },
-    {
-      "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.createOrUpdate.valid-minimal",
-      "capabilityId": "queue-storage",
-      "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
-      "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
-      "validationDepth": "provider-routing-or-parent-validation",
-      "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/queueServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5924b411b4/providers/Microsoft.Storage/storageAccounts/gs5924b411b4' could not be found."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5924b411b4/providers/Microsoft.Storage/storageAccounts/gs5924b411b4/queueServices/default/queues/q5924b411b4?api-version=2023-01-01",
-        "body": {
-          "properties": {}
-        }
-      },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.delete.not-found",
@@ -7709,6 +9554,29 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e60c68f04b/providers/Microsoft.Synapse/workspaces/ws-e60c68f04b/sqlPools/sqlpoole60c68f04b?api-version=2021-06-01",
+        "body": {
+          "location": "{location}",
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.missing-api-version",
       "capabilityId": "synapse-warehouse",
       "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
@@ -7729,6 +9597,49 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.missing-location",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-435012f366/providers/Microsoft.Synapse/workspaces/ws-435012f366/sqlPools/sqlpool435012f366?api-version=2021-06-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.null-properties",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-routing-or-parent-validation",
+      "expected": {
+        "status": 404,
+        "errorCode": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'workspaces/sqlPools', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8b5d63c55/providers/Microsoft.Synapse/workspaces/ws-b8b5d63c55' could not be found."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8b5d63c55/providers/Microsoft.Synapse/workspaces/ws-b8b5d63c55/sqlPools/sqlpoolb8b5d63c55?api-version=2021-06-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
     },
     {
       "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.valid-minimal",
@@ -7851,6 +9762,51 @@
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-26f35934e1/providers/Microsoft.Synapse/workspaces/ws-26f35934e1?api-version=2021-06-01",
+        "body": {
+          "location": "{location}",
+          "properties": {},
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.invalid-workspace-name",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-workspace-name",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "ValidationFailed",
+        "message": "Workspace request validation failed, check error details for more information"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7b1fa389f1/providers/Microsoft.Synapse/workspaces/Bad_Workspace?api-version=2021-06-01",
+        "body": {
+          "location": "{location}",
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
       "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.missing-api-version",
       "capabilityId": "synapse-warehouse",
       "resourceType": "Microsoft.Synapse/workspaces",
@@ -7871,6 +9827,49 @@
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.missing-location",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8e857492d5/providers/Microsoft.Synapse/workspaces/ws-8e857492d5?api-version=2021-06-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.null-properties",
+      "capabilityId": "synapse-warehouse",
+      "resourceType": "Microsoft.Synapse/workspaces",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "ValidationFailed",
+        "message": "Workspace request validation failed, check error details for more information"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b12f606c1e/providers/Microsoft.Synapse/workspaces/ws-b12f606c1e?api-version=2021-06-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "synapse-warehouse.microsoft-synapse-workspaces.delete.not-found",
@@ -8201,21 +10200,81 @@
       "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
       "operation": "CreateOrUpdate",
       "varianceId": "invalid-location",
-      "validationDepth": "provider-routing-or-parent-validation",
+      "validationDepth": "provider-validation",
       "expected": {
-        "status": 404,
-        "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'profiles/securitypolicies', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-007db90bfd/providers/Microsoft.Cdn/profiles/cdn-007db90bfd' could not be found."
+        "status": 400,
+        "errorCode": "LinkedInvalidPropertyId",
+        "message": "Property id '{wafPolicyId}' at path 'properties.parameters.wafPolicy.id' is invalid. Expect fully qualified resource Id that start with '/subscriptions/{subscriptionId}' or '/providers/{resourceProviderNamespace}/'."
       },
       "request": {
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-007db90bfd/providers/Microsoft.Cdn/profiles/cdn-007db90bfd/securityPolicies/security-007db90bfd?api-version=2024-02-01",
         "body": {
-          "location": "globalstack-invalid-location",
-          "properties": {}
+          "properties": {
+            "parameters": {
+              "type": "WebApplicationFirewall",
+              "wafPolicy": {
+                "id": "{wafPolicyId}"
+              },
+              "associations": [
+                {
+                  "domains": [
+                    {
+                      "id": "{endpointId}"
+                    }
+                  ],
+                  "patternsToMatch": [
+                    "/*"
+                  ]
+                }
+              ]
+            }
+          },
+          "location": "globalstack-invalid-location"
         }
       },
-      "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LinkedInvalidPropertyId",
+        "message": "Property id '{wafPolicyId}' at path 'properties.parameters.wafPolicy.id' is invalid. Expect fully qualified resource Id that start with '/subscriptions/{subscriptionId}' or '/providers/{resourceProviderNamespace}/'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-73f8035b0f/providers/Microsoft.Cdn/profiles/cdn-73f8035b0f/securityPolicies/security-73f8035b0f?api-version=2024-02-01",
+        "body": {
+          "properties": {
+            "parameters": {
+              "type": "WebApplicationFirewall",
+              "wafPolicy": {
+                "id": "{wafPolicyId}"
+              },
+              "associations": [
+                {
+                  "domains": [
+                    {
+                      "id": "{endpointId}"
+                    }
+                  ],
+                  "patternsToMatch": [
+                    "/*"
+                  ]
+                }
+              ]
+            }
+          },
+          "tags": "globalstack-invalid-tags"
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.missing-api-version",
@@ -8233,33 +10292,90 @@
         "method": "PUT",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-47ea97dbab/providers/Microsoft.Cdn/profiles/cdn-47ea97dbab/securityPolicies/security-47ea97dbab",
         "body": {
-          "location": "{location}",
-          "properties": {}
+          "properties": {
+            "parameters": {
+              "type": "WebApplicationFirewall",
+              "wafPolicy": {
+                "id": "{wafPolicyId}"
+              },
+              "associations": [
+                {
+                  "domains": [
+                    {
+                      "id": "{endpointId}"
+                    }
+                  ],
+                  "patternsToMatch": [
+                    "/*"
+                  ]
+                }
+              ]
+            }
+          }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
     },
     {
-      "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.valid-minimal",
+      "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.null-properties",
       "capabilityId": "waf-policy",
       "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
       "operation": "CreateOrUpdate",
-      "varianceId": "valid-minimal",
+      "varianceId": "null-properties",
       "validationDepth": "provider-routing-or-parent-validation",
       "expected": {
         "status": 404,
         "errorCode": "ParentResourceNotFound",
-        "message": "Failed to perform 'write' on resource(s) of type 'profiles/securitypolicies', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3becf33c1/providers/Microsoft.Cdn/profiles/cdn-a3becf33c1' could not be found."
+        "message": "Failed to perform 'write' on resource(s) of type 'profiles/securitypolicies', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a0cdc49fb0/providers/Microsoft.Cdn/profiles/cdn-a0cdc49fb0' could not be found."
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3becf33c1/providers/Microsoft.Cdn/profiles/cdn-a3becf33c1/securityPolicies/security-a3becf33c1?api-version=2024-02-01",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a0cdc49fb0/providers/Microsoft.Cdn/profiles/cdn-a0cdc49fb0/securityPolicies/security-a0cdc49fb0?api-version=2024-02-01",
         "body": {
-          "location": "{location}",
-          "properties": {}
+          "properties": null
         }
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+    },
+    {
+      "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.unsupported-api-version",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "unsupported-api-version",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LinkedInvalidPropertyId",
+        "message": "Property id '{wafPolicyId}' at path 'properties.parameters.wafPolicy.id' is invalid. Expect fully qualified resource Id that start with '/subscriptions/{subscriptionId}' or '/providers/{resourceProviderNamespace}/'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7b28f963bb/providers/Microsoft.Cdn/profiles/cdn-7b28f963bb/securityPolicies/security-7b28f963bb?api-version=1900-01-01",
+        "body": {
+          "properties": {
+            "parameters": {
+              "type": "WebApplicationFirewall",
+              "wafPolicy": {
+                "id": "{wafPolicyId}"
+              },
+              "associations": [
+                {
+                  "domains": [
+                    {
+                      "id": "{endpointId}"
+                    }
+                  ],
+                  "patternsToMatch": [
+                    "/*"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.delete.not-found",
@@ -8356,13 +10472,95 @@
           "location": "globalstack-invalid-location",
           "properties": {
             "policySettings": {
-              "enabledState": "Enabled",
-              "mode": "Prevention"
+              "state": "Enabled",
+              "mode": "Prevention",
+              "requestBodyCheck": true,
+              "maxRequestBodySizeInKb": 128
             },
             "managedRules": {
-              "managedRuleSets": []
+              "managedRuleSets": [
+                {
+                  "ruleSetType": "OWASP",
+                  "ruleSetVersion": "3.2"
+                }
+              ]
             }
           }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.invalid-policy-mode",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-policy-mode",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestFormat",
+        "message": "Cannot parse the request."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4afdd0046c/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-4afdd0046c?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "policySettings": {
+              "state": "Enabled",
+              "mode": "Enforce",
+              "requestBodyCheck": true,
+              "maxRequestBodySizeInKb": 128
+            },
+            "managedRules": {
+              "managedRuleSets": [
+                {
+                  "ruleSetType": "OWASP",
+                  "ruleSetVersion": "3.2"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.invalid-tags-shape",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-tags-shape",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 263.'."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d53fe3432f/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-d53fe3432f?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "properties": {
+            "policySettings": {
+              "state": "Enabled",
+              "mode": "Prevention",
+              "requestBodyCheck": true,
+              "maxRequestBodySizeInKb": 128
+            },
+            "managedRules": {
+              "managedRuleSets": [
+                {
+                  "ruleSetType": "OWASP",
+                  "ruleSetVersion": "3.2"
+                }
+              ]
+            }
+          },
+          "tags": "globalstack-invalid-tags"
         }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -8386,16 +10584,81 @@
           "location": "{location}",
           "properties": {
             "policySettings": {
-              "enabledState": "Enabled",
-              "mode": "Prevention"
+              "state": "Enabled",
+              "mode": "Prevention",
+              "requestBodyCheck": true,
+              "maxRequestBodySizeInKb": 128
             },
             "managedRules": {
-              "managedRuleSets": []
+              "managedRuleSets": [
+                {
+                  "ruleSetType": "OWASP",
+                  "ruleSetVersion": "3.2"
+                }
+              ]
             }
           }
         }
       },
       "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+    },
+    {
+      "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.missing-location",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "missing-location",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "LocationRequired",
+        "message": "The location property is required for this definition."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5a3f9ad824/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-5a3f9ad824?api-version=2023-09-01",
+        "body": {
+          "properties": {
+            "policySettings": {
+              "state": "Enabled",
+              "mode": "Prevention",
+              "requestBodyCheck": true,
+              "maxRequestBodySizeInKb": 128
+            },
+            "managedRules": {
+              "managedRuleSets": [
+                {
+                  "ruleSetType": "OWASP",
+                  "ruleSetVersion": "3.2"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.createOrUpdate.null-properties",
+      "capabilityId": "waf-policy",
+      "resourceType": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "operation": "CreateOrUpdate",
+      "varianceId": "null-properties",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "ApplicationGatewayFirewallManagedRuleSetsNoValidPrimaryRuleSetsAttached",
+        "message": "Firewall policy /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a5fd8596b2/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-a5fd8596b2 does not have any valid Primary Rule Set attached to it."
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a5fd8596b2/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-a5fd8596b2?api-version=2023-09-01",
+        "body": {
+          "location": "{location}",
+          "properties": null
+        }
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "waf-policy.microsoft-network-applicationgatewaywebapplicationfirewallpolicies.delete.not-found",
