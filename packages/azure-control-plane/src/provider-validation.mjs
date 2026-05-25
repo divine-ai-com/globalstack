@@ -1138,6 +1138,21 @@ function validateVirtualNetworkPayload(resourceType, body, providerRoute = null)
     }
   }
 
+  if (resourceType === 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups') {
+    const configs = body.properties?.privateDnsZoneConfigs;
+    if (!Array.isArray(configs) || configs.length === 0) {
+      return envelopedError(400, 'PrivateDnsZoneGroupConfigsRequired', 'Private DNS zone groups require properties.privateDnsZoneConfigs.');
+    }
+    for (const config of configs) {
+      if (typeof config?.name !== 'string' || config.name.trim() === '') {
+        return envelopedError(400, 'InvalidRequestFormat', 'Private DNS zone group configs require a non-empty name.');
+      }
+      if (typeof config?.properties?.privateDnsZoneId !== 'string' || config.properties.privateDnsZoneId.trim() === '') {
+        return envelopedError(400, 'PrivateDnsZoneIdRequired', 'Private DNS zone group configs require properties.privateDnsZoneId.');
+      }
+    }
+  }
+
   if (resourceType === 'Microsoft.Network/privateDnsZones') {
     const name = providerRoute?.typePath?.split('/')[1] ?? '';
     if (!/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*$/.test(name) || !name.includes('.')) {

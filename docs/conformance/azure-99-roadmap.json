@@ -1,16 +1,16 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T05:02:58.552Z",
+    "generatedAt": "2026-05-25T07:15:41.845Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 174,
+    "workItemCount": 173,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 68.9,
+      "percent": 69.2,
       "displayRange": "65-70%",
       "methodology": "status-derived average across all services and dimensions"
     },
@@ -1930,127 +1930,6 @@
       "objective": "Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.",
       "services": [
         {
-          "serviceId": "aks-metadata",
-          "tier": 1,
-          "awsAnalogue": "EKS",
-          "azureEquivalent": "Azure Kubernetes Service",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 5,
-            "partial": 4,
-            "notStarted": 1
-          },
-          "score": 0.6779,
-          "priority": 76,
-          "workItemCount": 5,
-          "nextDimensions": [
-            "dataPlaneBehavior",
-            "parameterVarianceCaptures",
-            "errorShapeFidelity",
-            "identityRbacBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "aks-metadata.dataPlaneBehavior",
-              "serviceId": "aks-metadata",
-              "dimensionId": "dataPlaneBehavior",
-              "dimension": "Data-plane behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "No durable local data-plane evidence is recorded yet.",
-                "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-              ],
-              "commands": [
-                "npm run hybrid:render",
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --all=true"
-              ],
-              "acceptanceGate": "Official emulator or GlobalStack facade behavior is tested against real Azure captures for request success, rejection, auth, side effects, and payload semantics."
-            },
-            {
-              "id": "aks-metadata.parameterVarianceCaptures",
-              "serviceId": "aks-metadata",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "7 live ARM captures",
-                "variance cases: empty-body=1, invalid-location=1, missing-api-version=1, valid-minimal=1, not-found=2, empty-list=1"
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "aks-metadata.errorShapeFidelity",
-              "serviceId": "aks-metadata",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=aks-metadata"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "aks-metadata.identityRbacBehavior",
-              "serviceId": "aks-metadata",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:aks-metadata-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "aks-metadata.liveApiSurfaceInventory",
-              "serviceId": "aks-metadata",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "4 candidate catalog calls",
-                "453 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            }
-          ]
-        },
-        {
           "serviceId": "front-door-cdn",
           "tier": 2,
           "awsAnalogue": "CloudFront",
@@ -2736,6 +2615,109 @@
           ]
         },
         {
+          "serviceId": "aks-metadata",
+          "tier": 1,
+          "awsAnalogue": "EKS",
+          "azureEquivalent": "Azure Kubernetes Service",
+          "currentStatus": "in-progress",
+          "dimensionCounts": {
+            "complete": 6,
+            "partial": 4,
+            "notStarted": 0
+          },
+          "score": 0.7926,
+          "priority": 60,
+          "workItemCount": 4,
+          "nextDimensions": [
+            "parameterVarianceCaptures",
+            "errorShapeFidelity",
+            "identityRbacBehavior",
+            "liveApiSurfaceInventory"
+          ],
+          "workItems": [
+            {
+              "id": "aks-metadata.parameterVarianceCaptures",
+              "serviceId": "aks-metadata",
+              "dimensionId": "parameterVarianceCaptures",
+              "dimension": "Parameter variance captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "7 live ARM captures",
+                "variance cases: empty-body=1, invalid-location=1, missing-api-version=1, valid-minimal=1, not-found=2, empty-list=1"
+              ],
+              "gaps": [
+                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=aks-metadata --limit=0",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
+            },
+            {
+              "id": "aks-metadata.errorShapeFidelity",
+              "serviceId": "aks-metadata",
+              "dimensionId": "errorShapeFidelity",
+              "dimension": "Error-shape fidelity",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "validation depths: provider-validation=3, arm-surface=1, provider-accepted=2, provider-routing-or-parent-validation=1"
+              ],
+              "gaps": [
+                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=aks-metadata"
+              ],
+              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
+            },
+            {
+              "id": "aks-metadata.identityRbacBehavior",
+              "serviceId": "aks-metadata",
+              "dimensionId": "identityRbacBehavior",
+              "dimension": "Identity/RBAC behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:aks-metadata-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+              ],
+              "gaps": [
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+              ],
+              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
+            },
+            {
+              "id": "aks-metadata.liveApiSurfaceInventory",
+              "serviceId": "aks-metadata",
+              "dimensionId": "liveApiSurfaceInventory",
+              "dimension": "Complete live Azure API surface inventory",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "4 candidate catalog calls",
+                "453 provider operations matched"
+              ],
+              "gaps": [
+                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
+                "Add data-plane surface inventory where the service has data-plane APIs."
+              ],
+              "commands": [
+                "npm run providers:surface",
+                "npm run conformance:catalog"
+              ],
+              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+            }
+          ]
+        },
+        {
           "serviceId": "service-discovery",
           "tier": 2,
           "awsAnalogue": "Service Discovery / Cloud Map",
@@ -3021,7 +3003,7 @@
           ]
         }
       ],
-      "workItemCount": 46
+      "workItemCount": 45
     },
     {
       "id": "wave-4-data-platforms",
@@ -4345,25 +4327,6 @@
     {
       "rank": 4,
       "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "aks-metadata",
-      "tier": 1,
-      "score": 0.6779,
-      "priority": 76,
-      "dimensionCounts": {
-        "complete": 5,
-        "partial": 4,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "dataPlaneBehavior",
-        "parameterVarianceCaptures",
-        "errorShapeFidelity",
-        "identityRbacBehavior"
-      ]
-    },
-    {
-      "rank": 5,
-      "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "front-door-cdn",
       "tier": 2,
       "score": 0.5836,
@@ -4381,7 +4344,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 5,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "cosmos-nosql-table",
       "tier": 1,
@@ -4400,7 +4363,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-keys",
       "tier": 1,
@@ -4419,7 +4382,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "waveId": "wave-4-data-platforms",
       "serviceId": "synapse-warehouse",
       "tier": 2,
@@ -4438,7 +4401,7 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 8,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-logs",
       "tier": 1,
@@ -4457,7 +4420,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 9,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "blob-storage",
       "tier": 1,
@@ -4476,7 +4439,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 10,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "service-bus-topics",
       "tier": 1,
@@ -4495,7 +4458,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 11,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-secrets",
       "tier": 1,
@@ -4514,7 +4477,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 12,
       "waveId": "wave-4-data-platforms",
       "serviceId": "database-migration-service",
       "tier": 2,
@@ -4533,7 +4496,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 13,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "api-management",
       "tier": 1,
@@ -4552,7 +4515,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 14,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "container-registry",
       "tier": 1,
@@ -4571,7 +4534,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 15,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "azure-functions",
       "tier": 1,
@@ -4590,7 +4553,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "identity-rbac",
       "tier": 1,
@@ -4609,7 +4572,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
@@ -4628,7 +4591,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-hubs-streams",
       "tier": 2,
@@ -4647,7 +4610,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "app-configuration-parameters",
       "tier": 2,
@@ -4666,7 +4629,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "logic-workflows",
       "tier": 2,
@@ -4685,7 +4648,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "azure-files",
       "tier": 2,
@@ -4695,6 +4658,25 @@
         "complete": 5,
         "partial": 4,
         "notStarted": 1
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures",
+        "errorShapeFidelity",
+        "identityRbacBehavior",
+        "liveApiSurfaceInventory"
+      ]
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "aks-metadata",
+      "tier": 1,
+      "score": 0.7926,
+      "priority": 60,
+      "dimensionCounts": {
+        "complete": 6,
+        "partial": 4,
+        "notStarted": 0
       },
       "nextDimensions": [
         "parameterVarianceCaptures",
@@ -4859,7 +4841,7 @@
   "workItemSummary": {
     "byAction": {
       "complete": 144,
-      "start": 30
+      "start": 29
     },
     "byDimension": {
       "parameterVarianceCaptures": 30,
@@ -4868,7 +4850,7 @@
       "liveApiSurfaceInventory": 30,
       "retryEventualConsistency": 21,
       "ambiguousRepeatCaptures": 26,
-      "dataPlaneBehavior": 8
+      "dataPlaneBehavior": 7
     }
   }
 }

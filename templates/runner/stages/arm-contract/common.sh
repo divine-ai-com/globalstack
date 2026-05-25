@@ -554,7 +554,7 @@ setup_pulumi_transparent_globalstack_proxy() {
       -keyout "${key}" \
       -out "${cert}" \
       -subj '/CN=management.azure.com' \
-      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,DNS:*.blob.core.windows.net,DNS:*.queue.core.windows.net,DNS:*.table.core.windows.net,DNS:*.vault.azure.net,DNS:*.azurefd.net,DNS:*.azureedge.net,IP:127.0.0.1' >/dev/null 2>&1
+      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,DNS:*.blob.core.windows.net,DNS:*.queue.core.windows.net,DNS:*.table.core.windows.net,DNS:*.vault.azure.net,DNS:*.azurefd.net,DNS:*.azureedge.net,DNS:*.azmk8s.io,IP:127.0.0.1' >/dev/null 2>&1
   fi
 
   for host in ${hosts}; do
@@ -610,6 +610,7 @@ queue_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_QUEUE_TARGET"])
 table_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_TABLE_TARGET"])
 key_vault_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET"])
 edge_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_EDGE_TARGET"])
+kubernetes_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_KUBERNETES_TARGET"])
 
 def target_parts(parsed):
     return parsed, parsed.port or (443 if parsed.scheme == "https" else 80)
@@ -626,6 +627,8 @@ def target_for_host(host):
         return target_parts(key_vault_target)
     if lower.endswith(".azurefd.net") or lower.endswith(".azureedge.net"):
         return target_parts(edge_target)
+    if lower.endswith(".azmk8s.io"):
+        return target_parts(kubernetes_target)
     return target_parts(arm_target)
 
 class Proxy(BaseHTTPRequestHandler):
@@ -678,6 +681,7 @@ PY
   GLOBALSTACK_TRANSPARENT_TABLE_TARGET="http://127.0.0.1:${GLOBALSTACK_TABLE_PORT:-10002}" \
   GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET="http://127.0.0.1:${GLOBALSTACK_KEY_VAULT_PORT:-10003}" \
   GLOBALSTACK_TRANSPARENT_EDGE_TARGET="http://127.0.0.1:${GLOBALSTACK_EDGE_PORT:-10004}" \
+  GLOBALSTACK_TRANSPARENT_KUBERNETES_TARGET="http://127.0.0.1:${GLOBALSTACK_KUBERNETES_PORT:-10005}" \
   GLOBALSTACK_TRANSPARENT_PROXY_PORT="${PLATFORM_TRANSPARENT_PROXY_PORT}" \
   GLOBALSTACK_TRANSPARENT_PROXY_CERT="${cert}" \
   GLOBALSTACK_TRANSPARENT_PROXY_KEY="${key}" \

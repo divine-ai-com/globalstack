@@ -727,6 +727,38 @@ export function aksCredentialActionRoute(providerRoute) {
   };
 }
 
+export function metricAlertStatusRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Insights') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'metricAlerts' || parts[2].toLowerCase() !== 'status') return null;
+  return {
+    alertRoute: {
+      ...providerRoute,
+      typePath: `metricAlerts/${parts[1]}`,
+    },
+    alertName: parts[1],
+  };
+}
+
+export function metricQueryExtensionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.Insights') return null;
+  const parts = providerRoute.typePath.split('/');
+  const extensionIndex = parts.findIndex((part, index) =>
+    index > 0
+    && part.toLowerCase() === 'providers'
+    && parts[index + 1]?.toLowerCase() === 'microsoft.insights'
+    && parts[index + 2]?.toLowerCase() === 'metrics'
+  );
+  if (extensionIndex < 0) return null;
+  return {
+    scopeRoute: {
+      ...providerRoute,
+      providerNamespace: providerRoute.providerNamespace,
+      typePath: parts.slice(0, extensionIndex).join('/'),
+    },
+  };
+}
+
 export function webHostListKeysRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Web') return null;
   const parts = providerRoute.typePath.split('/');
@@ -1308,6 +1340,7 @@ export function azureNotFoundFor({ method, resourceType, providerRoute, store })
   ]);
   const collectionUsesParentNotFound = new Set([
     'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
+    'Microsoft.Network/privateEndpoints/privateDnsZoneGroups',
   ]);
   const parent = nearestCapabilityParentRoute(providerRoute);
   const isCollection = isCollectionRoute(providerRoute);

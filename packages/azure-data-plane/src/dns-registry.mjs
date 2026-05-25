@@ -118,7 +118,7 @@ export class DnsRegistry {
     }
   }
 
-  registerRecord({ zoneName, privateZone = false, recordType, recordName, properties = {} }) {
+  registerRecord({ zoneName, privateZone = false, recordType, recordName, properties = {}, ownerKey = null }) {
     const normalizedZoneName = normalizeZoneName(zoneName);
     const normalizedRecordType = String(recordType ?? '').toUpperCase();
     const normalizedRecordName = normalizeRecordName(recordName);
@@ -134,6 +134,7 @@ export class DnsRegistry {
       recordType: normalizedRecordType,
       recordName: normalizedRecordName,
       fqdn,
+      ownerKey: ownerKey ? String(ownerKey) : null,
       ttl: properties.TTL ?? properties.ttl ?? 0,
       values: parseRecordValues(normalizedRecordType, properties),
     });
@@ -141,6 +142,16 @@ export class DnsRegistry {
 
   unregisterRecord({ zoneName, privateZone = false, recordType, recordName }) {
     this.records.delete(recordKey({ zoneName, privateZone, recordType, recordName }));
+  }
+
+  unregisterRecordsByOwner(ownerKey) {
+    const normalizedOwnerKey = String(ownerKey ?? '').trim();
+    if (!normalizedOwnerKey) return;
+    for (const [key, record] of this.records.entries()) {
+      if (record.ownerKey === normalizedOwnerKey) {
+        this.records.delete(key);
+      }
+    }
   }
 
   registerVirtualNetworkLink({ zoneName, linkName, vnetId, registrationEnabled = false }) {

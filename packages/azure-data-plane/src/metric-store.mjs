@@ -127,6 +127,22 @@ export class MetricStore {
     return deepClone(sample);
   }
 
+  listSamples({ scope, metricNamespace, metricName, start = null, end = null }) {
+    const key = [
+      normalizeId(scope),
+      normalizeMetricNamespace(metricNamespace),
+      normalizeMetricName(metricName),
+    ].join('|');
+    const startMs = start ? new Date(start).getTime() : Number.NEGATIVE_INFINITY;
+    const endMs = end ? new Date(end).getTime() : Number.POSITIVE_INFINITY;
+    return deepClone(
+      (this.metricSamples.get(key) ?? []).filter(sample => {
+        const timestampMs = new Date(sample.timestamp).getTime();
+        return timestampMs >= startMs && timestampMs <= endMs;
+      }),
+    );
+  }
+
   evaluateAlert(alertResourceOrId, { now = new Date().toISOString() } = {}) {
     const alertId = normalizeId(alertResourceOrId?.id ?? alertResourceOrId);
     const alert = this.metricAlerts.get(alertId);

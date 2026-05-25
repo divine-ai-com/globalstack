@@ -6,6 +6,7 @@ import { createBlobStorageServer, createQueueStorageServer, createTableStorageSe
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createEventGridRouterServer } from '../../packages/azure-data-plane/src/event-grid-router.mjs';
 import { createFunctionsRouterServer } from '../../packages/azure-data-plane/src/functions-router.mjs';
+import { createKubernetesRouterServer } from '../../packages/azure-data-plane/src/kubernetes-router.mjs';
 import { createKeyVaultRouterServer } from '../../packages/azure-data-plane/src/key-vault-router.mjs';
 
 const store = new ResourceStore();
@@ -26,6 +27,7 @@ const armServer = createArmServer({
   onResourcePut: runtime.syncResource,
   onResourceDelete: runtime.unsyncResource,
   workflowRunner: runtime.workflowRunner,
+  metricStore: runtime.metricStore,
 });
 const blobServer = createBlobStorageServer(runtime.storageRouter);
 const queueServer = createQueueStorageServer(runtime.storageRouter);
@@ -34,6 +36,7 @@ const appConfigurationServer = createAppConfigurationRouterServer(runtime.appCon
 const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
 const eventGridServer = createEventGridRouterServer(runtime.eventGridRouter);
 const functionsServer = createFunctionsRouterServer(runtime.functionsRouter);
+const kubernetesServer = createKubernetesRouterServer(runtime.kubernetesRouter);
 const keyVaultServer = createKeyVaultRouterServer(runtime.keyVaultRouter);
 
 await Promise.all([
@@ -46,6 +49,7 @@ await Promise.all([
   listen(appConfigurationServer, Number(process.env.GLOBALSTACK_APP_CONFIGURATION_PORT ?? 8483)),
   listen(eventGridServer, Number(process.env.GLOBALSTACK_EVENT_GRID_PORT ?? 6010)),
   listen(functionsServer, Number(process.env.GLOBALSTACK_FUNCTIONS_PORT ?? 7071)),
+  listen(kubernetesServer, Number(process.env.GLOBALSTACK_KUBERNETES_PORT ?? 10005)),
 ]);
 
 const shutdown = async () => {
@@ -59,6 +63,7 @@ const shutdown = async () => {
     new Promise(resolve => appConfigurationServer.close(resolve)),
     new Promise(resolve => eventGridServer.close(resolve)),
     new Promise(resolve => functionsServer.close(resolve)),
+    new Promise(resolve => kubernetesServer.close(resolve)),
   ]);
   process.exit(0);
 };

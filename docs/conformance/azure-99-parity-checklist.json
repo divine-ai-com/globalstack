@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T05:02:58.678Z",
+    "generatedAt": "2026-05-25T07:15:41.805Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -1532,9 +1532,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 5,
+        "complete": 6,
         "partial": 4,
-        "notStarted": 1
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1614,12 +1614,11 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane, dataPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
           "status": "complete",
@@ -1631,7 +1630,7 @@
         "serviceSpecificFacade": {
           "status": "complete",
           "evidence": [
-            "6 registry operations declared",
+            "7 registry operations declared",
             "backing engines: kind-or-k3d-future",
             "dedicated parity pack passed against the local facade/runtime path"
           ],
@@ -1879,7 +1878,7 @@
         "dataPlaneBehavior": {
           "status": "complete",
           "evidence": [
-            "parity result sections: controlPlane"
+            "parity result sections: controlPlane, dataPlane"
           ],
           "gaps": []
         },
@@ -1893,7 +1892,7 @@
         "serviceSpecificFacade": {
           "status": "complete",
           "evidence": [
-            "13 registry operations declared",
+            "15 registry operations declared",
             "backing engines: globalstack-metric-store",
             "dedicated parity pack passed against the local facade/runtime path"
           ],
@@ -1910,6 +1909,7 @@
         "Microsoft.Network/virtualNetworks",
         "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
         "Microsoft.Network/privateEndpoints",
+        "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
         "Microsoft.Network/privateDnsZones"
       ],
       "currentStatus": "in-progress",
@@ -2026,7 +2026,7 @@
         "serviceSpecificFacade": {
           "status": "complete",
           "evidence": [
-            "21 registry operations declared",
+            "25 registry operations declared",
             "backing engines: globalstack-network-model",
             "dedicated parity pack passed against the local facade/runtime path"
           ],

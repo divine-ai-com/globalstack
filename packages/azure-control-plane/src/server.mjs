@@ -61,6 +61,8 @@ import {
   workflowTriggerReadRoute,
   workflowTriggerRunRoute,
   aksCredentialActionRoute,
+  metricAlertStatusRoute,
+  metricQueryExtensionRoute,
   webAppConfigRoute,
 } from './server-support.mjs';
 
@@ -146,12 +148,93 @@ function sendHeadStatus(res, status, headers = {}) {
   res.end();
 }
 
+function parseTimespan(value) {
+  if (!value || !String(value).includes('/')) return { start: null, end: null };
+  const [start, end] = String(value).split('/');
+  return {
+    start: Number.isFinite(Date.parse(start)) ? start : null,
+    end: Number.isFinite(Date.parse(end)) ? end : null,
+  };
+}
+
+function metricAggregationField(aggregation) {
+  switch (String(aggregation ?? 'Average').toLowerCase()) {
+    case 'total':
+      return 'total';
+    case 'maximum':
+      return 'maximum';
+    case 'minimum':
+      return 'minimum';
+    case 'count':
+      return 'count';
+    default:
+      return 'average';
+  }
+}
+
+function metricAlertStatusBody(alertResource, alertState) {
+  return {
+    id: `${alertResource.id}/status`,
+    name: `${alertResource.name}/status`,
+    type: 'Microsoft.Insights/metricAlerts/status',
+    properties: {
+      status: alertState?.status ?? 'Resolved',
+      severity: alertResource.properties?.severity ?? null,
+      lastUpdatedTime: alertState?.lastEvaluatedAt ?? null,
+      monitoredScopes: alertResource.properties?.scopes ?? [],
+      lastMetricValue: alertState?.lastMetricValue ?? null,
+      actionGroupIds: alertState?.actionGroupIds ?? [],
+    },
+  };
+}
+
+function metricQueryBody({ scopeResource, metricName, metricNamespace, aggregation, timespan, samples }) {
+  const aggregationField = metricAggregationField(aggregation);
+  return {
+    cost: 0,
+    timespan: timespan ?? '',
+    interval: 'PT1M',
+    namespace: metricNamespace ?? '',
+    resourceregion: scopeResource?.location ?? 'global',
+    value: [
+      {
+        id: `${scopeResource?.id ?? ''}/providers/Microsoft.Insights/metrics/${encodeURIComponent(metricName ?? '')}`,
+        type: 'Microsoft.Insights/metrics',
+        name: {
+          value: metricName ?? '',
+          localizedValue: metricName ?? '',
+        },
+        displayDescription: 'GlobalStack bounded local metrics query surface.',
+        unit: aggregationField === 'count' ? 'Count' : 'Count',
+        timeseries: [
+          {
+            data: samples.map(sample => ({
+              timeStamp: sample.timestamp,
+              [aggregationField]: sample.value,
+            })),
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function metricQueryScopes(scopeResource) {
+  if (!scopeResource) return [];
+  if (String(scopeResource.type ?? '').toLowerCase() === 'microsoft.insights/metricalerts') {
+    const scopes = Array.isArray(scopeResource.properties?.scopes) ? scopeResource.properties.scopes : [];
+    return scopes.filter(Boolean);
+  }
+  return scopeResource.id ? [scopeResource.id] : [];
+}
+
 export function createArmRequestHandler({
   store = new ResourceStore(),
   persist = false,
   onResourcePut = null,
   onResourceDelete = null,
   workflowRunner = null,
+  metricStore = null,
 } = {}) {
   void persist;
 
@@ -1114,6 +1197,56 @@ export function createArmRequestHandler({
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksCredentialRoute.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
           return sendJson(res, 200, credentials);
+        }
+
+        const metricStatus = metricAlertStatusRoute(providerRoute);
+        if (metricStatus) {
+          if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'Metric alert status supports GET.');
+          const alertResource = store.getResource(metricStatus.alertRoute);
+          if (!alertResource) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${metricStatus.alertRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!metricStore) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No metric store is configured for local alert status inspection.');
+          }
+          const alertState = metricStore.getAlertState(alertResource.id);
+          return sendJson(res, 200, metricAlertStatusBody(alertResource, alertState));
+        }
+
+        const metricQueryRoute = metricQueryExtensionRoute(providerRoute);
+        if (metricQueryRoute) {
+          if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'Metric queries support GET.');
+          const scopeResource = store.getResource(metricQueryRoute.scopeRoute);
+          if (!scopeResource) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${metricQueryRoute.scopeRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!metricStore) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No metric store is configured for local metric queries.');
+          }
+          const metricName = url.searchParams.get('metricnames') ?? url.searchParams.get('metricName') ?? '';
+          const metricNamespace = url.searchParams.get('metricnamespace') ?? url.searchParams.get('metricNamespace') ?? '';
+          const aggregation = url.searchParams.get('aggregation') ?? 'Average';
+          if (!metricName || !metricNamespace) {
+            return sendError(res, 400, 'BadRequest', 'Metric query requires metricnames and metricnamespace.');
+          }
+          const timespan = url.searchParams.get('timespan');
+          const { start, end } = parseTimespan(timespan);
+          const queryScopes = metricQueryScopes(scopeResource);
+          const samples = queryScopes.flatMap(scope => metricStore.listSamples({
+            scope,
+            metricNamespace,
+            metricName,
+            start,
+            end,
+          }));
+          return sendJson(res, 200, metricQueryBody({
+            scopeResource,
+            metricName,
+            metricNamespace,
+            aggregation,
+            timespan,
+            samples,
+          }));
         }
 
         if (!capability) {

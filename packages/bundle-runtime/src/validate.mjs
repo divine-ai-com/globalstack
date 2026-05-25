@@ -1802,8 +1802,6 @@ if (!monitorMetricsAlertsParityText) {
     'action group list includes created resource',
     'metric alert list includes created resource',
     'action group unsupported receiver action fails closed',
-    'metric alert unsupported status route fails closed',
-    'metric query extension route fails closed',
     'ARM template deployment can create action group and metric alert',
     'metric alert get after delete is not found',
     'metric alert delete after delete returns no content',
@@ -1812,6 +1810,21 @@ if (!monitorMetricsAlertsParityText) {
   ]) {
     if (!monitorMetricsAlertsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Monitor Metrics/Alerts parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (monitorMetricsAlertsParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Monitor Metrics/Alerts parity data-plane matrix has failures');
+  }
+  if ((monitorMetricsAlertsParity.dataPlane?.total ?? 0) < 3) {
+    errors.push('Azure Monitor Metrics/Alerts parity data-plane matrix should exercise at least 3 cases');
+  }
+  for (const required of [
+    'metric alert status route starts resolved before metric ingestion',
+    'metric alert status route reflects fired alert state',
+    'metric query extension route returns ingested metric samples',
+  ]) {
+    if (!monitorMetricsAlertsParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Monitor Metrics/Alerts parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (monitorMetricsAlertsParity.platformMatrix?.skipped === true) {
@@ -1881,12 +1894,17 @@ if (!virtualNetworkParityText) {
     'private endpoint list includes created resource',
     'private dns zone list includes created resource',
     'virtual network peering list includes created resource',
-    'private endpoint unsupported dns zone group route fails closed',
+    'private endpoint dns zone group create succeeds',
+    'private endpoint dns zone group list includes created resource',
+    'local private dns registry resolves private endpoint zone-group record',
     'private dns zone missing record set is not found',
     'ARM template deployment can create network resources',
+    'private endpoint dns zone group delete succeeds',
+    'local private dns registry removes private endpoint zone-group record after delete',
     'virtual network peering delete succeeds',
     'virtual network peering get after delete is not found',
     'private endpoint get after delete is not found',
+    'local network model removes deleted private endpoint',
     'subnet get after delete is not found',
     'private dns zone get after delete is not found',
     'virtual network get after delete is not found',
@@ -2599,6 +2617,22 @@ if (!aksMetadataParityText) {
   ]) {
     if (!aksMetadataParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure AKS metadata parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (aksMetadataParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure AKS metadata parity data-plane matrix has failures');
+  }
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 4) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 4 cases');
+  }
+  for (const required of [
+    'local kubernetes api rejects missing bearer token',
+    'local kubernetes api version succeeds for kubeconfig host',
+    'local kubernetes api namespaces list succeeds',
+    'local kubernetes api nodes list reflects cluster agent pools',
+  ]) {
+    if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure AKS metadata parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (aksMetadataParity.platformMatrix?.skipped === true) {

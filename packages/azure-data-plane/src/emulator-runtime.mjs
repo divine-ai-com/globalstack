@@ -6,6 +6,7 @@ import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
 import { createFunctionsRouter } from './functions-router.mjs';
+import { createKubernetesRouter } from './kubernetes-router.mjs';
 import { createKeyVaultRouter } from './key-vault-router.mjs';
 import { createMetricStore } from './metric-store.mjs';
 import { createNetworkModel } from './network-model.mjs';
@@ -66,11 +67,26 @@ function resourceIdMatches(a, b) {
   return String(a ?? '').toLowerCase() === String(b ?? '').toLowerCase();
 }
 
+function privateDnsZoneGroupParts(providerRoute) {
+  const parts = String(providerRoute?.typePath ?? '').split('/');
+  return {
+    privateEndpointName: parts[1] ?? null,
+    groupName: parts[3] ?? null,
+  };
+}
+
+function zoneNameFromId(id) {
+  const parts = resourceSegments(id);
+  const index = parts.findIndex(part => part.toLowerCase() === 'privatednszones');
+  return index >= 0 ? parts[index + 1] ?? '' : '';
+}
+
 export function createEmulatorRuntime({ store }) {
   const storageRouter = createStorageDataPlaneRouter();
   const appConfigurationRouter = createAppConfigurationRouter();
   const eventGridRouter = createEventGridRouter();
   const functionsRouter = createFunctionsRouter();
+  const kubernetesRouter = createKubernetesRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();
   const networkModel = createNetworkModel();
@@ -137,6 +153,60 @@ export function createEmulatorRuntime({ store }) {
     },
   });
   const workflowRunner = createWorkflowRunner();
+
+  function reconcilePrivateEndpointDnsZoneGroup({ providerRoute, resource }) {
+    const ownerKey = `private-endpoint-zone-group:${String(resource?.id ?? resourcePath(providerRoute)).toLowerCase()}`;
+    dnsRegistry.unregisterRecordsByOwner(ownerKey);
+
+    const { privateEndpointName } = privateDnsZoneGroupParts(providerRoute);
+    if (!privateEndpointName || !resource) return;
+
+    const privateEndpointRoute = {
+      subscriptionId: providerRoute.subscriptionId,
+      resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: `privateEndpoints/${privateEndpointName}`,
+    };
+    const privateEndpoint = store.getResource(privateEndpointRoute);
+    const endpointState = networkModel.getPrivateEndpoint(privateEndpoint?.id);
+    const serviceId = privateEndpoint?.properties?.privateLinkServiceConnections?.[0]?.properties?.privateLinkServiceId;
+    const recordName = resourceNameFromId(serviceId);
+    if (!privateEndpoint || !endpointState?.ipAddress || !recordName) return;
+
+    for (const config of resource.properties?.privateDnsZoneConfigs ?? []) {
+      const zoneName = zoneNameFromId(config?.properties?.privateDnsZoneId);
+      if (!zoneName) continue;
+      dnsRegistry.registerRecord({
+        zoneName,
+        privateZone: true,
+        recordType: 'A',
+        recordName,
+        ownerKey,
+        properties: {
+          TTL: 60,
+          ARecords: [{ ipv4Address: endpointState.ipAddress }],
+        },
+      });
+    }
+  }
+
+  function reconcilePrivateEndpointDnsZoneGroupsForEndpoint(providerRoute) {
+    const privateEndpointName = providerRoute.typePath.split('/')[1];
+    const prefix = `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/Microsoft.Network/privateEndpoints/${privateEndpointName}/privateDnsZoneGroups/`;
+    for (const resource of store.listResources(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+      if (resource.type !== 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups') continue;
+      if (!String(resource.id ?? '').toLowerCase().startsWith(prefix.toLowerCase())) continue;
+      reconcilePrivateEndpointDnsZoneGroup({
+        providerRoute: {
+          subscriptionId: providerRoute.subscriptionId,
+          resourceGroupName: providerRoute.resourceGroupName,
+          providerNamespace: 'Microsoft.Network',
+          typePath: `privateEndpoints/${privateEndpointName}/privateDnsZoneGroups/${resource.name.split('/').at(-1)}`,
+        },
+        resource,
+      });
+    }
+  }
 
   function emitActivityLog({ providerRoute, resourceType, resource, verb }) {
     if (!providerRoute?.resourceGroupName || !resourceType) return;
@@ -347,6 +417,11 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.ContainerService/managedClusters') {
+      kubernetesRouter.registerCluster(resource);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites/functions') {
       const [, appName, , functionName] = providerRoute.typePath.split('/');
       functionsRouter.registerFunctionResource({
@@ -476,6 +551,7 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Network/privateEndpoints') {
       networkModel.registerPrivateEndpoint(resource);
+      reconcilePrivateEndpointDnsZoneGroupsForEndpoint(providerRoute);
       return;
     }
 
@@ -508,6 +584,11 @@ export function createEmulatorRuntime({ store }) {
         recordName,
         properties: resource.properties ?? {},
       });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups') {
+      reconcilePrivateEndpointDnsZoneGroup({ providerRoute, resource });
       return;
     }
 
@@ -561,6 +642,11 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ContainerService/managedClusters') {
+      kubernetesRouter.unregisterCluster(resource ?? providerRoute.typePath.split('/')[1]);
       return;
     }
 
@@ -657,6 +743,7 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Network/privateEndpoints') {
       networkModel.unregisterPrivateEndpoint(resource ?? providerRoute.typePath.split('/')[1]);
+      reconcilePrivateEndpointDnsZoneGroupsForEndpoint(providerRoute);
       return;
     }
 
@@ -686,6 +773,11 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups') {
+      dnsRegistry.unregisterRecordsByOwner(`private-endpoint-zone-group:${String(resource?.id ?? resourcePath(providerRoute)).toLowerCase()}`);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Insights/actionGroups') {
       metricStore.unregisterActionGroup(resource ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -702,6 +794,7 @@ export function createEmulatorRuntime({ store }) {
     eventGridRouter,
     edgeRouter,
     functionsRouter,
+    kubernetesRouter,
     keyVaultRouter,
     workflowRunner,
     serviceDiscoveryRegistry,

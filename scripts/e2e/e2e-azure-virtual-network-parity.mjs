@@ -118,6 +118,10 @@ function privateEndpointPath(resourceGroup, privateEndpointName, apiVersion = '2
   return providerPath(resourceGroup, 'Microsoft.Network', `privateEndpoints/${privateEndpointName}`, apiVersion);
 }
 
+function privateDnsZoneGroupPath(resourceGroup, privateEndpointName, groupName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `privateEndpoints/${privateEndpointName}/privateDnsZoneGroups/${groupName}`, apiVersion);
+}
+
 function privateDnsZonePath(resourceGroup, zoneName, apiVersion = '2020-06-01') {
   return providerPath(resourceGroup, 'Microsoft.Network', `privateDnsZones/${zoneName}`, apiVersion);
 }
@@ -189,6 +193,23 @@ function privateDnsZoneBody(overrides = {}) {
   };
 }
 
+function privateDnsZoneGroupBody({ privateDnsZoneId, overrides = {} }) {
+  return {
+    properties: {
+      privateDnsZoneConfigs: [
+        {
+          name: 'blob',
+          properties: {
+            privateDnsZoneId,
+          },
+        },
+      ],
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
 function deploymentBody({ vnetName, subnetName, privateEndpointName, privateDnsZoneName, resourceGroup }) {
   const subnetId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/virtualNetworks/${vnetName}/subnets/${subnetName}`;
   return {
@@ -246,6 +267,8 @@ async function runControlPlaneMatrix() {
   const peeringName = `peer-${suffix}`.slice(0, 40);
   const privateEndpointName = `pe-${suffix}`.slice(0, 40);
   const privateDnsZoneName = `${suffix}.internal.test`;
+  const privateEndpointDnsZoneName = 'privatelink.blob.core.windows.net';
+  const privateDnsZoneGroupName = `zonegroup-${suffix}`.slice(0, 40);
   const missingName = `missing-${suffix}`.slice(0, 40);
   let vnetId = null;
   let subnetId = null;
@@ -715,6 +738,43 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('private endpoint dns zone create succeeds for zone-group lifecycle', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        privateDnsZonePath(resourceGroup, privateEndpointDnsZoneName),
+        privateDnsZoneBody({ properties: {} }),
+      );
+      assert.equal(result.status, 202);
+      return { status: result.status };
+    });
+
+    await record('private endpoint dns zone get succeeds for zone-group lifecycle', async () => {
+      const result = await httpJson(armPort, 'GET', privateDnsZonePath(resourceGroup, privateEndpointDnsZoneName));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.name, privateEndpointDnsZoneName);
+      return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('private endpoint dns zone link create succeeds', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.Network', `privateDnsZones/${privateEndpointDnsZoneName}/virtualNetworkLinks/${privateDnsZoneGroupName}`, '2020-06-01'),
+        {
+          location: 'global',
+          properties: {
+            registrationEnabled: false,
+            virtualNetwork: {
+              id: vnetId,
+            },
+          },
+        },
+      );
+      assert.equal(result.status, 201);
+      return { status: result.status, resourceId: result.body.id };
+    });
+
     await record('virtual network peering list includes created resource', async () => {
       const result = await httpJson(
         armPort,
@@ -726,15 +786,39 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
-    await record('private endpoint unsupported dns zone group route fails closed', async () => {
+    await record('private endpoint dns zone group create succeeds', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        privateDnsZoneGroupPath(resourceGroup, privateEndpointName, privateDnsZoneGroupName),
+        privateDnsZoneGroupBody({
+          privateDnsZoneId: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/privateDnsZones/${privateEndpointDnsZoneName}`,
+        }),
+      );
+      assert.equal(result.status, 201);
+      assert.equal(result.body.type, 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups');
+      return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('private endpoint dns zone group list includes created resource', async () => {
       const result = await httpJson(
         armPort,
         'GET',
         providerPath(resourceGroup, 'Microsoft.Network', `privateEndpoints/${privateEndpointName}/privateDnsZoneGroups`, '2023-09-01'),
       );
-      assert.equal(result.status, 501);
-      assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.name === `${privateEndpointName}/${privateDnsZoneGroupName}`));
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local private dns registry resolves private endpoint zone-group record', async () => {
+      const result = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `stplaceholder.${privateEndpointDnsZoneName}`,
+        vnetId,
+      });
+      assert.equal(result.status, 'NOERROR');
+      assert.ok(result.values[0].startsWith('10.42.2.'));
+      return { status: 200, ipAddress: result.values[0] };
     });
 
     await record('private dns zone missing record set is not found', async () => {
@@ -772,6 +856,26 @@ async function runControlPlaneMatrix() {
       assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/privateEndpoints/${deploymentPrivateEndpoint}`)));
       assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/privateDnsZones/${deploymentPrivateDnsZone}`)));
       return { status: result.status, deploymentName };
+    });
+
+    await record('private endpoint dns zone group delete succeeds', async () => {
+      const result = await httpJson(
+        armPort,
+        'DELETE',
+        privateDnsZoneGroupPath(resourceGroup, privateEndpointName, privateDnsZoneGroupName),
+      );
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
+    await record('local private dns registry removes private endpoint zone-group record after delete', async () => {
+      const result = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `stplaceholder.${privateEndpointDnsZoneName}`,
+        vnetId,
+      });
+      assert.equal(result.status, 'NXDOMAIN');
+      assert.equal(result.reason, 'RECORD_NOT_FOUND');
+      return { status: 404, reason: result.reason };
     });
 
     await record('private endpoint delete succeeds', async () => {
@@ -821,6 +925,22 @@ async function runControlPlaneMatrix() {
 
     await record('private dns zone delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', privateDnsZonePath(resourceGroup, privateDnsZoneName));
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
+    await record('private endpoint dns zone link delete succeeds', async () => {
+      const result = await httpJson(
+        armPort,
+        'DELETE',
+        providerPath(resourceGroup, 'Microsoft.Network', `privateDnsZones/${privateEndpointDnsZoneName}/virtualNetworkLinks/${privateDnsZoneGroupName}`, '2020-06-01'),
+      );
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
+    await record('private endpoint dns zone delete succeeds', async () => {
+      const result = await httpJson(armPort, 'DELETE', privateDnsZonePath(resourceGroup, privateEndpointDnsZoneName));
       assert.equal(result.status, 200);
       return { status: result.status };
     });
@@ -953,7 +1073,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Virtual Network, subnet, Private Endpoint, and Private DNS zone ARM lifecycle, stricter parameter rejection, bounded local network-model private endpoint allocation behavior, unsupported Network child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure networking as 99%-complete or cloudValidated for packet routing, NSG evaluation, NAT, route table propagation, service endpoints, private endpoint approval workflows, DNS resolution behavior, record sets, VNet links, throttling, RBAC, or exact Azure Network data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Virtual Network, subnet, Private Endpoint, Private DNS zone, and private DNS zone-group ARM lifecycle, stricter parameter rejection, bounded local network-model private endpoint allocation behavior, private endpoint DNS registration into linked private zones, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure networking as 99%-complete or cloudValidated for packet routing, NSG evaluation, NAT, route table propagation, service endpoints, private endpoint approval workflows, full DNS resolution behavior, throttling, RBAC, or exact Azure Network data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

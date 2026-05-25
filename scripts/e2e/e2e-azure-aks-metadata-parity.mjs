@@ -6,6 +6,7 @@ import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { createKubernetesRouterServer } from '../../packages/azure-data-plane/src/kubernetes-router.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -50,12 +51,17 @@ async function withArmServer(fn) {
     onResourcePut: runtime.syncResource,
     onResourceDelete: runtime.unsyncResource,
     workflowRunner: runtime.workflowRunner,
+    metricStore: runtime.metricStore,
   });
+  const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => kubeServer.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
+  const kubePort = kubeServer.address().port;
   try {
-    return await fn({ armPort: port, runtime, store });
+    return await fn({ armPort: port, kubePort, runtime, store });
   } finally {
+    await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => server.close(resolve));
   }
 }
@@ -180,20 +186,53 @@ function decodeKubeconfig(result) {
   return Buffer.from(result.body.kubeconfigs[0].value, 'base64').toString('utf8');
 }
 
+function kubeconfigValue(kubeconfig, key) {
+  const line = String(kubeconfig)
+    .split('\n')
+    .find(entry => entry.trim().startsWith(`${key}:`));
+  return line ? line.split(':').slice(1).join(':').trim() : '';
+}
+
+async function httpKube(port, path, { host, token: kubeToken, auth = true } = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method: 'GET',
+    headers: {
+      ...(host ? { 'x-forwarded-host': host } : {}),
+      ...(auth ? { authorization: `Bearer ${kubeToken}` } : {}),
+    },
+  });
+  const text = await response.text();
+  let parsed = text;
+  try {
+    parsed = text ? JSON.parse(text) : null;
+  } catch {
+    // keep text
+  }
+  return {
+    status: response.status,
+    headers: Object.fromEntries(response.headers.entries()),
+    body: parsed,
+  };
+}
+
 async function runControlPlaneMatrix() {
-  const cases = [];
+  const controlCases = [];
+  const dataPlaneCases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
   const resourceGroup = `rg-gs-aks-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-aks-missing-${suffix}`;
   const clusterName = `aks-${suffix}`.slice(0, 40);
   const missingClusterName = `aks-missing-${suffix}`.slice(0, 40);
   let asyncOperation = null;
+  let clusterHost = null;
+  let userKubeToken = null;
+  let adminKubeToken = null;
 
   async function record(name, fn) {
     const startedAt = Date.now();
     try {
       const detail = await fn();
-      cases.push({
+      controlCases.push({
         name,
         ok: true,
         durationMs: Date.now() - startedAt,
@@ -201,7 +240,7 @@ async function runControlPlaneMatrix() {
       });
       console.log(`PASS ${name}`);
     } catch (error) {
-      cases.push({
+      controlCases.push({
         name,
         ok: false,
         durationMs: Date.now() - startedAt,
@@ -211,7 +250,29 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async ({ armPort }) => {
+  async function recordDataPlane(name, fn) {
+    const startedAt = Date.now();
+    try {
+      const detail = await fn();
+      dataPlaneCases.push({
+        name,
+        ok: true,
+        durationMs: Date.now() - startedAt,
+        ...detail,
+      });
+      console.log(`PASS ${name}`);
+    } catch (error) {
+      dataPlaneCases.push({
+        name,
+        ok: false,
+        durationMs: Date.now() - startedAt,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      console.error(`FAIL ${name}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  await withArmServer(async ({ armPort, kubePort }) => {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
 
@@ -524,6 +585,8 @@ async function runControlPlaneMatrix() {
       const kubeconfig = decodeKubeconfig(result);
       assert.match(kubeconfig, new RegExp(`name: ${clusterName}`));
       assert.match(kubeconfig, /server: https:\/\/.+\.azmk8s\.io/);
+      clusterHost = new URL(kubeconfigValue(kubeconfig, 'server')).host;
+      userKubeToken = kubeconfigValue(kubeconfig, 'token');
       return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
     });
 
@@ -533,6 +596,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.kubeconfigs[0].name, 'clusterAdmin');
       const kubeconfig = decodeKubeconfig(result);
       assert.match(kubeconfig, /current-context: clusterAdmin/);
+      adminKubeToken = kubeconfigValue(kubeconfig, 'token');
       return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
     });
 
@@ -543,6 +607,35 @@ async function runControlPlaneMatrix() {
       assert.equal(second.status, 200);
       assert.deepEqual(first.body, second.body);
       return { status: second.status, kubeconfigName: second.body.kubeconfigs[0].name };
+    });
+
+    await recordDataPlane('local kubernetes api rejects missing bearer token', async () => {
+      const result = await httpKube(kubePort, '/version', { host: clusterHost, token: userKubeToken, auth: false });
+      assert.equal(result.status, 401);
+      assert.equal(result.body.reason, 'Unauthorized');
+      return { status: result.status, reason: result.body.reason };
+    });
+
+    await recordDataPlane('local kubernetes api version succeeds for kubeconfig host', async () => {
+      const result = await httpKube(kubePort, '/version', { host: clusterHost, token: userKubeToken });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.gitVersion, 'v1.29.2');
+      return { status: result.status, gitVersion: result.body.gitVersion };
+    });
+
+    await recordDataPlane('local kubernetes api namespaces list succeeds', async () => {
+      const result = await httpKube(kubePort, '/api/v1/namespaces', { host: clusterHost, token: userKubeToken });
+      assert.equal(result.status, 200);
+      assert.ok(result.body.items.some(item => item.metadata.name === 'kube-system'));
+      return { status: result.status, count: result.body.items.length };
+    });
+
+    await recordDataPlane('local kubernetes api nodes list reflects cluster agent pools', async () => {
+      const result = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.items.length, 1);
+      assert.equal(result.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
+      return { status: result.status, count: result.body.items.length };
     });
 
     await record('unsupported AKS action fails closed', async () => {
@@ -618,14 +711,24 @@ async function runControlPlaneMatrix() {
     });
   });
 
-  const failed = cases.filter(item => !item.ok);
+  const failed = controlCases.filter(item => !item.ok);
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    clusterName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: controlCases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      clusterName,
+      cases: controlCases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      clusterHost,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -683,6 +786,18 @@ function markdown(report) {
   }
 
   lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Kubernetes host under test: ${report.dataPlane.clusterHost ?? ''}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.reason ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
   lines.push('## Platform Matrix');
   lines.push('');
   if (report.platformMatrix.skipped) {
@@ -699,21 +814,22 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster metadata lifecycle, captured servicePrincipalProfile validation, async provisioning-state smoke, local kubeconfig action metadata, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for a real Kubernetes API server, node provisioning, CNI, load balancer integration, addons, upgrades, private clusters, Azure AD/RBAC integration, kube API behavior, runCommand execution, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster metadata lifecycle, captured servicePrincipalProfile validation, async provisioning-state smoke, local kubeconfig action metadata, a bounded Kubernetes API host behind the AKS FQDN, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for managed node provisioning, CNI, load balancer integration, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, workload scheduling, runCommand execution, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster metadata lifecycle, local kubeconfig action metadata, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
-  claimBoundary: 'Local metadata parity evidence for the enumerated cases only; not a full AKS or Kubernetes runtime cloudValidated claim.',
-  controlPlane,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
+  scope: 'Azure Kubernetes Service ARM managed-cluster metadata lifecycle, bounded local Kubernetes API behavior behind the AKS FQDN, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  claimBoundary: 'Bounded local AKS metadata and Kubernetes API evidence for the enumerated cases only; not a full AKS or Kubernetes runtime cloudValidated claim.',
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 

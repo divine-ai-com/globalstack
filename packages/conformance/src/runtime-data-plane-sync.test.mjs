@@ -5,6 +5,7 @@ import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
 import { createEdgeRouterServer } from '../../azure-data-plane/src/edge-router.mjs';
+import { createKubernetesRouterServer } from '../../azure-data-plane/src/kubernetes-router.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
 
@@ -51,6 +52,7 @@ async function withRuntimeServer(fn) {
     onResourcePut: runtime.syncResource,
     onResourceDelete: runtime.unsyncResource,
     workflowRunner: runtime.workflowRunner,
+    metricStore: runtime.metricStore,
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
@@ -59,6 +61,27 @@ async function withRuntimeServer(fn) {
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
+}
+
+async function kubeJson(port, path, { host, auth = 'Bearer globalstack-aks-user-token' } = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    headers: {
+      ...(host ? { 'x-forwarded-host': host } : {}),
+      ...(auth ? { authorization: auth } : {}),
+    },
+  });
+  const text = await response.text();
+  let parsed = text;
+  try {
+    parsed = text ? JSON.parse(text) : null;
+  } catch {
+    // keep text
+  }
+  return {
+    status: response.status,
+    body: parsed,
+    headers: Object.fromEntries(response.headers.entries()),
+  };
 }
 
 async function edgeJson(port, method, path, options = {}) {
@@ -284,6 +307,174 @@ test('metric store follows alert lifecycle and evaluates bounded alert transitio
     const resolved = runtime.metricStore.evaluateAlert(alert.body.id, { now: '2026-01-01T00:21:00.000Z' });
     assert.equal(resolved.status, 'Resolved');
     assert.equal(resolved.lastMetricValue, 12);
+  });
+});
+
+test('kubernetes router follows managed cluster lifecycle and serves bounded kube api metadata', async () => {
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const armServer = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
+  const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
+  await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => kubeServer.listen(0, '127.0.0.1', resolve));
+  const armPort = armServer.address().port;
+  const kubePort = kubeServer.address().port;
+
+  try {
+    await httpJson(armPort, 'PUT', `${subscriptionPath}/resourceGroups/rg-aks-sync?api-version=2021-04-01`, { location: 'eastus' });
+    const created = await httpJson(
+      armPort,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync?api-version=2024-02-01`,
+      {
+        location: 'eastus',
+        identity: { type: 'SystemAssigned' },
+        properties: {
+          dnsPrefix: 'aks-sync',
+          kubernetesVersion: '1.29.2',
+          servicePrincipalProfile: { clientId: 'msi' },
+          agentPoolProfiles: [
+            { name: 'systempool', count: 1, vmSize: 'Standard_DS2_v2', mode: 'System', osType: 'Linux' },
+          ],
+        },
+      },
+    );
+    assert.equal(created.status, 202);
+
+    const cluster = await httpJson(
+      armPort,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync?api-version=2024-02-01`,
+    );
+    const host = cluster.body.properties.fqdn;
+    const unauthorized = await kubeJson(kubePort, '/version', { host, auth: null });
+    assert.equal(unauthorized.status, 401);
+
+    const version = await kubeJson(kubePort, '/version', { host });
+    assert.equal(version.status, 200);
+    assert.equal(version.body.gitVersion, 'v1.29.2');
+
+    const nodes = await kubeJson(kubePort, '/api/v1/nodes', { host });
+    assert.equal(nodes.status, 200);
+    assert.equal(nodes.body.items.length, 1);
+    assert.equal(nodes.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
+
+    const deleted = await httpJson(
+      armPort,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync?api-version=2024-02-01`,
+    );
+    assert.equal(deleted.status, 200);
+
+    const afterDelete = await kubeJson(kubePort, '/version', { host });
+    assert.equal(afterDelete.status, 404);
+  } finally {
+    await new Promise(resolve => kubeServer.close(resolve));
+    await new Promise(resolve => armServer.close(resolve));
+  }
+});
+
+test('private dns zone groups register and remove derived private endpoint records', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-zonegroup-sync?api-version=2021-04-01`, { location: 'eastus' });
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        properties: {
+          addressSpace: { addressPrefixes: ['10.91.0.0/16'] },
+          subnets: [{ name: 'default', properties: { addressPrefix: '10.91.1.0/24' } }],
+        },
+      },
+    );
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net?api-version=2020-06-01`,
+      { location: 'global', properties: {} },
+    );
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks/default-link?api-version=2020-06-01`,
+      {
+        location: 'global',
+        properties: {
+          registrationEnabled: false,
+          virtualNetwork: {
+            id: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync`,
+          },
+        },
+      },
+    );
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateEndpoints/pe-sync?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        properties: {
+          subnet: {
+            id: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync/subnets/default`,
+          },
+          privateLinkServiceConnections: [
+            {
+              name: 'blob',
+              properties: {
+                privateLinkServiceId: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Storage/storageAccounts/stsync`,
+                groupIds: ['blob'],
+              },
+            },
+          ],
+        },
+      },
+    );
+    const zoneGroup = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateEndpoints/pe-sync/privateDnsZoneGroups/default?api-version=2023-09-01`,
+      {
+        properties: {
+          privateDnsZoneConfigs: [
+            {
+              name: 'blob',
+              properties: {
+                privateDnsZoneId: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net`,
+              },
+            },
+          ],
+        },
+      },
+    );
+    assert.equal(zoneGroup.status, 201);
+
+    const resolved = runtime.dnsRegistry.resolvePrivateDns({
+      fqdn: 'stsync.privatelink.blob.core.windows.net',
+      vnetId: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync`,
+    });
+    assert.equal(resolved.status, 'NOERROR');
+    assert.match(resolved.values[0], /^10\.91\.1\./);
+
+    const deleted = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/privateEndpoints/pe-sync/privateDnsZoneGroups/default?api-version=2023-09-01`,
+    );
+    assert.equal(deleted.status, 200);
+
+    const unresolved = runtime.dnsRegistry.resolvePrivateDns({
+      fqdn: 'stsync.privatelink.blob.core.windows.net',
+      vnetId: `${subscriptionPath}/resourceGroups/rg-zonegroup-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync`,
+    });
+    assert.equal(unresolved.status, 'NXDOMAIN');
+    assert.equal(unresolved.reason, 'RECORD_NOT_FOUND');
   });
 });
 
