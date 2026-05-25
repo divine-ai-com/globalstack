@@ -1,0 +1,55 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-25T12:10:23.504Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f8726014a5/providers/Microsoft.KeyVault/vaults/kv-f8726014a5?api-version=2023-07-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "tenantId": "{tenantId}",
+        "sku": {
+          "name": "GlobalStack_InvalidSku_For_Conformance"
+        },
+        "accessPolicies": []
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9d5047bb-7f52-4711-ada2-60b5c81faff7",
+      "x-ms-request-id": "df898373-eb7b-44c7-b4c8-3d02b9286e5c",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260525T121022Z:9d5047bb-7f52-4711-ada2-60b5c81faff7"
+    },
+    "body": {
+      "error": {
+        "code": "BadRequest",
+        "message": "The key vault sku is invalid."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f8726014a5",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

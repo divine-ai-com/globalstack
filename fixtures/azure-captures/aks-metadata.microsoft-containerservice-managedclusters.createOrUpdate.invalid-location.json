@@ -1,6 +1,6 @@
 {
   "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T16:06:43.307Z",
+  "capturedAt": "2026-05-25T12:07:27.872Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "7d06af5b-22ce-43ad-b42d-4fcaab9ddc40",
-      "x-ms-request-id": "7d06af5b-22ce-43ad-b42d-4fcaab9ddc40",
-      "x-ms-routing-request-id": "EASTUS:20260516T160636Z:7d06af5b-22ce-43ad-b42d-4fcaab9ddc40"
+      "x-ms-correlation-request-id": "617fc69f-1359-498d-93fc-d4e6a3ce24df",
+      "x-ms-request-id": "617fc69f-1359-498d-93fc-d4e6a3ce24df",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T120721Z:617fc69f-1359-498d-93fc-d4e6a3ce24df"
     },
     "body": {
       "error": {

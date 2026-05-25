@@ -1,6 +1,6 @@
 {
   "id": "key-vault-keys.microsoft-keyvault-vaults.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T15:18:31.814Z",
+  "capturedAt": "2026-05-25T12:09:51.168Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-70c6fce701/providers/Microsoft.KeyVault/vaults/kv-70c6fce701?api-version=2023-07-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "6f23dc48-0ad6-44ac-86ae-908814789251",
-      "x-ms-request-id": "6f23dc48-0ad6-44ac-86ae-908814789251",
-      "x-ms-routing-request-id": "EASTUS:20260516T151824Z:6f23dc48-0ad6-44ac-86ae-908814789251"
+      "x-ms-correlation-request-id": "ab9fdc20-3296-4d7b-990d-daa3b9db777e",
+      "x-ms-request-id": "ab9fdc20-3296-4d7b-990d-daa3b9db777e",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T120949Z:ab9fdc20-3296-4d7b-990d-daa3b9db777e"
     },
     "body": {
       "error": {

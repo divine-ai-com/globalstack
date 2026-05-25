@@ -1,6 +1,6 @@
 {
   "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:06:52.145Z",
+  "capturedAt": "2026-05-25T12:07:33.314Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-42a3a01fff/providers/Microsoft.ContainerService/managedClusters/aks-42a3a01fff?api-version=2024-02-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "3e27c72e-29fb-4368-a9b3-1aa9d66e784e",
-      "x-ms-request-id": "3e27c72e-29fb-4368-a9b3-1aa9d66e784e",
-      "x-ms-routing-request-id": "EASTUS:20260516T160646Z:3e27c72e-29fb-4368-a9b3-1aa9d66e784e"
+      "x-ms-correlation-request-id": "d069da2e-da0f-45ee-a8eb-f319b2a925d6",
+      "x-ms-request-id": "d069da2e-da0f-45ee-a8eb-f319b2a925d6",
+      "x-ms-routing-request-id": "EASTUS:20260525T120731Z:d069da2e-da0f-45ee-a8eb-f319b2a925d6"
     },
     "body": {
       "error": {

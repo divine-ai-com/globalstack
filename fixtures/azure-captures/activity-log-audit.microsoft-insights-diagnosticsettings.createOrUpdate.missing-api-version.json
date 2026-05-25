@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T15:50:02.317Z",
+  "capturedAt": "2026-05-25T12:16:05.894Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "0d5644d6-7b99-4d6e-850e-0615f313322e",
-      "x-ms-request-id": "0d5644d6-7b99-4d6e-850e-0615f313322e",
-      "x-ms-routing-request-id": "EASTUS:20260516T154955Z:0d5644d6-7b99-4d6e-850e-0615f313322e"
+      "x-ms-correlation-request-id": "d377f55d-9205-48b4-83e2-0dcd662789ab",
+      "x-ms-request-id": "d377f55d-9205-48b4-83e2-0dcd662789ab",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260525T121603Z:d377f55d-9205-48b4-83e2-0dcd662789ab"
     },
     "body": {
       "error": {

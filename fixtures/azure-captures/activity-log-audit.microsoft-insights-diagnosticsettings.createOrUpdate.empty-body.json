@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T15:50:18.521Z",
+  "capturedAt": "2026-05-25T12:16:24.861Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8cad42be38/providers/Microsoft.Insights/diagnosticSettings/diag-8cad42be38?api-version=2021-05-01-preview",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "b4f3859f-dc97-45ad-bb9a-d47047c4adc5",
+      "x-ms-correlation-request-id": "d8bff336-3f09-45ab-acc7-a1db651c1566",
       "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
-      "x-ms-routing-request-id": "EASTUS:20260516T155017Z:b4f3859f-dc97-45ad-bb9a-d47047c4adc5"
+      "x-ms-routing-request-id": "EASTUS:20260525T121623Z:d8bff336-3f09-45ab-acc7-a1db651c1566"
     },
     "body": {
       "code": "BadRequest",

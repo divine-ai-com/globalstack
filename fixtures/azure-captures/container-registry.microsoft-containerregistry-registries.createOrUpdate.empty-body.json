@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-16T16:09:40.998Z",
+  "capturedAt": "2026-05-25T12:06:11.321Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -12,15 +12,16 @@
   "request": {
     "method": "PUT",
     "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-78f3c3955b/providers/Microsoft.ContainerRegistry/registries/acr78f3c3955b?api-version=2023-07-01",
-    "body": {}
+    "body": {},
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "c46b1fb2-b7b3-4ee9-8dad-f2f199a7c684",
-      "x-ms-request-id": "c46b1fb2-b7b3-4ee9-8dad-f2f199a7c684",
-      "x-ms-routing-request-id": "EASTUS:20260516T160939Z:c46b1fb2-b7b3-4ee9-8dad-f2f199a7c684"
+      "x-ms-correlation-request-id": "c5175ed1-fd8b-4b22-a422-9021a7b1c088",
+      "x-ms-request-id": "c5175ed1-fd8b-4b22-a422-9021a7b1c088",
+      "x-ms-routing-request-id": "EASTUS:20260525T120603Z:c5175ed1-fd8b-4b22-a422-9021a7b1c088"
     },
     "body": {
       "error": {

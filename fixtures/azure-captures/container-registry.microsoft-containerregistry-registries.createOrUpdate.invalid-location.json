@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T16:09:38.310Z",
+  "capturedAt": "2026-05-25T12:05:58.379Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "76d68dd1-1872-4937-ad0e-7773984c8b9c",
-      "x-ms-request-id": "76d68dd1-1872-4937-ad0e-7773984c8b9c",
-      "x-ms-routing-request-id": "WESTINDIA:20260516T160931Z:76d68dd1-1872-4937-ad0e-7773984c8b9c"
+      "x-ms-correlation-request-id": "6d15b1f8-327b-4fbc-9745-b0d363193b91",
+      "x-ms-request-id": "6d15b1f8-327b-4fbc-9745-b0d363193b91",
+      "x-ms-routing-request-id": "EASTUS:20260525T120556Z:6d15b1f8-327b-4fbc-9745-b0d363193b91"
     },
     "body": {
       "error": {

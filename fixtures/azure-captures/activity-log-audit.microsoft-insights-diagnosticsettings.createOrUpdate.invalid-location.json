@@ -1,6 +1,6 @@
 {
   "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.invalid-location",
-  "capturedAt": "2026-05-16T15:50:13.024Z",
+  "capturedAt": "2026-05-25T12:16:17.772Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "globalstack-invalid-location",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "dc9f7ca6-5d54-408d-a433-e1dab94fca43",
+      "x-ms-correlation-request-id": "554eea29-04b0-44a6-90da-27a6cd482308",
       "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
-      "x-ms-routing-request-id": "EASTUS:20260516T155006Z:dc9f7ca6-5d54-408d-a433-e1dab94fca43"
+      "x-ms-routing-request-id": "WESTINDIA:20260525T121616Z:554eea29-04b0-44a6-90da-27a6cd482308"
     },
     "body": {
       "code": "ResourceTypeNotSupported",

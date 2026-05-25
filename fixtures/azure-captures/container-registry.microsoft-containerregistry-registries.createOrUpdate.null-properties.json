@@ -1,0 +1,56 @@
+{
+  "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T12:06:31.117Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "container-registry",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerRegistry/registries",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-10c80c2ace/providers/Microsoft.ContainerRegistry/registries/acr10c80c2ace?api-version=2023-07-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b61bd0be-eb60-46c2-bf0c-7b442180a93e",
+      "x-ms-request-id": "b61bd0be-eb60-46c2-bf0c-7b442180a93e",
+      "x-ms-routing-request-id": "EASTUS:20260525T120623Z:b61bd0be-eb60-46c2-bf0c-7b442180a93e"
+    },
+    "body": {
+      "errors": {
+        "Sku": [
+          "The Sku field is required."
+        ]
+      },
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+      "title": "One or more validation errors occurred.",
+      "status": 400,
+      "extensions": {
+        "traceId": "00-1bbe4491cd5385025134061ee00b30a6-ef532c59705acd92-01"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-10c80c2ace",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

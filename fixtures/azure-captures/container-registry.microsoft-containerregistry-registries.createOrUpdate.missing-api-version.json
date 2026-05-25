@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.missing-api-version",
-  "capturedAt": "2026-05-16T16:09:27.929Z",
+  "capturedAt": "2026-05-25T12:05:42.920Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "6602406c-65a9-46e7-9631-ad0a1db3000b",
-      "x-ms-request-id": "6602406c-65a9-46e7-9631-ad0a1db3000b",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T160926Z:6602406c-65a9-46e7-9631-ad0a1db3000b"
+      "x-ms-correlation-request-id": "af8e6282-8317-46f7-b178-301822f64f1e",
+      "x-ms-request-id": "af8e6282-8317-46f7-b178-301822f64f1e",
+      "x-ms-routing-request-id": "EASTUS:20260525T120534Z:af8e6282-8317-46f7-b178-301822f64f1e"
     },
     "body": {
       "error": {

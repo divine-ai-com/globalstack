@@ -1,6 +1,6 @@
 {
   "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-16T16:09:22.514Z",
+  "capturedAt": "2026-05-25T12:05:28.711Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -15,15 +15,16 @@
     "body": {
       "location": "{location}",
       "properties": {}
-    }
+    },
+    "apiVersionOverride": null
   },
   "response": {
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "5b6df500-2f02-4c24-a717-f757ca2707f7",
-      "x-ms-request-id": "5b6df500-2f02-4c24-a717-f757ca2707f7",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260516T160914Z:5b6df500-2f02-4c24-a717-f757ca2707f7"
+      "x-ms-correlation-request-id": "fc1b5b33-50eb-48e6-ba48-ab42c7e9eec1",
+      "x-ms-request-id": "fc1b5b33-50eb-48e6-ba48-ab42c7e9eec1",
+      "x-ms-routing-request-id": "EASTUS:20260525T120526Z:fc1b5b33-50eb-48e6-ba48-ab42c7e9eec1"
     },
     "body": {
       "errors": {
@@ -35,7 +36,7 @@
       "title": "One or more validation errors occurred.",
       "status": 400,
       "extensions": {
-        "traceId": "00-bffa06cc9695643eebca36612c7805bf-203d2c93a07ada0b-01"
+        "traceId": "00-d6544654a70596c5552fb79270aee550-9a32195fa520f722-01"
       }
     }
   },

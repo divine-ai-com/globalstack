@@ -739,6 +739,7 @@
     "storage:capture:data-plane",
     "storage:expectations",
     "trial:openai-arm-json",
+    "trial:openai-complex-pulumi-bundles",
     "trial:openai-platforms",
     "trial:openai-verified-bundles",
     "validate",
@@ -747,7 +748,7 @@
     "workspace:validate"
   ],
   "counts": {
-    "azureCaptures": 754,
+    "azureCaptures": 771,
     "azureLifecycleCaptures": 2,
     "azureStorageDataPlaneCaptures": 1
   }
