@@ -56,6 +56,26 @@ async function prewarmImagesIfNeeded(docker, strategy) {
   }
 }
 
+async function normalizeHostOwnership(docker, targets) {
+  const writableTargets = targets.filter(Boolean);
+  if (writableTargets.length === 0) return;
+  const uid = process.getuid();
+  const gid = process.getgid();
+  for (const target of writableTargets) {
+    await run(docker.command, [
+      ...docker.prefix,
+      'run',
+      '--rm',
+      '-v',
+      `${target}:/target`,
+      'globalstack/azure-emulator:local',
+      'sh',
+      '-lc',
+      `chown -R ${uid}:${gid} /target`,
+    ], { stdio: 'ignore' });
+  }
+}
+
 const selected = new Set(
   process.argv
     .filter(arg => arg.startsWith('--platform='))
@@ -111,16 +131,10 @@ for (const platform of platforms) {
       'down',
       '--remove-orphans',
     ], { cwd: platformDir, env, stdio: 'ignore' });
-    if (docker.command === 'sudo') {
-      await run('sudo', [
-        '-n',
-        'chown',
-        '-R',
-        `${process.getuid()}:${process.getgid()}`,
-        join(platformDir, 'reports'),
-        join(platformDir, 'work'),
-      ], { stdio: 'ignore' });
-    }
+    await normalizeHostOwnership(docker, [
+      join(platformDir, 'reports'),
+      join(platformDir, 'work'),
+    ]);
   }
 
   const reportPath = join(platformDir, 'reports', 'lifecycle-report.json');

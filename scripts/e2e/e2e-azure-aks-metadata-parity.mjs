@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -41,11 +43,18 @@ async function readJson(path) {
 }
 
 async function withArmServer(fn) {
-  const server = createArmServer();
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort: port, runtime, store });
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -202,7 +211,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withArmServer(async ({ armPort }) => {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
 
@@ -402,6 +411,36 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('cluster user assigned identity without identities is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ identity: { type: 'UserAssigned', userAssignedIdentities: {} }, properties: { servicePrincipalProfile: undefined } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidIdentityValues');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster invalid agent pool mode is rejected', async () => {
+      const body = aksBody();
+      body.properties.agentPoolProfiles[0].mode = 'Invalid';
+      const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), body);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster invalid agent pool osType is rejected', async () => {
+      const body = aksBody();
+      body.properties.agentPoolProfiles[0].osType = 'Darwin';
+      const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), body);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('valid cluster create returns async Azure shape', async () => {
       const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), aksBody({
         tags: { workload: 'robotics-fleet-control' },
@@ -497,6 +536,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
     });
 
+    await record('user credential action returns deterministic kubeconfig across repeated reads', async () => {
+      const first = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterUserCredential`));
+      const second = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterUserCredential`));
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(first.body, second.body);
+      return { status: second.status, kubeconfigName: second.body.kubeconfigs[0].name };
+    });
+
     await record('unsupported AKS action fails closed', async () => {
       const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/runCommand`), {
         command: 'kubectl get pods',
@@ -532,6 +580,15 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster get after delete remains not found across repeated reads', async () => {
+      const first = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(first.status, 404);
+      assert.equal(second.status, 404);
+      assert.equal(errorCode(second), 'ResourceNotFound');
+      return { status: second.status, errorCode: errorCode(second) };
     });
 
     await record('credential action after delete is rejected', async () => {

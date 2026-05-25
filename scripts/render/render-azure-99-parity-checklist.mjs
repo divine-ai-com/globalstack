@@ -302,8 +302,15 @@ function hasDataPlaneCoverage(caseNames, sectionNames) {
     /docker registry/,
     /partitions list succeeds/,
     /workspace query|log analytics/,
+    /local network model/,
   ];
   return markers.some(pattern => caseNames.some(name => pattern.test(name)));
+}
+
+function repeatCaptureMarkers(caseNames) {
+  return {
+    repeatedBehavior: caseNames.some(name => /across repeated|repeated|repeat capture|remains .* across|stays .* across/.test(name)),
+  };
 }
 
 function identityEvidence(capabilityId, packageJson, scriptSources) {
@@ -456,6 +463,7 @@ const services = allCapabilities.map(capability => {
   const paritySections = paritySectionNames(parityResult);
   const platformMatrixComplete = parityPlatformMatrixComplete(parityResult);
   const stateMarkers = parityStateMarkers(parityCaseNames);
+  const repeatMarkers = repeatCaptureMarkers(parityCaseNames);
   const stateTransitionComplete = hasCreate
     && hasGet
     && hasList
@@ -600,10 +608,15 @@ const services = allCapabilities.map(capability => {
           ],
     }),
     ambiguousRepeatCaptures: status({
-      partial: storageDataPlaneRelevant,
-      complete: false,
-      evidence: storageDataPlaneRelevant ? ['queue-peek-after-delete is explicitly marked needs-repeat-capture'] : [],
-      gaps: ['Repeat timing-sensitive captures and record stabilization rules before normalization.'],
+      partial: storageDataPlaneRelevant || repeatMarkers.repeatedBehavior,
+      complete: repeatMarkers.repeatedBehavior,
+      evidence: [
+        storageDataPlaneRelevant ? 'queue-peek-after-delete is explicitly marked needs-repeat-capture' : null,
+        repeatMarkers.repeatedBehavior ? 'parity pack asserts repeated or timing-sensitive behavior remains stable across reruns' : null,
+      ].filter(Boolean),
+      gaps: repeatMarkers.repeatedBehavior
+        ? []
+        : ['Repeat timing-sensitive captures and record stabilization rules before normalization.'],
     }),
     serviceSpecificFacade: status({
       partial: hasLocalFacade,

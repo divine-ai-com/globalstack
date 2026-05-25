@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -41,11 +43,18 @@ async function readJson(path) {
 }
 
 async function withArmServer(fn) {
-  const server = createArmServer();
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort: port, runtime, store });
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -228,7 +237,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withArmServer(async ({ armPort, runtime }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -502,6 +511,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status, resourceId: result.body.id };
     });
 
+    await record('local metric alert data-plane evaluator starts resolved before metric ingestion', async () => {
+      const state = runtime.metricStore.getAlertState(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`);
+      assert.ok(state);
+      assert.equal(state.status, 'Resolved');
+      return { status: state.status };
+    });
+
     await record('metric alert update preserves metadata', async () => {
       const result = await httpJson(
         armPort,
@@ -521,6 +537,63 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.windowSize, 'PT10M');
       assert.equal(result.body.tags.workload, 'robotics-fleet-alerting');
       return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('local metric alert data-plane evaluator fires after metric ingestion', async () => {
+      runtime.metricStore.ingestMetric({
+        scope: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}`,
+        metricNamespace: 'Microsoft.Compute/virtualMachines',
+        metricName: 'Percentage CPU',
+        value: 95,
+        timestamp: '2026-01-01T00:00:00.000Z',
+      });
+      const state = runtime.metricStore.evaluateAlert(
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`,
+        { now: '2026-01-01T00:01:00.000Z' },
+      );
+      assert.ok(state);
+      assert.equal(state.status, 'Fired');
+      assert.equal(state.lastMetricValue, 95);
+      return { status: state.status, lastMetricValue: state.lastMetricValue };
+    });
+
+    await record('local metric alert data-plane evaluator invokes configured action group on transition', async () => {
+      const invocations = runtime.metricStore.listActionInvocations(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`);
+      assert.equal(invocations.length, 1);
+      assert.equal(invocations[0].actionGroupId, actionGroupId.toLowerCase());
+      return { status: 200, actionGroupName: invocations[0].actionGroupName };
+    });
+
+    await record('local metric alert data-plane evaluator resolves after healthy metric ingestion', async () => {
+      runtime.metricStore.ingestMetric({
+        scope: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}`,
+        metricNamespace: 'Microsoft.Compute/virtualMachines',
+        metricName: 'Percentage CPU',
+        value: 20,
+        timestamp: '2026-01-01T00:20:00.000Z',
+      });
+      const state = runtime.metricStore.evaluateAlert(
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`,
+        { now: '2026-01-01T00:21:00.000Z' },
+      );
+      assert.ok(state);
+      assert.equal(state.status, 'Resolved');
+      assert.equal(state.lastMetricValue, 20);
+      return { status: state.status, lastMetricValue: state.lastMetricValue };
+    });
+
+    await record('local metric alert data-plane evaluator stays resolved across repeated evaluations', async () => {
+      const first = runtime.metricStore.evaluateAlert(
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`,
+        { now: '2026-01-01T00:22:00.000Z' },
+      );
+      const second = runtime.metricStore.evaluateAlert(
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/metricAlerts/${metricAlertName}`,
+        { now: '2026-01-01T00:23:00.000Z' },
+      );
+      assert.equal(first.status, 'Resolved');
+      assert.equal(second.status, 'Resolved');
+      return { status: second.status, lastMetricValue: second.lastMetricValue };
     });
 
     await record('action group list includes created resource', async () => {
@@ -743,7 +816,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Monitor action group and metric alert ARM lifecycle, stricter parameter rejection, unsupported metric/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Monitor Metrics or Alerts as 99%-complete or cloudValidated for metrics ingestion, metric definitions, metric query time-series semantics, alert evaluation, action execution, dynamic thresholds, dimensions, common alert schema delivery, throttling, RBAC, private link, or exact Azure Monitor data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Monitor action group and metric alert ARM lifecycle, stricter parameter rejection, bounded local metric ingestion and evaluator state transitions, unsupported metric/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure Monitor Metrics or Alerts as 99%-complete or cloudValidated for full metrics ingestion, metric definitions, metric query time-series semantics, action execution, dynamic thresholds, dimensions, common alert schema delivery, throttling, RBAC, private link, or exact Azure Monitor data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

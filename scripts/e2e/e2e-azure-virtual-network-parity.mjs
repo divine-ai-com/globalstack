@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -41,11 +43,18 @@ async function readJson(path) {
 }
 
 async function withArmServer(fn) {
-  const server = createArmServer();
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort: port, runtime, store });
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -95,6 +104,10 @@ function resourceGroupPath(resourceGroup, apiVersion = '2021-04-01') {
 
 function virtualNetworkPath(resourceGroup, vnetName, apiVersion = '2023-09-01') {
   return providerPath(resourceGroup, 'Microsoft.Network', `virtualNetworks/${vnetName}`, apiVersion);
+}
+
+function virtualNetworkPeeringPath(resourceGroup, vnetName, peeringName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `virtualNetworks/${vnetName}/virtualNetworkPeerings/${peeringName}`, apiVersion);
 }
 
 function subnetPath(resourceGroup, vnetName, subnetName, apiVersion = '2023-09-01') {
@@ -228,7 +241,9 @@ async function runControlPlaneMatrix() {
   const resourceGroup = `rg-gs-vnet-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-vnet-missing-${suffix}`;
   const vnetName = `vnet-${suffix}`.slice(0, 40);
+  const peerVnetName = `vnet-peer-${suffix}`.slice(0, 40);
   const subnetName = `subnet-${suffix}`.slice(0, 40);
+  const peeringName = `peer-${suffix}`.slice(0, 40);
   const privateEndpointName = `pe-${suffix}`.slice(0, 40);
   const privateDnsZoneName = `${suffix}.internal.test`;
   const missingName = `missing-${suffix}`.slice(0, 40);
@@ -257,7 +272,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withArmServer(async ({ armPort, runtime }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -598,6 +613,38 @@ async function runControlPlaneMatrix() {
       return { status: result.status, resourceId: result.body.id };
     });
 
+    await record('peer virtual network create succeeds for peering lifecycle', async () => {
+      const result = await httpJson(armPort, 'PUT', virtualNetworkPath(resourceGroup, peerVnetName), vnetBody({
+        location: 'westus2',
+        properties: { addressSpace: { addressPrefixes: ['10.43.0.0/16'] } },
+      }));
+      assert.equal(result.status, 201);
+      return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('virtual network peering create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', virtualNetworkPeeringPath(resourceGroup, vnetName, peeringName), {
+        properties: {
+          remoteVirtualNetwork: {
+            id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/virtualNetworks/${peerVnetName}`,
+          },
+          allowVirtualNetworkAccess: true,
+          allowForwardedTraffic: true,
+        },
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.type, 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings');
+      assert.equal(result.body.properties.peeringState, 'Connected');
+      return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('virtual network peering get succeeds', async () => {
+      const result = await httpJson(armPort, 'GET', virtualNetworkPeeringPath(resourceGroup, vnetName, peeringName));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.name, `${vnetName}/${peeringName}`);
+      return { status: result.status, resourceId: result.body.id };
+    });
+
     await record('private endpoint create succeeds', async () => {
       const result = await httpJson(
         armPort,
@@ -612,12 +659,28 @@ async function runControlPlaneMatrix() {
       return { status: result.status, resourceId: result.body.id };
     });
 
+    await record('local network model allocates deterministic private endpoint address', async () => {
+      const endpoint = runtime.networkModel.getPrivateEndpoint(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/privateEndpoints/${privateEndpointName}`);
+      assert.ok(endpoint);
+      assert.equal(endpoint.subnetId, subnetId.toLowerCase());
+      assert.match(endpoint.ipAddress, /^10\.42\.2\./);
+      return { status: 200, ipAddress: endpoint.ipAddress };
+    });
+
     await record('private endpoint get succeeds', async () => {
       const result = await httpJson(armPort, 'GET', privateEndpointPath(resourceGroup, privateEndpointName));
       assert.equal(result.status, 200);
       assert.equal(result.body.name, privateEndpointName);
       assert.equal(result.body.tags.workload, 'ai-mlops-private-access');
       return { status: result.status, resourceId: result.body.id };
+    });
+
+    await record('local network model keeps private endpoint address stable across repeated reads', async () => {
+      const first = runtime.networkModel.getPrivateEndpoint(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/privateEndpoints/${privateEndpointName}`);
+      const second = runtime.networkModel.getPrivateEndpoint(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/privateEndpoints/${privateEndpointName}`);
+      assert.ok(first);
+      assert.deepEqual(first, second);
+      return { status: 200, ipAddress: second.ipAddress };
     });
 
     await record('private endpoint update preserves metadata', async () => {
@@ -652,15 +715,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
-    await record('virtual network unsupported peerings route fails closed', async () => {
+    await record('virtual network peering list includes created resource', async () => {
       const result = await httpJson(
         armPort,
         'GET',
         providerPath(resourceGroup, 'Microsoft.Network', `virtualNetworks/${vnetName}/virtualNetworkPeerings`, '2023-09-01'),
       );
-      assert.equal(result.status, 501);
-      assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.name === `${vnetName}/${peeringName}`));
+      return { status: result.status, count: result.body.value.length };
     });
 
     await record('private endpoint unsupported dns zone group route fails closed', async () => {
@@ -717,11 +780,30 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('virtual network peering delete succeeds', async () => {
+      const result = await httpJson(armPort, 'DELETE', virtualNetworkPeeringPath(resourceGroup, vnetName, peeringName));
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
+    await record('virtual network peering get after delete is not found', async () => {
+      const result = await httpJson(armPort, 'GET', virtualNetworkPeeringPath(resourceGroup, vnetName, peeringName));
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('private endpoint get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', privateEndpointPath(resourceGroup, privateEndpointName));
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local network model removes deleted private endpoint', async () => {
+      const endpoint = runtime.networkModel.getPrivateEndpoint(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/privateEndpoints/${privateEndpointName}`);
+      assert.equal(endpoint, null);
+      return { status: 404 };
     });
 
     await record('subnet delete succeeds', async () => {
@@ -871,7 +953,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Virtual Network, subnet, Private Endpoint, and Private DNS zone ARM lifecycle, stricter parameter rejection, unsupported Network child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure networking as 99%-complete or cloudValidated for packet routing, NSG evaluation, NAT, route table propagation, service endpoints, private endpoint approval workflows, DNS resolution behavior, record sets, VNet links, throttling, RBAC, or exact Azure Network data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Virtual Network, subnet, Private Endpoint, and Private DNS zone ARM lifecycle, stricter parameter rejection, bounded local network-model private endpoint allocation behavior, unsupported Network child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure networking as 99%-complete or cloudValidated for packet routing, NSG evaluation, NAT, route table propagation, service endpoints, private endpoint approval workflows, DNS resolution behavior, record sets, VNet links, throttling, RBAC, or exact Azure Network data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

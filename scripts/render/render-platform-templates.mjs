@@ -17,6 +17,29 @@ async function write(relPath, content, mode) {
   await writeFile(abs, content, { mode });
 }
 
+async function resetRenderedPlatformTemplates() {
+  const runtimeDirs = new Set(['reports', 'work', 'volume']);
+  const knownPlatforms = new Set(azurePlatforms.map(platform => platform.id));
+  const entries = await readdir(outRoot, { withFileTypes: true }).catch(() => []);
+  for (const entry of entries) {
+    const entryPath = join(outRoot, entry.name);
+    if (!entry.isDirectory()) {
+      await rm(entryPath, { recursive: true, force: true });
+      continue;
+    }
+    if (!knownPlatforms.has(entry.name)) {
+      continue;
+    }
+    const platformEntries = await readdir(entryPath, { withFileTypes: true }).catch(() => []);
+    for (const platformEntry of platformEntries) {
+      if (runtimeDirs.has(platformEntry.name)) {
+        continue;
+      }
+      await rm(join(entryPath, platformEntry.name), { recursive: true, force: true });
+    }
+  }
+}
+
 function composeFor(platform) {
   return [
     'services:',
@@ -118,7 +141,8 @@ function metadataFor(platform) {
   }, null, 2)}\n`;
 }
 
-await rm(outRoot, { recursive: true, force: true });
+await mkdir(outRoot, { recursive: true });
+await resetRenderedPlatformTemplates();
 
 const commonEntry = await readTemplate('runner/common/entrypoint.sh');
 const commonAzure = await readTemplate('runner/common/globalstack-azure.sh');

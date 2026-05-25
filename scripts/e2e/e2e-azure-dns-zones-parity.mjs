@@ -3,7 +3,9 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -41,11 +43,18 @@ async function readJson(path) {
 }
 
 async function withArmServer(fn) {
-  const server = createArmServer();
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort: port, runtime, store });
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -310,7 +319,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withArmServer(async ({ armPort, runtime }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -586,6 +595,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('local public dns registry resolves updated A record', async () => {
+      const result = runtime.dnsRegistry.resolvePublicDns(`www.${publicZoneName}`);
+      assert.equal(result.status, 'NOERROR');
+      assert.deepEqual(result.values, ['10.10.1.12']);
+      return { status: result.status, value: result.values[0] };
+    });
+
     await record('public dns A record list includes created resource', async () => {
       const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Network', `dnsZones/${publicZoneName}/A`, '2018-05-01'));
       assert.equal(result.status, 200);
@@ -641,6 +657,40 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.ok(result.body.value.some(item => item.name === `${privateZoneName}/${linkName}`));
       return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('local private dns registry resolves linked private zone record', async () => {
+      const result = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `api.${privateZoneName}`,
+        vnetId,
+      });
+      assert.equal(result.status, 'NOERROR');
+      assert.deepEqual(result.values, ['10.10.1.10']);
+      return { status: result.status, value: result.values[0] };
+    });
+
+    await record('local private dns registry returns nxdomain for unlinked virtual network', async () => {
+      const result = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `api.${privateZoneName}`,
+        vnetId: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/virtualNetworks/unlinked-${suffix}`,
+      });
+      assert.equal(result.status, 'NXDOMAIN');
+      assert.equal(result.reason, 'VNET_NOT_LINKED');
+      return { status: result.status, reason: result.reason };
+    });
+
+    await record('local private dns registry remains consistent across repeated linked lookups', async () => {
+      const first = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `api.${privateZoneName}`,
+        vnetId,
+      });
+      const second = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `api.${privateZoneName}`,
+        vnetId,
+      });
+      assert.equal(first.status, 'NOERROR');
+      assert.deepEqual(first.values, second.values);
+      return { status: second.status, repeatedValue: second.values[0] };
     });
 
     await record('private dns unsupported resolver policy route fails closed', async () => {
@@ -712,6 +762,16 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('local private dns registry returns nxdomain after link delete', async () => {
+      const result = runtime.dnsRegistry.resolvePrivateDns({
+        fqdn: `api.${privateZoneName}`,
+        vnetId,
+      });
+      assert.equal(result.status, 'NXDOMAIN');
+      assert.equal(result.reason, 'ZONE_NOT_LINKED');
+      return { status: result.status, reason: result.reason };
+    });
+
     await record('public dns zone delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', publicDnsZonePath(resourceGroup, publicZoneName));
       assert.equal(result.status, 200);
@@ -729,6 +789,12 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('local public dns registry returns nxdomain after delete', async () => {
+      const result = runtime.dnsRegistry.resolvePublicDns(`www.${publicZoneName}`);
+      assert.equal(result.status, 'NXDOMAIN');
+      return { status: result.status };
     });
 
     await record('private dns zone get after delete is not found', async () => {
@@ -825,7 +891,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure DNS and Private DNS ARM lifecycle, record-set parameter rejection, private DNS virtual network link metadata, unsupported DNS child routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure DNS as 99%-complete or cloudValidated for authoritative DNS serving, recursive resolution, delegation propagation, DNSSEC, traffic routing, health checks, resolver policies, throttling, RBAC, or exact Azure DNS data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure DNS and Private DNS ARM lifecycle, record-set parameter rejection, private DNS virtual network link metadata, bounded local public/private resolver behavior, unsupported DNS child routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure DNS as 99%-complete or cloudValidated for authoritative DNS serving, recursive resolution, delegation propagation, DNSSEC, traffic routing, health checks, resolver policies, throttling, RBAC, or exact Azure DNS data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

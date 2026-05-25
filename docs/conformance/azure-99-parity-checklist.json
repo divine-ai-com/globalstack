@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-24T21:04:16.656Z",
+    "generatedAt": "2026-05-25T04:30:03.774Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -1532,9 +1532,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 4,
+        "complete": 5,
         "partial": 4,
-        "notStarted": 2
+        "notStarted": 1
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1622,11 +1622,11 @@
           ]
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -1793,9 +1793,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 3,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 2
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -1877,19 +1877,18 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -1926,9 +1925,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 3,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 2
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2011,19 +2010,18 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -2602,9 +2600,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 3,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 2
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2687,19 +2685,18 @@
           "gaps": []
         },
         "dataPlaneBehavior": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "No durable local data-plane evidence is recorded yet.",
-            "Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity result sections: controlPlane"
+          ],
+          "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
