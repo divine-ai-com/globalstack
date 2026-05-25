@@ -67,6 +67,47 @@ function resourceIdMatches(a, b) {
   return String(a ?? '').toLowerCase() === String(b ?? '').toLowerCase();
 }
 
+function publicIpRoute({ subscriptionId, resourceGroupName, publicIpName }) {
+  return {
+    subscriptionId,
+    resourceGroupName,
+    providerNamespace: 'Microsoft.Network',
+    typePath: `publicIPAddresses/${publicIpName}`,
+  };
+}
+
+function publicIpDetails(resource) {
+  const properties = resource?.properties ?? {};
+  return {
+    ipAddress: properties.ipAddress ?? null,
+    fqdn: properties.dnsSettings?.fqdn ?? null,
+    hostName: properties.dnsSettings?.fqdn ?? properties.ipAddress ?? null,
+  };
+}
+
+function frontendPublicIpReferences(resource) {
+  return (resource?.properties?.frontendIPConfigurations ?? [])
+    .map(config => config?.properties?.publicIPAddress?.id ?? null)
+    .filter(Boolean);
+}
+
+function referenceName(id, segment) {
+  const parts = resourceSegments(id);
+  const index = parts.findIndex(part => part.toLowerCase() === String(segment).toLowerCase());
+  return index >= 0 ? parts[index + 1] ?? null : null;
+}
+
+function originHostFromAppGateway(resource) {
+  const pools = resource?.properties?.backendAddressPools ?? [];
+  for (const pool of pools) {
+    for (const address of pool?.properties?.backendAddresses ?? []) {
+      if (address?.fqdn) return address.fqdn;
+      if (address?.ipAddress) return address.ipAddress;
+    }
+  }
+  return null;
+}
+
 function privateDnsZoneGroupParts(providerRoute) {
   const parts = String(providerRoute?.typePath ?? '').split('/');
   return {
@@ -369,6 +410,111 @@ export function createEmulatorRuntime({ store }) {
     }
   }
 
+  function reconcileApplicationGateway({ subscriptionId, resourceGroupName, gatewayName }) {
+    if (!gatewayName) return;
+    const gatewayRoute = {
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: `applicationGateways/${gatewayName}`,
+    };
+    const gateway = store.getResource(gatewayRoute);
+    if (!gateway) return;
+    const publicIpIds = frontendPublicIpReferences(gateway);
+    const originHost = originHostFromAppGateway(gateway);
+    const listenerDisabled = (gateway.properties?.httpListeners ?? []).length === 0;
+    for (const publicIpId of publicIpIds) {
+      const publicIpName = referenceName(publicIpId, 'publicIPAddresses');
+      if (!publicIpName) continue;
+      const publicIp = store.getResource(publicIpRoute({ subscriptionId, resourceGroupName, publicIpName }));
+      const publicIpState = publicIpDetails(publicIp);
+      if (!publicIpState.hostName) continue;
+      edgeRouter.registerEndpoint({
+        endpointName: gatewayName,
+        hostName: publicIpState.hostName,
+        kind: 'application-gateway',
+        enabledState: listenerDisabled ? 'Disabled' : 'Enabled',
+        origins: originHost
+          ? [{
+              name: 'backend',
+              hostName: originHost,
+              httpPort: 80,
+              httpsPort: 443,
+            }]
+          : [],
+        routePatterns: ['/*'],
+      });
+    }
+  }
+
+  function reconcileAllApplicationGateways({ subscriptionId, resourceGroupName }) {
+    for (const gateway of store.listResourcesByType({
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: 'applicationGateways',
+    })) {
+      reconcileApplicationGateway({
+        subscriptionId,
+        resourceGroupName,
+        gatewayName: leafResourceName(gateway.name),
+      });
+    }
+  }
+
+  function reconcileLoadBalancer({ subscriptionId, resourceGroupName, loadBalancerName }) {
+    if (!loadBalancerName) return;
+    const loadBalancerRoute = {
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: `loadBalancers/${loadBalancerName}`,
+    };
+    const loadBalancer = store.getResource(loadBalancerRoute);
+    if (!loadBalancer) {
+      return;
+    }
+    const publicIpIds = frontendPublicIpReferences(loadBalancer);
+    const backendPoolName = (loadBalancer.properties?.backendAddressPools ?? [])[0]?.name ?? 'backend';
+    const probePort = (loadBalancer.properties?.probes ?? [])[0]?.properties?.port ?? 80;
+    const hasRule = (loadBalancer.properties?.loadBalancingRules ?? []).length > 0;
+    for (const publicIpId of publicIpIds) {
+      const publicIpName = referenceName(publicIpId, 'publicIPAddresses');
+      if (!publicIpName) continue;
+      const publicIp = store.getResource(publicIpRoute({ subscriptionId, resourceGroupName, publicIpName }));
+      const publicIpState = publicIpDetails(publicIp);
+      if (!publicIpState.hostName) continue;
+      edgeRouter.registerEndpoint({
+        endpointName: loadBalancerName,
+        hostName: publicIpState.hostName,
+        kind: 'load-balancer',
+        enabledState: hasRule ? 'Enabled' : 'Disabled',
+        origins: [{
+          name: backendPoolName,
+          hostName: `${loadBalancerName}.internal.globalstack`,
+          httpPort: probePort,
+          httpsPort: probePort,
+        }],
+        routePatterns: ['/*'],
+      });
+    }
+  }
+
+  function reconcileAllLoadBalancers({ subscriptionId, resourceGroupName }) {
+    for (const loadBalancer of store.listResourcesByType({
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: 'loadBalancers',
+    })) {
+      reconcileLoadBalancer({
+        subscriptionId,
+        resourceGroupName,
+        loadBalancerName: leafResourceName(loadBalancer.name),
+      });
+    }
+  }
+
   function syncResource({ store: resourceStore, providerRoute, resourceType, resource }) {
     emitActivityLog({ providerRoute, resourceType, resource, verb: 'write' });
 
@@ -546,6 +692,36 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Network/virtualNetworks/subnets') {
       networkModel.registerSubnet(resource);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/publicIPAddresses') {
+      reconcileAllApplicationGateways({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+      });
+      reconcileAllLoadBalancers({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/applicationGateways') {
+      reconcileApplicationGateway({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        gatewayName: leafResourceName(resource.name),
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/loadBalancers') {
+      reconcileLoadBalancer({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        loadBalancerName: leafResourceName(resource.name),
+      });
       return;
     }
 
@@ -738,6 +914,52 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Network/virtualNetworks/subnets') {
       networkModel.unregisterSubnet(resource ?? providerRoute.typePath.split('/').at(-1));
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/publicIPAddresses') {
+      const publicIpState = publicIpDetails(resource);
+      if (publicIpState.hostName) edgeRouter.unregisterEndpoint(publicIpState.hostName);
+      reconcileAllApplicationGateways({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+      });
+      reconcileAllLoadBalancers({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/applicationGateways') {
+      const publicIpIds = frontendPublicIpReferences(resource);
+      for (const publicIpId of publicIpIds) {
+        const publicIpName = referenceName(publicIpId, 'publicIPAddresses');
+        if (!publicIpName) continue;
+        const publicIp = store.getResource(publicIpRoute({
+          subscriptionId: providerRoute.subscriptionId,
+          resourceGroupName: providerRoute.resourceGroupName,
+          publicIpName,
+        }));
+        const publicIpState = publicIpDetails(publicIp);
+        if (publicIpState.hostName) edgeRouter.unregisterEndpoint(publicIpState.hostName);
+      }
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Network/loadBalancers') {
+      const publicIpIds = frontendPublicIpReferences(resource);
+      for (const publicIpId of publicIpIds) {
+        const publicIpName = referenceName(publicIpId, 'publicIPAddresses');
+        if (!publicIpName) continue;
+        const publicIp = store.getResource(publicIpRoute({
+          subscriptionId: providerRoute.subscriptionId,
+          resourceGroupName: providerRoute.resourceGroupName,
+          publicIpName,
+        }));
+        const publicIpState = publicIpDetails(publicIp);
+        if (publicIpState.hostName) edgeRouter.unregisterEndpoint(publicIpState.hostName);
+      }
       return;
     }
 

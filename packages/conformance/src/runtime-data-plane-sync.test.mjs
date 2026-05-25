@@ -654,3 +654,156 @@ test('activity log store records resource write and delete events through runtim
     assert.equal(deleteEvents[0].status, 'Succeeded');
   });
 });
+
+test('load balancing runtime registers and removes bounded public ingress hosts', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
+    await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
+    const edgePort = edgeServer.address().port;
+    try {
+      await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-lb-sync?api-version=2021-04-01`, { location: 'eastus' });
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          properties: {
+            addressSpace: { addressPrefixes: ['10.90.0.0/16'] },
+            subnets: [{ name: 'appgw', properties: { addressPrefix: '10.90.1.0/24' } }],
+          },
+        },
+      );
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/publicIPAddresses/pip-agw-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard' },
+          properties: {
+            publicIPAllocationMethod: 'Static',
+            publicIPAddressVersion: 'IPv4',
+            dnsSettings: { domainNameLabel: 'agwsync' },
+          },
+        },
+      );
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/publicIPAddresses/pip-lb-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard' },
+          properties: {
+            publicIPAllocationMethod: 'Static',
+            publicIPAddressVersion: 'IPv4',
+            dnsSettings: { domainNameLabel: 'lbsync' },
+          },
+        },
+      );
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard_v2', tier: 'Standard_v2', capacity: 1 },
+          properties: {
+            gatewayIPConfigurations: [{
+              name: 'gw',
+              properties: {
+                subnet: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/virtualNetworks/vnet-sync/subnets/appgw` },
+              },
+            }],
+            frontendIPConfigurations: [{
+              name: 'frontend',
+              properties: {
+                publicIPAddress: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/publicIPAddresses/pip-agw-sync` },
+              },
+            }],
+            frontendPorts: [{ name: 'http', properties: { port: 80 } }],
+            backendAddressPools: [{ name: 'backend', properties: { backendAddresses: [{ ipAddress: '10.90.2.10' }] } }],
+            backendHttpSettingsCollection: [{ name: 'http', properties: { port: 80, protocol: 'Http', cookieBasedAffinity: 'Disabled' } }],
+            httpListeners: [{
+              name: 'listener',
+              properties: {
+                frontendIPConfiguration: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync/frontendIPConfigurations/frontend` },
+                frontendPort: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync/frontendPorts/http` },
+                protocol: 'Http',
+              },
+            }],
+            requestRoutingRules: [{
+              name: 'rule',
+              properties: {
+                ruleType: 'Basic',
+                priority: 100,
+                httpListener: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync/httpListeners/listener` },
+                backendAddressPool: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync/backendAddressPools/backend` },
+                backendHttpSettings: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/applicationGateways/agw-sync/backendHttpSettingsCollection/http` },
+              },
+            }],
+          },
+        },
+      );
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/loadBalancers/lb-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard' },
+          properties: {
+            frontendIPConfigurations: [{
+              name: 'frontend',
+              properties: {
+                publicIPAddress: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/publicIPAddresses/pip-lb-sync` },
+              },
+            }],
+            backendAddressPools: [{ name: 'backend', properties: {} }],
+            probes: [{ name: 'probe', properties: { protocol: 'Tcp', port: 80, intervalInSeconds: 5, numberOfProbes: 2 } }],
+            loadBalancingRules: [{
+              name: 'rule',
+              properties: {
+                protocol: 'Tcp',
+                frontendPort: 80,
+                backendPort: 80,
+                frontendIPConfiguration: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/loadBalancers/lb-sync/frontendIPConfigurations/frontend` },
+                backendAddressPool: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/loadBalancers/lb-sync/backendAddressPools/backend` },
+                probe: { id: `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/loadBalancers/lb-sync/probes/probe` },
+              },
+            }],
+          },
+        },
+      );
+
+      const gatewayRoute = await edgeJson(edgePort, 'GET', '/robotics/models/v1', {
+        host: 'agwsync.eastus.cloudapp.azure.com',
+        protocol: 'http',
+      });
+      assert.equal(gatewayRoute.status, 200);
+      assert.equal(gatewayRoute.headers['x-globalstack-edge-route'], 'application-gateway/agw-sync');
+
+      const loadBalancerRoute = await edgeJson(edgePort, 'GET', '/mlops/health', {
+        host: 'lbsync.eastus.cloudapp.azure.com',
+        protocol: 'http',
+      });
+      assert.equal(loadBalancerRoute.status, 200);
+      assert.equal(loadBalancerRoute.headers['x-globalstack-edge-route'], 'load-balancer/lb-sync');
+
+      await httpJson(
+        port,
+        'DELETE',
+        `${subscriptionPath}/resourceGroups/rg-lb-sync/providers/Microsoft.Network/loadBalancers/lb-sync?api-version=2023-09-01`,
+      );
+      const removed = await edgeJson(edgePort, 'GET', '/mlops/health', {
+        host: 'lbsync.eastus.cloudapp.azure.com',
+        protocol: 'http',
+      });
+      assert.equal(removed.status, 404);
+      assert.equal(removed.body.error.code, 'EndpointNotFound');
+    } finally {
+      await new Promise(resolve => edgeServer.close(resolve));
+    }
+  });
+});

@@ -1,16 +1,16 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T10:07:41.465Z",
+    "generatedAt": "2026-05-25T10:18:55.119Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 152,
+    "workItemCount": 151,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 75.9,
+      "percent": 76.2,
       "displayRange": "75-80%",
       "methodology": "status-derived average across all services and dimensions"
     },
@@ -2244,148 +2244,6 @@
           ]
         },
         {
-          "serviceId": "load-balancing",
-          "tier": 2,
-          "awsAnalogue": "ALB/NLB",
-          "azureEquivalent": "Azure Application Gateway / Load Balancer",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 4,
-            "partial": 5,
-            "notStarted": 1
-          },
-          "score": 0.6984,
-          "priority": 58,
-          "workItemCount": 6,
-          "nextDimensions": [
-            "parameterVarianceCaptures",
-            "errorShapeFidelity",
-            "identityRbacBehavior",
-            "liveApiSurfaceInventory"
-          ],
-          "workItems": [
-            {
-              "id": "load-balancing.parameterVarianceCaptures",
-              "serviceId": "load-balancing",
-              "dimensionId": "parameterVarianceCaptures",
-              "dimension": "Parameter variance captures",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "14 live ARM captures",
-                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
-              ],
-              "gaps": [
-                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --limit=0",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
-            },
-            {
-              "id": "load-balancing.errorShapeFidelity",
-              "serviceId": "load-balancing",
-              "dimensionId": "errorShapeFidelity",
-              "dimension": "Error-shape fidelity",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2"
-              ],
-              "gaps": [
-                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-              ],
-              "commands": [
-                "npm run conformance:local -- --capability=load-balancing"
-              ],
-              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
-            },
-            {
-              "id": "load-balancing.identityRbacBehavior",
-              "serviceId": "load-balancing",
-              "dimensionId": "identityRbacBehavior",
-              "dimension": "Identity/RBAC behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:load-balancing-parity is wired into npm run smoke",
-                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
-                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
-              ],
-              "gaps": [
-                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
-            },
-            {
-              "id": "load-balancing.liveApiSurfaceInventory",
-              "serviceId": "load-balancing",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "8 candidate catalog calls",
-                "67 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "load-balancing.retryEventualConsistency",
-              "serviceId": "load-balancing",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:load-balancing-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            },
-            {
-              "id": "load-balancing.ambiguousRepeatCaptures",
-              "serviceId": "load-balancing",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
-            }
-          ]
-        },
-        {
           "serviceId": "logic-workflows",
           "tier": 2,
           "awsAnalogue": "Step Functions",
@@ -2760,9 +2618,134 @@
               "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
+        },
+        {
+          "serviceId": "load-balancing",
+          "tier": 2,
+          "awsAnalogue": "ALB/NLB",
+          "azureEquivalent": "Azure Application Gateway / Load Balancer",
+          "currentStatus": "in-progress",
+          "dimensionCounts": {
+            "complete": 5,
+            "partial": 5,
+            "notStarted": 0
+          },
+          "score": 0.7475,
+          "priority": 48,
+          "workItemCount": 5,
+          "nextDimensions": [
+            "parameterVarianceCaptures",
+            "errorShapeFidelity",
+            "identityRbacBehavior",
+            "liveApiSurfaceInventory"
+          ],
+          "workItems": [
+            {
+              "id": "load-balancing.parameterVarianceCaptures",
+              "serviceId": "load-balancing",
+              "dimensionId": "parameterVarianceCaptures",
+              "dimension": "Parameter variance captures",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "14 live ARM captures",
+                "variance cases: empty-body=2, invalid-location=2, missing-api-version=2, valid-minimal=2, not-found=4, empty-list=2"
+              ],
+              "gaps": [
+                "Expand service-specific positive and negative parameter matrix beyond the current generic variance cases."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --limit=0",
+                "npm run conformance:classify && npm run conformance:expectations"
+              ],
+              "acceptanceGate": "Live captures cover valid-minimal plus negative variations for required fields, api-version, location, SKU, names, parent references, auth, and service-specific constraints."
+            },
+            {
+              "id": "load-balancing.errorShapeFidelity",
+              "serviceId": "load-balancing",
+              "dimensionId": "errorShapeFidelity",
+              "dimension": "Error-shape fidelity",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "validation depths: provider-validation=5, arm-surface=2, provider-accepted=5, provider-routing-or-parent-validation=2"
+              ],
+              "gaps": [
+                "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
+              ],
+              "commands": [
+                "npm run conformance:local -- --capability=load-balancing"
+              ],
+              "acceptanceGate": "Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior."
+            },
+            {
+              "id": "load-balancing.identityRbacBehavior",
+              "serviceId": "load-balancing",
+              "dimensionId": "identityRbacBehavior",
+              "dimension": "Identity/RBAC behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:load-balancing-parity is wired into npm run smoke",
+                "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+                "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
+              ],
+              "gaps": [
+                "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
+                "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
+                "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
+              ],
+              "acceptanceGate": "Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable."
+            },
+            {
+              "id": "load-balancing.liveApiSurfaceInventory",
+              "serviceId": "load-balancing",
+              "dimensionId": "liveApiSurfaceInventory",
+              "dimension": "Complete live Azure API surface inventory",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "8 candidate catalog calls",
+                "67 provider operations matched"
+              ],
+              "gaps": [
+                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
+                "Add data-plane surface inventory where the service has data-plane APIs."
+              ],
+              "commands": [
+                "npm run providers:surface",
+                "npm run conformance:catalog"
+              ],
+              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+            },
+            {
+              "id": "load-balancing.retryEventualConsistency",
+              "serviceId": "load-balancing",
+              "dimensionId": "retryEventualConsistency",
+              "dimension": "Retry/eventual consistency behavior",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "e2e:load-balancing-parity is wired into npm run smoke",
+                "transitional/provisioning state behavior is asserted",
+                "post-delete behavior is asserted"
+              ],
+              "gaps": [
+                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
+                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
+              ],
+              "commands": [
+                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=load-balancing --all=true"
+              ],
+              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
+            }
+          ]
         }
       ],
-      "workItemCount": 40
+      "workItemCount": 39
     },
     {
       "id": "wave-4-data-platforms",
@@ -4173,25 +4156,6 @@
     },
     {
       "rank": 15,
-      "waveId": "wave-3-compute-api-and-edge",
-      "serviceId": "load-balancing",
-      "tier": 2,
-      "score": 0.6984,
-      "priority": 58,
-      "dimensionCounts": {
-        "complete": 4,
-        "partial": 5,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "parameterVarianceCaptures",
-        "errorShapeFidelity",
-        "identityRbacBehavior",
-        "liveApiSurfaceInventory"
-      ]
-    },
-    {
-      "rank": 16,
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
@@ -4210,7 +4174,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "virtual-network",
       "tier": 1,
@@ -4229,7 +4193,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-hubs-streams",
       "tier": 2,
@@ -4248,7 +4212,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "app-configuration-parameters",
       "tier": 2,
@@ -4267,7 +4231,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-metrics-alerts",
       "tier": 1,
@@ -4286,7 +4250,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "logic-workflows",
       "tier": 2,
@@ -4305,7 +4269,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "waf-policy",
       "tier": 2,
@@ -4324,7 +4288,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 22,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "activity-log-audit",
       "tier": 2,
@@ -4343,7 +4307,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 23,
       "waveId": "wave-4-data-platforms",
       "serviceId": "redis-cache",
       "tier": 2,
@@ -4362,7 +4326,7 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 24,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "front-door-cdn",
       "tier": 2,
@@ -4381,12 +4345,31 @@
       ]
     },
     {
-      "rank": 26,
+      "rank": 25,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "service-discovery",
       "tier": 2,
       "score": 0.7475,
       "priority": 49,
+      "dimensionCounts": {
+        "complete": 5,
+        "partial": 5,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "parameterVarianceCaptures",
+        "errorShapeFidelity",
+        "identityRbacBehavior",
+        "liveApiSurfaceInventory"
+      ]
+    },
+    {
+      "rank": 26,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
+      "tier": 2,
+      "score": 0.7475,
+      "priority": 48,
       "dimensionCounts": {
         "complete": 5,
         "partial": 5,
@@ -4479,14 +4462,14 @@
   "workItemSummary": {
     "byAction": {
       "complete": 144,
-      "start": 8
+      "start": 7
     },
     "byDimension": {
       "parameterVarianceCaptures": 30,
       "errorShapeFidelity": 30,
       "identityRbacBehavior": 29,
       "liveApiSurfaceInventory": 30,
-      "ambiguousRepeatCaptures": 10,
+      "ambiguousRepeatCaptures": 9,
       "dataPlaneBehavior": 2,
       "retryEventualConsistency": 21
     }

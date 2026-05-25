@@ -2165,8 +2165,14 @@ if (!loadBalancingParityText) {
   if (loadBalancingParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Load Balancing parity control-plane matrix has failures');
   }
+  if (loadBalancingParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Load Balancing parity data-plane matrix has failures');
+  }
   if ((loadBalancingParity.controlPlane?.total ?? 0) < 45) {
     errors.push('Azure Load Balancing parity control-plane matrix should exercise at least 45 cases');
+  }
+  if ((loadBalancingParity.dataPlane?.total ?? 0) < 6) {
+    errors.push('Azure Load Balancing parity data-plane matrix should exercise at least 6 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2215,9 +2221,21 @@ if (!loadBalancingParityText) {
     'load balancer delete after delete returns no content',
     'application gateway get after delete is not found',
     'application gateway delete after delete returns no content',
-  ]) {
+    ]) {
     if (!loadBalancingParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Load Balancing parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'bounded application gateway edge route succeeds using public ip fqdn',
+    'bounded application gateway edge route remains stable across repeated requests',
+    'bounded load balancer edge route succeeds using public ip fqdn',
+    'bounded load balancer edge route remains stable across repeated requests',
+    'bounded load balancer edge route is removed after delete',
+    'bounded application gateway edge route is removed after delete',
+  ]) {
+    if (!loadBalancingParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Load Balancing parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (loadBalancingParity.platformMatrix?.skipped === true) {

@@ -4,6 +4,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEdgeRouterServer } from '../../packages/azure-data-plane/src/edge-router.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -40,14 +43,25 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const port = server.address().port;
+async function withRuntimeServers(fn) {
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const armServer = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
+  const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
+  await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
+  const armPort = armServer.address().port;
+  const edgePort = edgeServer.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort, edgePort, runtime });
   } finally {
-    await new Promise(resolve => server.close(resolve));
+    await new Promise(resolve => edgeServer.close(resolve));
+    await new Promise(resolve => armServer.close(resolve));
   }
 }
 
@@ -81,6 +95,31 @@ function errorCode(result) {
   return result.body?.error?.code ?? result.body?.code ?? result.body?.Code ?? null;
 }
 
+async function edgeJson(port, method, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      ...(options.host ? { 'x-forwarded-host': options.host } : {}),
+      ...(options.protocol ? { 'x-forwarded-proto': options.protocol } : {}),
+      ...(options.headers ?? {}),
+    },
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    headers: Object.fromEntries(response.headers.entries()),
+    body: parsed,
+  };
+}
+
 function providerPath(resourceGroup, providerNamespace, typePath, apiVersion) {
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${providerNamespace}/${typePath}?api-version=${apiVersion}`;
 }
@@ -105,6 +144,10 @@ function loadBalancerPath(resourceGroup, loadBalancerName, apiVersion = '2023-09
   return providerPath(resourceGroup, 'Microsoft.Network', `loadBalancers/${loadBalancerName}`, apiVersion);
 }
 
+function publicIpPath(resourceGroup, publicIpName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `publicIPAddresses/${publicIpName}`, apiVersion);
+}
+
 function vnetBody() {
   return {
     location: 'eastus',
@@ -123,6 +166,23 @@ function vnetBody() {
         },
       ],
     },
+  };
+}
+
+function publicIpBody(domainNameLabel, overrides = {}) {
+  return {
+    location: 'eastus',
+    sku: { name: 'Standard', ...(overrides.sku ?? {}) },
+    properties: {
+      publicIPAllocationMethod: 'Static',
+      publicIPAddressVersion: 'IPv4',
+      dnsSettings: {
+        domainNameLabel,
+        ...(overrides.properties?.dnsSettings ?? {}),
+      },
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => !['properties', 'sku'].includes(key))),
   };
 }
 
@@ -224,6 +284,8 @@ function loadBalancerBody({ resourceGroup, loadBalancerName, overrides = {} }) {
 
 function deploymentBody({ resourceGroup, vnetName, gatewayName, loadBalancerName }) {
   const subnetId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/virtualNetworks/${vnetName}/subnets/appgw`;
+  const gatewayPublicIpName = `pip-${gatewayName}`;
+  const loadBalancerPublicIpName = `pip-${loadBalancerName}`;
   return {
     properties: {
       mode: 'Incremental',
@@ -243,16 +305,39 @@ function deploymentBody({ resourceGroup, vnetName, gatewayName, loadBalancerName
             apiVersion: '2023-09-01',
             name: gatewayName,
             location: 'eastus',
+            dependsOn: [
+              `Microsoft.Network/virtualNetworks/${vnetName}`,
+              `Microsoft.Network/publicIPAddresses/${gatewayPublicIpName}`,
+            ],
             sku: applicationGatewayBody({ resourceGroup, gatewayName, subnetId }).sku,
             properties: applicationGatewayBody({ resourceGroup, gatewayName, subnetId }).properties,
+          },
+          {
+            type: 'Microsoft.Network/publicIPAddresses',
+            apiVersion: '2023-09-01',
+            name: gatewayPublicIpName,
+            location: 'eastus',
+            sku: publicIpBody(`agwdeploy${gatewayName.slice(-6)}`).sku,
+            properties: publicIpBody(`agwdeploy${gatewayName.slice(-6)}`).properties,
           },
           {
             type: 'Microsoft.Network/loadBalancers',
             apiVersion: '2023-09-01',
             name: loadBalancerName,
             location: 'eastus',
+            dependsOn: [
+              `Microsoft.Network/publicIPAddresses/${loadBalancerPublicIpName}`,
+            ],
             sku: loadBalancerBody({ resourceGroup, loadBalancerName }).sku,
             properties: loadBalancerBody({ resourceGroup, loadBalancerName }).properties,
+          },
+          {
+            type: 'Microsoft.Network/publicIPAddresses',
+            apiVersion: '2023-09-01',
+            name: loadBalancerPublicIpName,
+            location: 'eastus',
+            sku: publicIpBody(`lbdeploy${loadBalancerName.slice(-6)}`).sku,
+            properties: publicIpBody(`lbdeploy${loadBalancerName.slice(-6)}`).properties,
           },
         ],
         outputs: {
@@ -272,6 +357,12 @@ async function runControlPlaneMatrix() {
   const vnetName = `vnet-lb-${suffix}`.slice(0, 40);
   const gatewayName = `agw-${suffix}`.slice(0, 40);
   const loadBalancerName = `lb-${suffix}`.slice(0, 40);
+  const gatewayPublicIpName = `pip-${gatewayName}`;
+  const loadBalancerPublicIpName = `pip-${loadBalancerName}`;
+  const gatewayHostLabel = `agw${suffix}`.slice(0, 24);
+  const loadBalancerHostLabel = `lb${suffix}`.slice(0, 24);
+  const gatewayHostName = `${gatewayHostLabel}.eastus.cloudapp.azure.com`;
+  const loadBalancerHostName = `${loadBalancerHostLabel}.eastus.cloudapp.azure.com`;
   const minimalLoadBalancerName = `lb-min-${suffix}`.slice(0, 40);
   const emptyRulesLoadBalancerName = `lb-rules-${suffix}`.slice(0, 40);
   const missingGatewayName = `agw-missing-${suffix}`.slice(0, 40);
@@ -301,7 +392,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withRuntimeServers(async ({ armPort, edgePort }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -451,6 +542,20 @@ async function runControlPlaneMatrix() {
       return { status: result.status, subnetId };
     });
 
+    await record('public ip create succeeds for application gateway ingress host', async () => {
+      const result = await httpJson(armPort, 'PUT', publicIpPath(resourceGroup, gatewayPublicIpName), publicIpBody(gatewayHostLabel));
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.dnsSettings.fqdn, gatewayHostName);
+      return { status: result.status, hostName: result.body.properties.dnsSettings.fqdn };
+    });
+
+    await record('public ip create succeeds for load balancer ingress host', async () => {
+      const result = await httpJson(armPort, 'PUT', publicIpPath(resourceGroup, loadBalancerPublicIpName), publicIpBody(loadBalancerHostLabel));
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.dnsSettings.fqdn, loadBalancerHostName);
+      return { status: result.status, hostName: result.body.properties.dnsSettings.fqdn };
+    });
+
     await record('application gateway missing gateway subnet is rejected', async () => {
       const result = await httpJson(armPort, 'PUT', applicationGatewayPath(resourceGroup, gatewayName), applicationGatewayBody({ resourceGroup, gatewayName, subnetId, overrides: { properties: { gatewayIPConfigurations: [] } } }));
       assert.equal(result.status, 400);
@@ -546,6 +651,28 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('bounded application gateway edge route succeeds using public ip fqdn', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/robotics/models/v1', {
+        host: gatewayHostName,
+        protocol: 'http',
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.headers['x-globalstack-edge-route'], `application-gateway/${gatewayName}`);
+      assert.equal(result.body.kind, 'application-gateway');
+      assert.equal(result.body.originHost, '10.86.2.10');
+      return { status: result.status, route: result.headers['x-globalstack-edge-route'] };
+    });
+
+    await record('bounded application gateway edge route remains stable across repeated requests', async () => {
+      const first = await edgeJson(edgePort, 'GET', '/robotics/models/v1', { host: gatewayHostName, protocol: 'http' });
+      const second = await edgeJson(edgePort, 'GET', '/robotics/models/v1', { host: gatewayHostName, protocol: 'http' });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.headers['x-globalstack-edge-route'], `application-gateway/${gatewayName}`);
+      assert.equal(second.headers['x-globalstack-edge-route'], `application-gateway/${gatewayName}`);
+      return { status: second.status, route: second.headers['x-globalstack-edge-route'] };
+    });
+
     await record('load balancer create succeeds', async () => {
       const result = await httpJson(armPort, 'PUT', loadBalancerPath(resourceGroup, loadBalancerName), loadBalancerBody({ resourceGroup, loadBalancerName }));
       assert.equal(result.status, 201);
@@ -567,6 +694,28 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.tags.workload, 'updated-ai-mlops-ingress');
       assert.ok(result.body.properties.resourceGuid);
       return { status: result.status };
+    });
+
+    await record('bounded load balancer edge route succeeds using public ip fqdn', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/mlops/ingress/health', {
+        host: loadBalancerHostName,
+        protocol: 'http',
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.headers['x-globalstack-edge-route'], `load-balancer/${loadBalancerName}`);
+      assert.equal(result.body.kind, 'load-balancer');
+      assert.equal(result.body.originHost, `${loadBalancerName}.internal.globalstack`);
+      return { status: result.status, route: result.headers['x-globalstack-edge-route'] };
+    });
+
+    await record('bounded load balancer edge route remains stable across repeated requests', async () => {
+      const first = await edgeJson(edgePort, 'GET', '/mlops/ingress/health', { host: loadBalancerHostName, protocol: 'http' });
+      const second = await edgeJson(edgePort, 'GET', '/mlops/ingress/health', { host: loadBalancerHostName, protocol: 'http' });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.headers['x-globalstack-edge-route'], `load-balancer/${loadBalancerName}`);
+      assert.equal(second.headers['x-globalstack-edge-route'], `load-balancer/${loadBalancerName}`);
+      return { status: second.status, route: second.headers['x-globalstack-edge-route'] };
     });
 
     await record('application gateway list includes created resource', async () => {
@@ -635,6 +784,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('bounded load balancer edge route is removed after delete', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/mlops/ingress/health', { host: loadBalancerHostName, protocol: 'http' });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'EndpointNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('load balancer get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', loadBalancerPath(resourceGroup, loadBalancerName));
       assert.equal(result.status, 404);
@@ -654,6 +810,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('bounded application gateway edge route is removed after delete', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/robotics/models/v1', { host: gatewayHostName, protocol: 'http' });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'EndpointNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('application gateway get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', applicationGatewayPath(resourceGroup, gatewayName));
       assert.equal(result.status, 404);
@@ -669,15 +832,37 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'bounded application gateway edge route succeeds using public ip fqdn',
+    'bounded application gateway edge route remains stable across repeated requests',
+    'bounded load balancer edge route succeeds using public ip fqdn',
+    'bounded load balancer edge route remains stable across repeated requests',
+    'bounded load balancer edge route is removed after delete',
+    'bounded application gateway edge route is removed after delete',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    vnetName,
-    gatewayName,
-    loadBalancerName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      vnetName,
+      gatewayName,
+      loadBalancerName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      gatewayName,
+      gatewayHostName,
+      loadBalancerName,
+      loadBalancerHostName,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -736,6 +921,19 @@ function markdown(report) {
   }
 
   lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Application Gateway ingress host: ${report.dataPlane.gatewayHostName}`);
+  lines.push(`- Load Balancer ingress host: ${report.dataPlane.loadBalancerHostName}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
   lines.push('## Platform Matrix');
   lines.push('');
   if (report.platformMatrix.skipped) {
@@ -752,21 +950,22 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed Azure Application Gateway and Load Balancer ARM lifecycle, frontend/listener/backend/probe parameter rejection, unsupported child/action route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure load balancing as 99%-complete or cloudValidated for packet-level balancing, TLS termination behavior, health probe state transitions, SNAT, zone behavior, autoscale, connection draining, WAF execution, throttling, RBAC, or exact Azure data-plane behavior.');
+  lines.push('This run proves local GlobalStack handling for the listed Azure Application Gateway and Load Balancer ARM lifecycle, frontend/listener/backend/probe parameter rejection, bounded public-IP-host ingress routing through the local edge runtime, unsupported child/action route fail-closed behavior, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Azure load balancing as 99%-complete or cloudValidated for packet-level balancing, TLS termination behavior, health probe state transitions, SNAT, zone behavior, autoscale, connection draining, WAF execution, throttling, RBAC, or exact Azure network data-plane behavior.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
-  scope: 'Azure Application Gateway and Load Balancer ARM lifecycle, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
+  scope: 'Azure Application Gateway and Load Balancer ARM lifecycle, bounded public-IP ingress routing, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Load Balancing cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 
