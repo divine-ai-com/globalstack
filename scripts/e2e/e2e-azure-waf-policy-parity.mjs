@@ -4,7 +4,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
-import { createWafEvaluator } from '../../packages/azure-data-plane/src/waf-evaluator.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEdgeRouterServer } from '../../packages/azure-data-plane/src/edge-router.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -40,14 +42,25 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const port = server.address().port;
+async function withRuntimeServers(fn) {
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const armServer = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
+  const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
+  await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
+  const armPort = armServer.address().port;
+  const edgePort = edgeServer.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort, edgePort, runtime });
   } finally {
-    await new Promise(resolve => server.close(resolve));
+    await new Promise(resolve => edgeServer.close(resolve));
+    await new Promise(resolve => armServer.close(resolve));
   }
 }
 
@@ -81,6 +94,31 @@ function errorCode(result) {
   return result.body?.error?.code ?? result.body?.code ?? result.body?.Code ?? null;
 }
 
+async function edgeJson(port, method, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      ...(options.host ? { 'x-forwarded-host': options.host } : {}),
+      ...(options.protocol ? { 'x-forwarded-proto': options.protocol } : {}),
+      ...(options.headers ?? {}),
+    },
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    headers: Object.fromEntries(response.headers.entries()),
+    body: parsed,
+  };
+}
+
 function providerPath(resourceGroup, providerNamespace, typePath, apiVersion) {
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${providerNamespace}/${typePath}?api-version=${apiVersion}`;
 }
@@ -99,6 +137,10 @@ function appWafPath(resourceGroup, policyName, apiVersion = '2023-09-01') {
 
 function cdnProfilePath(resourceGroup, profileName, apiVersion = '2023-05-01') {
   return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}`, apiVersion);
+}
+
+function afdEndpointPath(resourceGroup, profileName, endpointName, apiVersion = '2023-05-01') {
+  return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/afdEndpoints/${endpointName}`, apiVersion);
 }
 
 function cdnSecurityPolicyPath(resourceGroup, profileName, policyName, apiVersion = '2024-02-01') {
@@ -222,11 +264,11 @@ async function runControlPlaneMatrix() {
   const missingResourceGroup = `rg-gs-waf-missing-${suffix}`;
   const appWafName = `waf-${suffix}`.slice(0, 40);
   const profileName = `cdn-waf-${suffix}`.slice(0, 40);
+  const afdEndpointName = `afd-${suffix}`.slice(0, 40);
   const securityPolicyName = `security-${suffix}`.slice(0, 40);
   const missingPolicyName = `security-missing-${suffix}`.slice(0, 40);
   const wafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`;
-  const endpointId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/afdEndpoints/default`;
-  const wafEvaluator = createWafEvaluator();
+  const endpointId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/afdEndpoints/${afdEndpointName}`;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -241,7 +283,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withRuntimeServers(async ({ armPort, edgePort, runtime }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -340,12 +382,11 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.resourceState, 'Enabled');
-      wafEvaluator.registerPolicy({ policyName: appWafName, properties: result.body.properties });
       return { status: result.status };
     });
 
     await record('local waf evaluator allows clean request', async () => {
-      const result = wafEvaluator.evaluate({
+      const result = runtime.wafEvaluator.evaluate({
         policyName: appWafName,
         request: { method: 'GET', uri: '/robotics/telemetry', headers: { 'User-Agent': 'trusted-robot-client' } },
       });
@@ -356,7 +397,7 @@ async function runControlPlaneMatrix() {
     });
 
     await record('local waf evaluator blocks bad bot in prevention mode', async () => {
-      const result = wafEvaluator.evaluate({
+      const result = runtime.wafEvaluator.evaluate({
         policyName: appWafName,
         request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
       });
@@ -377,12 +418,11 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody({ properties: { policySettings: { state: 'Enabled', mode: 'Detection', requestBodyCheck: true } } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.policySettings.mode, 'Detection');
-      wafEvaluator.registerPolicy({ policyName: appWafName, properties: result.body.properties });
       return { status: result.status };
     });
 
     await record('local waf evaluator detects bad bot without blocking in detection mode', async () => {
-      const result = wafEvaluator.evaluate({
+      const result = runtime.wafEvaluator.evaluate({
         policyName: appWafName,
         request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
       });
@@ -393,11 +433,11 @@ async function runControlPlaneMatrix() {
     });
 
     await record('local waf evaluator disabled policy bypasses rules', async () => {
-      wafEvaluator.registerPolicy({
+      runtime.wafEvaluator.registerPolicy({
         policyName: `${appWafName}-disabled`,
         properties: appWafBody({ properties: { policySettings: { state: 'Disabled', mode: 'Prevention' } } }).properties,
       });
-      const result = wafEvaluator.evaluate({
+      const result = runtime.wafEvaluator.evaluate({
         policyName: `${appWafName}-disabled`,
         request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
       });
@@ -417,6 +457,33 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', cdnProfilePath(resourceGroup, profileName), cdnProfileBody());
       assert.equal(result.status, 201);
       return { status: result.status };
+    });
+
+    await record('waf policy update can switch back to prevention mode for attached security policy', async () => {
+      const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody({
+        properties: {
+          policySettings: {
+            state: 'Enabled',
+            mode: 'Prevention',
+            requestBodyCheck: true,
+          },
+        },
+      }));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.policySettings.mode, 'Prevention');
+      return { status: result.status };
+    });
+
+    await record('afd endpoint create succeeds for security policy association', async () => {
+      const result = await httpJson(armPort, 'PUT', afdEndpointPath(resourceGroup, profileName, afdEndpointName), {
+        location: 'eastus',
+        properties: {
+          enabledState: 'Enabled',
+        },
+      });
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.hostName, `${afdEndpointName}.azurefd.net`);
+      return { status: result.status, hostName: result.body.properties.hostName };
     });
 
     await record('cdn security policy collection list is empty before create', async () => {
@@ -448,6 +515,20 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
       return { status: result.status };
+    });
+
+    await record('local front door edge route blocks bad bot when security policy references waf policy', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/robotics/telemetry', {
+        host: `${afdEndpointName}.azurefd.net`,
+        protocol: 'https',
+        headers: {
+          'User-Agent': 'bad-bot/1.0',
+        },
+      });
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'WebApplicationFirewallRequestBlocked');
+      assert.equal(result.headers['x-globalstack-waf-policy'], appWafName);
+      return { status: result.status, errorCode: errorCode(result), wafPolicyName: result.headers['x-globalstack-waf-policy'] };
     });
 
     await record('cdn security policy get succeeds', async () => {
@@ -517,7 +598,6 @@ async function runControlPlaneMatrix() {
     await record('waf policy delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', appWafPath(resourceGroup, appWafName));
       assert.equal(result.status, 200);
-      wafEvaluator.unregisterPolicy(appWafName);
       return { status: result.status };
     });
 

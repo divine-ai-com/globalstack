@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
+import { createEdgeRouterServer } from '../../azure-data-plane/src/edge-router.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
 
@@ -58,6 +59,31 @@ async function withRuntimeServer(fn) {
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
+}
+
+async function edgeJson(port, method, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      ...(options.host ? { 'x-forwarded-host': options.host } : {}),
+      ...(options.protocol ? { 'x-forwarded-proto': options.protocol } : {}),
+      ...(options.headers ?? {}),
+    },
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    body: parsed,
+    headers: Object.fromEntries(response.headers.entries()),
+  };
 }
 
 test('dns registry follows private zone record and vnet link lifecycle', async () => {
@@ -258,5 +284,182 @@ test('metric store follows alert lifecycle and evaluates bounded alert transitio
     const resolved = runtime.metricStore.evaluateAlert(alert.body.id, { now: '2026-01-01T00:21:00.000Z' });
     assert.equal(resolved.status, 'Resolved');
     assert.equal(resolved.lastMetricValue, 12);
+  });
+});
+
+test('edge router applies synced front door routing and attached waf policy', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
+    await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
+    const edgePort = edgeServer.address().port;
+    try {
+      await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-edge-sync?api-version=2021-04-01`, { location: 'eastus' });
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-sync?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          properties: {
+            policySettings: { state: 'Enabled', mode: 'Prevention', requestBodyCheck: true },
+            managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] },
+            customRules: [{
+              name: 'BlockBadBotHeader',
+              priority: 100,
+              ruleType: 'MatchRule',
+              action: 'Block',
+              matchConditions: [{
+                matchVariables: [{ variableName: 'RequestHeaders', selector: 'User-Agent' }],
+                operator: 'Contains',
+                matchValues: ['bad-bot'],
+              }],
+            }],
+          },
+        },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync?api-version=2023-05-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard_AzureFrontDoor' },
+          properties: {},
+        },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/afdEndpoints/edge-sync?api-version=2023-05-01`,
+        {
+          location: 'eastus',
+          properties: { enabledState: 'Enabled' },
+        },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/originGroups/og-sync?api-version=2024-02-01`,
+        { properties: { sessionAffinityState: 'Disabled' } },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/originGroups/og-sync/origins/origin-sync?api-version=2024-02-01`,
+        {
+          properties: {
+            hostName: 'origin.example.org',
+            httpPort: 80,
+            httpsPort: 443,
+            originHostHeader: 'origin.example.org',
+            enabledState: 'Enabled',
+          },
+        },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/afdEndpoints/edge-sync/routes/route-sync?api-version=2024-02-01`,
+        {
+          properties: {
+            originGroup: {
+              id: `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/originGroups/og-sync`,
+            },
+            patternsToMatch: ['/mlops/*'],
+            supportedProtocols: ['Http', 'Https'],
+            forwardingProtocol: 'MatchRequest',
+            enabledState: 'Enabled',
+          },
+        },
+      );
+
+      await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/securityPolicies/security-sync?api-version=2024-02-01`,
+        {
+          properties: {
+            parameters: {
+              type: 'WebApplicationFirewall',
+              wafPolicy: {
+                id: `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-sync`,
+              },
+              associations: [{
+                domains: [{
+                  id: `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Cdn/profiles/profile-sync/afdEndpoints/edge-sync`,
+                }],
+                patternsToMatch: ['/mlops/*'],
+              }],
+            },
+          },
+        },
+      );
+
+      const allowed = await edgeJson(edgePort, 'GET', '/mlops/health', {
+        host: 'edge-sync.azurefd.net',
+        protocol: 'https',
+        headers: { 'User-Agent': 'trusted-client' },
+      });
+      assert.equal(allowed.status, 200);
+      assert.equal(allowed.headers['x-globalstack-origin-host'], 'origin.example.org');
+      assert.equal(allowed.headers['x-globalstack-waf-policy'], 'waf-sync');
+
+      const blocked = await edgeJson(edgePort, 'GET', '/mlops/health', {
+        host: 'edge-sync.azurefd.net',
+        protocol: 'https',
+        headers: { 'User-Agent': 'bad-bot/1.0' },
+      });
+      assert.equal(blocked.status, 403);
+      assert.equal(blocked.body.error.code, 'WebApplicationFirewallRequestBlocked');
+    } finally {
+      await new Promise(resolve => edgeServer.close(resolve));
+    }
+  });
+});
+
+test('activity log store records resource write and delete events through runtime hooks', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-audit-sync?api-version=2021-04-01`, { location: 'eastus' });
+
+    const created = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync?api-version=2022-06-15`,
+      {
+        location: 'eastus',
+        properties: {
+          source: `${subscriptionPath}/resourceGroups/rg-audit-sync`,
+          topicType: 'Microsoft.Resources.ResourceGroups',
+        },
+      },
+    );
+    assert.equal(created.status, 201);
+
+    const writeEvents = runtime.activityLogStore.query({
+      resourceGroup: 'rg-audit-sync',
+      operationName: 'Microsoft.EventGrid/systemTopics/write',
+    });
+    assert.equal(writeEvents.length, 1);
+    assert.equal(writeEvents[0].status, 'Succeeded');
+
+    const deleted = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync?api-version=2022-06-15`,
+    );
+    assert.equal(deleted.status, 200);
+
+    const deleteEvents = runtime.activityLogStore.query({
+      resourceGroup: 'rg-audit-sync',
+      operationName: 'Microsoft.EventGrid/systemTopics/delete',
+    });
+    assert.equal(deleteEvents.length, 1);
+    assert.equal(deleteEvents[0].status, 'Succeeded');
   });
 });

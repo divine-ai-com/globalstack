@@ -164,6 +164,25 @@ key_vault_host_aliases() {
   } | awk 'NF { print tolower($0) }' | awk '!seen[$0]++'
 }
 
+edge_host_aliases() {
+  if [ ! -f "$(task_metadata_path)" ]; then
+    return 0
+  fi
+
+  jq -r '
+    .integrationChecks[]?
+    | select(.provider == "Microsoft.Cdn")
+    | .typePath
+    | if test("^profiles/[^/]+/afdEndpoints/[^/]+$") then
+        capture("^profiles/[^/]+/afdEndpoints/(?<endpoint>[^/]+)$").endpoint + ".azurefd.net"
+      elif test("^profiles/[^/]+/endpoints/[^/]+$") then
+        capture("^profiles/[^/]+/endpoints/(?<endpoint>[^/]+)$").endpoint + ".azureedge.net"
+      else
+        empty
+      end
+  ' "$(task_metadata_path)" 2>/dev/null | awk 'NF { print tolower($0) }' | awk '!seen[$0]++'
+}
+
 local_access_token() {
   jq -r '.access_token' "${PLATFORM_TOKEN_RESPONSE}"
 }
@@ -535,7 +554,7 @@ setup_pulumi_transparent_globalstack_proxy() {
       -keyout "${key}" \
       -out "${cert}" \
       -subj '/CN=management.azure.com' \
-      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,DNS:*.blob.core.windows.net,DNS:*.queue.core.windows.net,DNS:*.table.core.windows.net,DNS:*.vault.azure.net,IP:127.0.0.1' >/dev/null 2>&1
+      -addext 'subjectAltName=DNS:management.azure.com,DNS:login.microsoftonline.com,DNS:login.windows.net,DNS:login.microsoft.com,DNS:sts.windows.net,DNS:localhost,DNS:*.blob.core.windows.net,DNS:*.queue.core.windows.net,DNS:*.table.core.windows.net,DNS:*.vault.azure.net,DNS:*.azurefd.net,DNS:*.azureedge.net,IP:127.0.0.1' >/dev/null 2>&1
   fi
 
   for host in ${hosts}; do
@@ -562,6 +581,13 @@ setup_pulumi_transparent_globalstack_proxy() {
     fi
   done < <(key_vault_host_aliases)
 
+  while IFS= read -r edge_host; do
+    [ -n "${edge_host}" ] || continue
+    if ! grep -Eq "^[[:space:]]*127\\.0\\.0\\.1[[:space:]].*\\b${edge_host}\\b" /etc/hosts; then
+      printf '127.0.0.1 %s\n' "${edge_host}" >> /etc/hosts
+    fi
+  done < <(edge_host_aliases)
+
   if command -v update-ca-certificates >/dev/null 2>&1; then
     cp "${cert}" /usr/local/share/ca-certificates/globalstack-transparent.crt
     update-ca-certificates >/dev/null 2>&1 || true
@@ -583,6 +609,7 @@ blob_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_BLOB_TARGET"])
 queue_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_QUEUE_TARGET"])
 table_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_TABLE_TARGET"])
 key_vault_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET"])
+edge_target = urlparse(os.environ["GLOBALSTACK_TRANSPARENT_EDGE_TARGET"])
 
 def target_parts(parsed):
     return parsed, parsed.port or (443 if parsed.scheme == "https" else 80)
@@ -597,6 +624,8 @@ def target_for_host(host):
         return target_parts(table_target)
     if lower.endswith(".vault.azure.net"):
         return target_parts(key_vault_target)
+    if lower.endswith(".azurefd.net") or lower.endswith(".azureedge.net"):
+        return target_parts(edge_target)
     return target_parts(arm_target)
 
 class Proxy(BaseHTTPRequestHandler):
@@ -648,6 +677,7 @@ PY
   GLOBALSTACK_TRANSPARENT_QUEUE_TARGET="http://127.0.0.1:${GLOBALSTACK_QUEUE_PORT:-10001}" \
   GLOBALSTACK_TRANSPARENT_TABLE_TARGET="http://127.0.0.1:${GLOBALSTACK_TABLE_PORT:-10002}" \
   GLOBALSTACK_TRANSPARENT_KEY_VAULT_TARGET="http://127.0.0.1:${GLOBALSTACK_KEY_VAULT_PORT:-10003}" \
+  GLOBALSTACK_TRANSPARENT_EDGE_TARGET="http://127.0.0.1:${GLOBALSTACK_EDGE_PORT:-10004}" \
   GLOBALSTACK_TRANSPARENT_PROXY_PORT="${PLATFORM_TRANSPARENT_PROXY_PORT}" \
   GLOBALSTACK_TRANSPARENT_PROXY_CERT="${cert}" \
   GLOBALSTACK_TRANSPARENT_PROXY_KEY="${key}" \

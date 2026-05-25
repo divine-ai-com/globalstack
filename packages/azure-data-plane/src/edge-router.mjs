@@ -40,9 +40,31 @@ function normalizeOrigins(origins) {
     .filter(origin => origin.name && origin.hostName);
 }
 
+function normalizePatterns(patterns) {
+  if (!Array.isArray(patterns)) return [];
+  return patterns
+    .map(pattern => String(pattern ?? '').trim())
+    .filter(Boolean);
+}
+
+function escapeRegex(text) {
+  return String(text).replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
+}
+
+function routeMatches(pattern, path) {
+  const candidate = String(path ?? '/');
+  const source = String(pattern ?? '')
+    .split('*')
+    .map(part => escapeRegex(part))
+    .join('.*');
+  const regex = new RegExp(`^${source}$`, 'i');
+  return regex.test(candidate);
+}
+
 export class EdgeRouter {
-  constructor() {
+  constructor({ wafEvaluator = null } = {}) {
     this.endpointsByHost = new Map();
+    this.wafEvaluator = wafEvaluator;
   }
 
   registerEndpoint({
@@ -53,16 +75,23 @@ export class EdgeRouter {
     origins = [],
     isHttpAllowed = true,
     isHttpsAllowed = true,
+    routePatterns = [],
+    wafPolicyName = null,
   }) {
     const normalizedHost = hostNameFromHeader(hostName);
+    const existing = this.endpointsByHost.get(normalizedHost) ?? {};
+    const normalizedOrigins = normalizeOrigins(origins);
+    const normalizedPatterns = normalizePatterns(routePatterns);
     this.endpointsByHost.set(normalizedHost, {
-      endpointName: String(endpointName),
+      endpointName: String(endpointName ?? existing.endpointName ?? normalizedHost),
       hostName: normalizedHost,
-      kind,
-      enabledState,
-      origins: normalizeOrigins(origins),
-      isHttpAllowed,
-      isHttpsAllowed,
+      kind: kind ?? existing.kind ?? 'cdn',
+      enabledState: enabledState ?? existing.enabledState ?? 'Enabled',
+      origins: normalizedOrigins.length > 0 ? normalizedOrigins : (existing.origins ?? []),
+      isHttpAllowed: isHttpAllowed ?? existing.isHttpAllowed ?? true,
+      isHttpsAllowed: isHttpsAllowed ?? existing.isHttpsAllowed ?? true,
+      routePatterns: normalizedPatterns.length > 0 ? normalizedPatterns : (existing.routePatterns ?? []),
+      wafPolicyName: wafPolicyName ?? existing.wafPolicyName ?? null,
     });
   }
 
@@ -101,6 +130,35 @@ export class EdgeRouter {
         return sendError(res, 403, 'ProtocolNotAllowed', `HTTPS is disabled for endpoint '${endpoint.endpointName}'.`);
       }
 
+      const routePatterns = endpoint.routePatterns ?? [];
+      if (routePatterns.length > 0 && !routePatterns.some(pattern => routeMatches(pattern, url.pathname))) {
+        return sendError(res, 404, 'RouteNotFound', `No Front Door/CDN route matched '${url.pathname}' for endpoint '${endpoint.endpointName}'.`);
+      }
+
+      if (endpoint.wafPolicyName && this.wafEvaluator) {
+        const wafVerdict = this.wafEvaluator.evaluate({
+          policyName: endpoint.wafPolicyName,
+          request: {
+            headers: req.headers,
+            method,
+            uri: url.pathname,
+            path: url.pathname,
+          },
+        });
+        if (wafVerdict.action === 'Block') {
+          return sendJson(res, 403, {
+            error: {
+              code: 'WebApplicationFirewallRequestBlocked',
+              message: `The WAF policy '${endpoint.wafPolicyName}' blocked this request.`,
+            },
+            waf: wafVerdict,
+          }, {
+            'x-globalstack-waf-policy': endpoint.wafPolicyName,
+            'x-globalstack-waf-action': wafVerdict.action,
+          });
+        }
+      }
+
       const origin = endpoint.origins[0] ?? null;
       if (endpoint.kind === 'cdn' && !origin) {
         return sendError(res, 502, 'OriginNotConfigured', `The CDN endpoint '${endpoint.endpointName}' has no configured origin.`);
@@ -116,16 +174,19 @@ export class EdgeRouter {
         protocol,
         originHost: origin?.hostName ?? null,
         cacheStatus: 'Configured',
+        routePatterns: endpoint.routePatterns ?? [],
+        wafPolicyName: endpoint.wafPolicyName ?? null,
       }, {
         'x-globalstack-edge-route': `${endpoint.kind}/${endpoint.endpointName}`,
+        ...(endpoint.wafPolicyName ? { 'x-globalstack-waf-policy': endpoint.wafPolicyName } : {}),
         ...(origin?.hostName ? { 'x-globalstack-origin-host': origin.hostName } : {}),
       });
     };
   }
 }
 
-export function createEdgeRouter() {
-  return new EdgeRouter();
+export function createEdgeRouter(options = {}) {
+  return new EdgeRouter(options);
 }
 
 export function createEdgeRouterServer(router = createEdgeRouter()) {

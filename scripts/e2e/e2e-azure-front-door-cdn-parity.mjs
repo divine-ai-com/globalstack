@@ -4,7 +4,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
-import { createEdgeRouter, createEdgeRouterServer } from '../../packages/azure-data-plane/src/edge-router.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEdgeRouterServer } from '../../packages/azure-data-plane/src/edge-router.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -40,25 +42,25 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const port = server.address().port;
+async function withRuntimeServers(fn) {
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const armServer = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
+  const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
+  await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
+  const armPort = armServer.address().port;
+  const edgePort = edgeServer.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort, edgePort, runtime });
   } finally {
-    await new Promise(resolve => server.close(resolve));
-  }
-}
-
-async function withEdgeServer(router, fn) {
-  const server = createEdgeRouterServer(router);
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const port = server.address().port;
-  try {
-    return await fn(port);
-  } finally {
-    await new Promise(resolve => server.close(resolve));
+    await new Promise(resolve => edgeServer.close(resolve));
+    await new Promise(resolve => armServer.close(resolve));
   }
 }
 
@@ -137,6 +139,18 @@ function afdEndpointPath(resourceGroup, profileName, endpointName, apiVersion = 
   return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/afdEndpoints/${endpointName}`, apiVersion);
 }
 
+function afdOriginGroupPath(resourceGroup, profileName, originGroupName, apiVersion = '2024-02-01') {
+  return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/originGroups/${originGroupName}`, apiVersion);
+}
+
+function afdOriginPath(resourceGroup, profileName, originGroupName, originName, apiVersion = '2024-02-01') {
+  return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/originGroups/${originGroupName}/origins/${originName}`, apiVersion);
+}
+
+function afdRoutePath(resourceGroup, profileName, endpointName, routeName, apiVersion = '2024-02-01') {
+  return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/afdEndpoints/${endpointName}/routes/${routeName}`, apiVersion);
+}
+
 function cdnEndpointPath(resourceGroup, profileName, endpointName, apiVersion = '2021-06-01') {
   return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/endpoints/${endpointName}`, apiVersion);
 }
@@ -182,6 +196,46 @@ function cdnEndpointBody(overrides = {}) {
       ],
       isHttpAllowed: true,
       isHttpsAllowed: true,
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
+function afdOriginGroupBody(overrides = {}) {
+  return {
+    properties: {
+      sessionAffinityState: 'Disabled',
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
+function afdOriginBody(overrides = {}) {
+  return {
+    properties: {
+      hostName: 'origin.example.org',
+      httpPort: 80,
+      httpsPort: 443,
+      originHostHeader: 'origin.example.org',
+      enabledState: 'Enabled',
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
+function afdRouteBody(originGroupId, overrides = {}) {
+  return {
+    properties: {
+      originGroup: { id: originGroupId },
+      supportedProtocols: ['Http', 'Https'],
+      forwardingProtocol: 'MatchRequest',
+      patternsToMatch: ['/mlops/*'],
+      enabledState: 'Enabled',
+      linkToDefaultDomain: 'Enabled',
+      httpsRedirect: 'Enabled',
       ...(overrides.properties ?? {}),
     },
     ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
@@ -238,10 +292,12 @@ async function runControlPlaneMatrix() {
   const missingResourceGroup = `rg-gs-cdn-missing-${suffix}`;
   const profileName = `cdn-${suffix}`.slice(0, 40);
   const afdEndpointName = `afd-${suffix}`.slice(0, 40);
+  const afdOriginGroupName = `og-${suffix}`.slice(0, 40);
+  const afdOriginName = `origin-${suffix}`.slice(0, 40);
+  const afdRouteName = `route-${suffix}`.slice(0, 40);
   const cdnEndpointName = `endpoint-${suffix}`.slice(0, 40);
   const missingProfileName = `cdn-missing-${suffix}`.slice(0, 40);
   const missingEndpointName = `endpoint-missing-${suffix}`.slice(0, 40);
-  const edgeRouter = createEdgeRouter();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -256,8 +312,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withEdgeServer(edgeRouter, async (edgePort) => {
-    await withArmServer(async (armPort) => {
+  await withRuntimeServers(async ({ armPort, edgePort }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -401,27 +456,41 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', afdEndpointPath(resourceGroup, profileName, afdEndpointName), afdEndpointBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.hostName, `${afdEndpointName}.azurefd.net`);
-      edgeRouter.registerEndpoint({
-        endpointName: afdEndpointName,
-        hostName: result.body.properties.hostName,
-        kind: 'frontDoor',
-        enabledState: result.body.properties.enabledState,
-      });
       return { status: result.status, hostName: result.body.properties.hostName };
+    });
+
+    await record('afd origin group create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', afdOriginGroupPath(resourceGroup, profileName, afdOriginGroupName), afdOriginGroupBody());
+      assert.equal(result.status, 201);
+      return { status: result.status };
+    });
+
+    await record('afd origin create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', afdOriginPath(resourceGroup, profileName, afdOriginGroupName, afdOriginName), afdOriginBody());
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.hostName, 'origin.example.org');
+      return { status: result.status, hostName: result.body.properties.hostName };
+    });
+
+    await record('afd route create succeeds', async () => {
+      const originGroupId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/originGroups/${afdOriginGroupName}`;
+      const result = await httpJson(armPort, 'PUT', afdRoutePath(resourceGroup, profileName, afdEndpointName, afdRouteName), afdRouteBody(originGroupId));
+      assert.equal(result.status, 201);
+      assert.deepEqual(result.body.properties.patternsToMatch, ['/mlops/*']);
+      return { status: result.status };
+    });
+
+    await record('afd route get succeeds', async () => {
+      const result = await httpJson(armPort, 'GET', afdRoutePath(resourceGroup, profileName, afdEndpointName, afdRouteName));
+      assert.equal(result.status, 200);
+      assert.deepEqual(result.body.properties.patternsToMatch, ['/mlops/*']);
+      return { status: result.status };
     });
 
     await record('cdn endpoint create succeeds', async () => {
       const result = await httpJson(armPort, 'PUT', cdnEndpointPath(resourceGroup, profileName, cdnEndpointName), cdnEndpointBody());
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.hostName, `${cdnEndpointName}.azureedge.net`);
-      edgeRouter.registerEndpoint({
-        endpointName: cdnEndpointName,
-        hostName: result.body.properties.hostName,
-        kind: 'cdn',
-        origins: result.body.properties.origins,
-        isHttpAllowed: result.body.properties.isHttpAllowed,
-        isHttpsAllowed: result.body.properties.isHttpsAllowed,
-      });
       return { status: result.status, hostName: result.body.properties.hostName };
     });
 
@@ -435,10 +504,18 @@ async function runControlPlaneMatrix() {
     await record('local front door edge route succeeds', async () => {
       const result = await edgeJson(edgePort, 'GET', '/mlops/control-plane/health?region=eastus', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
       assert.equal(result.status, 200);
-      assert.equal(result.headers['x-globalstack-edge-route'], `frontDoor/${afdEndpointName}`);
-      assert.equal(result.body.kind, 'frontDoor');
+      assert.equal(result.headers['x-globalstack-edge-route'], `frontdoor/${afdEndpointName}`);
+      assert.equal(result.body.kind, 'frontdoor');
       assert.equal(result.body.protocol, 'https');
+      assert.equal(result.headers['x-globalstack-origin-host'], 'origin.example.org');
       return { status: result.status, route: result.headers['x-globalstack-edge-route'] };
+    });
+
+    await record('local front door edge route rejects unmatched path', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/private/model.tar', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'RouteNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
     });
 
     await record('local cdn edge route returns configured origin', async () => {
@@ -452,14 +529,13 @@ async function runControlPlaneMatrix() {
 
     await record('local cdn edge route rejects disabled http', async () => {
       const secureEndpointName = `secure-${suffix}`.slice(0, 40);
-      edgeRouter.registerEndpoint({
-        endpointName: secureEndpointName,
-        hostName: `${secureEndpointName}.azureedge.net`,
-        kind: 'cdn',
-        origins: cdnEndpointBody().properties.origins,
-        isHttpAllowed: false,
-        isHttpsAllowed: true,
-      });
+      const created = await httpJson(armPort, 'PUT', cdnEndpointPath(resourceGroup, profileName, secureEndpointName), cdnEndpointBody({
+        properties: {
+          isHttpAllowed: false,
+          isHttpsAllowed: true,
+        },
+      }));
+      assert.equal(created.status, 201);
       const result = await edgeJson(edgePort, 'GET', '/private/model.tar', { host: `${secureEndpointName}.azureedge.net`, protocol: 'http' });
       assert.equal(result.status, 403);
       assert.equal(errorCode(result), 'ProtocolNotAllowed');
@@ -484,12 +560,6 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', afdEndpointPath(resourceGroup, profileName, afdEndpointName), afdEndpointBody({ properties: { enabledState: 'Disabled' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.enabledState, 'Disabled');
-      edgeRouter.registerEndpoint({
-        endpointName: afdEndpointName,
-        hostName: result.body.properties.hostName,
-        kind: 'frontDoor',
-        enabledState: result.body.properties.enabledState,
-      });
       return { status: result.status };
     });
 
@@ -556,14 +626,12 @@ async function runControlPlaneMatrix() {
     await record('afd endpoint delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', afdEndpointPath(resourceGroup, profileName, afdEndpointName));
       assert.equal(result.status, 200);
-      edgeRouter.unregisterEndpoint(`${afdEndpointName}.azurefd.net`);
       return { status: result.status };
     });
 
     await record('cdn endpoint delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', cdnEndpointPath(resourceGroup, profileName, cdnEndpointName));
       assert.equal(result.status, 200);
-      edgeRouter.unregisterEndpoint(`${cdnEndpointName}.azureedge.net`);
       return { status: result.status };
     });
 
@@ -591,7 +659,6 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
-    });
     });
   });
 

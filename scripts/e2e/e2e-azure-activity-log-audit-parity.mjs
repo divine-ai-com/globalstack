@@ -4,7 +4,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
-import { createActivityLogStore } from '../../packages/azure-data-plane/src/activity-log-store.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -40,12 +41,19 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
+async function withRuntimeServer(fn) {
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ port, runtime });
   } finally {
     await new Promise(resolve => server.close(resolve));
   }
@@ -160,7 +168,6 @@ async function runControlPlaneMatrix() {
   const diagnosticName = `diag-${suffix}`;
   const sourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}`;
   const workspaceResourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.OperationalInsights/workspaces/ws-${suffix}`;
-  const activityLog = createActivityLogStore();
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -175,7 +182,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
+  await withRuntimeServer(async ({ port: armPort, runtime }) => {
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
       assert.equal(result.status, 401);
@@ -261,17 +268,11 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.type, 'Microsoft.EventGrid/systemTopics');
       assert.equal(result.body.properties.topicType, 'Microsoft.Resources.ResourceGroups');
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
-      activityLog.emit({
-        resourceId: result.body.id,
-        resourceGroup,
-        operationName: 'Microsoft.EventGrid/systemTopics/write',
-        properties: { provisioningState: result.body.properties.provisioningState },
-      });
       return { status: result.status, provisioningState: result.body.properties.provisioningState };
     });
 
     await record('local activity log records system topic write', async () => {
-      const records = activityLog.query({
+      const records = runtime.activityLogStore.query({
         resourceGroup,
         category: 'Administrative',
         operationName: 'Microsoft.EventGrid/systemTopics/write',
@@ -283,7 +284,7 @@ async function runControlPlaneMatrix() {
     });
 
     await record('local activity log status filter excludes missing failures', async () => {
-      const records = activityLog.query({ resourceGroup, status: 'Failed' });
+      const records = runtime.activityLogStore.query({ resourceGroup, status: 'Failed' });
       assert.deepEqual(records, []);
       return { count: records.length };
     });
@@ -300,23 +301,17 @@ async function runControlPlaneMatrix() {
       const result = await httpJson(armPort, 'PUT', systemTopicPath(resourceGroup, systemTopicName), systemTopicBody(sourceId, { tags: { workload: 'audit-log-routing', owner: 'mlops' } }));
       assert.equal(result.status, 200);
       assert.equal(result.body.tags.owner, 'mlops');
-      activityLog.emit({
-        resourceId: result.body.id,
-        resourceGroup,
-        operationName: 'Microsoft.EventGrid/systemTopics/write',
-        properties: { tags: result.body.tags },
-      });
       return { status: result.status };
     });
 
     await record('local activity log correlation filter returns one record', async () => {
-      const record = activityLog.emit({
+      const record = runtime.activityLogStore.emit({
         resourceId: sourceId,
         resourceGroup,
         operationName: 'Microsoft.Resources/subscriptions/resourceGroups/write',
         correlationId: `corr-${suffix}`,
       });
-      const records = activityLog.query({ resourceGroup, correlationId: record.correlationId });
+      const records = runtime.activityLogStore.query({ resourceGroup, correlationId: record.correlationId });
       assert.equal(records.length, 1);
       assert.equal(records[0].operationName, 'Microsoft.Resources/subscriptions/resourceGroups/write');
       return { count: records.length, correlationId: record.correlationId };
@@ -329,25 +324,28 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
-    await record('diagnostic setting create preserves captured unsupported root-scope behavior', async () => {
+    await record('diagnostic setting create succeeds at resource group scope', async () => {
       const result = await httpJson(armPort, 'PUT', diagnosticPath(resourceGroup, diagnosticName), diagnosticBody(workspaceResourceId));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 201);
+      assert.equal(result.body.name, diagnosticName);
+      assert.equal(result.body.type, 'Microsoft.Insights/diagnosticSettings');
+      assert.equal(result.body.properties.workspaceId, workspaceResourceId);
+      return { status: result.status, workspaceId: result.body.properties.workspaceId };
     });
 
-    await record('diagnostic setting empty body is rejected before captured root-scope behavior', async () => {
+    await record('diagnostic setting empty body is rejected before resource-group-scope create', async () => {
       const result = await httpJson(armPort, 'PUT', diagnosticPath(resourceGroup, diagnosticName), {});
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'BadRequest');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('diagnostic setting get preserves captured unsupported root-scope behavior', async () => {
+    await record('diagnostic setting get succeeds at resource group scope', async () => {
       const result = await httpJson(armPort, 'GET', diagnosticPath(resourceGroup, diagnosticName));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.equal(result.body.name, diagnosticName);
+      assert.equal(result.body.properties.workspaceId, workspaceResourceId);
+      return { status: result.status, workspaceId: result.body.properties.workspaceId };
     });
 
     for (const [name, method, path] of [
@@ -382,16 +380,11 @@ async function runControlPlaneMatrix() {
     await record('system topic delete succeeds', async () => {
       const result = await httpJson(armPort, 'DELETE', systemTopicPath(resourceGroup, systemTopicName));
       assert.equal(result.status, 200);
-      activityLog.emit({
-        resourceId: `${sourceId}/providers/Microsoft.EventGrid/systemTopics/${systemTopicName}`,
-        resourceGroup,
-        operationName: 'Microsoft.EventGrid/systemTopics/delete',
-      });
       return { status: result.status };
     });
 
     await record('local activity log records system topic delete', async () => {
-      const records = activityLog.query({
+      const records = runtime.activityLogStore.query({
         resourceGroup,
         operationName: 'Microsoft.EventGrid/systemTopics/delete',
         status: 'Succeeded',
@@ -471,7 +464,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for Azure Event Grid system-topic ARM lifecycle, local administrative activity-log emission/query checks, stricter parameter rejection, diagnostic-setting root-scope rejection captured from existing conformance evidence, unsupported audit child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Activity Log, tenant audit retention, diagnostic fanout, Event Grid delivery, RBAC, policy integration, immutable storage, throttling, or exact Azure event schema behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for Azure Event Grid system-topic ARM lifecycle, local administrative activity-log emission/query checks, stricter parameter rejection, supported resource-group-scoped diagnostic-setting lifecycle, unsupported audit child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark Activity Log, tenant audit retention, diagnostic fanout, Event Grid delivery, RBAC, policy integration, immutable storage, throttling, or exact Azure event schema behavior as cloudValidated.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

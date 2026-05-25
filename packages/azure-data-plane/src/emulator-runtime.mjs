@@ -1,7 +1,9 @@
 import { URL } from 'node:url';
 import { capabilityForResourceType } from '../../core/src/azure-tier1-capabilities.mjs';
+import { createActivityLogStore } from './activity-log-store.mjs';
 import { createAppConfigurationRouter } from './app-configuration-router.mjs';
 import { createDnsRegistry } from './dns-registry.mjs';
+import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
 import { createFunctionsRouter } from './functions-router.mjs';
 import { createKeyVaultRouter } from './key-vault-router.mjs';
@@ -9,6 +11,7 @@ import { createMetricStore } from './metric-store.mjs';
 import { createNetworkModel } from './network-model.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
+import { createWafEvaluator } from './waf-evaluator.mjs';
 import { createWorkflowRunner } from './workflow-runner.mjs';
 
 function registeredStorageAccountKey(resourceStore, providerRoute) {
@@ -21,6 +24,18 @@ function resourceNameFromId(id) {
   return String(id ?? '').split('/').filter(Boolean).at(-1) ?? '';
 }
 
+function leafResourceName(name) {
+  return String(name ?? '').split('/').filter(Boolean).at(-1) ?? '';
+}
+
+function resourceSegments(id) {
+  return String(id ?? '').split('/').filter(Boolean);
+}
+
+function resourcePath({ subscriptionId, resourceGroupName, providerNamespace, typePath }) {
+  return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/${providerNamespace}/${typePath}`;
+}
+
 function dnsRouteParts(providerRoute) {
   const parts = providerRoute.typePath.split('/');
   return {
@@ -29,6 +44,26 @@ function dnsRouteParts(providerRoute) {
     recordName: parts.at(-1),
     linkName: parts.at(-1),
   };
+}
+
+function cdnTypeParts(typePath) {
+  return String(typePath ?? '').split('/');
+}
+
+function frontDoorProfileName(typePath) {
+  return cdnTypeParts(typePath)[1] ?? null;
+}
+
+function frontDoorEndpointName(typePath) {
+  return cdnTypeParts(typePath)[3] ?? null;
+}
+
+function frontDoorOriginGroupName(typePath) {
+  return cdnTypeParts(typePath)[3] ?? null;
+}
+
+function resourceIdMatches(a, b) {
+  return String(a ?? '').toLowerCase() === String(b ?? '').toLowerCase();
 }
 
 export function createEmulatorRuntime({ store }) {
@@ -40,6 +75,9 @@ export function createEmulatorRuntime({ store }) {
   const dnsRegistry = createDnsRegistry();
   const networkModel = createNetworkModel();
   const metricStore = createMetricStore();
+  const wafEvaluator = createWafEvaluator();
+  const edgeRouter = createEdgeRouter({ wafEvaluator });
+  const activityLogStore = createActivityLogStore();
   const keyVaultRouter = createKeyVaultRouter({
     onSecretSet({ subscriptionId, resourceGroupName, vaultName, secretName, value, contentType, tags, attributes }) {
       if (!subscriptionId || !resourceGroupName) return;
@@ -100,7 +138,170 @@ export function createEmulatorRuntime({ store }) {
   });
   const workflowRunner = createWorkflowRunner();
 
+  function emitActivityLog({ providerRoute, resourceType, resource, verb }) {
+    if (!providerRoute?.resourceGroupName || !resourceType) return;
+    activityLogStore.emit({
+      resourceId: resource?.id ?? resourcePath(providerRoute),
+      resourceGroup: providerRoute.resourceGroupName,
+      operationName: `${resourceType}/${verb}`,
+      status: 'Succeeded',
+      properties: {
+        providerNamespace: providerRoute.providerNamespace,
+        typePath: providerRoute.typePath,
+      },
+    });
+  }
+
+  function listCdnResources({ subscriptionId, resourceGroupName, typePath }) {
+    return store.listResourcesByType({
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Cdn',
+      typePath,
+    });
+  }
+
+  function reconcileCdnEndpoint({ subscriptionId, resourceGroupName, profileName, endpointName }) {
+    if (!profileName || !endpointName) return;
+    const endpointRoute = {
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Cdn',
+      typePath: `profiles/${profileName}/endpoints/${endpointName}`,
+    };
+    const endpoint = store.getResource(endpointRoute);
+    if (!endpoint) {
+      edgeRouter.unregisterEndpoint(`${endpointName}.azureedge.net`);
+      return;
+    }
+    edgeRouter.registerEndpoint({
+      endpointName,
+      hostName: endpoint.properties?.hostName,
+      kind: 'cdn',
+      enabledState: endpoint.properties?.isCompressionEnabled === false ? 'Enabled' : endpoint.properties?.resourceState ?? 'Enabled',
+      origins: endpoint.properties?.origins ?? [],
+      isHttpAllowed: endpoint.properties?.isHttpAllowed ?? true,
+      isHttpsAllowed: endpoint.properties?.isHttpsAllowed ?? true,
+    });
+  }
+
+  function reconcileAllCdnEndpoints({ subscriptionId, resourceGroupName, profileName }) {
+    if (!profileName) return;
+    for (const endpoint of listCdnResources({
+      subscriptionId,
+      resourceGroupName,
+      typePath: `profiles/${profileName}/endpoints`,
+    })) {
+      reconcileCdnEndpoint({
+        subscriptionId,
+        resourceGroupName,
+        profileName,
+        endpointName: leafResourceName(endpoint.name),
+      });
+    }
+  }
+
+  function routeConfigForAfdEndpoint({ subscriptionId, resourceGroupName, profileName, endpointName }) {
+    const routes = listCdnResources({
+      subscriptionId,
+      resourceGroupName,
+      typePath: `profiles/${profileName}/afdEndpoints/${endpointName}/routes`,
+    });
+    const route = routes.find(item => (item.properties?.enabledState ?? 'Enabled') === 'Enabled') ?? routes[0] ?? null;
+    let routePatterns = route?.properties?.patternsToMatch ?? [];
+    let origins = [];
+    const originGroupId = route?.properties?.originGroup?.id ?? route?.properties?.originGroup?.resourceId ?? null;
+    if (originGroupId) {
+      const parts = resourceSegments(originGroupId);
+      const originGroupName = parts[parts.indexOf('originGroups') + 1] ?? null;
+      if (originGroupName) {
+        origins = listCdnResources({
+          subscriptionId,
+          resourceGroupName,
+          typePath: `profiles/${profileName}/originGroups/${originGroupName}/origins`,
+        });
+      }
+    }
+
+    let wafPolicyName = null;
+    const securityPolicies = listCdnResources({
+      subscriptionId,
+      resourceGroupName,
+      typePath: `profiles/${profileName}/securityPolicies`,
+    });
+    for (const securityPolicy of securityPolicies) {
+      const associations = securityPolicy.properties?.parameters?.associations ?? [];
+      const matchedAssociation = associations.find(association =>
+        (association.domains ?? []).some(domain => resourceIdMatches(domain.id, endpointRouteId({ subscriptionId, resourceGroupName, profileName, endpointName }))),
+      );
+      if (!matchedAssociation) continue;
+      wafPolicyName = resourceNameFromId(securityPolicy.properties?.parameters?.wafPolicy?.id);
+      if (routePatterns.length === 0 && (matchedAssociation.patternsToMatch ?? []).length > 0) {
+        routePatterns = matchedAssociation.patternsToMatch;
+      }
+      break;
+    }
+    return { origins, routePatterns, wafPolicyName };
+  }
+
+  function endpointRouteId({ subscriptionId, resourceGroupName, profileName, endpointName }) {
+    return resourcePath({
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Cdn',
+      typePath: `profiles/${profileName}/afdEndpoints/${endpointName}`,
+    });
+  }
+
+  function reconcileAfdEndpoint({ subscriptionId, resourceGroupName, profileName, endpointName }) {
+    if (!profileName || !endpointName) return;
+    const endpointRoute = {
+      subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Cdn',
+      typePath: `profiles/${profileName}/afdEndpoints/${endpointName}`,
+    };
+    const endpoint = store.getResource(endpointRoute);
+    if (!endpoint) {
+      edgeRouter.unregisterEndpoint(`${endpointName}.azurefd.net`);
+      return;
+    }
+    const { origins, routePatterns, wafPolicyName } = routeConfigForAfdEndpoint({
+      subscriptionId,
+      resourceGroupName,
+      profileName,
+      endpointName,
+    });
+    edgeRouter.registerEndpoint({
+      endpointName,
+      hostName: endpoint.properties?.hostName,
+      kind: 'frontdoor',
+      enabledState: endpoint.properties?.enabledState ?? 'Enabled',
+      origins,
+      routePatterns,
+      wafPolicyName,
+    });
+  }
+
+  function reconcileAllAfdEndpoints({ subscriptionId, resourceGroupName, profileName }) {
+    if (!profileName) return;
+    for (const endpoint of listCdnResources({
+      subscriptionId,
+      resourceGroupName,
+      typePath: `profiles/${profileName}/afdEndpoints`,
+    })) {
+      reconcileAfdEndpoint({
+        subscriptionId,
+        resourceGroupName,
+        profileName,
+        endpointName: leafResourceName(endpoint.name),
+      });
+    }
+  }
+
   function syncResource({ store: resourceStore, providerRoute, resourceType, resource }) {
+    emitActivityLog({ providerRoute, resourceType, resource, verb: 'write' });
+
     if (resourceType === 'Microsoft.Storage/storageAccounts') {
       storageRouter.registerStorageAccount({
         accountName: resource.name,
@@ -224,6 +425,45 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+      wafEvaluator.registerPolicy({
+        policyName: resource.name,
+        properties: resource.properties ?? {},
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/endpoints') {
+      reconcileCdnEndpoint({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+        endpointName: leafResourceName(resource.name),
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints') {
+      reconcileAfdEndpoint({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+        endpointName: leafResourceName(resource.name),
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/originGroups/origins'
+      || resourceType === 'Microsoft.Cdn/profiles/afdEndpoints/routes'
+      || resourceType === 'Microsoft.Cdn/profiles/securityPolicies') {
+      reconcileAllAfdEndpoints({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Network/virtualNetworks') {
       networkModel.registerVirtualNetwork(resource);
       return;
@@ -283,6 +523,8 @@ export function createEmulatorRuntime({ store }) {
   }
 
   function unsyncResource({ providerRoute, resourceType, resource }) {
+    emitActivityLog({ providerRoute, resourceType, resource, verb: 'delete' });
+
     if (resourceType === 'Microsoft.Storage/storageAccounts') {
       storageRouter.unregisterStorageAccount(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -367,6 +609,42 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+      wafEvaluator.unregisterPolicy(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/endpoints') {
+      edgeRouter.unregisterEndpoint(resource?.properties?.hostName ?? `${providerRoute.typePath.split('/').at(-1)}.azureedge.net`);
+      reconcileAllCdnEndpoints({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints') {
+      edgeRouter.unregisterEndpoint(resource?.properties?.hostName ?? `${providerRoute.typePath.split('/').at(-1)}.azurefd.net`);
+      reconcileAllAfdEndpoints({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Cdn/profiles/originGroups/origins'
+      || resourceType === 'Microsoft.Cdn/profiles/afdEndpoints/routes'
+      || resourceType === 'Microsoft.Cdn/profiles/securityPolicies') {
+      reconcileAllAfdEndpoints({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        profileName: frontDoorProfileName(providerRoute.typePath),
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Network/virtualNetworks') {
       networkModel.unregisterVirtualNetwork(resource ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -422,13 +700,16 @@ export function createEmulatorRuntime({ store }) {
     storageRouter,
     appConfigurationRouter,
     eventGridRouter,
+    edgeRouter,
     functionsRouter,
     keyVaultRouter,
     workflowRunner,
     serviceDiscoveryRegistry,
+    activityLogStore,
     dnsRegistry,
     networkModel,
     metricStore,
+    wafEvaluator,
     syncResource,
     unsyncResource,
   };
