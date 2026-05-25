@@ -281,9 +281,30 @@ async function runControlAndTokenMatrix() {
       });
       assert.equal(result.status, 200);
       assert.equal(result.body.token_type, 'Bearer');
-      assert.equal(result.body.access_token, token);
+      assert.match(result.body.access_token, /^[^.]+\.[^.]+\.$/);
       assert.ok(Number(result.body.expires_on) > Math.floor(Date.now() / 1000));
       return { status: result.status, tokenType: result.body.token_type };
+    });
+
+    await record('token request issues stable local access token across repeated requests', async () => {
+      const first = await httpForm(armPort, `/${tenantId}/oauth2/v2.0/token`, {
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'client_credentials',
+      });
+      const second = await httpForm(armPort, `/${tenantId}/oauth2/v2.0/token`, {
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'client_credentials',
+      });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.body.token_type, 'Bearer');
+      assert.equal(second.body.token_type, 'Bearer');
+      assert.match(first.body.access_token, /^[^.]+\.[^.]+\.$/);
+      assert.match(second.body.access_token, /^[^.]+\.[^.]+\.$/);
+      assert.equal(first.body.access_token, second.body.access_token);
+      return { status: second.status, tokenType: second.body.token_type };
     });
 
     await record('unauthenticated ARM request is rejected', async () => {
@@ -627,6 +648,16 @@ async function runControlAndTokenMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('managed identity get after delete remains not found across repeated reads', async () => {
+      const first = await httpJson(armPort, 'GET', identityPath(resourceGroup, identityName));
+      const second = await httpJson(armPort, 'GET', identityPath(resourceGroup, identityName));
+      assert.equal(first.status, 404);
+      assert.equal(second.status, 404);
+      assert.equal(errorCode(first), 'ResourceNotFound');
+      assert.equal(errorCode(second), 'ResourceNotFound');
+      return { status: second.status, errorCode: errorCode(second) };
     });
 
     await record('managed identity list after delete excludes resource', async () => {

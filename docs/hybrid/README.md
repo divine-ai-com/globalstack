@@ -43,7 +43,7 @@ Unknown Azure resource types and incomplete ARM requests must fail closed rather
 | event-grid | EventBridge | Event Grid | metadata-only-control-plane | no | 2 |
 | container-registry | ECR | Azure Container Registry | metadata-only-control-plane | no | 1 |
 | aks-metadata | EKS | Azure Kubernetes Service | metadata-only-control-plane | no | 2 |
-| monitor-logs | CloudWatch Logs | Log Analytics / Azure Monitor Logs | metadata-only-control-plane | no | 1 |
+| monitor-logs | CloudWatch Logs | Log Analytics / Application Insights / Azure Monitor Logs | metadata-only-control-plane | no | 1 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Azure Monitor metrics and alerts | metadata-only-control-plane | no | 1 |
 | virtual-network | VPC | Virtual Network / Private Endpoint / Private DNS | metadata-only-control-plane | no | 2 |
 
@@ -56,7 +56,7 @@ Unknown Azure resource types and incomplete ARM requests must fail closed rather
 | redis-cache | ElastiCache Redis | Azure Cache for Redis | metadata-only-control-plane | no | 2 |
 | logic-workflows | Step Functions | Azure Logic Apps / Durable Functions | metadata-only-control-plane | no | 2 |
 | dns-zones | Route 53 | Azure DNS / Private DNS Zones | metadata-only-control-plane | no | 2 |
-| load-balancing | ALB/NLB | Azure Application Gateway / Load Balancer | metadata-only-control-plane | no | 2 |
+| load-balancing | ALB/NLB | Azure Application Gateway / Load Balancer | metadata-only-control-plane | no | 3 |
 | front-door-cdn | CloudFront | Azure Front Door / Azure CDN | metadata-only-control-plane | no | 2 |
 | waf-policy | WAF | Azure Web Application Firewall policy | metadata-only-control-plane | no | 2 |
 | activity-log-audit | CloudTrail | Azure Activity Log / Diagnostic Settings | metadata-only-control-plane | no | 2 |

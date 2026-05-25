@@ -506,6 +506,18 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('subscription list remains stable across repeated reads', async () => {
+      const first = await httpJson(port, 'GET', providerPath(resourceGroup, 'Microsoft.ServiceBus', `${topicPath}/subscriptions`));
+      const second = await httpJson(port, 'GET', providerPath(resourceGroup, 'Microsoft.ServiceBus', `${topicPath}/subscriptions`));
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(
+        second.body.value.map(item => item.id).sort(),
+        first.body.value.map(item => item.id).sort(),
+      );
+      return { status: second.status, count: second.body.value.length };
+    });
+
     await record('queue create succeeds', async () => {
       const result = await httpJson(port, 'PUT', providerPath(resourceGroup, 'Microsoft.ServiceBus', queuePath), {
         properties: { maxDeliveryCount: 3 },

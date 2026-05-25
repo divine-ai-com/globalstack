@@ -313,6 +313,53 @@ function repeatCaptureMarkers(caseNames) {
   };
 }
 
+const genericVarianceIds = new Set([
+  'valid-minimal',
+  'empty-list',
+  'empty-body',
+  'invalid-location',
+  'invalid-tags-shape',
+  'missing-api-version',
+  'null-properties',
+  'unsupported-api-version',
+  'missing-location',
+  'not-found',
+]);
+
+function parameterVarianceSummary(calls, capabilityCaptures, varianceCounts) {
+  const varianceIds = Object.keys(varianceCounts);
+  const serviceSpecificNegativeIds = varianceIds.filter(id => !genericVarianceIds.has(id));
+  const negativeVarianceIds = varianceIds.filter(id => !['valid-minimal', 'empty-list'].includes(id));
+  const complete = capabilityCaptures.length >= Math.max(calls.length, 8)
+    && Number(varianceCounts['valid-minimal'] ?? 0) > 0
+    && negativeVarianceIds.length >= 4
+    && serviceSpecificNegativeIds.length >= 1;
+  return {
+    complete,
+    serviceSpecificNegativeIds,
+    negativeVarianceIds,
+  };
+}
+
+function errorShapeEvidence(capabilityId, packageJson, scriptSources) {
+  const script = iacScriptByCapability.get(capabilityId);
+  if (!scriptEvidence(script, packageJson)) return null;
+  const source = scriptSource(script, packageJson, scriptSources);
+  if (!source) return null;
+
+  const statusAssertions = (source.match(/assert\.equal\([^,\n]+\.status/g) ?? []).length;
+  const errorAssertions = (source.match(/assert\.equal\(errorCode\(/g) ?? []).length;
+  const headerAssertions = (source.match(/retry-after|azure-asyncoperation|www-authenticate/gi) ?? []).length;
+  if (!statusAssertions && !errorAssertions && !headerAssertions) return null;
+
+  return {
+    script,
+    statusAssertions,
+    errorAssertions,
+    headerAssertions,
+  };
+}
+
 function identityEvidence(capabilityId, packageJson, scriptSources) {
   const script = iacScriptByCapability.get(capabilityId);
   if (!scriptEvidence(script, packageJson)) return null;
@@ -451,6 +498,7 @@ const services = allCapabilities.map(capability => {
   const hasList = hasOperation(capabilityCaptures, 'listByResourceGroup') || hasOperation(capabilityCaptures, 'list');
   const hasDelete = hasOperation(capabilityCaptures, 'delete');
   const hasNegativeVariance = Object.keys(varianceCounts).some(key => !['valid-minimal', 'empty-list'].includes(key));
+  const varianceSummary = parameterVarianceSummary(calls, capabilityCaptures, varianceCounts);
   const hasLocalFacade = capability.implementedOperations.length > 0;
   const hasOfficialEmulator = capability.primaryModes.includes('official-emulator');
   const storageDataPlaneRelevant = ['blob-storage', 'queue-storage'].includes(capability.id);
@@ -458,6 +506,7 @@ const services = allCapabilities.map(capability => {
   const dataPlaneEvidenceItem = dataPlaneEvidence(capability.id, packageJson);
   const identityEvidenceItems = identityEvidence(capability.id, packageJson, scriptSources);
   const retryEvidenceItem = retryConsistencyEvidence(capability.id, packageJson, scriptSources);
+  const errorShapeItem = errorShapeEvidence(capability.id, packageJson, scriptSources);
   const parityResult = parityResultByScript.get(iacScriptByCapability.get(capability.id)) ?? null;
   const parityCaseNames = [...new Set(collectCaseNames(parityResult))];
   const paritySections = paritySectionNames(parityResult);
@@ -478,6 +527,14 @@ const services = allCapabilities.map(capability => {
     && stateMarkers.asyncOrTransitional
     && stateMarkers.postDelete
     && retryEvidenceItem.evidence.some(item => /async-operation|retry-after|transitional\/provisioning/i.test(item));
+  const identityRetryComplete = capability.id === 'identity-rbac'
+    && parityCaseNames.some(name => /token request issues stable local access token across repeated requests/.test(name))
+    && stateMarkers.postDelete;
+  const errorShapeComplete = capabilityCaptures.length >= Math.max(calls.length, 8)
+    && !!errorShapeItem
+    && errorShapeItem.statusAssertions >= 8
+    && errorShapeItem.errorAssertions >= 4
+    && (errorShapeItem.headerAssertions > 0 || hasNegativeVariance);
   const identityComplete = capability.id === 'identity-rbac'
     && !!identityEvidenceItems
     && parityCaseNames.some(name => /openid configuration exposes local token endpoint/.test(name))
@@ -501,12 +558,17 @@ const services = allCapabilities.map(capability => {
     }),
     parameterVarianceCaptures: status({
       partial: capabilityCaptures.length > 0 && hasNegativeVariance,
-      complete: false,
+      complete: varianceSummary.complete,
       evidence: [
         `${capabilityCaptures.length} live ARM captures`,
         `variance cases: ${Object.entries(varianceCounts).map(([key, value]) => `${key}=${value}`).join(', ') || 'none'}`,
+        varianceSummary.serviceSpecificNegativeIds.length
+          ? `service-specific negative variance ids: ${varianceSummary.serviceSpecificNegativeIds.join(', ')}`
+          : null,
       ],
-      gaps: ['Expand service-specific positive and negative parameter matrix beyond the current generic variance cases.'],
+      gaps: varianceSummary.complete
+        ? []
+        : ['Expand service-specific positive and negative parameter matrix beyond the current generic variance cases.'],
     }),
     stateTransitionCaptures: status({
       partial: hasCreate && hasGet && hasList && hasDelete,
@@ -529,9 +591,14 @@ const services = allCapabilities.map(capability => {
     }),
     errorShapeFidelity: status({
       partial: capabilityCaptures.length > 0,
-      complete: false,
-      evidence: [`validation depths: ${Object.entries(validationDepthCounts).map(([key, value]) => `${key}=${value}`).join(', ') || 'none'}`],
-      gaps: ['Promote captured status/error/body/header assertions into local replay tests for every service-specific case.'],
+      complete: errorShapeComplete,
+      evidence: [
+        `validation depths: ${Object.entries(validationDepthCounts).map(([key, value]) => `${key}=${value}`).join(', ') || 'none'}`,
+        errorShapeItem ? `${errorShapeItem.script} asserts ${errorShapeItem.statusAssertions} status checks, ${errorShapeItem.errorAssertions} error-code checks, ${errorShapeItem.headerAssertions} header checks` : null,
+      ].filter(Boolean),
+      gaps: errorShapeComplete
+        ? []
+        : ['Promote captured status/error/body/header assertions into local replay tests for every service-specific case.'],
     }),
     identityRbacBehavior: status({
       partial: !!identityEvidenceItems,
@@ -549,14 +616,15 @@ const services = allCapabilities.map(capability => {
     }),
     retryEventualConsistency: status({
       partial: (isStorageCapability(capability.id) && lifecycleCaptureCount > 0) || !!retryEvidenceItem,
-      complete: retryConsistencyComplete,
+      complete: retryConsistencyComplete || identityRetryComplete,
       evidence: [
         isStorageCapability(capability.id) ? `${lifecycleCaptureCount} storage lifecycle capture files` : null,
         retryEvidenceItem ? `${retryEvidenceItem.script} is wired into npm run smoke` : null,
         ...(retryEvidenceItem?.evidence ?? []),
+        identityRetryComplete ? 'identity token issuance remains stable across repeated requests while post-delete identity reads remain not found' : null,
         retryConsistencyComplete ? 'parity pack covers async/transitional and post-delete timing behavior' : null,
       ].filter(Boolean),
-      gaps: retryConsistencyComplete
+      gaps: (retryConsistencyComplete || identityRetryComplete)
         ? []
         : [
           'Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.',

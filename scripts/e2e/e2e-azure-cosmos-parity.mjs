@@ -721,6 +721,24 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body._count };
     });
 
+    await record('data-plane SQL query remains stable across repeated reads', async () => {
+      const first = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { query: 'SELECT * FROM c' }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-isquery': 'true',
+      });
+      const second = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { query: 'SELECT * FROM c' }, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-isquery': 'true',
+      });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(
+        second.body.Documents.map(item => ({ id: item.id, pk: item.pk, score: item.score })),
+        first.body.Documents.map(item => ({ id: item.id, pk: item.pk, score: item.score })),
+      );
+      return { status: second.status, count: second.body._count };
+    });
+
     await record('data-plane non-select query is rejected', async () => {
       const result = await httpCosmos(cosmosPort, 'POST', `/dbs/${databaseName}/colls/${containerName}/docs`, { query: 'DELETE FROM c' }, {
         ...cosmosHeaders,
@@ -768,6 +786,22 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'NotFound');
       return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('data-plane document get after delete remains not found across repeated reads', async () => {
+      const first = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      const second = await httpCosmos(cosmosPort, 'GET', `/dbs/${databaseName}/colls/${containerName}/docs/run-1`, undefined, {
+        ...cosmosHeaders,
+        'x-ms-documentdb-partitionkey': JSON.stringify(['robotics']),
+      });
+      assert.equal(first.status, 404);
+      assert.equal(second.status, 404);
+      assert.equal(errorCode(first), 'NotFound');
+      assert.equal(errorCode(second), 'NotFound');
+      return { status: second.status, errorCode: errorCode(second) };
     });
 
     await record('cosmos account list includes created resource', async () => {

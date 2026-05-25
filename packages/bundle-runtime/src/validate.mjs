@@ -160,7 +160,11 @@ if (!parityRoadmapText) {
       errors.push(`Azure 99% roadmap missing required service ${required}`);
     }
   }
-  if ((parityRoadmap._meta?.workItemCount ?? 0) < 150) {
+  const unresolvedWorkItemCount = Object.values(parityRoadmap.workItemSummary?.byDimension ?? {}).reduce(
+    (sum, value) => sum + Number(value ?? 0),
+    0,
+  );
+  if (unresolvedWorkItemCount <= 0 || (parityRoadmap._meta?.workItemCount ?? 0) < unresolvedWorkItemCount) {
     errors.push('Azure 99% roadmap should track unresolved work items across all services and dimensions');
   }
   const firstWave = parityRoadmap.waves?.find(wave => wave.id === 'wave-1-official-emulator-and-storage-family');

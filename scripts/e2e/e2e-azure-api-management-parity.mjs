@@ -611,6 +611,18 @@ async function runControlPlaneAndGatewayMatrix() {
         return { status: result.status, route: result.headers['x-globalstack-apim-route'] };
       });
 
+      await record('gateway route remains stable across repeated requests', async () => {
+        const first = await httpDataPlaneJson(routerPort, 'POST', '/ingest/documents', { documentId: 'doc-001' }, { host: gatewayHost });
+        const second = await httpDataPlaneJson(routerPort, 'POST', '/ingest/documents', { documentId: 'doc-002' }, { host: gatewayHost });
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.equal(first.headers['x-globalstack-apim-route'], second.headers['x-globalstack-apim-route']);
+        assert.equal(second.body.serviceName, serviceName);
+        assert.equal(second.body.apiId, apiName);
+        assert.equal(second.body.body.documentId, 'doc-002');
+        return { status: second.status, route: second.headers['x-globalstack-apim-route'] };
+      });
+
       await record('inspection route exposes local apis', async () => {
         const result = await httpDataPlaneJson(routerPort, 'GET', `/_globalstack/apim/services/${serviceName}/apis`);
         assert.equal(result.status, 200);

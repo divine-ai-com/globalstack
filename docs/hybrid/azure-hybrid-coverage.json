@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-20T13:33:12.540Z",
+    "generatedAt": "2026-05-25T11:04:18.545Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -228,7 +228,8 @@
       "azureEquivalent": "Azure Functions / Function Apps",
       "resourceTypes": [
         "Microsoft.Web/sites",
-        "Microsoft.Web/serverfarms"
+        "Microsoft.Web/serverfarms",
+        "Microsoft.Web/sites/functions"
       ],
       "primaryModes": [
         "official-emulator",
@@ -247,10 +248,46 @@
         "FunctionApps.Get",
         "FunctionApps.List",
         "FunctionApps.Delete",
+        "Functions.CreateOrUpdate",
+        "Functions.Get",
+        "Functions.List",
+        "Functions.Delete",
+        "Functions.ListKeysLocal",
+        "Functions.ListSecretsLocal",
+        "Functions.SyncTriggersLocal",
+        "Functions.ListSyncTriggerStatusLocal",
+        "Functions.AdminInvokeLocal",
+        "Functions.ZipDeployLocal",
+        "Functions.DeploymentsGetLocal",
+        "Functions.DeploymentLogLocal",
+        "Host.ListKeysLocal",
+        "Host.StatusLocal",
+        "DurableOrchestrations.StartLocal",
+        "DurableOrchestrations.GetStatusLocal",
+        "DurableOrchestrations.ExecuteActivitiesLocal",
+        "DurableOrchestrations.FanOutBatchesLocal",
+        "DurableOrchestrations.CheckpointSnapshotsLocal",
+        "DurableOrchestrations.StagedReplayLocal",
+        "DurableOrchestrations.SubOrchestrationsLocal",
+        "DurableOrchestrations.ReplayHistoryLocal",
+        "DurableOrchestrations.TimersLocal",
+        "DurableOrchestrations.RaiseEventLocal",
+        "DurableOrchestrations.SuspendResumeLocal",
+        "DurableOrchestrations.TerminateLocal",
+        "DurableOrchestrations.PurgeLocal",
+        "DurableOrchestrations.RejectUnknownActivityLocal",
+        "DurableOrchestrations.RejectDuplicateInstanceLocal",
+        "DurableOrchestrations.RejectUnexpectedEventLocal",
         "HttpTriggers.RouteLocal",
         "HttpTriggers.RejectUnknownHost",
         "HttpTriggers.RejectUnknownRoute",
-        "HttpTriggers.EnforceFunctionKey"
+        "HttpTriggers.EnforceFunctionKey",
+        "TimerTriggers.InvokeLocal",
+        "QueueTriggers.InvokeLocal",
+        "BlobTriggers.InvokeLocal",
+        "EventGridTriggers.InvokeLocal",
+        "ServiceBusTriggers.InvokeLocal",
+        "EventHubTriggers.InvokeLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -668,7 +705,8 @@
         "ManagedClusters.ListByResourceGroup",
         "ManagedClusters.Delete",
         "ManagedClusters.ListClusterUserCredentialLocal",
-        "ManagedClusters.ListClusterAdminCredentialLocal"
+        "ManagedClusters.ListClusterAdminCredentialLocal",
+        "ManagedClusters.KubernetesApiLocal"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -678,8 +716,8 @@
         "identity integration errors"
       ],
       "knownGaps": [
-        "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-        "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+        "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+        "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -688,9 +726,10 @@
       "id": "monitor-logs",
       "tier": 1,
       "awsAnalogue": "CloudWatch Logs",
-      "azureEquivalent": "Log Analytics / Azure Monitor Logs",
+      "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
       "resourceTypes": [
         "Microsoft.OperationalInsights/workspaces",
+        "Microsoft.Insights/components",
         "Microsoft.Insights/diagnosticSettings"
       ],
       "primaryModes": [
@@ -704,8 +743,16 @@
         "Workspaces.Get",
         "Workspaces.List",
         "Workspaces.Delete",
+        "Workspaces.SharedKeys",
+        "Components.CreateOrUpdate",
+        "Components.Get",
+        "Components.List",
+        "Components.Delete",
         "Workspaces.RejectUnsupportedActions",
-        "DiagnosticSettings.CapturedUnsupported"
+        "DiagnosticSettings.CreateOrUpdate",
+        "DiagnosticSettings.Get",
+        "DiagnosticSettings.List",
+        "DiagnosticSettings.Delete"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -727,7 +774,8 @@
       "azureEquivalent": "Azure Monitor metrics and alerts",
       "resourceTypes": [
         "Microsoft.Insights/metricAlerts",
-        "Microsoft.Insights/actionGroups"
+        "Microsoft.Insights/actionGroups",
+        "Microsoft.Insights/activityLogAlerts"
       ],
       "primaryModes": [
         "globalstack-facade",
@@ -741,6 +789,12 @@
         "MetricAlerts.Get",
         "MetricAlerts.List",
         "MetricAlerts.Delete",
+        "MetricAlerts.StatusLocal",
+        "MetricAlerts.MetricsQueryLocal",
+        "ActivityLogAlerts.CreateOrUpdate",
+        "ActivityLogAlerts.Get",
+        "ActivityLogAlerts.List",
+        "ActivityLogAlerts.Delete",
         "ActionGroups.CreateOrUpdate",
         "ActionGroups.Get",
         "ActionGroups.List",
@@ -767,7 +821,9 @@
       "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
       "resourceTypes": [
         "Microsoft.Network/virtualNetworks",
+        "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
         "Microsoft.Network/privateEndpoints",
+        "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
         "Microsoft.Network/privateDnsZones"
       ],
       "primaryModes": [
@@ -782,6 +838,10 @@
         "VirtualNetworks.Get",
         "VirtualNetworks.List",
         "VirtualNetworks.Delete",
+        "VirtualNetworkPeerings.CreateOrUpdate",
+        "VirtualNetworkPeerings.Get",
+        "VirtualNetworkPeerings.List",
+        "VirtualNetworkPeerings.Delete",
         "Subnets.CreateOrUpdate",
         "Subnets.Get",
         "Subnets.List",
@@ -790,6 +850,10 @@
         "PrivateEndpoints.Get",
         "PrivateEndpoints.List",
         "PrivateEndpoints.Delete",
+        "PrivateDnsZoneGroups.CreateOrUpdate",
+        "PrivateDnsZoneGroups.Get",
+        "PrivateDnsZoneGroups.List",
+        "PrivateDnsZoneGroups.Delete",
         "PrivateDnsZones.CreateOrUpdate",
         "PrivateDnsZones.Get",
         "PrivateDnsZones.List",
@@ -804,8 +868,8 @@
         "route/NSG conflicts"
       ],
       "knownGaps": [
-        "MVP models ARM dependencies only.",
-        "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+        "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+        "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -950,6 +1014,36 @@
         "Workflows.Get",
         "Workflows.List",
         "Workflows.Delete",
+        "Triggers.RunLocal",
+        "Triggers.GetLocal",
+        "Triggers.ListCallbackUrlLocal",
+        "Triggers.RejectUnsupportedCallbackLocal",
+        "Triggers.ResetLocal",
+        "Triggers.HistoriesListLocal",
+        "Triggers.HistoryGetLocal",
+        "Triggers.HistoryResubmitLocal",
+        "Triggers.RecurrenceRunLocal",
+        "Triggers.HttpWebhookRunLocal",
+        "Runs.GetLocal",
+        "Runs.ListLocal",
+        "Runs.CancelLocal",
+        "Runs.ActionsListLocal",
+        "Runs.ActionsGetLocal",
+        "Actions.RunAfterLocal",
+        "Actions.IfLocal",
+        "Actions.ForeachLocal",
+        "Actions.HttpLocal",
+        "Actions.HttpRetryLocal",
+        "Actions.DelayLocal",
+        "Actions.UntilLocal",
+        "Actions.ApiConnectionLocal",
+        "Actions.ApiConnectionServiceBusLocal",
+        "Actions.ApiConnectionEventGridLocal",
+        "Actions.ApiConnectionKeyVaultLocal",
+        "Actions.ApiConnectionTableLocal",
+        "Actions.ParseJsonLocal",
+        "Actions.TerminateLocal",
+        "Runs.ReconcileAsyncLocal",
         "WorkflowRoutes.RejectUnsupportedRoutes",
         "Executions.StartLocal"
       ],
@@ -1042,7 +1136,8 @@
       "azureEquivalent": "Azure Application Gateway / Load Balancer",
       "resourceTypes": [
         "Microsoft.Network/applicationGateways",
-        "Microsoft.Network/loadBalancers"
+        "Microsoft.Network/loadBalancers",
+        "Microsoft.Network/publicIPAddresses"
       ],
       "primaryModes": [
         "globalstack-facade",
@@ -1060,6 +1155,10 @@
         "LoadBalancers.Get",
         "LoadBalancers.List",
         "LoadBalancers.Delete",
+        "PublicIPAddresses.CreateOrUpdate",
+        "PublicIPAddresses.Get",
+        "PublicIPAddresses.List",
+        "PublicIPAddresses.Delete",
         "LoadBalancingRoutes.RejectUnsupportedRoutes",
         "Routes.ProxyLocal"
       ],
@@ -1068,11 +1167,13 @@
       "realAzureCaptureRequired": [
         "probe state transitions",
         "listener validation",
-        "frontend IP conflict behavior"
+        "frontend IP conflict behavior",
+        "public IP dns label and address allocation behavior"
       ],
       "knownGaps": [
         "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-        "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+        "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+        "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
       ],
       "implementationKind": "metadata-only-control-plane",
       "realAzureApiComplete": false
@@ -1085,7 +1186,10 @@
       "resourceTypes": [
         "Microsoft.Cdn/profiles",
         "Microsoft.Cdn/profiles/afdEndpoints",
-        "Microsoft.Cdn/profiles/endpoints"
+        "Microsoft.Cdn/profiles/endpoints",
+        "Microsoft.Cdn/profiles/originGroups",
+        "Microsoft.Cdn/profiles/originGroups/origins",
+        "Microsoft.Cdn/profiles/afdEndpoints/routes"
       ],
       "primaryModes": [
         "globalstack-facade",
@@ -1103,12 +1207,22 @@
         "AfdEndpoints.Get",
         "AfdEndpoints.List",
         "AfdEndpoints.Delete",
+        "AfdOriginGroups.CreateOrUpdate",
+        "AfdOriginGroups.Get",
+        "AfdOriginGroups.List",
+        "AfdOriginGroups.Delete",
+        "AfdOrigins.CreateOrUpdate",
+        "AfdOrigins.Get",
+        "AfdOrigins.List",
+        "AfdOrigins.Delete",
         "CdnEndpoints.CreateOrUpdate",
         "CdnEndpoints.Get",
         "CdnEndpoints.List",
         "CdnEndpoints.Delete",
-        "CdnRoutes.RejectUnsupportedRoutes",
-        "Routes.CreateOrUpdate"
+        "Routes.CreateOrUpdate",
+        "Routes.Get",
+        "Routes.List",
+        "Routes.Delete"
       ],
       "contractTested": false,
       "cloudValidated": false,
@@ -1131,6 +1245,7 @@
       "azureEquivalent": "Azure Web Application Firewall policy",
       "resourceTypes": [
         "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+        "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
         "Microsoft.Cdn/profiles/securityPolicies"
       ],
       "primaryModes": [
@@ -1775,6 +1890,486 @@
           "Managed identity starts as a local token facade with explain traces."
         ]
       },
+      "Functions.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.Get": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.List": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.Delete": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.ListKeysLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.ListSecretsLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.SyncTriggersLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.ListSyncTriggerStatusLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.AdminInvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.ZipDeployLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.DeploymentsGetLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Functions.DeploymentLogLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Host.ListKeysLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "Host.StatusLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.StartLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.GetStatusLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.ExecuteActivitiesLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.FanOutBatchesLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.CheckpointSnapshotsLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.StagedReplayLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.SubOrchestrationsLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.ReplayHistoryLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.TimersLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.RaiseEventLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.SuspendResumeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.TerminateLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.PurgeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.RejectUnknownActivityLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.RejectDuplicateInstanceLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "DurableOrchestrations.RejectUnexpectedEventLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
       "HttpTriggers.RouteLocal": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
@@ -1824,6 +2419,102 @@
         ]
       },
       "HttpTriggers.EnforceFunctionKey": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "TimerTriggers.InvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "QueueTriggers.InvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "BlobTriggers.InvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "EventGridTriggers.InvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "ServiceBusTriggers.InvokeLocal": {
+        "implemented": true,
+        "implementationKind": "official-emulator-backed-local",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "functions-core-tools",
+          "azurite"
+        ],
+        "knownGaps": [
+          "No hosted scale controller parity in MVP.",
+          "No deployment slots, runtime image build, or full trigger retry parity in MVP.",
+          "Managed identity starts as a local token facade with explain traces."
+        ]
+      },
+      "EventHubTriggers.InvokeLocal": {
         "implemented": true,
         "implementationKind": "official-emulator-backed-local",
         "realAzureApiComplete": false,
@@ -3132,8 +3823,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       },
       "ManagedClusters.Get": {
@@ -3146,8 +3837,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       },
       "ManagedClusters.ListByResourceGroup": {
@@ -3160,8 +3851,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       },
       "ManagedClusters.Delete": {
@@ -3174,8 +3865,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       },
       "ManagedClusters.ListClusterUserCredentialLocal": {
@@ -3188,8 +3879,8 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       },
       "ManagedClusters.ListClusterAdminCredentialLocal": {
@@ -3202,8 +3893,22 @@
           "kind-or-k3d-future"
         ],
         "knownGaps": [
-          "MVP is metadata-only for AKS and returns local kubeconfig metadata only.",
-          "No real Kubernetes API server, managed node provisioning, CNI, addons, load balancer, upgrade, or kube API parity."
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
+        ]
+      },
+      "ManagedClusters.KubernetesApiLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "kind-or-k3d-future"
+        ],
+        "knownGaps": [
+          "AKS remains a bounded local Kubernetes metadata/runtime surface, not a full managed control plane.",
+          "No managed node provisioning, CNI, addons, load balancer, upgrade, admission controller, or full Kubernetes API parity."
         ]
       }
     },
@@ -3260,6 +3965,71 @@
           "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
         ]
       },
+      "Workspaces.SharedKeys": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Components.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Components.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Components.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "Components.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
       "Workspaces.RejectUnsupportedActions": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -3273,7 +4043,46 @@
           "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
         ]
       },
-      "DiagnosticSettings.CapturedUnsupported": {
+      "DiagnosticSettings.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "DiagnosticSettings.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "DiagnosticSettings.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-log-store"
+        ],
+        "knownGaps": [
+          "No full KQL, retention, diagnostic setting side effects, or Azure Monitor resource label parity in MVP."
+        ]
+      },
+      "DiagnosticSettings.Delete": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -3328,6 +4137,84 @@
         ]
       },
       "MetricAlerts.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "MetricAlerts.StatusLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "MetricAlerts.MetricsQueryLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActivityLogAlerts.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActivityLogAlerts.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActivityLogAlerts.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-metric-store"
+        ],
+        "knownGaps": [
+          "No production alert evaluator, aggregation engine, action execution, or scheduled query rule parity in MVP."
+        ]
+      },
+      "ActivityLogAlerts.Delete": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -3417,8 +4304,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "VirtualNetworks.Get": {
@@ -3431,8 +4318,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "VirtualNetworks.List": {
@@ -3445,8 +4332,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "VirtualNetworks.Delete": {
@@ -3459,8 +4346,64 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworkPeerings.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworkPeerings.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworkPeerings.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "VirtualNetworkPeerings.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "Subnets.CreateOrUpdate": {
@@ -3473,8 +4416,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "Subnets.Get": {
@@ -3487,8 +4430,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "Subnets.List": {
@@ -3501,8 +4444,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "Subnets.Delete": {
@@ -3515,8 +4458,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateEndpoints.CreateOrUpdate": {
@@ -3529,8 +4472,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateEndpoints.Get": {
@@ -3543,8 +4486,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateEndpoints.List": {
@@ -3557,8 +4500,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateEndpoints.Delete": {
@@ -3571,8 +4514,64 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZoneGroups.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZoneGroups.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZoneGroups.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+        ]
+      },
+      "PrivateDnsZoneGroups.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-network-model"
+        ],
+        "knownGaps": [
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateDnsZones.CreateOrUpdate": {
@@ -3585,8 +4584,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateDnsZones.Get": {
@@ -3599,8 +4598,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateDnsZones.List": {
@@ -3613,8 +4612,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "PrivateDnsZones.Delete": {
@@ -3627,8 +4626,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       },
       "NetworkRoutes.RejectUnsupportedRoutes": {
@@ -3641,8 +4640,8 @@
           "globalstack-network-model"
         ],
         "knownGaps": [
-          "MVP models ARM dependencies only.",
-          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, or private endpoint DNS parity."
+          "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+          "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
         ]
       }
     },
@@ -4042,6 +5041,456 @@
           "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
         ]
       },
+      "Triggers.RunLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.GetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.ListCallbackUrlLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.RejectUnsupportedCallbackLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.ResetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.HistoriesListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.HistoryGetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.HistoryResubmitLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.RecurrenceRunLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Triggers.HttpWebhookRunLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.GetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.ListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.CancelLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.ActionsListLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.ActionsGetLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.RunAfterLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.IfLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ForeachLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.HttpLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.HttpRetryLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.DelayLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.UntilLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ApiConnectionLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ApiConnectionServiceBusLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ApiConnectionEventGridLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ApiConnectionKeyVaultLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ApiConnectionTableLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.ParseJsonLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Actions.TerminateLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
+      "Runs.ReconcileAsyncLocal": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-workflow-runner",
+          "functions-core-tools"
+        ],
+        "knownGaps": [
+          "Logic Apps and Durable Functions are closest equivalents, not exact Step Functions ASL compatibility.",
+          "No complete connector runtime, designer schema, long-running orchestration, or retry parity in MVP."
+        ]
+      },
       "WorkflowRoutes.RejectUnsupportedRoutes": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -4325,7 +5774,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "ApplicationGateways.Get": {
@@ -4339,7 +5789,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "ApplicationGateways.List": {
@@ -4353,7 +5804,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "ApplicationGateways.Delete": {
@@ -4367,7 +5819,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "LoadBalancers.CreateOrUpdate": {
@@ -4381,7 +5834,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "LoadBalancers.Get": {
@@ -4395,7 +5849,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "LoadBalancers.List": {
@@ -4409,7 +5864,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "LoadBalancers.Delete": {
@@ -4423,7 +5879,68 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
+        ]
+      },
+      "PublicIPAddresses.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
+        ]
+      },
+      "PublicIPAddresses.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
+        ]
+      },
+      "PublicIPAddresses.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
+        ]
+      },
+      "PublicIPAddresses.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-http-router"
+        ],
+        "knownGaps": [
+          "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "LoadBalancingRoutes.RejectUnsupportedRoutes": {
@@ -4437,7 +5954,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       },
       "Routes.ProxyLocal": {
@@ -4451,7 +5969,8 @@
         ],
         "knownGaps": [
           "MVP supports metadata, frontend/listener/backend/probe validation, and simple HTTP routing only.",
-          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP."
+          "No packet-level load balancing, TLS policy execution, health probe state transitions, autoscale, zone, or SNAT parity in MVP.",
+          "Public IP resources model Azure-shaped metadata only and do not provide real internet reachability."
         ]
       }
     },
@@ -4568,6 +6087,118 @@
           "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
         ]
       },
+      "AfdOriginGroups.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOriginGroups.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOriginGroups.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOriginGroups.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOrigins.CreateOrUpdate": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOrigins.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOrigins.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "AfdOrigins.Delete": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
       "CdnEndpoints.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
@@ -4624,7 +6255,7 @@
           "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
         ]
       },
-      "CdnRoutes.RejectUnsupportedRoutes": {
+      "Routes.CreateOrUpdate": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
@@ -4638,7 +6269,35 @@
           "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
         ]
       },
-      "Routes.CreateOrUpdate": {
+      "Routes.Get": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Routes.List": {
+        "implemented": true,
+        "implementationKind": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-edge-router"
+        ],
+        "knownGaps": [
+          "MVP records edge routing intent and can proxy basic local origins.",
+          "No global CDN, cache invalidation, POP behavior, TLS certificate lifecycle, or rules engine parity in MVP."
+        ]
+      },
+      "Routes.Delete": {
         "implemented": true,
         "implementationKind": "metadata-only-control-plane",
         "realAzureApiComplete": false,
