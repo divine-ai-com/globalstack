@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-25T11:25:00.990Z
+Generated: 2026-05-25T11:29:28.874Z
 
 ## Guardrails
 
@@ -13,7 +13,7 @@ Generated: 2026-05-25T11:25:00.990Z
 
 ## Dynamic Estimate Snapshot
 
-- Overall 30-service Azure program: 84% (80-85%)
+- Overall 30-service Azure program: 84.2% (80-85%)
 - Azure Functions / Durable cluster: 99% (95-100%)
 - Azure Logic Apps cluster: 99% (95-100%)
 
@@ -41,7 +41,7 @@ These items remain open across the whole Azure program even when a service-speci
 | Wave | Services | Work Items | Objective |
 |---|---:|---:|---|
 | Wave 1: official emulator and storage-family depth | 8 | 26 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
-| Wave 2: identity, security, secrets, and encryption | 5 | 18 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
+| Wave 2: identity, security, secrets, and encryption | 5 | 17 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
 | Wave 3: compute, API, containers, and edge routing | 8 | 29 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
 | Wave 4: relational, cache, migration, and analytics platforms | 5 | 17 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
 | Wave 5: networking, DNS, and observability | 4 | 13 | Harden cross-cutting dependencies that most other services reference during deployment. |
@@ -64,15 +64,15 @@ These items remain open across the whole Azure program even when a service-speci
 | 12 | api-management | 1 | wave-3-compute-api-and-edge | 0.9008 | 50 | 8 | 2 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory |
 | 13 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 0.8516 | 49 | 7 | 2 | 1 | identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
 | 14 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.8016 | 49 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 15 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.9098 | 47 | 8 | 2 | 0 | liveApiSurfaceInventory<br>retryEventualConsistency |
-| 16 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.8016 | 47 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 17 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 18 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 19 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.8557 | 46 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 20 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.8016 | 44 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 21 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.8557 | 44 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 22 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
-| 23 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 15 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.8016 | 47 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 16 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 17 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.8016 | 46 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 18 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.8557 | 46 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 19 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.8016 | 44 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 20 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.8557 | 44 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 21 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 22 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.8557 | 43 | 7 | 3 | 0 | identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
+| 23 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.9549 | 43 | 9 | 1 | 0 | liveApiSurfaceInventory |
 | 24 | load-balancing | 2 | wave-3-compute-api-and-edge | 0.8016 | 43 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
 | 25 | synapse-warehouse | 2 | wave-4-data-platforms | 0.8016 | 42 | 6 | 4 | 0 | parameterVarianceCaptures<br>identityRbacBehavior<br>liveApiSurfaceInventory<br>retryEventualConsistency |
 | 26 | redis-cache | 2 | wave-4-data-platforms | 0.8516 | 40 | 7 | 2 | 1 | identityRbacBehavior<br>liveApiSurfaceInventory<br>ambiguousRepeatCaptures |
@@ -194,15 +194,6 @@ Priority: 58; current score: 0.8016; current status: in-progress.
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=key-vault-secrets --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
 
-### identity-rbac
-
-Priority: 47; current score: 0.9098; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-
 ### waf-policy
 
 Priority: 46; current score: 0.8016; current status: in-progress.
@@ -224,6 +215,14 @@ Priority: 46; current score: 0.8016; current status: in-progress.
 | Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
 | Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 | Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=activity-log-audit --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+
+### identity-rbac
+
+Priority: 43; current score: 0.9549; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| Complete live Azure API surface inventory | partial | complete | `npm run providers:surface`<br>`npm run conformance:catalog` | Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability. |
 
 
 ## Wave 3: compute, API, containers, and edge routing

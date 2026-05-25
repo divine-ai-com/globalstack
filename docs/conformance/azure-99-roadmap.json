@@ -1,16 +1,16 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T11:25:00.990Z",
+    "generatedAt": "2026-05-25T11:29:28.874Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 103,
+    "workItemCount": 102,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 84,
+      "percent": 84.2,
       "displayRange": "80-85%",
       "methodology": "status-derived average across all services and dimensions"
     },
@@ -1060,69 +1060,6 @@
           ]
         },
         {
-          "serviceId": "identity-rbac",
-          "tier": 1,
-          "awsAnalogue": "IAM/STS",
-          "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
-          "currentStatus": "in-progress",
-          "dimensionCounts": {
-            "complete": 8,
-            "partial": 2,
-            "notStarted": 0
-          },
-          "score": 0.9098,
-          "priority": 47,
-          "workItemCount": 2,
-          "nextDimensions": [
-            "liveApiSurfaceInventory",
-            "retryEventualConsistency"
-          ],
-          "workItems": [
-            {
-              "id": "identity-rbac.liveApiSurfaceInventory",
-              "serviceId": "identity-rbac",
-              "dimensionId": "liveApiSurfaceInventory",
-              "dimension": "Complete live Azure API surface inventory",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "12 candidate catalog calls",
-                "15 provider operations matched"
-              ],
-              "gaps": [
-                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
-                "Add data-plane surface inventory where the service has data-plane APIs."
-              ],
-              "commands": [
-                "npm run providers:surface",
-                "npm run conformance:catalog"
-              ],
-              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
-            },
-            {
-              "id": "identity-rbac.retryEventualConsistency",
-              "serviceId": "identity-rbac",
-              "dimensionId": "retryEventualConsistency",
-              "dimension": "Retry/eventual consistency behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:identity-rbac-parity is wired into npm run smoke",
-                "transitional/provisioning state behavior is asserted",
-                "post-delete behavior is asserted"
-              ],
-              "gaps": [
-                "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-                "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true"
-              ],
-              "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            }
-          ]
-        },
-        {
           "serviceId": "waf-policy",
           "tier": 2,
           "awsAnalogue": "WAF",
@@ -1337,9 +1274,50 @@
               "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
             }
           ]
+        },
+        {
+          "serviceId": "identity-rbac",
+          "tier": 1,
+          "awsAnalogue": "IAM/STS",
+          "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
+          "currentStatus": "in-progress",
+          "dimensionCounts": {
+            "complete": 9,
+            "partial": 1,
+            "notStarted": 0
+          },
+          "score": 0.9549,
+          "priority": 43,
+          "workItemCount": 1,
+          "nextDimensions": [
+            "liveApiSurfaceInventory"
+          ],
+          "workItems": [
+            {
+              "id": "identity-rbac.liveApiSurfaceInventory",
+              "serviceId": "identity-rbac",
+              "dimensionId": "liveApiSurfaceInventory",
+              "dimension": "Complete live Azure API surface inventory",
+              "status": "partial",
+              "action": "complete",
+              "evidence": [
+                "12 candidate catalog calls",
+                "15 provider operations matched"
+              ],
+              "gaps": [
+                "Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.",
+                "Add data-plane surface inventory where the service has data-plane APIs."
+              ],
+              "commands": [
+                "npm run providers:surface",
+                "npm run conformance:catalog"
+              ],
+              "acceptanceGate": "Provider operations, ARM REST specs, SDK/IaC provider calls, and data-plane APIs are reconciled for the capability."
+            }
+          ]
         }
       ],
-      "workItemCount": 18
+      "workItemCount": 17
     },
     {
       "id": "wave-3-compute-api-and-edge",
@@ -3252,23 +3230,6 @@
     },
     {
       "rank": 15,
-      "waveId": "wave-2-identity-security-and-secrets",
-      "serviceId": "identity-rbac",
-      "tier": 1,
-      "score": 0.9098,
-      "priority": 47,
-      "dimensionCounts": {
-        "complete": 8,
-        "partial": 2,
-        "notStarted": 0
-      },
-      "nextDimensions": [
-        "liveApiSurfaceInventory",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 16,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "logic-workflows",
       "tier": 2,
@@ -3287,7 +3248,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "waf-policy",
       "tier": 2,
@@ -3306,7 +3267,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "activity-log-audit",
       "tier": 2,
@@ -3325,7 +3286,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
@@ -3343,7 +3304,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "front-door-cdn",
       "tier": 2,
@@ -3362,7 +3323,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "virtual-network",
       "tier": 1,
@@ -3380,7 +3341,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-hubs-streams",
       "tier": 2,
@@ -3398,7 +3359,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 22,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "app-configuration-parameters",
       "tier": 2,
@@ -3413,6 +3374,22 @@
         "identityRbacBehavior",
         "liveApiSurfaceInventory",
         "retryEventualConsistency"
+      ]
+    },
+    {
+      "rank": 23,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "identity-rbac",
+      "tier": 1,
+      "score": 0.9549,
+      "priority": 43,
+      "dimensionCounts": {
+        "complete": 9,
+        "partial": 1,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "liveApiSurfaceInventory"
       ]
     },
     {
@@ -3547,7 +3524,7 @@
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 100,
+      "complete": 99,
       "start": 3
     },
     "byDimension": {
@@ -3556,7 +3533,7 @@
       "liveApiSurfaceInventory": 30,
       "ambiguousRepeatCaptures": 5,
       "parameterVarianceCaptures": 14,
-      "retryEventualConsistency": 21,
+      "retryEventualConsistency": 20,
       "errorShapeFidelity": 2
     }
   }

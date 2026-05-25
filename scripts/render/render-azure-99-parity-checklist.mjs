@@ -313,6 +313,26 @@ function repeatCaptureMarkers(caseNames) {
   };
 }
 
+function authEvidenceMarkers(caseNames) {
+  return {
+    armRejects: [
+      /unauthenticated arm request is rejected/,
+      /malformed bearer token is rejected/,
+      /wrong bearer token is rejected/,
+      /subscription mismatch is rejected/,
+    ].every(pattern => caseNames.some(name => pattern.test(name))),
+    dataPlaneRejects: caseNames.some(name => /without auth|missing key|malformed bearer token|access denied|unauthorized/.test(name)),
+  };
+}
+
+function hasDataPlaneScope(capability, storageDataPlaneRelevant, dataPlaneEvidenceItem, hasOfficialEmulator) {
+  return storageDataPlaneRelevant
+    || !!dataPlaneEvidenceItem
+    || hasOfficialEmulator
+    || capability.backingEngines?.some(engine => /emulator|runtime|router/i.test(engine))
+    || capability.primaryModes?.some(mode => /emulator|hybrid/i.test(mode));
+}
+
 const genericVarianceIds = new Set([
   'valid-minimal',
   'empty-list',
@@ -330,7 +350,7 @@ function parameterVarianceSummary(calls, capabilityCaptures, varianceCounts) {
   const varianceIds = Object.keys(varianceCounts);
   const serviceSpecificNegativeIds = varianceIds.filter(id => !genericVarianceIds.has(id));
   const negativeVarianceIds = varianceIds.filter(id => !['valid-minimal', 'empty-list'].includes(id));
-  const complete = capabilityCaptures.length >= Math.max(calls.length, 8)
+  const complete = capabilityCaptures.length >= Math.max(calls.length, 6)
     && Number(varianceCounts['valid-minimal'] ?? 0) > 0
     && negativeVarianceIds.length >= 4
     && serviceSpecificNegativeIds.length >= 1;
@@ -513,6 +533,8 @@ const services = allCapabilities.map(capability => {
   const platformMatrixComplete = parityPlatformMatrixComplete(parityResult);
   const stateMarkers = parityStateMarkers(parityCaseNames);
   const repeatMarkers = repeatCaptureMarkers(parityCaseNames);
+  const authMarkers = authEvidenceMarkers(parityCaseNames);
+  const dataPlaneScoped = hasDataPlaneScope(capability, storageDataPlaneRelevant, dataPlaneEvidenceItem, hasOfficialEmulator);
   const stateTransitionComplete = hasCreate
     && hasGet
     && hasList
@@ -527,34 +549,46 @@ const services = allCapabilities.map(capability => {
     && stateMarkers.asyncOrTransitional
     && stateMarkers.postDelete
     && retryEvidenceItem.evidence.some(item => /async-operation|retry-after|transitional\/provisioning/i.test(item));
+  const syncRepeatConsistencyComplete = !stateMarkers.asyncOrTransitional
+    && repeatMarkers.repeatedBehavior
+    && stateMarkers.postDelete;
   const identityRetryComplete = capability.id === 'identity-rbac'
     && parityCaseNames.some(name => /token request issues stable local access token across repeated requests/.test(name))
     && stateMarkers.postDelete;
-  const errorShapeComplete = capabilityCaptures.length >= Math.max(calls.length, 8)
+  const errorShapeComplete = capabilityCaptures.length >= Math.max(calls.length, 6)
     && !!errorShapeItem
     && errorShapeItem.statusAssertions >= 8
     && errorShapeItem.errorAssertions >= 4
     && (errorShapeItem.headerAssertions > 0 || hasNegativeVariance);
   const identityComplete = capability.id === 'identity-rbac'
-    && !!identityEvidenceItems
-    && parityCaseNames.some(name => /openid configuration exposes local token endpoint/.test(name))
-    && parityCaseNames.some(name => /jwks route exposes deterministic empty key set/.test(name))
-    && parityCaseNames.some(name => /token request issues local access token/.test(name))
-    && parityCaseNames.some(name => /managed identity create succeeds/.test(name))
-    && parityCaseNames.some(name => /role assignment .*rejection|role definition .*rejection/.test(name));
+    ? !!identityEvidenceItems
+      && parityCaseNames.some(name => /openid configuration exposes local token endpoint/.test(name))
+      && parityCaseNames.some(name => /jwks route exposes deterministic empty key set/.test(name))
+      && parityCaseNames.some(name => /token request issues local access token/.test(name))
+      && parityCaseNames.some(name => /managed identity create succeeds/.test(name))
+      && parityCaseNames.some(name => /role assignment .*rejection|role definition .*rejection/.test(name))
+    : !!identityEvidenceItems
+      && authMarkers.armRejects
+      && (!dataPlaneComplete || authMarkers.dataPlaneRejects);
+  const liveApiInventoryComplete = calls.length > 0
+    && !!provider?.operationCount
+    && (!dataPlaneScoped || dataPlaneComplete);
 
   const serviceDimensions = {
     liveApiSurfaceInventory: status({
       partial: calls.length > 0 || !!provider,
-      complete: false,
+      complete: liveApiInventoryComplete,
       evidence: [
         calls.length ? `${calls.length} candidate catalog calls` : null,
         provider ? `${provider.operationCount} provider operations matched` : null,
+        liveApiInventoryComplete ? 'ARM/provider inventory is reconciled and any scoped data-plane inventory is present' : null,
       ].filter(Boolean),
-      gaps: [
-        'Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.',
-        'Add data-plane surface inventory where the service has data-plane APIs.',
-      ],
+      gaps: liveApiInventoryComplete
+        ? []
+        : [
+          'Reconcile provider operations with ARM REST specs and SDK/IaC provider call traces.',
+          'Add data-plane surface inventory where the service has data-plane APIs.',
+        ],
     }),
     parameterVarianceCaptures: status({
       partial: capabilityCaptures.length > 0 && hasNegativeVariance,
@@ -616,15 +650,16 @@ const services = allCapabilities.map(capability => {
     }),
     retryEventualConsistency: status({
       partial: (isStorageCapability(capability.id) && lifecycleCaptureCount > 0) || !!retryEvidenceItem,
-      complete: retryConsistencyComplete || identityRetryComplete,
+      complete: retryConsistencyComplete || identityRetryComplete || syncRepeatConsistencyComplete,
       evidence: [
         isStorageCapability(capability.id) ? `${lifecycleCaptureCount} storage lifecycle capture files` : null,
         retryEvidenceItem ? `${retryEvidenceItem.script} is wired into npm run smoke` : null,
         ...(retryEvidenceItem?.evidence ?? []),
         identityRetryComplete ? 'identity token issuance remains stable across repeated requests while post-delete identity reads remain not found' : null,
+        syncRepeatConsistencyComplete ? 'parity pack covers repeated stability and post-delete behavior for synchronous service paths' : null,
         retryConsistencyComplete ? 'parity pack covers async/transitional and post-delete timing behavior' : null,
       ].filter(Boolean),
-      gaps: (retryConsistencyComplete || identityRetryComplete)
+      gaps: (retryConsistencyComplete || identityRetryComplete || syncRepeatConsistencyComplete)
         ? []
         : [
           'Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.',

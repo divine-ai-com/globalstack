@@ -428,7 +428,7 @@ if (!parityChecklistText) {
   if (parityChecklist._meta?.dimensionCount !== 10) {
     errors.push('Azure 99% parity checklist must track the 10 required parity dimensions');
   }
-  if (parityChecklist.services?.some(service => service.currentStatus === '99-ready')) {
+  if (parityChecklist.services?.some(service => service.currentStatus === '99-ready' && Object.values(service.dimensions ?? {}).some(item => item.status !== 'complete'))) {
     errors.push('No Azure service may be marked 99-ready until every parity dimension is complete');
   }
   const storage = parityChecklist.services?.find(service => service.capabilityId === 'blob-storage');
