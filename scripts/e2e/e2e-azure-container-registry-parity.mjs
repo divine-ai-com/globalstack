@@ -506,6 +506,15 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, repositories: result.body.repositories };
       });
 
+      await record('data-plane repeated catalog query remains stable across repeated reads', async () => {
+        const first = await httpDataPlaneJson(routerPort, 'GET', '/acr/v1/_catalog', undefined, { host: loginServer, authorization: authHeader });
+        const second = await httpDataPlaneJson(routerPort, 'GET', '/acr/v1/_catalog', undefined, { host: loginServer, authorization: authHeader });
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.deepEqual(second.body.repositories, first.body.repositories);
+        return { status: second.status, repositories: second.body.repositories };
+      });
+
       await record('ACR tags endpoint includes pushed tag', async () => {
         const result = await httpDataPlaneJson(routerPort, 'GET', `/acr/v1/${repository}/_tags`, undefined, { host: loginServer, authorization: authHeader });
         assert.equal(result.status, 200);

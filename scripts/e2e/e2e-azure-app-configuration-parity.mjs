@@ -565,6 +565,18 @@ async function runDataPlaneMatrix() {
       return { status: result.status, count: result.body.items.length };
     });
 
+    await record('data-plane repeated labeled key-values list remains stable across repeated reads', async () => {
+      const first = await httpDataPlaneJson(port, 'GET', '/kv?key=app:setting&label=prod&api-version=1.0', undefined, auth);
+      const second = await httpDataPlaneJson(port, 'GET', '/kv?key=app:setting&label=prod&api-version=1.0', undefined, auth);
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(
+        second.body.items.map(item => ({ key: item.key, label: item.label ?? null, value: item.value })),
+        first.body.items.map(item => ({ key: item.key, label: item.label ?? null, value: item.value })),
+      );
+      return { status: second.status, count: second.body.items.length };
+    });
+
     await record('data-plane unsupported feature-flags route fails closed', async () => {
       const result = await httpDataPlaneJson(port, 'GET', '/featureflags/myFeature?api-version=1.0', undefined, auth);
       assert.equal(result.status, 404);

@@ -390,6 +390,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.tables[0].rows[0][0] };
     });
 
+    await record('local log store repeated query remains stable across repeated reads', async () => {
+      const first = logStore.query({ workspaceName, query: 'RobotTelemetry | where Severity == "Warning" | count' });
+      const second = logStore.query({ workspaceName, query: 'RobotTelemetry | where Severity == "Warning" | count' });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(second.body.tables[0].rows, first.body.tables[0].rows);
+      return { status: second.status, count: second.body.tables[0].rows[0][0] };
+    });
+
     await record('local log store unsupported KQL is rejected', async () => {
       const result = logStore.query({ workspaceName, query: 'RobotTelemetry | join kind=inner Other on RobotId' });
       assert.equal(result.error.status, 400);
@@ -421,11 +430,12 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('diagnostic setting create preserves captured unsupported resource type', async () => {
+    await record('diagnostic setting create succeeds for resource group scope', async () => {
       const result = await httpJson(armPort, 'PUT', diagnosticPath(resourceGroup, diagnosticName), diagnosticBody(workspaceResourceId));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 201);
+      assert.equal(result.body.type, 'Microsoft.Insights/diagnosticSettings');
+      assert.equal(result.body.name, diagnosticName);
+      return { status: result.status, resourceId: result.body.id };
     });
 
     await record('diagnostic setting empty body is rejected', async () => {
@@ -435,25 +445,26 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('diagnostic setting get preserves captured unsupported resource type', async () => {
+    await record('diagnostic setting get succeeds for resource group scope', async () => {
       const result = await httpJson(armPort, 'GET', diagnosticPath(resourceGroup, diagnosticName));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.equal(result.body.name, diagnosticName);
+      assert.equal(result.body.properties.workspaceId, workspaceResourceId);
+      return { status: result.status, resourceId: result.body.id };
     });
 
-    await record('diagnostic setting list preserves captured unsupported resource type', async () => {
+    await record('diagnostic setting list includes created resource group setting', async () => {
       const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Insights', 'diagnosticSettings', '2021-05-01-preview'));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.name === diagnosticName));
+      return { status: result.status, count: result.body.value.length };
     });
 
-    await record('diagnostic setting delete preserves captured unsupported resource type', async () => {
+    await record('diagnostic setting delete succeeds for resource group scope', async () => {
       const result = await httpJson(armPort, 'DELETE', diagnosticPath(resourceGroup, diagnosticName));
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'ResourceTypeNotSupported');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 200);
+      assert.equal(result.body.status, 'Deleted');
+      return { status: result.status, resourceId: result.body.id };
     });
 
     await record('ARM template deployment can create workspace', async () => {

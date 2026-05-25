@@ -1075,6 +1075,26 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('workflow runs list remains stable across repeated reads', async () => {
+      const first = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/runs`, '2019-05-01'),
+      );
+      const second = await httpJson(
+        armPort,
+        'GET',
+        providerPath(resourceGroup, 'Microsoft.Logic', `workflows/${workflowName}/runs`, '2019-05-01'),
+      );
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.deepEqual(
+        second.body.value.map(item => item.id).sort(),
+        first.body.value.map(item => item.id).sort(),
+      );
+      return { status: second.status, count: second.body.value.length };
+    });
+
     await record('workflow run get route succeeds', async () => {
       const runs = await workflowRunner.listRuns({ workflowName });
       assert.equal(runs.status, 200);

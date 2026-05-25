@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-25T08:32:05.400Z
+Generated: 2026-05-25T10:07:41.244Z
 
 ## Dimensions
 
@@ -27,21 +27,21 @@ Generated: 2026-05-25T08:32:05.400Z
 | azure-functions | 1 | in-progress | 5 | 4 | 1 | 8 | 15 | 418 |
 | api-management | 1 | in-progress | 5 | 4 | 1 | 8 | 28 | 511 |
 | identity-rbac | 1 | in-progress | 5 | 4 | 1 | 12 | 39 | 15 |
-| key-vault-secrets | 1 | in-progress | 4 | 5 | 1 | 8 | 15 | 96 |
-| key-vault-keys | 1 | in-progress | 4 | 5 | 1 | 8 | 14 | 105 |
+| key-vault-secrets | 1 | in-progress | 5 | 5 | 0 | 8 | 15 | 96 |
+| key-vault-keys | 1 | in-progress | 5 | 5 | 0 | 8 | 14 | 105 |
 | postgresql-flexible-server | 1 | in-progress | 5 | 5 | 0 | 8 | 31 | 89 |
 | cosmos-nosql-table | 1 | in-progress | 5 | 4 | 1 | 16 | 41 | 366 |
 | service-bus-topics | 1 | in-progress | 5 | 4 | 1 | 12 | 33 | 116 |
-| event-grid | 1 | in-progress | 4 | 5 | 1 | 8 | 14 | 35 |
-| container-registry | 1 | in-progress | 4 | 5 | 1 | 4 | 7 | 118 |
+| event-grid | 1 | in-progress | 5 | 5 | 0 | 8 | 14 | 35 |
+| container-registry | 1 | in-progress | 5 | 5 | 0 | 4 | 7 | 118 |
 | aks-metadata | 1 | in-progress | 6 | 4 | 0 | 4 | 7 | 453 |
-| monitor-logs | 1 | in-progress | 4 | 5 | 1 | 8 | 15 | 1013 |
+| monitor-logs | 1 | in-progress | 5 | 5 | 0 | 8 | 15 | 1013 |
 | monitor-metrics-alerts | 1 | in-progress | 5 | 5 | 0 | 8 | 14 | 12 |
 | virtual-network | 1 | in-progress | 5 | 5 | 0 | 12 | 41 | 110 |
 | mysql-flexible-server | 2 | in-progress | 5 | 5 | 0 | 8 | 17 | 67 |
 | queue-storage | 2 | in-progress | 4 | 6 | 0 | 8 | 14 | 22 |
 | redis-cache | 2 | in-progress | 5 | 4 | 1 | 8 | 17 | 73 |
-| logic-workflows | 2 | in-progress | 4 | 5 | 1 | 8 | 14 | 425 |
+| logic-workflows | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 425 |
 | dns-zones | 2 | in-progress | 5 | 5 | 0 | 84 | 168 | 136 |
 | load-balancing | 2 | in-progress | 4 | 5 | 1 | 8 | 14 | 67 |
 | front-door-cdn | 2 | in-progress | 5 | 5 | 0 | 12 | 21 | 133 |
@@ -50,7 +50,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | azure-files | 2 | in-progress | 5 | 4 | 1 | 8 | 17 | 70 |
 | event-hubs-streams | 2 | in-progress | 5 | 5 | 0 | 8 | 31 | 93 |
 | synapse-warehouse | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 244 |
-| app-configuration-parameters | 2 | in-progress | 4 | 5 | 1 | 8 | 18 | 57 |
+| app-configuration-parameters | 2 | in-progress | 5 | 5 | 0 | 8 | 18 | 57 |
 | database-migration-service | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 34 |
 | service-discovery | 2 | in-progress | 5 | 5 | 0 | 12 | 37 | 131 |
 
@@ -156,7 +156,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:key-vault-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>local Key Vault secret set/get/version-list/delete and malformed secret rejection smoke<br>parity result sections: controlAndDataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 6 registry operations declared<br>backing engines: globalstack-secret-store<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## key-vault-keys
@@ -177,7 +177,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:key-vault-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | e2e:key-vault-parity is wired into npm run smoke<br>local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke<br>parity result sections: controlAndDataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 6 registry operations declared<br>backing engines: node-crypto<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## postgresql-flexible-server
@@ -261,7 +261,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:event-grid-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:event-grid-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | e2e:event-grid-parity is wired into npm run smoke<br>Event Grid topic publish URL, key auth, malformed publish rejection, and local event capture<br>parity result sections: controlAndDataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 8 registry operations declared<br>backing engines: globalstack-event-router<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## container-registry
@@ -282,7 +282,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:container-registry-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:container-registry-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | e2e:container-registry-parity is wired into npm run smoke<br>local ACR/Docker Registry bearer challenge, token, catalog, tag, manifest, and post-delete rejection smoke<br>parity result sections: controlAndDataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 6 registry operations declared<br>backing engines: local-oci-registry<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## aks-metadata
@@ -324,7 +324,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:monitor-logs-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:monitor-logs-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 14 registry operations declared<br>backing engines: globalstack-log-store<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## monitor-metrics-alerts
@@ -450,7 +450,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:logic-workflows-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:logic-workflows-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 36 registry operations declared<br>backing engines: globalstack-workflow-runner, functions-core-tools<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## dns-zones
@@ -639,7 +639,7 @@ Generated: 2026-05-25T08:32:05.400Z
 | Retry/eventual consistency behavior | partial | e2e:app-configuration-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:app-configuration-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 7 registry operations declared<br>backing engines: app-configuration-emulator, globalstack-secret-store<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## database-migration-service

@@ -632,7 +632,19 @@ async function runControlPlaneAndDataPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
-      await record('top-level event subscription create preserves captured rejection', async () => {
+      await record('local event capture remains stable across repeated publish reads', async () => {
+        const first = await httpDataPlaneJson(routerPort, 'GET', `/_globalstack/event-grid/topics/${topic}/events`);
+        const second = await httpDataPlaneJson(routerPort, 'GET', `/_globalstack/event-grid/topics/${topic}/events`);
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.deepEqual(
+          second.body.value.map(item => ({ id: item.id, eventType: item.eventType, subject: item.subject })),
+          first.body.value.map(item => ({ id: item.id, eventType: item.eventType, subject: item.subject })),
+        );
+        return { status: second.status, count: second.body.value.length };
+      });
+
+      await record('top-level event subscription create succeeds at resource group scope', async () => {
         const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.EventGrid', `eventSubscriptions/${eventSubscription}`), {
           properties: {
             destination: {
@@ -641,9 +653,10 @@ async function runControlPlaneAndDataPlaneMatrix() {
             },
           },
         });
-        assert.equal(result.status, 400);
-        assert.equal(errorCode(result), 'InvalidRequest');
-        return { status: result.status, errorCode: errorCode(result) };
+        assert.equal(result.status, 201);
+        assert.equal(result.body.type, 'Microsoft.EventGrid/eventSubscriptions');
+        assert.equal(result.body.name, eventSubscription);
+        return { status: result.status, resourceId: result.body.id };
       });
 
       await record('ARM template deployment can create Event Grid topic', async () => {

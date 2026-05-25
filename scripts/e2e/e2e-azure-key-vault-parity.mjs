@@ -717,6 +717,18 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, count: result.body.value.length };
       });
 
+      await record('data-plane repeated secret versions list remains stable across repeated reads', async () => {
+        const first = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}/versions?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        const second = await httpDataPlaneJson(routerPort, 'GET', `/secrets/${secretName}/versions?api-version=7.4`, undefined, { host: vaultHost, authorization: authHeader });
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.deepEqual(
+          second.body.value.map(item => item.id).sort(),
+          first.body.value.map(item => item.id).sort(),
+        );
+        return { status: second.status, count: second.body.value.length };
+      });
+
       await record('data-plane disabled secret set succeeds', async () => {
         const result = await httpDataPlaneJson(routerPort, 'PUT', `/secrets/${disabledSecretName}?api-version=7.4`, {
           value: 'disabled-secret',
@@ -914,6 +926,22 @@ async function runControlAndDataPlaneMatrix() {
         assert.equal(result.status, 200);
         assert.equal(Buffer.from(result.body.value, 'base64url').toString('utf8'), 'payload');
         return { status: result.status, kid: result.body.kid };
+      });
+
+      await record('data-plane repeated key decrypt remains stable across repeated reads', async () => {
+        const first = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/decrypt?api-version=7.4`, {
+          alg: 'RSA-OAEP',
+          value: cipherText,
+        }, { host: vaultHost, authorization: authHeader });
+        const second = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/decrypt?api-version=7.4`, {
+          alg: 'RSA-OAEP',
+          value: cipherText,
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.equal(Buffer.from(first.body.value, 'base64url').toString('utf8'), 'payload');
+        assert.equal(Buffer.from(second.body.value, 'base64url').toString('utf8'), 'payload');
+        return { status: second.status, kid: second.body.kid };
       });
 
       await record('data-plane key decrypt invalid ciphertext is rejected', async () => {
