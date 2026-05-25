@@ -764,6 +764,12 @@ if (!eventHubsParityText) {
   if ((eventHubsParity.controlPlane?.total ?? 0) < 51) {
     errors.push('Azure Event Hubs parity control/data-plane matrix should exercise at least 51 cases');
   }
+  if (eventHubsParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Event Hubs parity data-plane matrix has failures');
+  }
+  if ((eventHubsParity.dataPlane?.total ?? 0) < 22) {
+    errors.push('Azure Event Hubs parity data-plane matrix should exercise at least 22 cases');
+  }
   for (const required of [
     'unauthenticated ARM request is rejected',
     'malformed bearer token is rejected',
@@ -824,6 +830,34 @@ if (!eventHubsParityText) {
   ]) {
     if (!eventHubsParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Event Hubs parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'local data-plane unknown namespace is not found',
+    'local data-plane unknown event hub is not found',
+    'local data-plane event hub metadata succeeds',
+    'local data-plane partitions list succeeds',
+    'local data-plane publish missing body is rejected',
+    'local data-plane publish invalid properties is rejected',
+    'local data-plane batch publish invalid event is rejected',
+    'local data-plane publish invalid partition is rejected',
+    'local data-plane publish to explicit partition succeeds',
+    'local data-plane publish with partition key succeeds',
+    'local data-plane same partition key routes consistently',
+    'local data-plane duplicate message ids are accepted',
+    'local data-plane batch publish succeeds',
+    'local data-plane read from sequence succeeds',
+    'local data-plane read from later sequence skips older events',
+    'local data-plane read maxEvents limits result set',
+    'local data-plane read remains stable across repeated queries',
+    'local data-plane read invalid sequence is rejected',
+    'local data-plane read invalid maxEvents is rejected',
+    'local data-plane read invalid partition is rejected',
+    'local data-plane unsupported action fails closed',
+    'local data-plane read after event hub delete is not found',
+  ]) {
+    if (!eventHubsParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Event Hubs parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (eventHubsParity.platformMatrix?.skipped === true) {
@@ -1226,6 +1260,12 @@ if (!postgresqlParityText) {
   if ((postgresqlParity.controlPlane?.total ?? 0) < 42) {
     errors.push('Azure PostgreSQL parity control/data-plane matrix should exercise at least 42 cases');
   }
+  if (postgresqlParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure PostgreSQL parity data-plane matrix has failures');
+  }
+  if ((postgresqlParity.dataPlane?.total ?? 0) < 8) {
+    errors.push('Azure PostgreSQL parity data-plane matrix should exercise at least 8 cases');
+  }
   for (const required of [
     'unauthenticated ARM request is rejected',
     'malformed bearer token is rejected',
@@ -1273,6 +1313,20 @@ if (!postgresqlParityText) {
   ]) {
     if (!postgresqlParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure PostgreSQL parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'local postgres backing database can be created',
+    'local postgres backing accepts table insert and select',
+    'local postgres backing repeated select remains stable across repeated reads',
+    'local postgres backing enforces primary key uniqueness',
+    'local postgres backing rolls back failed transaction',
+    'local postgres backing rejects invalid sql',
+    'local postgres backing rejects unknown role',
+    'local postgres backing database cleanup succeeds',
+  ]) {
+    if (!postgresqlParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure PostgreSQL parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (postgresqlParity.platformMatrix?.skipped === true) {
@@ -1390,6 +1444,12 @@ if (!mysqlParityText) {
   if ((mysqlParity.controlPlane?.total ?? 0) < 42) {
     errors.push('Azure MySQL parity control/data-plane matrix should exercise at least 42 cases');
   }
+  if (mysqlParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure MySQL parity data-plane matrix has failures');
+  }
+  if ((mysqlParity.dataPlane?.total ?? 0) < 8) {
+    errors.push('Azure MySQL parity data-plane matrix should exercise at least 8 cases');
+  }
   for (const required of [
     'unauthenticated ARM request is rejected',
     'malformed bearer token is rejected',
@@ -1437,6 +1497,20 @@ if (!mysqlParityText) {
   ]) {
     if (!mysqlParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure MySQL parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'local mysql backing database can be created',
+    'local mysql backing accepts table insert and select',
+    'local mysql backing repeated select remains stable across repeated reads',
+    'local mysql backing enforces primary key uniqueness',
+    'local mysql backing rolls back failed transaction',
+    'local mysql backing rejects invalid sql',
+    'local mysql backing rejects unknown user',
+    'local mysql backing database cleanup succeeds',
+  ]) {
+    if (!mysqlParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure MySQL parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (mysqlParity.platformMatrix?.skipped === true) {

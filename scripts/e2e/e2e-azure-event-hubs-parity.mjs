@@ -547,6 +547,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('local data-plane read remains stable across repeated queries', async () => {
+      const first = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=0`);
+      assert.equal(first.status, 200);
+      const second = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=0`);
+      assert.equal(second.status, 200);
+      assert.deepEqual(second.body.value, first.body.value);
+      return { status: second.status, count: second.body.value.length };
+    });
+
     await record('local data-plane read invalid sequence is rejected', async () => {
       const result = await httpJson(eventHubsPort, 'GET', `/_globalstack/event-hubs/namespaces/${namespaceName}/eventhubs/${eventHubName}/events?partitionId=1&fromSequenceNumber=-1`);
       assert.equal(result.status, 400);
@@ -643,7 +652,47 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
-  return { ok: failed.length === 0, total: cases.length, failedCount: failed.length, resourceGroup, namespaceName, eventHubName, cases };
+  const dataPlaneCaseNames = new Set([
+    'local data-plane unknown namespace is not found',
+    'local data-plane unknown event hub is not found',
+    'local data-plane event hub metadata succeeds',
+    'local data-plane partitions list succeeds',
+    'local data-plane publish missing body is rejected',
+    'local data-plane publish invalid properties is rejected',
+    'local data-plane batch publish invalid event is rejected',
+    'local data-plane publish invalid partition is rejected',
+    'local data-plane publish to explicit partition succeeds',
+    'local data-plane publish with partition key succeeds',
+    'local data-plane same partition key routes consistently',
+    'local data-plane duplicate message ids are accepted',
+    'local data-plane batch publish succeeds',
+    'local data-plane read from sequence succeeds',
+    'local data-plane read from later sequence skips older events',
+    'local data-plane read maxEvents limits result set',
+    'local data-plane read remains stable across repeated queries',
+    'local data-plane read invalid sequence is rejected',
+    'local data-plane read invalid maxEvents is rejected',
+    'local data-plane read invalid partition is rejected',
+    'local data-plane unsupported action fails closed',
+    'local data-plane read after event hub delete is not found',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
+  return {
+    ok: failed.length === 0,
+    total: cases.length,
+    failedCount: failed.length,
+    resourceGroup,
+    namespaceName,
+    eventHubName,
+    cases,
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      cases: dataPlaneCases,
+    },
+  };
 }
 
 async function runPlatformMatrix() {
@@ -680,7 +729,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Namespace under test: ${report.controlPlane.namespaceName}`,
@@ -691,6 +740,17 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -716,10 +776,11 @@ const controlPlane = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Event Hubs namespace and event hub ARM lifecycle, validation, local publish/read partition facade checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Event Hubs cloudValidated claim.',
   controlPlane,
+  dataPlane: controlPlane.dataPlane,
   platformMatrix,
 };
 

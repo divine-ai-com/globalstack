@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-25T08:08:55.441Z
+Generated: 2026-05-25T08:32:05.400Z
 
 ## Dimensions
 
@@ -29,7 +29,7 @@ Generated: 2026-05-25T08:08:55.441Z
 | identity-rbac | 1 | in-progress | 5 | 4 | 1 | 12 | 39 | 15 |
 | key-vault-secrets | 1 | in-progress | 4 | 5 | 1 | 8 | 15 | 96 |
 | key-vault-keys | 1 | in-progress | 4 | 5 | 1 | 8 | 14 | 105 |
-| postgresql-flexible-server | 1 | in-progress | 4 | 5 | 1 | 8 | 31 | 89 |
+| postgresql-flexible-server | 1 | in-progress | 5 | 5 | 0 | 8 | 31 | 89 |
 | cosmos-nosql-table | 1 | in-progress | 5 | 4 | 1 | 16 | 41 | 366 |
 | service-bus-topics | 1 | in-progress | 5 | 4 | 1 | 12 | 33 | 116 |
 | event-grid | 1 | in-progress | 4 | 5 | 1 | 8 | 14 | 35 |
@@ -38,7 +38,7 @@ Generated: 2026-05-25T08:08:55.441Z
 | monitor-logs | 1 | in-progress | 4 | 5 | 1 | 8 | 15 | 1013 |
 | monitor-metrics-alerts | 1 | in-progress | 5 | 5 | 0 | 8 | 14 | 12 |
 | virtual-network | 1 | in-progress | 5 | 5 | 0 | 12 | 41 | 110 |
-| mysql-flexible-server | 2 | in-progress | 4 | 5 | 1 | 8 | 17 | 67 |
+| mysql-flexible-server | 2 | in-progress | 5 | 5 | 0 | 8 | 17 | 67 |
 | queue-storage | 2 | in-progress | 4 | 6 | 0 | 8 | 14 | 22 |
 | redis-cache | 2 | in-progress | 5 | 4 | 1 | 8 | 17 | 73 |
 | logic-workflows | 2 | in-progress | 4 | 5 | 1 | 8 | 14 | 425 |
@@ -48,7 +48,7 @@ Generated: 2026-05-25T08:08:55.441Z
 | waf-policy | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 9 |
 | activity-log-audit | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 15 |
 | azure-files | 2 | in-progress | 5 | 4 | 1 | 8 | 17 | 70 |
-| event-hubs-streams | 2 | in-progress | 4 | 5 | 1 | 8 | 31 | 93 |
+| event-hubs-streams | 2 | in-progress | 5 | 5 | 0 | 8 | 31 | 93 |
 | synapse-warehouse | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 244 |
 | app-configuration-parameters | 2 | in-progress | 4 | 5 | 1 | 8 | 18 | 57 |
 | database-migration-service | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 34 |
@@ -197,8 +197,8 @@ Generated: 2026-05-25T08:08:55.441Z
 | Identity/RBAC behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:postgresql-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:postgresql-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 9 registry operations declared<br>backing engines: local-postgres<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## cosmos-nosql-table
@@ -386,8 +386,8 @@ Generated: 2026-05-25T08:08:55.441Z
 | Identity/RBAC behavior | partial | e2e:mysql-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:mysql-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:mysql-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 9 registry operations declared<br>backing engines: local-mysql<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## queue-storage
@@ -596,8 +596,8 @@ Generated: 2026-05-25T08:08:55.441Z
 | Identity/RBAC behavior | partial | e2e:event-hubs-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:event-hubs-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:event-hubs-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 11 registry operations declared<br>backing engines: event-hubs-emulator<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## synapse-warehouse

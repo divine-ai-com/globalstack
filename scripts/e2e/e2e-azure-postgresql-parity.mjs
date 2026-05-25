@@ -476,6 +476,15 @@ async function runControlPlaneMatrix() {
       return { status: 0, selected: result.stdout.trim() };
     });
 
+    await record('local postgres backing repeated select remains stable across repeated reads', async () => {
+      const first = await psql(containerName, "SELECT payload->>'robot' FROM telemetry WHERE id = 1", { database: databaseName });
+      assert.equal(first.stdout.trim(), 'arm-1');
+      const second = await psql(containerName, "SELECT payload->>'robot' FROM telemetry WHERE id = 1", { database: databaseName });
+      assert.equal(second.stdout.trim(), 'arm-1');
+      assert.equal(second.stdout, first.stdout);
+      return { status: 0, selected: second.stdout.trim() };
+    });
+
     await record('local postgres backing enforces primary key uniqueness', async () => {
       const result = await psql(containerName, "INSERT INTO telemetry (id, payload) VALUES (1, '{\"robot\":\"duplicate\"}'::jsonb)", {
         database: databaseName,
@@ -625,6 +634,18 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'local postgres backing database can be created',
+    'local postgres backing accepts table insert and select',
+    'local postgres backing repeated select remains stable across repeated reads',
+    'local postgres backing enforces primary key uniqueness',
+    'local postgres backing rolls back failed transaction',
+    'local postgres backing rejects invalid sql',
+    'local postgres backing rejects unknown role',
+    'local postgres backing database cleanup succeeds',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
     ok: failed.length === 0,
     total: cases.length,
@@ -633,6 +654,12 @@ async function runControlPlaneMatrix() {
     serverName,
     databaseName,
     cases,
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -676,7 +703,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Server under test: ${report.controlPlane.serverName}`,
@@ -687,6 +714,17 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -712,10 +750,11 @@ const controlPlane = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Database for PostgreSQL Flexible Server and database ARM lifecycle, parameter rejection, local PostgreSQL backing-engine SQL checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure PostgreSQL cloudValidated claim.',
   controlPlane,
+  dataPlane: controlPlane.dataPlane,
   platformMatrix,
 };
 

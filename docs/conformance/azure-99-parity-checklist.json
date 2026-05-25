@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-25T08:08:55.441Z",
+    "generatedAt": "2026-05-25T08:32:05.400Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -875,9 +875,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 4,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 1
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -961,16 +961,16 @@
         "dataPlaneBehavior": {
           "status": "complete",
           "evidence": [
-            "parity result sections: controlPlane"
+            "parity result sections: controlPlane, dataPlane"
           ],
           "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -2056,9 +2056,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 4,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 1
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -2142,16 +2142,16 @@
         "dataPlaneBehavior": {
           "status": "complete",
           "evidence": [
-            "parity result sections: controlPlane"
+            "parity result sections: controlPlane, dataPlane"
           ],
           "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
@@ -3388,9 +3388,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 4,
+        "complete": 5,
         "partial": 5,
-        "notStarted": 1
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3474,16 +3474,16 @@
         "dataPlaneBehavior": {
           "status": "complete",
           "evidence": [
-            "parity result sections: controlPlane"
+            "parity result sections: controlPlane, dataPlane"
           ],
           "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
