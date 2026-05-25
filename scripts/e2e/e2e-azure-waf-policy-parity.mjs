@@ -407,6 +407,22 @@ async function runControlPlaneMatrix() {
       return { action: result.action, reason: result.reason, matchedRule: result.matchedRules[0].name };
     });
 
+    await record('local waf evaluator blocks repeated bad bot requests consistently', async () => {
+      const first = runtime.wafEvaluator.evaluate({
+        policyName: appWafName,
+        request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      const second = runtime.wafEvaluator.evaluate({
+        policyName: appWafName,
+        request: { method: 'GET', uri: '/mlops/model-registry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      assert.equal(first.action, 'Block');
+      assert.equal(second.action, 'Block');
+      assert.equal(first.matchedRules[0].name, 'BlockBadBotHeader');
+      assert.equal(second.matchedRules[0].name, 'BlockBadBotHeader');
+      return { action: second.action, matchedRule: second.matchedRules[0].name };
+    });
+
     await record('waf policy get succeeds', async () => {
       const result = await httpJson(armPort, 'GET', appWafPath(resourceGroup, appWafName));
       assert.equal(result.status, 200);
@@ -531,6 +547,26 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result), wafPolicyName: result.headers['x-globalstack-waf-policy'] };
     });
 
+    await record('local front door edge route keeps blocking repeated bad bot requests', async () => {
+      const first = await edgeJson(edgePort, 'GET', '/robotics/telemetry', {
+        host: `${afdEndpointName}.azurefd.net`,
+        protocol: 'https',
+        headers: { 'User-Agent': 'bad-bot/1.0' },
+      });
+      const second = await edgeJson(edgePort, 'GET', '/robotics/telemetry', {
+        host: `${afdEndpointName}.azurefd.net`,
+        protocol: 'https',
+        headers: { 'User-Agent': 'bad-bot/1.0' },
+      });
+      assert.equal(first.status, 403);
+      assert.equal(second.status, 403);
+      assert.equal(errorCode(first), 'WebApplicationFirewallRequestBlocked');
+      assert.equal(errorCode(second), 'WebApplicationFirewallRequestBlocked');
+      assert.equal(first.headers['x-globalstack-waf-policy'], appWafName);
+      assert.equal(second.headers['x-globalstack-waf-policy'], appWafName);
+      return { status: second.status, wafPolicyName: second.headers['x-globalstack-waf-policy'] };
+    });
+
     await record('cdn security policy get succeeds', async () => {
       const result = await httpJson(armPort, 'GET', cdnSecurityPolicyPath(resourceGroup, profileName, securityPolicyName));
       assert.equal(result.status, 200);
@@ -610,15 +646,36 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'local waf evaluator allows clean request',
+    'local waf evaluator blocks bad bot in prevention mode',
+    'local waf evaluator blocks repeated bad bot requests consistently',
+    'local waf evaluator detects bad bot without blocking in detection mode',
+    'local waf evaluator disabled policy bypasses rules',
+    'local front door edge route blocks bad bot when security policy references waf policy',
+    'local front door edge route keeps blocking repeated bad bot requests',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    appWafName,
-    profileName,
-    securityPolicyName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      appWafName,
+      profileName,
+      securityPolicyName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      appWafName,
+      profileName,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -662,7 +719,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- WAF policy under test: ${report.controlPlane.appWafName}`,
@@ -672,6 +729,18 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- WAF policy under test: ${report.dataPlane.appWafName}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -693,14 +762,15 @@ function markdown(report) {
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Application Gateway WAF policy and CDN security policy ARM lifecycle, bounded local custom-rule evaluation, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure WAF cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 

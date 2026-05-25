@@ -283,6 +283,25 @@ async function runControlPlaneMatrix() {
       return { count: records.length, operationName: records[0].operationName };
     });
 
+    await record('local activity log repeated system topic write query remains stable', async () => {
+      const first = runtime.activityLogStore.query({
+        resourceGroup,
+        category: 'Administrative',
+        operationName: 'Microsoft.EventGrid/systemTopics/write',
+        status: 'Succeeded',
+      });
+      const second = runtime.activityLogStore.query({
+        resourceGroup,
+        category: 'Administrative',
+        operationName: 'Microsoft.EventGrid/systemTopics/write',
+        status: 'Succeeded',
+      });
+      assert.equal(first.length, 1);
+      assert.equal(second.length, 1);
+      assert.equal(first[0].resourceId, second[0].resourceId);
+      return { count: second.length, operationName: second[0].operationName };
+    });
+
     await record('local activity log status filter excludes missing failures', async () => {
       const records = runtime.activityLogStore.query({ resourceGroup, status: 'Failed' });
       assert.deepEqual(records, []);
@@ -315,6 +334,21 @@ async function runControlPlaneMatrix() {
       assert.equal(records.length, 1);
       assert.equal(records[0].operationName, 'Microsoft.Resources/subscriptions/resourceGroups/write');
       return { count: records.length, correlationId: record.correlationId };
+    });
+
+    await record('local activity log repeated correlation query remains stable', async () => {
+      const record = runtime.activityLogStore.emit({
+        resourceId: sourceId,
+        resourceGroup,
+        operationName: 'Microsoft.Resources/subscriptions/resourceGroups/write',
+        correlationId: `corr-repeat-${suffix}`,
+      });
+      const first = runtime.activityLogStore.query({ resourceGroup, correlationId: record.correlationId });
+      const second = runtime.activityLogStore.query({ resourceGroup, correlationId: record.correlationId });
+      assert.equal(first.length, 1);
+      assert.equal(second.length, 1);
+      assert.equal(first[0].correlationId, second[0].correlationId);
+      return { count: second.length, correlationId: second[0].correlationId };
     });
 
     await record('system topic list includes created resource', async () => {
@@ -403,7 +437,34 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
-  return { ok: failed.length === 0, total: cases.length, failedCount: failed.length, resourceGroup, systemTopicName, cases };
+  const dataPlaneCaseNames = new Set([
+    'local activity log records system topic write',
+    'local activity log repeated system topic write query remains stable',
+    'local activity log status filter excludes missing failures',
+    'local activity log correlation filter returns one record',
+    'local activity log repeated correlation query remains stable',
+    'local activity log records system topic delete',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
+  return {
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      systemTopicName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      resourceGroup,
+      systemTopicName,
+      cases: dataPlaneCases,
+    },
+  };
 }
 
 async function runPlatformMatrix() {
@@ -440,7 +501,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- System topic under test: ${report.controlPlane.systemTopicName}`,
@@ -450,6 +511,18 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Resource group under test: ${report.dataPlane.resourceGroup}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -471,14 +544,15 @@ function markdown(report) {
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Activity Log audit system-topic ARM lifecycle, local administrative activity-log emission/query checks, diagnostic-setting captured rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Activity Log or Event Grid delivery cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 

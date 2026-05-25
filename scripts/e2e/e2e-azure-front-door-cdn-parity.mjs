@@ -511,6 +511,18 @@ async function runControlPlaneMatrix() {
       return { status: result.status, route: result.headers['x-globalstack-edge-route'] };
     });
 
+    await record('local front door edge route remains stable across repeated requests', async () => {
+      const first = await edgeJson(edgePort, 'GET', '/mlops/control-plane/health?region=eastus', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
+      const second = await edgeJson(edgePort, 'GET', '/mlops/control-plane/health?region=eastus', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.headers['x-globalstack-edge-route'], `frontdoor/${afdEndpointName}`);
+      assert.equal(second.headers['x-globalstack-edge-route'], `frontdoor/${afdEndpointName}`);
+      assert.equal(first.headers['x-globalstack-origin-host'], 'origin.example.org');
+      assert.equal(second.headers['x-globalstack-origin-host'], 'origin.example.org');
+      return { status: second.status, route: second.headers['x-globalstack-edge-route'] };
+    });
+
     await record('local front door edge route rejects unmatched path', async () => {
       const result = await edgeJson(edgePort, 'GET', '/private/model.tar', { host: `${afdEndpointName}.azurefd.net`, protocol: 'https' });
       assert.equal(result.status, 404);
@@ -525,6 +537,18 @@ async function runControlPlaneMatrix() {
       assert.equal(result.headers['x-globalstack-origin-host'], 'example.org');
       assert.equal(result.body.originHost, 'example.org');
       return { status: result.status, originHost: result.body.originHost };
+    });
+
+    await record('local cdn edge route remains stable across repeated requests', async () => {
+      const first = await edgeJson(edgePort, 'GET', '/artifacts/robotics/model.onnx', { host: `${cdnEndpointName}.azureedge.net` });
+      const second = await edgeJson(edgePort, 'GET', '/artifacts/robotics/model.onnx', { host: `${cdnEndpointName}.azureedge.net` });
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(first.headers['x-globalstack-edge-route'], `cdn/${cdnEndpointName}`);
+      assert.equal(second.headers['x-globalstack-edge-route'], `cdn/${cdnEndpointName}`);
+      assert.equal(first.body.originHost, 'example.org');
+      assert.equal(second.body.originHost, 'example.org');
+      return { status: second.status, originHost: second.body.originHost };
     });
 
     await record('local cdn edge route rejects disabled http', async () => {
@@ -663,15 +687,37 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'local edge router unknown host is not found',
+    'local front door edge route succeeds',
+    'local front door edge route remains stable across repeated requests',
+    'local front door edge route rejects unmatched path',
+    'local cdn edge route returns configured origin',
+    'local cdn edge route remains stable across repeated requests',
+    'local cdn edge route rejects disabled http',
+    'local front door edge route rejects disabled endpoint',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    profileName,
-    afdEndpointName,
-    cdnEndpointName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      profileName,
+      afdEndpointName,
+      cdnEndpointName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      afdEndpointName,
+      cdnEndpointName,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -715,7 +761,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Profile under test: ${report.controlPlane.profileName}`,
@@ -725,6 +771,19 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Front Door endpoint under test: ${report.dataPlane.afdEndpointName}`);
+  lines.push(`- CDN endpoint under test: ${report.dataPlane.cdnEndpointName}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -746,14 +805,15 @@ function markdown(report) {
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Front Door/CDN profile and endpoint ARM lifecycle, local edge routing checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Front Door/CDN cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 

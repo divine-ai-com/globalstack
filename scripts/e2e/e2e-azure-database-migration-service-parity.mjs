@@ -119,7 +119,7 @@ function projectBody(overrides = {}) {
     location: 'eastus',
     properties: {
       sourcePlatform: 'SQL',
-      targetPlatform: 'SQL',
+      targetPlatform: 'SQLDB',
       sourceConnectionInfo: { serverName: 'source.local', authentication: 'SqlAuthentication' },
       targetConnectionInfo: { serverName: 'target.local', authentication: 'SqlAuthentication' },
       ...(overrides.properties ?? {}),
@@ -151,7 +151,7 @@ function deploymentBody(serviceName, projectName) {
             location: 'eastus',
             properties: {
               sourcePlatform: 'SQL',
-              targetPlatform: 'SQL',
+              targetPlatform: 'SQLDB',
               sourceConnectionInfo: { serverName: 'source.local' },
               targetConnectionInfo: { serverName: 'target.local' },
             },
@@ -403,6 +403,26 @@ async function runControlPlaneMatrix() {
       return { status: completed.status, runId: started.body.id, runStatus: completed.body.status };
     });
 
+    await record('local migration runner repeated completed task status remains stable across repeated reads', async () => {
+      const started = migrationRunner.start({
+        serviceName,
+        projectName,
+        taskType: 'Assessment',
+        sourceDatabase: 'sourceDb',
+        targetDatabase: 'targetDb',
+      });
+      assert.equal(started.status, 202);
+      const completed = migrationRunner.complete(started.body.id);
+      assert.equal(completed.status, 200);
+      const first = migrationRunner.get(started.body.id);
+      assert.equal(first.status, 200);
+      const second = migrationRunner.get(started.body.id);
+      assert.equal(second.status, 200);
+      assert.equal(first.body.status, 'Succeeded');
+      assert.deepEqual(second.body, first.body);
+      return { status: second.status, runId: started.body.id, runStatus: second.body.status };
+    });
+
     await record('migration project get succeeds', async () => {
       const result = await httpJson(armPort, 'GET', projectPath(resourceGroup, serviceName, projectName));
       assert.equal(result.status, 200);
@@ -411,9 +431,9 @@ async function runControlPlaneMatrix() {
     });
 
     await record('migration project update can change target platform', async () => {
-      const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, projectName), projectBody({ properties: { sourcePlatform: 'MySQL', targetPlatform: 'PostgreSQL' } }));
+      const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, projectName), projectBody({ properties: { sourcePlatform: 'MySQL', targetPlatform: 'AzureDbForPostgreSql' } }));
       assert.equal(result.status, 200);
-      assert.equal(result.body.properties.targetPlatform, 'PostgreSQL');
+      assert.equal(result.body.properties.targetPlatform, 'AzureDbForPostgreSql');
       return { status: result.status };
     });
 
@@ -483,7 +503,30 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
-  return { ok: failed.length === 0, total: cases.length, failedCount: failed.length, resourceGroup, serviceName, projectName, cases };
+  const dataPlaneCaseNames = new Set([
+    'local migration runner missing project is not found',
+    'local migration runner rejects incomplete task',
+    'local migration runner starts assessment task',
+    'local migration runner completes task and rejects duplicate completion',
+    'local migration runner repeated completed task status remains stable across repeated reads',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
+  return {
+    ok: failed.length === 0,
+    total: cases.length,
+    failedCount: failed.length,
+    resourceGroup,
+    serviceName,
+    projectName,
+    cases,
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      cases: dataPlaneCases,
+    },
+  };
 }
 
 async function runPlatformMatrix() {
@@ -520,7 +563,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Service under test: ${report.controlPlane.serviceName}`,
@@ -531,6 +574,17 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -556,10 +610,11 @@ const controlPlane = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Database Migration Service and project ARM lifecycle, bounded local migration task state checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure DMS cloudValidated claim.',
   controlPlane,
+  dataPlane: controlPlane.dataPlane,
   platformMatrix,
 };
 

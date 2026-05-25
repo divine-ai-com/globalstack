@@ -848,6 +848,12 @@ if (!synapseWarehouseParityText) {
   if ((synapseWarehouseParity.controlPlane?.total ?? 0) < 48) {
     errors.push('Azure Synapse Warehouse parity control/data-plane matrix should exercise at least 48 cases');
   }
+  if (synapseWarehouseParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Synapse Warehouse parity data-plane matrix has failures');
+  }
+  if ((synapseWarehouseParity.dataPlane?.total ?? 0) < 9) {
+    errors.push('Azure Synapse Warehouse parity data-plane matrix should exercise at least 9 cases');
+  }
   for (const required of [
     'unauthenticated ARM request is rejected',
     'malformed bearer token is rejected',
@@ -900,6 +906,21 @@ if (!synapseWarehouseParityText) {
       errors.push(`Azure Synapse Warehouse parity E2E missing passing case: ${required}`);
     }
   }
+  for (const required of [
+    'local synapse sql runner missing pool is not found',
+    'local synapse sql runner creates table',
+    'local synapse sql runner duplicate table is rejected',
+    'local synapse sql runner inserts and selects rows',
+    'local synapse sql runner repeated select remains stable across repeated reads',
+    'local synapse sql runner unknown insert column is rejected',
+    'local synapse sql runner unknown table is rejected',
+    'local synapse sql runner unsupported sql is rejected',
+    'local synapse sql runner removes deleted pool',
+  ]) {
+    if (!synapseWarehouseParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Synapse Warehouse parity E2E missing passing data-plane case: ${required}`);
+    }
+  }
   if (synapseWarehouseParity.platformMatrix?.skipped === true) {
     errors.push('Azure Synapse Warehouse parity E2E must include the platform matrix during validation');
   }
@@ -921,6 +942,12 @@ if (!databaseMigrationServiceParityText) {
   }
   if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 43) {
     errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 43 cases');
+  }
+  if (databaseMigrationServiceParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Database Migration Service parity data-plane matrix has failures');
+  }
+  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 5) {
+    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 5 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -969,6 +996,17 @@ if (!databaseMigrationServiceParityText) {
       errors.push(`Azure Database Migration Service parity E2E missing passing case: ${required}`);
     }
   }
+  for (const required of [
+    'local migration runner missing project is not found',
+    'local migration runner rejects incomplete task',
+    'local migration runner starts assessment task',
+    'local migration runner completes task and rejects duplicate completion',
+    'local migration runner repeated completed task status remains stable across repeated reads',
+  ]) {
+    if (!databaseMigrationServiceParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Database Migration Service parity E2E missing passing data-plane case: ${required}`);
+    }
+  }
   if (databaseMigrationServiceParity.platformMatrix?.skipped === true) {
     errors.push('Azure Database Migration Service parity E2E must include the platform matrix during validation');
   }
@@ -990,6 +1028,12 @@ if (!serviceDiscoveryParityText) {
   }
   if ((serviceDiscoveryParity.controlPlane?.total ?? 0) < 40) {
     errors.push('Azure Service Discovery parity control/data-plane matrix should exercise at least 40 cases');
+  }
+  if (serviceDiscoveryParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Service Discovery parity data-plane matrix has failures');
+  }
+  if ((serviceDiscoveryParity.dataPlane?.total ?? 0) < 7) {
+    errors.push('Azure Service Discovery parity data-plane matrix should exercise at least 7 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1035,6 +1079,19 @@ if (!serviceDiscoveryParityText) {
   ]) {
     if (!serviceDiscoveryParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Service Discovery parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'local private dns registry resolves registered service',
+    'local private dns registry resolve remains stable across repeated reads',
+    'local private dns registry returns nxdomain for missing service',
+    'local container app registry resolves fqdn',
+    'local container app registry fqdn resolve remains stable across repeated reads',
+    'local container app registry missing fqdn is not found',
+    'local container app registry removes deleted fqdn',
+  ]) {
+    if (!serviceDiscoveryParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Service Discovery parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (serviceDiscoveryParity.platformMatrix?.skipped === true) {
@@ -2162,6 +2219,26 @@ if (!frontDoorCdnParityText) {
       errors.push(`Azure Front Door/CDN parity E2E missing passing case: ${required}`);
     }
   }
+  if (frontDoorCdnParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Front Door/CDN parity data-plane matrix has failures');
+  }
+  if ((frontDoorCdnParity.dataPlane?.total ?? 0) < 8) {
+    errors.push('Azure Front Door/CDN parity data-plane matrix should exercise at least 8 cases');
+  }
+  for (const required of [
+    'local edge router unknown host is not found',
+    'local front door edge route succeeds',
+    'local front door edge route remains stable across repeated requests',
+    'local front door edge route rejects unmatched path',
+    'local cdn edge route returns configured origin',
+    'local cdn edge route remains stable across repeated requests',
+    'local cdn edge route rejects disabled http',
+    'local front door edge route rejects disabled endpoint',
+  ]) {
+    if (!frontDoorCdnParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Front Door/CDN parity E2E missing passing data-plane case: ${required}`);
+    }
+  }
   if (frontDoorCdnParity.platformMatrix?.skipped === true) {
     errors.push('Azure Front Door/CDN parity E2E must include the platform matrix during validation');
   }
@@ -2235,6 +2312,25 @@ if (!wafPolicyParityText) {
       errors.push(`Azure WAF Policy parity E2E missing passing case: ${required}`);
     }
   }
+  if (wafPolicyParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure WAF Policy parity data-plane matrix has failures');
+  }
+  if ((wafPolicyParity.dataPlane?.total ?? 0) < 7) {
+    errors.push('Azure WAF Policy parity data-plane matrix should exercise at least 7 cases');
+  }
+  for (const required of [
+    'local waf evaluator allows clean request',
+    'local waf evaluator blocks bad bot in prevention mode',
+    'local waf evaluator blocks repeated bad bot requests consistently',
+    'local waf evaluator detects bad bot without blocking in detection mode',
+    'local waf evaluator disabled policy bypasses rules',
+    'local front door edge route blocks bad bot when security policy references waf policy',
+    'local front door edge route keeps blocking repeated bad bot requests',
+  ]) {
+    if (!wafPolicyParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure WAF Policy parity E2E missing passing data-plane case: ${required}`);
+    }
+  }
   if (wafPolicyParity.platformMatrix?.skipped === true) {
     errors.push('Azure WAF Policy parity E2E must include the platform matrix during validation');
   }
@@ -2295,6 +2391,24 @@ if (!activityLogAuditParityText) {
   ]) {
     if (!activityLogAuditParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Activity Log Audit parity E2E missing passing case: ${required}`);
+    }
+  }
+  if (activityLogAuditParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Activity Log Audit parity data-plane matrix has failures');
+  }
+  if ((activityLogAuditParity.dataPlane?.total ?? 0) < 6) {
+    errors.push('Azure Activity Log Audit parity data-plane matrix should exercise at least 6 cases');
+  }
+  for (const required of [
+    'local activity log records system topic write',
+    'local activity log repeated system topic write query remains stable',
+    'local activity log status filter excludes missing failures',
+    'local activity log correlation filter returns one record',
+    'local activity log repeated correlation query remains stable',
+    'local activity log records system topic delete',
+  ]) {
+    if (!activityLogAuditParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Activity Log Audit parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (activityLogAuditParity.platformMatrix?.skipped === true) {

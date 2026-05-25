@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-25T07:15:41.805Z
+Generated: 2026-05-25T08:08:55.441Z
 
 ## Dimensions
 
@@ -44,15 +44,15 @@ Generated: 2026-05-25T07:15:41.805Z
 | logic-workflows | 2 | in-progress | 4 | 5 | 1 | 8 | 14 | 425 |
 | dns-zones | 2 | in-progress | 5 | 5 | 0 | 84 | 168 | 136 |
 | load-balancing | 2 | in-progress | 4 | 5 | 1 | 8 | 14 | 67 |
-| front-door-cdn | 2 | in-progress | 3 | 5 | 2 | 12 | 21 | 133 |
-| waf-policy | 2 | in-progress | 3 | 5 | 2 | 8 | 14 | 9 |
-| activity-log-audit | 2 | in-progress | 3 | 5 | 2 | 8 | 14 | 15 |
+| front-door-cdn | 2 | in-progress | 5 | 5 | 0 | 12 | 21 | 133 |
+| waf-policy | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 9 |
+| activity-log-audit | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 15 |
 | azure-files | 2 | in-progress | 5 | 4 | 1 | 8 | 17 | 70 |
 | event-hubs-streams | 2 | in-progress | 4 | 5 | 1 | 8 | 31 | 93 |
-| synapse-warehouse | 2 | in-progress | 3 | 5 | 2 | 8 | 14 | 244 |
+| synapse-warehouse | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 244 |
 | app-configuration-parameters | 2 | in-progress | 4 | 5 | 1 | 8 | 18 | 57 |
-| database-migration-service | 2 | in-progress | 3 | 5 | 2 | 8 | 14 | 34 |
-| service-discovery | 2 | in-progress | 4 | 5 | 1 | 12 | 37 | 131 |
+| database-migration-service | 2 | in-progress | 5 | 5 | 0 | 8 | 14 | 34 |
+| service-discovery | 2 | in-progress | 5 | 5 | 0 | 12 | 37 | 131 |
 
 ## blob-storage
 
@@ -512,8 +512,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:front-door-cdn-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:front-door-cdn-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:front-door-cdn-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | not-started |  | No durable local data-plane evidence is recorded yet.<br>Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 24 registry operations declared<br>backing engines: globalstack-edge-router<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## waf-policy
@@ -533,8 +533,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:waf-policy-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:waf-policy-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:waf-policy-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | not-started |  | No durable local data-plane evidence is recorded yet.<br>Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 10 registry operations declared<br>backing engines: globalstack-waf-metadata<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## activity-log-audit
@@ -554,8 +554,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:activity-log-audit-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:activity-log-audit-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:activity-log-audit-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | not-started |  | No durable local data-plane evidence is recorded yet.<br>Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 9 registry operations declared<br>backing engines: globalstack-audit-log<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## azure-files
@@ -617,8 +617,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:synapse-warehouse-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:synapse-warehouse-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:synapse-warehouse-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | not-started |  | No durable local data-plane evidence is recorded yet.<br>Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 10 registry operations declared<br>backing engines: local-analytics-store<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## app-configuration-parameters
@@ -659,8 +659,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:database-migration-service-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:database-migration-service-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | not-started |  | No durable local data-plane evidence is recorded yet.<br>Inventory and capture service-specific data-plane APIs, or explicitly mark no data-plane scope for this capability. |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 10 registry operations declared<br>backing engines: globalstack-migration-plan-store<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## service-discovery
@@ -680,8 +680,8 @@ Generated: 2026-05-25T07:15:41.805Z
 | Identity/RBAC behavior | partial | e2e:service-discovery-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
 | Retry/eventual consistency behavior | partial | e2e:service-discovery-parity is wired into npm run smoke<br>async-operation header behavior is asserted<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
 | IaC-provider behavior | complete | e2e:service-discovery-parity is wired into npm run smoke<br>8 platform lifecycle runners: Terraform HCL, OpenTofu HCL, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
-| Data-plane behavior | complete | parity result sections: controlPlane |  |
-| Repeat captures for ambiguous behavior | not-started |  | Repeat timing-sensitive captures and record stabilization rules before normalization. |
+| Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
+| Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
 | Service-specific local facade/emulator integration | complete | 15 registry operations declared<br>backing engines: globalstack-service-registry, globalstack-dns-registry<br>dedicated parity pack passed against the local facade/runtime path |  |
 
 ## Operating Rule

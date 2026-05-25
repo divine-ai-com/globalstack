@@ -295,6 +295,15 @@ async function runControlPlaneMatrix() {
       return { status: result.status, values: result.values.join(',') };
     });
 
+    await record('local private dns registry resolve remains stable across repeated reads', async () => {
+      const first = discoveryRegistry.resolvePrivateDns(`api.${zoneName}`);
+      assert.equal(first.status, 'NOERROR');
+      const second = discoveryRegistry.resolvePrivateDns(`api.${zoneName}`);
+      assert.equal(second.status, 'NOERROR');
+      assert.deepEqual(second.values, first.values);
+      return { status: second.status, values: second.values.join(',') };
+    });
+
     await record('local private dns registry returns nxdomain for missing service', async () => {
       const result = discoveryRegistry.resolvePrivateDns(`missing.${zoneName}`);
       assert.equal(result.status, 'NXDOMAIN');
@@ -397,6 +406,16 @@ async function runControlPlaneMatrix() {
       return { status: result.status, targetPort: result.body.targetPort };
     });
 
+    await record('local container app registry fqdn resolve remains stable across repeated reads', async () => {
+      const created = await httpJson(armPort, 'GET', containerAppPath(resourceGroup, appName));
+      const first = discoveryRegistry.resolveContainerApp(created.body.properties.configuration.ingress.fqdn);
+      assert.equal(first.status, 200);
+      const second = discoveryRegistry.resolveContainerApp(created.body.properties.configuration.ingress.fqdn);
+      assert.equal(second.status, 200);
+      assert.deepEqual(second.body, first.body);
+      return { status: second.status, targetPort: second.body.targetPort };
+    });
+
     await record('local container app registry missing fqdn is not found', async () => {
       const result = discoveryRegistry.resolveContainerApp(`missing.${environmentName}.globalstack.local`);
       assert.equal(result.status, 404);
@@ -492,7 +511,33 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
-  return { ok: failed.length === 0, total: cases.length, failedCount: failed.length, resourceGroup, environmentName, appName, zoneName, cases };
+  const dataPlaneCaseNames = new Set([
+    'local private dns registry resolves registered service',
+    'local private dns registry resolve remains stable across repeated reads',
+    'local private dns registry returns nxdomain for missing service',
+    'local container app registry resolves fqdn',
+    'local container app registry fqdn resolve remains stable across repeated reads',
+    'local container app registry missing fqdn is not found',
+    'local container app registry removes deleted fqdn',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
+  return {
+    ok: failed.length === 0,
+    total: cases.length,
+    failedCount: failed.length,
+    resourceGroup,
+    environmentName,
+    appName,
+    zoneName,
+    cases,
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      cases: dataPlaneCases,
+    },
+  };
 }
 
 async function runPlatformMatrix() {
@@ -529,7 +574,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Managed environment under test: ${report.controlPlane.environmentName}`,
@@ -541,6 +586,17 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -566,10 +622,11 @@ const controlPlane = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Service Discovery via Private DNS and Container Apps ARM lifecycle, local DNS and Container App FQDN discovery checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure service discovery or Container Apps runtime cloudValidated claim.',
   controlPlane,
+  dataPlane: controlPlane.dataPlane,
   platformMatrix,
 };
 

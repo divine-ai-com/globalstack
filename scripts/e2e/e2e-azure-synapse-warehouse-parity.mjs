@@ -445,6 +445,23 @@ async function runControlPlaneMatrix() {
       return { status: rows.status, rowCount: rows.body.rows.length };
     });
 
+    await record('local synapse sql runner repeated select remains stable across repeated reads', async () => {
+      const first = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT * FROM dbo.Telemetry ORDER BY id',
+      });
+      assert.equal(first.status, 200);
+      const second = sqlRunner.execute({
+        workspaceName,
+        sqlPoolName,
+        sql: 'SELECT * FROM dbo.Telemetry ORDER BY id',
+      });
+      assert.equal(second.status, 200);
+      assert.deepEqual(second.body.rows, first.body.rows);
+      return { status: second.status, rowCount: second.body.rows.length };
+    });
+
     await record('local synapse sql runner unknown insert column is rejected', async () => {
       const result = sqlRunner.execute({
         workspaceName,
@@ -548,7 +565,34 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
-  return { ok: failed.length === 0, total: cases.length, failedCount: failed.length, resourceGroup, workspaceName, sqlPoolName, cases };
+  const dataPlaneCaseNames = new Set([
+    'local synapse sql runner missing pool is not found',
+    'local synapse sql runner creates table',
+    'local synapse sql runner duplicate table is rejected',
+    'local synapse sql runner inserts and selects rows',
+    'local synapse sql runner repeated select remains stable across repeated reads',
+    'local synapse sql runner unknown insert column is rejected',
+    'local synapse sql runner unknown table is rejected',
+    'local synapse sql runner unsupported sql is rejected',
+    'local synapse sql runner removes deleted pool',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
+  return {
+    ok: failed.length === 0,
+    total: cases.length,
+    failedCount: failed.length,
+    resourceGroup,
+    workspaceName,
+    sqlPoolName,
+    cases,
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      cases: dataPlaneCases,
+    },
+  };
 }
 
 async function runPlatformMatrix() {
@@ -585,7 +629,7 @@ function markdown(report) {
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
     '',
-    '## Control And Data Plane',
+    '## Control Plane',
     '',
     `- Passed: ${report.controlPlane.total - report.controlPlane.failedCount}/${report.controlPlane.total}`,
     `- Workspace under test: ${report.controlPlane.workspaceName}`,
@@ -596,6 +640,17 @@ function markdown(report) {
   ];
 
   for (const item of report.controlPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error Code |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
     lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.error ?? ''} |`);
   }
 
@@ -621,10 +676,11 @@ const controlPlane = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Synapse workspace and dedicated SQL pool ARM lifecycle, validation, bounded local SQL runner checks, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Synapse Analytics cloudValidated or distributed SQL parity claim.',
   controlPlane,
+  dataPlane: controlPlane.dataPlane,
   platformMatrix,
 };
 
