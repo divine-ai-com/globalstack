@@ -987,16 +987,35 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'local network model allocates deterministic private endpoint address',
+    'local network model keeps private endpoint address stable across repeated reads',
+    'local private dns registry resolves private endpoint zone-group record',
+    'local private dns registry removes private endpoint zone-group record after delete',
+    'local network model removes deleted private endpoint',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    vnetName,
-    subnetName,
-    privateEndpointName,
-    privateDnsZoneName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      vnetName,
+      subnetName,
+      privateEndpointName,
+      privateDnsZoneName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      privateEndpointName,
+      privateDnsZoneName: privateEndpointDnsZoneName,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -1057,6 +1076,19 @@ function markdown(report) {
   }
 
   lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Private endpoint under test: ${report.dataPlane.privateEndpointName}`);
+  lines.push(`- Private endpoint DNS zone under test: ${report.dataPlane.privateDnsZoneName}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.reason ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
   lines.push('## Platform Matrix');
   lines.push('');
   if (report.platformMatrix.skipped) {
@@ -1080,14 +1112,15 @@ function markdown(report) {
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure Virtual Network, subnet, Private Endpoint, and Private DNS zone ARM lifecycle, parameter rejection, unsupported Network route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure Network cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 

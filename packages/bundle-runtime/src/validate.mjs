@@ -1980,8 +1980,14 @@ if (!virtualNetworkParityText) {
   if (virtualNetworkParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Virtual Network parity control-plane matrix has failures');
   }
+  if (virtualNetworkParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure Virtual Network parity data-plane matrix has failures');
+  }
   if ((virtualNetworkParity.controlPlane?.total ?? 0) < 55) {
     errors.push('Azure Virtual Network parity control-plane matrix should exercise at least 55 cases');
+  }
+  if ((virtualNetworkParity.dataPlane?.total ?? 0) < 5) {
+    errors.push('Azure Virtual Network parity data-plane matrix should exercise at least 5 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2048,6 +2054,17 @@ if (!virtualNetworkParityText) {
       errors.push(`Azure Virtual Network parity E2E missing passing case: ${required}`);
     }
   }
+  for (const required of [
+    'local network model allocates deterministic private endpoint address',
+    'local network model keeps private endpoint address stable across repeated reads',
+    'local private dns registry resolves private endpoint zone-group record',
+    'local private dns registry removes private endpoint zone-group record after delete',
+    'local network model removes deleted private endpoint',
+  ]) {
+    if (!virtualNetworkParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure Virtual Network parity E2E missing passing data-plane case: ${required}`);
+    }
+  }
   if (virtualNetworkParity.platformMatrix?.skipped === true) {
     errors.push('Azure Virtual Network parity E2E must include the platform matrix during validation');
   }
@@ -2067,8 +2084,14 @@ if (!dnsZonesParityText) {
   if (dnsZonesParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure DNS Zones parity control-plane matrix has failures');
   }
+  if (dnsZonesParity.dataPlane?.failedCount !== 0) {
+    errors.push('Azure DNS Zones parity data-plane matrix has failures');
+  }
   if ((dnsZonesParity.controlPlane?.total ?? 0) < 55) {
     errors.push('Azure DNS Zones parity control-plane matrix should exercise at least 55 cases');
+  }
+  if ((dnsZonesParity.dataPlane?.total ?? 0) < 6) {
+    errors.push('Azure DNS Zones parity data-plane matrix should exercise at least 6 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2144,6 +2167,18 @@ if (!dnsZonesParityText) {
   ]) {
     if (!dnsZonesParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure DNS Zones parity E2E missing passing case: ${required}`);
+    }
+  }
+  for (const required of [
+    'local public dns registry resolves updated A record',
+    'local private dns registry resolves linked private zone record',
+    'local private dns registry returns nxdomain for unlinked virtual network',
+    'local private dns registry remains consistent across repeated linked lookups',
+    'local private dns registry returns nxdomain after link delete',
+    'local public dns registry returns nxdomain after delete',
+  ]) {
+    if (!dnsZonesParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
+      errors.push(`Azure DNS Zones parity E2E missing passing data-plane case: ${required}`);
     }
   }
   if (dnsZonesParity.platformMatrix?.skipped === true) {

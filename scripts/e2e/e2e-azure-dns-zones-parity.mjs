@@ -806,16 +806,37 @@ async function runControlPlaneMatrix() {
   });
 
   const failed = cases.filter(item => !item.ok);
+  const dataPlaneCaseNames = new Set([
+    'local public dns registry resolves updated A record',
+    'local private dns registry resolves linked private zone record',
+    'local private dns registry returns nxdomain for unlinked virtual network',
+    'local private dns registry remains consistent across repeated linked lookups',
+    'local private dns registry returns nxdomain after link delete',
+    'local public dns registry returns nxdomain after delete',
+  ]);
+  const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
+  const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
   return {
-    ok: failed.length === 0,
-    total: cases.length,
-    failedCount: failed.length,
-    resourceGroup,
-    publicZoneName,
-    privateZoneName,
-    vnetName,
-    linkName,
-    cases,
+    controlPlane: {
+      ok: failed.length === 0,
+      total: cases.length,
+      failedCount: failed.length,
+      resourceGroup,
+      publicZoneName,
+      privateZoneName,
+      vnetName,
+      linkName,
+      cases,
+    },
+    dataPlane: {
+      ok: dataPlaneFailed.length === 0,
+      total: dataPlaneCases.length,
+      failedCount: dataPlaneFailed.length,
+      publicZoneName,
+      privateZoneName,
+      vnetName,
+      cases: dataPlaneCases,
+    },
   };
 }
 
@@ -875,6 +896,20 @@ function markdown(report) {
   }
 
   lines.push('');
+  lines.push('## Data Plane');
+  lines.push('');
+  lines.push(`- Passed: ${report.dataPlane.total - report.dataPlane.failedCount}/${report.dataPlane.total}`);
+  lines.push(`- Public zone under test: ${report.dataPlane.publicZoneName}`);
+  lines.push(`- Private zone under test: ${report.dataPlane.privateZoneName}`);
+  lines.push(`- Virtual network under test: ${report.dataPlane.vnetName}`);
+  lines.push('');
+  lines.push('| Case | Status | HTTP | Error |');
+  lines.push('|---|---|---:|---|');
+  for (const item of report.dataPlane.cases) {
+    lines.push(`| ${item.name} | ${item.ok ? 'pass' : 'fail'} | ${item.status ?? ''} | ${item.errorCode ?? item.reason ?? item.error ?? ''} |`);
+  }
+
+  lines.push('');
   lines.push('## Platform Matrix');
   lines.push('');
   if (report.platformMatrix.skipped) {
@@ -898,14 +933,15 @@ function markdown(report) {
 
 await mkdir(outRoot, { recursive: true });
 
-const controlPlane = await runControlPlaneMatrix();
+const parity = await runControlPlaneMatrix();
 const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
-  ok: controlPlane.ok && platformMatrix.ok,
+  ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
   scope: 'Azure DNS zones, public and private record sets, private DNS virtual network links, parameter rejection, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure DNS cloudValidated claim.',
-  controlPlane,
+  controlPlane: parity.controlPlane,
+  dataPlane: parity.dataPlane,
   platformMatrix,
 };
 
