@@ -1007,6 +1007,60 @@ export function workflowRunsCollectionRoute(providerRoute) {
   };
 }
 
+export function dataMigrationTaskCollectionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.DataMigration') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'services' || parts[2] !== 'projects' || parts[4] !== 'tasks') return null;
+  return {
+    projectRoute: {
+      ...providerRoute,
+      typePath: `services/${parts[1]}/projects/${parts[3]}`,
+    },
+    serviceName: parts[1],
+    projectName: parts[3],
+  };
+}
+
+export function dataMigrationTaskItemRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.DataMigration') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 6 || parts[0] !== 'services' || parts[2] !== 'projects' || parts[4] !== 'tasks') return null;
+  return {
+    projectRoute: {
+      ...providerRoute,
+      typePath: `services/${parts[1]}/projects/${parts[3]}`,
+    },
+    taskRoute: {
+      ...providerRoute,
+      typePath: `services/${parts[1]}/projects/${parts[3]}/tasks/${parts[5]}`,
+    },
+    serviceName: parts[1],
+    projectName: parts[3],
+    taskName: parts[5],
+  };
+}
+
+export function dataMigrationTaskCommandRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.DataMigration') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (
+    parts.length !== 7
+    || parts[0] !== 'services'
+    || parts[2] !== 'projects'
+    || parts[4] !== 'tasks'
+    || parts[6].toLowerCase() !== 'command'
+  ) return null;
+  return {
+    taskRoute: {
+      ...providerRoute,
+      typePath: `services/${parts[1]}/projects/${parts[3]}/tasks/${parts[5]}`,
+    },
+    serviceName: parts[1],
+    projectName: parts[3],
+    taskName: parts[5],
+  };
+}
+
 export function serverFarmRouteFromId(serverFarmId) {
   const raw = String(serverFarmId ?? '').split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
   const lower = raw.map(segment => segment.toLowerCase());
@@ -1336,6 +1390,7 @@ export function azureNotFoundFor({ method, resourceType, providerRoute, store })
     'Microsoft.Cdn/profiles/afdEndpoints',
     'Microsoft.Cdn/profiles/endpoints',
     'Microsoft.DataMigration/services/projects',
+    'Microsoft.DataMigration/services/projects/tasks',
     'Microsoft.Synapse/workspaces/sqlPools',
   ]);
   const collectionUsesParentNotFound = new Set([

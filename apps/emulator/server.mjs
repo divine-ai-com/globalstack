@@ -27,6 +27,7 @@ const armServer = createArmServer({
   onResourcePut: runtime.syncResource,
   onResourceDelete: runtime.unsyncResource,
   workflowRunner: runtime.workflowRunner,
+  migrationRunner: runtime.migrationRunner,
   metricStore: runtime.metricStore,
 });
 const blobServer = createBlobStorageServer(runtime.storageRouter);

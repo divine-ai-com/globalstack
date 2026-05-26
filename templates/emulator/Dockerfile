@@ -15,6 +15,8 @@ COPY package.json package-lock.json ./
 COPY apps ./apps
 COPY packages ./packages
 
+RUN npm ci --omit=dev
+
 EXPOSE 4566
 
 CMD ["node", "apps/emulator/server.mjs"]

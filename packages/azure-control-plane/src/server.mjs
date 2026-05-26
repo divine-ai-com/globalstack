@@ -60,6 +60,9 @@ import {
   workflowTriggerHistoryItemRoute,
   workflowTriggerReadRoute,
   workflowTriggerRunRoute,
+  dataMigrationTaskCollectionRoute,
+  dataMigrationTaskCommandRoute,
+  dataMigrationTaskItemRoute,
   aksCredentialActionRoute,
   metricAlertStatusRoute,
   metricQueryExtensionRoute,
@@ -234,6 +237,7 @@ export function createArmRequestHandler({
   onResourcePut = null,
   onResourceDelete = null,
   workflowRunner = null,
+  migrationRunner = null,
   metricStore = null,
 } = {}) {
   void persist;
@@ -349,6 +353,13 @@ export function createArmRequestHandler({
         capability,
         resource: result.resource,
       });
+    }
+    if (resourceType === 'Microsoft.DataMigration/services/projects/tasks' && migrationRunner) {
+      const [, serviceName, , projectName, , taskName] = providerRoute.typePath.split('/');
+      const task = migrationRunner.getTask({ serviceName, projectName, taskName });
+      if (!task.error) {
+        result.resource = task.body;
+      }
     }
     const storageCreatedOkTypes = new Set([
       'Microsoft.Storage/storageAccounts/queueServices/queues',
@@ -954,6 +965,85 @@ export function createArmRequestHandler({
           });
         }
 
+        const dataMigrationTaskCommand = dataMigrationTaskCommandRoute(providerRoute);
+        if (dataMigrationTaskCommand && method === 'POST') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          if (!migrationRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No migration runner is configured for local task execution.');
+          }
+          const project = store.getResource({
+            subscriptionId: providerRoute.subscriptionId,
+            resourceGroupName: providerRoute.resourceGroupName,
+            providerNamespace: 'Microsoft.DataMigration',
+            typePath: `services/${dataMigrationTaskCommand.serviceName}/projects/${dataMigrationTaskCommand.projectName}`,
+          });
+          if (!project) {
+            return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
+          }
+          const task = store.getResource(dataMigrationTaskCommand.taskRoute);
+          if (!task) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${dataMigrationTaskCommand.taskRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const body = await readBody(req);
+          const result = await migrationRunner.commandTask({
+            serviceName: dataMigrationTaskCommand.serviceName,
+            projectName: dataMigrationTaskCommand.projectName,
+            taskName: dataMigrationTaskCommand.taskName,
+            body,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, result.status, result.body);
+        }
+
+        const dataMigrationTaskCollection = dataMigrationTaskCollectionRoute(providerRoute);
+        if (dataMigrationTaskCollection && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const project = store.getResource(dataMigrationTaskCollection.projectRoute);
+          if (!project) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${dataMigrationTaskCollection.projectRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!migrationRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No migration runner is configured for local task inspection.');
+          }
+          const result = migrationRunner.listTasks({
+            serviceName: dataMigrationTaskCollection.serviceName,
+            projectName: dataMigrationTaskCollection.projectName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
+        const dataMigrationTaskItem = dataMigrationTaskItemRoute(providerRoute);
+        if (dataMigrationTaskItem && method === 'GET') {
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const project = store.getResource(dataMigrationTaskItem.projectRoute);
+          if (!project) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${dataMigrationTaskItem.projectRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!migrationRunner) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No migration runner is configured for local task inspection.');
+          }
+          const result = migrationRunner.getTask({
+            serviceName: dataMigrationTaskItem.serviceName,
+            projectName: dataMigrationTaskItem.projectName,
+            taskName: dataMigrationTaskItem.taskName,
+          });
+          if (result.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          return sendJson(res, 200, result.body);
+        }
+
         const workflowTriggerInfoRoute = workflowTriggerReadRoute(providerRoute);
         if (workflowTriggerInfoRoute && method === 'GET') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1519,6 +1609,7 @@ export function createArmRequestHandler({
           providerRoute.providerNamespace === 'Microsoft.DataMigration'
           && resourceType.startsWith('Microsoft.DataMigration/services/')
           && resourceType !== 'Microsoft.DataMigration/services/projects'
+          && resourceType !== 'Microsoft.DataMigration/services/projects/tasks'
           && !exactCapabilityForResourceType(resourceType)
         ) {
           return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [

@@ -16,9 +16,16 @@ services:
       GLOBALSTACK_AZURE_TENANT_ID: ${ARM_TENANT_ID:-00000000-0000-0000-0000-000000000000}
       GLOBALSTACK_AZURE_CLIENT_ID: ${ARM_CLIENT_ID:-11111111-1111-1111-1111-111111111111}
       GLOBALSTACK_AZURE_CLIENT_SECRET: ${ARM_CLIENT_SECRET:-globalstack}
+      GLOBALSTACK_POSTGRES_ENDPOINT: postgres://globalstack:globalstack@local-postgres:5432/postgres
+      GLOBALSTACK_MYSQL_ENDPOINT: mysql://globalstack:globalstack@local-mysql:3306/globalstack
       DEBUG: ${DEBUG:-1}
     volumes:
       - ./volume:/var/lib/globalstack
+    depends_on:
+      local-postgres:
+        condition: service_started
+      local-mysql:
+        condition: service_started
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:4566/_globalstack/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 5s
@@ -55,3 +62,30 @@ services:
       - ${LOCAL_TASK_PATH:?LOCAL_TASK_PATH must be exported by run.sh}:/workspace/task:ro
       - ./reports:/workspace/reports
       - ./work:/workspace/work
+
+  local-postgres:
+    image: postgres:16-alpine
+    labels:
+      io.globalstack.owner: globalstack
+      io.globalstack.product: azure-runtime-backend
+      io.globalstack.scope: shipment-runtime
+      io.globalstack.cloud: azure
+      io.globalstack.backend: local-postgres
+    environment:
+      POSTGRES_USER: globalstack
+      POSTGRES_PASSWORD: globalstack
+      POSTGRES_DB: postgres
+
+  local-mysql:
+    image: mysql:8
+    labels:
+      io.globalstack.owner: globalstack
+      io.globalstack.product: azure-runtime-backend
+      io.globalstack.scope: shipment-runtime
+      io.globalstack.cloud: azure
+      io.globalstack.backend: local-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: globalstack-root
+      MYSQL_DATABASE: globalstack
+      MYSQL_USER: globalstack
+      MYSQL_PASSWORD: globalstack

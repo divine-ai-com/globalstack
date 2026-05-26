@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
-import { createMigrationPlanRunner } from '../../packages/azure-data-plane/src/migration-plan-runner.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { physicalDatabaseName } from '../../packages/azure-data-plane/src/relational-backend-manager.mjs';
+import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -36,18 +38,216 @@ function run(command, args, options = {}) {
   });
 }
 
+function runOutput(command, args, options = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(command, args, {
+      cwd: options.cwd ?? root,
+      env: options.env ?? process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    const timeout = setTimeout(() => {
+      child.kill('SIGTERM');
+      resolve({ code: 124, stdout, stderr });
+    }, options.timeoutMs ?? 120000);
+    child.on('error', error => {
+      clearTimeout(timeout);
+      resolve({ code: 127, stdout, stderr: `${stderr}${error.message}` });
+    });
+    child.on('close', code => {
+      clearTimeout(timeout);
+      resolve({ code: code ?? 1, stdout, stderr });
+    });
+  });
+}
+
+async function docker(args, options = {}) {
+  const result = await runOutput('docker', args, options);
+  if (result.code !== 0 && /permission denied|connect to the docker api/i.test(`${result.stderr}\n${result.stdout}`)) {
+    return runOutput('sudo', ['docker', ...args], options);
+  }
+  return result;
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-async function withArmServer(fn) {
-  const server = createArmServer();
+async function sleep(ms) {
+  await new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitFor(fn, { attempts = 40, delayMs = 500, description = 'condition' } = {}) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      await sleep(delayMs);
+    }
+  }
+  throw new Error(`Timed out waiting for ${description}: ${lastError?.message ?? lastError ?? 'unknown error'}`);
+}
+
+async function dockerMappedPort(containerName, internalPort) {
+  const result = await docker(['port', containerName, `${internalPort}/tcp`], { timeoutMs: 10000 });
+  if (result.code !== 0) throw new Error(`failed to inspect mapped port for ${containerName}:${internalPort}: ${result.stderr || result.stdout}`);
+  const line = result.stdout.trim().split('\n').find(Boolean) ?? '';
+  return Number(line.split(':').at(-1));
+}
+
+async function withLocalPostgres(fn) {
+  const suffix = Date.now().toString(36).slice(-8).toLowerCase();
+  const containerName = `globalstack-postgresql-${suffix}`;
+  const runResult = await docker([
+    'run',
+    '-d',
+    '--rm',
+    '--name',
+    containerName,
+    '-p',
+    '127.0.0.1::5432',
+    '-e',
+    'POSTGRES_USER=globalstack',
+    '-e',
+    'POSTGRES_PASSWORD=globalstack',
+    '-e',
+    'POSTGRES_DB=postgres',
+    'postgres:16-alpine',
+  ], { timeoutMs: 180000 });
+  if (runResult.code !== 0) {
+    throw new Error(`failed to start local PostgreSQL backing container: ${runResult.stderr || runResult.stdout}`);
+  }
+
+  try {
+    const hostPort = await dockerMappedPort(containerName, 5432);
+    for (let attempt = 0; attempt < 60; attempt += 1) {
+      const ready = await docker(['exec', containerName, 'pg_isready', '-h', '127.0.0.1', '-U', 'globalstack', '-d', 'postgres'], { timeoutMs: 10000 });
+      if (ready.code === 0) return await fn({ containerName, hostPort });
+      await sleep(1000);
+    }
+    throw new Error('local PostgreSQL backing container did not become ready in time');
+  } finally {
+    await docker(['rm', '-f', containerName], { timeoutMs: 60000 });
+  }
+}
+
+async function withLocalMysql(fn) {
+  const suffix = Date.now().toString(36).slice(-8).toLowerCase();
+  const containerName = `globalstack-mysql-${suffix}`;
+  const runResult = await docker([
+    'run',
+    '-d',
+    '--rm',
+    '--name',
+    containerName,
+    '-p',
+    '127.0.0.1::3306',
+    '-e',
+    'MYSQL_ROOT_PASSWORD=globalstack-root',
+    '-e',
+    'MYSQL_USER=globalstack',
+    '-e',
+    'MYSQL_PASSWORD=globalstack',
+    '-e',
+    'MYSQL_DATABASE=globalstack',
+    'mysql:8',
+  ], { timeoutMs: 240000 });
+  if (runResult.code !== 0) {
+    throw new Error(`failed to start local MySQL backing container: ${runResult.stderr || runResult.stdout}`);
+  }
+
+  try {
+    const hostPort = await dockerMappedPort(containerName, 3306);
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      const ready = await docker(['exec', containerName, 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uglobalstack', '-pglobalstack'], { timeoutMs: 10000 });
+      if (ready.code === 0) return await fn({ containerName, hostPort });
+      await sleep(1000);
+    }
+    throw new Error('local MySQL backing container did not become ready in time');
+  } finally {
+    await docker(['rm', '-f', containerName], { timeoutMs: 60000 });
+  }
+}
+
+async function psql(containerName, sql, options = {}) {
+  const result = await docker([
+    'exec',
+    '-e',
+    `PGPASSWORD=${options.password ?? 'globalstack'}`,
+    containerName,
+    'psql',
+    '-h',
+    '127.0.0.1',
+    '-U',
+    options.user ?? 'globalstack',
+    '-d',
+    options.database ?? 'postgres',
+    '-v',
+    'ON_ERROR_STOP=1',
+    '-tAc',
+    sql,
+  ], { timeoutMs: options.timeoutMs ?? 120000 });
+  if ((options.expectCode ?? 0) === 0 && result.code !== 0) {
+    throw new Error(`psql failed (${result.code}): ${result.stderr || result.stdout}`);
+  }
+  return result;
+}
+
+async function mysql(containerName, sql, options = {}) {
+  const user = options.user ?? 'globalstack';
+  const password = options.password ?? 'globalstack';
+  const args = [
+    'exec',
+    containerName,
+    'mysql',
+    '-h',
+    '127.0.0.1',
+    `-u${user}`,
+    `-p${password}`,
+    '--batch',
+    '--skip-column-names',
+  ];
+  if (options.database) args.push(options.database);
+  args.push('-e', sql);
+  const result = await docker(args, { timeoutMs: options.timeoutMs ?? 120000 });
+  if ((options.expectCode ?? 0) === 0 && result.code !== 0) {
+    throw new Error(`mysql failed (${result.code}): ${result.stderr || result.stdout}`);
+  }
+  return result;
+}
+
+async function withRuntimeArmServer({ postgresPort, mysqlPort }, fn) {
+  const previous = {
+    postgres: process.env.GLOBALSTACK_POSTGRES_ENDPOINT,
+    mysql: process.env.GLOBALSTACK_MYSQL_ENDPOINT,
+  };
+  process.env.GLOBALSTACK_POSTGRES_ENDPOINT = `postgres://globalstack:globalstack@127.0.0.1:${postgresPort}/postgres`;
+  process.env.GLOBALSTACK_MYSQL_ENDPOINT = `mysql://globalstack:globalstack@127.0.0.1:${mysqlPort}/globalstack`;
+  const store = new ResourceStore();
+  const runtime = createEmulatorRuntime({ store });
+  const server = createArmServer({
+    store,
+    onResourcePut: runtime.syncResource,
+    onResourceDelete: runtime.unsyncResource,
+    workflowRunner: runtime.workflowRunner,
+    migrationRunner: runtime.migrationRunner,
+    metricStore: runtime.metricStore,
+  });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
-    return await fn(port);
+    return await fn({ armPort: port, store, runtime });
   } finally {
     await new Promise(resolve => server.close(resolve));
+    if (previous.postgres === undefined) delete process.env.GLOBALSTACK_POSTGRES_ENDPOINT;
+    else process.env.GLOBALSTACK_POSTGRES_ENDPOINT = previous.postgres;
+    if (previous.mysql === undefined) delete process.env.GLOBALSTACK_MYSQL_ENDPOINT;
+    else process.env.GLOBALSTACK_MYSQL_ENDPOINT = previous.mysql;
   }
 }
 
@@ -81,27 +281,47 @@ function errorCode(result) {
   return result.body?.error?.code ?? result.body?.code ?? result.body?.Code ?? null;
 }
 
-function providerPath(resourceGroup, providerNamespace, typePath, apiVersion = '2022-03-30-preview') {
+function providerPath(resourceGroup, providerNamespace, typePath, apiVersion) {
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${providerNamespace}/${typePath}?api-version=${apiVersion}`;
-}
-
-function providerPathWithoutApiVersion(resourceGroup, providerNamespace, typePath) {
-  return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${providerNamespace}/${typePath}`;
 }
 
 function resourceGroupPath(resourceGroup, apiVersion = '2021-04-01') {
   return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}?api-version=${apiVersion}`;
 }
 
-function servicePath(resourceGroup, serviceName, apiVersion = '2022-03-30-preview') {
+function dmsServicePath(resourceGroup, serviceName, apiVersion = '2022-03-30-preview') {
   return providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}`, apiVersion);
 }
 
-function projectPath(resourceGroup, serviceName, projectName, apiVersion = '2022-03-30-preview') {
+function dmsProjectPath(resourceGroup, serviceName, projectName, apiVersion = '2022-03-30-preview') {
   return providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}`, apiVersion);
 }
 
-function serviceBody(overrides = {}) {
+function dmsTaskPath(resourceGroup, serviceName, projectName, taskName, apiVersion = '2022-03-30-preview') {
+  return providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks/${taskName}`, apiVersion);
+}
+
+function dmsTaskCommandPath(resourceGroup, serviceName, projectName, taskName, apiVersion = '2022-03-30-preview') {
+  return providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks/${taskName}/command`, apiVersion);
+}
+
+function postgresServerPath(resourceGroup, serverName, apiVersion = '2023-06-01-preview') {
+  return providerPath(resourceGroup, 'Microsoft.DBforPostgreSQL', `flexibleServers/${serverName}`, apiVersion);
+}
+
+function postgresDatabasePath(resourceGroup, serverName, databaseName, apiVersion = '2023-06-01-preview') {
+  return providerPath(resourceGroup, 'Microsoft.DBforPostgreSQL', `flexibleServers/${serverName}/databases/${databaseName}`, apiVersion);
+}
+
+function mysqlServerPath(resourceGroup, serverName, apiVersion = '2023-12-30') {
+  return providerPath(resourceGroup, 'Microsoft.DBforMySQL', `flexibleServers/${serverName}`, apiVersion);
+}
+
+function mysqlDatabasePath(resourceGroup, serverName, databaseName, apiVersion = '2023-12-30') {
+  return providerPath(resourceGroup, 'Microsoft.DBforMySQL', `flexibleServers/${serverName}/databases/${databaseName}`, apiVersion);
+}
+
+function dmsServiceBody(overrides = {}) {
   return {
     location: 'eastus',
     sku: { name: 'Premium_4vCores', ...(overrides.sku ?? {}) },
@@ -114,12 +334,12 @@ function serviceBody(overrides = {}) {
   };
 }
 
-function projectBody(overrides = {}) {
+function dmsProjectBody(overrides = {}) {
   return {
     location: 'eastus',
     properties: {
-      sourcePlatform: 'SQL',
-      targetPlatform: 'SQLDB',
+      sourcePlatform: 'MySQL',
+      targetPlatform: 'AzureDbForMySql',
       sourceConnectionInfo: { serverName: 'source.local', authentication: 'SqlAuthentication' },
       targetConnectionInfo: { serverName: 'target.local', authentication: 'SqlAuthentication' },
       ...(overrides.properties ?? {}),
@@ -128,41 +348,83 @@ function projectBody(overrides = {}) {
   };
 }
 
-function deploymentBody(serviceName, projectName) {
+function postgresServerBody(overrides = {}) {
+  return {
+    location: 'eastus',
+    sku: { name: 'Standard_B1ms', tier: 'Burstable', ...(overrides.sku ?? {}) },
+    properties: {
+      administratorLogin: 'globalstack',
+      administratorLoginPassword: 'Globalstack1!',
+      version: '16',
+      storage: { storageSizeGB: 32 },
+      backup: { backupRetentionDays: 7, geoRedundantBackup: 'Disabled' },
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => !['properties', 'sku'].includes(key))),
+  };
+}
+
+function postgresDatabaseBody(overrides = {}) {
   return {
     properties: {
-      mode: 'Incremental',
-      template: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '1.0.0.0',
-        resources: [
-          {
-            type: 'Microsoft.DataMigration/services',
-            apiVersion: '2022-03-30-preview',
-            name: serviceName,
-            location: 'eastus',
-            sku: { name: 'Premium_4vCores' },
-            properties: { publicNetworkAccess: 'Enabled' },
-          },
-          {
-            type: 'Microsoft.DataMigration/services/projects',
-            apiVersion: '2022-03-30-preview',
-            name: `${serviceName}/${projectName}`,
-            location: 'eastus',
-            properties: {
-              sourcePlatform: 'SQL',
-              targetPlatform: 'SQLDB',
-              sourceConnectionInfo: { serverName: 'source.local' },
-              targetConnectionInfo: { serverName: 'target.local' },
-            },
-          },
-        ],
-        outputs: {
-          serviceName: { type: 'string', value: serviceName },
-          projectName: { type: 'string', value: projectName },
-        },
-      },
+      charset: 'UTF8',
+      collation: 'en_US.utf8',
+      ...(overrides.properties ?? {}),
     },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
+function mysqlServerBody(overrides = {}) {
+  return {
+    location: 'eastus',
+    sku: { name: 'Standard_B1ms', tier: 'Burstable', ...(overrides.sku ?? {}) },
+    properties: {
+      administratorLogin: 'globalstack',
+      administratorLoginPassword: 'Globalstack1!',
+      version: '8.0.21',
+      storage: { storageSizeGB: 20 },
+      backup: { backupRetentionDays: 7, geoRedundantBackup: 'Disabled' },
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => !['properties', 'sku'].includes(key))),
+  };
+}
+
+function mysqlDatabaseBody(overrides = {}) {
+  return {
+    properties: {
+      charset: 'utf8mb4',
+      collation: 'utf8mb4_0900_ai_ci',
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
+function mysqlConnectionInfo(serverName, databaseName) {
+  return {
+    type: 'MySqlConnectionInfo',
+    dataSource: `${serverName}.mysql.database.azure.com`,
+    serverName,
+    databaseName,
+    authentication: 'SqlAuthentication',
+    port: 3306,
+    userName: 'globalstack',
+    password: 'Globalstack1!',
+  };
+}
+
+function postgresConnectionInfo(serverName, databaseName) {
+  return {
+    type: 'PostgreSqlConnectionInfo',
+    dataSource: `${serverName}.postgres.database.azure.com`,
+    serverName,
+    databaseName,
+    authentication: 'SqlAuthentication',
+    port: 5432,
+    userName: 'globalstack',
+    password: 'Globalstack1!',
   };
 }
 
@@ -170,12 +432,12 @@ async function runControlPlaneMatrix() {
   const cases = [];
   const suffix = Date.now().toString(36).slice(-8).toLowerCase();
   const resourceGroup = `rg-gs-dms-parity-${suffix}`;
-  const missingResourceGroup = `rg-gs-dms-missing-${suffix}`;
   const serviceName = `dms-${suffix}`;
-  const missingServiceName = `dms-missing-${suffix}`;
   const projectName = `proj-${suffix}`;
-  const missingProjectName = `proj-missing-${suffix}`;
-  const migrationRunner = createMigrationPlanRunner();
+  const mysqlServerName = `mysql${suffix}`;
+  const mysqlDatabaseName = `inventory`;
+  const postgresServerName = `pg${suffix}`;
+  const postgresDatabaseName = `warehouse`;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -190,325 +452,215 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async (armPort) => {
-    await record('unauthenticated ARM request is rejected', async () => {
-      const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
-      assert.equal(result.status, 401);
-      assert.equal(errorCode(result), 'InvalidAuthenticationToken');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+  await withLocalPostgres(async ({ containerName: postgresContainer, hostPort: postgresPort }) => {
+    await withLocalMysql(async ({ containerName: mysqlContainer, hostPort: mysqlPort }) => {
+      await withRuntimeArmServer({ postgresPort, mysqlPort }, async ({ armPort }) => {
+        await record('unauthenticated ARM request is rejected', async () => {
+          const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { auth: false });
+          assert.equal(result.status, 401);
+          assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
 
-    await record('malformed bearer token is rejected', async () => {
-      const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { headers: { authorization: 'Token bad' } });
-      assert.equal(result.status, 401);
-      assert.equal(errorCode(result), 'InvalidAuthenticationToken');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+        await record('resource group create succeeds', async () => {
+          const result = await httpJson(armPort, 'PUT', resourceGroupPath(resourceGroup), { location: 'eastus', tags: { purpose: 'globalstack-dms-parity' } });
+          assert.equal(result.status, 201);
+          return { status: result.status };
+        });
 
-    await record('wrong bearer token is rejected', async () => {
-      const result = await httpJson(armPort, 'GET', resourceGroupPath(resourceGroup), undefined, { headers: { authorization: 'Bearer wrong-token' } });
-      assert.equal(result.status, 401);
-      assert.equal(errorCode(result), 'InvalidAuthenticationToken');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+        await record('migration service and project create succeed', async () => {
+          const service = await httpJson(armPort, 'PUT', dmsServicePath(resourceGroup, serviceName), dmsServiceBody());
+          assert.equal(service.status, 201);
+          const project = await httpJson(armPort, 'PUT', dmsProjectPath(resourceGroup, serviceName, projectName), dmsProjectBody());
+          assert.equal(project.status, 201);
+          assert.equal(project.body.properties.migrationState, 'Ready');
+          return { status: project.status };
+        });
 
-    await record('subscription mismatch is rejected', async () => {
-      const path = `/subscriptions/99999999-9999-9999-9999-999999999999/resourceGroups/${resourceGroup}?api-version=2021-04-01`;
-      const result = await httpJson(armPort, 'GET', path);
-      assert.equal(result.status, 403);
-      assert.equal(errorCode(result), 'AuthorizationFailed');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+        await record('mysql and postgres flexible servers and databases materialize real local databases', async () => {
+          const mysqlServer = await httpJson(armPort, 'PUT', mysqlServerPath(resourceGroup, mysqlServerName), mysqlServerBody());
+          assert.equal(mysqlServer.status, 201);
+          const mysqlDatabase = await httpJson(armPort, 'PUT', mysqlDatabasePath(resourceGroup, mysqlServerName, mysqlDatabaseName), mysqlDatabaseBody());
+          assert.equal(mysqlDatabase.status, 201);
+          const postgresServer = await httpJson(armPort, 'PUT', postgresServerPath(resourceGroup, postgresServerName), postgresServerBody());
+          assert.equal(postgresServer.status, 201);
+          const postgresDatabase = await httpJson(armPort, 'PUT', postgresDatabasePath(resourceGroup, postgresServerName, postgresDatabaseName), postgresDatabaseBody());
+          assert.equal(postgresDatabase.status, 201);
 
-    await record('missing api-version is rejected', async () => {
-      const result = await httpJson(armPort, 'PUT', providerPathWithoutApiVersion(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}`), serviceBody());
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'MissingApiVersionParameter');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+          await waitFor(
+            () => mysql(mysqlContainer, 'SELECT 1', { database: physicalDatabaseName('mysql', mysqlServerName, mysqlDatabaseName) }),
+            { description: 'MySQL database provisioning' },
+          );
+          await waitFor(
+            () => psql(postgresContainer, 'SELECT 1', { database: physicalDatabaseName('postgres', postgresServerName, postgresDatabaseName) }),
+            { description: 'PostgreSQL database provisioning' },
+          );
 
-    await record('migration service create requires an existing resource group', async () => {
-      const result = await httpJson(armPort, 'PUT', servicePath(missingResourceGroup, serviceName), serviceBody());
-      assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'ResourceGroupNotFound');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+          await mysql(mysqlContainer, 'CREATE TABLE telemetry (id INT PRIMARY KEY, payload JSON NOT NULL)', {
+            database: physicalDatabaseName('mysql', mysqlServerName, mysqlDatabaseName),
+          });
+          await mysql(mysqlContainer, "INSERT INTO telemetry (id, payload) VALUES (1, JSON_OBJECT('robot', 'arm-1', 'reading', 42))", {
+            database: physicalDatabaseName('mysql', mysqlServerName, mysqlDatabaseName),
+          });
+          await psql(postgresContainer, 'CREATE TABLE telemetry (id integer PRIMARY KEY, payload jsonb NOT NULL)', {
+            database: physicalDatabaseName('postgres', postgresServerName, postgresDatabaseName),
+          });
+          await psql(postgresContainer, "INSERT INTO telemetry (id, payload) VALUES (1, '{\"robot\":\"arm-2\",\"reading\":43}'::jsonb)", {
+            database: physicalDatabaseName('postgres', postgresServerName, postgresDatabaseName),
+          });
 
-    await record('resource group create succeeds', async () => {
-      const result = await httpJson(armPort, 'PUT', resourceGroupPath(resourceGroup), { location: 'eastus', tags: { purpose: 'globalstack-dms-parity' } });
-      assert.equal(result.status, 201);
-      return { status: result.status };
-    });
+          return { status: 201 };
+        });
 
-    await record('migration service collection list is empty before create', async () => {
-      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', 'services'));
-      assert.equal(result.status, 200);
-      assert.deepEqual(result.body.value, []);
-      return { status: result.status, count: result.body.value.length };
-    });
+        await record('unsupported DMS task type is rejected', async () => {
+          const result = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, `unsupported-${suffix}`), {
+            properties: {
+              taskType: 'Validate.MongoDb',
+              input: {},
+            },
+          });
+          assert.equal(result.status, 400);
+          assert.equal(errorCode(result), 'InvalidTaskProperties');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
 
-    await record('migration service delete missing returns no content', async () => {
-      const result = await httpJson(armPort, 'DELETE', servicePath(resourceGroup, missingServiceName));
-      assert.equal(result.status, 204);
-      return { status: result.status };
-    });
+        await record('mysql source connect task queues, redacts password, and completes against real backend', async () => {
+          const taskName = `connect-mysql-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'ConnectToSource.MySql',
+              input: {
+                sourceConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+                targetPlatform: 'AzureDbForMySql',
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+          assert.equal(created.body.properties.state, 'Queued');
+          assert.equal(created.body.properties.input.sourceConnectionInfo.password, undefined);
 
-    await record('migration project create before service reports missing parent', async () => {
-      const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, missingServiceName, projectName), projectBody());
-      assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'ParentResourceNotFound');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'mysql source connect task completion' });
 
-    await record('migration project list before service reports missing parent', async () => {
-      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${missingServiceName}/projects`));
-      assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'ParentResourceNotFound');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
+          assert.ok(completed.body.properties.output[0].databases.includes(physicalDatabaseName('mysql', mysqlServerName, mysqlDatabaseName)));
+          assert.ok(completed.body.properties.output[0].sourceServerVersion);
+          return { status: completed.status, state: completed.body.properties.state };
+        });
 
-    for (const [name, pathName, body, expectedCode] of [
-      ['migration service empty body is rejected', serviceName, {}, 'LocationRequired'],
-      ['migration service invalid location is rejected', serviceName, serviceBody({ location: 'globalstack-invalid-location' }), 'InvalidResourceLocation'],
-      ['migration service invalid name is rejected', `bad-${suffix}-`, serviceBody(), 'InvalidResourceName'],
-      ['migration service invalid sku is rejected', serviceName, serviceBody({ sku: { name: 'GlobalStack_InvalidSku_For_Conformance' } }), 'InvalidSku'],
-      ['migration service invalid public access is rejected', serviceName, serviceBody({ properties: { publicNetworkAccess: 'PrivateOnly' } }), 'InvalidParameterValue'],
-    ]) {
-      await record(name, async () => {
-        const result = await httpJson(armPort, 'PUT', servicePath(resourceGroup, pathName), body);
-        assert.equal(result.status, 400);
-        assert.equal(errorCode(result), expectedCode);
-        return { status: result.status, errorCode: errorCode(result) };
+        await record('postgres target connect task completes against real backend', async () => {
+          const taskName = `connect-postgres-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'ConnectToTarget.AzureDbForPostgreSql.Sync',
+              input: {
+                targetConnectionInfo: postgresConnectionInfo(postgresServerName, postgresDatabaseName),
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'postgres target connect task completion' });
+
+          assert.ok(completed.body.properties.output[0].targetServerVersion);
+          return { status: completed.status, state: completed.body.properties.state };
+        });
+
+        await record('mysql user tables task returns actual tables from real backend', async () => {
+          const taskName = `tables-mysql-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'GetUserTables.MySql',
+              input: {
+                sourceConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+                selectedDatabases: [mysqlDatabaseName],
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'mysql get-user-tables task completion' });
+
+          const tables = completed.body.properties.output[0].tables;
+          assert.ok(tables.some(item => item.tableName === 'telemetry'));
+          return { status: completed.status, state: completed.body.properties.state, tableCount: tables.length };
+        });
+
+        await record('postgres user tables task returns actual tables from real backend', async () => {
+          const taskName = `tables-postgres-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'GetUserTables.PostgreSql',
+              input: {
+                sourceConnectionInfo: postgresConnectionInfo(postgresServerName, postgresDatabaseName),
+                selectedDatabases: [postgresDatabaseName],
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'postgres get-user-tables task completion' });
+
+          const tables = completed.body.properties.output[0].tables;
+          assert.ok(tables.some(item => item.tableName === 'telemetry'));
+          return { status: completed.status, state: completed.body.properties.state, tableCount: tables.length };
+        });
+
+        await record('task collection lists runtime-backed tasks with current state', async () => {
+          const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks`, '2022-03-30-preview'));
+          assert.equal(result.status, 200);
+          assert.equal(result.body.value.length, 4);
+          assert.ok(result.body.value.every(item => ['Queued', 'Running', 'Completed', 'Failed'].includes(item.properties.state)));
+          return { status: result.status, count: result.body.value.length };
+        });
+
+        await record('supported task command route completes against an existing task resource', async () => {
+          const result = await httpJson(armPort, 'POST', dmsTaskCommandPath(resourceGroup, serviceName, projectName, `tables-postgres-${suffix}`), {
+            commandType: 'Migrate.Sync.Complete.Database',
+            input: { databaseName: postgresDatabaseName },
+          });
+          assert.equal(result.status, 200);
+          assert.equal(result.body.state, 'Completed');
+          return { status: result.status, state: result.body.state };
+        });
+
+        await record('unsupported service worker route still fails closed', async () => {
+          const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/addWorker`, '2022-03-30-preview'), {});
+          assert.equal(result.status, 501);
+          assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
       });
-    }
-
-    await record('migration service create succeeds', async () => {
-      const result = await httpJson(armPort, 'PUT', servicePath(resourceGroup, serviceName), serviceBody());
-      assert.equal(result.status, 201);
-      assert.equal(result.body.properties.provisioningState, 'Succeeded');
-      return { status: result.status, provisioningState: result.body.properties.provisioningState };
-    });
-
-    await record('migration service get succeeds', async () => {
-      const result = await httpJson(armPort, 'GET', servicePath(resourceGroup, serviceName));
-      assert.equal(result.status, 200);
-      assert.equal(result.body.name, serviceName);
-      return { status: result.status };
-    });
-
-    await record('migration service update can disable public access', async () => {
-      const result = await httpJson(armPort, 'PUT', servicePath(resourceGroup, serviceName), serviceBody({ properties: { publicNetworkAccess: 'Disabled' } }));
-      assert.equal(result.status, 200);
-      assert.equal(result.body.properties.publicNetworkAccess, 'Disabled');
-      return { status: result.status };
-    });
-
-    await record('migration service list includes created resource', async () => {
-      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', 'services'));
-      assert.equal(result.status, 200);
-      assert.ok(result.body.value.some(item => item.name === serviceName));
-      return { status: result.status, count: result.body.value.length };
-    });
-
-    for (const [name, pathName, body, expectedCode] of [
-      ['migration project invalid name is rejected', `bad-${suffix}-`, projectBody(), 'InvalidResourceName'],
-      ['migration project missing source platform is rejected', projectName, projectBody({ properties: { sourcePlatform: undefined } }), 'InvalidProjectProperties'],
-      ['migration project invalid source platform is rejected', projectName, projectBody({ properties: { sourcePlatform: 'Oracle' } }), 'InvalidProjectProperties'],
-      ['migration project invalid target platform is rejected', projectName, projectBody({ properties: { targetPlatform: 'Oracle' } }), 'InvalidProjectProperties'],
-      ['migration project invalid source connection shape is rejected', projectName, projectBody({ properties: { sourceConnectionInfo: 'source' } }), 'InvalidProjectProperties'],
-    ]) {
-      await record(name, async () => {
-        const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, pathName), body);
-        assert.equal(result.status, 400);
-        assert.equal(errorCode(result), expectedCode);
-        return { status: result.status, errorCode: errorCode(result) };
-      });
-    }
-
-    await record('migration project collection list is empty before create', async () => {
-      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects`));
-      assert.equal(result.status, 200);
-      assert.deepEqual(result.body.value, []);
-      return { status: result.status, count: result.body.value.length };
-    });
-
-    await record('migration project delete missing returns no content', async () => {
-      const result = await httpJson(armPort, 'DELETE', projectPath(resourceGroup, serviceName, missingProjectName));
-      assert.equal(result.status, 204);
-      return { status: result.status };
-    });
-
-    await record('migration project create succeeds', async () => {
-      const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, projectName), projectBody());
-      assert.equal(result.status, 201);
-      assert.equal(result.body.properties.migrationState, 'Ready');
-      migrationRunner.registerProject({ serviceName, projectName, properties: result.body.properties });
-      return { status: result.status, migrationState: result.body.properties.migrationState };
-    });
-
-    await record('local migration runner missing project is not found', async () => {
-      const result = migrationRunner.start({
-        serviceName,
-        projectName: missingProjectName,
-        sourceDatabase: 'sourceDb',
-        targetDatabase: 'targetDb',
-      });
-      assert.equal(result.error.status, 404);
-      assert.equal(result.error.code, 'ProjectNotFound');
-      return { status: result.error.status, errorCode: result.error.code };
-    });
-
-    await record('local migration runner rejects incomplete task', async () => {
-      const result = migrationRunner.start({
-        serviceName,
-        projectName,
-        sourceDatabase: 'sourceDb',
-      });
-      assert.equal(result.error.status, 400);
-      assert.equal(result.error.code, 'InvalidMigrationTask');
-      return { status: result.error.status, errorCode: result.error.code };
-    });
-
-    await record('local migration runner starts assessment task', async () => {
-      const result = migrationRunner.start({
-        serviceName,
-        projectName,
-        taskType: 'Assessment',
-        sourceDatabase: 'sourceDb',
-        targetDatabase: 'targetDb',
-      });
-      assert.equal(result.status, 202);
-      assert.equal(result.body.status, 'Running');
-      const fetched = migrationRunner.get(result.body.id);
-      assert.equal(fetched.status, 200);
-      assert.equal(fetched.body.taskType, 'Assessment');
-      return { status: result.status, runId: result.body.id, runStatus: result.body.status };
-    });
-
-    await record('local migration runner completes task and rejects duplicate completion', async () => {
-      const started = migrationRunner.start({
-        serviceName,
-        projectName,
-        taskType: 'Migration',
-        sourceDatabase: 'sourceDb',
-        targetDatabase: 'targetDb',
-      });
-      assert.equal(started.status, 202);
-      const completed = migrationRunner.complete(started.body.id);
-      assert.equal(completed.status, 200);
-      assert.equal(completed.body.status, 'Succeeded');
-      const duplicate = migrationRunner.complete(started.body.id);
-      assert.equal(duplicate.error.status, 409);
-      assert.equal(duplicate.error.code, 'InvalidMigrationRunState');
-      return { status: completed.status, runId: started.body.id, runStatus: completed.body.status };
-    });
-
-    await record('local migration runner repeated completed task status remains stable across repeated reads', async () => {
-      const started = migrationRunner.start({
-        serviceName,
-        projectName,
-        taskType: 'Assessment',
-        sourceDatabase: 'sourceDb',
-        targetDatabase: 'targetDb',
-      });
-      assert.equal(started.status, 202);
-      const completed = migrationRunner.complete(started.body.id);
-      assert.equal(completed.status, 200);
-      const first = migrationRunner.get(started.body.id);
-      assert.equal(first.status, 200);
-      const second = migrationRunner.get(started.body.id);
-      assert.equal(second.status, 200);
-      assert.equal(first.body.status, 'Succeeded');
-      assert.deepEqual(second.body, first.body);
-      return { status: second.status, runId: started.body.id, runStatus: second.body.status };
-    });
-
-    await record('migration project get succeeds', async () => {
-      const result = await httpJson(armPort, 'GET', projectPath(resourceGroup, serviceName, projectName));
-      assert.equal(result.status, 200);
-      assert.equal(result.body.name, `${serviceName}/${projectName}`);
-      return { status: result.status };
-    });
-
-    await record('migration project update can change target platform', async () => {
-      const result = await httpJson(armPort, 'PUT', projectPath(resourceGroup, serviceName, projectName), projectBody({ properties: { sourcePlatform: 'MySQL', targetPlatform: 'AzureDbForPostgreSql' } }));
-      assert.equal(result.status, 200);
-      assert.equal(result.body.properties.targetPlatform, 'AzureDbForPostgreSql');
-      return { status: result.status };
-    });
-
-    await record('migration project list includes created resource', async () => {
-      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects`));
-      assert.equal(result.status, 200);
-      assert.ok(result.body.value.some(item => item.name === `${serviceName}/${projectName}`));
-      return { status: result.status, count: result.body.value.length };
-    });
-
-    for (const [name, method, path] of [
-      ['unsupported service add worker action fails closed', 'POST', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/addWorker`)],
-      ['unsupported service check status action fails closed', 'POST', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/checkStatus`)],
-      ['unsupported project task route fails closed', 'PUT', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks/task-${suffix}`)],
-    ]) {
-      await record(name, async () => {
-        const result = await httpJson(armPort, method, path, {});
-        assert.equal(result.status, 501);
-        assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
-        return { status: result.status, errorCode: errorCode(result) };
-      });
-    }
-
-    await record('ARM template deployment can create migration service and project', async () => {
-      const deploymentName = `dms-deploy-${suffix}`;
-      const deploymentService = `dms-deploy-${suffix}`;
-      const deploymentProject = `proj-deploy-${suffix}`;
-      const result = await httpJson(
-        armPort,
-        'PUT',
-        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}?api-version=2022-09-01`,
-        deploymentBody(deploymentService, deploymentProject),
-      );
-      assert.equal(result.status, 201);
-      assert.equal(result.body.properties.provisioningState, 'Succeeded');
-      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/services/${deploymentService}`)));
-      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/services/${deploymentService}/projects/${deploymentProject}`)));
-      return { status: result.status, stepCount: result.body.properties.globalstackDeploymentSteps.length };
-    });
-
-    await record('migration project delete succeeds', async () => {
-      const result = await httpJson(armPort, 'DELETE', projectPath(resourceGroup, serviceName, projectName));
-      assert.equal(result.status, 200);
-      migrationRunner.unregisterProject({ serviceName, projectName });
-      return { status: result.status };
-    });
-
-    await record('migration project get after delete is not found', async () => {
-      const result = await httpJson(armPort, 'GET', projectPath(resourceGroup, serviceName, projectName));
-      assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'ResourceNotFound');
-      return { status: result.status, errorCode: errorCode(result) };
-    });
-
-    await record('migration service delete succeeds', async () => {
-      const result = await httpJson(armPort, 'DELETE', servicePath(resourceGroup, serviceName));
-      assert.equal(result.status, 200);
-      return { status: result.status };
-    });
-
-    await record('migration service get after delete is not found', async () => {
-      const result = await httpJson(armPort, 'GET', servicePath(resourceGroup, serviceName));
-      assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'ResourceNotFound');
-      return { status: result.status, errorCode: errorCode(result) };
     });
   });
 
   const failed = cases.filter(item => !item.ok);
   const dataPlaneCaseNames = new Set([
-    'local migration runner missing project is not found',
-    'local migration runner rejects incomplete task',
-    'local migration runner starts assessment task',
-    'local migration runner completes task and rejects duplicate completion',
-    'local migration runner repeated completed task status remains stable across repeated reads',
+    'mysql and postgres flexible servers and databases materialize real local databases',
+    'mysql source connect task queues, redacts password, and completes against real backend',
+    'postgres target connect task completes against real backend',
+    'mysql user tables task returns actual tables from real backend',
+    'postgres user tables task returns actual tables from real backend',
+    'task collection lists runtime-backed tasks with current state',
+    'supported task command route completes against an existing task resource',
   ]);
   const dataPlaneCases = cases.filter(item => dataPlaneCaseNames.has(item.name));
   const dataPlaneFailed = dataPlaneCases.filter(item => !item.ok);
@@ -599,7 +751,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for Database Migration Service and project ARM lifecycle, bounded local migration task state checks, stricter migration-plan metadata rejection, unsupported child/action routes failing closed, ARM-template deployment path, and all-platform runner deployment paths. It does not mark live migration execution, CDC, schema conversion, network tunnel behavior, source/target authentication, full task state machines, retry timing, or exact Azure DMS runtime behavior as cloudValidated.');
+  lines.push('This run proves local GlobalStack handling for Database Migration Service, project, and task ARM lifecycle; runtime-backed MySQL/PostgreSQL connection validation; runtime-backed user-table inspection; command routing on task resources; local relational backend provisioning from PostgreSQL/MySQL flexible server database resources; unsupported child/action routes failing closed; and all-platform runner deployment paths. It does not yet prove live CDC, online cutover semantics, schema conversion, network tunnel behavior, or full Azure DMS runtime parity.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -611,8 +763,8 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Database Migration Service and project ARM lifecycle, bounded local migration task state checks, validation, unsupported route fail-closed checks, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
-  claimBoundary: 'Local parity evidence for the enumerated cases only; not a full Azure DMS cloudValidated claim.',
+  scope: 'Azure Database Migration Service ARM lifecycle plus runtime-backed DMS task execution against local MySQL/PostgreSQL backends.',
+  claimBoundary: 'Local parity evidence for the enumerated DMS task types and lifecycle cases only; not a full Azure DMS cloudValidated claim.',
   controlPlane,
   dataPlane: controlPlane.dataPlane,
   platformMatrix,

@@ -215,6 +215,18 @@ function validateDataMigrationName(resourceType, providerRoute) {
     }
   }
 
+  if (resourceType === 'Microsoft.DataMigration/services/projects/tasks') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'tasks');
+    if (name.includes('{')) return null;
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,78}[A-Za-z0-9]$/.test(name)) {
+      return invalidDataMigrationName(
+        resourceType,
+        name,
+        'Task names must be 2 through 80 characters, use alphanumerics, periods, underscores, and hyphens, and not start or end with punctuation.',
+      );
+    }
+  }
+
   return null;
 }
 
@@ -1043,6 +1055,28 @@ function validateDataMigrationPayload(resourceType, body) {
     }
     if (Object.hasOwn(properties, 'targetConnectionInfo') && typeof properties.targetConnectionInfo !== 'object') {
       return envelopedError(400, 'InvalidProjectProperties', 'Migration project targetConnectionInfo must be an object when provided.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.DataMigration/services/projects/tasks') {
+    const properties = body.properties ?? {};
+    const supportedTaskTypes = new Set([
+      'ConnectToSource.MySql',
+      'ConnectToSource.PostgreSql.Sync',
+      'ConnectToTarget.AzureDbForMySql',
+      'ConnectToTarget.AzureDbForPostgreSql.Sync',
+      'GetUserTables.MySql',
+      'GetUserTables.PostgreSql',
+    ]);
+    if (typeof properties.taskType !== 'string' || !supportedTaskTypes.has(properties.taskType)) {
+      return envelopedError(
+        400,
+        'InvalidTaskProperties',
+        'Migration task properties.taskType must be one of ConnectToSource.MySql, ConnectToSource.PostgreSql.Sync, ConnectToTarget.AzureDbForMySql, ConnectToTarget.AzureDbForPostgreSql.Sync, GetUserTables.MySql, or GetUserTables.PostgreSql.',
+      );
+    }
+    if (properties.input !== undefined && (typeof properties.input !== 'object' || Array.isArray(properties.input) || !properties.input)) {
+      return envelopedError(400, 'InvalidTaskProperties', 'Migration task properties.input must be an object when provided.');
     }
   }
 

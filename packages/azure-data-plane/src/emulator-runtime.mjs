@@ -9,7 +9,9 @@ import { createFunctionsRouter } from './functions-router.mjs';
 import { createKubernetesRouter } from './kubernetes-router.mjs';
 import { createKeyVaultRouter } from './key-vault-router.mjs';
 import { createMetricStore } from './metric-store.mjs';
+import { createMigrationPlanRunner } from './migration-plan-runner.mjs';
 import { createNetworkModel } from './network-model.mjs';
+import { createRelationalBackendManager } from './relational-backend-manager.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
 import { createWafEvaluator } from './waf-evaluator.mjs';
@@ -122,6 +124,14 @@ function zoneNameFromId(id) {
   return index >= 0 ? parts[index + 1] ?? '' : '';
 }
 
+function logAsyncRuntimeFailure(surface, error) {
+  console.error('[globalstack:azure-data-plane] async runtime reconciliation failed', {
+    surface,
+    message: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : undefined,
+  });
+}
+
 export function createEmulatorRuntime({ store }) {
   const storageRouter = createStorageDataPlaneRouter();
   const appConfigurationRouter = createAppConfigurationRouter();
@@ -132,6 +142,8 @@ export function createEmulatorRuntime({ store }) {
   const dnsRegistry = createDnsRegistry();
   const networkModel = createNetworkModel();
   const metricStore = createMetricStore();
+  const relationalBackends = createRelationalBackendManager();
+  const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
   const activityLogStore = createActivityLogStore();
@@ -563,6 +575,48 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers') {
+      relationalBackends.registerServer({
+        engine: 'postgres',
+        serverName: resource.name,
+        fqdn: resource.properties?.fullyQualifiedDomainName,
+        administratorLogin: resource.properties?.administratorLogin ?? null,
+        administratorLoginPassword: resource.properties?.administratorLoginPassword ?? null,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
+      const [, serverName, , databaseName] = providerRoute.typePath.split('/');
+      void relationalBackends.ensureDatabase({
+        engine: 'postgres',
+        serverName,
+        databaseName,
+      }).catch(error => logAsyncRuntimeFailure(`postgres-database:${serverName}/${databaseName}`, error));
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforMySQL/flexibleServers') {
+      relationalBackends.registerServer({
+        engine: 'mysql',
+        serverName: resource.name,
+        fqdn: resource.properties?.fullyQualifiedDomainName,
+        administratorLogin: resource.properties?.administratorLogin ?? null,
+        administratorLoginPassword: resource.properties?.administratorLoginPassword ?? null,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
+      const [, serverName, , databaseName] = providerRoute.typePath.split('/');
+      void relationalBackends.ensureDatabase({
+        engine: 'mysql',
+        serverName,
+        databaseName,
+      }).catch(error => logAsyncRuntimeFailure(`mysql-database:${serverName}/${databaseName}`, error));
+      return;
+    }
+
     if (resourceType === 'Microsoft.ContainerService/managedClusters') {
       kubernetesRouter.registerCluster(resource);
       return;
@@ -581,6 +635,29 @@ export function createEmulatorRuntime({ store }) {
     if (resourceType === 'Microsoft.Logic/workflows') {
       workflowRunner.registerWorkflow({
         workflowName: resource.name,
+        properties: resource.properties,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DataMigration/services/projects') {
+      const [, serviceName, , projectName] = providerRoute.typePath.split('/');
+      migrationRunner.registerProject({
+        serviceName,
+        projectName,
+        properties: resource.properties,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DataMigration/services/projects/tasks') {
+      const [, serviceName, , projectName, , taskName] = providerRoute.typePath.split('/');
+      migrationRunner.registerTask({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        serviceName,
+        projectName,
+        taskName,
         properties: resource.properties,
       });
       return;
@@ -821,6 +898,44 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers') {
+      relationalBackends.unregisterServer({
+        engine: 'postgres',
+        serverName: resource?.name ?? providerRoute.typePath.split('/')[1],
+        fqdn: resource?.properties?.fullyQualifiedDomainName ?? null,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
+      const [, serverName, , databaseName] = providerRoute.typePath.split('/');
+      void relationalBackends.dropDatabase({
+        engine: 'postgres',
+        serverName,
+        databaseName,
+      }).catch(error => logAsyncRuntimeFailure(`drop-postgres-database:${serverName}/${databaseName}`, error));
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforMySQL/flexibleServers') {
+      relationalBackends.unregisterServer({
+        engine: 'mysql',
+        serverName: resource?.name ?? providerRoute.typePath.split('/')[1],
+        fqdn: resource?.properties?.fullyQualifiedDomainName ?? null,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DBforMySQL/flexibleServers/databases') {
+      const [, serverName, , databaseName] = providerRoute.typePath.split('/');
+      void relationalBackends.dropDatabase({
+        engine: 'mysql',
+        serverName,
+        databaseName,
+      }).catch(error => logAsyncRuntimeFailure(`drop-mysql-database:${serverName}/${databaseName}`, error));
+      return;
+    }
+
     if (resourceType === 'Microsoft.ContainerService/managedClusters') {
       kubernetesRouter.unregisterCluster(resource ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -838,6 +953,25 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Logic/workflows') {
       workflowRunner.unregisterWorkflow(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DataMigration/services/projects') {
+      const [, serviceName, , projectName] = providerRoute.typePath.split('/');
+      migrationRunner.unregisterProject({
+        serviceName,
+        projectName,
+      });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.DataMigration/services/projects/tasks') {
+      const [, serviceName, , projectName, , taskName] = providerRoute.typePath.split('/');
+      migrationRunner.unregisterTask({
+        serviceName,
+        projectName,
+        taskName,
+      });
       return;
     }
 
@@ -1019,6 +1153,8 @@ export function createEmulatorRuntime({ store }) {
     kubernetesRouter,
     keyVaultRouter,
     workflowRunner,
+    migrationRunner,
+    relationalBackends,
     serviceDiscoveryRegistry,
     activityLogStore,
     dnsRegistry,

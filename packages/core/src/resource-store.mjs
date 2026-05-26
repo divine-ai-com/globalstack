@@ -547,6 +547,17 @@ export class ResourceStore {
               updatedAt: nowIso(),
             }
           : {}),
+        ...(type === 'Microsoft.DataMigration/services/projects/tasks'
+          ? {
+              taskType: body.properties?.taskType ?? existing?.properties?.taskType ?? null,
+              state: existing?.properties?.state ?? 'Queued',
+              output: existing?.properties?.output ?? [],
+              errors: existing?.properties?.errors ?? [],
+              commands: existing?.properties?.commands ?? [],
+              createdAt: existing?.properties?.createdAt ?? nowIso(),
+              updatedAt: nowIso(),
+            }
+          : {}),
         ...(type === 'Microsoft.App/managedEnvironments'
           ? {
               provisioningState: existing?.properties?.provisioningState ?? 'Succeeded',
