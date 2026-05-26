@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-26T10:47:46.936Z
+Generated: 2026-05-26T13:15:08.345Z
 
 ## Guardrails
 
@@ -20,6 +20,21 @@ Generated: 2026-05-26T10:47:46.936Z
 Method:
 - Overall program estimate is derived from roadmap status only: `complete = 100%`, `partial = 55%`, `not-started = 5%`, averaged across all services and dimensions.
 - Service cluster estimates start from the same status-derived base, then add bounded evidence bonuses for a started local facade, started provider behavior, started data-plane behavior, and a passing parity pack with full platform matrix when present.
+
+## Stress Verification Snapshot
+
+- Source: `dist/complex-pulumi-bundles/latest-results.json`
+- Generated: 2026-05-26T13:12:53.369Z
+- Bundles in latest adversarial wave: 5
+- Passing bundles in latest adversarial wave: 5/5
+
+| Bundle | Scenario | Overall | Final Stage |
+|---|---|---|---|
+| Pr91231 | multiregion-aks-promotion-fabric | PASS | destroy |
+| Pr91232 | governed-synapse-settlement-mesh | PASS | destroy |
+| Pr91233 | migration-cutover-control-room | PASS | destroy |
+| Pr91234 | industrial-telemetry-response-thread | PASS | destroy |
+| Pr91235 | edge-resilience-operations-fabric | PASS | destroy |
 
 ## Cross-Cutting Pending Backlog
 

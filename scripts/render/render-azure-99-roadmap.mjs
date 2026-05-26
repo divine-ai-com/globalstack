@@ -8,6 +8,7 @@ const checklistPath = join(outRoot, 'azure-99-parity-checklist.json');
 const outJsonPath = join(outRoot, 'azure-99-roadmap.json');
 const outMdPath = join(outRoot, 'azure-99-roadmap.md');
 const distRoot = join(root, 'dist', 'e2e');
+const complexBundleSummaryPath = join(root, 'dist', 'complex-pulumi-bundles', 'latest-results.json');
 
 const waveDefinitions = [
   {
@@ -308,6 +309,27 @@ function serviceEstimate(service, parityEvidence = null) {
   return Math.min(99, round1(serviceEstimateBase(service) + serviceEstimateBonus(service, parityEvidence)));
 }
 
+async function loadStressVerificationSnapshot() {
+  try {
+    const raw = JSON.parse(await readFile(complexBundleSummaryPath, 'utf8'));
+    const results = (raw.results ?? []).map((result) => ({
+      prId: result.prId,
+      scenarioId: result.scenarioId,
+      overallStatus: result.run?.report?.overall_status ?? 'UNKNOWN',
+      finalStage: result.run?.report?.final_stage ?? 'unknown',
+    }));
+    return {
+      source: 'dist/complex-pulumi-bundles/latest-results.json',
+      generatedAt: raw.generatedAt ?? null,
+      total: results.length,
+      passCount: results.filter((item) => item.overallStatus === 'PASS').length,
+      results,
+    };
+  } catch {
+    return null;
+  }
+}
+
 function programEstimate(services) {
   if (services.length === 0) return 0;
   const total = services.reduce((sum, service) => sum + serviceEstimateBase(service), 0);
@@ -426,13 +448,36 @@ function markdown(doc) {
     '- Overall program estimate is derived from roadmap status only: `complete = 100%`, `partial = 55%`, `not-started = 5%`, averaged across all services and dimensions.',
     '- Service cluster estimates start from the same status-derived base, then add bounded evidence bonuses for a started local facade, started provider behavior, started data-plane behavior, and a passing parity pack with full platform matrix when present.',
     '',
+  ];
+
+  if (doc.stressVerificationSnapshot) {
+    lines.push(
+      '## Stress Verification Snapshot',
+      '',
+      `- Source: \`${doc.stressVerificationSnapshot.source}\``,
+      `- Generated: ${doc.stressVerificationSnapshot.generatedAt ?? 'unknown'}`,
+      `- Bundles in latest adversarial wave: ${doc.stressVerificationSnapshot.total}`,
+      `- Passing bundles in latest adversarial wave: ${doc.stressVerificationSnapshot.passCount}/${doc.stressVerificationSnapshot.total}`,
+      '',
+      '| Bundle | Scenario | Overall | Final Stage |',
+      '|---|---|---|---|',
+    );
+
+    for (const result of doc.stressVerificationSnapshot.results) {
+      lines.push(`| ${result.prId} | ${result.scenarioId} | ${result.overallStatus} | ${result.finalStage} |`);
+    }
+
+    lines.push('');
+  }
+
+  lines.push(
     '## Cross-Cutting Pending Backlog',
     '',
     'These items remain open across the whole Azure program even when a service-specific parity pack is green.',
     '',
     '| Pending Item | Why It Is Still Pending | Default Commands |',
     '|---|---|---|',
-  ];
+  );
 
   for (const item of doc.crossCuttingBacklog) {
     lines.push(`| ${item.label} | ${item.detail} | ${item.commands.map(command => `\`${command}\``).join('<br>')} |`);
@@ -561,6 +606,7 @@ const logicParityEvidence = logicParity
       platformOk: logicParity.platformMatrix?.ok === true,
     }
   : null;
+const stressVerificationSnapshot = await loadStressVerificationSnapshot();
 const azureFunctionsEstimatePercent = azureFunctionsService ? serviceEstimate(azureFunctionsService, functionsParityEvidence) : null;
 const logicWorkflowsEstimatePercent = logicWorkflowsService ? serviceEstimate(logicWorkflowsService, logicParityEvidence) : null;
 const prioritizedServices = waves
@@ -606,6 +652,7 @@ const doc = {
       evidence: logicParityEvidence,
     },
   },
+  stressVerificationSnapshot,
   crossCuttingBacklog,
   waves,
   prioritizedServices,

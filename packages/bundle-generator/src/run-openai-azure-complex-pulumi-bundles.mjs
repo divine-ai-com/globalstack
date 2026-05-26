@@ -40,6 +40,7 @@ import { ultraExpertWave91211to91215 } from "./complex-pulumi-scenarios-wave-912
 import { ultraExpertWave91216to91220 } from "./complex-pulumi-scenarios-wave-91216-91220.mjs";
 import { ultraExpertWave91221to91225 } from "./complex-pulumi-scenarios-wave-91221-91225.mjs";
 import { ultraExpertWave91226to91230 } from "./complex-pulumi-scenarios-wave-91226-91230.mjs";
+import { ultraExpertWave91231to91235 } from "./complex-pulumi-scenarios-wave-91231-91235.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5055,6 +5056,7 @@ scenarios.push(...ultraExpertWave91211to91215);
 scenarios.push(...ultraExpertWave91216to91220);
 scenarios.push(...ultraExpertWave91221to91225);
 scenarios.push(...ultraExpertWave91226to91230);
+scenarios.push(...ultraExpertWave91231to91235);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -6016,6 +6018,8 @@ export function validateTapStack(scenario, tapStackText) {
   const cosmosContainerPattern = /new\s+(?:azure\.)?documentdb\.SqlResourceSqlContainer\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const postgresDatabasePattern = /new\s+(?:azure\.)?dbforpostgresql\.Database\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const mysqlDatabasePattern = /new\s+(?:azure\.)?dbformysql\.Database\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
+  const readsBackCreatedMySqlServer = /\b(?:azure\.)?dbformysql\.(?:Server\.get|getServer|getServerOutput)\s*\(/.test(tapStackText);
+  const readsBackCreatedPostgresServer = /\b(?:azure\.)?dbforpostgresql\.(?:Server\.get|getServer|getServerOutput)\s*\(/.test(tapStackText);
   const storageChildPattern = /new\s+(?:azure\.)?storage\.(?:BlobContainer|FileShare|Queue|Table)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsLinkPattern = /new\s+(?:azure\.)?(?:privatedns\.VirtualNetworkLink|network\.VirtualNetworkLink)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsRecordPattern = /new\s+(?:azure\.)?(?:privatedns\.PrivateRecordSet|network\.PrivateRecordSet)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
@@ -6061,6 +6065,12 @@ export function validateTapStack(scenario, tapStackText) {
     if (!/\bdependsOn\s*:/.test(block)) {
       throw new Error('azure.dbformysql.Database must include an explicit dependsOn option that waits for the MySQL server resource');
     }
+  }
+  if (readsBackCreatedMySqlServer) {
+    throw new Error('azure.dbformysql scenarios must not read back a just-created MySQL server with Server.get/getServer/getServerOutput; use the created mysqlServer resource variable directly');
+  }
+  if (readsBackCreatedPostgresServer) {
+    throw new Error('azure.dbforpostgresql scenarios must not read back a just-created PostgreSQL server with Server.get/getServer/getServerOutput; use the created postgresServer resource variable directly');
   }
   for (const block of tapStackText.match(privateDnsLinkPattern) ?? []) {
     if (!/\bdependsOn\s*:/.test(block)) {
@@ -6209,6 +6219,14 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   if (String(error).includes('azure.dbformysql.Database must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure.dbformysql.Database must include a third-argument resource options object with dependsOn: [mysqlServer].');
     extraGuidance.push('Create the MySQL server first, keep it in a variable like mysqlServer, and then create the database with serverName: mysqlServer.name plus dependsOn: [mysqlServer].');
+  }
+  if (String(error).includes('azure.dbformysql scenarios must not read back a just-created MySQL server')) {
+    extraGuidance.push('Do not call azure.dbformysql.Server.get, azure.dbformysql.getServer, or azure.dbformysql.getServerOutput for a server that this same stack just created.');
+    extraGuidance.push('Keep the created resource in a variable like const mysqlServer = new azure.dbformysql.Server(...); then reference mysqlServer.name directly when creating the database and any child resources.');
+  }
+  if (String(error).includes('azure.dbforpostgresql scenarios must not read back a just-created PostgreSQL server')) {
+    extraGuidance.push('Do not call azure.dbforpostgresql.Server.get, azure.dbforpostgresql.getServer, or azure.dbforpostgresql.getServerOutput for a server that this same stack just created.');
+    extraGuidance.push('Keep the created resource in a variable like const postgresServer = new azure.dbforpostgresql.Server(...); then reference postgresServer.name directly when creating the database and any child resources.');
   }
   if (String(error).includes('azure private DNS virtual network links must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure private DNS VirtualNetworkLink must include a third-argument resource options object with dependsOn: [privateZone, virtualNetwork] or at least dependsOn: [privateZone].');
@@ -6738,7 +6756,20 @@ export async function main() {
 
   const summaryPath = path.join(distPath(root, "complex-pulumi-bundles"), "latest-results.json");
   await mkdir(path.dirname(summaryPath), { recursive: true });
-  await writeFile(summaryPath, `${JSON.stringify({ model, generatedAt: new Date().toISOString(), results }, null, 2)}\n`);
+  let summaryResults = results;
+  if (bundleFilter.length === 1) {
+    try {
+      const existing = JSON.parse(await readFile(summaryPath, "utf8"));
+      const byPrId = new Map((existing.results ?? []).map((entry) => [entry.prId, entry]));
+      for (const entry of results) {
+        byPrId.set(entry.prId, entry);
+      }
+      summaryResults = Array.from(byPrId.values());
+    } catch {
+      summaryResults = results;
+    }
+  }
+  await writeFile(summaryPath, `${JSON.stringify({ model, generatedAt: new Date().toISOString(), results: summaryResults }, null, 2)}\n`);
   console.log(`\nWrote summary to ${summaryPath}`);
 }
 

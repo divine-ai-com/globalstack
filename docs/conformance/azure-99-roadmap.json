@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-26T10:47:46.936Z",
+    "generatedAt": "2026-05-26T13:15:08.345Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -32,6 +32,44 @@
         "platformOk": true
       }
     }
+  },
+  "stressVerificationSnapshot": {
+    "source": "dist/complex-pulumi-bundles/latest-results.json",
+    "generatedAt": "2026-05-26T13:12:53.369Z",
+    "total": 5,
+    "passCount": 5,
+    "results": [
+      {
+        "prId": "Pr91231",
+        "scenarioId": "multiregion-aks-promotion-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91232",
+        "scenarioId": "governed-synapse-settlement-mesh",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91233",
+        "scenarioId": "migration-cutover-control-room",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91234",
+        "scenarioId": "industrial-telemetry-response-thread",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91235",
+        "scenarioId": "edge-resilience-operations-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      }
+    ]
   },
   "crossCuttingBacklog": [
     {
