@@ -41,6 +41,7 @@ import { ultraExpertWave91216to91220 } from "./complex-pulumi-scenarios-wave-912
 import { ultraExpertWave91221to91225 } from "./complex-pulumi-scenarios-wave-91221-91225.mjs";
 import { ultraExpertWave91226to91230 } from "./complex-pulumi-scenarios-wave-91226-91230.mjs";
 import { ultraExpertWave91231to91235 } from "./complex-pulumi-scenarios-wave-91231-91235.mjs";
+import { ultraExpertWave91236to91240 } from "./complex-pulumi-scenarios-wave-91236-91240.mjs";
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
@@ -5057,6 +5058,7 @@ scenarios.push(...ultraExpertWave91216to91220);
 scenarios.push(...ultraExpertWave91221to91225);
 scenarios.push(...ultraExpertWave91226to91230);
 scenarios.push(...ultraExpertWave91231to91235);
+scenarios.push(...ultraExpertWave91236to91240);
 
 function validateScenarioDefinitions() {
   for (const scenario of scenarios) {
@@ -6020,6 +6022,12 @@ export function validateTapStack(scenario, tapStackText) {
   const mysqlDatabasePattern = /new\s+(?:azure\.)?dbformysql\.Database\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const readsBackCreatedMySqlServer = /\b(?:azure\.)?dbformysql\.(?:Server\.get|getServer|getServerOutput)\s*\(/.test(tapStackText);
   const readsBackCreatedPostgresServer = /\b(?:azure\.)?dbforpostgresql\.(?:Server\.get|getServer|getServerOutput)\s*\(/.test(tapStackText);
+  const usesMySqlServerOutputNameForDatabase = /\bnew\s+(?:azure\.)?dbformysql\.Database\([\s\S]*?\bserverName\s*:\s*mysqlServer\.name\b/.test(tapStackText);
+  const usesPostgresServerOutputNameForDatabase = /\bnew\s+(?:azure\.)?dbforpostgresql\.Database\([\s\S]*?\bserverName\s*:\s*postgresServer\.name\b/.test(tapStackText);
+  const hasUserAssignedIdentityArray = /\buserAssignedIdentities\s*:\s*\[/.test(tapStackText);
+  const hasContainerAppIdentityAttachment = /new\s+(?:azure\.)?app\.ContainerApp\([\s\S]*?\bidentity\s*:\s*\{[\s\S]*?\buserAssignedIdentities\s*:/.test(tapStackText);
+  const hasContainerAppRegistryOverrideForPublicImage = /new\s+(?:azure\.)?app\.ContainerApp\([\s\S]*?\bregistries\s*:\s*\[[\s\S]*?\][\s\S]*?image\s*:\s*["'`]mcr\.microsoft\.com\//.test(tapStackText);
+  const callsApplyOnSubnetId = /\b[A-Za-z0-9_]*Subnet\.id\.apply\s*\(/.test(tapStackText);
   const storageChildPattern = /new\s+(?:azure\.)?storage\.(?:BlobContainer|FileShare|Queue|Table)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsLinkPattern = /new\s+(?:azure\.)?(?:privatedns\.VirtualNetworkLink|network\.VirtualNetworkLink)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
   const privateDnsRecordPattern = /new\s+(?:azure\.)?(?:privatedns\.PrivateRecordSet|network\.PrivateRecordSet)\([\s\S]*?\n\s*}\s*(?:,\s*\{[\s\S]*?\})?\s*\);/g;
@@ -6071,6 +6079,24 @@ export function validateTapStack(scenario, tapStackText) {
   }
   if (readsBackCreatedPostgresServer) {
     throw new Error('azure.dbforpostgresql scenarios must not read back a just-created PostgreSQL server with Server.get/getServer/getServerOutput; use the created postgresServer resource variable directly');
+  }
+  if (usesMySqlServerOutputNameForDatabase) {
+    throw new Error('azure.dbformysql.Database must not set serverName: mysqlServer.name because that output is typed as possibly undefined in this SDK; use the prompt-fixed server name string instead');
+  }
+  if (usesPostgresServerOutputNameForDatabase) {
+    throw new Error('azure.dbforpostgresql.Database must not set serverName: postgresServer.name because that output is typed as possibly undefined in this SDK; use the prompt-fixed server name string instead');
+  }
+  if (hasUserAssignedIdentityArray) {
+    throw new Error('azure-native resources must not model userAssignedIdentities as an array; use the Azure ARM map/object shape or remove the identity attachment');
+  }
+  if (hasContainerAppIdentityAttachment) {
+    throw new Error('azure.app.ContainerApp resources must not attach userAssignedIdentities in generated bundles unless a prompt explicitly requires a validated managed-identity pull path');
+  }
+  if (hasContainerAppRegistryOverrideForPublicImage) {
+    throw new Error('azure.app.ContainerApp resources must not declare registry overrides when they still use a public mcr.microsoft.com image');
+  }
+  if (callsApplyOnSubnetId) {
+    throw new Error('do not call .apply directly on subnet.id because that property is optional in this SDK; use pulumi.output(subnet.id).apply(...) or a deterministic subnet ARM id string');
   }
   for (const block of tapStackText.match(privateDnsLinkPattern) ?? []) {
     if (!/\bdependsOn\s*:/.test(block)) {
@@ -6199,6 +6225,9 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
     extraGuidance.push(usesAzureNativeV3
       ? 'For azure.applicationinsights.Component, use workspaceResourceId in lower camel case. Do not use WorkspaceResourceId.'
       : 'For azure.insights.Component, use workspaceResourceId in lower camel case. Do not use WorkspaceResourceId.');
+    extraGuidance.push(usesAzureNativeV3
+      ? 'Rewrite the Application Insights resource with an explicit lower-camel property: new azure.applicationinsights.Component(name, { resourceName: name, resourceGroupName: rg.name, location, kind: "web", applicationType: "web", workspaceResourceId: workspace.id });'
+      : 'Rewrite the Application Insights resource with an explicit lower-camel property: new azure.insights.Component(name, { resourceName: name, resourceGroupName: rg.name, location, kind: "web", applicationType: "web", workspaceResourceId: workspace.id });');
   }
   if (String(error).includes('missing scenario marker applicationinsights.')) {
     extraGuidance.push(usesAzureNativeV3
@@ -6214,19 +6243,39 @@ function repairPrompt(scenario, originalPrompt, error, previousResponse) {
   }
   if (String(error).includes('azure.dbforpostgresql.Database must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure.dbforpostgresql.Database must include a third-argument resource options object with dependsOn: [postgresServer].');
-    extraGuidance.push('Create the PostgreSQL server first, keep it in a variable like postgresServer, and then create the database with serverName: postgresServer.name plus dependsOn: [postgresServer].');
+    extraGuidance.push('Create the PostgreSQL server first, keep it in a variable like postgresServer, and then create the database with the prompt-fixed server name string plus dependsOn: [postgresServer]. Do not use postgresServer.name for Database.serverName in this SDK.');
   }
   if (String(error).includes('azure.dbformysql.Database must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure.dbformysql.Database must include a third-argument resource options object with dependsOn: [mysqlServer].');
-    extraGuidance.push('Create the MySQL server first, keep it in a variable like mysqlServer, and then create the database with serverName: mysqlServer.name plus dependsOn: [mysqlServer].');
+    extraGuidance.push('Create the MySQL server first, keep it in a variable like mysqlServer, and then create the database with the prompt-fixed server name string plus dependsOn: [mysqlServer]. Do not use mysqlServer.name for Database.serverName in this SDK.');
   }
   if (String(error).includes('azure.dbformysql scenarios must not read back a just-created MySQL server')) {
     extraGuidance.push('Do not call azure.dbformysql.Server.get, azure.dbformysql.getServer, or azure.dbformysql.getServerOutput for a server that this same stack just created.');
-    extraGuidance.push('Keep the created resource in a variable like const mysqlServer = new azure.dbformysql.Server(...); then reference mysqlServer.name directly when creating the database and any child resources.');
+    extraGuidance.push('Keep the created resource in a variable like const mysqlServer = new azure.dbformysql.Server(...), but for Database.serverName use the prompt-fixed server name string instead of mysqlServer.name.');
   }
   if (String(error).includes('azure.dbforpostgresql scenarios must not read back a just-created PostgreSQL server')) {
     extraGuidance.push('Do not call azure.dbforpostgresql.Server.get, azure.dbforpostgresql.getServer, or azure.dbforpostgresql.getServerOutput for a server that this same stack just created.');
-    extraGuidance.push('Keep the created resource in a variable like const postgresServer = new azure.dbforpostgresql.Server(...); then reference postgresServer.name directly when creating the database and any child resources.');
+    extraGuidance.push('Keep the created resource in a variable like const postgresServer = new azure.dbforpostgresql.Server(...), but for Database.serverName use the prompt-fixed server name string instead of postgresServer.name.');
+  }
+  if (String(error).includes('azure.dbformysql.Database must not set serverName: mysqlServer.name')) {
+    extraGuidance.push('Do not use mysqlServer.name for azure.dbformysql.Database.serverName. That SDK field is typed as Output<string | undefined>. Use the exact server name string from the prompt, and keep dependsOn: [mysqlServer].');
+  }
+  if (String(error).includes('azure.dbforpostgresql.Database must not set serverName: postgresServer.name')) {
+    extraGuidance.push('Do not use postgresServer.name for azure.dbforpostgresql.Database.serverName. That SDK field is typed as Output<string | undefined>. Use the exact server name string from the prompt, and keep dependsOn: [postgresServer].');
+  }
+  if (String(error).includes('azure-native resources must not model userAssignedIdentities as an array')) {
+    extraGuidance.push('Do not write userAssignedIdentities as an array like [identity.id]. Azure ARM expects a map/object keyed by resource ID, for example userAssignedIdentities: pulumi.all([identity.id]).apply(([id]) => ({ [id]: {} })).');
+    extraGuidance.push('If the identity attachment is not strictly required for the prompt contract, keep the managed identity resource but omit the identity block from the consuming resource instead of using the wrong array form.');
+  }
+  if (String(error).includes('azure.app.ContainerApp resources must not attach userAssignedIdentities')) {
+    extraGuidance.push('For generated Container Apps bundles, create the managed identity resource as part of the infrastructure, but do not attach that identity to the Container App resource unless the prompt explicitly requires a validated managed-identity image-pull path.');
+    extraGuidance.push('Remove the entire identity block from azure.app.ContainerApp resources in this bundle.');
+  }
+  if (String(error).includes('azure.app.ContainerApp resources must not declare registry overrides when they still use a public mcr.microsoft.com image')) {
+    extraGuidance.push('If the container image is a public mcr.microsoft.com image, remove the registries block from azure.app.ContainerApp.configuration. Keep the Azure Container Registry resource as infrastructure, but do not wire registry overrides into the app unless the app image is actually pulled from that registry.');
+  }
+  if (String(error).includes('do not call .apply directly on subnet.id')) {
+    extraGuidance.push('Do not call subnet.id.apply(...) directly. In this SDK subnet.id is optional. Wrap it with pulumi.output(subnet.id).apply(value => value ?? "") or build the deterministic subnet ARM id string from the fixed VNet and subnet names.');
   }
   if (String(error).includes('azure private DNS virtual network links must include an explicit dependsOn option')) {
     extraGuidance.push('Every azure private DNS VirtualNetworkLink must include a third-argument resource options object with dependsOn: [privateZone, virtualNetwork] or at least dependsOn: [privateZone].');
@@ -6479,6 +6528,10 @@ function runtimeRepairPrompt(scenario, originalPrompt, runFailure, previousTapSt
       || String(runFailure).includes('is not assignable to type'))
     && String(runFailure).includes('Output<string | undefined>')) {
     extraGuidance.push('Do not pass Output<string | undefined> directly into string-only Azure Native args or output exports. Normalize it with .apply(value => value ?? "") or pulumi.interpolate before use.');
+  }
+  if (String(runFailure).includes("TS18048")
+    && String(runFailure).includes("is possibly 'undefined'")) {
+    extraGuidance.push('Do not call methods directly on optional Azure Native outputs like subnet.id or server.name. Use pulumi.output(resource.id).apply(value => value ?? "") for ids, and use the exact prompt-fixed name string for child resource args like Database.serverName.');
   }
   if (String(runFailure).includes('odata.type')
     && String(runFailure).includes('MetricAlert')) {
@@ -6757,17 +6810,15 @@ export async function main() {
   const summaryPath = path.join(distPath(root, "complex-pulumi-bundles"), "latest-results.json");
   await mkdir(path.dirname(summaryPath), { recursive: true });
   let summaryResults = results;
-  if (bundleFilter.length === 1) {
-    try {
-      const existing = JSON.parse(await readFile(summaryPath, "utf8"));
-      const byPrId = new Map((existing.results ?? []).map((entry) => [entry.prId, entry]));
-      for (const entry of results) {
-        byPrId.set(entry.prId, entry);
-      }
-      summaryResults = Array.from(byPrId.values());
-    } catch {
-      summaryResults = results;
+  try {
+    const existing = JSON.parse(await readFile(summaryPath, "utf8"));
+    const byPrId = new Map((existing.results ?? []).map((entry) => [entry.prId, entry]));
+    for (const entry of results) {
+      byPrId.set(entry.prId, entry);
     }
+    summaryResults = Array.from(byPrId.values());
+  } catch {
+    summaryResults = results;
   }
   await writeFile(summaryPath, `${JSON.stringify({ model, generatedAt: new Date().toISOString(), results: summaryResults }, null, 2)}\n`);
   console.log(`\nWrote summary to ${summaryPath}`);
