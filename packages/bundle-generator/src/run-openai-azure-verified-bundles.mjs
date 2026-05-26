@@ -37,6 +37,66 @@ const starterBundles = [
     prId: 'Pr91003',
   },
   {
+    platformId: 'azure-opentofu-hcl',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: 'cb410944-6b48-44f2-87df-e4bd8171c7dc',
+    prId: 'Pr91321',
+  },
+  {
+    platformId: 'azure-opentofu-hcl',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '76194018-d154-45f5-9018-43436a519e38',
+    prId: 'Pr91322',
+  },
+  {
+    platformId: 'azure-opentofu-hcl',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: '34b1fe4e-6aac-4e1d-b71a-9cbca4d87217',
+    prId: 'Pr91323',
+  },
+  {
+    platformId: 'azure-opentofu-hcl',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'e71de3ae-22d6-460d-969a-806f3fac0d23',
+    prId: 'Pr91324',
+  },
+  {
+    platformId: 'azure-opentofu-hcl',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '71492d4d-d4fb-430b-ba77-f4e5550d16f8',
+    prId: 'Pr91325',
+  },
+  {
+    platformId: 'azure-pulumi-py',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '84ea8fe9-1c24-415d-aeb4-230eb238167d',
+    prId: 'Pr91331',
+  },
+  {
+    platformId: 'azure-pulumi-py',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '4fe0c535-e93b-438a-ae6d-f746f5f06efa',
+    prId: 'Pr91332',
+  },
+  {
+    platformId: 'azure-pulumi-py',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: 'ac0f87b1-cab0-443b-b4be-6a82516c5d30',
+    prId: 'Pr91333',
+  },
+  {
+    platformId: 'azure-pulumi-py',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: '00fd95d9-d39b-4ba4-a6d8-5b3d697e4f3d',
+    prId: 'Pr91334',
+  },
+  {
+    platformId: 'azure-pulumi-py',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '4eaed2aa-5b40-4d44-a144-66036d50eb1c',
+    prId: 'Pr91335',
+  },
+  {
     platformId: 'azure-bicep',
     scenarioId: 'claims-evidence-command-ring',
     poId: '6b0d7a34-0af1-4be0-84d3-3ed7c5c3e911',
@@ -327,6 +387,40 @@ const platformInstructions = new Map([
     unitTestCommand: 'python3 test/terraform.unit.test.py',
     integrationTestCommand: 'python3 test/terraform.int.test.py',
   }],
+  ['azure-opentofu-hcl', {
+    files: ['lib/provider.tf', 'lib/variables.tf', 'lib/main.tf', 'lib/outputs.tf'],
+    instruction: [
+      'Use OpenTofu HCL with only the Azure AzAPI provider v2.x.',
+      'Do not use the azurerm provider.',
+      'Configure provider "azapi" with use_cli = true and a data "azapi_client_config" "current" block.',
+      'Declare string variables named subscription_id, location, resource_group_name, and storage_account_name in lib/variables.tf because the runner passes those exact variables at deploy time.',
+      'Use var.location for the resource group and storage account location, use var.resource_group_name for the resource group name, and use var.storage_account_name for the storage account name.',
+      'Use azapi_resource for the resource group and every workload resource.',
+      'Use native HCL object bodies, not jsonencode strings.',
+      'Create explicit azapi_resource parents for blobServices/default, queueServices/default, fileServices/default, and tableServices/default, then attach the container, queue, share, and table by setting parent_id to those explicit service resources.',
+      'Do not append /blobServices/default, /queueServices/default, /fileServices/default, or /tableServices/default onto the storage account id in a string expression.',
+      'Keep each task-owned resource in lib/main.tf and only outputs in lib/outputs.tf.',
+    ].join(' '),
+    requiredMarkers: [
+      'azapi_resource',
+      'data "azapi_client_config" "current"',
+      'Microsoft.Storage/storageAccounts',
+      'Microsoft.Storage/storageAccounts/blobServices',
+      'Microsoft.Storage/storageAccounts/queueServices',
+      'Microsoft.Storage/storageAccounts/fileServices',
+      'Microsoft.Storage/storageAccounts/tableServices',
+      'Microsoft.ServiceBus/namespaces',
+      'Microsoft.EventGrid/topics',
+      'Microsoft.EventHub/namespaces',
+      'Microsoft.AppConfiguration/configurationStores',
+      'variable "subscription_id"',
+      'variable "location"',
+      'variable "resource_group_name"',
+      'variable "storage_account_name"',
+    ],
+    unitTestCommand: 'python3 test/terraform.unit.test.py',
+    integrationTestCommand: 'python3 test/terraform.int.test.py',
+  }],
   ['azure-pulumi-ts', {
     files: ['Pulumi.yaml', 'package.json', 'bin/tap.ts', 'lib/tap-stack.ts'],
     instruction: [
@@ -342,6 +436,45 @@ const platformInstructions = new Map([
     requiredMarkers: ['@pulumi/azure-native', 'ResourceGroup', 'StorageAccount', 'servicebus', 'eventgrid', 'eventhub', 'appconfiguration'],
     unitTestCommand: 'node test/tap-stack.unit.test.mjs',
     integrationTestCommand: 'node test/tap-stack.int.test.mjs',
+  }],
+  ['azure-pulumi-py', {
+    files: ['Pulumi.yaml', 'requirements.txt', 'tap.py', 'lib/__init__.py', 'lib/tap_stack.py'],
+    instruction: [
+      'Use Pulumi Python with pulumi-azure-native.',
+      'Set Pulumi.yaml runtime to python and main to tap.py.',
+      'Put the entry point in tap.py and the reusable stack construction in lib/tap_stack.py.',
+      'Because the Pulumi Python runner executes tap.py as a script, make tap.py add its own directory to sys.path with Path(__file__).resolve().parent before importing lib.tap_stack.',
+      'Import the unversioned top-level pulumi_azure_native modules (for example import pulumi_azure_native.storage as storage) and do not use versioned namespace imports like from pulumi_azure_native.storage import v20230101 as storage.',
+      'Use the typed Azure Native resource classes for the main resources in this task and do not model them with resources.GenericResource.',
+      'For storage, create BlobContainer, Queue, FileShare, and Table directly from the StorageAccount using account_name and resource_group_name. Do not create BlobServiceProperties, QueueServiceProperties, FileServiceProperties, or TableServiceProperties helper resources.',
+      'Name the stack factory function create_stack and import that exact symbol from tap.py.',
+      'Use a conservative requirements.txt dependency set that is known to resolve in the runner: pulumi>=3.0.0 and pulumi-azure-native>=2.80.0.',
+      'Export exactly the requested output keys with pulumi.export.',
+      'Use the exact resource names provided and do not generate random suffixes.',
+      'Keep all resource construction inside create_stack in lib/tap_stack.py.',
+    ].join(' '),
+    requiredMarkers: [
+      'import pulumi_azure_native.resources as resources',
+      'import pulumi_azure_native.storage as storage',
+      'import pulumi_azure_native.servicebus as servicebus',
+      'import pulumi_azure_native.eventgrid as eventgrid',
+      'import pulumi_azure_native.eventhub as eventhub',
+      'import pulumi_azure_native.appconfiguration as appconfiguration',
+      'resources.ResourceGroup',
+      'storage.StorageAccount',
+      'storage.BlobContainer',
+      'storage.Queue',
+      'storage.FileShare',
+      'storage.Table',
+      'servicebus.Namespace',
+      'servicebus.Topic',
+      'eventgrid.Topic',
+      'eventhub.Namespace',
+      'eventhub.EventHub',
+      'appconfiguration.ConfigurationStore',
+    ],
+    unitTestCommand: 'python3 test/tap_stack.unit.test.py',
+    integrationTestCommand: 'python3 test/tap_stack.int.test.py',
   }],
   ['azure-bicep', {
     files: ['lib/main.bicep', 'lib/workload.bicep', 'lib/parameters.json'],
@@ -635,6 +768,24 @@ function validateFiles(platformId, scenario, platform, names, files) {
       if (!main.includes(marker)) errors.push(`Terraform bundle must reference ${marker} in lib/main.tf`);
     }
   }
+  if (platformId === 'azure-opentofu-hcl') {
+    const variables = files.get('lib/variables.tf') ?? '';
+    const main = files.get('lib/main.tf') ?? '';
+    const provider = files.get('lib/provider.tf') ?? '';
+    if (joined.match(/\bazurerm[_\s.]/i)) errors.push('OpenTofu bundle must not use azurerm');
+    if (joined.includes('jsonencode(')) errors.push('OpenTofu bundle must use native HCL object bodies');
+    if (joined.includes('"default/${')) errors.push('OpenTofu bundle must model storage service default resources explicitly instead of embedding default/ in child names');
+    if (joined.includes('/blobServices/default') || joined.includes('/queueServices/default') || joined.includes('/fileServices/default') || joined.includes('/tableServices/default')) {
+      errors.push('OpenTofu bundle must create explicit storage service parent resources instead of concatenating default service paths onto the storage account id');
+    }
+    if (!/use_cli\s*=\s*true/.test(provider)) errors.push('OpenTofu bundle must configure provider "azapi" with use_cli = true');
+    for (const variableName of ['subscription_id', 'location', 'resource_group_name', 'storage_account_name']) {
+      if (!variables.includes(`variable "${variableName}"`)) errors.push(`OpenTofu bundle must declare variable "${variableName}" in lib/variables.tf`);
+    }
+    for (const marker of ['var.location', 'var.resource_group_name', 'var.storage_account_name']) {
+      if (!main.includes(marker)) errors.push(`OpenTofu bundle must reference ${marker} in lib/main.tf`);
+    }
+  }
   if (platformId === 'azure-pulumi-ts') {
     const pulumiYaml = files.get('Pulumi.yaml') ?? '';
     const entry = files.get('bin/tap.ts') ?? '';
@@ -645,6 +796,66 @@ function validateFiles(platformId, scenario, platform, names, files) {
     if (!stack.includes('export function createTapStack')) errors.push('Pulumi bundle must export createTapStack from lib/tap-stack.ts');
     if (!packageJson.includes('"@pulumi/azure-native": "^2.80.0"')) errors.push('Pulumi bundle must pin @pulumi/azure-native to ^2.80.0');
     if (!packageJson.includes('"@pulumi/pulumi": "^3.122.0"')) errors.push('Pulumi bundle must pin @pulumi/pulumi to ^3.122.0');
+  }
+  if (platformId === 'azure-pulumi-py') {
+    const pulumiYaml = files.get('Pulumi.yaml') ?? '';
+    const entry = files.get('tap.py') ?? '';
+    const stack = files.get('lib/tap_stack.py') ?? '';
+    const requirements = files.get('requirements.txt') ?? '';
+    const initPy = files.get('lib/__init__.py') ?? '';
+    if (!pulumiYaml.includes('runtime: python')) errors.push('Pulumi Python bundle must set runtime: python in Pulumi.yaml');
+    if (!pulumiYaml.includes('main: tap.py')) errors.push('Pulumi Python bundle must set Pulumi.yaml main to tap.py');
+    if (!entry.includes('from pathlib import Path')) errors.push('Pulumi Python entry point must import Path from pathlib');
+    if (!entry.includes('import sys')) errors.push('Pulumi Python entry point must import sys');
+    if (!entry.includes('sys.path.insert(') || !entry.includes('Path(__file__).resolve().parent')) {
+      errors.push('Pulumi Python entry point must add its own directory to sys.path before importing lib.tap_stack');
+    }
+    if (!entry.includes('from lib.tap_stack import create_stack')) errors.push('Pulumi Python entry point must import create_stack from lib.tap_stack');
+    if (!entry.includes('create_stack()')) errors.push('Pulumi Python entry point must call create_stack()');
+    if (!stack.includes('def create_stack():')) errors.push('Pulumi Python bundle must define create_stack in lib/tap_stack.py');
+    if (/from pulumi_azure_native\.[a-z_]+ import v\d{8} as/.test(stack)) {
+      errors.push('Pulumi Python bundle must use top-level pulumi_azure_native module imports instead of versioned namespace imports');
+    }
+    if (stack.includes('resources.GenericResource(')) {
+      errors.push('Pulumi Python bundle must use typed Azure Native resource classes instead of resources.GenericResource for the requested resources');
+    }
+    if (stack.includes('supports_https_traffic_only=')) {
+      errors.push('Pulumi Python StorageAccount must use enable_https_traffic_only= instead of supports_https_traffic_only=');
+    }
+    for (const forbiddenStorageHelper of ['BlobServiceProperties(', 'QueueServiceProperties(', 'FileServiceProperties(', 'TableServiceProperties(']) {
+      if (stack.includes(forbiddenStorageHelper)) {
+        errors.push(`Pulumi Python bundle must not create ${forbiddenStorageHelper.replace('(', '')}; create the direct storage child resource instead`);
+      }
+    }
+    for (const forbiddenStorageArg of ['blob_services_name=', 'queue_services_name=', 'file_services_name=', 'table_services_name=']) {
+      if (stack.includes(forbiddenStorageArg)) {
+        errors.push(`Pulumi Python bundle must not use ${forbiddenStorageArg}; create the direct storage child resource from account_name/resource_group_name`);
+      }
+    }
+    if (!requirements.includes('pulumi>=3.0.0')) errors.push('Pulumi Python bundle must require pulumi>=3.0.0');
+    if (!requirements.includes('pulumi-azure-native>=2.80.0')) errors.push('Pulumi Python bundle must require pulumi-azure-native>=2.80.0');
+    if (initPy.trim() !== '' && !initPy.includes('#')) errors.push('lib/__init__.py should be empty or a trivial package marker');
+    for (const marker of [
+      'resources.ResourceGroup',
+      'storage.StorageAccount',
+      'storage.BlobContainer',
+      'storage.Queue',
+      'storage.FileShare',
+      'storage.Table',
+      'servicebus.Namespace',
+      'servicebus.Topic',
+      'eventgrid.Topic',
+      'eventhub.Namespace',
+      'eventhub.EventHub',
+      'appconfiguration.ConfigurationStore',
+    ]) {
+      if (!stack.includes(marker)) errors.push(`Pulumi Python bundle must use ${marker}`);
+    }
+    for (const outputKey of scenario.outputKeys) {
+      if (!stack.includes(`pulumi.export("${outputKey}"`) && !stack.includes(`pulumi.export('${outputKey}'`)) {
+        errors.push(`Pulumi Python bundle must export ${outputKey}`);
+      }
+    }
   }
   if (platformId === 'azure-bicep') {
     const main = files.get('lib/main.bicep') ?? '';
@@ -809,6 +1020,34 @@ function fileContainsAssertions(platformId, scenario, names) {
       'lib/outputs.tf': scenario.outputKeys,
     };
   }
+  if (platformId === 'azure-opentofu-hcl') {
+    return {
+      'lib/provider.tf': ['azapi', 'use_cli', 'data "azapi_client_config" "current"'],
+      'lib/main.tf': [
+        'Microsoft.Resources/resourceGroups',
+        'Microsoft.Storage/storageAccounts@2023-01-01',
+        'Microsoft.Storage/storageAccounts/blobServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01',
+        'Microsoft.Storage/storageAccounts/queueServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01',
+        'Microsoft.Storage/storageAccounts/fileServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/fileServices/shares@2023-01-01',
+        'Microsoft.Storage/storageAccounts/tableServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/tableServices/tables@2023-01-01',
+        'Microsoft.ServiceBus/namespaces@2021-11-01',
+        'Microsoft.ServiceBus/namespaces/topics@2021-11-01',
+        'Microsoft.EventGrid/topics@2022-06-15',
+        'Microsoft.EventHub/namespaces@2024-01-01',
+        'Microsoft.EventHub/namespaces/eventhubs@2024-01-01',
+        'Microsoft.AppConfiguration/configurationStores@2023-03-01',
+        'blob_service',
+        'queue_service',
+        'file_service',
+        'table_service',
+      ],
+      'lib/outputs.tf': scenario.outputKeys,
+    };
+  }
   if (platformId === 'azure-pulumi-ts') {
     return {
       'Pulumi.yaml': ['runtime: nodejs'],
@@ -823,6 +1062,40 @@ function fileContainsAssertions(platformId, scenario, names) {
         'eventhub.Namespace',
         'eventhub.EventHub',
         'appconfiguration.ConfigurationStore',
+      ],
+    };
+  }
+  if (platformId === 'azure-pulumi-py') {
+    return {
+      'Pulumi.yaml': ['runtime: python', 'main: tap.py'],
+      'requirements.txt': ['pulumi>=3.0.0', 'pulumi-azure-native>=2.80.0'],
+      'tap.py': [
+        'from pathlib import Path',
+        'import sys',
+        'sys.path.insert(0, str(Path(__file__).resolve().parent))',
+        'from lib.tap_stack import create_stack',
+        'create_stack()',
+      ],
+      'lib/tap_stack.py': [
+        'pulumi',
+        'import pulumi_azure_native.resources as resources',
+        'import pulumi_azure_native.storage as storage',
+        'import pulumi_azure_native.servicebus as servicebus',
+        'import pulumi_azure_native.eventgrid as eventgrid',
+        'import pulumi_azure_native.eventhub as eventhub',
+        'import pulumi_azure_native.appconfiguration as appconfiguration',
+        'ResourceGroup',
+        'StorageAccount',
+        'BlobContainer',
+        'Queue(',
+        'FileShare',
+        'Table(',
+        'Namespace(',
+        'Topic(',
+        'servicebus',
+        'eventgrid',
+        'eventhub',
+        'appconfiguration',
       ],
     };
   }
@@ -977,7 +1250,7 @@ if metadata["platformId"] == "azure-bicep":
     for output_key in metadata["expectedOutputKeys"]:
         expected_line = f"output {output_key} string = workload.outputs.{output_key}"
         assert expected_line in main, f"main.bicep is missing output {output_key}"
-elif metadata["platformId"] == "azure-terraform-hcl":
+elif metadata["platformId"] in {"azure-terraform-hcl", "azure-opentofu-hcl"}:
     provider = (root / "lib/provider.tf").read_text()
     variables = (root / "lib/variables.tf").read_text()
     main = (root / "lib/main.tf").read_text()
@@ -1053,6 +1326,76 @@ elif metadata["platformId"] == "azure-terraform-hcl":
 
     for output_key in metadata["expectedOutputKeys"]:
         assert f'output "{output_key}"' in outputs, f"outputs.tf is missing {output_key}"
+elif metadata["platformId"] == "azure-pulumi-py":
+    pulumi_yaml = (root / "Pulumi.yaml").read_text()
+    requirements = (root / "requirements.txt").read_text()
+    entry = (root / "tap.py").read_text()
+    stack = (root / "lib/tap_stack.py").read_text()
+    init_py = (root / "lib/__init__.py").read_text()
+
+    assert "runtime: python" in pulumi_yaml
+    assert "main: tap.py" in pulumi_yaml
+    assert "pulumi>=3.0.0" in requirements
+    assert "pulumi-azure-native>=2.80.0" in requirements
+    assert "from pathlib import Path" in entry
+    assert "import sys" in entry
+    assert "sys.path.insert(" in entry
+    assert "Path(__file__).resolve().parent" in entry
+    assert "from lib.tap_stack import create_stack" in entry
+    assert "create_stack()" in entry
+    assert "def create_stack():" in stack
+    assert "import pulumi_azure_native.resources as resources" in stack
+    assert "import pulumi_azure_native.storage as storage" in stack
+    assert "import pulumi_azure_native.servicebus as servicebus" in stack
+    assert "import pulumi_azure_native.eventgrid as eventgrid" in stack
+    assert "import pulumi_azure_native.eventhub as eventhub" in stack
+    assert "import pulumi_azure_native.appconfiguration as appconfiguration" in stack
+    assert " import v20" not in stack
+    assert "supports_https_traffic_only=" not in stack
+    assert "BlobServiceProperties(" not in stack
+    assert "QueueServiceProperties(" not in stack
+    assert "FileServiceProperties(" not in stack
+    assert "TableServiceProperties(" not in stack
+    assert "blob_services_name=" not in stack
+    assert "queue_services_name=" not in stack
+    assert "file_services_name=" not in stack
+    assert "table_services_name=" not in stack
+    assert init_py.strip() == "" or init_py.strip().startswith("#")
+
+    for marker in [
+        "resources.ResourceGroup",
+        "storage.StorageAccount",
+        "storage.BlobContainer",
+        "storage.Queue",
+        "storage.FileShare",
+        "storage.Table",
+        "servicebus.Namespace",
+        "servicebus.Topic",
+        "eventgrid.Topic",
+        "eventhub.Namespace",
+        "eventhub.EventHub",
+        "appconfiguration.ConfigurationStore",
+    ]:
+        assert marker in stack, f"tap_stack.py is missing {marker}"
+
+    for value in [
+        resource_names["resourceGroup"],
+        resource_names["storageAccount"],
+        resource_names["serviceBusNamespace"],
+        resource_names["eventGridTopic"],
+        resource_names["eventHubNamespace"],
+        resource_names["appConfigStore"],
+        resource_names["blobContainerName"],
+        resource_names["queueName"],
+        resource_names["fileShareName"],
+        resource_names["tableName"],
+        resource_names["serviceBusTopicName"],
+        resource_names["eventHubName"],
+    ]:
+        assert value in stack, f"tap_stack.py is missing resource name {value}"
+
+    for output_key in metadata["expectedOutputKeys"]:
+        assert f'pulumi.export("{output_key}"' in stack or f"pulumi.export('{output_key}'" in stack, f"tap_stack.py is missing export {output_key}"
 else:
     raise AssertionError(f"unsupported Python unit-test platform {metadata['platformId']}")
 
@@ -1298,9 +1641,12 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
   if (platformId === 'azure-pulumi-ts') {
     await writeFile(join(bundleDir, 'test', 'tap-stack.unit.test.mjs'), nodeUnitTest());
     await writeFile(join(bundleDir, 'test', 'tap-stack.int.test.mjs'), nodeIntegrationTest());
-  } else if (platformId === 'azure-terraform-hcl') {
+  } else if (platformId === 'azure-terraform-hcl' || platformId === 'azure-opentofu-hcl') {
     await writeFile(join(bundleDir, 'test', 'terraform.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'terraform.int.test.py'), pythonIntegrationTest());
+  } else if (platformId === 'azure-pulumi-py') {
+    await writeFile(join(bundleDir, 'test', 'tap_stack.unit.test.py'), pythonUnitTest());
+    await writeFile(join(bundleDir, 'test', 'tap_stack.int.test.py'), pythonIntegrationTest());
   } else {
     await writeFile(join(bundleDir, 'test', 'bicep.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'bicep.int.test.py'), pythonIntegrationTest());
@@ -1321,7 +1667,7 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
     resourceNames: resources,
     unitAssertions: {
       fileContains: fileContainsAssertions(platformId, scenario, names),
-      anyFileContains: platformId === 'azure-pulumi-ts' ? scenario.outputKeys : [],
+      anyFileContains: platformId === 'azure-pulumi-ts' || platformId === 'azure-pulumi-py' ? scenario.outputKeys : [],
     },
     integrationChecks: integrationChecks(names, scenario),
     stageCommands: {
@@ -1381,10 +1727,16 @@ function executionReport(platformId, summary) {
 }
 
 async function normalizeBundle(docker, platformId, bundleDir) {
-  if (platformId !== 'azure-terraform-hcl') return;
+  if (platformId !== 'azure-terraform-hcl' && platformId !== 'azure-opentofu-hcl') return;
   const uid = String(process.getuid());
   const gid = String(process.getgid());
   const libDir = join(bundleDir, 'lib');
+  const image = platformId === 'azure-opentofu-hcl'
+    ? 'globalstack/azure-opentofu-hcl:local'
+    : 'globalstack/azure-terraform-hcl:local';
+  const fmtCommand = platformId === 'azure-opentofu-hcl'
+    ? 'tofu fmt -recursive >/dev/null'
+    : 'terraform fmt -recursive >/dev/null';
   const code = await run(docker.command, [
     ...docker.prefix,
     'run',
@@ -1397,12 +1749,12 @@ async function normalizeBundle(docker, platformId, bundleDir) {
     `${libDir}:/workspace`,
     '-w',
     '/workspace',
-    'globalstack/azure-terraform-hcl:local',
+    image,
     '-lc',
-    'terraform fmt -recursive >/dev/null',
+    fmtCommand,
   ], { cwd: root, stdio: 'ignore' });
   if (code !== 0) {
-    throw new Error(`terraform fmt normalization failed for ${bundleDir}`);
+    throw new Error(`HCL formatter normalization failed for ${bundleDir}`);
   }
 }
 
@@ -1474,7 +1826,7 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
       lint: 'structural contract validation',
       'unit-tests': 'task-authored unit tests plus deterministic hygiene checks',
       deploy: 'native provider deployment against Azure-shaped control plane',
-      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' ? 'Terraform plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
+      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },

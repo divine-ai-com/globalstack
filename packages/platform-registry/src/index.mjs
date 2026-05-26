@@ -45,7 +45,7 @@ export const azurePlatforms = [
     solutionFiles: ['Pulumi.yaml', 'tap.py', 'lib/tap_stack.py'],
     testFiles: ['tests/unit/test_tap_stack.py', 'tests/integration/test_tap_stack.py'],
     implGuidance:
-      'put the Pulumi program entrypoint in tap.py and the reusable component in lib/tap_stack.py. read environment_suffix from ENVIRONMENT_SUFFIX and include it in every Azure resource name that varies by environment.',
+      'put the Pulumi program entrypoint in tap.py and the reusable component in lib/tap_stack.py. because tap.py runs as a script in the runner, add the task root to sys.path before importing lib.tap_stack. use the unversioned pulumi_azure_native Python modules rather than versioned namespace imports, prefer the typed Azure Native resource classes over resources.GenericResource for the main resources, and create storage containers/queues/shares/tables directly instead of introducing storage service helper resources. read environment_suffix from ENVIRONMENT_SUFFIX and include it in every Azure resource name that varies by environment.',
   },
   {
     id: 'azure-pulumi-yaml',
