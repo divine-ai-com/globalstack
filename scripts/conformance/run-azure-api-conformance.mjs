@@ -33,6 +33,9 @@ const location = process.env.AZURE_LOCATION ?? 'eastus';
 const mysqlSeedLocation = process.env.GLOBALSTACK_AZURE_MYSQL_SEED_LOCATION ?? 'westus2';
 const cleanupVerifyAttempts = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_ATTEMPTS ?? 24);
 const cleanupVerifyDelayMs = Number(process.env.GLOBALSTACK_AZURE_CLEANUP_VERIFY_DELAY_MS ?? 5000);
+const azureRequestTimeoutMs = Number(process.env.GLOBALSTACK_AZURE_REQUEST_TIMEOUT_MS ?? 300000);
+const azureRequestAttempts = Number(process.env.GLOBALSTACK_AZURE_REQUEST_ATTEMPTS ?? 4);
+const azureRequestRetryDelayMs = Number(process.env.GLOBALSTACK_AZURE_REQUEST_RETRY_DELAY_MS ?? 5000);
 let azureAccessToken;
 let localExpectationMap;
 let azureAccountContext;
@@ -269,32 +272,47 @@ function sanitizeHeaders(headers) {
   return out;
 }
 
+function transientAzureRequestError(error) {
+  const code = error?.cause?.code ?? error?.code ?? null;
+  return ['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'EAI_AGAIN', 'ENETUNREACH'].includes(code);
+}
+
 async function azureRequest(method, path, body) {
   const token = await getAzureAccessToken();
   const targetUrl = String(path).startsWith('https://') ? String(path) : `https://management.azure.com${path}`;
-  const response = await fetch(targetUrl, {
-    method,
-    signal: AbortSignal.timeout(Number(process.env.GLOBALSTACK_AZURE_REQUEST_TIMEOUT_MS ?? 300000)),
-    headers: {
-      authorization: `Bearer ${token}`,
-      'content-type': 'application/json',
-    },
-    body: body === undefined || body === null ? undefined : JSON.stringify(body),
-  });
-  const text = await response.text();
-  let parsed = text;
-  try {
-    parsed = text ? JSON.parse(text) : null;
-  } catch {
-    parsed = text.slice(0, 500);
+  for (let attempt = 0; attempt < azureRequestAttempts; attempt += 1) {
+    try {
+      const response = await fetch(targetUrl, {
+        method,
+        signal: AbortSignal.timeout(azureRequestTimeoutMs),
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+        body: body === undefined || body === null ? undefined : JSON.stringify(body),
+      });
+      const text = await response.text();
+      let parsed = text;
+      try {
+        parsed = text ? JSON.parse(text) : null;
+      } catch {
+        parsed = text.slice(0, 500);
+      }
+      return {
+        status: response.status,
+        ok: response.ok,
+        body: sanitize(parsed),
+        headers: sanitizeHeaders(response.headers),
+        rawHeaders: Object.fromEntries(response.headers.entries()),
+      };
+    } catch (error) {
+      if (attempt + 1 >= azureRequestAttempts || !transientAzureRequestError(error)) {
+        throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, azureRequestRetryDelayMs * (attempt + 1)));
+    }
   }
-  return {
-    status: response.status,
-    ok: response.ok,
-    body: sanitize(parsed),
-    headers: sanitizeHeaders(response.headers),
-    rawHeaders: Object.fromEntries(response.headers.entries()),
-  };
+  throw new Error(`Azure request failed after ${azureRequestAttempts} attempts: ${method} ${targetUrl}`);
 }
 
 function requestPath(call, replacements, { omitApiVersion = false, apiVersionOverride = null, pathTemplateOverride = null } = {}) {
