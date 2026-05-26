@@ -1,6 +1,6 @@
 {
   "id": "logic-workflows.microsoft-web-sites.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-25T13:24:09.683Z",
+  "capturedAt": "2026-05-26T12:23:23.797Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -11,7 +11,7 @@
   "varianceId": "valid-minimal",
   "request": {
     "method": "PUT",
-    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8d4ba9ac8c/providers/Microsoft.Web/sites/site-8d4ba9ac8c?api-version=2023-12-01",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-336904bea4/providers/Microsoft.Web/sites/site-336904bea4?api-version=2023-12-01",
     "body": {
       "location": "{location}",
       "kind": "functionapp",
@@ -26,17 +26,17 @@
     "status": 404,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "866d0c5b-e2a1-4658-8ade-00d3c431b44b",
-      "x-ms-request-id": "866d0c5b-e2a1-4658-8ade-00d3c431b44b",
-      "x-ms-routing-request-id": "WESTINDIA:20260525T132403Z:866d0c5b-e2a1-4658-8ade-00d3c431b44b"
+      "x-ms-correlation-request-id": "8ec276e0-249f-4407-a1bb-522f9c49b458",
+      "x-ms-request-id": "8ec276e0-249f-4407-a1bb-522f9c49b458",
+      "x-ms-routing-request-id": "EASTUS:20260526T122322Z:8ec276e0-249f-4407-a1bb-522f9c49b458"
     },
     "body": {
       "Code": "NotFound",
-      "Message": "Cannot find serverFarm with name plan-8d4ba9ac8c.",
+      "Message": "Cannot find serverFarm with name plan-336904bea4.",
       "Target": null,
       "Details": [
         {
-          "Message": "Cannot find serverFarm with name plan-8d4ba9ac8c."
+          "Message": "Cannot find serverFarm with name plan-336904bea4."
         },
         {
           "Code": "NotFound"
@@ -47,10 +47,10 @@
             "MessageTemplate": "Cannot find {0} with name {1}.",
             "Parameters": [
               "serverFarm",
-              "plan-8d4ba9ac8c"
+              "plan-336904bea4"
             ],
             "Code": "NotFound",
-            "Message": "Cannot find serverFarm with name plan-8d4ba9ac8c."
+            "Message": "Cannot find serverFarm with name plan-336904bea4."
           }
         }
       ],
@@ -58,7 +58,7 @@
     }
   },
   "cleanup": {
-    "resourceGroupName": "rg-gs-conf-8d4ba9ac8c",
+    "resourceGroupName": "rg-gs-conf-336904bea4",
     "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true

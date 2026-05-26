@@ -1,6 +1,6 @@
 {
   "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.valid-minimal",
-  "capturedAt": "2026-05-25T13:21:20.928Z",
+  "capturedAt": "2026-05-26T12:22:44.234Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -11,7 +11,7 @@
   "varianceId": "valid-minimal",
   "request": {
     "method": "PUT",
-    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-65355b7f98/providers/Microsoft.Logic/workflows/workflow-65355b7f98?api-version=2019-05-01",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-149fad5085/providers/Microsoft.Logic/workflows/workflow-149fad5085?api-version=2019-05-01",
     "body": {
       "location": "{location}",
       "properties": {
@@ -40,18 +40,18 @@
     "status": 201,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "1794f80b-9cad-4113-969e-0363c6eb5c31",
-      "x-ms-request-id": "eastus:f405b424-fc20-47d6-8e58-32f8ce727fe7",
-      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T132018Z:1794f80b-9cad-4113-969e-0363c6eb5c31"
+      "x-ms-correlation-request-id": "4b26b272-1d49-4e1d-9291-cd65377b5db1",
+      "x-ms-request-id": "eastus:ef137b28-6e87-4ab2-99fa-54521b58b1c1",
+      "x-ms-routing-request-id": "EASTUS:20260526T122139Z:4b26b272-1d49-4e1d-9291-cd65377b5db1"
     },
     "body": {
       "properties": {
         "provisioningState": "Succeeded",
-        "createdTime": "2026-05-25T13:20:17.8504964Z",
-        "changedTime": "2026-05-25T13:20:17.8482668Z",
+        "createdTime": "2026-05-26T12:21:39.8202964Z",
+        "changedTime": "2026-05-26T12:21:39.815716Z",
         "state": "Enabled",
-        "version": "08584218916676563131",
-        "accessEndpoint": "https://prod-31.eastus.logic.azure.com:443/workflows/ec505f6a44a2441fb98e99d2141e612e",
+        "version": "08584218087856927981",
+        "accessEndpoint": "https://prod-12.eastus.logic.azure.com:443/workflows/45d7290b8f134955bcb5ee62feab5aa7",
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
           "contentVersion": "1.0.0.0",
@@ -219,14 +219,14 @@
           }
         }
       },
-      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-65355b7f98/providers/Microsoft.Logic/workflows/workflow-65355b7f98",
-      "name": "workflow-65355b7f98",
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-149fad5085/providers/Microsoft.Logic/workflows/workflow-149fad5085",
+      "name": "workflow-149fad5085",
       "type": "Microsoft.Logic/workflows",
       "location": "eastus"
     }
   },
   "cleanup": {
-    "resourceGroupName": "rg-gs-conf-65355b7f98",
+    "resourceGroupName": "rg-gs-conf-149fad5085",
     "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true
