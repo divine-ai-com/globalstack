@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-26T15:09:25.018Z",
+    "generatedAt": "2026-05-26T15:45:34.201Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -35,9 +35,9 @@
   },
   "stressVerificationSnapshot": {
     "source": "dist/complex-pulumi-bundles/latest-results.json",
-    "generatedAt": "2026-05-26T15:09:19.164Z",
-    "total": 10,
-    "passCount": 10,
+    "generatedAt": "2026-05-26T15:45:26.976Z",
+    "total": 15,
+    "passCount": 15,
     "results": [
       {
         "prId": "Pr91239",
@@ -96,6 +96,36 @@
       {
         "prId": "Pr91245",
         "scenarioId": "investigation-lakehouse-response-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91246",
+        "scenarioId": "policy-appeals-decision-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91247",
+        "scenarioId": "regional-catalog-sync-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91248",
+        "scenarioId": "case-orchestration-evidence-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91249",
+        "scenarioId": "global-release-governance-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91250",
+        "scenarioId": "cutover-telemetry-command-fabric",
         "overallStatus": "PASS",
         "finalStage": "destroy"
       }

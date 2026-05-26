@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-26T15:09:25.018Z
+Generated: 2026-05-26T15:45:34.201Z
 
 ## Guardrails
 
@@ -24,9 +24,9 @@ Method:
 ## Stress Verification Snapshot
 
 - Source: `dist/complex-pulumi-bundles/latest-results.json`
-- Generated: 2026-05-26T15:09:19.164Z
-- Bundles in latest adversarial wave: 10
-- Passing bundles in latest adversarial wave: 10/10
+- Generated: 2026-05-26T15:45:26.976Z
+- Bundles in latest adversarial wave: 15
+- Passing bundles in latest adversarial wave: 15/15
 
 | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|
@@ -40,6 +40,11 @@ Method:
 | Pr91243 | industrial-command-digital-thread | PASS | destroy |
 | Pr91244 | active-active-release-control-ring | PASS | destroy |
 | Pr91245 | investigation-lakehouse-response-fabric | PASS | destroy |
+| Pr91246 | policy-appeals-decision-fabric | PASS | destroy |
+| Pr91247 | regional-catalog-sync-ring | PASS | destroy |
+| Pr91248 | case-orchestration-evidence-fabric | PASS | destroy |
+| Pr91249 | global-release-governance-ring | PASS | destroy |
+| Pr91250 | cutover-telemetry-command-fabric | PASS | destroy |
 
 ## Cross-Cutting Pending Backlog
 
