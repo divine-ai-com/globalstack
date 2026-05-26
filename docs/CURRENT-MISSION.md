@@ -128,6 +128,31 @@ These are the recurring mistakes that future work must not repeat:
 - do not hide this distinction in docs, summaries, or roadmap language; the implementation class must stay explicit
 - do not default to “make the next task green” if that means avoiding the deeper runtime work the service actually requires
 
+## Supported-Surface Identity Rule
+
+For every Azure route, resource, action, or data-plane operation that GlobalStack claims to support, the target standard is the same externally observable behavior as real Azure.
+
+That means matching, where applicable:
+
+- status codes
+- Azure error codes
+- response body shape and payload semantics
+- headers and async-operation headers
+- state transitions and eventual-consistency windows
+- side effects on downstream services and backing resources
+- provider-visible behavior during deploy, refresh, update, and destroy
+
+If real Azure and GlobalStack behave differently for a supported surface, that is a product gap.
+
+It must not be normalized away by:
+
+- relaxing tests
+- weakening docs language
+- calling the mismatch “close enough”
+- hiding it behind a façade-only success path
+
+For supported surfaces, the standard is Azure-identical externally observable behavior. If that standard is not yet met, the surface must stay explicitly bounded or unsupported.
+
 Parity-hardening packs are expected to cover, at minimum:
 
 - authenticated and unauthenticated ARM behavior,
@@ -162,6 +187,15 @@ The tracked checklist is now closed. The next engineering work is not “add mor
 3. Runtime and orchestration fidelity under behavior-first integration tests.
 4. Multi-region, network, DNS, edge, identity, and policy-heavy stress.
 5. Narrow real-Azure canary reruns and drift checks that turn every surviving semantic mismatch into a product gap.
+
+Phase 6 is already underway. Verified breadth waves are green on:
+
+- Terraform HCL
+- Bicep
+- OpenTofu HCL
+- Pulumi Python
+
+Keep pushing the remaining breadth and mutation pressure across the other platform surfaces instead of assuming one green platform generalizes to all of them.
 
 ## Development Loop
 

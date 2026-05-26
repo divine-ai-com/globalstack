@@ -117,6 +117,7 @@ It must use:
 - real Azure resource hierarchies
 - real parent-child relationships
 - real output shapes
+- the actual SDK or provider surface for the pinned toolchain version used by the runner
 - deterministic naming only when the task requires it
 - platform-native structure and conventions
 
@@ -125,8 +126,11 @@ It must not use:
 - fake resource types
 - custom providers invented for GlobalStack
 - synthetic helper wrappers that exist only for local emulation
+- property names, constructor arguments, or helper-resource patterns copied from a different language SDK or a different provider surface
 - relaxed schemas added just to satisfy tests
 - made-up success paths
+
+When a task exports child-resource names, the exported value must match the task contract. If the prompt or tests expect the leaf name, do not leak provider-specific parent-qualified path names in outputs just because the SDK readback returned them that way.
 
 ## 5. Unit Test Rules
 
@@ -249,6 +253,12 @@ Anti-patterns that must be rejected:
 - using bounded router behavior as a substitute for a real local backend when the scenario needs executable service semantics
 - describing metadata-only coverage as if it were full service emulation
 - keeping a transitional façade-only implementation after it is clear the service needs a concrete runtime to support realistic workloads
+
+Supported-surface standard:
+
+- if GlobalStack claims a route, resource, action, or data-plane operation is supported, it should match real Azure’s externally observable behavior
+- that includes status codes, Azure error codes, payload semantics, headers, async behavior, timing windows, and side effects
+- if a real-Azure differential run shows a mismatch, the correct response is to fix GlobalStack or mark the surface bounded or unsupported, not to soften the test or language
 
 ## 10. Dataset Hygiene
 

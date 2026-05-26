@@ -23,6 +23,7 @@ The goal is not to make Azure calls "work" by returning friendly local success. 
 - Deprovision every real Azure resource created for capture or smoke testing.
 - Do not use LocalStack for Azure as a runtime dependency. GlobalStack must own the emulator surface it claims.
 - Treat official Microsoft emulators as useful local data planes, not proof of full Azure management-plane parity.
+- For any Azure surface we claim to support, the target is the same externally observable behavior as real Azure. If Azure and GlobalStack differ, that is a product gap.
 - Keep dataset-visible Azure IaC artifacts Azure-only. Prompts, IaC, unit tests, and integration tests must not mention GlobalStack, local endpoints, or emulator-only runtime details. See `docs/product/azure-iac-principals.md`.
 
 ## Current Scope
