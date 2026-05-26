@@ -2,9 +2,11 @@ function key(accountName, queueName) {
   return `${String(accountName ?? '').toLowerCase()}\0${String(queueName ?? '').toLowerCase()}`;
 }
 
-export const queueDeleteStaleReadObservedThroughMs = 2000;
-export const queueDeleteStaleReadObservedGoneByMs = 2500;
-export const queueDeleteStaleReadWindowMs = queueDeleteStaleReadObservedGoneByMs;
+export const queueDeleteStaleReadObservedThroughMs = 10000;
+export const queueDeleteStaleReadObservedGoneByMs = 15000;
+export const queueDeleteStaleReadWindowMs = Math.trunc(
+  (queueDeleteStaleReadObservedThroughMs + queueDeleteStaleReadObservedGoneByMs) / 2,
+);
 
 export class QueueDeleteStaleReadTracker {
   constructor({ now = () => Date.now(), windowMs = queueDeleteStaleReadWindowMs } = {}) {

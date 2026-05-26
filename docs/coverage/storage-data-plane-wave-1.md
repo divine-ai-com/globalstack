@@ -1,6 +1,6 @@
 # Azure Storage Data-Plane Capture Wave 1
 
-Captured: 2026-05-25T14:39:01.155Z
+Captured: 2026-05-26T10:46:31.045Z
 Cleanup verified: yes
 
 This report records real Azure Blob/Queue data-plane behavior for the first storage hardening wave. It does not mark storage as `cloudValidated`; mismatches remain explicit gaps until normalized into local expectations.
@@ -41,6 +41,22 @@ This report records real Azure Blob/Queue data-plane behavior for the first stor
 | queue-list | 200 |  |
 | queue-delete | 204 |  |
 | queue-peek-after-delete | 200 |  |
+
+## Timed Repeat Observations
+
+| Case | Delay | HTTP | Error Code |
+|---|---:|---:|---|
+| queue-peek-after-delete | 0ms | 200 |  |
+| queue-peek-after-delete | 2000ms | 200 |  |
+| queue-peek-after-delete | 2500ms | 200 |  |
+| queue-peek-after-delete | 3000ms | 200 |  |
+| queue-peek-after-delete | 3500ms | 200 |  |
+| queue-peek-after-delete | 4000ms | 200 |  |
+| queue-peek-after-delete | 4500ms | 200 |  |
+| queue-peek-after-delete | 5000ms | 200 |  |
+| queue-peek-after-delete | 7500ms | 200 |  |
+| queue-peek-after-delete | 10000ms | 200 |  |
+| queue-peek-after-delete | 15000ms | 404 | QueueNotFound |
 
 ## Azurite Comparison
 

@@ -119,7 +119,7 @@ The normalizer is intentionally narrow. It only rewrites cases where Wave 1 capt
 | `queue-malformed-message` | `400 InvalidXmlDocument` | `400` without `x-ms-error-code` | Status matches; local error-code parity gap. |
 | `queue-peek-after-delete` | `200` through the observed stale-read window, then `404 QueueNotFound` | `404 QueueNotFound` immediately | Queue delete propagation is eventually consistent in Azure and must be modeled explicitly. |
 
-These mismatches must not be hidden by broad success criteria. The first three are normalized by the GlobalStack storage proxy. `queue-peek-after-delete` is also normalized now, but only as a bounded stale-read window backed by repeat Azure captures: stale `200` was observed through `2000ms`, and `QueueNotFound` was observed by `2500ms`.
+These mismatches must not be hidden by broad success criteria. The first three are normalized by the GlobalStack storage proxy. `queue-peek-after-delete` is also normalized now, but only as a bounded stale-read window backed by repeat Azure captures: stale `200` was observed through `10000ms`, and `QueueNotFound` was observed by `15000ms`.
 
 ## Real Azure Capture Backlog
 

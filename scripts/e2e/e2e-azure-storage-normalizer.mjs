@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { AzuriteClient } from '../../packages/azure-data-plane/src/azurite-client.mjs';
+import { queueDeleteStaleReadObservedGoneByMs } from '../../packages/azure-data-plane/src/queue-delete-window.mjs';
 import { listenStorageProxy } from '../../packages/azure-data-plane/src/storage-proxy.mjs';
 
 const root = workspaceRoot(import.meta.url);
@@ -174,7 +175,7 @@ try {
   await startAzurite(docker);
   await waitForPort(10000);
   await waitForPort(10001);
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise(resolve => setTimeout(resolve, queueDeleteStaleReadObservedGoneByMs + 1000));
 
   blobProxy = await listenStorageProxy({
     service: 'blob',
@@ -284,7 +285,7 @@ try {
     return response;
   });
 
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise(resolve => setTimeout(resolve, queueDeleteStaleReadObservedGoneByMs + 1000));
 
   await record('queue peek after bounded stale-read window expires', async () => {
     const response = await normalized.peekQueueMessages(queue);
@@ -306,7 +307,7 @@ const report = {
   ok,
   generatedAt: new Date().toISOString(),
   scope: 'GlobalStack Azure Storage proxy normalization for real Azure captured Blob/Queue mismatches.',
-  caveat: 'Only implemented for captured safe mismatches. Queue delete now uses a bounded stale-read window from repeat Azure captures: stale 200 observed through 2000ms, QueueNotFound observed by 2500ms.',
+  caveat: 'Only implemented for captured safe mismatches. Queue delete now uses a bounded stale-read window from repeat Azure captures: stale 200 observed through 10000ms, QueueNotFound observed by 15000ms.',
   steps,
 };
 

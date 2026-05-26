@@ -5,7 +5,7 @@
   "fixtureSummaries": [
     {
       "id": "storage-data-plane-blob-queue-wave-1",
-      "capturedAt": "2026-05-25T14:39:01.155Z",
+      "capturedAt": "2026-05-26T10:46:31.045Z",
       "caseCount": 32,
       "mismatchCount": 4,
       "cleanupVerified": true
@@ -592,8 +592,8 @@
         "azureErrorCode": null,
         "azuriteStatus": 404,
         "azuriteErrorCode": "QueueNotFound",
-        "observedContinueThroughMs": 2000,
-        "observedGoneByMs": 2500
+        "observedContinueThroughMs": 10000,
+        "observedGoneByMs": 15000
       }
     }
   ],

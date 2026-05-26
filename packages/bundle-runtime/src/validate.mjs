@@ -541,8 +541,8 @@ if (!storageDataPlaneExpectationsText) {
   if (postDelete?.globalstackNormalization?.status !== 'implemented') {
     errors.push('Azure Storage data-plane expectation must mark queue-peek-after-delete as implemented by the GlobalStack normalizer');
   }
-  if (postDelete?.globalstackNormalization?.observedContinueThroughMs !== 2000 || postDelete?.globalstackNormalization?.observedGoneByMs !== 2500) {
-    errors.push('Azure Storage data-plane expectation must preserve the observed queue delete stale-read window (2000ms stale, 2500ms gone)');
+  if (postDelete?.globalstackNormalization?.observedContinueThroughMs !== 10000 || postDelete?.globalstackNormalization?.observedGoneByMs !== 15000) {
+    errors.push('Azure Storage data-plane expectation must preserve the observed queue delete stale-read window (10000ms stale, 15000ms gone)');
   }
 }
 

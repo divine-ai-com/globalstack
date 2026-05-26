@@ -186,6 +186,15 @@ async function captureCase(cases, id, description, fn, replacements) {
   return response;
 }
 
+function appendRepeatedObservation(captured, delayMs, response, replacements) {
+  const observation = {
+    delayMs,
+    response: responseShape(response, replacements),
+  };
+  captured.repeatedObservations = [...(captured.repeatedObservations ?? []), observation];
+  console.log(`${captured.id} @${delayMs}ms: HTTP ${observation.response.status} ${observation.response.errorCode ?? ''}`);
+}
+
 async function readAzuriteResults() {
   const path = join(root, 'dist', 'e2e', 'azure-storage-hardening', 'results.json');
   try {
@@ -252,6 +261,15 @@ function markdown(fixture, comparison) {
   ];
   for (const item of fixture.cases) {
     lines.push(`| ${item.id} | ${item.response.status} | ${item.response.errorCode ?? ''} |`);
+  }
+  const repeatedCases = fixture.cases.filter(item => Array.isArray(item.repeatedObservations) && item.repeatedObservations.length > 0);
+  if (repeatedCases.length > 0) {
+    lines.push('', '## Timed Repeat Observations', '', '| Case | Delay | HTTP | Error Code |', '|---|---:|---:|---|');
+    for (const item of repeatedCases) {
+      for (const observation of item.repeatedObservations) {
+        lines.push(`| ${item.id} | ${observation.delayMs}ms | ${observation.response.status} | ${observation.response.errorCode ?? ''} |`);
+      }
+    }
   }
   lines.push('', '## Azurite Comparison', '', '| Case | Azure | Azurite | Status Match | Error Match |', '|---|---|---|---|---|');
   for (const item of comparison) {
@@ -352,7 +370,19 @@ try {
   await captureCase(cases, 'queue-peek-message', 'Peek queue message.', () => client.peekQueueMessages(queue), replacements);
   await captureCase(cases, 'queue-list', 'List queues.', () => client.listQueues(), replacements);
   await captureCase(cases, 'queue-delete', 'Delete queue.', () => client.deleteQueue(queue), replacements);
-  await captureCase(cases, 'queue-peek-after-delete', 'Peek queue after delete.', () => client.peekQueueMessages(queue), replacements);
+  const queuePeekAfterDelete = await captureCase(cases, 'queue-peek-after-delete', 'Peek queue after delete.', () => client.peekQueueMessages(queue), replacements);
+  const queuePeekAfterDeleteCapture = cases.at(-1);
+  appendRepeatedObservation(queuePeekAfterDeleteCapture, 0, queuePeekAfterDelete, replacements);
+  let previousDelayMs = 0;
+  for (const delayMs of [2000, 2500, 3000, 3500, 4000, 4500, 5000, 7500, 10000, 15000]) {
+    await new Promise(resolve => setTimeout(resolve, delayMs - previousDelayMs));
+    previousDelayMs = delayMs;
+    const response = await client.peekQueueMessages(queue);
+    appendRepeatedObservation(queuePeekAfterDeleteCapture, delayMs, response, replacements);
+    if (response.status !== 200 || errorCode(response) === 'QueueNotFound') {
+      break;
+    }
+  }
 } finally {
   const deleteResponse = await armRequest('DELETE', rgPath, null, replacements);
   cleanup.attempted = true;

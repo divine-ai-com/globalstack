@@ -101,6 +101,6 @@ test('Azure Storage data-plane expectations mark only captured safe mismatches a
   assert.equal(postDelete.globalstackNormalization?.status, 'implemented');
   assert.equal(postDelete.expected.status, 200);
   assert.equal(postDelete.azurite.status, 404);
-  assert.equal(postDelete.globalstackNormalization?.observedContinueThroughMs, 2000);
-  assert.equal(postDelete.globalstackNormalization?.observedGoneByMs, 2500);
+  assert.equal(postDelete.globalstackNormalization?.observedContinueThroughMs, 10000);
+  assert.equal(postDelete.globalstackNormalization?.observedGoneByMs, 15000);
 });
