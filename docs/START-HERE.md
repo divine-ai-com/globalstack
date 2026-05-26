@@ -50,6 +50,7 @@ See `docs/SERVICE-SCOPE.md` for the generated capability matrix.
 - Capture classification lives in `docs/conformance/azure-capture-classification.json`.
 - The 99%-parity checklist lives in `docs/conformance/azure-99-parity-checklist.md`.
 - The prioritized execution roadmap lives in `docs/conformance/azure-99-roadmap.md`.
+- The same roadmap now also carries the post-checklist continuation phases for platform breadth, mutation depth, runtime fidelity, multi-region stress, and real-Azure canary reruns.
 - The platform runner lifecycle checklist lives in `docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md`.
 - The local ARM facade lives in `packages/azure-control-plane/src/server.mjs`.
 - Storage data-plane E2E uses Azurite through `scripts/e2e/e2e-azure-storage.mjs`.
@@ -63,6 +64,11 @@ As of the latest validated run:
 - 262 local conformance cases passed.
 
 These numbers are evidence for the current test set only. They are not a statement of full Azure API parity.
+
+The correct reading of the current state is:
+
+- `100%` of the tracked 30-service parity program is closed.
+- The broader Azure IaC ecosystem is still treated as open-ended and is now advanced through adversarial new task waves and real-Azure drift checks.
 
 ## First Files To Read
 

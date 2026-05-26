@@ -41,6 +41,7 @@ Use this file as the routing table for the repo. If you are not sure which docum
 | Clean repo runtime noise or decide what belongs in git | `product/PRODUCT-REPO-BOUNDARIES.md` | `ARTIFACT-REGISTRY.md`, `REPO-MAP.md` | Product source stays in git; runtime logs, reports, and workdirs do not |
 | Decide whether something belongs in core product code or an add-on | `product/EXTENSIONS.md` | `ARCHITECTURE.md`, `REPO-MAP.md` | Core runtime stays in `apps/` and `packages/`; optional add-ons belong under `extensions/` |
 | Work on generated prompts or smoke deploys | `AGENT-RUNBOOK.md` | `REPO-MAP.md` | `scripts/verified/generate-azure-smoke-prompts.mjs` and `scripts/runtime/smoke-deploy-azure-usecases.mjs` |
+| Choose the next post-checklist parity expansion | `conformance/azure-99-roadmap.md` | `CURRENT-MISSION.md`, `AGENT-RUNBOOK.md` | The generated roadmap phases and immediate next work table |
 | Generate bundle code with Amazon Bedrock | `product/BEDROCK-GENERATION.md` | `product/azure-iac-principals.md`, `AGENT-RUNBOOK.md` | Bedrock request path, credentials handling, and single-file generation constraints |
 | Understand repo layout or file ownership | `ARTIFACT-REGISTRY.md` | `REPO-MAP.md`, `ARCHITECTURE.md` | Artifact registry plus generated repo map |
 | Add new files or product surfaces | `ARTIFACT-REGISTRY.md` | `CONFORMANCE-MODEL.md`, `ARCHITECTURE.md` | Existing ownership model and source-of-truth order |

@@ -61,6 +61,14 @@ After each service has a dedicated parity pack, continue hardening each capabili
 9. Repeat captures for timing-sensitive or ambiguous behavior before normalizing local expectations.
 10. Service-specific local facade or official emulator integration for any behavior beyond generic ARM metadata.
 
+The tracked checklist is now closed. The next engineering work is not “add more green boxes” but keep challenging the claim through the continuation phases in `docs/conformance/azure-99-roadmap.md`:
+
+1. Platform breadth pressure across Terraform, OpenTofu, Bicep, ARM JSON, Pulumi Python, Pulumi YAML, and Ansible YAML.
+2. Mutation and lifecycle depth: updates, replacements, imports, drift, rollback, and delete/recreate races.
+3. Runtime and orchestration fidelity under behavior-first integration tests.
+4. Multi-region, network, DNS, edge, identity, and policy-heavy stress.
+5. Narrow real-Azure canary reruns and drift checks that turn every surviving semantic mismatch into a product gap.
+
 ## Development Loop
 
 Use the fast loop while changing a service:

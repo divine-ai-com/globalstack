@@ -57,6 +57,14 @@ This workspace must fail closed. It must not return successful Azure-shaped resp
 
 Current support is not complete live Azure API parity. Most services are metadata-only control-plane facades. Services backed by official local emulators are marked `official-emulator-backed-local`, and even those remain `realAzureApiComplete: false` until every relevant live Azure behavior is covered by conformance tests.
 
+The tracked 30-service parity program is closed, but the product is not treated as “finished.” The default continuation lane now lives in `docs/conformance/azure-99-roadmap.md` and is organized into:
+
+- platform breadth pressure across Terraform, OpenTofu, Bicep, ARM, Pulumi Python, Pulumi YAML, and Ansible,
+- mutation and lifecycle depth,
+- runtime and orchestration fidelity,
+- multi-region, network, and policy stress,
+- and narrow real-Azure canary reruns.
+
 ## Commands
 
 ```bash

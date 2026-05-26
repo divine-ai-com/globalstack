@@ -55,6 +55,8 @@ During parity-pack development, use the short feedback loop first and the full p
 
 This keeps local development fast while preserving the end-to-end guarantee that Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON still deploy through the GlobalStack path.
 
+After the tracked 30-service program is green, do not default back to more Pulumi TS-only work. Use `docs/conformance/azure-99-roadmap.md` as the continuation queue and pressure the other supported platforms first, starting with Terraform HCL and Bicep adversarial waves, then mutation-heavy bundles and narrow real-Azure differential reruns.
+
 After any command that starts Docker-based emulators:
 
 ```bash
