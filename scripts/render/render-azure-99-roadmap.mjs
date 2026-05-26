@@ -249,6 +249,134 @@ const crossCuttingBacklog = [
   },
 ];
 
+const extendedContinuationRoadmap = [
+  {
+    id: 'phase-6-platform-breadth-pressure',
+    label: 'Phase 6: Platform breadth pressure',
+    objective: 'Take the same adversarial Azure workloads beyond Pulumi TypeScript so the parity claim is exercised across the full supported IaC platform set instead of one dominant toolchain.',
+    tracks: [
+      'Run 5-bundle adversarial waves across Terraform HCL and OpenTofu HCL with the same shipment lifecycle bar.',
+      'Run 5-bundle adversarial waves across Bicep and ARM JSON with the same service graphs, outputs, and destroy guarantees.',
+      'Run 5-bundle adversarial waves across Pulumi Python, Pulumi YAML, and Ansible YAML.',
+      'Treat every platform-specific mismatch as either generator defect, runner defect, or emulator parity defect; do not blur them together.',
+    ],
+    defaultCommands: [
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=<platform>',
+      'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
+      'git diff --check',
+    ],
+    acceptanceBar: 'Every supported Azure IaC platform has at least one recent adversarial wave with all bundles green through build, lint, unit-tests, deploy, provider-lifecycle, integration-tests, and destroy.',
+  },
+  {
+    id: 'phase-7-mutation-and-lifecycle-depth',
+    label: 'Phase 7: Mutation and lifecycle depth',
+    objective: 'Push beyond create/read/destroy into the update, replacement, import, and rollback paths that usually expose the hardest parity mismatches.',
+    tracks: [
+      'Add mutation-heavy bundles with phased rollouts, partial replacements, and schema-preserving updates.',
+      'Add import/adopt flows where the toolchain binds existing Azure-shaped resources into state.',
+      'Add out-of-band drift mutations per service family and verify reconcile behavior, not just drift detection.',
+      'Add delete/recreate races and replacement-boundary assertions for child resources and scoped extension resources.',
+    ],
+    defaultCommands: [
+      'npm run smoke:prompts',
+      'npm run smoke:deploy',
+      'GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
+    ],
+    acceptanceBar: 'Replacement, refresh, drift-reconcile, import/adopt, and rollback semantics are covered by dedicated adversarial tasks and produce the same qualitative behavior against GlobalStack that the provider expects from Azure.',
+  },
+  {
+    id: 'phase-8-runtime-and-orchestration-fidelity',
+    label: 'Phase 8: Runtime and orchestration fidelity',
+    objective: 'Deepen the hosted-runtime side of the emulator so Function, Logic, APIM, messaging, and storage/event chains hold up under behavior-first integration tests rather than only ARM reads.',
+    tracks: [
+      'Stress Functions, Logic Apps, APIM, Event Grid, Service Bus, Event Hubs, Key Vault, and Storage in chained operational flows.',
+      'Expand negative-path and no-side-effect assertions for invalid auth, invalid payloads, missing dependencies, and retry exhaustion.',
+      'Add fan-out/fan-in, long-running orchestration, and multi-hop event delivery verification where the prompt claims them.',
+      'Keep integration tests behavior-first: service existence first, then end-to-end operational flow, then negative-path guarantees.',
+    ],
+    defaultCommands: [
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs',
+      'npm run e2e:azure-functions-parity',
+      'npm run e2e:logic-workflows-parity',
+      'npm run e2e:api-management-parity',
+    ],
+    acceptanceBar: 'Runtime-heavy adversarial bundles continue to pass without test relaxations, and any surviving mismatch is traceable to a real Azure behavioral difference or an explicit product gap.',
+  },
+  {
+    id: 'phase-9-multi-region-network-and-policy',
+    label: 'Phase 9: Multi-region, network, and policy stress',
+    objective: 'Widen the parity claim across active-active topologies, DNS layering, edge routing, private/public resolution, and identity or policy propagation under nested scopes.',
+    tracks: [
+      'Generate more active-active and east/west or hub/spoke bundles with Front Door, Application Gateway, Load Balancer, public DNS, and private DNS together.',
+      'Stress split-horizon DNS, private link style registration, and repeated resolution after link/delete or failover mutations.',
+      'Exercise user-assigned identities, RBAC inheritance, and activity-log or metrics-based governance in the same bundles.',
+      'Add policy and security surfaces where denial or attachment timing can diverge from naive CRUD assumptions.',
+    ],
+    defaultCommands: [
+      'npm run e2e:front-door-cdn-parity',
+      'npm run e2e:load-balancing-parity',
+      'npm run e2e:virtual-network-parity',
+      'npm run e2e:dns-zones-parity',
+    ],
+    acceptanceBar: 'Multi-region and policy-heavy adversarial tasks can mutate, refresh, and destroy cleanly while preserving Azure-shaped routing, resolution, and governance behavior.',
+  },
+  {
+    id: 'phase-10-real-azure-canary-lane',
+    label: 'Phase 10: Real-Azure canary and drift lane',
+    objective: 'Keep the `100%` claim honest by repeatedly challenging it against live Azure instead of freezing it at one historical capture set.',
+    tracks: [
+      'Run narrow, high-signal real-Azure reruns for timing-sensitive, retry-sensitive, and propagation-sensitive service surfaces.',
+      'Keep differential checks focused enough to complete cleanly and emit deterministic fixtures.',
+      'Record semantic drift only; discard timestamp, request-id, and dynamic endpoint churn unless it reflects real product behavior.',
+      'Convert every surviving semantic mismatch into a product work item immediately, with no temporary relaxations.',
+    ],
+    defaultCommands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+      'npm run conformance:parity && npm run conformance:roadmap',
+    ],
+    acceptanceBar: 'Scoped real-Azure reruns remain part of the default engineering loop, and the roadmap stays synchronized with any live drift or newly surfaced product gap.',
+  },
+];
+
+const immediateNextWork = [
+  {
+    rank: 1,
+    label: 'Run the next adversarial 5-bundle wave against Terraform HCL',
+    why: 'Pulumi TypeScript is now well stressed. The highest-value next move is to pressure a different provider and state engine with the same deep service graphs.',
+    commands: [
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-terraform-hcl',
+    ],
+  },
+  {
+    rank: 2,
+    label: 'Run the same adversarial wave against Bicep',
+    why: 'Bicep exercises ARM-native deployment semantics and catches a different class of naming, dependency, and child-resource identity issues than provider-based flows.',
+    commands: [
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep',
+    ],
+  },
+  {
+    rank: 3,
+    label: 'Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations',
+    why: 'The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.',
+    commands: [
+      'npm run smoke:platform-runners',
+      'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
+    ],
+  },
+  {
+    rank: 4,
+    label: 'Keep narrow real-Azure differential reruns running on timing-sensitive services',
+    why: 'The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true',
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true',
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true',
+    ],
+  },
+];
+
 function statusScore(status) {
   if (status === 'complete') return 1;
   if (status === 'partial') return 0.45;
@@ -437,7 +565,7 @@ function markdown(doc) {
   const lines = [
     '# Azure 99% Coverage Roadmap',
     '',
-    'This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.',
+    'This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.',
     '',
     `Generated: ${doc._meta.generatedAt}`,
     '',
@@ -491,6 +619,41 @@ function markdown(doc) {
 
   for (const item of doc.crossCuttingBacklog) {
     lines.push(`| ${item.label} | ${item.detail} | ${item.commands.map(command => `\`${command}\``).join('<br>')} |`);
+  }
+
+  lines.push(
+    '',
+    '## Extended Continuation Roadmap',
+    '',
+    'The tracked 30-service program is closed. These are the next phases that continue expanding confidence instead of freezing the claim.',
+    '',
+  );
+
+  for (const phase of doc.extendedContinuationRoadmap) {
+    lines.push(`### ${phase.label}`);
+    lines.push('');
+    lines.push(phase.objective);
+    lines.push('');
+    lines.push('Tracks:');
+    for (const track of phase.tracks) {
+      lines.push(`- ${track}`);
+    }
+    lines.push('');
+    lines.push(`Default commands: ${phase.defaultCommands.map(command => `\`${command}\``).join(', ')}`);
+    lines.push('');
+    lines.push(`Acceptance bar: ${phase.acceptanceBar}`);
+    lines.push('');
+  }
+
+  lines.push(
+    '## Immediate Next Work',
+    '',
+    '| Rank | Next Work | Why Now | Commands |',
+    '|---:|---|---|---|',
+  );
+
+  for (const item of doc.immediateNextWork) {
+    lines.push(`| ${item.rank} | ${item.label} | ${item.why} | ${item.commands.map(command => `\`${command}\``).join('<br>')} |`);
   }
 
   lines.push(
@@ -664,6 +827,8 @@ const doc = {
   },
   stressVerificationSnapshot,
   crossCuttingBacklog,
+  extendedContinuationRoadmap,
+  immediateNextWork,
   waves,
   prioritizedServices,
   workItemSummary: summarizeWorkItems(allWorkItems),
