@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T14:20:41.639Z",
+  "generatedAt": "2026-05-26T14:37:32.216Z",
   "source": "fixtures/azure-captures",
   "expectationCount": 440,
   "allowedDepths": [
@@ -5380,7 +5380,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e6d9082150/providers/Microsoft.KeyVault/vaults/kv-e6d9082150",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5ea30d0188/providers/Microsoft.KeyVault/vaults/kv-5ea30d0188",
         "body": {
           "location": "{location}",
           "properties": {
