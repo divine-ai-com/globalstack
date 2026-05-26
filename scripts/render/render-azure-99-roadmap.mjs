@@ -200,6 +200,42 @@ const crossCuttingBacklog = [
       'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
     ],
   },
+  {
+    id: 'adversarial-new-task-waves',
+    label: 'Adversarial new task waves',
+    detail: 'Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target.',
+    commands: [
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs',
+      'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
+    ],
+  },
+  {
+    id: 'real-azure-differential-reruns',
+    label: 'Real-Azure differential reruns',
+    detail: 'Re-run the same deployment and inspection flows against real Azure and GlobalStack so the parity claim is continuously challenged instead of frozen at one historical capture set.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+    ],
+  },
+  {
+    id: 'timing-and-drift-checks',
+    label: 'Repeated timing and drift checks',
+    detail: 'Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:parity && npm run conformance:roadmap',
+    ],
+  },
+  {
+    id: 'mismatch-to-product-gap',
+    label: 'Treat every surviving mismatch as a product gap',
+    detail: 'Classify each new failure as bundle-generation defect, provider defect, or emulator/runtime parity defect, then convert every true Azure mismatch into an explicit product work item instead of a one-off workaround.',
+    commands: [
+      'npm run validate',
+      'git diff --check',
+    ],
+  },
 ];
 
 function statusScore(status) {
