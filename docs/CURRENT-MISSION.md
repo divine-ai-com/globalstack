@@ -106,6 +106,28 @@ This means:
 - do not count another route or validation patch as “good enough” when the exposed gap really needs executable local runtime behavior
 - if a workload is supposed to deploy and actually run, GlobalStack must aim to let that mix of services execute locally, not merely provision Azure-shaped metadata
 
+## What We Were Doing Wrong
+
+These are the recurring mistakes that future work must not repeat:
+
+- flattening all service coverage into one parity number without separating metadata-only surfaces from executable local runtimes
+- treating a passing parity pack as if it proved full service emulation, even when the service was still backed only by metadata, validation, or a bounded router
+- accepting control-plane success for services whose real value is runtime behavior
+- adding narrow route patches or validation relaxations when the real missing piece was a concrete local backend/runtime
+- letting “bounded local subset” implementations linger as if they were acceptable end-state emulation
+- using façade-only success to make complex tasks pass instead of deepening the runtime that the task actually needed
+- speaking too loosely about parity when the repo itself still documented bounded or metadata-only behavior
+
+## What We Must Not Do
+
+- do not call a metadata-only or validation-only surface “real emulation”
+- do not present bounded router/model behavior as equivalent to a real service backend
+- do not prefer another ARM route addition over building the executable substrate when the workload needs one
+- do not count task success as sufficient if the service mix would not really function as a deployed local system
+- do not let convenience, speed, or checklist progress justify façade-only implementations for runtime-heavy services
+- do not hide this distinction in docs, summaries, or roadmap language; the implementation class must stay explicit
+- do not default to “make the next task green” if that means avoiding the deeper runtime work the service actually requires
+
 Parity-hardening packs are expected to cover, at minimum:
 
 - authenticated and unauthenticated ARM behavior,

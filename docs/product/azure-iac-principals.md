@@ -242,6 +242,14 @@ In practice:
 - when a bundle exposes a real runtime gap, fix the runtime gap instead of adding another narrow façade success path
 - when the user says "go for it" on parity or service expansion, assume they mean "deepen real emulation" unless they explicitly ask for control-plane-only coverage
 
+Anti-patterns that must be rejected:
+
+- counting control-plane acceptance as proof of runtime parity
+- patching one missing route while leaving the underlying runtime absent
+- using bounded router behavior as a substitute for a real local backend when the scenario needs executable service semantics
+- describing metadata-only coverage as if it were full service emulation
+- keeping a transitional façade-only implementation after it is clear the service needs a concrete runtime to support realistic workloads
+
 ## 10. Dataset Hygiene
 
 Before treating a bundle as training-grade, confirm that dataset-visible files do not leak runtime-only terms or wiring.
