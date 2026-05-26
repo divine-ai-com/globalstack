@@ -37,6 +37,36 @@ const starterBundles = [
     prId: 'Pr91003',
   },
   {
+    platformId: 'azure-bicep',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '6b0d7a34-0af1-4be0-84d3-3ed7c5c3e911',
+    prId: 'Pr91311',
+  },
+  {
+    platformId: 'azure-bicep',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '1d53f24c-7f8a-4b5f-ae9e-df2e93c61f26',
+    prId: 'Pr91312',
+  },
+  {
+    platformId: 'azure-bicep',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: '7a9d7fd1-ea9e-4f6f-bd2e-4fd2b8b4b2f7',
+    prId: 'Pr91313',
+  },
+  {
+    platformId: 'azure-bicep',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'e99df446-7d07-4fe0-bb11-d285f6f0741c',
+    prId: 'Pr91314',
+  },
+  {
+    platformId: 'azure-bicep',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '6036a132-b6df-4dc9-b6fa-6ac9b5014b9c',
+    prId: 'Pr91315',
+  },
+  {
     platformId: 'azure-terraform-hcl',
     scenarioId: 'claims-evidence-command-ring',
     poId: '2c1d6f0e-3640-4fc2-a41a-5d2b8c0d2f01',
@@ -318,6 +348,7 @@ const platformInstructions = new Map([
     instruction: [
       'Use Azure Bicep with a subscription-scoped lib/main.bicep that creates the resource group and calls a resource-group-scoped lib/workload.bicep module.',
       'Keep parameters in lib/parameters.json.',
+      'Declare the workload outputs in lib/workload.bicep and re-export them from lib/main.bicep as output <Key> string = workload.outputs.<Key>.',
       'Expose exactly the requested output keys as Bicep outputs.',
       'Do not embed raw ARM JSON strings inside Bicep resources.',
     ].join(' '),
@@ -614,6 +645,18 @@ function validateFiles(platformId, scenario, platform, names, files) {
     if (!stack.includes('export function createTapStack')) errors.push('Pulumi bundle must export createTapStack from lib/tap-stack.ts');
     if (!packageJson.includes('"@pulumi/azure-native": "^2.80.0"')) errors.push('Pulumi bundle must pin @pulumi/azure-native to ^2.80.0');
     if (!packageJson.includes('"@pulumi/pulumi": "^3.122.0"')) errors.push('Pulumi bundle must pin @pulumi/pulumi to ^3.122.0');
+  }
+  if (platformId === 'azure-bicep') {
+    const main = files.get('lib/main.bicep') ?? '';
+    const workload = files.get('lib/workload.bicep') ?? '';
+    for (const outputKey of scenario.outputKeys) {
+      if (!main.includes(`output ${outputKey} string = workload.outputs.${outputKey}`)) {
+        errors.push(`Bicep main.bicep must re-export output ${outputKey} from workload.outputs.${outputKey}`);
+      }
+      if (!workload.includes(`output ${outputKey} string =`)) {
+        errors.push(`Bicep workload.bicep must declare output ${outputKey}`);
+      }
+    }
   }
   if (errors.length > 0) throw new Error(errors.join('; '));
 }
@@ -1418,9 +1461,9 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
     && providerLifecycleOk;
 
   const summary = {
-    platformId,
+    platformId: task.platformId,
     ok,
-    exitCode,
+    exitCode: shipmentRun.code,
     finalStage: lifecycle?.stage ?? null,
     finalStatus: lifecycle?.status ?? null,
     provisioningState: deployment?.properties?.provisioningState ?? null,
@@ -1431,7 +1474,7 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
       lint: 'structural contract validation',
       'unit-tests': 'task-authored unit tests plus deterministic hygiene checks',
       deploy: 'native provider deployment against Azure-shaped control plane',
-      'provider-lifecycle': platformId === 'azure-terraform-hcl' ? 'Terraform plan, refresh, drift, import, and reconcile evidence' : platformId === 'azure-pulumi-ts' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
+      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' ? 'Terraform plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },
@@ -1502,7 +1545,12 @@ async function generateBundle(task, docker) {
           summary,
         };
       }
-      lastError = `runner lifecycle failed at ${summary.finalStage ?? 'unknown'}; final status=${summary.finalStatus ?? 'unknown'}; native stderr=${summary.nativeStderrTail.join(' | ')}`;
+      const relevantErrorTail = summary.finalStage === 'unit-tests'
+        ? summary.unitTestStderrTail
+        : summary.finalStage === 'integration-tests'
+          ? summary.integrationTestStderrTail
+          : summary.nativeStderrTail;
+      lastError = `runner lifecycle failed at ${summary.finalStage ?? 'unknown'}; final status=${summary.finalStatus ?? 'unknown'}; stderr=${relevantErrorTail.join(' | ')}`;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
     }
