@@ -1,6 +1,6 @@
 {
   "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.null-properties",
-  "capturedAt": "2026-05-25T12:59:58.677Z",
+  "capturedAt": "2026-05-26T14:19:41.502Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -11,7 +11,7 @@
   "varianceId": "null-properties",
   "request": {
     "method": "PUT",
-    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9611dd5b89/providers/Microsoft.EventGrid/topics/topic-9611dd5b89?api-version=2022-06-15",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0fa29e4e66/providers/Microsoft.EventGrid/topics/topic-0fa29e4e66?api-version=2022-06-15",
     "body": {
       "location": "{location}",
       "properties": null
@@ -21,12 +21,12 @@
   "response": {
     "status": 201,
     "headers": {
-      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.EventGrid/locations/eastus/operationsStatus/5B718138-2BF4-43DF-9C50-8DDB43C36AD2?api-version=2022-06-15&redacted=true",
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.EventGrid/locations/eastus/operationsStatus/9D213902-A83D-45C3-B8B7-E2BD1A92E82C?api-version=2022-06-15&redacted=true",
       "content-type": "application/json; charset=utf-8",
       "retry-after": "10",
-      "x-ms-correlation-request-id": "3dea6841-b383-4ee9-a068-58ad1f0e765a",
-      "x-ms-request-id": "4000046d-0001-fa00-b63f-84710c7967bb",
-      "x-ms-routing-request-id": "CENTRALINDIA:20260525T125855Z:3dea6841-b383-4ee9-a068-58ad1f0e765a"
+      "x-ms-correlation-request-id": "5ca7b5fc-3519-45cb-b653-fad1fd11873b",
+      "x-ms-request-id": "40000d6d-000c-fa00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260526T141838Z:5ca7b5fc-3519-45cb-b653-fad1fd11873b"
     },
     "body": {
       "properties": {
@@ -37,13 +37,13 @@
       "systemData": null,
       "location": "eastus",
       "tags": null,
-      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9611dd5b89/providers/Microsoft.EventGrid/topics/topic-9611dd5b89",
-      "name": "topic-9611dd5b89",
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0fa29e4e66/providers/Microsoft.EventGrid/topics/topic-0fa29e4e66",
+      "name": "topic-0fa29e4e66",
       "type": "Microsoft.EventGrid/topics"
     }
   },
   "cleanup": {
-    "resourceGroupName": "rg-gs-conf-9611dd5b89",
+    "resourceGroupName": "rg-gs-conf-0fa29e4e66",
     "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true

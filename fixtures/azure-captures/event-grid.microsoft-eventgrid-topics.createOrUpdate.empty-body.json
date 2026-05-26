@@ -1,6 +1,6 @@
 {
   "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.empty-body",
-  "capturedAt": "2026-05-25T12:58:38.507Z",
+  "capturedAt": "2026-05-26T14:17:24.420Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -11,7 +11,7 @@
   "varianceId": "empty-body",
   "request": {
     "method": "PUT",
-    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f613dec636/providers/Microsoft.EventGrid/topics/topic-f613dec636?api-version=2022-06-15",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-873be7e8f5/providers/Microsoft.EventGrid/topics/topic-873be7e8f5?api-version=2022-06-15",
     "body": {},
     "apiVersionOverride": null
   },
@@ -19,9 +19,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "a1d0dbda-ee89-49cc-96bc-0e2dedfb5294",
-      "x-ms-request-id": "a1d0dbda-ee89-49cc-96bc-0e2dedfb5294",
-      "x-ms-routing-request-id": "EASTUS:20260525T125837Z:a1d0dbda-ee89-49cc-96bc-0e2dedfb5294"
+      "x-ms-correlation-request-id": "23fe640a-06eb-49c1-8204-d05b8773dacc",
+      "x-ms-request-id": "23fe640a-06eb-49c1-8204-d05b8773dacc",
+      "x-ms-routing-request-id": "EASTUS:20260526T141718Z:23fe640a-06eb-49c1-8204-d05b8773dacc"
     },
     "body": {
       "error": {
@@ -31,7 +31,7 @@
     }
   },
   "cleanup": {
-    "resourceGroupName": "rg-gs-conf-f613dec636",
+    "resourceGroupName": "rg-gs-conf-873be7e8f5",
     "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true

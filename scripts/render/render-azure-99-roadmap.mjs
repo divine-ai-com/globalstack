@@ -220,6 +220,16 @@ const crossCuttingBacklog = [
     ],
   },
   {
+    id: 'conformance-runner-completion-determinism',
+    label: 'Conformance runner completion determinism',
+    detail: 'Harden the real-Azure conformance runner so it exits deterministically after capture and cleanup. Some scoped reruns still write fresh fixtures and then go quiet instead of finishing cleanly.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true',
+      'npm run conformance:classify && npm run conformance:expectations',
+      'npm run validate',
+    ],
+  },
+  {
     id: 'timing-and-drift-checks',
     label: 'Repeated timing and drift checks',
     detail: 'Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures.',

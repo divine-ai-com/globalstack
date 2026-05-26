@@ -2,7 +2,7 @@
 
 This roadmap turns the parity checklist into an execution order. It does not mark any service complete; it identifies the next capture, implementation, and validation work needed for near-real Azure emulation.
 
-Generated: 2026-05-26T14:14:39.525Z
+Generated: 2026-05-26T14:20:32.272Z
 
 ## Guardrails
 
@@ -52,6 +52,7 @@ These items remain open across the whole Azure program even when a service-speci
 | Deeper service-specific data planes where applicable | Broaden bounded local facades and official-emulator integrations for services such as Cosmos, Files, Event Hubs, App Configuration, Key Vault, PostgreSQL, MySQL, and Redis. | `npm run hybrid:render`<br>`npm run smoke`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true` |
 | Adversarial new task waves | Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
 | Real-Azure differential reruns | Re-run the same deployment and inspection flows against real Azure and GlobalStack so the parity claim is continuously challenged instead of frozen at one historical capture set. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` |
+| Conformance runner completion determinism | Harden the real-Azure conformance runner so it exits deterministically after capture and cleanup. Some scoped reruns still write fresh fixtures and then go quiet instead of finishing cleanly. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations`<br>`npm run validate` |
 | Repeated timing and drift checks | Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:parity && npm run conformance:roadmap` |
 | Treat every surviving mismatch as a product gap | Classify each new failure as bundle-generation defect, provider defect, or emulator/runtime parity defect, then convert every true Azure mismatch into an explicit product work item instead of a one-off workaround. | `npm run validate`<br>`git diff --check` |
 

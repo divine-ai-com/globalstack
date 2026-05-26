@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T13:53:42.381Z",
+  "generatedAt": "2026-05-26T14:20:41.639Z",
   "source": "fixtures/azure-captures",
   "expectationCount": 440,
   "allowedDepths": [
@@ -3386,7 +3386,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f613dec636/providers/Microsoft.EventGrid/topics/topic-f613dec636?api-version=2022-06-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-873be7e8f5/providers/Microsoft.EventGrid/topics/topic-873be7e8f5?api-version=2022-06-15",
         "body": {}
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
@@ -3405,7 +3405,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8a733b8842/providers/Microsoft.EventGrid/topics/topic-8a733b8842?api-version=2022-06-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d32d07425d/providers/Microsoft.EventGrid/topics/topic-d32d07425d?api-version=2022-06-15",
         "body": {
           "location": "{location}",
           "properties": {
@@ -3430,7 +3430,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-90e6daeb81/providers/Microsoft.EventGrid/topics/topic-90e6daeb81?api-version=2022-06-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-712bea5893/providers/Microsoft.EventGrid/topics/topic-712bea5893?api-version=2022-06-15",
         "body": {
           "location": "globalstack-invalid-location",
           "properties": {
@@ -3455,7 +3455,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-de2da41aa1/providers/Microsoft.EventGrid/topics/topic-de2da41aa1?api-version=2022-06-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-738d44d360/providers/Microsoft.EventGrid/topics/topic-738d44d360?api-version=2022-06-15",
         "body": {
           "location": "{location}",
           "properties": {
@@ -3481,7 +3481,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f963b5aa37/providers/Microsoft.EventGrid/topics/topic-f963b5aa37",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0006242b8d/providers/Microsoft.EventGrid/topics/topic-0006242b8d",
         "body": {
           "location": "{location}",
           "properties": {
@@ -3506,7 +3506,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c05ed32494/providers/Microsoft.EventGrid/topics/topic-c05ed32494?api-version=2022-06-15",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d2ea899917/providers/Microsoft.EventGrid/topics/topic-d2ea899917?api-version=2022-06-15",
         "body": {
           "properties": {
             "inputSchema": "EventGridSchema",
@@ -5159,7 +5159,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d372ababc8/providers/Microsoft.KeyVault/vaults/kv-d372ababc8/secrets/bad_secret?api-version=2023-07-01",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a37d14ea9e/providers/Microsoft.KeyVault/vaults/kv-a37d14ea9e/secrets/bad_secret?api-version=2023-07-01",
         "body": {
           "location": "{location}",
           "properties": {
@@ -6662,7 +6662,7 @@
       },
       "request": {
         "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3486629f70/providers/Microsoft.Logic/workflows/workflow-3486629f70?api-version=2019-05-01",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa0063b417/providers/Microsoft.Logic/workflows/workflow-fa0063b417?api-version=2019-05-01",
         "body": {
           "location": "{location}",
           "properties": {

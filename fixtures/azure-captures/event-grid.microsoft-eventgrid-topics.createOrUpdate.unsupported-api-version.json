@@ -1,6 +1,6 @@
 {
   "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.unsupported-api-version",
-  "capturedAt": "2026-05-25T12:58:29.796Z",
+  "capturedAt": "2026-05-26T14:17:02.885Z",
   "target": "azure",
   "subscriptionId": "<subscription-id>",
   "tenantId": "<tenant-id>",
@@ -11,7 +11,7 @@
   "varianceId": "unsupported-api-version",
   "request": {
     "method": "PUT",
-    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-da43042fa9/providers/Microsoft.EventGrid/topics/topic-da43042fa9?api-version=1900-01-01",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-55d901cfef/providers/Microsoft.EventGrid/topics/topic-55d901cfef?api-version=1900-01-01",
     "body": {
       "location": "{location}",
       "properties": {
@@ -25,9 +25,9 @@
     "status": 400,
     "headers": {
       "content-type": "application/json; charset=utf-8",
-      "x-ms-correlation-request-id": "33a0b1a3-5457-4035-afe5-3dafa301099d",
-      "x-ms-request-id": "33a0b1a3-5457-4035-afe5-3dafa301099d",
-      "x-ms-routing-request-id": "SOUTHINDIA:20260525T125823Z:33a0b1a3-5457-4035-afe5-3dafa301099d"
+      "x-ms-correlation-request-id": "2789ad00-1c92-4236-8356-db41816b77e6",
+      "x-ms-request-id": "2789ad00-1c92-4236-8356-db41816b77e6",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260526T141655Z:2789ad00-1c92-4236-8356-db41816b77e6"
     },
     "body": {
       "error": {
@@ -37,7 +37,7 @@
     }
   },
   "cleanup": {
-    "resourceGroupName": "rg-gs-conf-da43042fa9",
+    "resourceGroupName": "rg-gs-conf-55d901cfef",
     "deleteStatus": 202,
     "verificationStatus": 404,
     "verifiedDeleted": true
