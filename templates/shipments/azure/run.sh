@@ -230,7 +230,23 @@ if ! preclean_compose_project; then
 fi
 
 compose_exit_code=0
-docker_cmd compose up --abort-on-container-exit --exit-code-from runner runner || compose_exit_code=$?
+runner_container_id=""
+docker_cmd compose up -d runner || compose_exit_code=$?
+
+if [ "$compose_exit_code" -eq 0 ]; then
+  runner_container_id="$(docker_cmd compose ps -q runner | head -1)"
+  if [ -z "$runner_container_id" ]; then
+    echo "Error: could not resolve runner container id for compose project ${COMPOSE_PROJECT_NAME}" >&2
+    compose_exit_code=1
+  else
+    docker_cmd logs -f "$runner_container_id" || true &
+    runner_logs_pid=$!
+    if ! compose_exit_code="$(docker_cmd wait "$runner_container_id" 2>/dev/null | tail -n 1)"; then
+      compose_exit_code=1
+    fi
+    wait "$runner_logs_pid" || true
+  fi
+fi
 
 docker_cmd compose down --remove-orphans >/dev/null 2>&1 || true
 

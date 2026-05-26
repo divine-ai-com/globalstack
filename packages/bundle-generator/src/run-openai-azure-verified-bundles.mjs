@@ -1,32 +1,21 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { distPath, verifiedWorkspacePath, workspaceRoot } from '../../workspace-utils/src/index.mjs';
+import { distPath, verificationRepoRoot, verifiedWorkspacePath, workspaceRoot } from '../../workspace-utils/src/index.mjs';
 import { spawn } from 'node:child_process';
 import { azurePlatforms } from '../../platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
+const verificationRoot = verificationRepoRoot(root);
 const runtimeRoot = distPath(root, 'verified-bundle-runtime');
 const model = process.env.OPENAI_MODEL ?? 'gpt-5.5';
 const location = process.env.AZURE_LOCATION ?? 'eastus';
-const authToken = process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-local-token';
 const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot/i;
 const requestedItems = process.argv
   .filter(arg => arg.startsWith('--bundle='))
   .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean));
 
 const platformById = new Map(azurePlatforms.map(platform => [platform.id, platform]));
-
-function platformIdToImageTag(platformId) {
-  const platform = platformById.get(platformId);
-  if (!platform) throw new Error(`Unknown platform ${platformId}`);
-  return platform.imageTag;
-}
-
-async function imageExists(docker, image) {
-  const inspectCode = await run(docker.command, [...docker.prefix, 'image', 'inspect', image], { cwd: root, stdio: 'ignore' });
-  return inspectCode === 0;
-}
 
 const starterBundles = [
   {
@@ -46,6 +35,36 @@ const starterBundles = [
     scenarioId: 'regulated-genai-knowledge-ingestion',
     poId: '0fb57f73-b5c4-4d8d-bf1e-e88f2164c103',
     prId: 'Pr91003',
+  },
+  {
+    platformId: 'azure-terraform-hcl',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '2c1d6f0e-3640-4fc2-a41a-5d2b8c0d2f01',
+    prId: 'Pr91301',
+  },
+  {
+    platformId: 'azure-terraform-hcl',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: 'e2a2de44-24eb-44a0-9d74-371bc3d9f002',
+    prId: 'Pr91302',
+  },
+  {
+    platformId: 'azure-terraform-hcl',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: 'd69fb4e6-8d8e-4323-b2f2-2a8fbe359703',
+    prId: 'Pr91303',
+  },
+  {
+    platformId: 'azure-terraform-hcl',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: '1f908b84-c7be-4d8e-b18b-4497ab0a2304',
+    prId: 'Pr91304',
+  },
+  {
+    platformId: 'azure-terraform-hcl',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: 'a4d1fd61-9860-49fb-a4cb-54fdff0b3705',
+    prId: 'Pr91305',
   },
 ];
 
@@ -121,6 +140,126 @@ const scenarios = new Map([
       'KnowledgeConfigStoreName',
     ],
   }],
+  ['claims-evidence-command-ring', {
+    title: 'Claims evidence command ring',
+    narrative: [
+      'A claims operations team needs an Azure intake ring for evidence packets and downstream command fan-out.',
+      'Adjusters upload evidence archives, queue classification work, publish claim events, and keep a compact ledger that investigators can query without waiting for a larger platform migration.',
+      'Keep the task narrowly focused on the Azure storage and messaging foundation for this evidence and command path.',
+    ].join(' '),
+    containerName: 'claims-evidence',
+    queueName: 'claims-jobs',
+    fileShareName: 'claimsfiles',
+    tableName: 'claimsledger',
+    serviceBusTopicName: 'claims-events',
+    eventHubName: 'claims-stream',
+    outputKeys: [
+      'ClaimsEvidenceStorageAccountName',
+      'ClaimsEvidenceContainerName',
+      'ClaimsJobsQueueName',
+      'ClaimsFilesShareName',
+      'ClaimsLedgerTableName',
+      'ClaimsEventsTopicName',
+      'ClaimsStreamHubName',
+      'ClaimsConfigStoreName',
+    ],
+  }],
+  ['partner-order-ingest-buffer', {
+    title: 'Partner order ingest buffer',
+    narrative: [
+      'A partner integration group needs a compact Azure landing zone for inbound order packages.',
+      'Partners upload order bundles, queue normalization work, emit downstream partner events, and keep a small operational ledger while the broader fulfillment platform remains separate.',
+      'Keep the deployment limited to the storage and messaging assets required for this intake layer.',
+    ].join(' '),
+    containerName: 'partner-orders',
+    queueName: 'partner-jobs',
+    fileShareName: 'partnerfiles',
+    tableName: 'partnerledger',
+    serviceBusTopicName: 'partner-events',
+    eventHubName: 'partner-stream',
+    outputKeys: [
+      'PartnerOrderStorageAccountName',
+      'PartnerOrdersContainerName',
+      'PartnerJobsQueueName',
+      'PartnerFilesShareName',
+      'PartnerLedgerTableName',
+      'PartnerEventsTopicName',
+      'PartnerStreamHubName',
+      'PartnerConfigStoreName',
+    ],
+  }],
+  ['warehouse-dispatch-event-plane', {
+    title: 'Warehouse dispatch event plane',
+    narrative: [
+      'A warehouse dispatch team needs one Azure event plane for manifests, command queues, and operational records.',
+      'Dispatch systems upload manifest batches, queue routing work, publish dispatch events, and stream live warehouse state into a bounded hub for downstream operations services.',
+      'Keep this task limited to the Azure storage and messaging surface that fronts the dispatch workflow.',
+    ].join(' '),
+    containerName: 'dispatch-manifests',
+    queueName: 'dispatch-jobs',
+    fileShareName: 'dispatchfiles',
+    tableName: 'dispatchledger',
+    serviceBusTopicName: 'dispatch-events',
+    eventHubName: 'dispatch-stream',
+    outputKeys: [
+      'DispatchStorageAccountName',
+      'DispatchManifestsContainerName',
+      'DispatchJobsQueueName',
+      'DispatchFilesShareName',
+      'DispatchLedgerTableName',
+      'DispatchEventsTopicName',
+      'DispatchStreamHubName',
+      'DispatchConfigStoreName',
+    ],
+  }],
+  ['billing-audit-notification-mesh', {
+    title: 'Billing audit notification mesh',
+    narrative: [
+      'A finance platform team needs an Azure notification mesh for billing audit artifacts.',
+      'Audit jobs upload evidence packages, queue reconciliation work, publish billing notifications, and keep a narrow ledger so operations can trace incidents without a larger application stack.',
+      'Keep the task focused on the storage and messaging foundation for audit notifications and evidence retention.',
+    ].join(' '),
+    containerName: 'billing-audit',
+    queueName: 'billing-jobs',
+    fileShareName: 'billingfiles',
+    tableName: 'billingledger',
+    serviceBusTopicName: 'billing-events',
+    eventHubName: 'billing-stream',
+    outputKeys: [
+      'BillingAuditStorageAccountName',
+      'BillingAuditContainerName',
+      'BillingJobsQueueName',
+      'BillingFilesShareName',
+      'BillingLedgerTableName',
+      'BillingEventsTopicName',
+      'BillingStreamHubName',
+      'BillingConfigStoreName',
+    ],
+  }],
+  ['regional-catalog-command-plane', {
+    title: 'Regional catalog command plane',
+    narrative: [
+      'A commerce catalog team needs a compact Azure command plane for regional catalog refreshes.',
+      'Regional import jobs upload catalog snapshots, queue normalization work, publish catalog invalidation events, and keep a small operational ledger while the main serving stack remains outside this task.',
+      'Keep the deployment limited to the Azure storage and messaging assets needed for the catalog command plane.',
+    ].join(' '),
+    containerName: 'catalog-snapshots',
+    queueName: 'catalog-jobs',
+    fileShareName: 'catalogfiles',
+    tableName: 'catalogledger',
+    serviceBusTopicName: 'catalog-events',
+    eventHubName: 'catalog-stream',
+    outputKeys: [
+      'CatalogStorageAccountName',
+      'CatalogSnapshotsContainerName',
+      'CatalogJobsQueueName',
+      'CatalogFilesShareName',
+      'CatalogLedgerTableName',
+      'CatalogEventsTopicName',
+      'CatalogStreamHubName',
+      'CatalogConfigStoreName',
+    ],
+  }],
 ]);
 
 const platformInstructions = new Map([
@@ -130,6 +269,8 @@ const platformInstructions = new Map([
       'Use Terraform HCL with only the Azure AzAPI provider v2.x.',
       'Do not use the azurerm provider.',
       'Configure provider "azapi" with use_cli = true and a data "azapi_client_config" "current" block.',
+      'Declare string variables named subscription_id, location, resource_group_name, and storage_account_name in lib/variables.tf because the runner passes those exact variables at deploy time.',
+      'Use var.location for the resource group and storage account location, use var.resource_group_name for the resource group name, and use var.storage_account_name for the storage account name.',
       'Use azapi_resource for the resource group and every workload resource.',
       'Use native HCL object bodies, not jsonencode strings.',
       'Create explicit azapi_resource parents for blobServices/default, queueServices/default, fileServices/default, and tableServices/default, then attach the container, queue, share, and table by setting parent_id to those explicit service resources.',
@@ -139,7 +280,6 @@ const platformInstructions = new Map([
     requiredMarkers: [
       'azapi_resource',
       'data "azapi_client_config" "current"',
-      'use_cli = true',
       'Microsoft.Storage/storageAccounts',
       'Microsoft.Storage/storageAccounts/blobServices',
       'Microsoft.Storage/storageAccounts/queueServices',
@@ -149,6 +289,10 @@ const platformInstructions = new Map([
       'Microsoft.EventGrid/topics',
       'Microsoft.EventHub/namespaces',
       'Microsoft.AppConfiguration/configurationStores',
+      'variable "subscription_id"',
+      'variable "location"',
+      'variable "resource_group_name"',
+      'variable "storage_account_name"',
     ],
     unitTestCommand: 'python3 test/terraform.unit.test.py',
     integrationTestCommand: 'python3 test/terraform.int.test.py',
@@ -248,6 +392,10 @@ function visibleBundleDir(task) {
 
 function runtimeBundleDir(task) {
   return join(runtimeRoot, task.poId, task.prId);
+}
+
+function shipmentBundleDir(task) {
+  return join(verificationRoot, '.lifecycle-work', 'shipments', task.poId, `${task.prId}_unzipped`);
 }
 
 function uniqueSuffix(platformId, scenarioId) {
@@ -439,11 +587,21 @@ function validateFiles(platformId, scenario, platform, names, files) {
     if (joined.includes(forbidden)) errors.push(`contains unsupported property ${forbidden}`);
   }
   if (platformId === 'azure-terraform-hcl') {
+    const variables = files.get('lib/variables.tf') ?? '';
+    const main = files.get('lib/main.tf') ?? '';
+    const provider = files.get('lib/provider.tf') ?? '';
     if (joined.match(/\bazurerm[_\s.]/i)) errors.push('Terraform bundle must not use azurerm');
     if (joined.includes('jsonencode(')) errors.push('Terraform bundle must use native HCL object bodies');
     if (joined.includes('"default/${')) errors.push('Terraform bundle must model storage service default resources explicitly instead of embedding default/ in child names');
     if (joined.includes('/blobServices/default') || joined.includes('/queueServices/default') || joined.includes('/fileServices/default') || joined.includes('/tableServices/default')) {
       errors.push('Terraform bundle must create explicit storage service parent resources instead of concatenating default service paths onto the storage account id');
+    }
+    if (!/use_cli\s*=\s*true/.test(provider)) errors.push('Terraform bundle must configure provider "azapi" with use_cli = true');
+    for (const variableName of ['subscription_id', 'location', 'resource_group_name', 'storage_account_name']) {
+      if (!variables.includes(`variable "${variableName}"`)) errors.push(`Terraform bundle must declare variable "${variableName}" in lib/variables.tf`);
+    }
+    for (const marker of ['var.location', 'var.resource_group_name', 'var.storage_account_name']) {
+      if (!main.includes(marker)) errors.push(`Terraform bundle must reference ${marker} in lib/main.tf`);
     }
   }
   if (platformId === 'azure-pulumi-ts') {
@@ -586,9 +744,9 @@ function fileContainsAssertions(platformId, scenario, names) {
   const resources = scenarioResources(scenario, names);
   if (platformId === 'azure-terraform-hcl') {
     return {
-      'lib/provider.tf': ['azapi', 'use_cli = true', 'data "azapi_client_config" "current"'],
+      'lib/provider.tf': ['azapi', 'use_cli', 'data "azapi_client_config" "current"'],
       'lib/main.tf': [
-        'Microsoft.Resources/resourceGroups@2021-04-01',
+        'Microsoft.Resources/resourceGroups',
         'Microsoft.Storage/storageAccounts@2023-01-01',
         'Microsoft.Storage/storageAccounts/blobServices@2023-01-01',
         'Microsoft.Storage/storageAccounts/queueServices@2023-01-01',
@@ -695,6 +853,7 @@ function expectedOutputs(platformId, scenario, names) {
 
 function pythonUnitTest() {
   return `import json
+import re
 from pathlib import Path
 
 root = Path.cwd()
@@ -777,38 +936,47 @@ if metadata["platformId"] == "azure-bicep":
         assert expected_line in main, f"main.bicep is missing output {output_key}"
 elif metadata["platformId"] == "azure-terraform-hcl":
     provider = (root / "lib/provider.tf").read_text()
+    variables = (root / "lib/variables.tf").read_text()
     main = (root / "lib/main.tf").read_text()
     outputs = (root / "lib/outputs.tf").read_text()
 
-    for marker in [
-        'source  = "Azure/azapi"',
-        'provider "azapi"',
-        'use_cli = true',
-        'data "azapi_client_config" "current" {}',
-    ]:
-        assert marker in provider, f"provider.tf is missing {marker}"
+    assert re.search(r'source\\s*=\\s*"Azure/azapi"', provider), 'provider.tf is missing source = "Azure/azapi"'
+    assert 'provider "azapi"' in provider, 'provider.tf is missing provider "azapi"'
+    assert re.search(r'use_cli\\s*=\\s*true', provider), 'provider.tf is missing use_cli = true'
+    assert 'data "azapi_client_config" "current"' in provider, 'provider.tf is missing data "azapi_client_config" "current"'
 
     for marker in [
-        'Microsoft.Resources/resourceGroups@2021-04-01',
+        'variable "subscription_id"',
+        'variable "location"',
+        'variable "resource_group_name"',
+        'variable "storage_account_name"',
+    ]:
+        assert marker in variables, f"variables.tf is missing {marker}"
+
+    for marker in [
+        'var.location',
+        'var.resource_group_name',
+        'var.storage_account_name',
+        'Microsoft.Resources/resourceGroups',
         'Microsoft.Storage/storageAccounts@2023-01-01',
-        'type      = "Microsoft.Storage/storageAccounts/blobServices@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/queueServices@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/fileServices@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/fileServices/shares@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/tableServices@2023-01-01"',
-        'type      = "Microsoft.Storage/storageAccounts/tableServices/tables@2023-01-01"',
+        'Microsoft.Storage/storageAccounts/blobServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01',
+        'Microsoft.Storage/storageAccounts/queueServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01',
+        'Microsoft.Storage/storageAccounts/fileServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/fileServices/shares@2023-01-01',
+        'Microsoft.Storage/storageAccounts/tableServices@2023-01-01',
+        'Microsoft.Storage/storageAccounts/tableServices/tables@2023-01-01',
         'Microsoft.ServiceBus/namespaces@2021-11-01',
         'Microsoft.ServiceBus/namespaces/topics@2021-11-01',
         'Microsoft.EventGrid/topics@2022-06-15',
         'Microsoft.EventHub/namespaces@2024-01-01',
         'Microsoft.EventHub/namespaces/eventhubs@2024-01-01',
         'Microsoft.AppConfiguration/configurationStores@2023-03-01',
-        'parent_id = azapi_resource.blob_service.id',
-        'parent_id = azapi_resource.queue_service.id',
-        'parent_id = azapi_resource.file_service.id',
-        'parent_id = azapi_resource.table_service.id',
+        'azapi_resource.blob_service.id',
+        'azapi_resource.queue_service.id',
+        'azapi_resource.file_service.id',
+        'azapi_resource.table_service.id',
     ]:
         assert marker in main, f"main.tf is missing {marker}"
 
@@ -821,6 +989,8 @@ elif metadata["platformId"] == "azure-terraform-hcl":
         'azurerm_',
     ]:
         assert forbidden not in provider + main + outputs, f"Terraform source contains forbidden marker {forbidden}"
+
+    terraform_source = provider + variables + main + outputs
 
     for value in [
         resource_names["resourceGroup"],
@@ -836,7 +1006,7 @@ elif metadata["platformId"] == "azure-terraform-hcl":
         resource_names["serviceBusTopicName"],
         resource_names["eventHubName"],
     ]:
-        assert value in main, f"main.tf is missing concrete contract value {value}"
+        assert value in terraform_source, f"Terraform source is missing concrete contract value {value}"
 
     for output_key in metadata["expectedOutputKeys"]:
         assert f'output "{output_key}"' in outputs, f"outputs.tf is missing {output_key}"
@@ -1193,66 +1363,33 @@ async function normalizeBundle(docker, platformId, bundleDir) {
   }
 }
 
-async function runBundleLifecycle(docker, platformId, runtimeDir, visibleBundleDirPath) {
-  const platformDir = join(root, 'dist', 'platform-images', platformId);
+async function runBundleLifecycle(task, visibleBundleDirPath) {
+  const shipmentDir = shipmentBundleDir(task);
+  const shipmentReportsDir = join(shipmentDir, 'docker', 'reports');
   const env = {
     ...process.env,
-    GLOBALSTACK_AUTH_TOKEN: authToken,
-    PIPELINE_STAGE_SCOPE: 'full',
-    LOCAL_TASK_PATH: runtimeDir,
+    GLOBALSTACK_SOURCE_ROOT: root,
+    PIPELINE_STAGE_SCOPE: process.env.PIPELINE_STAGE_SCOPE ?? 'full',
   };
-  const reportDir = join(platformDir, 'reports');
-  const workDir = join(platformDir, 'work');
 
-  await fixOwnership([reportDir, workDir]);
-  await rm(reportDir, { recursive: true, force: true });
-  await rm(workDir, { recursive: true, force: true });
-  await mkdir(reportDir, { recursive: true });
-  await mkdir(workDir, { recursive: true });
-
-  const imageBuildStrategy = process.env.GLOBALSTACK_IMAGE_BUILD_STRATEGY ?? 'auto';
-  if (imageBuildStrategy !== 'reuse') {
-    const requiredImages = ['globalstack/azure-emulator:local', platformIdToImageTag(platformId)];
-    let missing = false;
-    for (const image of requiredImages) {
-      if (!(await imageExists(docker, image))) {
-        missing = true;
-        break;
-      }
-    }
-    if (imageBuildStrategy === 'build' || missing) {
-      const buildCode = await run('node', ['scripts/runtime/build-platform-images.mjs', `--platform=${platformId}`], { cwd: root, stdio: 'inherit' });
-      if (buildCode !== 0) {
-        throw new Error(`prewarm image build failed for ${platformId}`);
-      }
-    }
+  const exportCode = await run('node', [
+    'packages/bundle-runtime/src/export-azure-shipment-bundle.mjs',
+    `--po-id=${task.poId}`,
+    `--pr-id=${task.prId}`,
+  ], { cwd: root, env, stdio: 'inherit' });
+  if (exportCode !== 0) {
+    throw new Error(`shipment export failed for ${task.poId}/${task.prId}`);
   }
 
-  const composeUp = await runCapture(docker.command, [
-    ...docker.prefix,
-    'compose',
-    'up',
-    '--abort-on-container-exit',
-    '--exit-code-from',
-    'runner',
-    'runner',
-  ], { cwd: platformDir, env });
-  const exitCode = composeUp.code;
-
-  await run('timeout', [
-    '30s',
-    docker.command,
-    ...docker.prefix,
-    'compose',
-    'down',
-    '--remove-orphans',
-  ], { cwd: platformDir, env, stdio: 'ignore' });
-  await fixOwnership([reportDir, workDir]);
+  const shipmentRun = await runCapture('bash', ['-lc', './run.sh'], {
+    cwd: shipmentDir,
+    env,
+  });
 
   const stageOrder = ['build', 'lint', 'unit-tests', 'deploy', 'provider-lifecycle', 'integration-tests', 'destroy'];
   const stageResults = {};
   for (const stage of stageOrder) {
-    const stagePath = join(reportDir, `stage-${stage}.json`);
+    const stagePath = join(shipmentReportsDir, `stage-${stage}.json`);
     try {
       stageResults[stage] = await readJson(stagePath);
     } catch {
@@ -1260,19 +1397,21 @@ async function runBundleLifecycle(docker, platformId, runtimeDir, visibleBundleD
     }
   }
 
-  const deployment = await readJson(join(reportDir, 'deployment-response.json')).catch(() => null);
-  const providerLifecycle = await readJson(join(reportDir, 'provider-lifecycle-response.json')).catch(() => null);
-  const lifecycle = await readJson(join(reportDir, 'lifecycle-report.json')).catch(() => null);
-  const nativeStderr = await readFile(join(reportDir, 'native-stderr.log'), 'utf8').catch(() => '');
-  const unitStderr = await readFile(join(reportDir, 'unit-tests-task-stderr.log'), 'utf8').catch(() => '');
-  const integrationStderr = await readFile(join(reportDir, 'integration-tests-task-stderr.log'), 'utf8').catch(() => '');
+  const deployment = await readJson(join(shipmentReportsDir, 'deployment-response.json')).catch(() => null);
+  const providerLifecycle = await readJson(join(shipmentReportsDir, 'provider-lifecycle-response.json')).catch(() => null);
+  const lifecycle = await readJson(join(shipmentReportsDir, 'lifecycle-report.json')).catch(() => null);
+  const nativeStderr = await readFile(join(shipmentReportsDir, 'native-stderr.log'), 'utf8').catch(() => '');
+  const unitStderr = await readFile(join(shipmentReportsDir, 'unit-tests-task-stderr.log'), 'utf8').catch(() => '');
+  const integrationStderr = await readFile(join(shipmentReportsDir, 'integration-tests-task-stderr.log'), 'utf8').catch(() => '');
+  const shipmentExecutionLog = await readFile(join(shipmentDir, 'execution.log'), 'utf8').catch(() => '');
+  const shipmentExecutionReport = await readFile(join(shipmentDir, 'execution-report.json'), 'utf8').catch(() => '');
 
   const providerLifecycleOk = providerLifecycle?.status === 'PASS'
     && Array.isArray(providerLifecycle.operations)
     && providerLifecycle.operations.length > 0
     && providerLifecycle.operations.every(operation => operation.status === 'PASS');
 
-  const ok = exitCode === 0
+  const ok = shipmentRun.code === 0
     && lifecycle?.status === 'PASS'
     && lifecycle?.stage === 'destroy'
     && deployment?.properties?.provisioningState === 'Succeeded'
@@ -1296,16 +1435,20 @@ async function runBundleLifecycle(docker, platformId, runtimeDir, visibleBundleD
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },
+    executionLogPath: join(visibleBundleDirPath, 'execution.log'),
+    executionReportPath: join(visibleBundleDirPath, 'execution-report.json'),
     nativeStderrTail: nativeStderr.trim().split('\n').slice(-40),
     unitTestStderrTail: unitStderr.trim().split('\n').slice(-40),
     integrationTestStderrTail: integrationStderr.trim().split('\n').slice(-40),
   };
-  const fullExecutionLog = [
-    composeUp.stdout.trimEnd(),
-    composeUp.stderr.trimEnd(),
-  ].filter(Boolean).join('\n');
-  await writeFile(join(visibleBundleDirPath, 'execution.log'), `${fullExecutionLog}${fullExecutionLog.endsWith('\n') ? '' : '\n'}`);
-  await writeFile(join(visibleBundleDirPath, 'execution-report.json'), `${JSON.stringify(executionReport(platformId, summary), null, 2)}\n`);
+  await writeFile(
+    join(visibleBundleDirPath, 'execution.log'),
+    `${shipmentExecutionLog || [shipmentRun.stdout.trimEnd(), shipmentRun.stderr.trimEnd()].filter(Boolean).join('\n')}${(shipmentExecutionLog || shipmentRun.stdout || shipmentRun.stderr).endsWith('\n') ? '' : '\n'}`,
+  );
+  await writeFile(
+    join(visibleBundleDirPath, 'execution-report.json'),
+    shipmentExecutionReport || `${JSON.stringify(executionReport(task.platformId, summary), null, 2)}\n`,
+  );
   return summary;
 }
 
@@ -1346,7 +1489,7 @@ async function generateBundle(task, docker) {
       await mkdir(dirname(runtimeDir), { recursive: true });
       await cp(bundleDir, runtimeDir, { recursive: true });
       await writeRuntimeSupportFiles(runtimeDir, task.platformId, scenario, names);
-      const summary = await runBundleLifecycle(docker, task.platformId, runtimeDir, bundleDir);
+      const summary = await runBundleLifecycle(task, bundleDir);
       if (summary.ok) {
         return {
           platformId: task.platformId,
@@ -1425,4 +1568,10 @@ async function main() {
   if (report.bundles.some(bundle => !bundle.ok)) process.exit(1);
 }
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error(error instanceof Error ? error.stack ?? error.message : String(error));
+  process.exit(1);
+}

@@ -90,14 +90,20 @@ flowchart TD
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/cosmos-sql-router.mjs`
+- `packages/azure-data-plane/src/dns-registry.mjs`
 - `packages/azure-data-plane/src/edge-router.mjs`
+- `packages/azure-data-plane/src/emulator-runtime.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
 - `packages/azure-data-plane/src/event-hubs-router.mjs`
 - `packages/azure-data-plane/src/functions-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
+- `packages/azure-data-plane/src/kubernetes-router.mjs`
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
+- `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
+- `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
+- `packages/azure-data-plane/src/queue-delete-window.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
@@ -105,6 +111,7 @@ flowchart TD
 - `packages/azure-data-plane/src/synapse-sql-runner.mjs`
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
 - `packages/azure-data-plane/src/workflow-runner.mjs`
+- `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`
@@ -116,6 +123,8 @@ flowchart TD
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
+- `packages/conformance/src/key-vault-router-sync.test.mjs`
+- `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/platform-registry/src/index.mjs`
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
@@ -127,8 +136,51 @@ flowchart TD
 - `packages/bundle-runtime/src/smoke-deploy-azure-usecases.mjs`
 - `packages/bundle-runtime/src/smoke-platform-runner-lifecycles.mjs`
 - `packages/bundle-runtime/src/validate.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91046-91050.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91051-91055.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91056-91060.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91061-91065.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91066-91070.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91071-91075.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91076-91080.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91081-91085.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91086-91090.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91091-91095.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91096-91100.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91101-91105.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91106-91110.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91111-91115.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91116-91120.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91121-91125.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91126-91130.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91131-91135.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91136-91140.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91141-91145.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91146-91150.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91151-91155.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91156-91160.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91161-91165.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91166-91170.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91171-91175.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91176-91180.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91181-91185.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91186-91190.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91191-91195.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91196-91200.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91201-91205.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91206-91210.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91211-91215.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91216-91220.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91221-91225.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91226-91230.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91231-91235.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91236-91240.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91241-91245.mjs`
+- `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91246-91250.mjs`
 - `packages/bundle-generator/src/generate-azure-smoke-prompts.mjs`
 - `packages/bundle-generator/src/run-openai-azure-arm-json-trial.mjs`
+- `packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs`
+- `packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`
 - `packages/bundle-generator/src/run-openai-azure-platform-trials.mjs`
 - `packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`
 - `packages/bundle-generator/src/smoke-azure-iac-model-responses.mjs`
@@ -200,6 +252,7 @@ flowchart TD
 - `scripts/runtime/validate.mjs`
 - `scripts/verified/generate-azure-smoke-prompts.mjs`
 - `scripts/verified/run-openai-azure-arm-json-trial.mjs`
+- `scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs`
 - `scripts/verified/run-openai-azure-platform-trials.mjs`
 - `scripts/verified/run-openai-azure-verified-bundles.mjs`
 - `scripts/verified/smoke-azure-iac-model-responses.mjs`
@@ -282,6 +335,7 @@ flowchart TD
 - `npm run storage:capture:data-plane`
 - `npm run storage:expectations`
 - `npm run trial:openai-arm-json`
+- `npm run trial:openai-complex-pulumi-bundles`
 - `npm run trial:openai-platforms`
 - `npm run trial:openai-verified-bundles`
 - `npm run validate`
