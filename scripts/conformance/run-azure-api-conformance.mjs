@@ -39,6 +39,7 @@ const azureRequestRetryDelayMs = Number(process.env.GLOBALSTACK_AZURE_REQUEST_RE
 let azureAccessToken;
 let localExpectationMap;
 let azureAccountContext;
+const azureCaptureSalt = process.env.GLOBALSTACK_AZURE_CAPTURE_SALT ?? new Date().toISOString();
 
 function run(command, commandArgs, opts = {}) {
   return new Promise((resolve) => {
@@ -110,8 +111,8 @@ async function loadLocalExpectationMap() {
   return localExpectationMap;
 }
 
-function valuesFor(call, varianceId) {
-  const suffix = suffixFor(`${call.capabilityId}-${call.resourceType}-${varianceId}`);
+function valuesFor(call, varianceId, salt = '') {
+  const suffix = suffixFor(`${call.capabilityId}-${call.resourceType}-${varianceId}-${salt}`);
   return {
     subscriptionId,
     resourceGroupName: `rg-gs-conf-${suffix}`.slice(0, 60),
@@ -258,6 +259,22 @@ async function getAzureAccountContext() {
   }
   azureAccountContext = JSON.parse(result.stdout);
   return azureAccountContext;
+}
+
+async function loadExistingFixture(fixturePath) {
+  try {
+    return JSON.parse(await readFile(fixturePath, 'utf8'));
+  } catch {
+    // fall through
+  }
+  const relativePath = fixturePath.startsWith(`${root}/`) ? fixturePath.slice(root.length + 1) : fixturePath;
+  const result = await run('git', ['show', `HEAD:${relativePath}`]);
+  if (result.code !== 0 || !result.stdout.trim()) return null;
+  try {
+    return JSON.parse(result.stdout);
+  } catch {
+    return null;
+  }
 }
 
 function sanitizeHeaders(headers) {
@@ -637,7 +654,7 @@ async function runAzureCase(call, variance) {
   if (!runAllAzure && !caseFilter) {
     throw new Error('Real Azure conformance requires --case=<variance-id> or --all so calls are intentionally scoped.');
   }
-  const replacements = valuesFor(call, variance.id);
+  const replacements = valuesFor(call, variance.id, azureCaptureSalt);
   const fixtureId = fixtureIdFor(call, variance);
   const rgPath = `/subscriptions/${subscriptionId}/resourcegroups/${replacements.resourceGroupName}?api-version=2021-04-01`;
   const inventory = {
@@ -706,6 +723,8 @@ async function runAzureCase(call, variance) {
 
 async function writeAzureFixture(result, call, variance) {
   await mkdir(fixtureRoot, { recursive: true });
+  const fixturePath = join(fixtureRoot, `${result.fixtureId}.json`);
+  const existingFixture = await loadExistingFixture(fixturePath);
   const fixture = {
     id: result.fixtureId,
     capturedAt: new Date().toISOString(),
@@ -735,10 +754,11 @@ async function writeAzureFixture(result, call, variance) {
       verifiedDeleted: result.inventory.cleanup.verifiedDeleted,
     },
     globalstack: {
+      ...(existingFixture?.globalstack ?? {}),
       normalizedIntoLocalConformance: false,
     },
   };
-  await writeFile(join(fixtureRoot, `${result.fixtureId}.json`), `${JSON.stringify(fixture, null, 2)}\n`);
+  await writeFile(fixturePath, `${JSON.stringify(fixture, null, 2)}\n`);
 }
 
 function selectedCreateCalls(catalog) {
