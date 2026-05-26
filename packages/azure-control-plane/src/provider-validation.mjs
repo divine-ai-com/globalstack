@@ -1998,6 +1998,9 @@ function validateWafPayload(resourceType, body) {
     if (!isNonEmptyString(parameters.wafPolicy?.id)) {
       return envelopedError(400, 'BadRequest', 'CDN security policy parameters.wafPolicy.id is required.');
     }
+    if (!String(parameters.wafPolicy.id).includes('/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/')) {
+      return envelopedError(400, 'BadRequest', 'CDN security policy parameters.wafPolicy.id must reference a Front Door WAF policy.');
+    }
     const associations = parameters.associations;
     if (!Array.isArray(associations) || associations.length === 0) {
       return envelopedError(400, 'BadRequest', 'CDN security policies require at least one association.');

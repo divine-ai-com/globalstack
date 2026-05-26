@@ -18,6 +18,9 @@ async function readJson(path, fallback) {
 
 function implementationKind(capability) {
   if (capability.primaryModes.includes(supportLevels.OFFICIAL_EMULATOR)) return 'official-emulator-backed-local';
+  if ((capability.backingEngines ?? []).some(engine => /(runtime|router|registry|store|postgres|mysql|redis|file-share|analytics|token|crypto|dns|network-model|event-router|workflow-runner|kubernetes)/i.test(engine))) {
+    return 'facade-plus-local-runtime';
+  }
   if (capability.primaryModes.includes(supportLevels.GLOBALSTACK_FACADE)) return 'metadata-control-plane-facade';
   if (capability.primaryModes.includes(supportLevels.REAL_AZURE_CAPTURE_REQUIRED)) return 'capture-required';
   return 'unsupported';
@@ -93,6 +96,7 @@ This matrix is generated from \`packages/core/src/azure-tier1-capabilities.mjs\`
 
 - \`Cloud Validated = no\` means the capability must not be described as complete live Azure parity.
 - \`official-emulator-backed-local\` means at least one official Microsoft emulator is part of the local strategy. It does not prove ARM control-plane or Azure failure-mode parity.
+- \`facade-plus-local-runtime\` means GlobalStack exposes an Azure-shaped facade but backs at least part of the supported behavior with a concrete local runtime, router, registry, store, or engine.
 - \`metadata-control-plane-facade\` means GlobalStack accepts and stores Azure-shaped management-plane resources locally, with exact behavior limited to captured expectations.
 - \`provider-accepted\` evidence is not full parity. It only means Azure accepted that request shape in the captured context.
 - \`capture-infrastructure-gap\` evidence is a capture setup or subscription artifact, not service behavior.

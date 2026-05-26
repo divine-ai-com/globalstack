@@ -346,6 +346,7 @@ export function createEmulatorRuntime({ store }) {
       }
     }
 
+    let wafPolicyId = null;
     let wafPolicyName = null;
     const securityPolicies = listCdnResources({
       subscriptionId,
@@ -358,13 +359,14 @@ export function createEmulatorRuntime({ store }) {
         (association.domains ?? []).some(domain => resourceIdMatches(domain.id, endpointRouteId({ subscriptionId, resourceGroupName, profileName, endpointName }))),
       );
       if (!matchedAssociation) continue;
-      wafPolicyName = resourceNameFromId(securityPolicy.properties?.parameters?.wafPolicy?.id);
+      wafPolicyId = securityPolicy.properties?.parameters?.wafPolicy?.id ?? null;
+      wafPolicyName = resourceNameFromId(wafPolicyId);
       if (routePatterns.length === 0 && (matchedAssociation.patternsToMatch ?? []).length > 0) {
         routePatterns = matchedAssociation.patternsToMatch;
       }
       break;
     }
-    return { origins, routePatterns, wafPolicyName };
+    return { origins, routePatterns, wafPolicyId, wafPolicyName };
   }
 
   function endpointRouteId({ subscriptionId, resourceGroupName, profileName, endpointName }) {
@@ -389,7 +391,7 @@ export function createEmulatorRuntime({ store }) {
       edgeRouter.unregisterEndpoint(`${endpointName}.azurefd.net`);
       return;
     }
-    const { origins, routePatterns, wafPolicyName } = routeConfigForAfdEndpoint({
+    const { origins, routePatterns, wafPolicyId, wafPolicyName } = routeConfigForAfdEndpoint({
       subscriptionId,
       resourceGroupName,
       profileName,
@@ -402,6 +404,7 @@ export function createEmulatorRuntime({ store }) {
       enabledState: endpoint.properties?.enabledState ?? 'Enabled',
       origins,
       routePatterns,
+      wafPolicyId,
       wafPolicyName,
     });
   }
@@ -422,6 +425,20 @@ export function createEmulatorRuntime({ store }) {
     }
   }
 
+  function reconcileAllFrontDoorProfiles({ subscriptionId, resourceGroupName }) {
+    for (const profile of listCdnResources({
+      subscriptionId,
+      resourceGroupName,
+      typePath: 'profiles',
+    })) {
+      reconcileAllAfdEndpoints({
+        subscriptionId,
+        resourceGroupName,
+        profileName: leafResourceName(profile.name),
+      });
+    }
+  }
+
   function reconcileApplicationGateway({ subscriptionId, resourceGroupName, gatewayName }) {
     if (!gatewayName) return;
     const gatewayRoute = {
@@ -435,6 +452,8 @@ export function createEmulatorRuntime({ store }) {
     const publicIpIds = frontendPublicIpReferences(gateway);
     const originHost = originHostFromAppGateway(gateway);
     const listenerDisabled = (gateway.properties?.httpListeners ?? []).length === 0;
+    const wafPolicyId = gateway.properties?.firewallPolicy?.id ?? null;
+    const wafPolicyName = resourceNameFromId(wafPolicyId);
     for (const publicIpId of publicIpIds) {
       const publicIpName = referenceName(publicIpId, 'publicIPAddresses');
       if (!publicIpName) continue;
@@ -455,6 +474,8 @@ export function createEmulatorRuntime({ store }) {
             }]
           : [],
         routePatterns: ['/*'],
+        wafPolicyId,
+        wafPolicyName,
       });
     }
   }
@@ -723,11 +744,26 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
-    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
+      || resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+      const policyId = resourcePath({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        providerNamespace: 'Microsoft.Network',
+        typePath: providerRoute.typePath,
+      });
       wafEvaluator.registerPolicy({
+        policyId,
         policyName: resource.name,
+        policyType: resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies' ? 'frontdoor' : 'application-gateway',
         properties: resource.properties ?? {},
       });
+      if (resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+        reconcileAllFrontDoorProfiles({
+          subscriptionId: providerRoute.subscriptionId,
+          resourceGroupName: providerRoute.resourceGroupName,
+        });
+      }
       return;
     }
 
@@ -1005,8 +1041,22 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
-    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies') {
+    if (resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies'
+      || resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+      const policyId = resourcePath({
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        providerNamespace: 'Microsoft.Network',
+        typePath: providerRoute.typePath,
+      });
+      wafEvaluator.unregisterPolicy(policyId);
       wafEvaluator.unregisterPolicy(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      if (resourceType === 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies') {
+        reconcileAllFrontDoorProfiles({
+          subscriptionId: providerRoute.subscriptionId,
+          resourceGroupName: providerRoute.resourceGroupName,
+        });
+      }
       return;
     }
 

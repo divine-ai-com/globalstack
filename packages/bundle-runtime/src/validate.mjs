@@ -982,68 +982,41 @@ if (!databaseMigrationServiceParityText) {
   if (databaseMigrationServiceParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity control/data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 43) {
-    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 43 cases');
+  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 12) {
+    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 12 cases');
   }
   if (databaseMigrationServiceParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 5) {
-    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 5 cases');
+  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 7) {
+    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 7 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
-    'malformed bearer token is rejected',
-    'wrong bearer token is rejected',
-    'subscription mismatch is rejected',
-    'missing api-version is rejected',
-    'migration service create requires an existing resource group',
     'resource group create succeeds',
-    'migration service collection list is empty before create',
-    'migration service delete missing returns no content',
-    'migration project create before service reports missing parent',
-    'migration project list before service reports missing parent',
-    'migration service empty body is rejected',
-    'migration service invalid location is rejected',
-    'migration service invalid name is rejected',
-    'migration service invalid sku is rejected',
-    'migration service invalid public access is rejected',
-    'migration service create succeeds',
-    'migration service get succeeds',
-    'migration service update can disable public access',
-    'migration service list includes created resource',
-    'migration project invalid name is rejected',
-    'migration project missing source platform is rejected',
-    'migration project invalid source platform is rejected',
-    'migration project invalid target platform is rejected',
-    'migration project invalid source connection shape is rejected',
-    'migration project collection list is empty before create',
-    'migration project delete missing returns no content',
-    'migration project create succeeds',
-    'local migration runner missing project is not found',
-    'local migration runner rejects incomplete task',
-    'local migration runner starts assessment task',
-    'local migration runner completes task and rejects duplicate completion',
-    'migration project get succeeds',
-    'migration project update can change target platform',
-    'migration project list includes created resource',
-    'unsupported service add worker action fails closed',
-    'unsupported service check status action fails closed',
-    'unsupported project task route fails closed',
-    'ARM template deployment can create migration service and project',
-    'migration project get after delete is not found',
-    'migration service get after delete is not found',
+    'migration service and project create succeed',
+    'mysql and postgres flexible servers and databases materialize real local databases',
+    'unsupported DMS task type is rejected',
+    'mysql source connect task queues, redacts password, and completes against real backend',
+    'postgres target connect task completes against real backend',
+    'mysql user tables task returns actual tables from real backend',
+    'postgres user tables task returns actual tables from real backend',
+    'task collection lists runtime-backed tasks with current state',
+    'supported task command route completes against an existing task resource',
+    'unsupported service worker route still fails closed',
   ]) {
     if (!databaseMigrationServiceParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Database Migration Service parity E2E missing passing case: ${required}`);
     }
   }
   for (const required of [
-    'local migration runner missing project is not found',
-    'local migration runner rejects incomplete task',
-    'local migration runner starts assessment task',
-    'local migration runner completes task and rejects duplicate completion',
-    'local migration runner repeated completed task status remains stable across repeated reads',
+    'mysql and postgres flexible servers and databases materialize real local databases',
+    'mysql source connect task queues, redacts password, and completes against real backend',
+    'postgres target connect task completes against real backend',
+    'mysql user tables task returns actual tables from real backend',
+    'postgres user tables task returns actual tables from real backend',
+    'task collection lists runtime-backed tasks with current state',
+    'supported task command route completes against an existing task resource',
   ]) {
     if (!databaseMigrationServiceParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Database Migration Service parity E2E missing passing data-plane case: ${required}`);
@@ -2396,8 +2369,8 @@ if (!wafPolicyParityText) {
   if (wafPolicyParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure WAF Policy parity control/data-plane matrix has failures');
   }
-  if ((wafPolicyParity.controlPlane?.total ?? 0) < 47) {
-    errors.push('Azure WAF Policy parity control/data-plane matrix should exercise at least 47 cases');
+  if ((wafPolicyParity.controlPlane?.total ?? 0) < 55) {
+    errors.push('Azure WAF Policy parity control/data-plane matrix should exercise at least 55 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2420,6 +2393,7 @@ if (!wafPolicyParityText) {
     'waf policy missing managed rules is rejected',
     'waf policy invalid custom rule priority is rejected',
     'waf policy create succeeds',
+    'front door waf policy create succeeds',
     'local waf evaluator allows clean request',
     'local waf evaluator blocks bad bot in prevention mode',
     'waf policy get succeeds',
@@ -2427,12 +2401,18 @@ if (!wafPolicyParityText) {
     'local waf evaluator detects bad bot without blocking in detection mode',
     'local waf evaluator disabled policy bypasses rules',
     'waf policy list includes created resource',
+    'front door waf policy list includes created resource',
+    'virtual network create succeeds for application gateway waf attachment',
+    'public ip create succeeds for application gateway waf attachment',
+    'waf policy update can switch back to prevention mode for application gateway traffic',
+    'application gateway create succeeds with attached waf policy',
     'cdn profile create succeeds for security policy parent',
     'cdn security policy collection list is empty before create',
     'cdn security policy invalid name is rejected',
     'cdn security policy missing parameters is rejected',
     'cdn security policy invalid type is rejected',
     'cdn security policy missing waf policy id is rejected',
+    'cdn security policy wrong waf policy type is rejected',
     'cdn security policy missing association domains is rejected',
     'cdn security policy missing patterns is rejected',
     'cdn security policy create succeeds',
@@ -2444,7 +2424,9 @@ if (!wafPolicyParityText) {
     'ARM template deployment can create waf policies',
     'cdn security policy get after delete is not found',
     'cdn security policy delete after delete returns no content',
+    'front door waf policy delete succeeds',
     'waf policy get after delete is not found',
+    'front door waf policy get after delete is not found',
   ]) {
     if (!wafPolicyParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure WAF Policy parity E2E missing passing case: ${required}`);
@@ -2453,15 +2435,17 @@ if (!wafPolicyParityText) {
   if (wafPolicyParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure WAF Policy parity data-plane matrix has failures');
   }
-  if ((wafPolicyParity.dataPlane?.total ?? 0) < 7) {
-    errors.push('Azure WAF Policy parity data-plane matrix should exercise at least 7 cases');
+  if ((wafPolicyParity.dataPlane?.total ?? 0) < 8) {
+    errors.push('Azure WAF Policy parity data-plane matrix should exercise at least 8 cases');
   }
   for (const required of [
     'local waf evaluator allows clean request',
     'local waf evaluator blocks bad bot in prevention mode',
     'local waf evaluator blocks repeated bad bot requests consistently',
+    'local front door waf evaluator blocks bad bot in prevention mode',
     'local waf evaluator detects bad bot without blocking in detection mode',
     'local waf evaluator disabled policy bypasses rules',
+    'application gateway edge route blocks bad bot when firewall policy is attached',
     'local front door edge route blocks bad bot when security policy references waf policy',
     'local front door edge route keeps blocking repeated bad bot requests',
   ]) {

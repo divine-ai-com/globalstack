@@ -20,6 +20,14 @@ function sendError(res, status, code, message) {
   });
 }
 
+async function readRequestBody(req) {
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 function hostNameFromHeader(host) {
   return String(host ?? '').split(':')[0].toLowerCase();
 }
@@ -76,12 +84,15 @@ export class EdgeRouter {
     isHttpAllowed = true,
     isHttpsAllowed = true,
     routePatterns = [],
+    wafPolicyId,
     wafPolicyName = null,
   }) {
     const normalizedHost = hostNameFromHeader(hostName);
     const existing = this.endpointsByHost.get(normalizedHost) ?? {};
     const normalizedOrigins = normalizeOrigins(origins);
     const normalizedPatterns = normalizePatterns(routePatterns);
+    const hasWafPolicyId = Object.hasOwn(arguments[0] ?? {}, 'wafPolicyId');
+    const hasWafPolicyName = Object.hasOwn(arguments[0] ?? {}, 'wafPolicyName');
     this.endpointsByHost.set(normalizedHost, {
       endpointName: String(endpointName ?? existing.endpointName ?? normalizedHost),
       hostName: normalizedHost,
@@ -91,7 +102,8 @@ export class EdgeRouter {
       isHttpAllowed: isHttpAllowed ?? existing.isHttpAllowed ?? true,
       isHttpsAllowed: isHttpsAllowed ?? existing.isHttpsAllowed ?? true,
       routePatterns: normalizedPatterns.length > 0 ? normalizedPatterns : (existing.routePatterns ?? []),
-      wafPolicyName: wafPolicyName ?? existing.wafPolicyName ?? null,
+      wafPolicyId: hasWafPolicyId ? (wafPolicyId ?? null) : (existing.wafPolicyId ?? null),
+      wafPolicyName: hasWafPolicyName ? (wafPolicyName ?? null) : (existing.wafPolicyName ?? null),
     });
   }
 
@@ -135,25 +147,40 @@ export class EdgeRouter {
         return sendError(res, 404, 'RouteNotFound', `No Front Door/CDN route matched '${url.pathname}' for endpoint '${endpoint.endpointName}'.`);
       }
 
-      if (endpoint.wafPolicyName && this.wafEvaluator) {
+      const body = await readRequestBody(req);
+
+      if ((endpoint.wafPolicyId || endpoint.wafPolicyName) && this.wafEvaluator) {
         const wafVerdict = this.wafEvaluator.evaluate({
+          policyRef: endpoint.wafPolicyId ?? null,
           policyName: endpoint.wafPolicyName,
           request: {
             headers: req.headers,
             method,
             uri: url.pathname,
             path: url.pathname,
+            queryString: url.search,
+            body,
+            remoteAddress: req.socket?.remoteAddress ?? null,
           },
         });
-        if (wafVerdict.action === 'Block') {
-          return sendJson(res, 403, {
+        if (wafVerdict.action === 'Redirect') {
+          return sendJson(res, wafVerdict.statusCode ?? 302, {
+            waf: wafVerdict,
+          }, {
+            ...Object.fromEntries(Object.entries(wafVerdict.headers ?? {})),
+            ...(wafVerdict.policyName ? { 'x-globalstack-waf-policy': wafVerdict.policyName } : {}),
+            'x-globalstack-waf-action': wafVerdict.action,
+          });
+        }
+        if (['Block', 'CAPTCHA', 'JSChallenge'].includes(wafVerdict.action)) {
+          return sendJson(res, wafVerdict.statusCode ?? 403, {
             error: {
-              code: 'WebApplicationFirewallRequestBlocked',
-              message: `The WAF policy '${endpoint.wafPolicyName}' blocked this request.`,
+              code: wafVerdict.errorCode ?? 'WebApplicationFirewallRequestBlocked',
+              message: `The WAF policy '${wafVerdict.policyName ?? endpoint.wafPolicyName ?? endpoint.wafPolicyId}' blocked this request.`,
             },
             waf: wafVerdict,
           }, {
-            'x-globalstack-waf-policy': endpoint.wafPolicyName,
+            ...(wafVerdict.policyName ? { 'x-globalstack-waf-policy': wafVerdict.policyName } : {}),
             'x-globalstack-waf-action': wafVerdict.action,
           });
         }
@@ -175,6 +202,7 @@ export class EdgeRouter {
         originHost: origin?.hostName ?? null,
         cacheStatus: 'Configured',
         routePatterns: endpoint.routePatterns ?? [],
+        wafPolicyId: endpoint.wafPolicyId ?? null,
         wafPolicyName: endpoint.wafPolicyName ?? null,
       }, {
         'x-globalstack-edge-route': `${endpoint.kind}/${endpoint.endpointName}`,

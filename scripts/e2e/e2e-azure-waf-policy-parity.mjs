@@ -135,6 +135,10 @@ function appWafPath(resourceGroup, policyName, apiVersion = '2023-09-01') {
   return providerPath(resourceGroup, 'Microsoft.Network', `ApplicationGatewayWebApplicationFirewallPolicies/${policyName}`, apiVersion);
 }
 
+function frontDoorWafPath(resourceGroup, policyName, apiVersion = '2024-05-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `FrontDoorWebApplicationFirewallPolicies/${policyName}`, apiVersion);
+}
+
 function cdnProfilePath(resourceGroup, profileName, apiVersion = '2023-05-01') {
   return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}`, apiVersion);
 }
@@ -145,6 +149,18 @@ function afdEndpointPath(resourceGroup, profileName, endpointName, apiVersion = 
 
 function cdnSecurityPolicyPath(resourceGroup, profileName, policyName, apiVersion = '2024-02-01') {
   return providerPath(resourceGroup, 'Microsoft.Cdn', `profiles/${profileName}/securityPolicies/${policyName}`, apiVersion);
+}
+
+function virtualNetworkPath(resourceGroup, vnetName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `virtualNetworks/${vnetName}`, apiVersion);
+}
+
+function applicationGatewayPath(resourceGroup, gatewayName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `applicationGateways/${gatewayName}`, apiVersion);
+}
+
+function publicIpPath(resourceGroup, publicIpName, apiVersion = '2023-09-01') {
+  return providerPath(resourceGroup, 'Microsoft.Network', `publicIPAddresses/${publicIpName}`, apiVersion);
 }
 
 function appWafBody(overrides = {}) {
@@ -185,11 +201,135 @@ function appWafBody(overrides = {}) {
   };
 }
 
+function frontDoorWafBody(overrides = {}) {
+  return {
+    location: 'global',
+    sku: { name: 'Premium_AzureFrontDoor' },
+    tags: { workload: 'robotics-frontdoor-waf' },
+    properties: {
+      policySettings: {
+        enabledState: 'Enabled',
+        mode: 'Prevention',
+        requestBodyCheck: 'Enabled',
+        customBlockResponseStatusCode: 403,
+      },
+      managedRules: {
+        managedRuleSets: [
+          { ruleSetType: 'DefaultRuleSet', ruleSetVersion: '1.0' },
+        ],
+      },
+      customRules: {
+        rules: [
+          {
+            name: 'BlockBadBotHeader',
+            priority: 100,
+            ruleType: 'MatchRule',
+            action: 'Block',
+            enabledState: 'Enabled',
+            matchConditions: [
+              {
+                matchVariable: 'RequestHeaders',
+                selector: 'User-Agent',
+                operator: 'Contains',
+                negateCondition: false,
+                matchValue: ['bad-bot'],
+                transforms: ['Lowercase'],
+              },
+            ],
+          },
+        ],
+      },
+      ...(overrides.properties ?? {}),
+    },
+    ...Object.fromEntries(Object.entries(overrides).filter(([key]) => key !== 'properties')),
+  };
+}
+
 function cdnProfileBody() {
   return {
     location: 'eastus',
     sku: { name: 'Standard_AzureFrontDoor' },
     properties: {},
+  };
+}
+
+function vnetBody() {
+  return {
+    location: 'eastus',
+    properties: {
+      addressSpace: { addressPrefixes: ['10.92.0.0/16'] },
+      subnets: [
+        { name: 'appgw', properties: { addressPrefix: '10.92.1.0/24' } },
+        { name: 'backend', properties: { addressPrefix: '10.92.2.0/24' } },
+      ],
+    },
+  };
+}
+
+function publicIpBody(domainNameLabel) {
+  return {
+    location: 'eastus',
+    sku: { name: 'Standard' },
+    properties: {
+      publicIPAllocationMethod: 'Static',
+      publicIPAddressVersion: 'IPv4',
+      dnsSettings: { domainNameLabel },
+    },
+  };
+}
+
+function applicationGatewayBody({ resourceGroup, gatewayName, subnetId, firewallPolicyId }) {
+  const gatewayId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/applicationGateways/${gatewayName}`;
+  const publicIpId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/publicIPAddresses/pip-${gatewayName}`;
+  return {
+    location: 'eastus',
+    sku: { name: 'WAF_v2', tier: 'WAF_v2', capacity: 1 },
+    properties: {
+      firewallPolicy: firewallPolicyId ? { id: firewallPolicyId } : undefined,
+      gatewayIPConfigurations: [
+        {
+          name: 'appGatewayIpConfig',
+          properties: { subnet: { id: subnetId } },
+        },
+      ],
+      frontendIPConfigurations: [
+        {
+          name: 'frontend',
+          properties: { publicIPAddress: { id: publicIpId } },
+        },
+      ],
+      frontendPorts: [
+        { name: 'http', properties: { port: 80 } },
+      ],
+      backendAddressPools: [
+        { name: 'backend', properties: { backendAddresses: [{ fqdn: 'robotics.backend.local' }] } },
+      ],
+      backendHttpSettingsCollection: [
+        { name: 'httpSettings', properties: { port: 80, protocol: 'Http', cookieBasedAffinity: 'Disabled' } },
+      ],
+      httpListeners: [
+        {
+          name: 'listener',
+          properties: {
+            frontendIPConfiguration: { id: `${gatewayId}/frontendIPConfigurations/frontend` },
+            frontendPort: { id: `${gatewayId}/frontendPorts/http` },
+            protocol: 'Http',
+          },
+        },
+      ],
+      requestRoutingRules: [
+        {
+          name: 'rule',
+          properties: {
+            ruleType: 'Basic',
+            priority: 100,
+            httpListener: { id: `${gatewayId}/httpListeners/listener` },
+            backendAddressPool: { id: `${gatewayId}/backendAddressPools/backend` },
+            backendHttpSettings: { id: `${gatewayId}/backendHttpSettingsCollection/httpSettings` },
+          },
+        },
+      ],
+    },
   };
 }
 
@@ -212,8 +352,8 @@ function cdnSecurityPolicyBody({ wafPolicyId, endpointId, overrides = {} }) {
   };
 }
 
-function deploymentBody({ resourceGroup, appWafName, profileName, securityPolicyName }) {
-  const wafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`;
+function deploymentBody({ resourceGroup, frontDoorWafName, profileName, securityPolicyName }) {
+  const wafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/${frontDoorWafName}`;
   const endpointId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/afdEndpoints/default`;
   return {
     properties: {
@@ -223,11 +363,12 @@ function deploymentBody({ resourceGroup, appWafName, profileName, securityPolicy
         contentVersion: '1.0.0.0',
         resources: [
           {
-            type: 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies',
-            apiVersion: '2023-09-01',
-            name: appWafName,
-            location: 'eastus',
-            properties: appWafBody().properties,
+            type: 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies',
+            apiVersion: '2024-05-01',
+            name: frontDoorWafName,
+            location: 'global',
+            sku: frontDoorWafBody().sku,
+            properties: frontDoorWafBody().properties,
           },
           {
             type: 'Microsoft.Cdn/profiles',
@@ -243,13 +384,13 @@ function deploymentBody({ resourceGroup, appWafName, profileName, securityPolicy
             name: `${profileName}/${securityPolicyName}`,
             dependsOn: [
               `Microsoft.Cdn/profiles/${profileName}`,
-              `Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`,
+              `Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/${frontDoorWafName}`,
             ],
             properties: cdnSecurityPolicyBody({ wafPolicyId, endpointId }).properties,
           },
         ],
         outputs: {
-          appWafName: { type: 'string', value: appWafName },
+          frontDoorWafName: { type: 'string', value: frontDoorWafName },
           securityPolicyName: { type: 'string', value: securityPolicyName },
         },
       },
@@ -263,12 +404,19 @@ async function runControlPlaneMatrix() {
   const resourceGroup = `rg-gs-waf-parity-${suffix}`;
   const missingResourceGroup = `rg-gs-waf-missing-${suffix}`;
   const appWafName = `waf-${suffix}`.slice(0, 40);
+  const frontDoorWafName = `fdwaf-${suffix}`.slice(0, 40);
   const profileName = `cdn-waf-${suffix}`.slice(0, 40);
   const afdEndpointName = `afd-${suffix}`.slice(0, 40);
   const securityPolicyName = `security-${suffix}`.slice(0, 40);
   const missingPolicyName = `security-missing-${suffix}`.slice(0, 40);
-  const wafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`;
+  const vnetName = `vnet-${suffix}`.slice(0, 40);
+  const appGatewayName = `agw-${suffix}`.slice(0, 40);
+  const gatewayPublicIpName = `pip-${appGatewayName}`;
+  const gatewayDomainLabel = `waf${suffix}`.slice(0, 30);
+  const appWafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/${appWafName}`;
+  const frontDoorWafPolicyId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/${frontDoorWafName}`;
   const endpointId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Cdn/profiles/${profileName}/afdEndpoints/${afdEndpointName}`;
+  const gatewaySubnetId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/virtualNetworks/${vnetName}/subnets/appgw`;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -328,7 +476,7 @@ async function runControlPlaneMatrix() {
     });
 
     await record('cdn security policy create requires an existing resource group', async () => {
-      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(missingResourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId, endpointId }));
+      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(missingResourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId }));
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceGroupNotFound');
       return { status: result.status, errorCode: errorCode(result) };
@@ -354,7 +502,7 @@ async function runControlPlaneMatrix() {
     });
 
     await record('cdn security policy create requires an existing profile', async () => {
-      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(resourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId, endpointId }));
+      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(resourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId }));
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ParentResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
@@ -385,6 +533,13 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('front door waf policy create succeeds', async () => {
+      const result = await httpJson(armPort, 'PUT', frontDoorWafPath(resourceGroup, frontDoorWafName), frontDoorWafBody());
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.resourceState, 'Enabled');
+      return { status: result.status };
+    });
+
     await record('local waf evaluator allows clean request', async () => {
       const result = runtime.wafEvaluator.evaluate({
         policyName: appWafName,
@@ -394,6 +549,17 @@ async function runControlPlaneMatrix() {
       assert.equal(result.reason, 'NoRuleMatch');
       assert.deepEqual(result.matchedRules, []);
       return { action: result.action, reason: result.reason };
+    });
+
+    await record('local front door waf evaluator blocks bad bot in prevention mode', async () => {
+      const result = runtime.wafEvaluator.evaluate({
+        policyRef: frontDoorWafPolicyId,
+        request: { method: 'GET', uri: '/robotics/telemetry', headers: { 'User-Agent': 'bad-bot/1.0' } },
+      });
+      assert.equal(result.action, 'Block');
+      assert.equal(result.reason, 'CustomRuleMatch');
+      assert.equal(result.policyName, frontDoorWafName);
+      return { action: result.action, reason: result.reason, policyName: result.policyName };
     });
 
     await record('local waf evaluator blocks bad bot in prevention mode', async () => {
@@ -469,6 +635,65 @@ async function runControlPlaneMatrix() {
       return { status: result.status, count: result.body.value.length };
     });
 
+    await record('front door waf policy list includes created resource', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.Network', 'FrontDoorWebApplicationFirewallPolicies', '2024-05-01'));
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => item.name === frontDoorWafName));
+      return { status: result.status, count: result.body.value.length };
+    });
+
+    await record('virtual network create succeeds for application gateway waf attachment', async () => {
+      const result = await httpJson(armPort, 'PUT', virtualNetworkPath(resourceGroup, vnetName), vnetBody());
+      assert.equal(result.status, 201);
+      return { status: result.status };
+    });
+
+    await record('public ip create succeeds for application gateway waf attachment', async () => {
+      const result = await httpJson(armPort, 'PUT', publicIpPath(resourceGroup, gatewayPublicIpName), publicIpBody(gatewayDomainLabel));
+      assert.equal(result.status, 201);
+      assert.match(String(result.body.properties?.dnsSettings?.fqdn ?? ''), /\.cloudapp\.azure\.com$/);
+      return { status: result.status, fqdn: result.body.properties?.dnsSettings?.fqdn ?? null };
+    });
+
+    await record('waf policy update can switch back to prevention mode for application gateway traffic', async () => {
+      const result = await httpJson(armPort, 'PUT', appWafPath(resourceGroup, appWafName), appWafBody({
+        properties: {
+          policySettings: {
+            state: 'Enabled',
+            mode: 'Prevention',
+            requestBodyCheck: true,
+          },
+        },
+      }));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.policySettings.mode, 'Prevention');
+      return { status: result.status };
+    });
+
+    await record('application gateway create succeeds with attached waf policy', async () => {
+      const result = await httpJson(armPort, 'PUT', applicationGatewayPath(resourceGroup, appGatewayName), applicationGatewayBody({
+        resourceGroup,
+        gatewayName: appGatewayName,
+        subnetId: gatewaySubnetId,
+        firewallPolicyId: appWafPolicyId,
+      }));
+      assert.equal(result.status, 201);
+      assert.equal(result.body.properties.firewallPolicy.id, appWafPolicyId);
+      return { status: result.status, firewallPolicyId: result.body.properties.firewallPolicy.id };
+    });
+
+    await record('application gateway edge route blocks bad bot when firewall policy is attached', async () => {
+      const result = await edgeJson(edgePort, 'GET', '/robotics/telemetry', {
+        host: `${gatewayDomainLabel}.eastus.cloudapp.azure.com`,
+        protocol: 'http',
+        headers: { 'User-Agent': 'bad-bot/1.0' },
+      });
+      assert.equal(result.status, 403);
+      assert.equal(errorCode(result), 'WebApplicationFirewallRequestBlocked');
+      assert.equal(result.headers['x-globalstack-waf-policy'], appWafName);
+      return { status: result.status, errorCode: errorCode(result), wafPolicyName: result.headers['x-globalstack-waf-policy'] };
+    });
+
     await record('cdn profile create succeeds for security policy parent', async () => {
       const result = await httpJson(armPort, 'PUT', cdnProfilePath(resourceGroup, profileName), cdnProfileBody());
       assert.equal(result.status, 201);
@@ -510,12 +735,13 @@ async function runControlPlaneMatrix() {
     });
 
     for (const [name, body, expectedCode] of [
-      ['cdn security policy invalid name is rejected', cdnSecurityPolicyBody({ wafPolicyId, endpointId }), 'InvalidResourceName'],
+      ['cdn security policy invalid name is rejected', cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId }), 'InvalidResourceName'],
       ['cdn security policy missing parameters is rejected', { properties: {} }, 'BadRequest'],
-      ['cdn security policy invalid type is rejected', cdnSecurityPolicyBody({ wafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'RateLimit' } } } }), 'BadRequest'],
-      ['cdn security policy missing waf policy id is rejected', cdnSecurityPolicyBody({ wafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', associations: [{ domains: [{ id: endpointId }], patternsToMatch: ['/*'] }] } } } }), 'BadRequest'],
-      ['cdn security policy missing association domains is rejected', cdnSecurityPolicyBody({ wafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: wafPolicyId }, associations: [{ patternsToMatch: ['/*'] }] } } } }), 'BadRequest'],
-      ['cdn security policy missing patterns is rejected', cdnSecurityPolicyBody({ wafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: wafPolicyId }, associations: [{ domains: [{ id: endpointId }] }] } } } }), 'BadRequest'],
+      ['cdn security policy invalid type is rejected', cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'RateLimit' } } } }), 'BadRequest'],
+      ['cdn security policy missing waf policy id is rejected', cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', associations: [{ domains: [{ id: endpointId }], patternsToMatch: ['/*'] }] } } } }), 'BadRequest'],
+      ['cdn security policy wrong waf policy type is rejected', cdnSecurityPolicyBody({ wafPolicyId: appWafPolicyId, endpointId }), 'BadRequest'],
+      ['cdn security policy missing association domains is rejected', cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: frontDoorWafPolicyId }, associations: [{ patternsToMatch: ['/*'] }] } } } }), 'BadRequest'],
+      ['cdn security policy missing patterns is rejected', cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId, overrides: { properties: { parameters: { type: 'WebApplicationFirewall', wafPolicy: { id: frontDoorWafPolicyId }, associations: [{ domains: [{ id: endpointId }] }] } } } }), 'BadRequest'],
     ]) {
       await record(name, async () => {
         const pathName = name === 'cdn security policy invalid name is rejected' ? `-bad-${suffix}` : securityPolicyName;
@@ -527,7 +753,7 @@ async function runControlPlaneMatrix() {
     }
 
     await record('cdn security policy create succeeds', async () => {
-      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(resourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId, endpointId }));
+      const result = await httpJson(armPort, 'PUT', cdnSecurityPolicyPath(resourceGroup, profileName, securityPolicyName), cdnSecurityPolicyBody({ wafPolicyId: frontDoorWafPolicyId, endpointId }));
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
       return { status: result.status };
@@ -543,7 +769,7 @@ async function runControlPlaneMatrix() {
       });
       assert.equal(result.status, 403);
       assert.equal(errorCode(result), 'WebApplicationFirewallRequestBlocked');
-      assert.equal(result.headers['x-globalstack-waf-policy'], appWafName);
+      assert.equal(result.headers['x-globalstack-waf-policy'], frontDoorWafName);
       return { status: result.status, errorCode: errorCode(result), wafPolicyName: result.headers['x-globalstack-waf-policy'] };
     });
 
@@ -562,8 +788,8 @@ async function runControlPlaneMatrix() {
       assert.equal(second.status, 403);
       assert.equal(errorCode(first), 'WebApplicationFirewallRequestBlocked');
       assert.equal(errorCode(second), 'WebApplicationFirewallRequestBlocked');
-      assert.equal(first.headers['x-globalstack-waf-policy'], appWafName);
-      assert.equal(second.headers['x-globalstack-waf-policy'], appWafName);
+      assert.equal(first.headers['x-globalstack-waf-policy'], frontDoorWafName);
+      assert.equal(second.headers['x-globalstack-waf-policy'], frontDoorWafName);
       return { status: second.status, wafPolicyName: second.headers['x-globalstack-waf-policy'] };
     });
 
@@ -596,18 +822,18 @@ async function runControlPlaneMatrix() {
 
     await record('ARM template deployment can create waf policies', async () => {
       const deploymentName = `waf-deploy-${suffix}`;
-      const deploymentWaf = `waf-deploy-${suffix}`.slice(0, 40);
       const deploymentProfile = `cdn-waf-deploy-${suffix}`.slice(0, 40);
+      const deploymentFrontDoorWaf = `fdwaf-deploy-${suffix}`.slice(0, 40);
       const deploymentSecurity = `security-deploy-${suffix}`.slice(0, 40);
       const result = await httpJson(
         armPort,
         'PUT',
         `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}?api-version=2022-09-01`,
-        deploymentBody({ resourceGroup, appWafName: deploymentWaf, profileName: deploymentProfile, securityPolicyName: deploymentSecurity }),
+        deploymentBody({ resourceGroup, frontDoorWafName: deploymentFrontDoorWaf, profileName: deploymentProfile, securityPolicyName: deploymentSecurity }),
       );
       assert.equal(result.status, 201);
       assert.equal(result.body.properties.provisioningState, 'Succeeded');
-      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/ApplicationGatewayWebApplicationFirewallPolicies/${deploymentWaf}`)));
+      assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/FrontDoorWebApplicationFirewallPolicies/${deploymentFrontDoorWaf}`)));
       assert.ok(result.body.properties.globalstackDeploymentSteps.some(step => step.id.includes(`/securityPolicies/${deploymentSecurity}`)));
       return { status: result.status, stepCount: result.body.properties.globalstackDeploymentSteps.length };
     });
@@ -637,8 +863,21 @@ async function runControlPlaneMatrix() {
       return { status: result.status };
     });
 
+    await record('front door waf policy delete succeeds', async () => {
+      const result = await httpJson(armPort, 'DELETE', frontDoorWafPath(resourceGroup, frontDoorWafName));
+      assert.equal(result.status, 200);
+      return { status: result.status };
+    });
+
     await record('waf policy get after delete is not found', async () => {
       const result = await httpJson(armPort, 'GET', appWafPath(resourceGroup, appWafName));
+      assert.equal(result.status, 404);
+      assert.equal(errorCode(result), 'ResourceNotFound');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('front door waf policy get after delete is not found', async () => {
+      const result = await httpJson(armPort, 'GET', frontDoorWafPath(resourceGroup, frontDoorWafName));
       assert.equal(result.status, 404);
       assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
@@ -650,8 +889,10 @@ async function runControlPlaneMatrix() {
     'local waf evaluator allows clean request',
     'local waf evaluator blocks bad bot in prevention mode',
     'local waf evaluator blocks repeated bad bot requests consistently',
+    'local front door waf evaluator blocks bad bot in prevention mode',
     'local waf evaluator detects bad bot without blocking in detection mode',
     'local waf evaluator disabled policy bypasses rules',
+    'application gateway edge route blocks bad bot when firewall policy is attached',
     'local front door edge route blocks bad bot when security policy references waf policy',
     'local front door edge route keeps blocking repeated bad bot requests',
   ]);
