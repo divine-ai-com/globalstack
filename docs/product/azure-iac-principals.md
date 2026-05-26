@@ -223,7 +223,26 @@ Unacceptable fixes:
 - scenario-specific success paths
 - bundle-specific hidden mutations in the emulator
 
-## 9. Dataset Hygiene
+## 9. Real Emulation Priority
+
+When parity work is expanded, the default direction is toward real local emulation depth, not broader metadata-only acceptance.
+
+Preferred order:
+
+1. official Microsoft emulator plus Azure-shaped facade where available
+2. concrete local backend/runtime behind Azure-shaped APIs
+3. bounded router/model runtime only when a stronger local backend does not yet exist
+4. metadata-only control-plane façade only as temporary scaffolding
+
+In practice:
+
+- do not stop at a façade if the service is supposed to execute meaningful runtime behavior
+- prefer a real local database, registry, workflow runner, queue engine, Kubernetes backend, or similar executable substrate when the workload needs it
+- treat metadata-only or validation-only surfaces as transitional and document them plainly
+- when a bundle exposes a real runtime gap, fix the runtime gap instead of adding another narrow façade success path
+- when the user says "go for it" on parity or service expansion, assume they mean "deepen real emulation" unless they explicitly ask for control-plane-only coverage
+
+## 10. Dataset Hygiene
 
 Before treating a bundle as training-grade, confirm that dataset-visible files do not leak runtime-only terms or wiring.
 
@@ -244,7 +263,7 @@ Allowed exception:
 
 - `provider: GlobalStack` in metadata only
 
-## 10. Acceptance Bar
+## 11. Acceptance Bar
 
 A bundle is acceptable only if all of the following are true:
 

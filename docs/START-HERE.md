@@ -41,6 +41,7 @@ The local implementation is a hybrid:
 - conformance tests that replay captured expectations.
 
 See `docs/SERVICE-SCOPE.md` for the generated capability matrix.
+See `docs/CURRENT-MISSION.md` for the current implementation classes and the standing rule that parity expansion must prefer real local backend/runtime depth over metadata-only façade growth.
 
 ## What Is Real Today
 

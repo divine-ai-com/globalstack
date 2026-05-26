@@ -34,6 +34,78 @@ Verified bundles are part of the verification workspace, not the product core. K
 
 The target is the 30 AWS-analogue Azure capabilities listed in `docs/SERVICE-SCOPE.md` and tracked by `docs/conformance/azure-99-roadmap.md`.
 
+## Implementation Strategy Classes
+
+The 30-service Azure scope is not one uniform implementation style. Future work must treat these classes explicitly instead of flattening them into one parity number.
+
+### Class A: facade + official emulator or official local runtime
+
+These are the strongest current surfaces and the preferred shape where Microsoft provides a usable local runtime:
+
+- `blob-storage`
+- `azure-functions`
+- `cosmos-nosql-table`
+- `service-bus-topics`
+- `queue-storage`
+- `event-hubs-streams`
+- `app-configuration-parameters`
+
+### Class B: facade + concrete local backend/runtime
+
+These use a real local engine or runtime behind Azure-shaped APIs, but not an official Microsoft emulator:
+
+- `identity-rbac`
+- `key-vault-secrets`
+- `key-vault-keys`
+- `postgresql-flexible-server`
+- `mysql-flexible-server`
+- `redis-cache`
+- `container-registry`
+- `monitor-logs`
+- `monitor-metrics-alerts`
+- `azure-files`
+- `synapse-warehouse`
+- `service-discovery`
+
+### Class C: facade + bounded router/model runtime
+
+These have executable local behavior, but the runtime is still bounded and not close enough to call a full service backend:
+
+- `api-management`
+- `event-grid`
+- `aks-metadata`
+- `virtual-network`
+- `logic-workflows`
+- `dns-zones`
+- `load-balancing`
+- `front-door-cdn`
+- `activity-log-audit`
+
+### Class D: mostly metadata / validation only
+
+These are the weakest current surfaces and should be treated as transitional, not end-state emulation:
+
+- `waf-policy`
+- `database-migration-service`
+
+## Real Emulation Priority
+
+When the user says "go for it" on parity expansion, the default objective is to move services toward real emulation, not to add more metadata-only acceptance.
+
+Priority order:
+
+1. Class D -> Class C
+2. Class C -> Class B
+3. Class B -> Class A where an official emulator exists, otherwise deepen the concrete local backend/runtime
+
+This means:
+
+- prefer facade plus a concrete local backend/runtime over façade-only success
+- prefer official Microsoft emulators where they are good enough to anchor the runtime
+- treat pure metadata/control-plane facades as temporary scaffolding
+- do not count another route or validation patch as “good enough” when the exposed gap really needs executable local runtime behavior
+- if a workload is supposed to deploy and actually run, GlobalStack must aim to let that mix of services execute locally, not merely provision Azure-shaped metadata
+
 Parity-hardening packs are expected to cover, at minimum:
 
 - authenticated and unauthenticated ARM behavior,
