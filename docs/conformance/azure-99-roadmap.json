@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-26T14:20:32.272Z",
+    "generatedAt": "2026-05-26T15:09:25.018Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -35,9 +35,9 @@
   },
   "stressVerificationSnapshot": {
     "source": "dist/complex-pulumi-bundles/latest-results.json",
-    "generatedAt": "2026-05-26T14:14:39.385Z",
-    "total": 5,
-    "passCount": 5,
+    "generatedAt": "2026-05-26T15:09:19.164Z",
+    "total": 10,
+    "passCount": 10,
     "results": [
       {
         "prId": "Pr91239",
@@ -66,6 +66,36 @@
       {
         "prId": "Pr91238",
         "scenarioId": "regulated-cutover-governance-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91241",
+        "scenarioId": "multiregion-replenishment-balancing-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91242",
+        "scenarioId": "regulated-migration-command-center",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91243",
+        "scenarioId": "industrial-command-digital-thread",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91244",
+        "scenarioId": "active-active-release-control-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91245",
+        "scenarioId": "investigation-lakehouse-response-fabric",
         "overallStatus": "PASS",
         "finalStage": "destroy"
       }
