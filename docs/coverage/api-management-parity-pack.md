@@ -20,7 +20,7 @@ By default it runs two layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | API Management ARM and gateway matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch rejection, missing `api-version`, missing resource group, captured APIM service validation, service/API collection list, documented APIM service/API success shapes, async service provisioning, API create/update/list/delete/post-delete, fail-closed unsupported APIM action, ARM-template deployment, and local gateway host/path/subscription-key route rejection/routing. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:api-management-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
 

@@ -21,7 +21,7 @@ This pack is the local acceptance suite for Azure Database for PostgreSQL Flexib
 | Local PostgreSQL backing | Disposable `postgres:16-alpine` database creation, table creation, insert/select, primary-key rejection, transaction rollback, invalid SQL rejection, unknown-role rejection, and cleanup. | SQL success and failure behavior is backed by a real PostgreSQL engine rather than a mocked response. |
 | Unsupported routes | Firewall rule and server configuration routes. | Routes fail closed with `GlobalStackResourceTypeNotEmulated`. |
 | IaC path | ARM deployment can create a Flexible Server and database. | Deployment succeeds only through implemented resource types and records deployment steps. |
-| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
+| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
 
 ## Current Claim
 

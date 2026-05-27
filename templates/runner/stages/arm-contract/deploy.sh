@@ -120,6 +120,32 @@ if is_native_ansible_platform; then
   exit 0
 fi
 
+if is_native_cli_platform; then
+  log_stage deploy "deploying native Azure CLI REST script against provider=${PROVIDER:-${GLOBALSTACK_TARGET_PROVIDER}}"
+  setup_native_cli_auth
+  if ! bash "${PLATFORM_WORK_DIR}/lib/deploy.sh" >"${PLATFORM_NATIVE_STDOUT}" 2>"${PLATFORM_NATIVE_STDERR}"; then
+    write_stage_report deploy FAIL "Azure CLI REST deploy script failed; see native stderr/stdout reports"
+    exit 1
+  fi
+  resource_group="$(resource_group_name)"
+  storage_account="$(storage_account_name)"
+  rg_url="${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourcegroups/${resource_group}?api-version=2021-04-01"
+  storage_url="${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${resource_group}/providers/Microsoft.Storage/storageAccounts/${storage_account}?api-version=2023-01-01"
+  curl -fsS \
+    -H "Authorization: Bearer ${AZURE_ACCESS_TOKEN}" \
+    -H 'content-type: application/json' \
+    "${rg_url}" > "${REPORT_DIR}/resource-group-get.json"
+  jq -e --arg name "${resource_group}" '.name == $name' "${REPORT_DIR}/resource-group-get.json" >/dev/null
+  curl -fsS \
+    -H "Authorization: Bearer ${AZURE_ACCESS_TOKEN}" \
+    -H 'content-type: application/json' \
+    "${storage_url}" > "${REPORT_DIR}/storage-account-get.json"
+  jq -e --arg name "${storage_account}" '.name == $name' "${REPORT_DIR}/storage-account-get.json" >/dev/null
+  write_native_cli_deployment_response "${resource_group}" "${storage_account}"
+  write_stage_report deploy PASS "Azure CLI REST deploy script completed successfully"
+  exit 0
+fi
+
 log_stage deploy "deploying ARM contract against provider=${PROVIDER:-${GLOBALSTACK_TARGET_PROVIDER}}"
 request_local_token
 token="$(local_access_token)"

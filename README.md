@@ -38,13 +38,13 @@ npm run workspace:validate
 
 ## What is included
 
-- Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Bicep, and ARM JSON.
+- Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON.
 - Docker runner templates that share the GlobalStack Azure sidecar network.
 - A GlobalStack Azure compose file that requires the already-exported `GLOBALSTACK_AUTH_TOKEN`.
 - Metadata-driven provider routing: task `metadata.json` can select `provider=GlobalStack` for local emulation or `provider=Azure` for real Azure execution.
 - A smoke prompt generator that creates Azure deployment prompts for every supported platform.
 - A deploy-smoke generator for AI/MLOps, robotics, and GenAI use cases that exercises supported Azure control-plane resources against GlobalStack.
-- A platform runner lifecycle matrix for Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON.
+- A platform runner lifecycle matrix for Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON.
 - A hybrid Azure emulator foundation that prefers official Microsoft emulators, fills control-plane gaps with a GlobalStack ARM facade, and reserves real Azure for conformance capture.
 - Tier 1 and Tier 2 AWS-to-Azure capability mappings with explicit backing engines, known gaps, and cloud-validation status.
 - A generated artifact registry in `docs/ARTIFACT-REGISTRY.md` that records file ownership, source-of-truth boundaries, generator commands, and edit policy.
@@ -170,7 +170,7 @@ Run the complete platform runner lifecycle matrix against the shared GlobalStack
 GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
 ```
 
-This covers Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON. Terraform and OpenTofu run native AzAPI provider apply/destroy through the selected provider endpoint; Pulumi TypeScript, Pulumi Python, and Pulumi YAML run native Pulumi Azure Native up/destroy through runner-transparent GlobalStack routing; Ansible runs native `azure.azcollection` modules through the same GlobalStack routing; ARM JSON deploys the shared Azure ARM contract directly. Results are written to `dist/platform-lifecycle-smoke-results.json` and per-platform `reports/` folders.
+This covers Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON. Terraform and OpenTofu run native AzAPI provider apply/destroy through the selected provider endpoint; Pulumi TypeScript, Pulumi Python, and Pulumi YAML run native Pulumi Azure Native up/destroy through runner-transparent GlobalStack routing; Ansible runs native `azure.azcollection` modules through the same GlobalStack routing; Azure CLI REST runs task-owned `az rest` scripts; ARM JSON deploys the shared Azure ARM contract directly. Results are written to `dist/platform-lifecycle-smoke-results.json` and per-platform `reports/` folders.
 
 The GlobalStack Azure sidecar expects the host shell to already have:
 

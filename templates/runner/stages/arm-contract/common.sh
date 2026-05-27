@@ -255,6 +255,13 @@ PY
     azure-ansible-yaml)
       ansible-playbook -i "${PLATFORM_WORK_DIR}/inventory.yml" "${PLATFORM_WORK_DIR}/lib/playbook.yml" --syntax-check
       ;;
+    azure-cli-rest)
+      test -f "${PLATFORM_WORK_DIR}/lib/deploy.sh"
+      bash -n "${PLATFORM_WORK_DIR}/lib/deploy.sh"
+      grep -q 'az rest' "${PLATFORM_WORK_DIR}/lib/deploy.sh"
+      grep -q 'ARM_SUBSCRIPTION_ID' "${PLATFORM_WORK_DIR}/lib/deploy.sh"
+      grep -q 'ARM_ENDPOINT' "${PLATFORM_WORK_DIR}/lib/deploy.sh"
+      ;;
     *)
       echo "No native check registered for ${PLATFORM_ID}" >&2
       return 1
@@ -279,6 +286,13 @@ is_native_pulumi_platform() {
 is_native_ansible_platform() {
   case "${PLATFORM_ID}" in
     azure-ansible-yaml) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_native_cli_platform() {
+  case "${PLATFORM_ID}" in
+    azure-cli-rest) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -409,6 +423,75 @@ setup_native_ansible_auth() {
       export ANSIBLE_AZURE_AUTH_SOURCE=cli
     fi
   fi
+}
+
+setup_native_cli_auth() {
+  request_local_token
+  local token
+  token="$(local_access_token)"
+  if [ -z "${token}" ] || [ "${token}" = "null" ]; then
+    write_stage_report deploy FAIL "Azure CLI REST token request did not return an access_token"
+    exit 1
+  fi
+
+  export ARM_SUBSCRIPTION_ID
+  export ARM_TENANT_ID
+  export ARM_CLIENT_ID
+  export ARM_CLIENT_SECRET="${ARM_CLIENT_SECRET:-globalstack}"
+  export ARM_ENDPOINT="${AZURE_ENDPOINT_URL%/}"
+  export AZURE_RESOURCE_MANAGER_ENDPOINT="${AZURE_ENDPOINT_URL%/}"
+  export AZURE_LOCATION
+  export AZURE_ACCESS_TOKEN="${token}"
+  export AZURE_DEPLOYMENT_OUTPUTS_PATH="${PLATFORM_NATIVE_OUTPUTS}"
+  export GLOBALSTACK_RESOURCE_GROUP_NAME="$(resource_group_name)"
+  export GLOBALSTACK_STORAGE_ACCOUNT_NAME="$(storage_account_name)"
+  export AZURE_CORE_ONLY_SHOW_ERRORS=true
+}
+
+write_native_cli_deployment_response() {
+  local resource_group="$1"
+  local storage_account="$2"
+  local metadata
+  metadata="$(task_metadata_path)"
+  local native_outputs='{}'
+  if [ -s "${PLATFORM_NATIVE_OUTPUTS}" ]; then
+    native_outputs="$(jq -c '.' "${PLATFORM_NATIVE_OUTPUTS}" 2>/dev/null || printf '{}')"
+  fi
+  jq -n \
+    --slurpfile metadata "${metadata}" \
+    --argjson nativeOutputs "${native_outputs}" \
+    --arg platform "${PLATFORM_ID}" \
+    --arg resourceGroupName "${resource_group}" \
+    --arg storageAccountName "${storage_account}" \
+    --arg endpoint "${AZURE_ENDPOINT_URL}" \
+    '{
+      id: ("/subscriptions/" + env.ARM_SUBSCRIPTION_ID + "/providers/Microsoft.Resources/deployments/" + $platform + "-native-cli-smoke"),
+      name: ($platform + "-native-cli-smoke"),
+      type: "GlobalStack.PlatformRunner/nativeProviderLifecycle",
+      properties: {
+        provisioningState: "Succeeded",
+        mode: "NativeAzureCliRest",
+        platform: $platform,
+        toolchain: "azure-cli",
+        endpoint: $endpoint,
+        outputs: (($metadata[0].expectedOutputs // {}) + $nativeOutputs + {
+          resourceGroupName: { type: "string", value: $resourceGroupName },
+          storageAccountName: { type: "string", value: $storageAccountName }
+        }),
+        globalstackDeploymentSteps: [
+          {
+            operation: "az-rest-deploy-script",
+            toolchain: "azure-cli",
+            status: 0
+          },
+          {
+            operation: "GET",
+            id: ("/subscriptions/" + env.ARM_SUBSCRIPTION_ID + "/resourceGroups/" + $resourceGroupName),
+            status: 200
+          }
+        ]
+      }
+    }' > "${PLATFORM_DEPLOYMENT_RESPONSE}"
 }
 
 ansible_playbook_path() {

@@ -170,7 +170,7 @@ Parity-hardening packs are expected to cover, at minimum:
 - negative parameter variance,
 - unsupported route fail-closed behavior,
 - ARM template deployment,
-- all eight platform runners where applicable: Terraform HCL, OpenTofu HCL, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible YAML, Bicep, and ARM JSON.
+- all nine platform runners where applicable: Terraform HCL, OpenTofu HCL, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible YAML, Azure CLI REST, Bicep, and ARM JSON.
 
 Passing a parity pack is a baseline, not a 99% parity claim.
 

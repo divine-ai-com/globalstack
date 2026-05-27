@@ -20,7 +20,7 @@ This pack is the local acceptance suite for Azure Application Gateway and Azure 
 | Load Balancer validation | SKU, frontend IP configuration, backend pool, probe, and load balancing rule. | Invalid load balancer shapes fail locally instead of producing invented success. |
 | Unsupported routes | Application Gateway backend health/private endpoint connection routes and Load Balancer child/action routes. | Routes fail closed with `GlobalStackResourceTypeNotEmulated`. |
 | IaC path | ARM deployment can create a VNet, Application Gateway, and Load Balancer using the same local ARM facade. | Deployment succeeds only through implemented resource types and records deployment steps. |
-| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
+| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
 
 ## Current Claim
 

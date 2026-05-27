@@ -20,7 +20,7 @@ By default it runs two layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | Azure Virtual Network control-plane matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch, missing `api-version`, missing resource group, VNet lifecycle, subnet lifecycle, Private Endpoint lifecycle, Private DNS zone async lifecycle, parameter rejection, unsupported Network child/action routes, ARM-template deployment, and post-delete behavior. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:virtual-network-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
 

@@ -72,6 +72,18 @@ export const azurePlatforms = [
       'write the Ansible automation in lib/playbook.yml and role/task YAML. run against localhost, read environment_suffix and azure_location from extra vars, and support desired_state=present and desired_state=absent for deploy and destroy.',
   },
   {
+    id: 'azure-cli-rest',
+    label: 'Azure CLI REST Bash',
+    toolchain: 'azure-cli',
+    language: 'bash',
+    imageTag: 'globalstack/azure-cli-rest:local',
+    dockerfile: 'Dockerfile.azure-cli',
+    solutionFiles: ['lib/deploy.sh'],
+    testFiles: ['test/cli.unit.test.py', 'test/cli.int.test.py'],
+    implGuidance:
+      'write an idempotent Bash deployment in lib/deploy.sh using Azure CLI az rest calls only. read ARM_SUBSCRIPTION_ID, ARM_ENDPOINT, AZURE_LOCATION, and AZURE_ACCESS_TOKEN from the environment, create resources in dependency order, and emit deployed output values to AZURE_DEPLOYMENT_OUTPUTS_PATH when present.',
+  },
+  {
     id: 'azure-bicep',
     label: 'Azure Bicep',
     toolchain: 'bicep',

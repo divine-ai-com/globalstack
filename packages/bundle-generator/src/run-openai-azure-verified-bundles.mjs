@@ -126,6 +126,36 @@ const starterBundles = [
     prId: 'Pr91375',
   },
   {
+    platformId: 'azure-cli-rest',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '147671b9-1d3f-4f60-a756-804b6ca56c81',
+    prId: 'Pr91381',
+  },
+  {
+    platformId: 'azure-cli-rest',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: 'b5659fd6-b9ed-4fd9-927e-05fef0dd2d63',
+    prId: 'Pr91382',
+  },
+  {
+    platformId: 'azure-cli-rest',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: 'bc124fa6-cbf6-4f4b-b2fe-e41c98874d6b',
+    prId: 'Pr91383',
+  },
+  {
+    platformId: 'azure-cli-rest',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'a8308d93-2a8a-47e0-b442-35375a433f6a',
+    prId: 'Pr91384',
+  },
+  {
+    platformId: 'azure-cli-rest',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: 'f5c7ce8e-fb8e-49b7-884b-2292ef632311',
+    prId: 'Pr91385',
+  },
+  {
     platformId: 'azure-bicep',
     scenarioId: 'regulated-genai-knowledge-ingestion',
     poId: '0fb57f73-b5c4-4d8d-bf1e-e88f2164c103',
@@ -644,6 +674,45 @@ const platformInstructions = new Map([
     unitTestCommand: 'python3 test/ansible.unit.test.py',
     integrationTestCommand: 'python3 test/ansible.int.test.py',
   }],
+  ['azure-cli-rest', {
+    files: ['lib/deploy.sh'],
+    instruction: [
+      'Use Azure CLI in a Bash script.',
+      'Put the complete deployment in lib/deploy.sh.',
+      'Use az rest for every Azure management-plane create or read call.',
+      'Do not use ARM templates, Bicep, Terraform, OpenTofu, Pulumi, Ansible, curl, wget, or language SDKs.',
+      'Read endpoint="${ARM_ENDPOINT:-https://management.azure.com}", subscription_id from ARM_SUBSCRIPTION_ID, location from AZURE_LOCATION, and token from AZURE_ACCESS_TOKEN.',
+      'If AZURE_ACCESS_TOKEN is empty, retrieve a real Azure token with az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv.',
+      'For every az rest call, pass Authorization=Bearer ${token}, content-type=application/json, and --skip-authorization-header.',
+      'Create resources sequentially in dependency order: resource group, storage account, storage children, Service Bus namespace, Service Bus topic, Event Grid topic, Event Hubs namespace, event hub, and App Configuration store.',
+      'Make each PUT body explicit JSON written by the script; do not generate or invoke an ARM deployment template.',
+      'At the end, if AZURE_DEPLOYMENT_OUTPUTS_PATH is set, write a JSON object whose keys are exactly the requested output keys and whose values use the ARM output shape { "type": "string", "value": "<deployed-name>" }.',
+      'Use the exact resource names provided and do not generate random suffixes.',
+    ].join(' '),
+    requiredMarkers: [
+      '#!/usr/bin/env bash',
+      'set -euo pipefail',
+      'az rest',
+      'ARM_ENDPOINT',
+      'ARM_SUBSCRIPTION_ID',
+      'AZURE_LOCATION',
+      'AZURE_ACCESS_TOKEN',
+      'Authorization=Bearer',
+      '--skip-authorization-header',
+      'Microsoft.Storage/storageAccounts',
+      'blobServices/default/containers',
+      'queueServices/default/queues',
+      'fileServices/default/shares',
+      'tableServices/default/tables',
+      'Microsoft.ServiceBus/namespaces',
+      'Microsoft.EventGrid/topics',
+      'Microsoft.EventHub/namespaces',
+      'Microsoft.AppConfiguration/configurationStores',
+      'AZURE_DEPLOYMENT_OUTPUTS_PATH',
+    ],
+    unitTestCommand: 'python3 test/cli.unit.test.py',
+    integrationTestCommand: 'python3 test/cli.int.test.py',
+  }],
   ['azure-pulumi-py', {
     files: ['Pulumi.yaml', 'requirements.txt', 'tap.py', 'lib/__init__.py', 'lib/tap_stack.py'],
     instruction: [
@@ -972,6 +1041,24 @@ function promptText(platformId, scenarioId, scenario, platform, names) {
       '- Every azure_rm_resource task must include auth_source: env, polling_timeout: 60, and polling_interval: 1.',
       '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
     ]
+    : platformId === 'azure-cli-rest'
+    ? [
+      'Use this exact Azure resource contract:',
+      '- Use Azure CLI az rest calls only. Do not use ARM JSON deployment templates, Bicep, Terraform, OpenTofu, Pulumi, Ansible, curl, wget, or language SDKs.',
+      '- Resource group uses PUT /subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}?api-version=2021-04-01 with location eastus.',
+      '- Storage account uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}?api-version=2023-01-01 with kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, supportsHttpsTrafficOnly=true.',
+      '- Blob container uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}/blobServices/default/containers/{containerName}?api-version=2023-01-01 with publicAccess None.',
+      '- Queue uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}/queueServices/default/queues/{queueName}?api-version=2023-01-01 with an empty properties object.',
+      '- File share uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}/fileServices/default/shares/{shareName}?api-version=2023-01-01 with shareQuota 32.',
+      '- Table uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}/tableServices/default/tables/{tableName}?api-version=2023-01-01 with an empty properties object.',
+      '- Service Bus namespace uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}?api-version=2021-11-01 with sku name Standard and tier Standard.',
+      '- Service Bus topic uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}?api-version=2021-11-01 with maxSizeInMegabytes 1024.',
+      '- Event Grid topic uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}?api-version=2022-06-15 with inputSchema EventGridSchema.',
+      '- Event Hubs namespace uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}?api-version=2024-01-01 with sku Standard tier Standard capacity 1.',
+      '- Event Hub uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}?api-version=2024-01-01 with partitionCount 2 and messageRetentionInDays 1.',
+      '- App Configuration store uses PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{storeName}?api-version=2023-03-01 with sku name free and disableLocalAuth false.',
+      '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
+    ]
     : [
       'Use this exact Azure resource contract:',
       '- Storage account API version 2023-01-01 with kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, supportsHttpsTrafficOnly=true.',
@@ -1287,6 +1374,44 @@ function validateFiles(platformId, scenario, platform, names, files) {
       `${resources.eventHubNamespace}/${resources.eventHubName}`,
     ]) {
       if (!playbook.includes(resourceNameExpression)) errors.push(`Ansible playbook must include composite resource_name ${resourceNameExpression}`);
+    }
+  }
+  if (platformId === 'azure-cli-rest') {
+    const deployScript = files.get('lib/deploy.sh') ?? '';
+    if (!deployScript.startsWith('#!/usr/bin/env bash')) errors.push('Azure CLI REST deploy.sh must start with a Bash shebang');
+    if (!deployScript.includes('set -euo pipefail')) errors.push('Azure CLI REST deploy.sh must use set -euo pipefail');
+    if (!deployScript.includes('az rest')) errors.push('Azure CLI REST deploy.sh must use az rest');
+    for (const forbidden of ['curl ', 'wget ', 'az deployment', 'az group create', 'terraform ', 'tofu ', 'pulumi ', 'ansible-playbook', 'az bicep']) {
+      if (deployScript.includes(forbidden)) errors.push(`Azure CLI REST deploy.sh must not use ${forbidden.trim()}`);
+    }
+    for (const marker of [
+      'ARM_ENDPOINT',
+      'ARM_SUBSCRIPTION_ID',
+      'AZURE_LOCATION',
+      'AZURE_ACCESS_TOKEN',
+      'az account get-access-token',
+      'Authorization=Bearer',
+      '--skip-authorization-header',
+      'content-type=application/json',
+      'api-version=2023-01-01',
+      'api-version=2021-11-01',
+      'api-version=2022-06-15',
+      'api-version=2024-01-01',
+      'Microsoft.Storage/storageAccounts',
+      'blobServices/default/containers',
+      'queueServices/default/queues',
+      'fileServices/default/shares',
+      'tableServices/default/tables',
+      'Microsoft.ServiceBus/namespaces',
+      'Microsoft.EventGrid/topics',
+      'Microsoft.EventHub/namespaces',
+      'Microsoft.AppConfiguration/configurationStores',
+      'AZURE_DEPLOYMENT_OUTPUTS_PATH',
+    ]) {
+      if (!deployScript.includes(marker)) errors.push(`Azure CLI REST deploy.sh must include ${marker}`);
+    }
+    for (const outputKey of scenario.outputKeys) {
+      if (!deployScript.includes(outputKey)) errors.push(`Azure CLI REST deploy.sh must emit output ${outputKey}`);
     }
   }
   if (platformId === 'azure-pulumi-py') {
@@ -1708,6 +1833,44 @@ function fileContainsAssertions(platformId, scenario, names) {
         resources.eventHubNamespace,
         resources.eventHubName,
         resources.appConfigStore,
+      ],
+    };
+  }
+  if (platformId === 'azure-cli-rest') {
+    return {
+      'lib/deploy.sh': [
+        '#!/usr/bin/env bash',
+        'set -euo pipefail',
+        'az rest',
+        'ARM_ENDPOINT',
+        'ARM_SUBSCRIPTION_ID',
+        'AZURE_LOCATION',
+        'AZURE_ACCESS_TOKEN',
+        'Authorization=Bearer',
+        '--skip-authorization-header',
+        'Microsoft.Storage/storageAccounts',
+        'blobServices/default/containers',
+        'queueServices/default/queues',
+        'fileServices/default/shares',
+        'tableServices/default/tables',
+        'Microsoft.ServiceBus/namespaces',
+        'Microsoft.EventGrid/topics',
+        'Microsoft.EventHub/namespaces',
+        'Microsoft.AppConfiguration/configurationStores',
+        'AZURE_DEPLOYMENT_OUTPUTS_PATH',
+        resources.resourceGroup,
+        resources.storageAccount,
+        resources.blobContainerName,
+        resources.queueName,
+        resources.fileShareName,
+        resources.tableName,
+        resources.serviceBusNamespace,
+        resources.serviceBusTopicName,
+        resources.eventGridTopic,
+        resources.eventHubNamespace,
+        resources.eventHubName,
+        resources.appConfigStore,
+        ...scenario.outputKeys,
       ],
     };
   }
@@ -2249,6 +2412,74 @@ elif metadata["platformId"] == "azure-ansible-yaml":
         f'{resource_names["eventHubNamespace"]}/{resource_names["eventHubName"]}',
     ]:
         assert value in playbook, f"playbook.yml is missing resource contract value {value}"
+elif metadata["platformId"] == "azure-cli-rest":
+    deploy_script = (root / "lib/deploy.sh").read_text()
+
+    assert deploy_script.startswith("#!/usr/bin/env bash")
+    assert "set -euo pipefail" in deploy_script
+    assert "az rest" in deploy_script
+    assert "az account get-access-token" in deploy_script
+
+    for forbidden in [
+        "curl ",
+        "wget ",
+        "az deployment",
+        "az group create",
+        "terraform ",
+        "tofu ",
+        "pulumi ",
+        "ansible-playbook",
+        "az bicep",
+        "publicNetworkAccess",
+        "defaultToOAuthAuthentication",
+        "enablePurgeProtection",
+        "softDeleteRetentionInDays",
+    ]:
+        assert forbidden not in deploy_script, f"deploy.sh contains forbidden marker {forbidden}"
+
+    for marker in [
+        "ARM_ENDPOINT",
+        "ARM_SUBSCRIPTION_ID",
+        "AZURE_LOCATION",
+        "AZURE_ACCESS_TOKEN",
+        "Authorization=Bearer",
+        "--skip-authorization-header",
+        "content-type=application/json",
+        "api-version=2023-01-01",
+        "api-version=2021-11-01",
+        "api-version=2022-06-15",
+        "api-version=2024-01-01",
+        "Microsoft.Storage/storageAccounts",
+        "blobServices/default/containers",
+        "queueServices/default/queues",
+        "fileServices/default/shares",
+        "tableServices/default/tables",
+        "Microsoft.ServiceBus/namespaces",
+        "Microsoft.EventGrid/topics",
+        "Microsoft.EventHub/namespaces",
+        "Microsoft.AppConfiguration/configurationStores",
+        "AZURE_DEPLOYMENT_OUTPUTS_PATH",
+    ]:
+        assert marker in deploy_script, f"deploy.sh is missing {marker}"
+
+    for value in [
+        resource_names["resourceGroup"],
+        resource_names["storageAccount"],
+        resource_names["serviceBusNamespace"],
+        resource_names["eventGridTopic"],
+        resource_names["eventHubNamespace"],
+        resource_names["appConfigStore"],
+        resource_names["blobContainerName"],
+        resource_names["queueName"],
+        resource_names["fileShareName"],
+        resource_names["tableName"],
+        resource_names["serviceBusTopicName"],
+        resource_names["eventHubName"],
+    ]:
+        assert value in deploy_script, f"deploy.sh is missing resource contract value {value}"
+
+    for output_key in metadata["expectedOutputKeys"]:
+        assert output_key in deploy_script, f"deploy.sh is missing output {output_key}"
 elif metadata["platformId"] == "azure-pulumi-py":
     pulumi_yaml = (root / "Pulumi.yaml").read_text()
     requirements = (root / "requirements.txt").read_text()
@@ -2570,6 +2801,9 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
   } else if (platformId === 'azure-ansible-yaml') {
     await writeFile(join(bundleDir, 'test', 'ansible.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'ansible.int.test.py'), pythonIntegrationTest());
+  } else if (platformId === 'azure-cli-rest') {
+    await writeFile(join(bundleDir, 'test', 'cli.unit.test.py'), pythonUnitTest());
+    await writeFile(join(bundleDir, 'test', 'cli.int.test.py'), pythonIntegrationTest());
   } else if (platformId === 'azure-terraform-hcl' || platformId === 'azure-opentofu-hcl') {
     await writeFile(join(bundleDir, 'test', 'terraform.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'terraform.int.test.py'), pythonIntegrationTest());
@@ -2758,7 +2992,7 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
       lint: 'structural contract validation',
       'unit-tests': 'task-authored unit tests plus deterministic hygiene checks',
       deploy: 'native provider deployment against Azure-shaped control plane',
-      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' || task.platformId === 'azure-pulumi-yaml' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : task.platformId === 'azure-ansible-yaml' ? 'Ansible idempotency and ARM read-after-apply evidence' : 'Bicep redeploy and read-after-deploy evidence',
+      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' || task.platformId === 'azure-pulumi-yaml' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : task.platformId === 'azure-ansible-yaml' ? 'Ansible idempotency and ARM read-after-apply evidence' : task.platformId === 'azure-cli-rest' ? 'Azure CLI REST idempotency and ARM read-after-write evidence' : 'Bicep redeploy and read-after-deploy evidence',
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },

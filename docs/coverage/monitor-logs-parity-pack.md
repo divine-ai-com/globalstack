@@ -20,7 +20,7 @@ By default it runs two layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | Azure Monitor Logs control/data-plane matrix | Auth rejection, malformed/wrong token rejection, subscription mismatch, missing `api-version`, missing resource group, Log Analytics workspace lifecycle, bounded local log ingestion/query behavior, unsupported workspace actions, captured diagnostic-setting rejection, ARM-template deployment, and post-delete behavior. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:monitor-logs-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
 

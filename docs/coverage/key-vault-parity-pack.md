@@ -20,7 +20,7 @@ By default it runs two layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | Key Vault ARM and data-plane matrix | Auth rejection, malformed bearer rejection, missing/unsupported `api-version`, missing resource group, captured vault validation, missing-parent key/secret rejection, ARM vault/secret/key create/update/list/delete boundaries, local secret version data plane, disabled-secret rejection, deleted-secret get/recover/purge lifecycle, local RSA key create/get/list/encrypt/decrypt/delete with `key_ops` enforcement, fail-closed unsupported actions, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:key-vault-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the platform matrix.
 

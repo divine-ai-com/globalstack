@@ -8,7 +8,7 @@ This pack is the current local evidence boundary for the Tier 1 `container-regis
 - Captured provider validation preserved for missing `location`, invalid `location`, missing `api-version`, and missing `sku`.
 - Local ARM success path for registry create, update, get, list, delete, and ARM-template deployment when the request includes an Azure-shaped `sku.name`.
 - Local data-plane smoke for ACR/Docker Registry host routing, bearer challenge, token issuance, `/v2/`, `/acr/v1/_catalog`, `/acr/v1/<repository>/_tags`, manifest push/get/delete, Docker tag listing, and post-delete rejection.
-- All eight platform runner lifecycles execute through the GlobalStack provider path during the full parity run.
+- All nine platform runner lifecycles execute through the GlobalStack provider path during the full parity run.
 
 ## Commands
 

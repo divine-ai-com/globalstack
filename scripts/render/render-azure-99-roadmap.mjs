@@ -367,6 +367,12 @@ const verifiedPlatformTargets = [
     enablement: 'Add generator validation and a real native output contract for Ansible before running the verified wave.',
     command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml',
   },
+  {
+    platformId: 'azure-cli-rest',
+    label: 'Azure CLI REST Bash',
+    enablement: 'Add generator validation, native az rest lifecycle execution, and task-defined tests before running the verified wave.',
+    command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-cli-rest',
+  },
 ];
 
 function platformWaveComplete(verifiedPlatformSnapshot, platformId) {

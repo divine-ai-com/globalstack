@@ -78,6 +78,11 @@ case "$PLATFORM_ID" in
     export TOOLCHAIN="ansible"
     DEFAULT_RUNNER_IMAGE="globalstack/azure-ansible-yaml:local"
     ;;
+  azure-cli-rest)
+    export LANGUAGE="bash"
+    export TOOLCHAIN="azure-cli"
+    DEFAULT_RUNNER_IMAGE="globalstack/azure-cli-rest:local"
+    ;;
   azure-bicep)
     export LANGUAGE="bicep"
     export TOOLCHAIN="bicep"

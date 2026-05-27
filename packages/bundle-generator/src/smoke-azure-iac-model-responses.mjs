@@ -18,6 +18,7 @@ const coreSolutionFiles = new Map([
   ['azure-pulumi-py', ['Pulumi.yaml', 'tap.py', 'lib/tap_stack.py']],
   ['azure-pulumi-yaml', ['Pulumi.yaml']],
   ['azure-ansible-yaml', ['lib/playbook.yml', 'inventory.yml', 'ansible.cfg']],
+  ['azure-cli-rest', ['lib/deploy.sh']],
   ['azure-bicep', ['lib/main.bicep', 'lib/parameters.json']],
   ['azure-arm-json', ['lib/azuredeploy.json', 'lib/azuredeploy.parameters.json']],
 ]);
@@ -886,6 +887,97 @@ outputs:
     };
   }
 
+  if (platformId === 'azure-cli-rest') {
+    return {
+      'lib/deploy.sh': `#!/usr/bin/env bash
+set -euo pipefail
+
+endpoint="\${ARM_ENDPOINT:-https://management.azure.com}"
+subscription_id="\${ARM_SUBSCRIPTION_ID:?ARM_SUBSCRIPTION_ID is required}"
+location="\${AZURE_LOCATION:-${location}}"
+resource_group="${names.resourceGroup}"
+storage_account="${names.storage}"
+service_bus_namespace="${names.serviceBus}"
+event_grid_topic="${names.eventGridTopic}"
+event_hub_namespace="${names.eventHubNs}"
+app_config_store="${names.appConfig}"
+token="\${AZURE_ACCESS_TOKEN:-}"
+if [ -z "\${token}" ]; then
+  token="$(az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv)"
+fi
+
+body_dir="\${TMPDIR:-/tmp}/azure-cli-iac-smoke"
+mkdir -p "\${body_dir}"
+
+az_rest_put() {
+  local url="$1"
+  local body_file="$2"
+  az rest --method put --url "\${url}" --body "@\${body_file}" --headers "Authorization=Bearer \${token}" "content-type=application/json" --skip-authorization-header -o json >/dev/null
+}
+
+cat > "\${body_dir}/resource-group.json" <<JSON
+{"location":"\${location}"}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourcegroups/\${resource_group}?api-version=2021-04-01" "\${body_dir}/resource-group.json"
+
+cat > "\${body_dir}/storage.json" <<JSON
+{"location":"\${location}","sku":{"name":"${storageSku}"},"kind":"StorageV2","properties":{"allowBlobPublicAccess":false}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.Storage/storageAccounts/\${storage_account}?api-version=2023-01-01" "\${body_dir}/storage.json"
+
+cat > "\${body_dir}/blob.json" <<JSON
+{"properties":{"publicAccess":"None"}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.Storage/storageAccounts/\${storage_account}/blobServices/default/containers/model-artifacts?api-version=2023-01-01" "\${body_dir}/blob.json"
+
+cat > "\${body_dir}/queue.json" <<JSON
+{"properties":{}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.Storage/storageAccounts/\${storage_account}/queueServices/default/queues/model-jobs?api-version=2023-01-01" "\${body_dir}/queue.json"
+
+cat > "\${body_dir}/file.json" <<JSON
+{"properties":{"shareQuota":32}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.Storage/storageAccounts/\${storage_account}/fileServices/default/shares/modelfiles?api-version=2023-01-01" "\${body_dir}/file.json"
+
+cat > "\${body_dir}/table.json" <<JSON
+{"properties":{}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.Storage/storageAccounts/\${storage_account}/tableServices/default/tables/modeltable?api-version=2023-01-01" "\${body_dir}/table.json"
+
+cat > "\${body_dir}/service-bus.json" <<JSON
+{"location":"\${location}","sku":{"name":"Standard","tier":"Standard"},"properties":{}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.ServiceBus/namespaces/\${service_bus_namespace}?api-version=2021-11-01" "\${body_dir}/service-bus.json"
+
+cat > "\${body_dir}/service-bus-topic.json" <<JSON
+{"properties":{"maxSizeInMegabytes":1024}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.ServiceBus/namespaces/\${service_bus_namespace}/topics/model-events?api-version=2021-11-01" "\${body_dir}/service-bus-topic.json"
+
+cat > "\${body_dir}/event-grid.json" <<JSON
+{"location":"\${location}","properties":{"inputSchema":"EventGridSchema"}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.EventGrid/topics/\${event_grid_topic}?api-version=2022-06-15" "\${body_dir}/event-grid.json"
+
+cat > "\${body_dir}/event-hub-namespace.json" <<JSON
+{"location":"\${location}","sku":{"name":"Standard","tier":"Standard","capacity":1},"properties":{}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.EventHub/namespaces/\${event_hub_namespace}?api-version=2024-01-01" "\${body_dir}/event-hub-namespace.json"
+
+cat > "\${body_dir}/event-hub.json" <<JSON
+{"properties":{"partitionCount":2,"messageRetentionInDays":1}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.EventHub/namespaces/\${event_hub_namespace}/eventhubs/model-stream?api-version=2024-01-01" "\${body_dir}/event-hub.json"
+
+cat > "\${body_dir}/app-config.json" <<JSON
+{"location":"\${location}","sku":{"name":"free"},"properties":{"disableLocalAuth":false}}
+JSON
+az_rest_put "\${endpoint%/}/subscriptions/\${subscription_id}/resourceGroups/\${resource_group}/providers/Microsoft.AppConfiguration/configurationStores/\${app_config_store}?api-version=2023-03-01" "\${body_dir}/app-config.json"
+`,
+    };
+  }
+
   if (platformId === 'azure-ansible-yaml') {
     return {
       'ansible.cfg': '[defaults]\ninventory = inventory.yml\nhost_key_checking = false\n',
@@ -1047,8 +1139,8 @@ function lintExtractedFiles(platform, files, variant) {
     'modeltable',
     'model-events',
     'model-stream',
-    platform.id.startsWith('azure-pulumi') ? 'StorageAccount' : platform.id === 'azure-ansible-yaml' ? 'provider: Storage' : 'Microsoft.Storage',
-    platform.id.startsWith('azure-pulumi') ? 'eventgrid' : platform.id === 'azure-ansible-yaml' ? 'azure_rm_resource' : 'EventGrid',
+    platform.id.startsWith('azure-pulumi') ? 'StorageAccount' : platform.id === 'azure-ansible-yaml' ? 'provider: Storage' : platform.id === 'azure-cli-rest' ? 'az rest' : 'Microsoft.Storage',
+    platform.id.startsWith('azure-pulumi') ? 'eventgrid' : platform.id === 'azure-ansible-yaml' ? 'azure_rm_resource' : platform.id === 'azure-cli-rest' ? 'Microsoft.EventGrid' : 'EventGrid',
   ];
   for (const requiredText of requiredMarkers) {
     if (!joined.includes(requiredText)) errors.push(`missing expected IaC marker ${requiredText}`);
@@ -1202,7 +1294,7 @@ const reportDoc = {
   generatedAt: new Date().toISOString(),
   endpoint: baseUrl,
   executionMode: 'adapter-extracted-arm-plan; native-provider-execution-covered-by-platform-lifecycle-smoke',
-  caveat: 'This validates delivery-bundle-shaped model responses and Azure emulator accept/reject behavior by replaying the extracted ARM plan. Native Terraform, OpenTofu, Pulumi, Ansible, Bicep, and ARM JSON execution is covered by npm run smoke:platform-runners.',
+  caveat: 'This validates delivery-bundle-shaped model responses and Azure emulator accept/reject behavior by replaying the extracted ARM plan. Native Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON execution is covered by npm run smoke:platform-runners.',
   results,
 };
 await writeFile(join(outRoot, 'results.json'), `${JSON.stringify(reportDoc, null, 2)}\n`);

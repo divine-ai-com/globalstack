@@ -21,7 +21,7 @@ By default it runs three layers:
 |---|---|---|
 | Service Bus ARM matrix | Auth rejection, malformed/wrong bearer rejection, subscription mismatch, missing `api-version`, missing resource group, captured namespace validation, missing-parent topic/queue/subscription rejection, official namespace/topic/queue/subscription naming rules, async namespace creation, get/update/list/delete/post-delete for namespaces, topics, subscriptions, and queues, fail-closed unsupported authorization-rule actions, and ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error expectations. |
 | Official emulator matrix | Microsoft Service Bus emulator health plus queue send/receive/complete removal, abandon/redelivery, duplicate message-id delivery when duplicate detection is disabled, peek non-removal, dead-letter subqueue routing, topic publish/subscription receive/complete removal, and missing topic/subscription/queue rejection. | The existing `npm run e2e:service-bus` report passes. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:service-bus-parity -- --skip-emulator --skip-platforms` only for tight local debugging. `npm run validate` requires the official emulator and platform matrices.
 

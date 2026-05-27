@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T22:54:00.587Z
+Generated: 2026-05-27T23:23:53.477Z
 
 ## Guardrails
 
@@ -13,7 +13,7 @@ Generated: 2026-05-27T22:54:00.587Z
 
 ## Dynamic Estimate Snapshot
 
-- Overall 30-service Azure program: 100% (95-100%)
+- Overall 30-service Azure program: 94.6% (90-95%)
 - Azure Functions / Durable cluster: 99% (95-100%)
 - Azure Logic Apps cluster: 99% (95-100%)
 
@@ -49,13 +49,13 @@ Method:
 ## Platform Verification Snapshot
 
 - Source: `docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present`
-- Generated: 2026-05-27T22:53:55.432Z
+- Generated: 2026-05-27T23:14:17.399Z
 - Model: gpt-5.5
 - Location: eastus
 - Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
-- Platform waves recorded: 8
-- Bundles across recorded platform waves: 40
-- Passing bundles across recorded platform waves: 40/40
+- Platform waves recorded: 9
+- Bundles across recorded platform waves: 45
+- Passing bundles across recorded platform waves: 45/45
 
 | Platform | Generated | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|---|---|
@@ -74,6 +74,11 @@ Method:
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91313 | warehouse-dispatch-event-plane | PASS | destroy |
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91314 | billing-audit-notification-mesh | PASS | destroy |
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91315 | regional-catalog-command-plane | PASS | destroy |
+| azure-cli-rest | 2026-05-27T23:14:17.399Z | Pr91381 | claims-evidence-command-ring | PASS | destroy |
+| azure-cli-rest | 2026-05-27T23:14:17.399Z | Pr91382 | partner-order-ingest-buffer | PASS | destroy |
+| azure-cli-rest | 2026-05-27T23:14:17.399Z | Pr91383 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-cli-rest | 2026-05-27T23:14:17.399Z | Pr91384 | billing-audit-notification-mesh | PASS | destroy |
+| azure-cli-rest | 2026-05-27T23:14:17.399Z | Pr91385 | regional-catalog-command-plane | PASS | destroy |
 | azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91321 | claims-evidence-command-ring | PASS | destroy |
 | azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91322 | partner-order-ingest-buffer | PASS | destroy |
 | azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91323 | warehouse-dispatch-event-plane | PASS | destroy |
@@ -207,46 +212,46 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Wave | Services | Work Items | Objective |
 |---|---:|---:|---|
-| Wave 1: official emulator and storage-family depth | 8 | 0 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
-| Wave 2: identity, security, secrets, and encryption | 5 | 0 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
-| Wave 3: compute, API, containers, and edge routing | 8 | 0 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
-| Wave 4: relational, cache, migration, and analytics platforms | 5 | 0 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
-| Wave 5: networking, DNS, and observability | 4 | 0 | Harden cross-cutting dependencies that most other services reference during deployment. |
+| Wave 1: official emulator and storage-family depth | 8 | 8 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
+| Wave 2: identity, security, secrets, and encryption | 5 | 5 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
+| Wave 3: compute, API, containers, and edge routing | 8 | 8 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
+| Wave 4: relational, cache, migration, and analytics platforms | 5 | 10 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
+| Wave 5: networking, DNS, and observability | 4 | 4 | Harden cross-cutting dependencies that most other services reference during deployment. |
 
 ## Service Priority
 
 | Rank | Service | Tier | Wave | Score | Priority | Complete | Partial | Not Started | Next Dimensions |
 |---:|---|---:|---|---:|---:|---:|---:|---:|---|
-| 1 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 1 | 44 | 10 | 0 | 0 |  |
-| 2 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 1 | 43 | 10 | 0 | 0 |  |
-| 3 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 1 | 42 | 10 | 0 | 0 |  |
-| 4 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 1 | 41 | 10 | 0 | 0 |  |
-| 5 | api-management | 1 | wave-3-compute-api-and-edge | 1 | 40 | 10 | 0 | 0 |  |
-| 6 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 1 | 39 | 10 | 0 | 0 |  |
-| 7 | azure-functions | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
-| 8 | aks-metadata | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
-| 9 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 1 | 39 | 10 | 0 | 0 |  |
-| 10 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
-| 11 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
-| 12 | container-registry | 1 | wave-3-compute-api-and-edge | 1 | 36 | 10 | 0 | 0 |  |
-| 13 | postgresql-flexible-server | 1 | wave-4-data-platforms | 1 | 32 | 10 | 0 | 0 |  |
-| 14 | virtual-network | 1 | wave-5-networking-observability-and-dns | 1 | 30 | 10 | 0 | 0 |  |
-| 15 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 16 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 17 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 18 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 19 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 1 | 29 | 10 | 0 | 0 |  |
-| 20 | logic-workflows | 2 | wave-3-compute-api-and-edge | 1 | 27 | 10 | 0 | 0 |  |
-| 21 | waf-policy | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
-| 22 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
-| 23 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
-| 24 | service-discovery | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
-| 25 | load-balancing | 2 | wave-3-compute-api-and-edge | 1 | 23 | 10 | 0 | 0 |  |
-| 26 | synapse-warehouse | 2 | wave-4-data-platforms | 1 | 22 | 10 | 0 | 0 |  |
-| 27 | mysql-flexible-server | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
-| 28 | redis-cache | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
-| 29 | database-migration-service | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
-| 30 | dns-zones | 2 | wave-5-networking-observability-and-dns | 1 | 18 | 10 | 0 | 0 |  |
+| 1 | database-migration-service | 2 | wave-4-data-platforms | 0.6623 | 59 | 4 | 5 | 1 | iacProviderBehavior<br>stateTransitionCaptures<br>errorShapeFidelity<br>identityRbacBehavior |
+| 2 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 0.9279 | 51 | 9 | 1 | 0 | iacProviderBehavior |
+| 3 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 0.9279 | 50 | 9 | 1 | 0 | iacProviderBehavior |
+| 4 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 0.9279 | 49 | 9 | 1 | 0 | iacProviderBehavior |
+| 5 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 0.9279 | 48 | 9 | 1 | 0 | iacProviderBehavior |
+| 6 | api-management | 1 | wave-3-compute-api-and-edge | 0.9279 | 47 | 9 | 1 | 0 | iacProviderBehavior |
+| 7 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 0.9279 | 46 | 9 | 1 | 0 | iacProviderBehavior |
+| 8 | azure-functions | 1 | wave-3-compute-api-and-edge | 0.9279 | 46 | 9 | 1 | 0 | iacProviderBehavior |
+| 9 | aks-metadata | 1 | wave-3-compute-api-and-edge | 0.9279 | 46 | 9 | 1 | 0 | iacProviderBehavior |
+| 10 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 0.9279 | 46 | 9 | 1 | 0 | iacProviderBehavior |
+| 11 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 0.9279 | 45 | 9 | 1 | 0 | iacProviderBehavior |
+| 12 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 0.9279 | 45 | 9 | 1 | 0 | iacProviderBehavior |
+| 13 | container-registry | 1 | wave-3-compute-api-and-edge | 0.9279 | 43 | 9 | 1 | 0 | iacProviderBehavior |
+| 14 | postgresql-flexible-server | 1 | wave-4-data-platforms | 0.9279 | 39 | 9 | 1 | 0 | iacProviderBehavior |
+| 15 | virtual-network | 1 | wave-5-networking-observability-and-dns | 0.9279 | 37 | 9 | 1 | 0 | iacProviderBehavior |
+| 16 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 0.9279 | 36 | 9 | 1 | 0 | iacProviderBehavior |
+| 17 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 0.9279 | 36 | 9 | 1 | 0 | iacProviderBehavior |
+| 18 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 0.9279 | 36 | 9 | 1 | 0 | iacProviderBehavior |
+| 19 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 0.9279 | 36 | 9 | 1 | 0 | iacProviderBehavior |
+| 20 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 0.9279 | 36 | 9 | 1 | 0 | iacProviderBehavior |
+| 21 | logic-workflows | 2 | wave-3-compute-api-and-edge | 0.9279 | 34 | 9 | 1 | 0 | iacProviderBehavior |
+| 22 | waf-policy | 2 | wave-2-identity-security-and-secrets | 0.9279 | 33 | 9 | 1 | 0 | iacProviderBehavior |
+| 23 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 0.9279 | 33 | 9 | 1 | 0 | iacProviderBehavior |
+| 24 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 0.9279 | 31 | 9 | 1 | 0 | iacProviderBehavior |
+| 25 | service-discovery | 2 | wave-3-compute-api-and-edge | 0.9279 | 31 | 9 | 1 | 0 | iacProviderBehavior |
+| 26 | load-balancing | 2 | wave-3-compute-api-and-edge | 0.9279 | 30 | 9 | 1 | 0 | iacProviderBehavior |
+| 27 | synapse-warehouse | 2 | wave-4-data-platforms | 0.9279 | 29 | 9 | 1 | 0 | iacProviderBehavior |
+| 28 | mysql-flexible-server | 2 | wave-4-data-platforms | 0.9279 | 27 | 9 | 1 | 0 | iacProviderBehavior |
+| 29 | redis-cache | 2 | wave-4-data-platforms | 0.9279 | 27 | 9 | 1 | 0 | iacProviderBehavior |
+| 30 | dns-zones | 2 | wave-5-networking-observability-and-dns | 0.9279 | 25 | 9 | 1 | 0 | iacProviderBehavior |
 
 ## Wave 1: official emulator and storage-family depth
 
@@ -254,59 +259,67 @@ Finish the services with official emulator leverage or storage-like data-plane b
 
 ### cosmos-nosql-table
 
-Priority: 44; current score: 1; current status: 99-ready.
+Priority: 51; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### blob-storage
 
-Priority: 43; current score: 1; current status: 99-ready.
+Priority: 50; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### service-bus-topics
 
-Priority: 42; current score: 1; current status: 99-ready.
+Priority: 49; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### event-grid
 
-Priority: 41; current score: 1; current status: 99-ready.
+Priority: 48; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### queue-storage
 
-Priority: 29; current score: 1; current status: 99-ready.
+Priority: 36; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### azure-files
 
-Priority: 29; current score: 1; current status: 99-ready.
+Priority: 36; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### event-hubs-streams
 
-Priority: 29; current score: 1; current status: 99-ready.
+Priority: 36; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### app-configuration-parameters
 
-Priority: 29; current score: 1; current status: 99-ready.
+Priority: 36; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 
 ## Wave 2: identity, security, secrets, and encryption
@@ -315,38 +328,43 @@ Make authorization, denial, audit, and secure configuration behavior credible ac
 
 ### key-vault-keys
 
-Priority: 39; current score: 1; current status: 99-ready.
+Priority: 46; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### identity-rbac
 
-Priority: 38; current score: 1; current status: 99-ready.
+Priority: 45; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### key-vault-secrets
 
-Priority: 38; current score: 1; current status: 99-ready.
+Priority: 45; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### waf-policy
 
-Priority: 26; current score: 1; current status: 99-ready.
+Priority: 33; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### activity-log-audit
 
-Priority: 26; current score: 1; current status: 99-ready.
+Priority: 33; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 
 ## Wave 3: compute, API, containers, and edge routing
@@ -355,99 +373,117 @@ Cover deployable app platforms and request routing surfaces used by generated Ia
 
 ### api-management
 
-Priority: 40; current score: 1; current status: 99-ready.
+Priority: 47; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### azure-functions
 
-Priority: 39; current score: 1; current status: 99-ready.
+Priority: 46; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### aks-metadata
 
-Priority: 39; current score: 1; current status: 99-ready.
+Priority: 46; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### container-registry
 
-Priority: 36; current score: 1; current status: 99-ready.
+Priority: 43; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### logic-workflows
 
-Priority: 27; current score: 1; current status: 99-ready.
+Priority: 34; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### front-door-cdn
 
-Priority: 24; current score: 1; current status: 99-ready.
+Priority: 31; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### service-discovery
 
-Priority: 24; current score: 1; current status: 99-ready.
+Priority: 31; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### load-balancing
 
-Priority: 23; current score: 1; current status: 99-ready.
+Priority: 30; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 
 ## Wave 4: relational, cache, migration, and analytics platforms
 
 Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals.
 
-### postgresql-flexible-server
+### database-migration-service
 
-Priority: 32; current score: 1; current status: 99-ready.
+Priority: 59; current score: 0.6623; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
+| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
+| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=database-migration-service` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
+| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
+| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
+| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
+
+### postgresql-flexible-server
+
+Priority: 39; current score: 0.9279; current status: in-progress.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### synapse-warehouse
 
-Priority: 22; current score: 1; current status: 99-ready.
+Priority: 29; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### mysql-flexible-server
 
-Priority: 20; current score: 1; current status: 99-ready.
+Priority: 27; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### redis-cache
 
-Priority: 20; current score: 1; current status: 99-ready.
+Priority: 27; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
-
-### database-migration-service
-
-Priority: 20; current score: 1; current status: 99-ready.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 
 ## Wave 5: networking, DNS, and observability
@@ -456,31 +492,35 @@ Harden cross-cutting dependencies that most other services reference during depl
 
 ### monitor-logs
 
-Priority: 39; current score: 1; current status: 99-ready.
+Priority: 46; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### virtual-network
 
-Priority: 30; current score: 1; current status: 99-ready.
+Priority: 37; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### monitor-metrics-alerts
 
-Priority: 29; current score: 1; current status: 99-ready.
+Priority: 36; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ### dns-zones
 
-Priority: 18; current score: 1; current status: 99-ready.
+Priority: 25; current score: 0.9279; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
+| IaC-provider behavior | partial | complete | `npm run smoke:prompts`<br>`npm run smoke:deploy` | Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack. |
 
 ## Verification Loop
 

@@ -362,6 +362,42 @@ YAML
   exit 0
 fi
 
+if is_native_cli_platform; then
+  log_stage provider-lifecycle "checking Azure CLI REST idempotency and read-after-write behavior"
+  setup_native_cli_auth
+  : > "${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}"
+  : > "${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"
+
+  if ! bash "${PLATFORM_WORK_DIR}/lib/deploy.sh" >"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "Azure CLI REST idempotent deploy script failed; see provider lifecycle reports"
+    exit 1
+  fi
+
+  resource_group="$(resource_group_name)"
+  storage_account="$(storage_account_name)"
+  rg_url="${ARM_ENDPOINT%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourcegroups/${resource_group}?api-version=2021-04-01"
+  storage_url="${ARM_ENDPOINT%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${resource_group}/providers/Microsoft.Storage/storageAccounts/${storage_account}?api-version=2023-01-01"
+  az rest \
+    --method get \
+    --url "${rg_url}" \
+    --headers "Authorization=Bearer ${AZURE_ACCESS_TOKEN}" \
+    --skip-authorization-header \
+    -o json > "${REPORT_DIR}/provider-lifecycle-resource-group-get.json"
+  az rest \
+    --method get \
+    --url "${storage_url}" \
+    --headers "Authorization=Bearer ${AZURE_ACCESS_TOKEN}" \
+    --skip-authorization-header \
+    -o json > "${REPORT_DIR}/provider-lifecycle-storage-account-get.json"
+
+  write_provider_lifecycle_response "NativeAzureCliRestLifecycle" \
+    "$(json_op azure-cli-rest-idempotent-deploy PASS "second az rest deployment completed")" \
+    "$(json_op azure-cli-rest-read-resource-group PASS "resource group remains queryable through az rest")" \
+    "$(json_op azure-cli-rest-read-storage-account PASS "storage account remains queryable through az rest")"
+  write_stage_report provider-lifecycle PASS "Azure CLI REST provider lifecycle evidence passed"
+  exit 0
+fi
+
 log_stage provider-lifecycle "checking ARM contract redeploy and read behavior"
 token="$(token_for_reads)"
 deploy_url="${AZURE_ENDPOINT_URL%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/providers/Microsoft.Resources/deployments/${PLATFORM_ID}-runner-smoke?api-version=2022-09-01"

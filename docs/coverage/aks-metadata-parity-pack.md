@@ -32,7 +32,7 @@ This pack is the current local evidence boundary for the Tier 1 `aks-metadata` c
 - Bounded agent-pool node-image upgrade reflects through ARM readback and live Kubernetes node labels.
 - Bounded autoscaler runtime behavior for user pools, with a real scale-up from zero on targeted unschedulable workloads and a scale-down back to `minCount` after workload removal.
 - Bounded `runCommand` execution via the real local k3s backend.
-- All eight platform runner lifecycles execute through the GlobalStack provider path during the full parity run.
+- All nine platform runner lifecycles execute through the GlobalStack provider path during the full parity run.
 
 ## Commands
 

@@ -2,6 +2,7 @@ import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { allCapabilities } from '../../packages/core/src/azure-tier1-capabilities.mjs';
+import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
 const outRoot = join(root, 'docs', 'conformance');
@@ -17,16 +18,7 @@ const distE2eRoot = join(root, 'dist', 'e2e');
 const storageHardeningResultsPath = join(distE2eRoot, 'azure-storage-hardening', 'results.json');
 const storageNormalizerResultsPath = join(distE2eRoot, 'azure-storage-normalizer', 'results.json');
 
-const platformRunnerNames = [
-  'Terraform HCL',
-  'OpenTofu HCL',
-  'Pulumi TypeScript',
-  'Pulumi Python',
-  'Pulumi YAML',
-  'Ansible YAML',
-  'Bicep',
-  'ARM JSON',
-];
+const platformRunnerNames = azurePlatforms.map(platform => platform.label.replace(/^Azure /, ''));
 
 const iacScriptByCapability = new Map([
   ['activity-log-audit', 'e2e:activity-log-audit-parity'],

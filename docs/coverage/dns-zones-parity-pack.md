@@ -21,7 +21,7 @@ This pack is the local acceptance suite for Azure DNS, Private DNS zones, public
 | Private DNS link | Virtual network creation, private DNS virtual network link create/get/list/delete, missing VNet reference, and invalid registration flag. | Link metadata must contain an Azure-shaped virtual network reference and boolean registration setting. |
 | Unsupported routes | Unsupported public DNS record type and Private DNS resolver policy route. | Routes fail closed with `GlobalStackResourceTypeNotEmulated`. |
 | IaC path | ARM deployment can create public zone, public A record, virtual network, private zone, private A record, and private DNS VNet link. | Deployment succeeds only through implemented resource types and records deployment steps. |
-| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
+| Platform runners | Terraform, OpenTofu, Pulumi TS, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON GlobalStack provider lifecycles. | All platform runners complete successfully. |
 
 ## Current Claim
 

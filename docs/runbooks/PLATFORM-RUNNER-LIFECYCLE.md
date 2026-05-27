@@ -28,6 +28,7 @@ For `provider=GlobalStack`, runners receive deterministic Azure-shaped local ide
 | `azure-pulumi-py` | Python syntax compile for Pulumi entrypoints | Native Pulumi Azure Native `up`, `preview --diff`, `refresh`, stack export, and `destroy` through runner-transparent GlobalStack endpoint routing | PASS |
 | `azure-pulumi-yaml` | Pulumi YAML project shape and Azure Native resource check | Native Pulumi Azure Native `up`, `preview --diff`, `refresh`, stack export, and `destroy` through runner-transparent GlobalStack endpoint routing | PASS |
 | `azure-ansible-yaml` | `ansible-playbook --syntax-check` | Native `azure.azcollection` deploy, focused `azure_rm_resource` idempotency check, explicit ARM reads, and destroy through runner-transparent GlobalStack routing | PASS |
+| `azure-cli-rest` | `bash -n` plus Azure CLI REST script shape checks | Native task-owned `az rest` PUT/GET/DELETE calls with idempotency and explicit ARM reads through the runner-selected provider endpoint | PASS |
 | `azure-bicep` | `az bicep build` against the Bicep task | Compiled Bicep ARM template deploy, redeploy, deployment GET, resource GET, and destroy through Azure CLI REST | PASS |
 | `azure-arm-json` | `jq` validation for ARM template and parameters | ARM template deploy, redeploy, deployment GET, resource GET, and destroy through Azure CLI REST | PASS |
 
@@ -51,7 +52,9 @@ Pulumi TypeScript, Pulumi Python, and Pulumi YAML perform native Azure Native de
 
 Ansible performs native Azure module deployment with `azure.azcollection`. In GlobalStack mode, the runner keeps the playbook Azure-native, configures deterministic local service-principal environment variables, and routes public Azure identity and management hostnames to the sidecar through the local TLS proxy.
 
-The `provider-lifecycle` stage is mandatory for full-scope runs. It records `provider-lifecycle-response.json` and the smoke harness fails the platform if that report is missing, has no operations, or contains a failed operation. HCL platforms exercise refresh/diff-style plans and state reads; Pulumi platforms exercise preview, refresh, idempotent up, and stack export; Ansible exercises an Azure module idempotency re-apply plus ARM reads; Bicep and ARM JSON exercise idempotent redeploy plus deployment/resource reads.
+Azure CLI REST performs native task-owned `az rest` calls. The script reads `ARM_ENDPOINT`, `ARM_SUBSCRIPTION_ID`, `AZURE_LOCATION`, and `AZURE_ACCESS_TOKEN`, uses normal Azure CLI syntax, and writes output evidence to `AZURE_DEPLOYMENT_OUTPUTS_PATH` when present.
+
+The `provider-lifecycle` stage is mandatory for full-scope runs. It records `provider-lifecycle-response.json` and the smoke harness fails the platform if that report is missing, has no operations, or contains a failed operation. HCL platforms exercise refresh/diff-style plans and state reads; Pulumi platforms exercise preview, refresh, idempotent up, and stack export; Ansible exercises an Azure module idempotency re-apply plus ARM reads; Azure CLI REST exercises idempotent script re-run plus ARM reads; Bicep and ARM JSON exercise idempotent redeploy plus deployment/resource reads.
 
 ARM JSON is already the native ARM contract format. Its runner validates the task ARM template and deploys it directly through Azure-shaped REST.
 
@@ -80,7 +83,7 @@ The matrix writes:
 
 ## Latest Local Smoke
 
-The latest strict local smoke completed all `8/8` platforms across the combined matrix with final stage `destroy`, final status `PASS`, deployment provisioning state `Succeeded`, and provider-lifecycle evidence present for each platform.
+The latest strict local smoke completed all `9/9` platforms across the combined matrix with final stage `destroy`, final status `PASS`, deployment provisioning state `Succeeded`, and provider-lifecycle evidence present for each platform.
 
 Command:
 

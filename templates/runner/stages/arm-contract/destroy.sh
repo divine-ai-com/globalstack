@@ -57,6 +57,24 @@ YAML
   exit 1
 fi
 
+if is_native_cli_platform; then
+  log_stage destroy "destroying native Azure CLI REST resources against provider=${PROVIDER:-${GLOBALSTACK_TARGET_PROVIDER}}"
+  setup_native_cli_auth
+  resource_group="$(resource_group_name)"
+  cleanup_url="${ARM_ENDPOINT%/}/subscriptions/${ARM_SUBSCRIPTION_ID}/resourcegroups/${resource_group}?api-version=2021-04-01"
+  if az rest \
+    --method delete \
+    --url "${cleanup_url}" \
+    --headers "Authorization=Bearer ${AZURE_ACCESS_TOKEN}" \
+    --skip-authorization-header \
+    -o json >"${REPORT_DIR}/native-destroy-stdout.log" 2>"${REPORT_DIR}/native-destroy-stderr.log"; then
+    write_stage_report destroy PASS "Azure CLI REST resource group delete succeeded"
+    exit 0
+  fi
+  write_stage_report destroy FAIL "Azure CLI REST resource group delete failed; see native destroy stderr/stdout reports"
+  exit 1
+fi
+
 log_stage destroy "deleting task resource group against provider=${PROVIDER:-${GLOBALSTACK_TARGET_PROVIDER}}"
 token="$(local_access_token)"
 resource_group="$(resource_group_name)"

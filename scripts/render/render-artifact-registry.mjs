@@ -318,7 +318,7 @@ const artifacts = [
     kind: 'source-registry',
     owner: 'platform-templates',
     editPolicy: 'edit directly with render validation',
-    purpose: 'Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Bicep, and ARM JSON.',
+    purpose: 'Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON.',
   }),
   artifact({
     path: 'packages/workspace-utils/src/index.mjs',

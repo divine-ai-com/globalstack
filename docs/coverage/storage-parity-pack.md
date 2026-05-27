@@ -20,7 +20,7 @@ By default it runs two layers:
 | Layer | Scope | Required Result |
 |---|---|---|
 | Storage ARM matrix | Auth rejection, missing `api-version`, missing resource group, invalid account name, invalid SKU, async storage account creation, parent-not-ready child rejection, child naming rejects, get/list/update/delete/post-delete for blob containers, queues, file shares, and tables, plus ARM-template deployment. | Every enumerated positive and negative case passes with Azure-shaped status and error code expectations. |
-| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
+| Platform runner matrix | Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON deploy through the GlobalStack provider path. | Every platform reaches `destroy` with `PASS` and a `Succeeded` ARM deployment response. |
 
 Use `npm run e2e:storage-parity -- --skip-platforms` only for tight local debugging. `npm run validate` requires the full platform matrix.
 
