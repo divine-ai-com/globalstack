@@ -696,6 +696,13 @@ function validateAksAgentPoolProperties(pool = {}) {
       'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
     );
   }
+  if (pool.orchestratorVersion && !/^\d+\.\d+(?:\.\d+)?$/.test(pool.orchestratorVersion)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool orchestratorVersion must use a semantic version such as 1.29.2 when provided.',
+    );
+  }
   if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
     return envelopedError(
       400,
@@ -739,11 +746,151 @@ function validateAksAgentPoolProperties(pool = {}) {
         'AKS autoscaled agent pool count must stay within minCount and maxCount.',
       );
     }
-  } else if (Object.hasOwn(pool, 'minCount') || Object.hasOwn(pool, 'maxCount')) {
+  } else if (
+    (pool.minCount !== undefined && pool.minCount !== null)
+    || (pool.maxCount !== undefined && pool.maxCount !== null)
+  ) {
     return envelopedError(
       400,
       'InvalidParameter',
       'AKS minCount and maxCount require enableAutoScaling to be true.',
+    );
+  }
+  return null;
+}
+
+function normalizeSemver(version) {
+  return String(version ?? '')
+    .split('.')
+    .map(part => Number(part))
+    .concat([0, 0, 0])
+    .slice(0, 3);
+}
+
+function compareSemver(left, right) {
+  const leftParts = normalizeSemver(left);
+  const rightParts = normalizeSemver(right);
+  for (let index = 0; index < 3; index += 1) {
+    if (leftParts[index] > rightParts[index]) return 1;
+    if (leftParts[index] < rightParts[index]) return -1;
+  }
+  return 0;
+}
+
+function parseIpv4Address(value) {
+  const text = String(value ?? '');
+  if (isIP(text) !== 4) return null;
+  return text
+    .split('.')
+    .reduce((sum, part) => (sum << 8) + Number(part), 0) >>> 0;
+}
+
+function parseIpv4Cidr(value) {
+  const [address, prefixText, extra] = String(value ?? '').split('/');
+  if (extra !== undefined) return null;
+  const prefix = Number(prefixText);
+  if (!Number.isInteger(prefix) || prefix < 8 || prefix > 29) return null;
+  const parsedAddress = parseIpv4Address(address);
+  if (parsedAddress === null) return null;
+  const mask = (0xffffffff << (32 - prefix)) >>> 0;
+  return {
+    address,
+    prefix,
+    network: parsedAddress & mask,
+    mask,
+  };
+}
+
+function ipv4InCidr(address, cidr) {
+  const parsedAddress = parseIpv4Address(address);
+  if (parsedAddress === null || !cidr) return false;
+  return (parsedAddress & cidr.mask) === cidr.network;
+}
+
+function validateAksNetworkProfile(networkProfile = {}) {
+  if (networkProfile.networkPlugin && !['azure', 'kubenet'].includes(networkProfile.networkPlugin)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS networkProfile.networkPlugin must be azure or kubenet when provided.',
+    );
+  }
+  if (networkProfile.networkPolicy && !['azure', 'calico', 'none'].includes(networkProfile.networkPolicy)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS networkProfile.networkPolicy must be azure, calico, or none when provided.',
+    );
+  }
+  const serviceCidr = networkProfile.serviceCidr ?? networkProfile.serviceCIDR;
+  const parsedServiceCidr = serviceCidr ? parseIpv4Cidr(serviceCidr) : null;
+  if (serviceCidr && !parsedServiceCidr) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS networkProfile.serviceCidr must be an IPv4 CIDR with a prefix between /8 and /29.',
+    );
+  }
+  if (networkProfile.dnsServiceIP) {
+    if (parseIpv4Address(networkProfile.dnsServiceIP) === null) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS networkProfile.dnsServiceIP must be an IPv4 address when provided.',
+      );
+    }
+    if (parsedServiceCidr && !ipv4InCidr(networkProfile.dnsServiceIP, parsedServiceCidr)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS networkProfile.dnsServiceIP must be inside networkProfile.serviceCidr.',
+      );
+    }
+  }
+  if (networkProfile.dockerBridgeCidr && !parseIpv4Cidr(networkProfile.dockerBridgeCidr)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS networkProfile.dockerBridgeCidr must be an IPv4 CIDR with a prefix between /8 and /29 when provided.',
+    );
+  }
+  if (networkProfile.dockerBridgeCidr && serviceCidr && networkProfile.dockerBridgeCidr === serviceCidr) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS networkProfile.dockerBridgeCidr must not match networkProfile.serviceCidr.',
+    );
+  }
+  return null;
+}
+
+function validateAksApiServerAccessProfile(profile = {}) {
+  if (Object.hasOwn(profile, 'enablePrivateCluster') && typeof profile.enablePrivateCluster !== 'boolean') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS apiServerAccessProfile.enablePrivateCluster must be a boolean when provided.',
+    );
+  }
+  if (Object.hasOwn(profile, 'enablePrivateClusterPublicFQDN') && typeof profile.enablePrivateClusterPublicFQDN !== 'boolean') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS apiServerAccessProfile.enablePrivateClusterPublicFQDN must be a boolean when provided.',
+    );
+  }
+  if (profile.privateDNSZone !== undefined && typeof profile.privateDNSZone !== 'string') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS apiServerAccessProfile.privateDNSZone must be a string resource ID, System, or None when provided.',
+    );
+  }
+  if (profile.enablePrivateCluster !== true && profile.enablePrivateClusterPublicFQDN === true) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS apiServerAccessProfile.enablePrivateClusterPublicFQDN requires enablePrivateCluster to be true.',
     );
   }
   return null;
@@ -824,6 +971,24 @@ function validateAksPayload(resourceType, body) {
       'InvalidKubernetesVersion',
       'AKS properties.kubernetesVersion must use a semantic version such as 1.29.2.',
     );
+  }
+  const controlPlaneVersion = properties.kubernetesVersion ?? '1.29.2';
+  for (const pool of properties.agentPoolProfiles) {
+    if (pool.orchestratorVersion && compareSemver(pool.orchestratorVersion, controlPlaneVersion) > 0) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool orchestratorVersion cannot be greater than the control-plane kubernetesVersion.',
+      );
+    }
+  }
+  if (properties.networkProfile) {
+    const networkValidation = validateAksNetworkProfile(properties.networkProfile);
+    if (networkValidation) return networkValidation;
+  }
+  if (properties.apiServerAccessProfile) {
+    const apiServerAccessValidation = validateAksApiServerAccessProfile(properties.apiServerAccessProfile);
+    if (apiServerAccessValidation) return apiServerAccessValidation;
   }
   if (body.identity?.type && !['SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'].includes(body.identity.type)) {
     return envelopedError(

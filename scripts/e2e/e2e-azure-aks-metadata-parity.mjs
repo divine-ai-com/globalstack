@@ -247,6 +247,14 @@ async function edgeText(port, method, path, options = {}) {
   };
 }
 
+async function edgeJson(port, method, path, options = {}) {
+  const result = await edgeText(port, method, path, options);
+  return {
+    ...result,
+    body: result.body ? JSON.parse(result.body) : null,
+  };
+}
+
 async function waitFor(assertion, { timeoutMs = 180000, delayMs = 1000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   let lastError = null;
@@ -545,6 +553,75 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('cluster invalid network plugin is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ properties: { networkProfile: { networkPlugin: 'invalid-plugin' } } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster invalid network policy is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ properties: { networkProfile: { networkPolicy: 'invalid-policy' } } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster dnsServiceIP outside serviceCidr is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ properties: { networkProfile: { serviceCidr: '10.42.0.0/16', dnsServiceIP: '10.43.0.10' } } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster invalid docker bridge cidr is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ properties: { networkProfile: { dockerBridgeCidr: 'not-a-cidr' } } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster private public fqdn flag requires private cluster', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({ properties: { apiServerAccessProfile: { enablePrivateClusterPublicFQDN: true } } }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('cluster agent pool orchestratorVersion above control plane is rejected', async () => {
+      const body = aksBody();
+      body.properties.agentPoolProfiles[0].orchestratorVersion = '1.30.0';
+      const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), body);
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('cluster invalid identity type is rejected', async () => {
       const result = await httpJson(
         armPort,
@@ -606,7 +683,16 @@ async function runControlPlaneMatrix() {
     await record('valid cluster create returns async Azure shape', async () => {
       const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), aksBody({
         tags: { workload: 'robotics-fleet-control' },
-        properties: { dnsPrefix: clusterName },
+        properties: {
+          dnsPrefix: clusterName,
+          networkProfile: {
+            networkPlugin: 'azure',
+            networkPolicy: 'calico',
+            serviceCidr: '10.42.0.0/16',
+            dnsServiceIP: '10.42.0.10',
+            dockerBridgeCidr: '172.18.0.1/16',
+          },
+        },
       }));
       assert.equal(result.status, 202);
       assert.ok(result.headers['azure-asyncoperation']);
@@ -643,7 +729,17 @@ async function runControlPlaneMatrix() {
       assert.match(result.body.properties.fqdn, /\.azmk8s\.io$/);
       assert.ok(result.body.properties.nodeResourceGroup.startsWith('MC_'));
       assert.equal(result.body.properties.agentPoolProfiles[0].provisioningState, 'Succeeded');
-      return { status: result.status, fqdn: result.body.properties.fqdn };
+      assert.equal(result.body.properties.networkProfile.networkPlugin, 'azure');
+      assert.equal(result.body.properties.networkProfile.networkPolicy, 'calico');
+      assert.equal(result.body.properties.networkProfile.serviceCidr, '10.42.0.0/16');
+      assert.equal(result.body.properties.networkProfile.dnsServiceIP, '10.42.0.10');
+      assert.equal(result.body.properties.networkProfile.dockerBridgeCidr, '172.18.0.1/16');
+      assert.equal(result.body.properties.agentPoolProfiles[0].orchestratorVersion, '1.29.2');
+      return {
+        status: result.status,
+        fqdn: result.body.properties.fqdn,
+        networkPlugin: result.body.properties.networkProfile.networkPlugin,
+      };
     });
 
     await record('cluster update preserves fqdn metadata', async () => {
@@ -1109,6 +1205,27 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('agent pool child put rejects invalid orchestratorVersion', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
+        {
+          properties: {
+            count: 1,
+            vmSize: 'Standard_DS3_v2',
+            mode: 'User',
+            osType: 'Linux',
+            type: 'VirtualMachineScaleSets',
+            orchestratorVersion: 'latest',
+          },
+        },
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('AKS runCommand returns commandResults location and completes successfully', async () => {
       const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/runCommand`), {
         command: 'kubectl get namespaces -o name',
@@ -1131,19 +1248,20 @@ async function runControlPlaneMatrix() {
       };
     });
 
-    await record('agent pool child put scales user pool out with VMSS metadata preserved across repeated reads', async () => {
+    await record('agent pool child put updates user pool VMSS metadata across repeated reads', async () => {
       const result = await httpJson(
         armPort,
         'PUT',
         providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
         {
           properties: {
-            count: 2,
+            count: 1,
             vmSize: 'Standard_DS3_v2',
             mode: 'User',
             osType: 'Linux',
             type: 'VirtualMachineScaleSets',
             availabilityZones: ['1'],
+            orchestratorVersion: '1.29.2',
           },
         },
       );
@@ -1152,7 +1270,7 @@ async function runControlPlaneMatrix() {
         const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
         assert.equal(ready.status, 200);
         const userPoolNodes = ready.body.items.filter(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool');
-        assert.equal(userPoolNodes.length, 2);
+        assert.equal(userPoolNodes.length, 1);
         assert.ok(userPoolNodes.every(item => item.metadata.labels['topology.kubernetes.io/zone'] === '1'));
         return ready;
       }, { timeoutMs: 240000 });
@@ -1160,8 +1278,9 @@ async function runControlPlaneMatrix() {
       const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
       assert.equal(first.status, 200);
       assert.equal(second.status, 200);
-      assert.equal(second.body.properties.count, 2);
+      assert.equal(second.body.properties.count, 1);
       assert.equal(second.body.properties.type, 'VirtualMachineScaleSets');
+      assert.equal(second.body.properties.orchestratorVersion, '1.29.2');
       assert.deepEqual(second.body.properties.availabilityZones, ['1']);
       return { status: result.status, nodeCount: nodes.body.items.length, userPoolCount: second.body.properties.count };
     });
@@ -1384,6 +1503,7 @@ async function runControlPlaneMatrix() {
             annotations: {
               'service.beta.kubernetes.io/azure-load-balancer-resource-group': resourceGroup,
               'service.beta.kubernetes.io/azure-pip-name': publicIpName,
+              'service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout': '15',
             },
           },
           spec: {
@@ -1414,11 +1534,103 @@ async function runControlPlaneMatrix() {
         assert.match(current.body, /runtime-smoke/);
         return current;
       }, { timeoutMs: 120000, delayMs: 1000 });
+      const edgeEndpoints = await edgeJson(edgePort, 'GET', '/_globalstack/edge/endpoints');
+      assert.equal(edgeEndpoints.status, 200);
+      const endpoint = edgeEndpoints.body.value.find(item => item.hostName === publicIpFqdn);
+      assert.equal(endpoint.metadata.resourceGroupName, resourceGroup);
+      assert.equal(endpoint.metadata.publicIpName, publicIpName);
+      assert.equal(endpoint.metadata.idleTimeoutInMinutes, 15);
 
       return {
         status: response.status,
         ingressIp: service.body.status.loadBalancer.ingress[0].ip,
         hostname: publicIpFqdn,
+        route: response.headers['x-globalstack-edge-route'] ?? null,
+      };
+    });
+
+    await recordDataPlane('ingress routes public host through managed AKS edge integration', async () => {
+      const serviceName = 'runtime-smoke-ingress-svc';
+      const hostName = `ing${suffix.slice(-6)}.aks.localtest.me`;
+      const service = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: { name: serviceName },
+          spec: {
+            type: 'NodePort',
+            selector: { app: 'runtime-smoke' },
+            ports: [{ name: 'http', port: 80, targetPort: 5678 }],
+          },
+        },
+      });
+      assert.equal(service.status, 201);
+      const ingress = await httpKube(kubePort, '/apis/networking.k8s.io/v1/namespaces/runtime-smoke/ingresses', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'networking.k8s.io/v1',
+          kind: 'Ingress',
+          metadata: {
+            name: 'runtime-smoke-ingress',
+            annotations: {
+              'kubernetes.io/ingress.class': 'azure/application-gateway',
+            },
+          },
+          spec: {
+            rules: [{
+              host: hostName,
+              http: {
+                paths: [{
+                  path: '/app',
+                  pathType: 'Prefix',
+                  backend: {
+                    service: {
+                      name: serviceName,
+                      port: { name: 'http' },
+                    },
+                  },
+                }],
+              },
+            }],
+          },
+        },
+      });
+      assert.equal(ingress.status, 201);
+
+      const currentIngress = await waitFor(async () => {
+        const current = await httpKube(kubePort, '/apis/networking.k8s.io/v1/namespaces/runtime-smoke/ingresses/runtime-smoke-ingress', {
+          host: clusterHost,
+          token: adminKubeToken,
+        });
+        assert.equal(current.status, 200);
+        assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.ip);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+
+      const response = await waitFor(async () => {
+        const current = await edgeText(edgePort, 'GET', '/app', {
+          host: hostName,
+          protocol: 'http',
+        });
+        assert.equal(current.status, 200);
+        assert.match(current.body, /runtime-smoke/);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+
+      const miss = await edgeText(edgePort, 'GET', '/other', {
+        host: hostName,
+        protocol: 'http',
+      });
+      assert.equal(miss.status, 404);
+      return {
+        status: response.status,
+        hostName,
+        ingressIp: currentIngress.body.status.loadBalancer.ingress[0].ip,
         route: response.headers['x-globalstack-edge-route'] ?? null,
       };
     });
@@ -1585,6 +1797,107 @@ async function runControlPlaneMatrix() {
       });
       assert.equal(response.status, 404);
       return { status: service.status, ingressIp: service.body.status.loadBalancer.ingress[0].ip };
+    });
+
+    await record('cluster update enables private FQDN and DNS profile', async () => {
+      const before = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(before.status, 200);
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        {
+          location: 'eastus',
+          tags: before.body.tags,
+          identity: before.body.identity,
+          properties: {
+            ...before.body.properties,
+            dnsPrefix: clusterName,
+            apiServerAccessProfile: {
+              enablePrivateCluster: true,
+              privateDNSZone: 'System',
+            },
+          },
+        },
+      );
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.apiServerAccessProfile.enablePrivateCluster, true);
+      assert.equal(result.body.properties.apiServerAccessProfile.privateDNSZone, 'System');
+      assert.match(result.body.properties.privateFQDN, /\.privatelink\.eastus\.azmk8s\.io$/);
+      return {
+        status: result.status,
+        privateFQDN: result.body.properties.privateFQDN,
+      };
+    });
+
+    await recordDataPlane('private cluster kubeconfig uses private host and rejects public API host', async () => {
+      const current = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(current.status, 200);
+      const publicHost = current.body.properties.fqdn;
+      const privateHost = current.body.properties.privateFQDN;
+      const credentials = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterUserCredential`));
+      assert.equal(credentials.status, 200);
+      const kubeconfig = decodeKubeconfig(credentials);
+      assert.equal(new URL(kubeconfigValue(kubeconfig, 'server')).host, privateHost);
+      userKubeToken = kubeconfigValue(kubeconfig, 'token');
+      const adminCredentials = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterAdminCredential`));
+      assert.equal(adminCredentials.status, 200);
+      adminKubeToken = kubeconfigValue(decodeKubeconfig(adminCredentials), 'token');
+      const publicResult = await httpKube(kubePort, '/version', { host: publicHost, token: userKubeToken });
+      assert.equal(publicResult.status, 404);
+      const privateResult = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/version', { host: privateHost, token: userKubeToken });
+        assert.equal(ready.status, 200);
+        return ready;
+      }, { timeoutMs: 240000, delayMs: 2000 });
+      clusterHost = privateHost;
+      return {
+        status: privateResult.status,
+        publicHostStatus: publicResult.status,
+        privateHost,
+      };
+    });
+
+    await recordDataPlane('control-plane version update preserves bounded workload state', async () => {
+      const before = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(before.status, 200);
+      const update = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        {
+          location: 'eastus',
+          tags: before.body.tags,
+          identity: before.body.identity,
+          properties: {
+            ...before.body.properties,
+            dnsPrefix: clusterName,
+            kubernetesVersion: '1.29.3',
+          },
+        },
+      );
+      assert.equal(update.status, 200);
+      assert.equal(update.body.properties.kubernetesVersion, '1.29.3');
+
+      const version = await waitFor(async () => {
+        const current = await httpKube(kubePort, '/version', { host: clusterHost, token: adminKubeToken });
+        assert.equal(current.status, 200);
+        assert.equal(current.body.gitVersion, 'v1.29.3');
+        return current;
+      }, { timeoutMs: 300000, delayMs: 3000 });
+      const preservedConfigMap = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/configmaps/runtime-smoke-config', {
+        host: clusterHost,
+        token: adminKubeToken,
+      });
+      assert.equal(preservedConfigMap.status, 200);
+      const upgradeProfile = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/upgradeProfiles/default`));
+      assert.equal(upgradeProfile.status, 200);
+      assert.equal(upgradeProfile.body.properties.controlPlaneProfile.kubernetesVersion, '1.29.3');
+      return {
+        status: version.status,
+        gitVersion: version.body.gitVersion,
+        preservedConfigMap: preservedConfigMap.body.metadata.name,
+      };
     });
 
     await record('agent pool child put adds a live burst pool after scale-to-zero user pool', async () => {
@@ -1825,7 +2138,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, service-principal reset, certificate rotation with kubeconfig token invalidation, upgrade-profile readback, agent-pool child resources, bounded node-image upgrade with live node-label readback, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service slice, addons, control-plane upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, service-principal reset, certificate rotation with kubeconfig token invalidation, upgrade-profile readback, private-cluster FQDN and kubeconfig host behavior, CNI/network profile validation and readback, agent-pool child resources, bounded node-image upgrade with live node-label readback, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality, ARM public-IP attachment, selected Azure service annotations, NodePort-backed Ingress routing, workload preservation across pool create/update/delete and control-plane patch-version update, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, full CNI datapath behavior, Azure-managed load balancer controller parity beyond the bounded public/internal, externalTrafficPolicy=Local, ARM-public-IP, annotation, and ingress slices, addons, multi-step upgrade orchestration, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

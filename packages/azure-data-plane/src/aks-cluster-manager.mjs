@@ -10,6 +10,7 @@ import { aksKubeToken } from '../../core/src/resource-store.mjs';
 
 const DEFAULT_K3S_IMAGE = process.env.GLOBALSTACK_AKS_K3S_IMAGE ?? 'rancher/k3s:v1.29.2-k3s1';
 const DEFAULT_DOCKER_SOCKET = process.env.GLOBALSTACK_DOCKER_SOCKET ?? '/var/run/docker.sock';
+const AKS_NODE_READY_ATTEMPTS = Number(process.env.GLOBALSTACK_AKS_NODE_READY_ATTEMPTS ?? 300);
 const AKS_CLUSTER_USER = 'globalstack-cluster-user';
 const AKS_CLUSTER_ADMIN = 'globalstack-cluster-admin';
 
@@ -133,6 +134,24 @@ function aksInternalServiceIp(entry, service) {
   return `10.224.${octet3}.${octet4}`;
 }
 
+function aksIngressIp(entry, ingress) {
+  const digest = createHash('sha256')
+    .update(`${String(entry?.id ?? '').toLowerCase()}:ingress:${String(ingress?.metadata?.namespace ?? 'default').toLowerCase()}:${String(ingress?.metadata?.name ?? '').toLowerCase()}`)
+    .digest('hex');
+  const octet3 = (parseInt(digest.slice(0, 2), 16) % 250) + 1;
+  const octet4 = (parseInt(digest.slice(2, 4), 16) % 250) + 1;
+  return `203.1.${octet3}.${octet4}`;
+}
+
+function aksInternalIngressIp(entry, ingress) {
+  const digest = createHash('sha256')
+    .update(`${String(entry?.id ?? '').toLowerCase()}:internal-ingress:${String(ingress?.metadata?.namespace ?? 'default').toLowerCase()}:${String(ingress?.metadata?.name ?? '').toLowerCase()}`)
+    .digest('hex');
+  const octet3 = (parseInt(digest.slice(0, 2), 16) % 250) + 1;
+  const octet4 = (parseInt(digest.slice(2, 4), 16) % 250) + 1;
+  return `10.225.${octet3}.${octet4}`;
+}
+
 function serviceAnnotation(service, key) {
   return service?.metadata?.annotations?.[key] ?? null;
 }
@@ -164,6 +183,9 @@ function clusterSignature(resource) {
     .update(JSON.stringify({
       id: resource.id,
       fqdn: resource.properties?.fqdn,
+      privateFqdn: resource.properties?.privateFQDN ?? null,
+      apiServerAccessProfile: resource.properties?.apiServerAccessProfile ?? {},
+      networkProfile: resource.properties?.networkProfile ?? {},
       version: resource.properties?.kubernetesVersion ?? resource.properties?.currentKubernetesVersion ?? null,
       credentialGeneration: resource.properties?.credentialGeneration ?? 0,
       pools: (resource.properties?.agentPoolProfiles ?? []).map(pool => ({
@@ -176,9 +198,20 @@ function clusterSignature(resource) {
         enableAutoScaling: pool?.enableAutoScaling ?? null,
         minCount: pool?.minCount ?? null,
         maxCount: pool?.maxCount ?? null,
+        orchestratorVersion: pool?.orchestratorVersion ?? null,
         nodeImageVersion: pool?.nodeImageVersion ?? null,
         availabilityZones: Array.isArray(pool?.availabilityZones) ? pool.availabilityZones : [],
       })),
+    }))
+    .digest('hex');
+}
+
+function clusterBackendSignature(resource) {
+  return createHash('sha256')
+    .update(JSON.stringify({
+      id: resource.id,
+      fqdn: resource.properties?.fqdn,
+      version: resource.properties?.kubernetesVersion ?? resource.properties?.currentKubernetesVersion ?? null,
     }))
     .digest('hex');
 }
@@ -314,6 +347,19 @@ function aksVersionBody(entry) {
   };
 }
 
+function aksApiServerHost(entry) {
+  return entry?.privateCluster === true && entry?.privateFqdn
+    ? entry.privateFqdn
+    : entry?.fqdn;
+}
+
+function kubeconfigCaData(entry) {
+  const ca = entry?.backendCa?.length
+    ? entry.backendCa
+    : Buffer.from(`globalstack-aks-placeholder-ca:${entry?.id ?? entry?.name ?? 'cluster'}`);
+  return Buffer.from(ca).toString('base64');
+}
+
 function overlayNode(entry, node) {
   const assignment = entry.nodeAssignments?.[node?.metadata?.name ?? ''] ?? {};
   const vmSize = String(assignment.vmSize ?? node?.metadata?.labels?.['node.kubernetes.io/instance-type'] ?? 'Standard_DS2_v2');
@@ -385,6 +431,8 @@ export class AksClusterManager {
     return [...this.clustersById.values()].map(entry => ({
       name: entry.name,
       fqdn: entry.fqdn,
+      privateFqdn: entry.privateFqdn ?? null,
+      privateCluster: entry.privateCluster === true,
       version: entry.version,
       ready: entry.ready === true,
       failed: Boolean(entry.error),
@@ -402,6 +450,8 @@ export class AksClusterManager {
     return {
       name: entry.name,
       fqdn: entry.fqdn,
+      privateFqdn: entry.privateFqdn ?? null,
+      privateCluster: entry.privateCluster === true,
       version: entry.version,
       ready: entry.ready === true,
       failed: Boolean(entry.error),
@@ -547,6 +597,12 @@ export class AksClusterManager {
 
   async cleanupEntry(entry) {
     if (!entry) return;
+    for (const hostName of entry.serviceExposureHosts ?? []) {
+      this.edgeRouter?.unregisterEndpoint(hostName);
+    }
+    for (const hostName of entry.ingressExposureHosts ?? []) {
+      this.edgeRouter?.unregisterEndpoint(hostName);
+    }
     this.stopAutoscaler(entry);
     if (entry.disposed !== true) {
       await Promise.resolve(entry.readyPromise).catch(() => {});
@@ -630,9 +686,11 @@ export class AksClusterManager {
   }
 
   async waitForNodeCount(entry, expectedNodeCount) {
-    for (let attempt = 0; attempt < 180; attempt += 1) {
+    let lastItems = [];
+    for (let attempt = 0; attempt < AKS_NODE_READY_ATTEMPTS; attempt += 1) {
       const backend = await backendJsonRequest(entry, { path: '/api/v1/nodes' });
       const items = Array.isArray(backend.body?.items) ? backend.body.items : [];
+      lastItems = items;
       const readyCount = items.filter(node =>
         Array.isArray(node?.status?.conditions)
         && node.status.conditions.some(condition => condition.type === 'Ready' && condition.status === 'True'),
@@ -642,7 +700,12 @@ export class AksClusterManager {
       }
       await delay(1000);
     }
-    throw new Error(`AKS backend '${entry.serverContainerName}' did not reach ${expectedNodeCount} ready nodes within 180s.`);
+    const observed = lastItems.map(node => ({
+      name: node?.metadata?.name ?? null,
+      ready: (node?.status?.conditions ?? []).find(condition => condition?.type === 'Ready')?.status ?? null,
+      kubeletVersion: node?.status?.nodeInfo?.kubeletVersion ?? null,
+    }));
+    throw new Error(`AKS backend '${entry.serverContainerName}' did not reach ${expectedNodeCount} ready nodes within ${AKS_NODE_READY_ATTEMPTS}s; observed nodes: ${JSON.stringify(observed)}`);
   }
 
   async waitForNodeAbsent(entry, nodeName) {
@@ -833,6 +896,74 @@ export class AksClusterManager {
       powerState: { code: desiredCount === 0 ? 'Stopped' : 'Running' },
     });
     await this.syncServiceExposureEndpoints(entry);
+    await this.syncIngressEndpoints(entry);
+    return true;
+  }
+
+  async refreshPoolNodeMetadata(entry, pool) {
+    const assignments = this.poolAssignments(entry, pool.name);
+    for (const assignment of assignments) {
+      const target = entry.nodeAssignments?.[assignment.nodeName];
+      if (!target) continue;
+      target.vmSize = pool.vmSize ?? target.vmSize ?? 'Standard_DS2_v2';
+      target.osType = pool.osType ?? target.osType ?? 'Linux';
+      target.mode = pool.mode ?? target.mode ?? 'User';
+      target.type = pool.type ?? target.type ?? 'VirtualMachineScaleSets';
+      target.availabilityZones = Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [];
+      target.nodeImageVersion = pool.nodeImageVersion ?? target.nodeImageVersion ?? 'AKSUbuntu-2026.05.27';
+    }
+    if (assignments.length === 0 || !entry.ready) return;
+    const nodeNames = assignments.map(assignment => assignment.nodeName).join(' ');
+    const labels = [
+      `kubernetes.azure.com/mode=${pool.mode ?? 'User'}`,
+      `kubernetes.azure.com/nodepool-type=${pool.type ?? 'VirtualMachineScaleSets'}`,
+      `node.kubernetes.io/instance-type=${pool.vmSize ?? 'Standard_DS2_v2'}`,
+      `kubernetes.io/os=${String(pool.osType ?? 'Linux').toLowerCase()}`,
+      `kubernetes.azure.com/node-image-version=${pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27'}`,
+      ...(Array.isArray(pool.availabilityZones) && pool.availabilityZones[0]
+        ? [`topology.kubernetes.io/zone=${String(pool.availabilityZones[0])}`]
+        : []),
+    ];
+    const container = this.docker.getContainer(entry.serverContainerName);
+    const execution = await this.execCommand(container, [
+      'sh',
+      '-lc',
+      `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml; for node in ${nodeNames}; do kubectl label node "$node" ${labels.map(label => `"${label}"`).join(' ')} --overwrite; done`,
+    ]);
+    if (execution.exitCode !== 0) {
+      throw new Error(`AKS node metadata label update failed: ${execution.output.trim() || `exit ${execution.exitCode}`}`);
+    }
+  }
+
+  async reconcileAgentPools(entry, nextAgentPools = [], { waitForReady = true } = {}) {
+    if (waitForReady) await Promise.resolve(entry.readyPromise);
+    if (entry.error) throw entry.error;
+    if (!entry.ready) return false;
+    const desiredPools = Array.isArray(nextAgentPools) ? nextAgentPools : [];
+    const desiredNames = new Set(desiredPools.map(pool => String(pool?.name ?? '').toLowerCase()).filter(Boolean));
+    for (const pool of entry.agentPools ?? []) {
+      const poolName = String(pool?.name ?? '').toLowerCase();
+      if (!poolName || desiredNames.has(poolName)) continue;
+      const assignments = this.poolAssignments(entry, poolName).filter(assignment => assignment.role === 'agent');
+      for (const assignment of assignments) {
+        await this.removeAgentNode(entry, assignment);
+      }
+      this.store?.updateAksRuntimePoolState(entry.id, pool.name, {
+        count: 0,
+        provisioningState: 'Succeeded',
+        powerState: { code: 'Stopped' },
+      });
+    }
+    entry.agentPools = desiredPools.map(pool => JSON.parse(JSON.stringify(pool)));
+    for (const pool of entry.agentPools) {
+      const desiredCount = Math.max(0, Number(pool?.count ?? 0));
+      await this.scalePoolToCount(entry, pool, desiredCount);
+      await this.refreshPoolNodeMetadata(entry, pool);
+    }
+    await this.syncServiceExposureEndpoints(entry);
+    await this.syncIngressEndpoints(entry);
+    if (this.autoscaledPools(entry).length > 0) this.startAutoscaler(entry);
+    else this.stopAutoscaler(entry);
     return true;
   }
 
@@ -1069,6 +1200,13 @@ export class AksClusterManager {
       ? null
       : (publicIpAddress || configuredIp || (internal ? aksInternalServiceIp(entry, service) : aksPublicServiceIp(entry, service)));
     const dnsLabel = String(annotations['service.beta.kubernetes.io/azure-dns-label-name'] ?? '').trim().toLowerCase();
+    const resourceGroupName = String(
+      annotations['service.beta.kubernetes.io/azure-load-balancer-resource-group']
+      ?? entry.nodeResourceGroup
+      ?? entry.resourceGroupName
+      ?? '',
+    ).trim();
+    const idleTimeoutInMinutes = Number(annotations['service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout'] ?? 0) || null;
     const hostname = !internal
       ? (publicIpResource?.properties?.dnsSettings?.fqdn
         ?? (dnsLabel ? `${dnsLabel}.${String(entry.location ?? 'eastus').toLowerCase()}.cloudapp.azure.com` : null))
@@ -1080,6 +1218,13 @@ export class AksClusterManager {
       hostname,
       exposureHosts,
       publicIpResourceId: publicIpResource?.id ?? null,
+      metadata: {
+        internal,
+        resourceGroupName,
+        ...(idleTimeoutInMinutes ? { idleTimeoutInMinutes } : {}),
+        ...(requestedPublicIpName ? { publicIpName: requestedPublicIpName } : {}),
+        ...(publicIpResource?.id ? { publicIpResourceId: publicIpResource.id } : {}),
+      },
     };
   }
 
@@ -1192,6 +1337,7 @@ export class AksClusterManager {
           proxyMode: 'http-forward',
           origins,
           routePatterns: ['/*'],
+          metadata: exposure.metadata,
         });
         nextHosts.add(hostName.toLowerCase());
       }
@@ -1204,11 +1350,130 @@ export class AksClusterManager {
     entry.serviceExposureHosts = nextHosts;
   }
 
+  ingressInternal(ingress) {
+    const annotations = ingress?.metadata?.annotations ?? {};
+    return String(
+      annotations['service.beta.kubernetes.io/azure-load-balancer-internal']
+      ?? annotations['kubernetes.azure.com/internal']
+      ?? 'false',
+    ).toLowerCase() === 'true';
+  }
+
+  ingressRoutePattern(path = '/', pathType = 'Prefix') {
+    const normalizedPath = String(path || '/');
+    if (String(pathType ?? '').toLowerCase() === 'exact') return normalizedPath;
+    if (normalizedPath === '/') return '/*';
+    return `${normalizedPath.replace(/\/+$/, '')}*`;
+  }
+
+  serviceForIngressBackend(servicesByKey, namespace, backend = {}) {
+    const serviceName = backend?.service?.name;
+    if (!serviceName) return null;
+    const service = servicesByKey.get(`${namespace}/${serviceName}`);
+    if (!service) return null;
+    const portSpec = backend.service.port ?? {};
+    const ports = Array.isArray(service?.spec?.ports) ? service.spec.ports : [];
+    const selectedIndex = ports.findIndex(port =>
+      (portSpec.number !== undefined && Number(port.port) === Number(portSpec.number))
+      || (portSpec.name !== undefined && String(port.name ?? '') === String(portSpec.name)));
+    if (selectedIndex <= 0) return service;
+    return {
+      ...service,
+      spec: {
+        ...(service.spec ?? {}),
+        ports: [
+          ports[selectedIndex],
+          ...ports.filter((_, index) => index !== selectedIndex),
+        ],
+      },
+    };
+  }
+
+  async patchIngressExposureStatus(entry, ingress, ip) {
+    const namespace = ingress?.metadata?.namespace;
+    const ingressName = ingress?.metadata?.name;
+    if (!namespace || !ingressName || !ip) return;
+    const currentIngress = ingress?.status?.loadBalancer?.ingress?.[0] ?? {};
+    if (currentIngress.ip === ip) return;
+    await backendJsonRequest(entry, {
+      method: 'PATCH',
+      path: `/apis/networking.k8s.io/v1/namespaces/${namespace}/ingresses/${ingressName}/status`,
+      body: {
+        status: {
+          loadBalancer: {
+            ingress: [{ ip }],
+          },
+        },
+      },
+      headers: {
+        'content-type': 'application/merge-patch+json',
+      },
+    });
+  }
+
+  async syncIngressEndpoints(entry) {
+    if (!this.edgeRouter || !entry?.ready) return;
+    const previousHosts = entry.ingressExposureHosts ?? new Set();
+    const nextHosts = new Set();
+    const servicesResponse = await backendJsonRequest(entry, { path: '/api/v1/services' });
+    const ingressResponse = await backendJsonRequest(entry, { path: '/apis/networking.k8s.io/v1/ingresses' });
+    const services = Array.isArray(servicesResponse.body?.items) ? servicesResponse.body.items : [];
+    const ingresses = Array.isArray(ingressResponse.body?.items) ? ingressResponse.body.items : [];
+    const servicesByKey = new Map(services.map(service => [
+      `${service?.metadata?.namespace ?? 'default'}/${service?.metadata?.name ?? ''}`,
+      service,
+    ]));
+    const nodeOrigins = await this.nodeOriginMap(entry);
+    for (const ingress of ingresses) {
+      const namespace = String(ingress?.metadata?.namespace ?? 'default');
+      const internal = this.ingressInternal(ingress);
+      const ingressIp = internal ? aksInternalIngressIp(entry, ingress) : aksIngressIp(entry, ingress);
+      await this.patchIngressExposureStatus(entry, ingress, ingressIp);
+      if (internal) continue;
+
+      for (const rule of ingress?.spec?.rules ?? []) {
+        const hostName = String(rule?.host ?? '').trim().toLowerCase();
+        if (!hostName) continue;
+        const paths = Array.isArray(rule?.http?.paths) ? rule.http.paths : [];
+        for (const path of paths) {
+          const service = this.serviceForIngressBackend(servicesByKey, namespace, path?.backend);
+          if (!service) continue;
+          const origins = await this.serviceOrigins(entry, service, nodeOrigins);
+          if (origins.length === 0) continue;
+          this.edgeRouter.registerEndpoint({
+            endpointName: `${namespace}-${ingress.metadata.name}`,
+            hostName,
+            kind: 'aks-ingress',
+            enabledState: 'Enabled',
+            proxyMode: 'http-forward',
+            origins,
+            routePatterns: [this.ingressRoutePattern(path?.path, path?.pathType)],
+            metadata: {
+              namespace,
+              ingressName: ingress.metadata.name,
+              ingressIp,
+              internal: false,
+              serviceName: service.metadata.name,
+              pathType: path?.pathType ?? 'Prefix',
+            },
+          });
+          nextHosts.add(hostName);
+        }
+      }
+    }
+    for (const hostName of previousHosts) {
+      if (!nextHosts.has(String(hostName).toLowerCase())) {
+        this.edgeRouter.unregisterEndpoint(hostName);
+      }
+    }
+    entry.ingressExposureHosts = nextHosts;
+  }
+
   kubeconfig(entry, role = 'user', { serverFqdn = null } = {}) {
     const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
     const token = role === 'admin' ? entry.adminToken : entry.userToken;
-    const caData = Buffer.from(entry.backendCa ?? '').toString('base64');
-    const server = `https://${serverFqdn || entry.fqdn}`;
+    const caData = kubeconfigCaData(entry);
+    const server = `https://${serverFqdn || aksApiServerHost(entry)}`;
     return [
       'apiVersion: v1',
       'kind: Config',
@@ -1232,8 +1497,8 @@ export class AksClusterManager {
   }
 
   aadExecKubeconfig(entry, { serverFqdn = null } = {}) {
-    const server = `https://${serverFqdn || entry.fqdn}`;
-    const caData = Buffer.from(entry.backendCa ?? '').toString('base64');
+    const server = `https://${serverFqdn || aksApiServerHost(entry)}`;
+    const caData = kubeconfigCaData(entry);
     const tenantId = entry.aadProfile?.tenantID ?? '00000000-0000-0000-0000-000000000000';
     const clientId = entry.aadProfile?.clientAppID ?? '80faf920-1908-4b52-b5ef-a8e7bedfc67a';
     const serverId = entry.aadProfile?.serverAppID ?? '6dae42f8-4368-4678-94ff-3960e28e3630';
@@ -1274,8 +1539,8 @@ export class AksClusterManager {
   }
 
   aadAzureAuthProviderKubeconfig(entry, { serverFqdn = null } = {}) {
-    const server = `https://${serverFqdn || entry.fqdn}`;
-    const caData = Buffer.from(entry.backendCa ?? '').toString('base64');
+    const server = `https://${serverFqdn || aksApiServerHost(entry)}`;
+    const caData = kubeconfigCaData(entry);
     const tenantId = entry.aadProfile?.tenantID ?? '00000000-0000-0000-0000-000000000000';
     const clientId = entry.aadProfile?.clientAppID ?? '80faf920-1908-4b52-b5ef-a8e7bedfc67a';
     const serverId = entry.aadProfile?.serverAppID ?? '6dae42f8-4368-4678-94ff-3960e28e3630';
@@ -1310,9 +1575,6 @@ export class AksClusterManager {
   async listClusterCredentials(resource, role = 'user', options = {}) {
     const entry = this.clustersById.get(String(resource?.id ?? '').toLowerCase());
     if (!entry) return null;
-    await Promise.resolve(entry.readyPromise);
-    if (entry.error) throw entry.error;
-    if (!entry.ready) return null;
     const aadManaged = entry.aadProfile?.managed === true;
     const disableLocalAccounts = entry.disableLocalAccounts === true;
     if (disableLocalAccounts && (!aadManaged || role === 'admin')) {
@@ -1347,6 +1609,9 @@ export class AksClusterManager {
         ],
       };
     }
+    await Promise.resolve(entry.readyPromise);
+    if (entry.error) throw entry.error;
+    if (!entry.ready) return null;
     const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
     return {
       kubeconfigs: [
@@ -1484,14 +1749,16 @@ export class AksClusterManager {
       configMaps: [],
       deployments: [],
       services: [],
+      ingresses: [],
     };
     for (const namespace of userNamespaces) {
       const namespaceName = namespace.metadata?.name;
       if (!namespaceName) continue;
-      const [configMaps, deployments, services] = await Promise.all([
+      const [configMaps, deployments, services, ingresses] = await Promise.all([
         backendJsonRequest(entry, { path: `/api/v1/namespaces/${namespaceName}/configmaps` }),
         backendJsonRequest(entry, { path: `/apis/apps/v1/namespaces/${namespaceName}/deployments` }),
         backendJsonRequest(entry, { path: `/api/v1/namespaces/${namespaceName}/services` }),
+        backendJsonRequest(entry, { path: `/apis/networking.k8s.io/v1/namespaces/${namespaceName}/ingresses` }),
       ]);
       snapshot.configMaps.push(
         ...(Array.isArray(configMaps.body?.items) ? configMaps.body.items : [])
@@ -1505,6 +1772,11 @@ export class AksClusterManager {
       );
       snapshot.services.push(
         ...(Array.isArray(services.body?.items) ? services.body.items : [])
+          .filter(item => item?.metadata?.name)
+          .map(item => this.sanitizeResourceForCreate(item)),
+      );
+      snapshot.ingresses.push(
+        ...(Array.isArray(ingresses.body?.items) ? ingresses.body.items : [])
           .filter(item => item?.metadata?.name)
           .map(item => this.sanitizeResourceForCreate(item)),
       );
@@ -1532,6 +1804,7 @@ export class AksClusterManager {
     await applyObjects(snapshot.configMaps ?? [], object => `/api/v1/namespaces/${object.metadata?.namespace ?? 'default'}/configmaps`);
     await applyObjects(snapshot.deployments ?? [], object => `/apis/apps/v1/namespaces/${object.metadata?.namespace ?? 'default'}/deployments`);
     await applyObjects(snapshot.services ?? [], object => `/api/v1/namespaces/${object.metadata?.namespace ?? 'default'}/services`);
+    await applyObjects(snapshot.ingresses ?? [], object => `/apis/networking.k8s.io/v1/namespaces/${object.metadata?.namespace ?? 'default'}/ingresses`);
   }
 
   async createBackend(resource) {
@@ -1752,14 +2025,76 @@ export class AksClusterManager {
   registerCluster(resource) {
     const fqdn = String(resource?.properties?.fqdn ?? '').toLowerCase();
     if (!fqdn) return;
+    const privateFqdn = String(resource?.properties?.privateFQDN ?? '').toLowerCase();
+    const apiServerAccessProfile = resource?.properties?.apiServerAccessProfile ?? {};
+    const privateCluster = apiServerAccessProfile.enablePrivateCluster === true && Boolean(privateFqdn);
+    const hostAliases = privateCluster
+      ? [
+          privateFqdn,
+          ...(apiServerAccessProfile.enablePrivateClusterPublicFQDN === true ? [fqdn] : []),
+        ]
+      : [fqdn];
     const signature = clusterSignature(resource);
-    const existing = this.clustersByHost.get(fqdn);
+    const backendSignature = clusterBackendSignature(resource);
+    const resourceId = String(resource?.id ?? '').toLowerCase();
+    const existing = this.clustersById.get(resourceId) ?? this.clustersByHost.get(fqdn);
     if (existing && existing.signature === signature && !existing.disposed) {
+      return;
+    }
+    const nextAgentPools = Array.isArray(resource.properties?.agentPoolProfiles) ? resource.properties.agentPoolProfiles : [];
+    const nextUserToken = aksKubeToken(resource.id, 'user', resource.properties?.credentialGeneration ?? 0);
+    const nextAdminToken = aksKubeToken(resource.id, 'admin', resource.properties?.credentialGeneration ?? 0);
+    if (
+      existing
+      && !existing.disposed
+      && !existing.error
+      && existing.deferredBackend !== true
+      && existing.backendSignature === backendSignature
+    ) {
+      for (const hostName of existing.hostAliases ?? [existing.fqdn]) {
+        this.clustersByHost.delete(String(hostName ?? '').toLowerCase());
+      }
+      Object.assign(existing, {
+        signature,
+        backendSignature,
+        fqdn,
+        privateFqdn: privateFqdn || null,
+        privateCluster: privateCluster === true,
+        hostAliases,
+        apiServerAccessProfile: JSON.parse(JSON.stringify(apiServerAccessProfile)),
+        networkProfile: resource.properties?.networkProfile ? JSON.parse(JSON.stringify(resource.properties.networkProfile)) : null,
+        version: resource.properties?.currentKubernetesVersion ?? resource.properties?.kubernetesVersion ?? existing.version,
+        nodeResourceGroup: resource.properties?.nodeResourceGroup ?? existing.nodeResourceGroup,
+        aadProfile: resource.properties?.aadProfile ? JSON.parse(JSON.stringify(resource.properties.aadProfile)) : null,
+        disableLocalAccounts: resource.properties?.disableLocalAccounts === true,
+        credentialGeneration: resource.properties?.credentialGeneration ?? 0,
+        userToken: nextUserToken,
+        adminToken: nextAdminToken,
+      });
+      for (const hostName of hostAliases) {
+        this.clustersByHost.set(String(hostName).toLowerCase(), existing);
+      }
+      this.clustersById.set(resourceId, existing);
+      const previousReadyPromise = existing.readyPromise;
+      existing.readyPromise = Promise.resolve(previousReadyPromise)
+        .then(() => this.reconcileAgentPools(existing, nextAgentPools, { waitForReady: false }))
+        .catch((error) => {
+          existing.error = error;
+          console.error('[globalstack:aks-runtime] in-place cluster reconciliation failed', {
+            cluster: existing.name,
+            resourceId: existing.id,
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+          });
+        });
       return;
     }
 
     if (existing) {
       existing.disposed = true;
+      for (const hostName of existing.hostAliases ?? [existing.fqdn]) {
+        this.clustersByHost.delete(String(hostName ?? '').toLowerCase());
+      }
     }
     const existingSnapshot = existing
       ? (async () => {
@@ -1792,15 +2127,21 @@ export class AksClusterManager {
       subscriptionId: resource.subscriptionId ?? subscriptionIdFromResourceId(resource.id),
       resourceGroupName: resource.resourceGroupName ?? resourceGroupFromResourceId(resource.id),
       fqdn,
+      privateFqdn: privateFqdn || null,
+      privateCluster: privateCluster === true,
+      hostAliases,
+      backendSignature,
+      apiServerAccessProfile: JSON.parse(JSON.stringify(apiServerAccessProfile)),
+      networkProfile: resource.properties?.networkProfile ? JSON.parse(JSON.stringify(resource.properties.networkProfile)) : null,
       location: String(resource.location ?? 'eastus').toLowerCase(),
       version: resource.properties?.currentKubernetesVersion ?? resource.properties?.kubernetesVersion ?? '1.29.2',
       nodeResourceGroup: resource.properties?.nodeResourceGroup ?? '',
       aadProfile: resource.properties?.aadProfile ? JSON.parse(JSON.stringify(resource.properties.aadProfile)) : null,
       disableLocalAccounts: resource.properties?.disableLocalAccounts === true,
-      agentPools: Array.isArray(resource.properties?.agentPoolProfiles) ? resource.properties.agentPoolProfiles : [],
+      agentPools: nextAgentPools,
       credentialGeneration: resource.properties?.credentialGeneration ?? 0,
-      userToken: aksKubeToken(resource.id, 'user', resource.properties?.credentialGeneration ?? 0),
-      adminToken: aksKubeToken(resource.id, 'admin', resource.properties?.credentialGeneration ?? 0),
+      userToken: nextUserToken,
+      adminToken: nextAdminToken,
       serverContainerName: clusterContainerName(resource),
       networkName: clusterNetworkName(resource),
       ownedNetwork: this.mode !== 'container-network',
@@ -1809,47 +2150,59 @@ export class AksClusterManager {
       disposed: false,
       commandResults: new Map(),
     };
-    entry.readyPromise = existingCleanup
-      .then(snapshot => this.createBackend(resource).then(async (backend) => {
-        if (entry.disposed) {
-          return this.cleanupEntry({
-            ...entry,
-            ...backend,
+    const deferBackend = entry.aadProfile?.managed === true && entry.disableLocalAccounts === true;
+    entry.deferredBackend = deferBackend;
+    entry.readyPromise = deferBackend
+      ? existingCleanup.then(() => {})
+      : existingCleanup
+        .then(snapshot => this.createBackend(resource).then(async (backend) => {
+          if (entry.disposed) {
+            return this.cleanupEntry({
+              ...entry,
+              ...backend,
+            });
+          }
+          Object.assign(entry, backend, { ready: false });
+          if (snapshot) {
+            await this.restoreWorkloadState(entry, snapshot);
+          }
+          entry.ready = true;
+          await this.syncServiceExposureEndpoints(entry);
+          await this.syncIngressEndpoints(entry);
+          this.startAutoscaler(entry);
+        }))
+        .catch((error) => {
+          entry.error = error;
+          entry.disposed = true;
+          console.error('[globalstack:aks-runtime] backend initialization failed', {
+            cluster: entry.name,
+            resourceId: entry.id,
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
           });
-        }
-        Object.assign(entry, backend, { ready: false });
-        if (snapshot) {
-          await this.restoreWorkloadState(entry, snapshot);
-        }
-        entry.ready = true;
-        await this.syncServiceExposureEndpoints(entry);
-        this.startAutoscaler(entry);
-      }))
-      .catch((error) => {
-        entry.error = error;
-        entry.disposed = true;
-        console.error('[globalstack:aks-runtime] backend initialization failed', {
-          cluster: entry.name,
-          resourceId: entry.id,
-          message: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
+          void this.cleanupEntry(entry);
         });
-        void this.cleanupEntry(entry);
-      });
 
-    this.clustersByHost.set(fqdn, entry);
+    for (const hostName of hostAliases) {
+      this.clustersByHost.set(String(hostName).toLowerCase(), entry);
+    }
     this.clustersById.set(String(resource.id ?? '').toLowerCase(), entry);
   }
 
   unregisterCluster(resource) {
+    const resourceId = String(resource?.id ?? '').toLowerCase();
     const fqdn = String(resource?.properties?.fqdn ?? resource ?? '').toLowerCase();
-    if (!fqdn) return;
-    const entry = this.clustersByHost.get(fqdn);
+    const entry = (resourceId ? this.clustersById.get(resourceId) : null) ?? this.clustersByHost.get(fqdn);
     if (!entry) return;
     entry.disposed = true;
-    this.clustersByHost.delete(fqdn);
+    for (const hostName of entry.hostAliases ?? [entry.fqdn]) {
+      this.clustersByHost.delete(String(hostName ?? '').toLowerCase());
+    }
     this.clustersById.delete(String(entry.id ?? '').toLowerCase());
     for (const hostName of entry.serviceExposureHosts ?? []) {
+      this.edgeRouter?.unregisterEndpoint(hostName);
+    }
+    for (const hostName of entry.ingressExposureHosts ?? []) {
       this.edgeRouter?.unregisterEndpoint(hostName);
     }
     this.stopAutoscaler(entry);
@@ -1863,6 +2216,9 @@ export class AksClusterManager {
     await Promise.all(entries.map(async (entry) => {
       entry.disposed = true;
       for (const hostName of entry.serviceExposureHosts ?? []) {
+        this.edgeRouter?.unregisterEndpoint(hostName);
+      }
+      for (const hostName of entry.ingressExposureHosts ?? []) {
         this.edgeRouter?.unregisterEndpoint(hostName);
       }
       this.stopAutoscaler(entry);
@@ -1967,11 +2323,19 @@ export class AksClusterManager {
         && method !== 'GET'
         && (
           /\/services(?:\/|$)/.test(url.pathname)
+          || /\/ingresses(?:\/|$)/.test(url.pathname)
           || /\/namespaces\/[^/]+$/.test(url.pathname)
         )
       ) {
         void this.syncServiceExposureEndpoints(entry).catch(error => {
           console.error('[globalstack:aks-runtime] failed to reconcile service exposure', {
+            cluster: entry.name,
+            resourceId: entry.id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        });
+        void this.syncIngressEndpoints(entry).catch(error => {
+          console.error('[globalstack:aks-runtime] failed to reconcile ingress exposure', {
             cluster: entry.name,
             resourceId: entry.id,
             message: error instanceof Error ? error.message : String(error),

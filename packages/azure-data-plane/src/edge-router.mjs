@@ -104,6 +104,7 @@ export class EdgeRouter {
     wafPolicyId,
     wafPolicyName = null,
     proxyMode = null,
+    metadata = {},
   }) {
     const normalizedHost = hostNameFromHeader(hostName);
     const existing = this.endpointsByHost.get(normalizedHost) ?? {};
@@ -123,6 +124,7 @@ export class EdgeRouter {
       wafPolicyId: hasWafPolicyId ? (wafPolicyId ?? null) : (existing.wafPolicyId ?? null),
       wafPolicyName: hasWafPolicyName ? (wafPolicyName ?? null) : (existing.wafPolicyName ?? null),
       proxyMode: proxyMode ?? existing.proxyMode ?? null,
+      metadata: metadata ?? existing.metadata ?? {},
       nextOriginIndex: existing.nextOriginIndex ?? 0,
     });
   }

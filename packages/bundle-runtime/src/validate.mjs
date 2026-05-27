@@ -2833,8 +2833,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity control-plane matrix has failures');
   }
-  if ((aksMetadataParity.controlPlane?.total ?? 0) < 65) {
-    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 65 cases');
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 73) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 73 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2844,6 +2844,12 @@ if (!aksMetadataParityText) {
     'cluster invalid dnsPrefix is rejected',
     'cluster missing agentPoolProfiles is rejected',
     'cluster invalid agent pool name is rejected',
+    'cluster invalid network plugin is rejected',
+    'cluster invalid network policy is rejected',
+    'cluster dnsServiceIP outside serviceCidr is rejected',
+    'cluster invalid docker bridge cidr is rejected',
+    'cluster private public fqdn flag requires private cluster',
+    'cluster agent pool orchestratorVersion above control plane is rejected',
     'valid cluster create returns async Azure shape',
     'cluster first get is Creating',
     'cluster async operation reaches Succeeded',
@@ -2860,13 +2866,15 @@ if (!aksMetadataParityText) {
     'AAD user credential action returns azure auth-provider kubeconfig when requested',
     'AAD admin credential action is rejected when local accounts are disabled',
     'AAD cluster service principal reset is rejected for managed identity cluster',
+    'cluster update enables private FQDN and DNS profile',
     'agent pool child collection reflects cluster pool metadata',
     'cluster update can add a live user pool with a second node',
     'agent pool child item reflects updated user pool metadata',
     'agent pool node image upgrade updates ARM state and live node labels',
     'agent pool child put rejects invalid autoscaler bounds',
+    'agent pool child put rejects invalid orchestratorVersion',
     'AKS runCommand returns commandResults location and completes successfully',
-    'agent pool child put scales user pool out with VMSS metadata preserved across repeated reads',
+    'agent pool child put updates user pool VMSS metadata across repeated reads',
     'agent pool child put scales user pool to zero and repeated drift reads stay stable',
     'agent pool child put enables autoscaling bounds on user pool',
     'agent pool child put adds a live burst pool after scale-to-zero user pool',
@@ -2882,8 +2890,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 13) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 13 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 16) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 16 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
@@ -2894,11 +2902,14 @@ if (!aksMetadataParityText) {
     'cluster admin credentials can create namespace and configmap on live backend',
     'cluster user credentials are restricted by backend RBAC on secrets',
     'cluster admin credentials can create deployment and service on live backend',
+    'private cluster kubeconfig uses private host and rejects public API host',
     'autoscaled user pool scales from zero for targeted workload and returns to minCount after deletion',
     'load balancer service exposes live backend through AKS edge integration',
     'local traffic load balancer routes only to nodes with matching local endpoints',
     'load balancer service can bind to an ARM public IP resource',
+    'ingress routes public host through managed AKS edge integration',
     'internal load balancer service gets private ingress and no public edge route',
+    'control-plane version update preserves bounded workload state',
   ]) {
     if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure AKS metadata parity E2E missing passing data-plane case: ${required}`);

@@ -227,6 +227,14 @@ function aksFqdn(name, location, dnsPrefix) {
   return `${dnsPrefix}-${digest}.hcp.${location}.azmk8s.io`;
 }
 
+function aksPrivateFqdn(name, location, dnsPrefix) {
+  const digest = createHash('sha256')
+    .update(`globalstack:aks:private:${name}:${location}:${dnsPrefix}`)
+    .digest('hex')
+    .slice(0, 8);
+  return `${dnsPrefix}-${digest}.privatelink.${location}.azmk8s.io`;
+}
+
 export function aksKubeToken(resourceId, role = 'user', generation = 0) {
   const normalizedRole = role === 'admin' ? 'admin' : 'user';
   return createHash('sha256')
@@ -245,7 +253,7 @@ function aksNodeResourceGroup(resourceGroupName, name, location) {
   return `MC_${resourceGroupName}_${name}_${location}`;
 }
 
-function materializeAksAgentPoolProfile(pool = {}, existingPool = {}) {
+function materializeAksAgentPoolProfile(pool = {}, existingPool = {}, { clusterVersion = null } = {}) {
   const poolType = pool.type ?? existingPool.type ?? 'VirtualMachineScaleSets';
   return {
     ...existingPool,
@@ -258,8 +266,35 @@ function materializeAksAgentPoolProfile(pool = {}, existingPool = {}) {
     enableAutoScaling: pool.enableAutoScaling ?? existingPool.enableAutoScaling ?? false,
     minCount: pool.minCount ?? existingPool.minCount ?? null,
     maxCount: pool.maxCount ?? existingPool.maxCount ?? null,
-    orchestratorVersion: pool.orchestratorVersion ?? existingPool.orchestratorVersion ?? null,
+    orchestratorVersion: pool.orchestratorVersion ?? existingPool.orchestratorVersion ?? clusterVersion,
     nodeImageVersion: pool.nodeImageVersion ?? existingPool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
+  };
+}
+
+function materializeAksNetworkProfile(input = {}, existing = {}) {
+  const networkPlugin = input.networkPlugin ?? existing.networkPlugin ?? 'kubenet';
+  const serviceCidr = input.serviceCidr ?? input.serviceCIDR ?? existing.serviceCidr ?? '10.0.0.0/16';
+  return {
+    ...deepClone(existing),
+    ...deepClone(input),
+    networkPlugin,
+    ...(input.networkPolicy ?? existing.networkPolicy ? { networkPolicy: input.networkPolicy ?? existing.networkPolicy } : {}),
+    serviceCidr,
+    dnsServiceIP: input.dnsServiceIP ?? existing.dnsServiceIP ?? '10.0.0.10',
+    dockerBridgeCidr: input.dockerBridgeCidr ?? existing.dockerBridgeCidr ?? '172.17.0.1/16',
+    loadBalancerSku: input.loadBalancerSku ?? existing.loadBalancerSku ?? 'standard',
+  };
+}
+
+function materializeAksApiServerAccessProfile(input = {}, existing = {}) {
+  return {
+    ...deepClone(existing),
+    ...deepClone(input),
+    enablePrivateCluster: input.enablePrivateCluster ?? existing.enablePrivateCluster ?? false,
+    ...(input.privateDNSZone ?? existing.privateDNSZone ? { privateDNSZone: input.privateDNSZone ?? existing.privateDNSZone } : {}),
+    ...((input.enablePrivateClusterPublicFQDN ?? existing.enablePrivateClusterPublicFQDN) !== undefined
+      ? { enablePrivateClusterPublicFQDN: input.enablePrivateClusterPublicFQDN ?? existing.enablePrivateClusterPublicFQDN }
+      : {}),
   };
 }
 
@@ -845,27 +880,50 @@ export class ResourceStore {
             }
           : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters'
-          ? {
-              fqdn: existing?.properties?.fqdn ?? aksFqdn(name, body.location ?? existing?.location ?? 'global', body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name),
-              nodeResourceGroup: body.properties?.nodeResourceGroup ?? existing?.properties?.nodeResourceGroup ?? aksNodeResourceGroup(resourceGroupName, name, body.location ?? existing?.location ?? 'global'),
-              currentKubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.currentKubernetesVersion ?? '1.29.2',
-              kubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.kubernetesVersion ?? '1.29.2',
-              credentialGeneration: existing?.properties?.credentialGeneration ?? 0,
-              powerState: { code: 'Running' },
-              agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool =>
-                materializeAksAgentPoolProfile(
-                  pool,
-                  (existing?.properties?.agentPoolProfiles ?? []).find(existingPool => String(existingPool?.name ?? '').toLowerCase() === String(pool?.name ?? '').toLowerCase()),
-                )
-              ),
-          }
+          ? (() => {
+              const location = body.location ?? existing?.location ?? 'global';
+              const dnsPrefix = body.properties?.dnsPrefix ?? existing?.properties?.dnsPrefix ?? name;
+              const version = body.properties?.kubernetesVersion ?? existing?.properties?.kubernetesVersion ?? '1.29.2';
+              const apiServerAccessProfile = materializeAksApiServerAccessProfile(
+                body.properties?.apiServerAccessProfile ?? {},
+                existing?.properties?.apiServerAccessProfile ?? {},
+              );
+              const privateFQDN = apiServerAccessProfile.enablePrivateCluster === true
+                ? existing?.properties?.privateFQDN ?? aksPrivateFqdn(name, location, dnsPrefix)
+                : undefined;
+              return {
+                fqdn: existing?.properties?.fqdn ?? aksFqdn(name, location, dnsPrefix),
+                privateFQDN,
+                apiServerAccessProfile,
+                networkProfile: materializeAksNetworkProfile(
+                  body.properties?.networkProfile ?? {},
+                  existing?.properties?.networkProfile ?? {},
+                ),
+                nodeResourceGroup: body.properties?.nodeResourceGroup ?? existing?.properties?.nodeResourceGroup ?? aksNodeResourceGroup(resourceGroupName, name, location),
+                currentKubernetesVersion: version,
+                kubernetesVersion: version,
+                credentialGeneration: existing?.properties?.credentialGeneration ?? 0,
+                powerState: { code: 'Running' },
+                agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool =>
+                  materializeAksAgentPoolProfile(
+                    pool,
+                    (existing?.properties?.agentPoolProfiles ?? []).find(existingPool => String(existingPool?.name ?? '').toLowerCase() === String(pool?.name ?? '').toLowerCase()),
+                    { clusterVersion: version },
+                  )
+                ),
+              };
+            })()
           : {}),
         ...(type === 'Microsoft.ContainerService/managedClusters/agentPools'
-          ? {
-              ...materializeAksAgentPoolProfile(body.properties ?? {}, existing?.properties ?? {}),
-              count: body.properties?.count ?? existing?.properties?.count ?? 1,
-              vmSize: body.properties?.vmSize ?? existing?.properties?.vmSize ?? 'Standard_DS2_v2',
-          }
+          ? (() => {
+              const parentCluster = this.resources.get(id.toLowerCase().replace(/\/agentpools\/[^/]+$/, ''));
+              const clusterVersion = parentCluster?.properties?.kubernetesVersion ?? parentCluster?.properties?.currentKubernetesVersion ?? null;
+              return {
+                ...materializeAksAgentPoolProfile(body.properties ?? {}, existing?.properties ?? {}, { clusterVersion }),
+                count: body.properties?.count ?? existing?.properties?.count ?? 1,
+                vmSize: body.properties?.vmSize ?? existing?.properties?.vmSize ?? 'Standard_DS2_v2',
+              };
+            })()
           : {}),
         ...(type === 'Microsoft.Network/dnsZones'
           ? {
@@ -1130,7 +1188,9 @@ export class ResourceStore {
         const materialized = materializeAksAgentPoolProfile({
           ...resource.properties,
           name: leafName,
-        }, profiles[existingIndex] ?? {});
+        }, profiles[existingIndex] ?? {}, {
+          clusterVersion: parentResource.properties?.kubernetesVersion ?? parentResource.properties?.currentKubernetesVersion ?? null,
+        });
         if (existingIndex >= 0) profiles[existingIndex] = materialized;
         else profiles.push(materialized);
         parentResource.properties.agentPoolProfiles = profiles;
@@ -1380,6 +1440,7 @@ export class ResourceStore {
       if (Object.hasOwn(updates, 'provisioningState')) target.properties.provisioningState = updates.provisioningState;
       if (Object.hasOwn(updates, 'powerState')) target.properties.powerState = deepClone(updates.powerState);
       if (Object.hasOwn(updates, 'nodeImageVersion')) target.properties.nodeImageVersion = updates.nodeImageVersion;
+      if (Object.hasOwn(updates, 'orchestratorVersion')) target.properties.orchestratorVersion = updates.orchestratorVersion;
     };
 
     const profiles = Array.isArray(cluster.properties?.agentPoolProfiles)
