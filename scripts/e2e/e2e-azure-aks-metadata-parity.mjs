@@ -130,7 +130,6 @@ function operationStatusPath(asyncOperationUrl) {
 function aksBody(overrides = {}) {
   return {
     location: 'eastus',
-    identity: { type: 'SystemAssigned' },
     properties: {
       dnsPrefix: 'gs-aks-dns',
       kubernetesVersion: '1.29.2',
@@ -712,6 +711,66 @@ async function runControlPlaneMatrix() {
       return { status: second.status, kubeconfigName: second.body.kubeconfigs[0].name };
     });
 
+    await record('cluster upgrade profile returns control-plane and agent-pool upgrade targets', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/upgradeProfiles/default`));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.name, 'default');
+      assert.equal(result.body.properties.controlPlaneProfile.kubernetesVersion, '1.29.2');
+      assert.ok(result.body.properties.controlPlaneProfile.upgrades.some(item => item.kubernetesVersion === '1.30.0'));
+      assert.ok(result.body.properties.agentPoolProfiles.some(item => item.name === 'systempool'));
+      return { status: result.status, upgrades: result.body.properties.controlPlaneProfile.upgrades.length };
+    });
+
+    await record('service principal reset updates cluster profile and returns async operation', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/resetServicePrincipalProfile`),
+        { clientId: 'sp-reset-client', secret: 'sp-reset-secret' },
+      );
+      assert.equal(result.status, 202);
+      assert.ok(result.headers.location);
+      assert.equal(result.body.properties.servicePrincipalProfile.clientId, 'sp-reset-client');
+      const readback = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(readback.status, 200);
+      assert.equal(readback.body.properties.servicePrincipalProfile.clientId, 'sp-reset-client');
+      return { status: result.status, clientId: readback.body.properties.servicePrincipalProfile.clientId };
+    });
+
+    await record('cluster certificate rotation invalidates old kubeconfig tokens and issues new ones', async () => {
+      const oldUserToken = userKubeToken;
+      const oldAdminToken = adminKubeToken;
+      const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/rotateClusterCertificates`));
+      assert.equal(result.status, 202);
+      assert.equal(result.body.properties.credentialGeneration, 1);
+      const oldUser = await httpKube(kubePort, '/version', {
+        host: clusterHost,
+        token: oldUserToken,
+      });
+      assert.equal(oldUser.status, 401);
+      const oldAdmin = await httpKube(kubePort, '/version', {
+        host: clusterHost,
+        token: oldAdminToken,
+      });
+      assert.equal(oldAdmin.status, 401);
+      const userResult = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterUserCredential`));
+      const adminResult = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/listClusterAdminCredential`));
+      assert.equal(userResult.status, 200);
+      assert.equal(adminResult.status, 200);
+      const userKubeconfig = decodeKubeconfig(userResult);
+      const adminKubeconfig = decodeKubeconfig(adminResult);
+      userKubeToken = kubeconfigValue(userKubeconfig, 'token');
+      adminKubeToken = kubeconfigValue(adminKubeconfig, 'token');
+      assert.notEqual(userKubeToken, oldUserToken);
+      assert.notEqual(adminKubeToken, oldAdminToken);
+      const freshUser = await httpKube(kubePort, '/version', {
+        host: clusterHost,
+        token: userKubeToken,
+      });
+      assert.equal(freshUser.status, 200);
+      return { status: result.status, generation: result.body.properties.credentialGeneration };
+    });
+
     await record('AAD cluster with disableLocalAccounts creates successfully', async () => {
       const created = await httpJson(
         armPort,
@@ -790,6 +849,18 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 400);
       assert.equal(errorCode(result), 'BadRequest');
       assert.match(result.body.error.message, /Getting static credential isn't allowed/);
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
+    await record('AAD cluster service principal reset is rejected for managed identity cluster', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${aadClusterPath}/resetServicePrincipalProfile`),
+        { clientId: 'sp-reset-client', secret: 'sp-reset-secret' },
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
@@ -993,6 +1064,26 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.mode, 'User');
       assert.equal(result.body.properties.type, 'VirtualMachineScaleSets');
       return { status: result.status, pool: leafResourceName(result.body.name) };
+    });
+
+    await record('agent pool node image upgrade updates ARM state and live node labels', async () => {
+      const before = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(before.status, 200);
+      const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool/upgradeNodeImageVersion`));
+      assert.equal(result.status, 202);
+      assert.ok(result.headers.location);
+      const after = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(after.status, 200);
+      assert.notEqual(after.body.properties.nodeImageVersion, before.body.properties.nodeImageVersion);
+      const nodes = await httpKube(kubePort, '/api/v1/nodes', {
+        host: clusterHost,
+        token: adminKubeToken,
+      });
+      assert.equal(nodes.status, 200);
+      const userNodes = nodes.body.items.filter(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool');
+      assert.ok(userNodes.length >= 1);
+      assert.ok(userNodes.every(item => item.metadata.labels['kubernetes.azure.com/node-image-version'] === after.body.properties.nodeImageVersion));
+      return { status: result.status, nodeImageVersion: after.body.properties.nodeImageVersion };
     });
 
     await record('agent pool child put rejects invalid autoscaler bounds', async () => {
@@ -1734,7 +1825,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, service-principal reset, certificate rotation with kubeconfig token invalidation, upgrade-profile readback, agent-pool child resources, bounded node-image upgrade with live node-label readback, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service slice, addons, control-plane upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1746,7 +1837,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded Microsoft Entra-managed credential formats, bounded AKS runCommand execution, bounded VMSS-like pool create/update/delete runtime reconciliation, bounded autoscaler scale-up/down behavior for targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, service-principal reset, certificate rotation with kubeconfig token invalidation, upgrade-profile readback, bounded node-image upgrade with live node-label readback, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded Microsoft Entra-managed credential formats, bounded AKS runCommand execution, bounded VMSS-like pool create/update/delete runtime reconciliation, bounded autoscaler scale-up/down behavior for targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,

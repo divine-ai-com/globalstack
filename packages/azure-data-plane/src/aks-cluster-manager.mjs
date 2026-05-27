@@ -165,6 +165,7 @@ function clusterSignature(resource) {
       id: resource.id,
       fqdn: resource.properties?.fqdn,
       version: resource.properties?.kubernetesVersion ?? resource.properties?.currentKubernetesVersion ?? null,
+      credentialGeneration: resource.properties?.credentialGeneration ?? 0,
       pools: (resource.properties?.agentPoolProfiles ?? []).map(pool => ({
         name: pool?.name ?? null,
         count: pool?.count ?? null,
@@ -175,6 +176,7 @@ function clusterSignature(resource) {
         enableAutoScaling: pool?.enableAutoScaling ?? null,
         minCount: pool?.minCount ?? null,
         maxCount: pool?.maxCount ?? null,
+        nodeImageVersion: pool?.nodeImageVersion ?? null,
         availabilityZones: Array.isArray(pool?.availabilityZones) ? pool.availabilityZones : [],
       })),
     }))
@@ -747,6 +749,8 @@ export class AksClusterManager {
         `kubernetes.io/os=${String(pool.osType ?? 'Linux').toLowerCase()}`,
         '--node-label',
         `topology.kubernetes.io/region=${String(entry.location ?? 'eastus').toLowerCase()}`,
+        '--node-label',
+        `kubernetes.azure.com/node-image-version=${pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27'}`,
         ...(Array.isArray(pool.availabilityZones) && pool.availabilityZones[0]
           ? ['--node-label', `topology.kubernetes.io/zone=${String(pool.availabilityZones[0])}`]
           : []),
@@ -779,6 +783,7 @@ export class AksClusterManager {
       containerName: agentContainerName,
       ordinal,
       role: 'agent',
+      nodeImageVersion: pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
     };
     entry.agentContainerNames.push(agentContainerName);
     entry.agentContainerIds.push(agentContainer.id);
@@ -829,6 +834,54 @@ export class AksClusterManager {
     });
     await this.syncServiceExposureEndpoints(entry);
     return true;
+  }
+
+  async upgradeNodeImageVersion(resource, poolName) {
+    const entry = this.clustersById.get(String(resource?.id ?? '').toLowerCase());
+    if (!entry) return null;
+    await Promise.resolve(entry.readyPromise);
+    if (entry.error) throw entry.error;
+    if (!entry.ready) return null;
+    const normalizedPoolName = String(poolName ?? '').toLowerCase();
+    const pool = (entry.agentPools ?? []).find(item => String(item?.name ?? '').toLowerCase() === normalizedPoolName);
+    if (!pool) {
+      return {
+        error: {
+          status: 404,
+          code: 'ResourceNotFound',
+          message: `The Resource 'agentPools/${poolName}' under managed cluster '${resource?.name ?? ''}' was not found.`,
+        },
+      };
+    }
+    const current = String(pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27');
+    const match = current.match(/^(.*?)(?:\.(\d+))?$/);
+    const nextImage = `${match?.[1] || 'AKSUbuntu-2026.05.27'}.${Number(match?.[2] ?? 0) + 1}`;
+    pool.nodeImageVersion = nextImage;
+    const assignments = this.poolAssignments(entry, pool.name);
+    if (assignments.length > 0) {
+      const container = this.docker.getContainer(entry.serverContainerName);
+      const nodeNames = assignments.map(assignment => assignment.nodeName).join(' ');
+      const execution = await this.execCommand(container, [
+        'sh',
+        '-lc',
+        `export KUBECONFIG=/etc/rancher/k3s/k3s.yaml; for node in ${nodeNames}; do kubectl label node "$node" kubernetes.azure.com/node-image-version=${nextImage} --overwrite; done`,
+      ]);
+      if (execution.exitCode !== 0) {
+        throw new Error(`AKS node image label update failed: ${execution.output.trim() || `exit ${execution.exitCode}`}`);
+      }
+      for (const assignment of assignments) {
+        entry.nodeAssignments[assignment.nodeName].nodeImageVersion = nextImage;
+      }
+    }
+    this.persistRuntimePoolCount(entry, pool.name, {
+      nodeImageVersion: nextImage,
+      provisioningState: 'Succeeded',
+      powerState: { code: assignments.length === 0 ? 'Stopped' : 'Running' },
+    });
+    return {
+      nodeImageVersion: nextImage,
+      count: assignments.length,
+    };
   }
 
   podTargetsPool(pod, poolName) {
@@ -1509,6 +1562,7 @@ export class AksClusterManager {
         containerName: serverContainerName,
         ordinal: 0,
         role: 'server',
+        nodeImageVersion: systemPool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
       },
     };
     const commonLabels = {
@@ -1526,6 +1580,7 @@ export class AksClusterManager {
       `node.kubernetes.io/instance-type=${systemPool.vmSize ?? 'Standard_DS2_v2'}`,
       `kubernetes.io/os=${String(systemPool.osType ?? 'Linux').toLowerCase()}`,
       `topology.kubernetes.io/region=${String(resource.location ?? 'eastus').toLowerCase()}`,
+      `kubernetes.azure.com/node-image-version=${systemPool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27'}`,
       ...(Array.isArray(systemPool.availabilityZones) && systemPool.availabilityZones[0]
         ? [`topology.kubernetes.io/zone=${String(systemPool.availabilityZones[0])}`]
         : []),
@@ -1607,6 +1662,7 @@ export class AksClusterManager {
           containerName: agentContainerName,
           ordinal,
           role: 'agent',
+          nodeImageVersion: pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
         };
         const agentBody = {
           name: agentContainerName,
@@ -1632,6 +1688,8 @@ export class AksClusterManager {
             `kubernetes.io/os=${String(pool.osType ?? 'Linux').toLowerCase()}`,
             '--node-label',
             `topology.kubernetes.io/region=${String(resource.location ?? 'eastus').toLowerCase()}`,
+            '--node-label',
+            `kubernetes.azure.com/node-image-version=${pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27'}`,
             ...(Array.isArray(pool.availabilityZones) && pool.availabilityZones[0]
               ? ['--node-label', `topology.kubernetes.io/zone=${String(pool.availabilityZones[0])}`]
               : []),
@@ -1740,8 +1798,9 @@ export class AksClusterManager {
       aadProfile: resource.properties?.aadProfile ? JSON.parse(JSON.stringify(resource.properties.aadProfile)) : null,
       disableLocalAccounts: resource.properties?.disableLocalAccounts === true,
       agentPools: Array.isArray(resource.properties?.agentPoolProfiles) ? resource.properties.agentPoolProfiles : [],
-      userToken: aksKubeToken(resource.id, 'user'),
-      adminToken: aksKubeToken(resource.id, 'admin'),
+      credentialGeneration: resource.properties?.credentialGeneration ?? 0,
+      userToken: aksKubeToken(resource.id, 'user', resource.properties?.credentialGeneration ?? 0),
+      adminToken: aksKubeToken(resource.id, 'admin', resource.properties?.credentialGeneration ?? 0),
       serverContainerName: clusterContainerName(resource),
       networkName: clusterNetworkName(resource),
       ownedNetwork: this.mode !== 'container-network',

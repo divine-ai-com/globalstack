@@ -227,11 +227,18 @@ function aksFqdn(name, location, dnsPrefix) {
   return `${dnsPrefix}-${digest}.hcp.${location}.azmk8s.io`;
 }
 
-export function aksKubeToken(resourceId, role = 'user') {
+export function aksKubeToken(resourceId, role = 'user', generation = 0) {
   const normalizedRole = role === 'admin' ? 'admin' : 'user';
   return createHash('sha256')
-    .update(`globalstack:aks:kube:${normalizedRole}:${String(resourceId ?? '').toLowerCase()}`)
+    .update(`globalstack:aks:kube:${normalizedRole}:${Number(generation ?? 0)}:${String(resourceId ?? '').toLowerCase()}`)
     .digest('hex');
+}
+
+function aksNextNodeImageVersion(current = 'AKSUbuntu-2026.05.27') {
+  const match = String(current ?? '').match(/^(.*?)(?:\.(\d+))?$/);
+  const prefix = match?.[1] || 'AKSUbuntu-2026.05.27';
+  const revision = Number(match?.[2] ?? 0) + 1;
+  return `${prefix}.${revision}`;
 }
 
 function aksNodeResourceGroup(resourceGroupName, name, location) {
@@ -843,6 +850,7 @@ export class ResourceStore {
               nodeResourceGroup: body.properties?.nodeResourceGroup ?? existing?.properties?.nodeResourceGroup ?? aksNodeResourceGroup(resourceGroupName, name, body.location ?? existing?.location ?? 'global'),
               currentKubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.currentKubernetesVersion ?? '1.29.2',
               kubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.kubernetesVersion ?? '1.29.2',
+              credentialGeneration: existing?.properties?.credentialGeneration ?? 0,
               powerState: { code: 'Running' },
               agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool =>
                 materializeAksAgentPoolProfile(
@@ -1323,7 +1331,7 @@ export class ResourceStore {
     if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
     const clusterName = resource.name;
     const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
-    const token = aksKubeToken(resource.id, role);
+    const token = aksKubeToken(resource.id, role, resource.properties?.credentialGeneration ?? 0);
     const kubeconfig = [
       'apiVersion: v1',
       'kind: Config',
@@ -1382,6 +1390,124 @@ export class ResourceStore {
     applyUpdates({ properties: profile });
     if (child) applyUpdates(child);
     return true;
+  }
+
+  aksUpgradeProfile(route) {
+    const resource = this.getResource(route);
+    if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
+    const currentVersion = resource.properties?.currentKubernetesVersion ?? resource.properties?.kubernetesVersion ?? '1.29.2';
+    const nextMinor = (() => {
+      const [majorRaw, minorRaw] = String(currentVersion).split('.');
+      const major = Number(majorRaw) || 1;
+      const minor = Number(minorRaw) || 29;
+      return `${major}.${minor + 1}.0`;
+    })();
+    const poolProfiles = (resource.properties?.agentPoolProfiles ?? []).map(pool => ({
+      name: pool.name,
+      kubernetesVersion: pool.orchestratorVersion ?? currentVersion,
+      osType: pool.osType ?? 'Linux',
+      upgrades: [
+        {
+          kubernetesVersion: nextMinor,
+          isPreview: false,
+        },
+      ],
+    }));
+    return {
+      id: `${resource.id}/upgradeProfiles/default`,
+      name: 'default',
+      type: 'Microsoft.ContainerService/managedClusters/upgradeProfiles',
+      properties: {
+        controlPlaneProfile: {
+          kubernetesVersion: currentVersion,
+          osType: 'Linux',
+          upgrades: [
+            {
+              kubernetesVersion: nextMinor,
+              isPreview: false,
+            },
+          ],
+        },
+        agentPoolProfiles: poolProfiles,
+      },
+    };
+  }
+
+  resetAksServicePrincipalProfile(route, body = {}) {
+    const id = normalizeResourceId(route.subscriptionId, route.resourceGroupName, route.providerNamespace, route.typePath, route.scopeId ?? null);
+    const resource = this.resources.get(id.toLowerCase());
+    if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
+    if (resource.properties?.identityProfile || resource.identity?.type === 'SystemAssigned' || resource.identity?.type === 'UserAssigned') {
+      return {
+        error: {
+          status: 400,
+          code: 'BadRequest',
+          message: 'Reset service principal profile cannot be performed on a managed identity cluster.',
+        },
+      };
+    }
+    const clientId = String(body.clientId ?? body.properties?.clientId ?? '').trim();
+    if (!clientId) {
+      return {
+        error: {
+          status: 400,
+          code: 'InvalidParameter',
+          message: 'AKS resetServicePrincipalProfile requires clientId.',
+        },
+      };
+    }
+    resource.properties.servicePrincipalProfile = {
+      ...(resource.properties.servicePrincipalProfile ?? {}),
+      clientId,
+      secret: body.secret ?? body.properties?.secret ?? resource.properties.servicePrincipalProfile?.secret ?? null,
+    };
+    resource.properties.provisioningState = 'Succeeded';
+    return deepClone(resource);
+  }
+
+  rotateAksClusterCertificates(route) {
+    const id = normalizeResourceId(route.subscriptionId, route.resourceGroupName, route.providerNamespace, route.typePath, route.scopeId ?? null);
+    const resource = this.resources.get(id.toLowerCase());
+    if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
+    resource.properties.credentialGeneration = Number(resource.properties?.credentialGeneration ?? 0) + 1;
+    resource.properties.provisioningState = 'Succeeded';
+    resource.properties.certificateRotation = {
+      generation: resource.properties.credentialGeneration,
+      lastRotatedAt: nowIso(),
+    };
+    return deepClone(resource);
+  }
+
+  upgradeAksAgentPoolNodeImage(route) {
+    const typeParts = String(route?.typePath ?? '').split('/');
+    if (typeParts.length !== 4 || typeParts[0] !== 'managedClusters' || typeParts[2] !== 'agentPools') return null;
+    const poolName = typeParts[3];
+    const childId = normalizeResourceId(route.subscriptionId, route.resourceGroupName, route.providerNamespace, route.typePath, route.scopeId ?? null);
+    const child = this.resources.get(childId.toLowerCase());
+    const clusterRoute = {
+      ...route,
+      typePath: `managedClusters/${typeParts[1]}`,
+    };
+    const clusterId = normalizeResourceId(clusterRoute.subscriptionId, clusterRoute.resourceGroupName, clusterRoute.providerNamespace, clusterRoute.typePath, clusterRoute.scopeId ?? null);
+    const cluster = this.resources.get(clusterId.toLowerCase());
+    if (!cluster || cluster.type !== 'Microsoft.ContainerService/managedClusters') return null;
+    const pool = (cluster.properties?.agentPoolProfiles ?? [])
+      .find(item => String(item?.name ?? '').toLowerCase() === String(poolName).toLowerCase());
+    if (!pool) return null;
+    const nextImage = aksNextNodeImageVersion(pool.nodeImageVersion);
+    pool.nodeImageVersion = nextImage;
+    pool.provisioningState = 'Succeeded';
+    if (child?.properties) {
+      child.properties.nodeImageVersion = nextImage;
+      child.properties.provisioningState = 'Succeeded';
+    }
+    return deepClone(child ?? {
+      id: `${cluster.id}/agentPools/${poolName}`,
+      name: poolName,
+      type: 'Microsoft.ContainerService/managedClusters/agentPools',
+      location: cluster.location,
+      properties: pool,
+    });
   }
 
   exportSnapshot() {

@@ -468,10 +468,14 @@ export const tier1Capabilities = [
       'ManagedClusters.ListClusterAdminCredentialLocal',
       'ManagedClusters.ListClusterUserCredentialAadExecLocal',
       'ManagedClusters.ListClusterUserCredentialAzureAuthProviderLocal',
+      'ManagedClusters.UpgradeProfiles.GetLocal',
+      'ManagedClusters.ResetServicePrincipalProfileLocal',
+      'ManagedClusters.RotateClusterCertificatesLocal',
       'ManagedClusters.AgentPools.Get',
       'ManagedClusters.AgentPools.ListByCluster',
       'ManagedClusters.AgentPools.CreateOrUpdate',
       'ManagedClusters.AgentPools.Delete',
+      'ManagedClusters.AgentPools.UpgradeNodeImageVersionLocal',
       'ManagedClusters.AgentPools.BoundedAutoscalerRuntime',
       'ManagedClusters.RunCommandLocal',
       'ManagedClusters.CommandResults.Get',
@@ -488,7 +492,7 @@ export const tier1Capabilities = [
     realAzureCaptureRequired: ['node pool validation', 'CNI validation', 'identity integration errors'],
     knownGaps: [
       'AKS now fronts a real local k3s-backed cluster slice, but it is still not a full managed control plane.',
-      'Only a bounded VMSS-like node-pool and autoscaler slice is implemented; VMSS instance lifecycle, node-image, CNI, Azure-managed load balancer semantics beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service-exposure slice, addons, upgrades, admission controller, and full Kubernetes API parity remain open.',
+      'Only a bounded VMSS-like node-pool, node-image upgrade, certificate-rotation, and autoscaler slice is implemented; full VMSS instance lifecycle, CNI, Azure-managed load balancer semantics beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service-exposure slice, addons, control-plane upgrades, admission controller, and full Kubernetes API parity remain open.',
     ],
   },
   {

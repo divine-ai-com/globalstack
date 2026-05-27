@@ -2833,8 +2833,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity control-plane matrix has failures');
   }
-  if ((aksMetadataParity.controlPlane?.total ?? 0) < 60) {
-    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 60 cases');
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 65) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 65 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2851,14 +2851,19 @@ if (!aksMetadataParityText) {
     'credential action rejects wrong method',
     'user credential action returns kubeconfig metadata',
     'admin credential action returns kubeconfig metadata',
+    'cluster upgrade profile returns control-plane and agent-pool upgrade targets',
+    'service principal reset updates cluster profile and returns async operation',
+    'cluster certificate rotation invalidates old kubeconfig tokens and issues new ones',
     'cluster disableLocalAccounts requires Microsoft Entra managed profile',
     'AAD cluster with disableLocalAccounts creates successfully',
     'AAD user credential action returns exec kubeconfig when local accounts are disabled',
     'AAD user credential action returns azure auth-provider kubeconfig when requested',
     'AAD admin credential action is rejected when local accounts are disabled',
+    'AAD cluster service principal reset is rejected for managed identity cluster',
     'agent pool child collection reflects cluster pool metadata',
     'cluster update can add a live user pool with a second node',
     'agent pool child item reflects updated user pool metadata',
+    'agent pool node image upgrade updates ARM state and live node labels',
     'agent pool child put rejects invalid autoscaler bounds',
     'AKS runCommand returns commandResults location and completes successfully',
     'agent pool child put scales user pool out with VMSS metadata preserved across repeated reads',

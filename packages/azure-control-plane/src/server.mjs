@@ -63,9 +63,12 @@ import {
   dataMigrationTaskCollectionRoute,
   dataMigrationTaskCommandRoute,
   dataMigrationTaskItemRoute,
+  aksAgentPoolActionRoute,
   aksCommandResultRoute,
   aksCredentialActionRoute,
+  aksManagedClusterActionRoute,
   aksRunCommandRoute,
+  aksUpgradeProfileRoute,
   metricAlertStatusRoute,
   metricQueryExtensionRoute,
   webAppConfigRoute,
@@ -1277,6 +1280,85 @@ export function createArmRequestHandler({
             return sendError(res, result.error.status, result.error.code, result.error.message);
           }
           return sendJson(res, 200, result.body);
+        }
+
+        const aksUpgradeProfile = aksUpgradeProfileRoute(providerRoute);
+        if (aksUpgradeProfile) {
+          if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'AKS upgradeProfiles supports GET.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const profile = store.aksUpgradeProfile(aksUpgradeProfile.route);
+          if (!profile) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksUpgradeProfile.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, profile);
+        }
+
+        const aksManagedClusterAction = aksManagedClusterActionRoute(providerRoute);
+        if (aksManagedClusterAction) {
+          if (method !== 'POST') return sendError(res, 405, 'MethodNotAllowed', 'AKS managed-cluster actions support POST.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const body = await readBody(req);
+          const result = aksManagedClusterAction.action === 'resetserviceprincipalprofile'
+            ? store.resetAksServicePrincipalProfile(aksManagedClusterAction.route, body)
+            : store.rotateAksClusterCertificates(aksManagedClusterAction.route);
+          if (result?.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          if (!result) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksManagedClusterAction.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (typeof onResourcePut === 'function') {
+            onResourcePut({
+              store,
+              providerRoute: aksManagedClusterAction.route,
+              resourceType: 'Microsoft.ContainerService/managedClusters',
+              body: result,
+              apiVersion,
+              capability: capabilityForResourceType('Microsoft.ContainerService/managedClusters'),
+              resource: result,
+            });
+          }
+          const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+          const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+          return sendJson(res, 202, result, {
+            'azure-asyncoperation': operationUrl,
+            location: operationUrl,
+            'retry-after': '0',
+          });
+        }
+
+        const aksAgentPoolAction = aksAgentPoolActionRoute(providerRoute);
+        if (aksAgentPoolAction) {
+          if (method !== 'POST') return sendError(res, 405, 'MethodNotAllowed', 'AKS agent-pool actions support POST.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const cluster = store.getResource(aksAgentPoolAction.clusterRoute);
+          if (!cluster) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksAgentPoolAction.clusterRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          const storeResult = store.upgradeAksAgentPoolNodeImage(aksAgentPoolAction.agentPoolRoute);
+          if (!storeResult) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksAgentPoolAction.agentPoolRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (kubernetesRouter) {
+            const runtimeResult = await kubernetesRouter.clusterManager?.upgradeNodeImageVersion?.(cluster, aksAgentPoolAction.poolName);
+            if (runtimeResult?.error) {
+              return sendError(res, runtimeResult.error.status, runtimeResult.error.code, runtimeResult.error.message);
+            }
+          }
+          const refreshed = store.getResource(aksAgentPoolAction.agentPoolRoute) ?? storeResult;
+          const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+          const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+          return sendJson(res, 202, refreshed, {
+            'azure-asyncoperation': operationUrl,
+            location: operationUrl,
+            'retry-after': '0',
+          });
         }
 
         const aksCredentialRoute = aksCredentialActionRoute(providerRoute);

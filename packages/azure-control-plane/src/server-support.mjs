@@ -727,6 +727,53 @@ export function aksCredentialActionRoute(providerRoute) {
   };
 }
 
+export function aksManagedClusterActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'managedClusters') return null;
+  const action = parts[2]?.toLowerCase();
+  if (!['resetserviceprincipalprofile', 'rotateclustercertificates'].includes(action)) return null;
+  return {
+    route: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+    action,
+  };
+}
+
+export function aksUpgradeProfileRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4 || parts[0] !== 'managedClusters' || parts[2].toLowerCase() !== 'upgradeprofiles' || parts[3].toLowerCase() !== 'default') return null;
+  return {
+    route: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+  };
+}
+
+export function aksAgentPoolActionRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 5 || parts[0] !== 'managedClusters' || parts[2] !== 'agentPools') return null;
+  const action = parts[4]?.toLowerCase();
+  if (action !== 'upgradenodeimageversion') return null;
+  return {
+    clusterRoute: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+    agentPoolRoute: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}/agentPools/${parts[3]}`,
+    },
+    poolName: parts[3],
+    action,
+  };
+}
+
 export function aksRunCommandRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
   const parts = providerRoute.typePath.split('/');
