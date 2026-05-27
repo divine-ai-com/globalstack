@@ -63,7 +63,9 @@ import {
   dataMigrationTaskCollectionRoute,
   dataMigrationTaskCommandRoute,
   dataMigrationTaskItemRoute,
+  aksCommandResultRoute,
   aksCredentialActionRoute,
+  aksRunCommandRoute,
   metricAlertStatusRoute,
   metricQueryExtensionRoute,
   webAppConfigRoute,
@@ -239,6 +241,7 @@ export function createArmRequestHandler({
   workflowRunner = null,
   migrationRunner = null,
   metricStore = null,
+  kubernetesRouter = null,
 } = {}) {
   void persist;
 
@@ -1282,11 +1285,63 @@ export function createArmRequestHandler({
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
             return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
           }
-          const credentials = store.listAksCredentials(aksCredentialRoute.route, aksCredentialRoute.role);
+          const cluster = store.getResource(aksCredentialRoute.route);
+          const credentials = kubernetesRouter && cluster
+            ? await kubernetesRouter.listClusterCredentials(cluster, aksCredentialRoute.role, {
+                serverFqdn: url.searchParams.get('server-fqdn') ?? null,
+                format: url.searchParams.get('format') ?? null,
+              })
+            : store.listAksCredentials(aksCredentialRoute.route, aksCredentialRoute.role);
           if (!credentials) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksCredentialRoute.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
           return sendJson(res, 200, credentials);
+        }
+
+        const aksRunCommand = aksRunCommandRoute(providerRoute);
+        if (aksRunCommand) {
+          if (method !== 'POST') return sendError(res, 405, 'MethodNotAllowed', 'AKS runCommand supports POST.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const cluster = store.getResource(aksRunCommand.route);
+          if (!cluster) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksRunCommand.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!kubernetesRouter) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No Kubernetes runtime is configured for AKS runCommand.');
+          }
+          const body = await readBody(req);
+          const result = await kubernetesRouter.runCommand(cluster, body, apiVersion);
+          if (result?.error) {
+            return sendError(res, result.error.status, result.error.code, result.error.message);
+          }
+          if (result?.accepted) {
+            res.writeHead(202, result.headers ?? {});
+            res.end();
+            return;
+          }
+          return sendJson(res, 200, result?.body ?? {});
+        }
+
+        const aksCommandResult = aksCommandResultRoute(providerRoute);
+        if (aksCommandResult) {
+          if (method !== 'GET') return sendError(res, 405, 'MethodNotAllowed', 'AKS commandResults supports GET.');
+          if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
+            return sendError(res, 404, 'ResourceGroupNotFound', `Resource group '${providerRoute.resourceGroupName}' could not be found.`);
+          }
+          const cluster = store.getResource(aksCommandResult.route);
+          if (!cluster) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksCommandResult.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          if (!kubernetesRouter) {
+            return sendError(res, 501, 'GlobalStackRouteNotImplemented', 'No Kubernetes runtime is configured for AKS command result inspection.');
+          }
+          const result = await kubernetesRouter.getCommandResult(cluster, aksCommandResult.commandId);
+          if (!result) {
+            return sendError(res, 404, 'ResourceNotFound', `The Resource '${providerRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+          }
+          return sendJson(res, 200, result);
         }
 
         const metricStatus = metricAlertStatusRoute(providerRoute);

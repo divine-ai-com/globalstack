@@ -42,7 +42,7 @@ Unknown Azure resource types and incomplete ARM requests must fail closed rather
 | service-bus-topics | SNS | Service Bus topics / Event Grid topics | official-emulator-backed-local | no | 2 |
 | event-grid | EventBridge | Event Grid | metadata-only-control-plane | no | 2 |
 | container-registry | ECR | Azure Container Registry | metadata-only-control-plane | no | 1 |
-| aks-metadata | EKS | Azure Kubernetes Service | metadata-only-control-plane | no | 2 |
+| aks-metadata | EKS | Azure Kubernetes Service | facade-plus-local-runtime | no | 2 |
 | monitor-logs | CloudWatch Logs | Log Analytics / Application Insights / Azure Monitor Logs | metadata-only-control-plane | no | 1 |
 | monitor-metrics-alerts | CloudWatch Metrics/Alarms | Azure Monitor metrics and alerts | metadata-only-control-plane | no | 1 |
 | virtual-network | VPC | Virtual Network / Private Endpoint / Private DNS | metadata-only-control-plane | no | 2 |
@@ -70,4 +70,3 @@ Unknown Azure resource types and incomplete ARM requests must fail closed rather
 ## Real Azure Capture Rule
 
 Any unclear validation, default, error, async, auth, or side-effect behavior must be captured from a disposable real Azure resource before it can be marked `cloudValidated`.
-

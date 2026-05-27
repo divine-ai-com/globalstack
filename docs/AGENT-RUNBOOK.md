@@ -309,7 +309,7 @@ Run the Azure Kubernetes Service metadata parity pack after changing AKS managed
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity
 ```
 
-Expected result is `dist/e2e/azure-aks-metadata-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers captured servicePrincipalProfile validation, cluster naming and node-pool rejection, async managed-cluster metadata lifecycle, local kubeconfig action metadata, unsupported action fail-closed behavior, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-aks-metadata-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers captured servicePrincipalProfile validation, cluster naming and node-pool rejection, async managed-cluster lifecycle, agent-pool child resources, real local k3s-backed kubeconfig/runtime behavior, bounded `runCommand`, workload preservation across pool create/update/delete operations, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 After any real Azure capture:
 

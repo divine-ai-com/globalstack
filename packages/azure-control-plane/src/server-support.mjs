@@ -727,6 +727,31 @@ export function aksCredentialActionRoute(providerRoute) {
   };
 }
 
+export function aksRunCommandRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 3 || parts[0] !== 'managedClusters' || parts[2].toLowerCase() !== 'runcommand') return null;
+  return {
+    route: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+  };
+}
+
+export function aksCommandResultRoute(providerRoute) {
+  if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
+  const parts = providerRoute.typePath.split('/');
+  if (parts.length !== 4 || parts[0] !== 'managedClusters' || parts[2] !== 'commandResults' || !parts[3]) return null;
+  return {
+    route: {
+      ...providerRoute,
+      typePath: `managedClusters/${parts[1]}`,
+    },
+    commandId: parts[3],
+  };
+}
+
 export function metricAlertStatusRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.Insights') return null;
   const parts = providerRoute.typePath.split('/');

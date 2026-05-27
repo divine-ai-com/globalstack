@@ -333,14 +333,25 @@ function validateContainerRegistryName(resourceType, providerRoute) {
 }
 
 function validateAksName(resourceType, providerRoute) {
-  if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
-  const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'managedClusters');
-  if (!/^[A-Za-z0-9](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9])?$/.test(name)) {
-    return invalidAksName(
-      resourceType,
-      name,
-      'Cluster names must be 1 through 63 characters, use alphanumerics, hyphens, and underscores, and start and end with an alphanumeric character.',
-    );
+  if (resourceType === 'Microsoft.ContainerService/managedClusters') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'managedClusters');
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9])?$/.test(name)) {
+      return invalidAksName(
+        resourceType,
+        name,
+        'Cluster names must be 1 through 63 characters, use alphanumerics, hyphens, and underscores, and start and end with an alphanumeric character.',
+      );
+    }
+  }
+  if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
+    const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'agentPools');
+    if (!/^[a-z][a-z0-9]{0,11}$/.test(name)) {
+      return invalidAksName(
+        resourceType,
+        name,
+        'AKS agent pool names must start with a lowercase letter, use lowercase alphanumerics only, and be 1 through 12 characters.',
+      );
+    }
   }
   return null;
 }
@@ -648,6 +659,38 @@ function validateContainerRegistryPayload(resourceType, body) {
 }
 
 function validateAksPayload(resourceType, body) {
+  if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
+    const pool = body.properties ?? {};
+    if (!Number.isInteger(pool.count) || pool.count < 1 || pool.count > 100) {
+      return envelopedError(
+        400,
+        'InvalidAgentPoolCount',
+        'AKS agent pool count must be an integer between 1 and 100.',
+      );
+    }
+    if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool vmSize is required.',
+      );
+    }
+    if (pool.mode && !['System', 'User'].includes(pool.mode)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool mode must be System or User when provided.',
+      );
+    }
+    if (pool.osType && !['Linux', 'Windows'].includes(pool.osType)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool osType must be Linux or Windows when provided.',
+      );
+    }
+    return null;
+  }
   if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
   const properties = body.properties ?? {};
   const identityTypes = String(body.identity?.type ?? '')

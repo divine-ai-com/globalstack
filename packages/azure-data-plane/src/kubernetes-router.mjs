@@ -18,6 +18,18 @@ export class KubernetesRouter {
     return this.clusterManager.cluster(host);
   }
 
+  async listClusterCredentials(resource, role = 'user', options = {}) {
+    return this.clusterManager.listClusterCredentials(resource, role, options);
+  }
+
+  async runCommand(resource, body = {}, apiVersion = '2024-02-01') {
+    return this.clusterManager.runCommand(resource, body, apiVersion);
+  }
+
+  async getCommandResult(resource, commandId) {
+    return this.clusterManager.getCommandResult(resource, commandId);
+  }
+
   async dispose() {
     await this.clusterManager.dispose();
   }

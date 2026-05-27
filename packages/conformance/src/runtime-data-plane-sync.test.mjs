@@ -53,6 +53,7 @@ async function withRuntimeServer(fn) {
     onResourceDelete: runtime.unsyncResource,
     workflowRunner: runtime.workflowRunner,
     metricStore: runtime.metricStore,
+    kubernetesRouter: runtime.kubernetesRouter,
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
@@ -100,6 +101,10 @@ function kubeconfigToken(kubeconfigText) {
     .slice(1)
     .join(':')
     .trim() ?? '';
+}
+
+function leafResourceName(name) {
+  return String(name ?? '').split('/').filter(Boolean).at(-1) ?? '';
 }
 
 async function waitFor(assertion, { timeoutMs = 180000, delayMs = 1000 } = {}) {
@@ -350,6 +355,7 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     onResourcePut: runtime.syncResource,
     onResourceDelete: runtime.unsyncResource,
     workflowRunner: runtime.workflowRunner,
+    kubernetesRouter: runtime.kubernetesRouter,
   });
   const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
   await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
@@ -495,6 +501,31 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     });
     assert.equal(nodes.status, 200);
     assert.equal(nodes.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
+
+    const poolList = await httpJson(
+      armPort,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools?api-version=2024-02-01`,
+    );
+    assert.equal(poolList.status, 200);
+    assert.ok(poolList.body.value.some(item => leafResourceName(item.name) === 'systempool'));
+
+    const runCommand = await httpJson(
+      armPort,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/runCommand?api-version=2024-02-01`,
+      { command: 'kubectl get namespaces -o name' },
+    );
+    assert.equal(runCommand.status, 202);
+    const commandLocation = new URL(runCommand.headers.location);
+    const commandResult = await waitFor(async () => {
+      const resolved = await httpJson(armPort, 'GET', `${commandLocation.pathname}${commandLocation.search}`);
+      assert.equal(resolved.status, 200);
+      assert.equal(resolved.body.properties.provisioningState, 'succeeded');
+      return resolved;
+    });
+    assert.equal(commandResult.body.properties.exitCode, 0);
+    assert.match(commandResult.body.properties.logs, /namespace\/runtime-smoke/);
 
     const deleted = await httpJson(
       armPort,

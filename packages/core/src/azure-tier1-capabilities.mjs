@@ -456,7 +456,7 @@ export const tier1Capabilities = [
     tier: 1,
     awsAnalogue: 'EKS',
     azureEquivalent: 'Azure Kubernetes Service',
-    resourceTypes: ['Microsoft.ContainerService/managedClusters'],
+    resourceTypes: ['Microsoft.ContainerService/managedClusters', 'Microsoft.ContainerService/managedClusters/agentPools'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-aks-runtime', 'rancher-k3s-cluster'],
     implementedOperations: [
@@ -466,6 +466,10 @@ export const tier1Capabilities = [
       'ManagedClusters.Delete',
       'ManagedClusters.ListClusterUserCredentialLocal',
       'ManagedClusters.ListClusterAdminCredentialLocal',
+      'ManagedClusters.AgentPools.Get',
+      'ManagedClusters.AgentPools.ListByCluster',
+      'ManagedClusters.RunCommandLocal',
+      'ManagedClusters.CommandResults.Get',
       'ManagedClusters.KubernetesApiRuntime',
       'ManagedClusters.KubernetesApiAdminWriteRuntime',
     ],
@@ -474,7 +478,7 @@ export const tier1Capabilities = [
     realAzureCaptureRequired: ['node pool validation', 'CNI validation', 'identity integration errors'],
     knownGaps: [
       'AKS now fronts a real local k3s-backed cluster slice, but it is still not a full managed control plane.',
-      'No managed multi-node provisioning, VMSS behavior, CNI parity, addons, load balancer integration, upgrades, admission controller, or full Kubernetes API parity.',
+      'No VMSS behavior, CNI parity, addons, load balancer integration, upgrades, admission controller, or full Kubernetes API parity.',
     ],
   },
   {

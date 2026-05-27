@@ -643,6 +643,18 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
+      const parentRoute = {
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        providerNamespace: 'Microsoft.ContainerService',
+        typePath: providerRoute.typePath.split('/').slice(0, -2).join('/'),
+      };
+      const cluster = store.getResource(parentRoute);
+      if (cluster) kubernetesRouter.registerCluster(cluster);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites/functions') {
       const [, appName, , functionName] = providerRoute.typePath.split('/');
       functionsRouter.registerFunctionResource({
@@ -974,6 +986,18 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.ContainerService/managedClusters') {
       kubernetesRouter.unregisterCluster(resource ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
+      const parentRoute = {
+        subscriptionId: providerRoute.subscriptionId,
+        resourceGroupName: providerRoute.resourceGroupName,
+        providerNamespace: 'Microsoft.ContainerService',
+        typePath: providerRoute.typePath.split('/').slice(0, -2).join('/'),
+      };
+      const cluster = store.getResource(parentRoute);
+      if (cluster) kubernetesRouter.registerCluster(cluster);
       return;
     }
 

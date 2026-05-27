@@ -84,6 +84,7 @@ flowchart TD
 - `packages/azure-control-plane/src/server-support.mjs`
 - `packages/azure-control-plane/src/server.mjs`
 - `packages/azure-data-plane/src/activity-log-store.mjs`
+- `packages/azure-data-plane/src/aks-cluster-manager.mjs`
 - `packages/azure-data-plane/src/api-management-router.mjs`
 - `packages/azure-data-plane/src/app-configuration-router.mjs`
 - `packages/azure-data-plane/src/azure-files-router.mjs`
@@ -104,6 +105,7 @@ flowchart TD
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
+- `packages/azure-data-plane/src/relational-backend-manager.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`

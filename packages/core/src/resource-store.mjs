@@ -238,6 +238,18 @@ function aksNodeResourceGroup(resourceGroupName, name, location) {
   return `MC_${resourceGroupName}_${name}_${location}`;
 }
 
+function materializeAksAgentPoolProfile(pool = {}, existingPool = {}) {
+  return {
+    ...existingPool,
+    ...deepClone(pool),
+    provisioningState: 'Succeeded',
+    powerState: { code: 'Running' },
+    mode: pool.mode ?? existingPool.mode ?? 'User',
+    osType: pool.osType ?? existingPool.osType ?? 'Linux',
+    orchestratorVersion: pool.orchestratorVersion ?? existingPool.orchestratorVersion ?? null,
+  };
+}
+
 function dnsNameServers(name) {
   const digest = createHash('sha256')
     .update(`globalstack:dns:${name}`)
@@ -826,11 +838,19 @@ export class ResourceStore {
               currentKubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.currentKubernetesVersion ?? '1.29.2',
               kubernetesVersion: body.properties?.kubernetesVersion ?? existing?.properties?.kubernetesVersion ?? '1.29.2',
               powerState: { code: 'Running' },
-              agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool => ({
-                ...pool,
-                provisioningState: 'Succeeded',
-                powerState: { code: 'Running' },
-              })),
+              agentPoolProfiles: (body.properties?.agentPoolProfiles ?? existing?.properties?.agentPoolProfiles ?? []).map(pool =>
+                materializeAksAgentPoolProfile(
+                  pool,
+                  (existing?.properties?.agentPoolProfiles ?? []).find(existingPool => String(existingPool?.name ?? '').toLowerCase() === String(pool?.name ?? '').toLowerCase()),
+                )
+              ),
+          }
+          : {}),
+        ...(type === 'Microsoft.ContainerService/managedClusters/agentPools'
+          ? {
+              ...materializeAksAgentPoolProfile(body.properties ?? {}, existing?.properties ?? {}),
+              count: body.properties?.count ?? existing?.properties?.count ?? 1,
+              vmSize: body.properties?.vmSize ?? existing?.properties?.vmSize ?? 'Standard_DS2_v2',
           }
           : {}),
         ...(type === 'Microsoft.Network/dnsZones'
@@ -1042,6 +1062,66 @@ export class ResourceStore {
         }
       }
     }
+    if (type === 'Microsoft.ContainerService/managedClusters') {
+      const inlineAgentPools = Array.isArray(resource.properties?.agentPoolProfiles) ? resource.properties.agentPoolProfiles : [];
+      const agentPoolCapability = capabilityForResourceType('Microsoft.ContainerService/managedClusters/agentPools') ?? capability;
+      const agentPoolPrefix = `${key}/agentpools/`;
+      const expectedAgentPoolNames = new Set();
+      for (const agentPool of inlineAgentPools) {
+        const agentPoolName = String(agentPool?.name ?? '').trim();
+        if (!agentPoolName) continue;
+        expectedAgentPoolNames.add(agentPoolName.toLowerCase());
+        this.putResource({
+          subscriptionId,
+          resourceGroupName,
+          providerNamespace,
+          typePath: `${typePath}/agentPools/${agentPoolName}`,
+          scopeId,
+          apiVersion,
+          capability: agentPoolCapability,
+          body: {
+            location: body.location ?? existing?.location ?? 'global',
+            tags: resource.tags,
+            properties: deepClone(agentPool),
+          },
+        });
+      }
+      for (const resourceId of [...this.resources.keys()]) {
+        if (!resourceId.startsWith(agentPoolPrefix)) continue;
+        const agentPoolName = resourceId.slice(agentPoolPrefix.length).split('/')[0];
+        if (!expectedAgentPoolNames.has(agentPoolName)) this.resources.delete(resourceId);
+      }
+    }
+    if (type === 'Microsoft.ContainerService/managedClusters/agentPools') {
+      const parentRoute = {
+        subscriptionId,
+        resourceGroupName,
+        providerNamespace,
+        typePath: typeParts.slice(0, -2).join('/'),
+        scopeId,
+      };
+      const parentId = normalizeResourceId(
+        parentRoute.subscriptionId,
+        parentRoute.resourceGroupName,
+        parentRoute.providerNamespace,
+        parentRoute.typePath,
+        parentRoute.scopeId ?? null,
+      ).toLowerCase();
+      const parentResource = this.resources.get(parentId);
+      if (parentResource) {
+        const profiles = Array.isArray(parentResource.properties?.agentPoolProfiles)
+          ? parentResource.properties.agentPoolProfiles
+          : [];
+        const existingIndex = profiles.findIndex(pool => String(pool?.name ?? '').toLowerCase() === String(leafName ?? '').toLowerCase());
+        const materialized = materializeAksAgentPoolProfile({
+          ...resource.properties,
+          name: leafName,
+        }, profiles[existingIndex] ?? {});
+        if (existingIndex >= 0) profiles[existingIndex] = materialized;
+        else profiles.push(materialized);
+        parentResource.properties.agentPoolProfiles = profiles;
+      }
+    }
     return { resource: deepClone(resource), created: !existing, asyncAccepted: Boolean(lifecycleSequence) };
   }
 
@@ -1088,7 +1168,26 @@ export class ResourceStore {
 
   deleteResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null }) {
     const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId);
-    return this.resources.delete(id.toLowerCase());
+    const key = id.toLowerCase();
+    const typeParts = typePath.split('/');
+    const type = `${providerNamespace}/${typeParts.filter((_, index) => index % 2 === 0).join('/')}`;
+    if (type === 'Microsoft.ContainerService/managedClusters/agentPools') {
+      const parentTypePath = typeParts.slice(0, -2).join('/');
+      const parentId = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, parentTypePath, scopeId).toLowerCase();
+      const parentResource = this.resources.get(parentId);
+      if (parentResource) {
+        parentResource.properties.agentPoolProfiles = (parentResource.properties?.agentPoolProfiles ?? [])
+          .filter(pool => String(pool?.name ?? '').toLowerCase() !== String(typeParts.at(-1) ?? '').toLowerCase());
+      }
+    }
+    let deleted = false;
+    for (const resourceId of [...this.resources.keys()]) {
+      if (resourceId === key || resourceId.startsWith(`${key}/`)) {
+        this.resources.delete(resourceId);
+        deleted = true;
+      }
+    }
+    return deleted;
   }
 
   listResources(subscriptionId, resourceGroupName) {

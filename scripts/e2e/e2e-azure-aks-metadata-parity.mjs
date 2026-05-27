@@ -52,6 +52,7 @@ async function withArmServer(fn) {
     onResourceDelete: runtime.unsyncResource,
     workflowRunner: runtime.workflowRunner,
     metricStore: runtime.metricStore,
+    kubernetesRouter: runtime.kubernetesRouter,
   });
   const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -193,6 +194,10 @@ function kubeconfigValue(kubeconfig, key) {
     .split('\n')
     .find(entry => entry.trim().startsWith(`${key}:`));
   return line ? line.split(':').slice(1).join(':').trim() : '';
+}
+
+function leafResourceName(name) {
+  return String(name ?? '').split('/').filter(Boolean).at(-1) ?? '';
 }
 
 async function httpKube(port, path, { host, token: kubeToken, auth = true, method = 'GET', body } = {}) {
@@ -640,6 +645,7 @@ async function runControlPlaneMatrix() {
       const kubeconfig = decodeKubeconfig(result);
       assert.match(kubeconfig, new RegExp(`name: ${clusterName}`));
       assert.match(kubeconfig, /server: https:\/\/.+\.azmk8s\.io/);
+      assert.ok(kubeconfigValue(kubeconfig, 'certificate-authority-data').length > 16);
       clusterHost = new URL(kubeconfigValue(kubeconfig, 'server')).host;
       userKubeToken = kubeconfigValue(kubeconfig, 'token');
       return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
@@ -698,6 +704,13 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.equal(result.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
       return { status: result.status, count: result.body.items.length };
+    });
+
+    await record('agent pool child collection reflects cluster pool metadata', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools`));
+      assert.equal(result.status, 200);
+      assert.ok(result.body.value.some(item => leafResourceName(item.name) === 'systempool'));
+      return { status: result.status, count: result.body.value.length };
     });
 
     await recordDataPlane('cluster user credentials are read only on live kubernetes surface', async () => {
@@ -775,12 +788,141 @@ async function runControlPlaneMatrix() {
       return { status: service.status, deployment: deployment.body.metadata.name, service: service.body.metadata.name };
     });
 
-    await record('unsupported AKS action fails closed', async () => {
-      const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/runCommand`), {
-        command: 'kubectl get pods',
+    await record('cluster update can add a live user pool with a second node', async () => {
+      const body = aksBody({
+        tags: { workload: 'mlops-training-control-plane', topology: 'multi-pool' },
+        properties: {
+          dnsPrefix: clusterName,
+          enableRBAC: false,
+          agentPoolProfiles: [
+            {
+              name: 'systempool',
+              count: 1,
+              vmSize: 'Standard_DS2_v2',
+              mode: 'System',
+              osType: 'Linux',
+            },
+            {
+              name: 'userpool',
+              count: 1,
+              vmSize: 'Standard_DS3_v2',
+              mode: 'User',
+              osType: 'Linux',
+            },
+          ],
+        },
       });
+      const updated = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), body);
+      assert.equal(updated.status, 200);
+      const nodes = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        assert.ok(ready.body.items.length >= 2);
+        assert.ok(ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
+        return ready;
+      }, { timeoutMs: 240000 });
+      return {
+        status: updated.status,
+        nodeCount: nodes.body.items.length,
+        pools: [...new Set(nodes.body.items.map(item => item.metadata.labels['kubernetes.azure.com/agentpool']))].sort(),
+      };
+    });
+
+    await record('agent pool child item reflects updated user pool metadata', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.count, 1);
+      assert.equal(result.body.properties.vmSize, 'Standard_DS3_v2');
+      assert.equal(result.body.properties.mode, 'User');
+      return { status: result.status, pool: leafResourceName(result.body.name) };
+    });
+
+    await record('AKS runCommand returns commandResults location and completes successfully', async () => {
+      const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/runCommand`), {
+        command: 'kubectl get namespaces -o name',
+      });
+      assert.equal(result.status, 202);
+      assert.ok(result.headers.location);
+      const commandResult = await waitFor(async () => {
+        const location = new URL(result.headers.location);
+        const resolved = await httpJson(armPort, 'GET', `${location.pathname}${location.search}`);
+        assert.equal(resolved.status, 200);
+        assert.equal(resolved.body.properties.provisioningState, 'succeeded');
+        assert.equal(resolved.body.properties.exitCode, 0);
+        assert.match(resolved.body.properties.logs, /namespace\/runtime-smoke/);
+        return resolved;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+      return {
+        status: result.status,
+        commandId: commandResult.body.id,
+        provisioningState: commandResult.body.properties.provisioningState,
+      };
+    });
+
+    await record('agent pool child put adds a live burst pool with a third node', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/burstpool`),
+        {
+          properties: {
+            count: 1,
+            vmSize: 'Standard_DS4_v2',
+            mode: 'User',
+            osType: 'Linux',
+          },
+        },
+      );
+      assert.ok([200, 201].includes(result.status));
+      const nodes = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        assert.ok(ready.body.items.length >= 3);
+        assert.ok(ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'burstpool'));
+        return ready;
+      }, { timeoutMs: 240000 });
+      const namespace = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke', {
+        host: clusterHost,
+        token: adminKubeToken,
+      });
+      assert.equal(namespace.status, 200);
+      return {
+        status: result.status,
+        nodeCount: nodes.body.items.length,
+        pools: [...new Set(nodes.body.items.map(item => item.metadata.labels['kubernetes.azure.com/agentpool']))].sort(),
+      };
+    });
+
+    await record('agent pool child delete removes burst pool and preserves workload state', async () => {
+      const result = await httpJson(
+        armPort,
+        'DELETE',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/burstpool`),
+      );
+      assert.equal(result.status, 200);
+      const nodes = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        assert.equal(ready.body.items.length, 2);
+        assert.ok(!ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'burstpool'));
+        return ready;
+      }, { timeoutMs: 240000 });
+      const namespace = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke', {
+        host: clusterHost,
+        token: adminKubeToken,
+      });
+      assert.equal(namespace.status, 200);
+      return {
+        status: result.status,
+        nodeCount: nodes.body.items.length,
+        pools: [...new Set(nodes.body.items.map(item => item.metadata.labels['kubernetes.azure.com/agentpool']))].sort(),
+      };
+    });
+
+    await record('agent pool child get after delete is rejected', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/burstpool`));
       assert.equal(result.status, 404);
-      assert.equal(errorCode(result), 'GlobalStackRouteNotImplemented');
+      assert.equal(errorCode(result), 'ResourceNotFound');
       return { status: result.status, errorCode: errorCode(result) };
     });
 
@@ -886,7 +1028,11 @@ async function runPlatformMatrix() {
     PROVIDER: 'GlobalStack',
     CLOUD_PROVIDER: 'GlobalStack',
   };
-  const result = await run('npm', ['run', 'smoke:platform-runners'], { env, timeoutMs: 1800000 });
+  const result = await run('npm', ['run', 'smoke:platform-runners'], {
+    env,
+    timeoutMs: 1800000,
+    stdio: 'ignore',
+  });
   const resultsPath = join(root, 'dist', 'platform-lifecycle-smoke-results.json');
   const summary = await readJson(resultsPath).catch(() => ({ generatedAt: null, results: [] }));
   const failed = (summary.results ?? []).filter(item => !item.ok);
@@ -951,7 +1097,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster metadata lifecycle, captured servicePrincipalProfile validation, async provisioning-state smoke, local kubeconfig action metadata, a bounded Kubernetes API host behind the AKS FQDN, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for managed node provisioning, CNI, load balancer integration, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, workload scheduling, runCommand execution, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, async provisioning-state smoke, local kubeconfig action metadata, bounded multi-pool k3s-backed runtime behavior, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for VMSS semantics, CNI, load balancer integration, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -963,7 +1109,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, bounded AKS runCommand execution, bounded pool create/update/delete runtime reconciliation, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,

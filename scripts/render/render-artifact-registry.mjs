@@ -238,7 +238,7 @@ const artifacts = [
     kind: 'handwritten-doc',
     owner: 'aks-metadata',
     editPolicy: 'edit directly',
-    purpose: 'AKS ARM metadata, local kubeconfig action metadata, platform parity pack scope, outputs, and claim boundary.',
+    purpose: 'AKS managed-cluster and agent-pool runtime parity pack scope, kubeconfig and runCommand coverage, outputs, and claim boundary.',
   }),
   artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
@@ -485,7 +485,7 @@ const artifacts = [
     owner: 'aks-metadata',
     command: 'npm run e2e:aks-metadata-parity',
     editPolicy: 'edit directly with validation',
-    purpose: 'AKS managed-cluster metadata parity matrix, local kubeconfig action metadata, and all-platform lifecycle coverage.',
+    purpose: 'AKS managed-cluster and agent-pool parity matrix, k3s-backed kube runtime coverage, bounded runCommand coverage, and all-platform lifecycle coverage.',
   }),
 
   artifact({

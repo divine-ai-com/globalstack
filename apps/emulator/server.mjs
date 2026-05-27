@@ -29,6 +29,7 @@ const armServer = createArmServer({
   workflowRunner: runtime.workflowRunner,
   migrationRunner: runtime.migrationRunner,
   metricStore: runtime.metricStore,
+  kubernetesRouter: runtime.kubernetesRouter,
 });
 const blobServer = createBlobStorageServer(runtime.storageRouter);
 const queueServer = createQueueStorageServer(runtime.storageRouter);
