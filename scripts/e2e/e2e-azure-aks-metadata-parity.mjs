@@ -6,6 +6,7 @@ import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { createEdgeRouterServer } from '../../packages/azure-data-plane/src/edge-router.mjs';
 import { createKubernetesRouterServer } from '../../packages/azure-data-plane/src/kubernetes-router.mjs';
 import { azurePlatforms } from '../../packages/platform-registry/src/index.mjs';
 
@@ -55,13 +56,17 @@ async function withArmServer(fn) {
     kubernetesRouter: runtime.kubernetesRouter,
   });
   const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
+  const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   await new Promise(resolve => kubeServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   const kubePort = kubeServer.address().port;
+  const edgePort = edgeServer.address().port;
   try {
-    return await fn({ armPort: port, kubePort, runtime, store });
+    return await fn({ armPort: port, kubePort, edgePort, runtime, store });
   } finally {
+    await new Promise(resolve => edgeServer.close(resolve));
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => server.close(resolve));
     await runtime.dispose();
@@ -224,6 +229,22 @@ async function httpKube(port, path, { host, token: kubeToken, auth = true, metho
   };
 }
 
+async function edgeText(port, method, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      ...(options.host ? { 'x-forwarded-host': options.host } : {}),
+      ...(options.protocol ? { 'x-forwarded-proto': options.protocol } : {}),
+      ...(options.headers ?? {}),
+    },
+  });
+  return {
+    status: response.status,
+    headers: Object.fromEntries(response.headers.entries()),
+    body: await response.text(),
+  };
+}
+
 async function waitFor(assertion, { timeoutMs = 180000, delayMs = 1000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   let lastError = null;
@@ -295,7 +316,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async ({ armPort, kubePort }) => {
+  await withArmServer(async ({ armPort, kubePort, edgePort }) => {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
 
@@ -745,7 +766,34 @@ async function runControlPlaneMatrix() {
         },
       });
       assert.equal(configMap.status, 201);
-      return { status: configMap.status, namespace: namespace.body.metadata.name, configMap: configMap.body.metadata.name };
+      const secret = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/secrets', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Secret',
+          metadata: { name: 'runtime-smoke-secret' },
+          stringData: { mode: 'admin-only' },
+        },
+      });
+      assert.equal(secret.status, 201);
+      return {
+        status: secret.status,
+        namespace: namespace.body.metadata.name,
+        configMap: configMap.body.metadata.name,
+        secret: secret.body.metadata.name,
+      };
+    });
+
+    await recordDataPlane('cluster user credentials are restricted by backend RBAC on secrets', async () => {
+      const result = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/secrets', {
+        host: clusterHost,
+        token: userKubeToken,
+      });
+      assert.equal(result.status, 403);
+      assert.equal(result.body.reason, 'Forbidden');
+      return { status: result.status, reason: result.body.reason };
     });
 
     await recordDataPlane('cluster admin credentials can create deployment and service on live backend', async () => {
@@ -763,7 +811,12 @@ async function runControlPlaneMatrix() {
             template: {
               metadata: { labels: { app: 'runtime-smoke' } },
               spec: {
-                containers: [{ name: 'pause', image: 'registry.k8s.io/pause:3.9' }],
+                containers: [{
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
+                }],
               },
             },
           },
@@ -780,7 +833,7 @@ async function runControlPlaneMatrix() {
           metadata: { name: 'runtime-smoke-svc' },
           spec: {
             selector: { app: 'runtime-smoke' },
-            ports: [{ port: 80, targetPort: 80 }],
+            ports: [{ port: 80, targetPort: 5678 }],
           },
         },
       });
@@ -856,6 +909,49 @@ async function runControlPlaneMatrix() {
         status: result.status,
         commandId: commandResult.body.id,
         provisioningState: commandResult.body.properties.provisioningState,
+      };
+    });
+
+    await recordDataPlane('load balancer service exposes live backend through AKS edge integration', async () => {
+      const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: { name: 'runtime-smoke-lb' },
+          spec: {
+            type: 'LoadBalancer',
+            selector: { app: 'runtime-smoke' },
+            ports: [{ port: 80, targetPort: 5678 }],
+          },
+        },
+      });
+      assert.equal(created.status, 201);
+      const service = await waitFor(async () => {
+        const current = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-lb', {
+          host: clusterHost,
+          token: adminKubeToken,
+        });
+        assert.equal(current.status, 200);
+        assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.hostname);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+      const hostname = service.body.status.loadBalancer.ingress[0].hostname;
+      const response = await waitFor(async () => {
+        const current = await edgeText(edgePort, 'GET', '/', {
+          host: hostname,
+          protocol: 'http',
+        });
+        assert.equal(current.status, 200);
+        assert.match(current.body, /runtime-smoke/);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+      return {
+        status: response.status,
+        hostname,
+        route: response.headers['x-globalstack-edge-route'] ?? null,
       };
     });
 
@@ -1097,7 +1193,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, async provisioning-state smoke, local kubeconfig action metadata, bounded multi-pool k3s-backed runtime behavior, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for VMSS semantics, CNI, load balancer integration, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, async provisioning-state smoke, local kubeconfig action metadata, backend-RBAC-backed user/admin Kubernetes access, bounded multi-pool k3s-backed runtime behavior, bounded LoadBalancer service exposure through the edge router, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded service-exposure slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1109,7 +1205,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, bounded AKS runCommand execution, bounded pool create/update/delete runtime reconciliation, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded AKS runCommand execution, bounded LoadBalancer service exposure through the edge router, bounded pool create/update/delete runtime reconciliation, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,

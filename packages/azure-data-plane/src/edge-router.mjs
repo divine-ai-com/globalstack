@@ -1,5 +1,6 @@
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { URL } from 'node:url';
+import { request as httpsRequest } from 'node:https';
 
 function sendJson(res, status, body, headers = {}) {
   const payload = body === undefined ? '' : JSON.stringify(body, null, 2);
@@ -26,6 +27,22 @@ async function readRequestBody(req) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
   }
   return Buffer.concat(chunks).toString('utf8');
+}
+
+function stripHopByHopHeaders(headers = {}) {
+  return Object.fromEntries(
+    Object.entries(headers).filter(([key]) => ![
+      'connection',
+      'content-length',
+      'transfer-encoding',
+      'keep-alive',
+      'proxy-authenticate',
+      'proxy-authorization',
+      'te',
+      'trailer',
+      'upgrade',
+    ].includes(String(key).toLowerCase())),
+  );
 }
 
 function hostNameFromHeader(host) {
@@ -86,6 +103,7 @@ export class EdgeRouter {
     routePatterns = [],
     wafPolicyId,
     wafPolicyName = null,
+    proxyMode = null,
   }) {
     const normalizedHost = hostNameFromHeader(hostName);
     const existing = this.endpointsByHost.get(normalizedHost) ?? {};
@@ -104,6 +122,8 @@ export class EdgeRouter {
       routePatterns: normalizedPatterns.length > 0 ? normalizedPatterns : (existing.routePatterns ?? []),
       wafPolicyId: hasWafPolicyId ? (wafPolicyId ?? null) : (existing.wafPolicyId ?? null),
       wafPolicyName: hasWafPolicyName ? (wafPolicyName ?? null) : (existing.wafPolicyName ?? null),
+      proxyMode: proxyMode ?? existing.proxyMode ?? null,
+      nextOriginIndex: existing.nextOriginIndex ?? 0,
     });
   }
 
@@ -112,7 +132,57 @@ export class EdgeRouter {
   }
 
   endpoints() {
-    return [...this.endpointsByHost.values()];
+    return [...this.endpointsByHost.values()].map(endpoint => ({
+      ...endpoint,
+      nextOriginIndex: undefined,
+    }));
+  }
+
+  selectOrigin(endpoint) {
+    const origins = endpoint.origins ?? [];
+    if (origins.length === 0) return null;
+    const index = endpoint.nextOriginIndex ?? 0;
+    endpoint.nextOriginIndex = (index + 1) % origins.length;
+    return origins[index];
+  }
+
+  async proxyToOrigin(endpoint, origin, req, res, body) {
+    const protocol = String(req.headers['x-forwarded-proto'] ?? 'http').toLowerCase() === 'https' ? 'https' : 'http';
+    const requestFn = protocol === 'https' ? httpsRequest : httpRequest;
+    const originPort = protocol === 'https'
+      ? Number(origin.httpsPort ?? origin.httpPort ?? 0)
+      : Number(origin.httpPort ?? origin.httpsPort ?? 0);
+    if (!origin?.hostName || !originPort) {
+      sendError(res, 502, 'OriginNotConfigured', `The endpoint '${endpoint.endpointName}' has no routable origin.`);
+      return;
+    }
+    const headers = {
+      ...stripHopByHopHeaders(req.headers),
+      host: origin.hostName,
+      'content-length': String(Buffer.byteLength(body)),
+    };
+    delete headers['x-forwarded-host'];
+    delete headers['x-globalstack-edge-host'];
+    const upstream = requestFn({
+      method: req.method,
+      hostname: origin.hostName,
+      port: originPort,
+      path: req.url,
+      headers,
+    }, (upstreamRes) => {
+      res.writeHead(upstreamRes.statusCode ?? 502, {
+        ...stripHopByHopHeaders(upstreamRes.headers),
+        'x-globalstack-edge-route': `${endpoint.kind}/${endpoint.endpointName}`,
+        ...(endpoint.wafPolicyName ? { 'x-globalstack-waf-policy': endpoint.wafPolicyName } : {}),
+        'x-globalstack-origin-host': origin.hostName,
+      });
+      upstreamRes.pipe(res);
+    });
+    upstream.on('error', (error) => {
+      sendError(res, 502, 'OriginUnavailable', `The endpoint '${endpoint.endpointName}' origin '${origin.hostName}:${originPort}' failed: ${error instanceof Error ? error.message : String(error)}`);
+    });
+    if (body.length > 0) upstream.write(body);
+    upstream.end();
   }
 
   handler() {
@@ -186,9 +256,17 @@ export class EdgeRouter {
         }
       }
 
-      const origin = endpoint.origins[0] ?? null;
+      const origin = endpoint.proxyMode ? this.selectOrigin(endpoint) : (endpoint.origins[0] ?? null);
       if (endpoint.kind === 'cdn' && !origin) {
         return sendError(res, 502, 'OriginNotConfigured', `The CDN endpoint '${endpoint.endpointName}' has no configured origin.`);
+      }
+
+      if (endpoint.proxyMode === 'http-forward') {
+        if (!origin) {
+          return sendError(res, 502, 'OriginNotConfigured', `The endpoint '${endpoint.endpointName}' has no configured origin.`);
+        }
+        await this.proxyToOrigin(endpoint, origin, req, res, body);
+        return;
       }
 
       return sendJson(res, 200, {

@@ -358,10 +358,13 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     kubernetesRouter: runtime.kubernetesRouter,
   });
   const kubeServer = createKubernetesRouterServer(runtime.kubernetesRouter);
+  const edgeServer = createEdgeRouterServer(runtime.edgeRouter);
   await new Promise(resolve => armServer.listen(0, '127.0.0.1', resolve));
   await new Promise(resolve => kubeServer.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => edgeServer.listen(0, '127.0.0.1', resolve));
   const armPort = armServer.address().port;
   const kubePort = kubeServer.address().port;
+  const edgePort = edgeServer.address().port;
 
   try {
     await httpJson(armPort, 'PUT', `${subscriptionPath}/resourceGroups/rg-aks-sync?api-version=2021-04-01`, { location: 'eastus' });
@@ -446,6 +449,26 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     });
     assert.equal(configMapCreate.status, 201);
 
+    const secretCreate = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/secrets', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Secret',
+        metadata: { name: 'runtime-smoke-secret' },
+        stringData: { mode: 'admin-only' },
+      },
+    });
+    assert.equal(secretCreate.status, 201);
+
+    const userSecrets = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/secrets', {
+      host,
+      auth: `Bearer ${userToken}`,
+    });
+    assert.equal(userSecrets.status, 403);
+    assert.equal(userSecrets.body.reason, 'Forbidden');
+
     const deploymentCreate = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
       host,
       auth: `Bearer ${adminToken}`,
@@ -462,8 +485,10 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
             spec: {
               containers: [
                 {
-                  name: 'pause',
-                  image: 'registry.k8s.io/pause:3.9',
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
                 },
               ],
             },
@@ -483,7 +508,7 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
         metadata: { name: 'runtime-smoke-svc' },
         spec: {
           selector: { app: 'runtime-smoke' },
-          ports: [{ port: 80, targetPort: 80 }],
+          ports: [{ port: 80, targetPort: 5678 }],
         },
       },
     });
@@ -527,6 +552,45 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     assert.equal(commandResult.body.properties.exitCode, 0);
     assert.match(commandResult.body.properties.logs, /namespace\/runtime-smoke/);
 
+    const loadBalancerService = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: { name: 'runtime-smoke-lb' },
+        spec: {
+          type: 'LoadBalancer',
+          selector: { app: 'runtime-smoke' },
+          ports: [{ port: 80, targetPort: 5678 }],
+        },
+      },
+    });
+    assert.equal(loadBalancerService.status, 201);
+
+    const exposedService = await waitFor(async () => {
+      const current = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-lb', {
+        host,
+        auth: `Bearer ${adminToken}`,
+      });
+      assert.equal(current.status, 200);
+      assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.hostname);
+      return current;
+    });
+    const exposureHost = exposedService.body.status.loadBalancer.ingress[0].hostname;
+
+    const exposedResponse = await waitFor(async () => {
+      const current = await edgeJson(edgePort, 'GET', '/', {
+        host: exposureHost,
+        protocol: 'http',
+      });
+      assert.equal(current.status, 200);
+      assert.match(String(current.body), /runtime-smoke/);
+      return current;
+    });
+    assert.equal(exposedResponse.headers['x-globalstack-edge-route'], 'aks-service/runtime-smoke-runtime-smoke-lb');
+
     const deleted = await httpJson(
       armPort,
       'DELETE',
@@ -537,6 +601,7 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     const afterDelete = await kubeJson(kubePort, '/version', { host });
     assert.equal(afterDelete.status, 404);
   } finally {
+    await new Promise(resolve => edgeServer.close(resolve));
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => armServer.close(resolve));
     await runtime.dispose();

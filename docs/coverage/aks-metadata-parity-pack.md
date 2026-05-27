@@ -15,8 +15,10 @@ This pack is the current local evidence boundary for the Tier 1 `aks-metadata` c
   - `/version`
   - namespace list
   - node list
-  - admin write operations for namespace, configmap, deployment, and service creation
-  - read-only enforcement for cluster user credentials
+  - backend-RBAC-backed user/admin separation
+  - admin write operations for namespace, configmap, secret, deployment, and service creation
+  - user write rejection plus secret-read rejection through backend Kubernetes RBAC
+- Bounded `LoadBalancer` service exposure through the AKS facade, with the service hostname surfaced on the Kubernetes service status and traffic forwarded through the GlobalStack edge router into the live cluster backend.
 - Workload preservation when node-pool topology changes through parent updates or child pool create/delete operations.
 - Bounded `runCommand` execution via the real local k3s backend.
 - All eight platform runner lifecycles execute through the GlobalStack provider path during the full parity run.
@@ -44,7 +46,7 @@ This is local AKS facade plus real local cluster runtime evidence for the enumer
 
 Still explicit gaps:
 
-- No VMSS semantics, CNI, load balancer integration, private clusters, ingress, addons, upgrades, maintenance windows, diagnostics, or autoscaler parity.
+- No VMSS semantics, CNI, Azure-managed load balancer semantics beyond the bounded service-exposure slice, private clusters, ingress, addons, upgrades, maintenance windows, diagnostics, or autoscaler parity.
 - No exact Azure AD/RBAC, local account, cluster extension, node image, or credential rotation behavior.
 - Exhaustive live Azure parameter variance, async state, retry, identity/RBAC, and provider/IaC edge captures remain required.
 

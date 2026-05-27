@@ -471,14 +471,16 @@ export const tier1Capabilities = [
       'ManagedClusters.RunCommandLocal',
       'ManagedClusters.CommandResults.Get',
       'ManagedClusters.KubernetesApiRuntime',
+      'ManagedClusters.KubernetesApiRbacRuntime',
       'ManagedClusters.KubernetesApiAdminWriteRuntime',
+      'ManagedClusters.LoadBalancerServiceExposureLocal',
     ],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['node pool validation', 'CNI validation', 'identity integration errors'],
     knownGaps: [
       'AKS now fronts a real local k3s-backed cluster slice, but it is still not a full managed control plane.',
-      'No VMSS behavior, CNI parity, addons, load balancer integration, upgrades, admission controller, or full Kubernetes API parity.',
+      'No VMSS behavior, CNI parity, Azure-managed load balancer semantics beyond the bounded service-exposure slice, addons, upgrades, admission controller, or full Kubernetes API parity.',
     ],
   },
   {
