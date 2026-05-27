@@ -2833,8 +2833,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity control-plane matrix has failures');
   }
-  if ((aksMetadataParity.controlPlane?.total ?? 0) < 73) {
-    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 73 cases');
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 74) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 74 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2849,6 +2849,7 @@ if (!aksMetadataParityText) {
     'cluster dnsServiceIP outside serviceCidr is rejected',
     'cluster invalid docker bridge cidr is rejected',
     'cluster private public fqdn flag requires private cluster',
+    'private cluster dns zone None with disabled public FQDN is rejected',
     'cluster agent pool orchestratorVersion above control plane is rejected',
     'valid cluster create returns async Azure shape',
     'cluster first get is Creating',
@@ -2890,8 +2891,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 16) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 16 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 17) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 17 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
@@ -2910,6 +2911,7 @@ if (!aksMetadataParityText) {
     'ingress routes public host through managed AKS edge integration',
     'internal load balancer service gets private ingress and no public edge route',
     'control-plane version update preserves bounded workload state',
+    'private cluster public FQDN can be re-enabled and routes public host',
   ]) {
     if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure AKS metadata parity E2E missing passing data-plane case: ${required}`);

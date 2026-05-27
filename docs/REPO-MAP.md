@@ -189,6 +189,7 @@ flowchart TD
 
 ## Scripts
 
+- `scripts/capture/capture-azure-aks-differential.mjs`
 - `scripts/capture/capture-azure-provider-surface.mjs`
 - `scripts/capture/capture-azure-storage-data-plane.mjs`
 - `scripts/capture/capture-azure-storage-lifecycle.mjs`
@@ -261,6 +262,7 @@ flowchart TD
 
 ## NPM Commands
 
+- `npm run aks:capture:differential`
 - `npm run build:images`
 - `npm run capture:azure`
 - `npm run conformance:azure`

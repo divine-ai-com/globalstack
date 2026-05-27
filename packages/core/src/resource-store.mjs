@@ -287,13 +287,15 @@ function materializeAksNetworkProfile(input = {}, existing = {}) {
 }
 
 function materializeAksApiServerAccessProfile(input = {}, existing = {}) {
+  const enablePrivateCluster = input.enablePrivateCluster ?? existing.enablePrivateCluster ?? false;
+  const publicFqdnValue = input.enablePrivateClusterPublicFQDN ?? existing.enablePrivateClusterPublicFQDN;
   return {
     ...deepClone(existing),
     ...deepClone(input),
-    enablePrivateCluster: input.enablePrivateCluster ?? existing.enablePrivateCluster ?? false,
+    enablePrivateCluster,
     ...(input.privateDNSZone ?? existing.privateDNSZone ? { privateDNSZone: input.privateDNSZone ?? existing.privateDNSZone } : {}),
-    ...((input.enablePrivateClusterPublicFQDN ?? existing.enablePrivateClusterPublicFQDN) !== undefined
-      ? { enablePrivateClusterPublicFQDN: input.enablePrivateClusterPublicFQDN ?? existing.enablePrivateClusterPublicFQDN }
+    ...(publicFqdnValue !== undefined || enablePrivateCluster === true
+      ? { enablePrivateClusterPublicFQDN: publicFqdnValue ?? true }
       : {}),
   };
 }

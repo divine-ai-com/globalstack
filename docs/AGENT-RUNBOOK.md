@@ -309,7 +309,7 @@ Run the Azure Kubernetes Service metadata parity pack after changing AKS managed
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity
 ```
 
-Expected result is `dist/e2e/azure-aks-metadata-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers captured servicePrincipalProfile validation, cluster naming and node-pool rejection, async managed-cluster lifecycle, agent-pool child resources, real local k3s-backed kubeconfig/runtime behavior, bounded `runCommand`, workload preservation across pool create/update/delete operations, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-aks-metadata-parity/results.json` with `ok == true`, zero control-plane failures, and all eight platform runners passing. This suite covers captured servicePrincipalProfile validation, cluster naming and node-pool rejection, async managed-cluster lifecycle, agent-pool child resources, private-cluster FQDN behavior, CNI profile validation, ingress/load-balancer exposure slices, real local k3s-backed kubeconfig/runtime behavior, bounded `runCommand`, workload preservation across pool create/update/delete operations and control-plane patch updates, ARM-template deployment, post-delete errors, and representative IaC deployment lifecycles.
 
 After any real Azure capture:
 
@@ -358,6 +358,16 @@ Storage lifecycle capture:
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run lifecycle:capture:storage
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run lifecycle:capture:storage -- --wait-ready=true
 ```
+
+AKS guarded differential capture:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential -- --case=private-dns-none-public-fqdn-disabled
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential -- --all --include-provisioning
+```
+
+The AKS differential path is validation-only by default. Provisioning cases require `--include-provisioning`, a quota-aware subscription, and cleanup verification.
 
 Do not run broad real Azure capture waves without a cleanup plan, subscription awareness, and an explicit reason.
 

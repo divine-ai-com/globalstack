@@ -10,7 +10,7 @@ This pack is the current local evidence boundary for the Tier 1 `aks-metadata` c
 - Captured provider validation preserved for missing `location`, invalid `location`, missing `api-version`, and missing `servicePrincipalProfile`.
 - Local ARM success path for managed-cluster create, async provisioning reads, update, get, list, delete, post-delete get, and ARM-template deployment.
 - Local action behavior for `listClusterUserCredential`, `listClusterAdminCredential`, `resetServicePrincipalProfile`, `rotateClusterCertificates`, and `upgradeProfiles/default`, including bounded Microsoft Entra-managed user credential formats when local accounts are disabled and old kubeconfig-token rejection after certificate rotation.
-- Bounded private-cluster behavior for `apiServerAccessProfile.enablePrivateCluster`, `privateDNSZone: System`, private FQDN readback, kubeconfig server host selection, and public Kubernetes API host rejection when a cluster is updated to private mode without a public FQDN enabled.
+- Bounded private-cluster behavior for `apiServerAccessProfile.enablePrivateCluster`, `privateDNSZone: System`, the invalid `privateDNSZone: None` plus disabled public-FQDN combination, private FQDN readback, kubeconfig server host selection, public Kubernetes API host rejection when public FQDN is disabled, and public/private host routing when public FQDN is explicitly re-enabled.
 - Bounded CNI/network profile validation and readback for `networkPlugin`, `networkPolicy`, `serviceCidr`, `dnsServiceIP`, and `dockerBridgeCidr`.
 - Local ARM child-resource behavior for AKS agent-pool list/get plus child create/delete, VMSS-like pool metadata validation, scale-out, scale-to-zero, bounded autoscaler bounds, bounded node-image upgrade, and parent-cluster pool updates reflected in the live runtime.
 - Real local k3s-backed Kubernetes API behavior behind the AKS FQDN for:
@@ -46,10 +46,19 @@ For a faster control-plane-only iteration:
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity -- --skip-platforms
 ```
 
+For guarded real Azure differential captures:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential
+```
+
 ## Outputs
 
 - `dist/e2e/azure-aks-metadata-parity/results.json`
 - `dist/e2e/azure-aks-metadata-parity/report.md`
+- `fixtures/azure-captures/aks-metadata.differential.<case>.json` when the guarded real Azure capture is run
+
+See `docs/coverage/aks-real-azure-differential.md` for the capture cases, provisioning guard, and cleanup contract.
 
 ## Claim Boundary
 

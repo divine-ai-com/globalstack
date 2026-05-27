@@ -241,6 +241,14 @@ const artifacts = [
     purpose: 'AKS managed-cluster and agent-pool runtime parity pack scope, kubeconfig and runCommand coverage, outputs, and claim boundary.',
   }),
   artifact({
+    path: 'docs/coverage/aks-real-azure-differential.md',
+    kind: 'handwritten-doc',
+    owner: 'aks-metadata',
+    command: 'npm run aks:capture:differential',
+    editPolicy: 'edit directly when AKS capture cases or safety gates change',
+    purpose: 'Guarded real Azure AKS differential capture cases, provisioning guard, outputs, and cleanup contract.',
+  }),
+  artifact({
     path: 'docs/ARTIFACT-REGISTRY.md',
     kind: 'generated-doc',
     owner: 'scripts/render/render-artifact-registry.mjs',
@@ -414,6 +422,14 @@ const artifacts = [
     command: 'npm run storage:capture:data-plane',
     editPolicy: 'edit directly with cleanup guarantees',
     purpose: 'Captures live Azure Blob/Queue data-plane behavior and verifies cleanup.',
+  }),
+  artifact({
+    path: 'scripts/capture/capture-azure-aks-differential.mjs',
+    kind: 'capture-tool',
+    owner: 'aks-metadata',
+    command: 'npm run aks:capture:differential',
+    editPolicy: 'edit directly with cleanup guarantees',
+    purpose: 'Captures guarded real Azure AKS validation and opt-in provisioning differentials for local parity hardening.',
   }),
   artifact({
     path: 'scripts/e2e/e2e-azure-storage*.mjs',

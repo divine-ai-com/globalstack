@@ -228,6 +228,17 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function aksRuntimeUlimits() {
+  const nofile = Number(process.env.GLOBALSTACK_AKS_NOFILE_ULIMIT ?? 1048576);
+  return [
+    {
+      Name: 'nofile',
+      Soft: nofile,
+      Hard: nofile,
+    },
+  ];
+}
+
 function parseKubeconfig(kubeconfigText) {
   const kubeconfig = YAML.parse(String(kubeconfigText ?? '')) ?? {};
   const cluster = kubeconfig.clusters?.[0]?.cluster ?? {};
@@ -824,6 +835,7 @@ export class AksClusterManager {
       },
       HostConfig: {
         Privileged: true,
+        Ulimits: aksRuntimeUlimits(),
         Tmpfs: {
           '/run': 'rw',
           '/var/run': 'rw',
@@ -1892,6 +1904,7 @@ export class AksClusterManager {
       },
       HostConfig: {
         Privileged: true,
+        Ulimits: aksRuntimeUlimits(),
         Tmpfs: {
           '/run': 'rw',
           '/var/run': 'rw',
@@ -1973,6 +1986,7 @@ export class AksClusterManager {
           },
           HostConfig: {
             Privileged: true,
+            Ulimits: aksRuntimeUlimits(),
             Tmpfs: {
               '/run': 'rw',
               '/var/run': 'rw',
@@ -2031,7 +2045,7 @@ export class AksClusterManager {
     const hostAliases = privateCluster
       ? [
           privateFqdn,
-          ...(apiServerAccessProfile.enablePrivateClusterPublicFQDN === true ? [fqdn] : []),
+          ...(apiServerAccessProfile.enablePrivateClusterPublicFQDN !== false ? [fqdn] : []),
         ]
       : [fqdn];
     const signature = clusterSignature(resource);

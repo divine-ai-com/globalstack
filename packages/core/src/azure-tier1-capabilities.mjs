@@ -470,6 +470,8 @@ export const tier1Capabilities = [
       'ManagedClusters.ListClusterUserCredentialAzureAuthProviderLocal',
       'ManagedClusters.PrivateClusterPrivateFqdnLocal',
       'ManagedClusters.PrivateClusterKubeconfigHostLocal',
+      'ManagedClusters.PrivateClusterPublicFqdnToggleLocal',
+      'ManagedClusters.PrivateClusterDnsZoneValidationLocal',
       'ManagedClusters.NetworkProfileValidationLocal',
       'ManagedClusters.NetworkProfileReadbackLocal',
       'ManagedClusters.UpgradeProfiles.GetLocal',

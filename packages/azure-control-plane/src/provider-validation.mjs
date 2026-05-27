@@ -893,6 +893,17 @@ function validateAksApiServerAccessProfile(profile = {}) {
       'AKS apiServerAccessProfile.enablePrivateClusterPublicFQDN requires enablePrivateCluster to be true.',
     );
   }
+  if (
+    profile.enablePrivateCluster === true
+    && String(profile.privateDNSZone ?? '').toLowerCase() === 'none'
+    && profile.enablePrivateClusterPublicFQDN === false
+  ) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS apiServerAccessProfile.privateDNSZone None requires the private cluster public FQDN to remain enabled.',
+    );
+  }
   return null;
 }
 

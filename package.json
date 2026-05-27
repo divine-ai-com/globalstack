@@ -44,6 +44,7 @@
     "conformance:roadmap": "node scripts/render/render-azure-99-roadmap.mjs",
     "lifecycle:capture:storage": "node scripts/capture/capture-azure-storage-lifecycle.mjs",
     "storage:capture:data-plane": "node scripts/capture/capture-azure-storage-data-plane.mjs",
+    "aks:capture:differential": "node scripts/capture/capture-azure-aks-differential.mjs",
     "e2e:storage": "node scripts/e2e/e2e-azure-storage.mjs",
     "e2e:storage-hardening": "node scripts/e2e/e2e-azure-storage-hardening.mjs",
     "e2e:storage-normalizer": "node scripts/e2e/e2e-azure-storage-normalizer.mjs",

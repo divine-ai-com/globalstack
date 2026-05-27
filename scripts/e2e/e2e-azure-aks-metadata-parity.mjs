@@ -613,6 +613,26 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('private cluster dns zone None with disabled public FQDN is rejected', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({
+          properties: {
+            apiServerAccessProfile: {
+              enablePrivateCluster: true,
+              privateDNSZone: 'None',
+              enablePrivateClusterPublicFQDN: false,
+            },
+          },
+        }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('cluster agent pool orchestratorVersion above control plane is rejected', async () => {
       const body = aksBody();
       body.properties.agentPoolProfiles[0].orchestratorVersion = '1.30.0';
@@ -1816,6 +1836,7 @@ async function runControlPlaneMatrix() {
             apiServerAccessProfile: {
               enablePrivateCluster: true,
               privateDNSZone: 'System',
+              enablePrivateClusterPublicFQDN: false,
             },
           },
         },
@@ -1823,6 +1844,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.status, 200);
       assert.equal(result.body.properties.apiServerAccessProfile.enablePrivateCluster, true);
       assert.equal(result.body.properties.apiServerAccessProfile.privateDNSZone, 'System');
+      assert.equal(result.body.properties.apiServerAccessProfile.enablePrivateClusterPublicFQDN, false);
       assert.match(result.body.properties.privateFQDN, /\.privatelink\.eastus\.azmk8s\.io$/);
       return {
         status: result.status,
@@ -1854,6 +1876,44 @@ async function runControlPlaneMatrix() {
       return {
         status: privateResult.status,
         publicHostStatus: publicResult.status,
+        privateHost,
+      };
+    });
+
+    await recordDataPlane('private cluster public FQDN can be re-enabled and routes public host', async () => {
+      const before = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath));
+      assert.equal(before.status, 200);
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        {
+          location: 'eastus',
+          tags: before.body.tags,
+          identity: before.body.identity,
+          properties: {
+            ...before.body.properties,
+            dnsPrefix: clusterName,
+            apiServerAccessProfile: {
+              ...before.body.properties.apiServerAccessProfile,
+              enablePrivateCluster: true,
+              enablePrivateClusterPublicFQDN: true,
+            },
+          },
+        },
+      );
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.apiServerAccessProfile.enablePrivateClusterPublicFQDN, true);
+      const publicHost = result.body.properties.fqdn;
+      const privateHost = result.body.properties.privateFQDN;
+      const publicResult = await httpKube(kubePort, '/version', { host: publicHost, token: userKubeToken });
+      assert.equal(publicResult.status, 200);
+      const privateResult = await httpKube(kubePort, '/version', { host: privateHost, token: userKubeToken });
+      assert.equal(privateResult.status, 200);
+      clusterHost = privateHost;
+      return {
+        status: publicResult.status,
+        publicHost,
         privateHost,
       };
     });
@@ -2146,7 +2206,15 @@ function markdown(report) {
 await mkdir(outRoot, { recursive: true });
 
 const parity = await runControlPlaneMatrix();
-const platformMatrix = await runPlatformMatrix();
+const platformMatrix = parity.controlPlane.ok && parity.dataPlane.ok
+  ? await runPlatformMatrix()
+  : {
+      ok: false,
+      skipped: true,
+      reason: 'AKS control/data-plane matrix failed before platform runner validation',
+      expectedPlatforms: azurePlatforms.length,
+      results: [],
+    };
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
