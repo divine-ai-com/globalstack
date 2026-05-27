@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T20:19:28.698Z
+Generated: 2026-05-27T20:59:06.238Z
 
 ## Guardrails
 
@@ -49,13 +49,13 @@ Method:
 ## Platform Verification Snapshot
 
 - Source: `docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present`
-- Generated: 2026-05-27T20:17:23.723Z
+- Generated: 2026-05-27T20:59:00.516Z
 - Model: gpt-5.5
 - Location: eastus
 - Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
-- Platform waves recorded: 4
-- Bundles across recorded platform waves: 20
-- Passing bundles across recorded platform waves: 20/20
+- Platform waves recorded: 5
+- Bundles across recorded platform waves: 25
+- Passing bundles across recorded platform waves: 25/25
 
 | Platform | Generated | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|---|---|
@@ -79,6 +79,11 @@ Method:
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91333 | warehouse-dispatch-event-plane | PASS | destroy |
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91334 | billing-audit-notification-mesh | PASS | destroy |
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91335 | regional-catalog-command-plane | PASS | destroy |
+| azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91301 | claims-evidence-command-ring | PASS | destroy |
+| azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91302 | partner-order-ingest-buffer | PASS | destroy |
+| azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91303 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91304 | billing-audit-notification-mesh | PASS | destroy |
+| azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91305 | regional-catalog-command-plane | PASS | destroy |
 
 ## Cross-Cutting Pending Backlog
 
@@ -179,11 +184,11 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Rank | Next Work | Why Now | Commands |
 |---:|---|---|---|
-| 1 | Run the verified 5-bundle wave against Terraform HCL | Terraform HCL has no complete recorded 5-bundle platform wave yet, so platform breadth is still not fully proven. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-terraform-hcl` |
-| 2 | Enable and run the verified 5-bundle wave for Pulumi TypeScript | Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts` |
-| 3 | Enable and run the verified 5-bundle wave for Pulumi YAML | Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml` |
-| 4 | Enable and run the verified 5-bundle wave for Ansible YAML | Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml` |
-| 5 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
+| 1 | Enable and run the verified 5-bundle wave for Pulumi TypeScript | Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts` |
+| 2 | Enable and run the verified 5-bundle wave for Pulumi YAML | Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml` |
+| 3 | Enable and run the verified 5-bundle wave for Ansible YAML | Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml` |
+| 4 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
+| 5 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
 
 ## Wave Summary
 

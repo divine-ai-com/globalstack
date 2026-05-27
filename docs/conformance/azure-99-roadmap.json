@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T20:19:28.698Z",
+    "generatedAt": "2026-05-27T20:59:06.238Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -133,13 +133,13 @@
   },
   "verifiedPlatformSnapshot": {
     "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
-    "generatedAt": "2026-05-27T20:17:23.723Z",
+    "generatedAt": "2026-05-27T20:59:00.516Z",
     "model": "gpt-5.5",
     "location": "eastus",
     "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
-    "waveCount": 4,
-    "total": 20,
-    "passCount": 20,
+    "waveCount": 5,
+    "total": 25,
+    "passCount": 25,
     "waves": [
       {
         "platformId": "azure-arm-json",
@@ -337,6 +337,57 @@
           },
           {
             "prId": "Pr91335",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91301",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91302",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91303",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91304",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91305",
             "scenarioId": "regional-catalog-command-plane",
             "ok": true,
             "finalStatus": "PASS",
@@ -566,6 +617,61 @@
         "ok": true,
         "finalStatus": "PASS",
         "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91301",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91302",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91303",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91304",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91305",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
       }
     ]
   },
@@ -786,14 +892,6 @@
   "immediateNextWork": [
     {
       "rank": 1,
-      "label": "Run the verified 5-bundle wave against Terraform HCL",
-      "why": "Terraform HCL has no complete recorded 5-bundle platform wave yet, so platform breadth is still not fully proven.",
-      "commands": [
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-terraform-hcl"
-      ]
-    },
-    {
-      "rank": 2,
       "label": "Enable and run the verified 5-bundle wave for Pulumi TypeScript",
       "why": "Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence.",
       "commands": [
@@ -802,7 +900,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "label": "Enable and run the verified 5-bundle wave for Pulumi YAML",
       "why": "Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave.",
       "commands": [
@@ -811,7 +909,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 3,
       "label": "Enable and run the verified 5-bundle wave for Ansible YAML",
       "why": "Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave.",
       "commands": [
@@ -820,12 +918,21 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 4,
       "label": "Make the complex adversarial runner platform-aware",
       "why": "The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.",
       "commands": [
         "node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs",
         "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep"
+      ]
+    },
+    {
+      "rank": 5,
+      "label": "Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations",
+      "why": "The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.",
+      "commands": [
+        "npm run smoke:platform-runners",
+        "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>"
       ]
     }
   ],

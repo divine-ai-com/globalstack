@@ -504,6 +504,7 @@ write_native_pulumi_deployment_response() {
   local resource_group="$1"
   local storage_account="$2"
   jq -n \
+    --slurpfile nativeOutputs "${PLATFORM_NATIVE_OUTPUTS}" \
     --arg platform "${PLATFORM_ID}" \
     --arg resourceGroupName "${resource_group}" \
     --arg storageAccountName "${storage_account}" \
@@ -518,10 +519,10 @@ write_native_pulumi_deployment_response() {
         platform: $platform,
         toolchain: "pulumi",
         endpoint: $endpoint,
-        outputs: {
+        outputs: ($nativeOutputs[0] // {
           resourceGroupName: { type: "string", value: $resourceGroupName },
           storageAccountName: { type: "string", value: $storageAccountName }
-        },
+        }),
         globalstackDeploymentSteps: [
           {
             operation: "pulumi-up",
@@ -806,6 +807,7 @@ write_native_hcl_deployment_response() {
   local resource_group="$2"
   local storage_account="$3"
   jq -n \
+    --slurpfile nativeOutputs "${PLATFORM_NATIVE_OUTPUTS}" \
     --arg platform "${PLATFORM_ID}" \
     --arg tool "${tool}" \
     --arg resourceGroupName "${resource_group}" \
@@ -821,10 +823,10 @@ write_native_hcl_deployment_response() {
         platform: $platform,
         toolchain: $tool,
         endpoint: $endpoint,
-        outputs: {
+        outputs: ($nativeOutputs[0] // {
           resourceGroupName: { type: "string", value: $resourceGroupName },
           storageAccountName: { type: "string", value: $storageAccountName }
-        },
+        }),
         globalstackDeploymentSteps: [
           {
             operation: "native-provider-apply",

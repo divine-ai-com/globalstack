@@ -121,6 +121,29 @@ mutate_drift_target() {
   DRIFT_TARGET_DETAIL="drifted resource group tags"
 }
 
+hcl_state_address_for_resource_type() {
+  local state_json_file="$1"
+  local resource_type_prefix="$2"
+  jq -r --arg prefix "${resource_type_prefix}@" '
+    .resources[]?
+    | select(.mode == "managed" and .type == "azapi_resource")
+    | . as $resource
+    | ($resource.module // "") as $module
+    | $resource.instances[]?
+    | select((.attributes.type // "") | startswith($prefix))
+    | (
+        (if $module == "" then "" else $module + "." end)
+        + $resource.type + "." + $resource.name
+        + (
+            if .index_key == null then ""
+            elif (.index_key | type) == "number" then "[" + (.index_key | tostring) + "]"
+            else "[\"" + (.index_key | tostring) + "\"]"
+            end
+          )
+      )
+  ' "${state_json_file}" | head -n 1
+}
+
 if is_native_hcl_platform; then
   tool="$(hcl_tool)"
   log_stage provider-lifecycle "checking native HCL plan, refresh, drift, import, idempotency, and state reads with ${tool}"
@@ -156,6 +179,20 @@ if is_native_hcl_platform; then
     write_stage_report provider-lifecycle FAIL "${tool} state list failed after deploy"
     exit 1
   fi
+  if ! "${tool}" -chdir="${PLATFORM_WORK_DIR}/lib" state pull >"${REPORT_DIR}/native-state.json" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+    write_stage_report provider-lifecycle FAIL "${tool} state pull failed after deploy"
+    exit 1
+  fi
+  if ! resource_group_address="$(hcl_state_address_for_resource_type "${REPORT_DIR}/native-state.json" "Microsoft.Resources/resourceGroups")"; then
+    resource_group_address=""
+  fi
+  if ! storage_account_address="$(hcl_state_address_for_resource_type "${REPORT_DIR}/native-state.json" "Microsoft.Storage/storageAccounts")"; then
+    storage_account_address=""
+  fi
+  if [ -z "${resource_group_address}" ] || [ -z "${storage_account_address}" ]; then
+    write_stage_report provider-lifecycle FAIL "${tool} state list is missing importable resource group or storage account resources"
+    exit 1
+  fi
 
   mutate_drift_target
   set +e
@@ -180,11 +217,11 @@ if is_native_hcl_platform; then
     write_stage_report provider-lifecycle FAIL "${tool} import workspace init failed"
     exit 1
   fi
-  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" azapi_resource.resource_group "$(resource_group_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" "${resource_group_address}" "$(resource_group_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
     write_stage_report provider-lifecycle FAIL "${tool} import of resource group failed"
     exit 1
   fi
-  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" azapi_resource.storage_account "$(storage_account_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
+  if ! "${tool}" -chdir="${import_dir}" import -input=false -no-color "${vars[@]}" "${storage_account_address}" "$(storage_account_id)" >>"${PLATFORM_PROVIDER_LIFECYCLE_STDOUT}" 2>>"${PLATFORM_PROVIDER_LIFECYCLE_STDERR}"; then
     write_stage_report provider-lifecycle FAIL "${tool} import of storage account failed"
     exit 1
   fi
@@ -192,7 +229,7 @@ if is_native_hcl_platform; then
     write_stage_report provider-lifecycle FAIL "${tool} imported state list failed"
     exit 1
   fi
-  if ! grep -q 'azapi_resource.resource_group' "${REPORT_DIR}/native-import-state-list.txt" || ! grep -q 'azapi_resource.storage_account' "${REPORT_DIR}/native-import-state-list.txt"; then
+  if ! grep -Fxq "${resource_group_address}" "${REPORT_DIR}/native-import-state-list.txt" || ! grep -Fxq "${storage_account_address}" "${REPORT_DIR}/native-import-state-list.txt"; then
     write_stage_report provider-lifecycle FAIL "${tool} imported state is missing expected resources"
     exit 1
   fi
@@ -204,8 +241,8 @@ if is_native_hcl_platform; then
     "$(json_op "${tool}-state-list" PASS "state file contains deployed resources")" \
     "$(append_command "${tool}-plan-drift-refresh-only" "${drift_code}")" \
     "$(json_op "${tool}-apply-drift-reconcile" PASS "${DRIFT_TARGET_DETAIL} was reconciled")" \
-    "$(json_op "${tool}-import-resource-group" PASS "resource group import completed in a clean workspace")" \
-    "$(json_op "${tool}-import-storage-account" PASS "storage account import completed in a clean workspace")" \
+    "$(json_op "${tool}-import-resource-group" PASS "resource group import completed in a clean workspace at ${resource_group_address}")" \
+    "$(json_op "${tool}-import-storage-account" PASS "storage account import completed in a clean workspace at ${storage_account_address}")" \
     "$(json_op "${tool}-import-state-list" PASS "import workspace state contains both resources")"
   write_stage_report provider-lifecycle PASS "${tool} provider lifecycle evidence passed"
   exit 0
