@@ -66,6 +66,36 @@ const starterBundles = [
     prId: 'Pr91355',
   },
   {
+    platformId: 'azure-pulumi-yaml',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '4c0d81d6-6b34-405f-9d00-087c1284d844',
+    prId: 'Pr91361',
+  },
+  {
+    platformId: 'azure-pulumi-yaml',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '271f800d-71b1-40c4-9f8b-0b9f1f4e1eff',
+    prId: 'Pr91362',
+  },
+  {
+    platformId: 'azure-pulumi-yaml',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: '5667b642-5474-4be6-9d07-059b2243df4b',
+    prId: 'Pr91363',
+  },
+  {
+    platformId: 'azure-pulumi-yaml',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: '0a172f4d-8d74-4953-a5aa-b5e9f81e19ce',
+    prId: 'Pr91364',
+  },
+  {
+    platformId: 'azure-pulumi-yaml',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '8ad8494d-69f2-4950-80ef-231551f86a7d',
+    prId: 'Pr91365',
+  },
+  {
     platformId: 'azure-bicep',
     scenarioId: 'regulated-genai-knowledge-ingestion',
     poId: '0fb57f73-b5c4-4d8d-bf1e-e88f2164c103',
@@ -510,6 +540,39 @@ const platformInstructions = new Map([
     unitTestCommand: 'node test/tap-stack.unit.test.mjs',
     integrationTestCommand: 'node test/tap-stack.int.test.mjs',
   }],
+  ['azure-pulumi-yaml', {
+    files: ['Pulumi.yaml'],
+    instruction: [
+      'Use Pulumi YAML with the azure-native provider.',
+      'Put the entire program in Pulumi.yaml with runtime: yaml.',
+      'Use unversioned Pulumi YAML resource type tokens such as azure-native:resources:ResourceGroup, azure-native:storage:StorageAccount, azure-native:storage:BlobContainer, azure-native:storage:Queue, azure-native:storage:FileShare, azure-native:storage:Table, azure-native:servicebus:Namespace, azure-native:servicebus:Topic, azure-native:eventgrid:Topic, azure-native:eventhub:Namespace, azure-native:eventhub:EventHub, and azure-native:appconfiguration:ConfigurationStore. Do not use versioned token segments such as storage/v20230101.',
+      'Use these exact Pulumi YAML resource keys: resourceGroup, storageAccount, blobContainer, storageQueue, fileShare, storageTable, serviceBusNamespace, serviceBusTopic, eventGridTopic, eventHubNamespace, eventHub, and appConfigurationStore.',
+      'Create storage child resources directly with accountName and resourceGroupName. Do not introduce blobServices/default, queueServices/default, fileServices/default, or tableServices/default helper resources in this platform.',
+      'Reference parent resource outputs for children: storage children must use accountName: ${storageAccount.name}, the Service Bus topic must use namespaceName: ${serviceBusNamespace.name}, and the event hub must use namespaceName: ${eventHubNamespace.name}.',
+      'Add explicit Pulumi YAML options.dependsOn entries for the storage child resources, Service Bus topic, and event hub so parent resources are created before their children.',
+      'Export exactly the requested output keys from the Pulumi YAML outputs block.',
+      'For child resources, output the exact logical names from this prompt, not provider-computed composite names such as account/default/container or namespace/topic.',
+      'Use the exact resource names provided and do not generate random suffixes.',
+    ].join(' '),
+    requiredMarkers: [
+      'runtime: yaml',
+      'azure-native:resources:ResourceGroup',
+      'azure-native:storage:StorageAccount',
+      'azure-native:storage:BlobContainer',
+      'azure-native:storage:Queue',
+      'azure-native:storage:FileShare',
+      'azure-native:storage:Table',
+      'azure-native:servicebus:Namespace',
+      'azure-native:servicebus:Topic',
+      'azure-native:eventgrid:Topic',
+      'azure-native:eventhub:Namespace',
+      'azure-native:eventhub:EventHub',
+      'azure-native:appconfiguration:ConfigurationStore',
+      'outputs:',
+    ],
+    unitTestCommand: 'python3 test/pulumi_yaml.unit.test.py',
+    integrationTestCommand: 'python3 test/pulumi_yaml.int.test.py',
+  }],
   ['azure-pulumi-py', {
     files: ['Pulumi.yaml', 'requirements.txt', 'tap.py', 'lib/__init__.py', 'lib/tap_stack.py'],
     instruction: [
@@ -775,6 +838,30 @@ function promptText(platformId, scenarioId, scenario, platform, names) {
       '- App Configuration store API version 2023-03-01 with sku name free and disableLocalAuth = false.',
       '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
     ]
+    : platformId === 'azure-pulumi-yaml'
+    ? [
+      'Use this exact Azure resource contract:',
+      '- Use Pulumi YAML azure-native type tokens. Do not use ARM JSON resources, Terraform resources, Ansible tasks, or a language host.',
+      '- Use only unversioned Pulumi YAML tokens such as azure-native:storage:StorageAccount. Do not use versioned token segments such as azure-native:storage/v20230101:StorageAccount.',
+      '- Use these exact resource keys under resources: resourceGroup, storageAccount, blobContainer, storageQueue, fileShare, storageTable, serviceBusNamespace, serviceBusTopic, eventGridTopic, eventHubNamespace, eventHub, and appConfigurationStore.',
+      '- Storage account ARM contract is API version 2023-01-01 with kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, enableHttpsTrafficOnly=true.',
+      '- For Pulumi YAML storage child resources, create BlobContainer, Queue, FileShare, and Table directly with accountName + resourceGroupName + containerName/queueName/shareName/tableName. Do not introduce blobServices/default, queueServices/default, fileServices/default, or tableServices/default helper resources in this platform.',
+      '- Storage child resources must use accountName: ${storageAccount.name} and include options.dependsOn with ${storageAccount}.',
+      '- The Service Bus topic must use namespaceName: ${serviceBusNamespace.name} and include options.dependsOn with ${serviceBusNamespace}.',
+      '- The Event Hub must use namespaceName: ${eventHubNamespace.name} and include options.dependsOn with ${eventHubNamespace}.',
+      '- Blob container API version 2023-01-01 with publicAccess None.',
+      '- Queue API version 2023-01-01 with no extra properties.',
+      '- File share API version 2023-01-01 with shareQuota 32.',
+      '- Table API version 2023-01-01 with no extra properties.',
+      '- Service Bus namespace API version 2021-11-01 with sku name Standard and tier Standard.',
+      '- Service Bus topic API version 2021-11-01 with maxSizeInMegabytes = 1024.',
+      '- Event Grid topic API version 2022-06-15 with inputSchema = EventGridSchema.',
+      '- Event Hubs namespace API version 2024-01-01 with sku name Standard, tier Standard, capacity 1.',
+      '- Event Hub API version 2024-01-01 with partitionCount = 2 and messageRetentionInDays = 1.',
+      '- App Configuration store API version 2023-03-01 with sku name free and disableLocalAuth = false.',
+      '- Export the exact logical child names from this prompt. Do not export Pulumi child resource .name values when the provider resolves them to composite Azure names containing parent segments.',
+      '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
+    ]
     : platformId === 'azure-pulumi-py'
     ? [
       'Use this exact Azure resource contract:',
@@ -886,6 +973,7 @@ function repairPrompt(originalPrompt, validationOrRunError, previousResponse) {
     '',
     'The previous draft did not validate or did not pass the runner lifecycle.',
     `Repair these issues: ${validationOrRunError}`,
+    'Preserve the original requested platform and do not switch to alternate provider token styles, file names, languages, or deployment tools.',
     'Return a complete replacement for every requested file.',
     'Do not add any prose outside the fenced code blocks.',
     '',
@@ -995,6 +1083,63 @@ function validateFiles(platformId, scenario, platform, names, files) {
     if (!stack.includes('export function createTapStack')) errors.push('Pulumi bundle must export createTapStack from lib/tap-stack.ts');
     if (!packageJson.includes('"@pulumi/azure-native": "^2.80.0"')) errors.push('Pulumi bundle must pin @pulumi/azure-native to ^2.80.0');
     if (!packageJson.includes('"@pulumi/pulumi": "^3.122.0"')) errors.push('Pulumi bundle must pin @pulumi/pulumi to ^3.122.0');
+  }
+  if (platformId === 'azure-pulumi-yaml') {
+    const pulumiYaml = files.get('Pulumi.yaml') ?? '';
+    if (!pulumiYaml.includes('runtime: yaml')) errors.push('Pulumi YAML bundle must set runtime: yaml');
+    if (!pulumiYaml.includes('resources:')) errors.push('Pulumi YAML bundle must define a resources block');
+    if (!pulumiYaml.includes('outputs:')) errors.push('Pulumi YAML bundle must define an outputs block');
+    if (/blobServices\/default|queueServices\/default|fileServices\/default|tableServices\/default/.test(pulumiYaml)) {
+      errors.push('Pulumi YAML bundle must create direct storage child resources instead of default service helper paths');
+    }
+    if (/azure-native:[a-z]+\/v\d{8}:/i.test(pulumiYaml)) {
+      errors.push('Pulumi YAML bundle must use unversioned azure-native type tokens, not versioned token segments');
+    }
+    for (const marker of [
+      'azure-native:resources:ResourceGroup',
+      'azure-native:storage:StorageAccount',
+      'azure-native:storage:BlobContainer',
+      'azure-native:storage:Queue',
+      'azure-native:storage:FileShare',
+      'azure-native:storage:Table',
+      'azure-native:servicebus:Namespace',
+      'azure-native:servicebus:Topic',
+      'azure-native:eventgrid:Topic',
+      'azure-native:eventhub:Namespace',
+      'azure-native:eventhub:EventHub',
+      'azure-native:appconfiguration:ConfigurationStore',
+    ]) {
+      if (!pulumiYaml.includes(marker)) errors.push(`Pulumi YAML bundle must use ${marker}`);
+    }
+    for (const resourceKey of [
+      'resourceGroup',
+      'storageAccount',
+      'blobContainer',
+      'storageQueue',
+      'fileShare',
+      'storageTable',
+      'serviceBusNamespace',
+      'serviceBusTopic',
+      'eventGridTopic',
+      'eventHubNamespace',
+      'eventHub',
+      'appConfigurationStore',
+    ]) {
+      if (!new RegExp(`^  ${resourceKey}:`, 'm').test(pulumiYaml)) {
+        errors.push(`Pulumi YAML bundle must use resource key ${resourceKey}`);
+      }
+    }
+    for (const parentReference of ['${storageAccount.name}', '${serviceBusNamespace.name}', '${eventHubNamespace.name}']) {
+      if (!pulumiYaml.includes(parentReference)) errors.push(`Pulumi YAML bundle must use parent reference ${parentReference}`);
+    }
+    for (const dependencyReference of ['${storageAccount}', '${serviceBusNamespace}', '${eventHubNamespace}']) {
+      if (!pulumiYaml.includes(dependencyReference)) errors.push(`Pulumi YAML bundle must declare options.dependsOn for ${dependencyReference}`);
+    }
+    for (const outputKey of scenario.outputKeys) {
+      if (!new RegExp(`^\\s{2}${outputKey}:`, 'm').test(pulumiYaml)) {
+        errors.push(`Pulumi YAML bundle must export ${outputKey}`);
+      }
+    }
   }
   if (platformId === 'azure-pulumi-py') {
     const pulumiYaml = files.get('Pulumi.yaml') ?? '';
@@ -1352,6 +1497,28 @@ function fileContainsAssertions(platformId, scenario, names) {
         'eventhub.Namespace',
         'eventhub.EventHub',
         'appconfiguration.ConfigurationStore',
+      ],
+    };
+  }
+  if (platformId === 'azure-pulumi-yaml') {
+    return {
+      'Pulumi.yaml': [
+        'runtime: yaml',
+        'resources:',
+        'outputs:',
+        'azure-native:resources:ResourceGroup',
+        'azure-native:storage:StorageAccount',
+        'azure-native:storage:BlobContainer',
+        'azure-native:storage:Queue',
+        'azure-native:storage:FileShare',
+        'azure-native:storage:Table',
+        'azure-native:servicebus:Namespace',
+        'azure-native:servicebus:Topic',
+        'azure-native:eventgrid:Topic',
+        'azure-native:eventhub:Namespace',
+        'azure-native:eventhub:EventHub',
+        'azure-native:appconfiguration:ConfigurationStore',
+        ...scenario.outputKeys,
       ],
     };
   }
@@ -1731,6 +1898,94 @@ elif metadata["platformId"] in {"azure-terraform-hcl", "azure-opentofu-hcl"}:
 
     for output_key in metadata["expectedOutputKeys"]:
         assert f'output "{output_key}"' in outputs, f"outputs.tf is missing {output_key}"
+elif metadata["platformId"] == "azure-pulumi-yaml":
+    pulumi_yaml = (root / "Pulumi.yaml").read_text()
+
+    assert "runtime: yaml" in pulumi_yaml
+    assert "resources:" in pulumi_yaml
+    assert "outputs:" in pulumi_yaml
+
+    for marker in [
+        "azure-native:resources:ResourceGroup",
+        "azure-native:storage:StorageAccount",
+        "azure-native:storage:BlobContainer",
+        "azure-native:storage:Queue",
+        "azure-native:storage:FileShare",
+        "azure-native:storage:Table",
+        "azure-native:servicebus:Namespace",
+        "azure-native:servicebus:Topic",
+        "azure-native:eventgrid:Topic",
+        "azure-native:eventhub:Namespace",
+        "azure-native:eventhub:EventHub",
+        "azure-native:appconfiguration:ConfigurationStore",
+    ]:
+        assert marker in pulumi_yaml, f"Pulumi.yaml is missing {marker}"
+
+    for forbidden in [
+        "blobServices/default",
+        "queueServices/default",
+        "fileServices/default",
+        "tableServices/default",
+        "azure-native:storage/v",
+        "azure-native:servicebus/v",
+        "azure-native:eventgrid/v",
+        "azure-native:eventhub/v",
+        "azure-native:appconfiguration/v",
+        "publicNetworkAccess",
+        "defaultToOAuthAuthentication",
+        "enablePurgeProtection",
+        "softDeleteRetentionInDays",
+    ]:
+        assert forbidden not in pulumi_yaml, f"Pulumi.yaml contains forbidden marker {forbidden}"
+
+    for value in [
+        resource_names["resourceGroup"],
+        resource_names["storageAccount"],
+        resource_names["serviceBusNamespace"],
+        resource_names["eventGridTopic"],
+        resource_names["eventHubNamespace"],
+        resource_names["appConfigStore"],
+        resource_names["blobContainerName"],
+        resource_names["queueName"],
+        resource_names["fileShareName"],
+        resource_names["tableName"],
+        resource_names["serviceBusTopicName"],
+        resource_names["eventHubName"],
+    ]:
+        assert value in pulumi_yaml, f"Pulumi.yaml is missing resource name {value}"
+
+    for resource_key in [
+        "resourceGroup",
+        "storageAccount",
+        "blobContainer",
+        "storageQueue",
+        "fileShare",
+        "storageTable",
+        "serviceBusNamespace",
+        "serviceBusTopic",
+        "eventGridTopic",
+        "eventHubNamespace",
+        "eventHub",
+        "appConfigurationStore",
+    ]:
+        assert f"  {resource_key}:" in pulumi_yaml, f"Pulumi.yaml is missing resource key {resource_key}"
+
+    for parent_reference in [
+        "\${storageAccount.name}",
+        "\${serviceBusNamespace.name}",
+        "\${eventHubNamespace.name}",
+    ]:
+        assert parent_reference in pulumi_yaml, f"Pulumi.yaml is missing parent reference {parent_reference}"
+
+    for dependency_reference in [
+        "- \${storageAccount}",
+        "- \${serviceBusNamespace}",
+        "- \${eventHubNamespace}",
+    ]:
+        assert dependency_reference in pulumi_yaml, f"Pulumi.yaml is missing dependency {dependency_reference}"
+
+    for output_key in metadata["expectedOutputKeys"]:
+        assert f"  {output_key}:" in pulumi_yaml, f"Pulumi.yaml is missing output {output_key}"
 elif metadata["platformId"] == "azure-pulumi-py":
     pulumi_yaml = (root / "Pulumi.yaml").read_text()
     requirements = (root / "requirements.txt").read_text()
@@ -2046,6 +2301,9 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
   if (platformId === 'azure-pulumi-ts') {
     await writeFile(join(bundleDir, 'test', 'tap-stack.unit.test.mjs'), nodeUnitTest());
     await writeFile(join(bundleDir, 'test', 'tap-stack.int.test.mjs'), nodeIntegrationTest());
+  } else if (platformId === 'azure-pulumi-yaml') {
+    await writeFile(join(bundleDir, 'test', 'pulumi_yaml.unit.test.py'), pythonUnitTest());
+    await writeFile(join(bundleDir, 'test', 'pulumi_yaml.int.test.py'), pythonIntegrationTest());
   } else if (platformId === 'azure-terraform-hcl' || platformId === 'azure-opentofu-hcl') {
     await writeFile(join(bundleDir, 'test', 'terraform.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'terraform.int.test.py'), pythonIntegrationTest());
@@ -2075,7 +2333,7 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
     resourceNames: resources,
     unitAssertions: {
       fileContains: fileContainsAssertions(platformId, scenario, names),
-      anyFileContains: platformId === 'azure-pulumi-ts' || platformId === 'azure-pulumi-py' ? scenario.outputKeys : [],
+      anyFileContains: platformId === 'azure-pulumi-ts' || platformId === 'azure-pulumi-py' || platformId === 'azure-pulumi-yaml' ? scenario.outputKeys : [],
     },
     integrationChecks: integrationChecks(names, scenario),
     stageCommands: {
@@ -2234,7 +2492,7 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
       lint: 'structural contract validation',
       'unit-tests': 'task-authored unit tests plus deterministic hygiene checks',
       deploy: 'native provider deployment against Azure-shaped control plane',
-      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
+      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' || task.platformId === 'azure-pulumi-yaml' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },

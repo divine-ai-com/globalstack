@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-27T21:19:46.126Z",
+  "updatedAt": "2026-05-27T22:01:01.147Z",
   "waves": [
     {
       "platformId": "azure-arm-json",
@@ -249,6 +249,57 @@
         },
         {
           "prId": "Pr91355",
+          "scenarioId": "regional-catalog-command-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        }
+      ]
+    },
+    {
+      "platformId": "azure-pulumi-yaml",
+      "generatedAt": "2026-05-27T22:01:01.147Z",
+      "model": "gpt-5.5",
+      "location": "eastus",
+      "source": "dist/verified-bundles/latest-results.json",
+      "total": 5,
+      "passCount": 5,
+      "results": [
+        {
+          "prId": "Pr91361",
+          "scenarioId": "claims-evidence-command-ring",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91362",
+          "scenarioId": "partner-order-ingest-buffer",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91363",
+          "scenarioId": "warehouse-dispatch-event-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91364",
+          "scenarioId": "billing-audit-notification-mesh",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91365",
           "scenarioId": "regional-catalog-command-plane",
           "ok": true,
           "finalStatus": "PASS",
