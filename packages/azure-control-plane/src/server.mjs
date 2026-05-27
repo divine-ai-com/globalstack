@@ -1292,6 +1292,9 @@ export function createArmRequestHandler({
                 format: url.searchParams.get('format') ?? null,
               })
             : store.listAksCredentials(aksCredentialRoute.route, aksCredentialRoute.role);
+          if (credentials?.error) {
+            return sendError(res, credentials.error.status, credentials.error.code, credentials.error.message);
+          }
           if (!credentials) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${aksCredentialRoute.route.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }

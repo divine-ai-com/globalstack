@@ -2833,8 +2833,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity control-plane matrix has failures');
   }
-  if ((aksMetadataParity.controlPlane?.total ?? 0) < 35) {
-    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 35 cases');
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 58) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 58 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2851,11 +2851,18 @@ if (!aksMetadataParityText) {
     'credential action rejects wrong method',
     'user credential action returns kubeconfig metadata',
     'admin credential action returns kubeconfig metadata',
+    'cluster disableLocalAccounts requires Microsoft Entra managed profile',
+    'AAD cluster with disableLocalAccounts creates successfully',
+    'AAD user credential action returns exec kubeconfig when local accounts are disabled',
+    'AAD user credential action returns azure auth-provider kubeconfig when requested',
+    'AAD admin credential action is rejected when local accounts are disabled',
     'agent pool child collection reflects cluster pool metadata',
     'cluster update can add a live user pool with a second node',
     'agent pool child item reflects updated user pool metadata',
     'AKS runCommand returns commandResults location and completes successfully',
-    'agent pool child put adds a live burst pool with a third node',
+    'agent pool child put scales user pool out with VMSS metadata preserved across repeated reads',
+    'agent pool child put scales user pool to zero and repeated drift reads stay stable',
+    'agent pool child put adds a live burst pool after scale-to-zero user pool',
     'agent pool child delete removes burst pool and preserves workload state',
     'agent pool child get after delete is rejected',
     'ARM template deployment can create AKS metadata cluster',
@@ -2868,8 +2875,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 9) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 9 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 10) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 10 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
@@ -2881,6 +2888,7 @@ if (!aksMetadataParityText) {
     'cluster user credentials are restricted by backend RBAC on secrets',
     'cluster admin credentials can create deployment and service on live backend',
     'load balancer service exposes live backend through AKS edge integration',
+    'internal load balancer service gets private ingress and no public edge route',
   ]) {
     if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure AKS metadata parity E2E missing passing data-plane case: ${required}`);

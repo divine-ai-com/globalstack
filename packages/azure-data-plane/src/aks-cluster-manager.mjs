@@ -97,15 +97,9 @@ function clusterJoinToken(resource) {
 }
 
 function poolNodeName(resource, poolName, ordinal) {
-  return [
-    safeClusterName(resource.name).slice(0, 20),
-    safeClusterName(poolName).slice(0, 12),
-    String(ordinal).padStart(2, '0'),
-  ]
-    .filter(Boolean)
-    .join('-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 63) || 'aks-node';
+  const pool = safeClusterName(poolName).replace(/[^a-z0-9]/g, '').slice(0, 12) || 'nodepool1';
+  const cluster = clusterDigest(resource).slice(0, 8);
+  return `aks-${pool}-${cluster}-vmss${String(ordinal).padStart(6, '0')}`.slice(0, 63);
 }
 
 function clusterAgentContainerName(resource, poolName, ordinal) {
@@ -117,6 +111,30 @@ function clusterAgentContainerName(resource, poolName, ordinal) {
     .filter(Boolean)
     .join('-')
     .slice(0, 63);
+}
+
+function serviceExposureHash(entry, service) {
+  return createHash('sha256')
+    .update(`${String(entry?.id ?? '').toLowerCase()}:${String(service?.metadata?.namespace ?? 'default').toLowerCase()}:${String(service?.metadata?.name ?? '').toLowerCase()}`)
+    .digest('hex');
+}
+
+function aksPublicServiceIp(entry, service) {
+  const digest = serviceExposureHash(entry, service);
+  const octet3 = (parseInt(digest.slice(0, 2), 16) % 250) + 1;
+  const octet4 = (parseInt(digest.slice(2, 4), 16) % 250) + 1;
+  return `203.0.${octet3}.${octet4}`;
+}
+
+function aksInternalServiceIp(entry, service) {
+  const digest = serviceExposureHash(entry, service);
+  const octet3 = (parseInt(digest.slice(4, 6), 16) % 250) + 1;
+  const octet4 = (parseInt(digest.slice(6, 8), 16) % 250) + 1;
+  return `10.224.${octet3}.${octet4}`;
+}
+
+function serviceAnnotation(service, key) {
+  return service?.metadata?.annotations?.[key] ?? null;
 }
 
 function clusterImageFor(resource) {
@@ -277,6 +295,7 @@ function overlayNode(entry, node) {
   const assignment = entry.nodeAssignments?.[node?.metadata?.name ?? ''] ?? {};
   const vmSize = String(assignment.vmSize ?? node?.metadata?.labels?.['node.kubernetes.io/instance-type'] ?? 'Standard_DS2_v2');
   const osType = String(assignment.osType ?? node?.metadata?.labels?.['kubernetes.io/os'] ?? 'Linux').toLowerCase();
+  const availabilityZone = assignment.availabilityZones?.[0] ?? node?.metadata?.labels?.['topology.kubernetes.io/zone'] ?? null;
   return {
     ...node,
     metadata: {
@@ -286,8 +305,10 @@ function overlayNode(entry, node) {
         'kubernetes.azure.com/agentpool': String(assignment.name ?? node?.metadata?.labels?.['kubernetes.azure.com/agentpool'] ?? 'systempool'),
         'kubernetes.azure.com/cluster': String(entry.name ?? '').toLowerCase(),
         ...(assignment.mode ? { 'kubernetes.azure.com/mode': String(assignment.mode) } : {}),
+        'kubernetes.azure.com/nodepool-type': String(assignment.type ?? 'VirtualMachineScaleSets'),
         'kubernetes.io/os': osType,
         'node.kubernetes.io/instance-type': vmSize,
+        ...(availabilityZone ? { 'topology.kubernetes.io/zone': String(availabilityZone) } : {}),
       },
     },
     status: {
@@ -449,7 +470,14 @@ export class AksClusterManager {
       all: true,
       filters: { label: [`io.globalstack.resource-id=${resourceId}`] },
     });
-    await Promise.all(containers.map(container => this.removeContainer(container.Names?.[0]?.replace(/^\//, '') ?? container.Id)));
+    containers.sort((left, right) => {
+      const leftRole = left.Labels?.['io.globalstack.aks.role'] === 'server' ? 1 : 0;
+      const rightRole = right.Labels?.['io.globalstack.aks.role'] === 'server' ? 1 : 0;
+      return leftRole - rightRole;
+    });
+    for (const container of containers) {
+      await this.removeContainer(container.Names?.[0]?.replace(/^\//, '') ?? container.Id);
+    }
   }
 
   async ensureNetwork(resource) {
@@ -496,18 +524,9 @@ export class AksClusterManager {
     if (!entry) return;
     if (entry.disposed !== true) {
       await Promise.resolve(entry.readyPromise).catch(() => {});
-    } else if (entry.readyPromise) {
-      void Promise.resolve(entry.readyPromise)
-        .catch(() => {})
-        .finally(() => Promise.all([
-          this.removeContainersForResource(entry.id),
-          this.removeNetwork(entry.networkName, { owned: entry.ownedNetwork }),
-        ]).catch(() => {}));
     }
-    await Promise.all([
-      this.removeContainersForResource(entry.id),
-      this.removeNetwork(entry.networkName, { owned: entry.ownedNetwork }),
-    ]).catch(() => {});
+    await this.removeContainersForResource(entry.id).catch(() => {});
+    await this.removeNetwork(entry.networkName, { owned: entry.ownedNetwork }).catch(() => {});
   }
 
   async inspectHostEndpoint(containerName) {
@@ -672,26 +691,41 @@ export class AksClusterManager {
     return {};
   }
 
-  serviceExposureHost(entry, service) {
-    const serviceName = String(service?.metadata?.name ?? '').toLowerCase();
-    const namespace = String(service?.metadata?.namespace ?? 'default').toLowerCase();
-    if (!serviceName) return null;
-    return `${serviceName}.${namespace}.${entry.fqdn}`;
+  serviceExposureDetails(entry, service) {
+    const annotations = service?.metadata?.annotations ?? {};
+    const internal = String(annotations['service.beta.kubernetes.io/azure-load-balancer-internal'] ?? 'false').toLowerCase() === 'true';
+    const configuredIp = String(
+      annotations['service.beta.kubernetes.io/azure-load-balancer-ipv4']
+      ?? service?.spec?.loadBalancerIP
+      ?? '',
+    ).trim();
+    const ip = configuredIp || (internal ? aksInternalServiceIp(entry, service) : aksPublicServiceIp(entry, service));
+    const dnsLabel = String(annotations['service.beta.kubernetes.io/azure-dns-label-name'] ?? '').trim().toLowerCase();
+    const hostname = !internal && dnsLabel ? `${dnsLabel}.${String(entry.location ?? 'eastus').toLowerCase()}.cloudapp.azure.com` : null;
+    const exposureHosts = internal ? [] : [ip, ...(hostname ? [hostname] : [])];
+    return {
+      internal,
+      ip,
+      hostname,
+      exposureHosts,
+    };
   }
 
-  async patchServiceExposureStatus(entry, service, hostName) {
+  async patchServiceExposureStatus(entry, service, exposure) {
     const namespace = service?.metadata?.namespace;
     const serviceName = service?.metadata?.name;
-    if (!namespace || !serviceName || !hostName) return;
-    const currentHost = service?.status?.loadBalancer?.ingress?.[0]?.hostname ?? null;
-    if (currentHost === hostName) return;
+    if (!namespace || !serviceName || !exposure?.ip) return;
+    const currentIngress = service?.status?.loadBalancer?.ingress?.[0] ?? {};
+    if (currentIngress.ip === exposure.ip) return;
     await backendJsonRequest(entry, {
       method: 'PATCH',
       path: `/api/v1/namespaces/${namespace}/services/${serviceName}/status`,
       body: {
         status: {
           loadBalancer: {
-            ingress: [{ hostname: hostName }],
+            ingress: [{
+              ip: exposure.ip,
+            }],
           },
         },
       },
@@ -718,24 +752,25 @@ export class AksClusterManager {
       if (serviceType !== 'LoadBalancer') continue;
       const nodePort = Number(service?.spec?.ports?.[0]?.nodePort ?? 0);
       if (!nodePort || nodeOrigins.length === 0) continue;
-      const hostName = this.serviceExposureHost(entry, service);
-      if (!hostName) continue;
-      await this.patchServiceExposureStatus(entry, service, hostName);
-      this.edgeRouter.registerEndpoint({
-        endpointName: `${service.metadata.namespace}-${service.metadata.name}`,
-        hostName,
-        kind: 'aks-service',
-        enabledState: 'Enabled',
-        proxyMode: 'http-forward',
-        origins: nodeOrigins.map((originHost, index) => ({
-          name: `node-${index + 1}`,
-          hostName: originHost,
-          httpPort: nodePort,
-          httpsPort: nodePort,
-        })),
-        routePatterns: ['/*'],
-      });
-      nextHosts.add(hostName.toLowerCase());
+      const exposure = this.serviceExposureDetails(entry, service);
+      await this.patchServiceExposureStatus(entry, service, exposure);
+      for (const hostName of exposure.exposureHosts) {
+        this.edgeRouter.registerEndpoint({
+          endpointName: `${service.metadata.namespace}-${service.metadata.name}`,
+          hostName,
+          kind: 'aks-service',
+          enabledState: 'Enabled',
+          proxyMode: 'http-forward',
+          origins: nodeOrigins.map((originHost, index) => ({
+            name: `node-${index + 1}`,
+            hostName: originHost,
+            httpPort: nodePort,
+            httpsPort: nodePort,
+          })),
+          routePatterns: ['/*'],
+        });
+        nextHosts.add(hostName.toLowerCase());
+      }
     }
     for (const hostName of previousHosts) {
       if (!nextHosts.has(String(hostName).toLowerCase())) {
@@ -772,12 +807,122 @@ export class AksClusterManager {
     ].join('\n');
   }
 
+  aadExecKubeconfig(entry, { serverFqdn = null } = {}) {
+    const server = `https://${serverFqdn || entry.fqdn}`;
+    const caData = Buffer.from(entry.backendCa ?? '').toString('base64');
+    const tenantId = entry.aadProfile?.tenantID ?? '00000000-0000-0000-0000-000000000000';
+    const clientId = entry.aadProfile?.clientAppID ?? '80faf920-1908-4b52-b5ef-a8e7bedfc67a';
+    const serverId = entry.aadProfile?.serverAppID ?? '6dae42f8-4368-4678-94ff-3960e28e3630';
+    return [
+      'apiVersion: v1',
+      'kind: Config',
+      'clusters:',
+      `- name: ${entry.name}`,
+      '  cluster:',
+      `    server: ${server}`,
+      `    certificate-authority-data: ${caData}`,
+      'contexts:',
+      `- name: clusterUser_${entry.name}`,
+      '  context:',
+      `    cluster: ${entry.name}`,
+      `    user: clusterUser_${entry.name}`,
+      `current-context: clusterUser_${entry.name}`,
+      'users:',
+      `- name: clusterUser_${entry.name}`,
+      '  user:',
+      '    exec:',
+      '      apiVersion: client.authentication.k8s.io/v1beta1',
+      '      command: kubelogin',
+      '      args:',
+      '      - get-token',
+      '      - --login',
+      '      - azurecli',
+      '      - --environment',
+      '      - AzurePublicCloud',
+      '      - --tenant-id',
+      `      - ${tenantId}`,
+      '      - --server-id',
+      `      - ${serverId}`,
+      '      - --client-id',
+      `      - ${clientId}`,
+      '',
+    ].join('\n');
+  }
+
+  aadAzureAuthProviderKubeconfig(entry, { serverFqdn = null } = {}) {
+    const server = `https://${serverFqdn || entry.fqdn}`;
+    const caData = Buffer.from(entry.backendCa ?? '').toString('base64');
+    const tenantId = entry.aadProfile?.tenantID ?? '00000000-0000-0000-0000-000000000000';
+    const clientId = entry.aadProfile?.clientAppID ?? '80faf920-1908-4b52-b5ef-a8e7bedfc67a';
+    const serverId = entry.aadProfile?.serverAppID ?? '6dae42f8-4368-4678-94ff-3960e28e3630';
+    return [
+      'apiVersion: v1',
+      'kind: Config',
+      'clusters:',
+      `- name: ${entry.name}`,
+      '  cluster:',
+      `    server: ${server}`,
+      `    certificate-authority-data: ${caData}`,
+      'contexts:',
+      `- name: clusterUser_${entry.name}`,
+      '  context:',
+      `    cluster: ${entry.name}`,
+      `    user: clusterUser_${entry.name}`,
+      `current-context: clusterUser_${entry.name}`,
+      'users:',
+      `- name: clusterUser_${entry.name}`,
+      '  user:',
+      '    auth-provider:',
+      '      name: azure',
+      '      config:',
+      `        apiserver-id: ${serverId}`,
+      `        client-id: ${clientId}`,
+      `        tenant-id: ${tenantId}`,
+      '        environment: AzurePublicCloud',
+      '',
+    ].join('\n');
+  }
+
   async listClusterCredentials(resource, role = 'user', options = {}) {
     const entry = this.clustersById.get(String(resource?.id ?? '').toLowerCase());
     if (!entry) return null;
     await Promise.resolve(entry.readyPromise);
     if (entry.error) throw entry.error;
     if (!entry.ready) return null;
+    const aadManaged = entry.aadProfile?.managed === true;
+    const disableLocalAccounts = entry.disableLocalAccounts === true;
+    if (disableLocalAccounts && (!aadManaged || role === 'admin')) {
+      return {
+        error: {
+          status: 400,
+          code: 'BadRequest',
+          message: "Getting static credential isn't allowed because this cluster is set to disable local accounts.",
+        },
+      };
+    }
+    if (aadManaged && role === 'user') {
+      const requestedFormat = String(options.format ?? 'exec').toLowerCase();
+      if (!['exec', 'azure'].includes(requestedFormat)) {
+        return {
+          error: {
+            status: 400,
+            code: 'InvalidParameter',
+            message: "AKS listClusterUserCredential format must be 'exec' or 'azure' for Microsoft Entra clusters.",
+          },
+        };
+      }
+      const kubeconfig = requestedFormat === 'azure'
+        ? this.aadAzureAuthProviderKubeconfig(entry, options)
+        : this.aadExecKubeconfig(entry, options);
+      return {
+        kubeconfigs: [
+          {
+            name: 'clusterUser',
+            value: Buffer.from(kubeconfig).toString('base64'),
+          },
+        ],
+      };
+    }
     const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
     return {
       kubeconfigs: [
@@ -988,6 +1133,8 @@ export class AksClusterManager {
         vmSize: systemPool.vmSize ?? 'Standard_DS2_v2',
         osType: systemPool.osType ?? 'Linux',
         mode: systemPool.mode ?? 'System',
+        type: systemPool.type ?? 'VirtualMachineScaleSets',
+        availabilityZones: Array.isArray(systemPool.availabilityZones) ? [...systemPool.availabilityZones] : [],
       },
     };
     const commonLabels = {
@@ -1001,9 +1148,13 @@ export class AksClusterManager {
     const serverLabels = [
       `kubernetes.azure.com/agentpool=${systemPool.name ?? 'systempool'}`,
       `kubernetes.azure.com/mode=${systemPool.mode ?? 'System'}`,
+      `kubernetes.azure.com/nodepool-type=${systemPool.type ?? 'VirtualMachineScaleSets'}`,
       `node.kubernetes.io/instance-type=${systemPool.vmSize ?? 'Standard_DS2_v2'}`,
       `kubernetes.io/os=${String(systemPool.osType ?? 'Linux').toLowerCase()}`,
       `topology.kubernetes.io/region=${String(resource.location ?? 'eastus').toLowerCase()}`,
+      ...(Array.isArray(systemPool.availabilityZones) && systemPool.availabilityZones[0]
+        ? [`topology.kubernetes.io/zone=${String(systemPool.availabilityZones[0])}`]
+        : []),
     ];
 
     const createBody = {
@@ -1077,6 +1228,8 @@ export class AksClusterManager {
           vmSize: pool.vmSize ?? 'Standard_DS2_v2',
           osType: pool.osType ?? 'Linux',
           mode: pool.mode ?? 'User',
+          type: pool.type ?? 'VirtualMachineScaleSets',
+          availabilityZones: Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [],
         };
         const agentBody = {
           name: agentContainerName,
@@ -1095,11 +1248,16 @@ export class AksClusterManager {
             '--node-label',
             `kubernetes.azure.com/mode=${pool.mode ?? 'User'}`,
             '--node-label',
+            `kubernetes.azure.com/nodepool-type=${pool.type ?? 'VirtualMachineScaleSets'}`,
+            '--node-label',
             `node.kubernetes.io/instance-type=${pool.vmSize ?? 'Standard_DS2_v2'}`,
             '--node-label',
             `kubernetes.io/os=${String(pool.osType ?? 'Linux').toLowerCase()}`,
             '--node-label',
             `topology.kubernetes.io/region=${String(resource.location ?? 'eastus').toLowerCase()}`,
+            ...(Array.isArray(pool.availabilityZones) && pool.availabilityZones[0]
+              ? ['--node-label', `topology.kubernetes.io/zone=${String(pool.availabilityZones[0])}`]
+              : []),
           ],
           Labels: {
             ...commonLabels,
@@ -1194,8 +1352,11 @@ export class AksClusterManager {
       name: resource.name,
       id: resource.id,
       fqdn,
+      location: String(resource.location ?? 'eastus').toLowerCase(),
       version: resource.properties?.currentKubernetesVersion ?? resource.properties?.kubernetesVersion ?? '1.29.2',
       nodeResourceGroup: resource.properties?.nodeResourceGroup ?? '',
+      aadProfile: resource.properties?.aadProfile ? JSON.parse(JSON.stringify(resource.properties.aadProfile)) : null,
+      disableLocalAccounts: resource.properties?.disableLocalAccounts === true,
       agentPools: Array.isArray(resource.properties?.agentPoolProfiles) ? resource.properties.agentPoolProfiles : [],
       userToken: aksKubeToken(resource.id, 'user'),
       adminToken: aksKubeToken(resource.id, 'admin'),

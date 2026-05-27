@@ -66,6 +66,9 @@ async function withArmServer(fn) {
   try {
     return await fn({ armPort: port, kubePort, edgePort, runtime, store });
   } finally {
+    edgeServer.closeAllConnections?.();
+    kubeServer.closeAllConnections?.();
+    server.closeAllConnections?.();
     await new Promise(resolve => edgeServer.close(resolve));
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => server.close(resolve));
@@ -267,6 +270,7 @@ async function runControlPlaneMatrix() {
   const missingResourceGroup = `rg-gs-aks-missing-${suffix}`;
   const clusterName = `aks-${suffix}`.slice(0, 40);
   const missingClusterName = `aks-missing-${suffix}`.slice(0, 40);
+  const aadClusterName = `aks-aad-${suffix}`.slice(0, 40);
   let asyncOperation = null;
   let clusterHost = null;
   let userKubeToken = null;
@@ -319,6 +323,7 @@ async function runControlPlaneMatrix() {
   await withArmServer(async ({ armPort, kubePort, edgePort }) => {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
+    const aadClusterPath = `managedClusters/${aadClusterName}`;
 
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, { auth: false });
@@ -583,6 +588,22 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
+    await record('cluster disableLocalAccounts requires Microsoft Entra managed profile', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
+        aksBody({
+          properties: {
+            disableLocalAccounts: true,
+          },
+        }),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('valid cluster create returns async Azure shape', async () => {
       const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath), aksBody({
         tags: { workload: 'robotics-fleet-control' },
@@ -691,6 +712,87 @@ async function runControlPlaneMatrix() {
       return { status: second.status, kubeconfigName: second.body.kubeconfigs[0].name };
     });
 
+    await record('AAD cluster with disableLocalAccounts creates successfully', async () => {
+      const created = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', aadClusterPath),
+        aksBody({
+          identity: { type: 'SystemAssigned' },
+          properties: {
+            servicePrincipalProfile: undefined,
+            dnsPrefix: aadClusterName,
+            disableLocalAccounts: true,
+            aadProfile: {
+              managed: true,
+              tenantID: '11111111-1111-1111-1111-111111111111',
+              adminGroupObjectIDs: ['22222222-2222-2222-2222-222222222222'],
+            },
+            agentPoolProfiles: [
+              {
+                name: 'systempool',
+                count: 1,
+                vmSize: 'Standard_DS2_v2',
+                mode: 'System',
+                osType: 'Linux',
+                type: 'VirtualMachineScaleSets',
+              },
+            ],
+          },
+        }),
+      );
+      assert.equal(created.status, 202);
+      const cluster = await waitFor(async () => {
+        const current = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', aadClusterPath));
+        assert.equal(current.status, 200);
+        assert.equal(current.body.properties.provisioningState, 'Succeeded');
+        return current;
+      });
+      assert.equal(cluster.body.properties.disableLocalAccounts, true);
+      assert.equal(cluster.body.properties.aadProfile.managed, true);
+      return { status: created.status, clusterName: cluster.body.name };
+    });
+
+    await record('AAD user credential action returns exec kubeconfig when local accounts are disabled', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${aadClusterPath}/listClusterUserCredential`) + '&format=exec',
+      );
+      assert.equal(result.status, 200);
+      const kubeconfig = decodeKubeconfig(result);
+      assert.match(kubeconfig, /command: kubelogin/);
+      assert.match(kubeconfig, /- --login/);
+      assert.ok(!/\n\s+token:\s+/.test(kubeconfig));
+      return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
+    });
+
+    await record('AAD user credential action returns azure auth-provider kubeconfig when requested', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${aadClusterPath}/listClusterUserCredential`) + '&format=azure',
+      );
+      assert.equal(result.status, 200);
+      const kubeconfig = decodeKubeconfig(result);
+      assert.match(kubeconfig, /auth-provider:/);
+      assert.match(kubeconfig, /name: azure/);
+      assert.ok(!/\n\s+token:\s+/.test(kubeconfig));
+      return { status: result.status, kubeconfigName: result.body.kubeconfigs[0].name };
+    });
+
+    await record('AAD admin credential action is rejected when local accounts are disabled', async () => {
+      const result = await httpJson(
+        armPort,
+        'POST',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${aadClusterPath}/listClusterAdminCredential`),
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'BadRequest');
+      assert.match(result.body.error.message, /Getting static credential isn't allowed/);
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await recordDataPlane('local kubernetes api rejects missing bearer token', async () => {
       const result = await httpKube(kubePort, '/version', { host: clusterHost, token: userKubeToken, auth: false });
       assert.equal(result.status, 401);
@@ -724,6 +826,8 @@ async function runControlPlaneMatrix() {
       });
       assert.equal(result.status, 200);
       assert.equal(result.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
+      assert.equal(result.body.items[0].metadata.labels['kubernetes.azure.com/nodepool-type'], 'VirtualMachineScaleSets');
+      assert.match(result.body.items[0].metadata.name, /^aks-systempool-[a-f0-9]{8}-vmss\d{6}$/);
       return { status: result.status, count: result.body.items.length };
     });
 
@@ -887,6 +991,7 @@ async function runControlPlaneMatrix() {
       assert.equal(result.body.properties.count, 1);
       assert.equal(result.body.properties.vmSize, 'Standard_DS3_v2');
       assert.equal(result.body.properties.mode, 'User');
+      assert.equal(result.body.properties.type, 'VirtualMachineScaleSets');
       return { status: result.status, pool: leafResourceName(result.body.name) };
     });
 
@@ -912,6 +1017,77 @@ async function runControlPlaneMatrix() {
       };
     });
 
+    await record('agent pool child put scales user pool out with VMSS metadata preserved across repeated reads', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
+        {
+          properties: {
+            count: 2,
+            vmSize: 'Standard_DS3_v2',
+            mode: 'User',
+            osType: 'Linux',
+            type: 'VirtualMachineScaleSets',
+            availabilityZones: ['1'],
+          },
+        },
+      );
+      assert.ok([200, 201].includes(result.status));
+      const nodes = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        const userPoolNodes = ready.body.items.filter(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool');
+        assert.equal(userPoolNodes.length, 2);
+        assert.ok(userPoolNodes.every(item => item.metadata.labels['topology.kubernetes.io/zone'] === '1'));
+        return ready;
+      }, { timeoutMs: 240000 });
+      const first = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(second.body.properties.count, 2);
+      assert.equal(second.body.properties.type, 'VirtualMachineScaleSets');
+      assert.deepEqual(second.body.properties.availabilityZones, ['1']);
+      return { status: result.status, nodeCount: nodes.body.items.length, userPoolCount: second.body.properties.count };
+    });
+
+    await record('agent pool child put scales user pool to zero and repeated drift reads stay stable', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
+        {
+          properties: {
+            count: 0,
+            vmSize: 'Standard_DS3_v2',
+            mode: 'User',
+            osType: 'Linux',
+            type: 'VirtualMachineScaleSets',
+          },
+        },
+      );
+      assert.ok([200, 201].includes(result.status));
+      const nodes = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        assert.equal(ready.body.items.length, 1);
+        assert.ok(!ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
+        return ready;
+      }, { timeoutMs: 240000 });
+      const first = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(second.body.properties.count, 0);
+      const namespace = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke', {
+        host: clusterHost,
+        token: adminKubeToken,
+      });
+      assert.equal(namespace.status, 200);
+      return { status: result.status, nodeCount: nodes.body.items.length, userPoolCount: second.body.properties.count };
+    });
+
     await recordDataPlane('load balancer service exposes live backend through AKS edge integration', async () => {
       const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
         host: clusterHost,
@@ -920,7 +1096,12 @@ async function runControlPlaneMatrix() {
         body: {
           apiVersion: 'v1',
           kind: 'Service',
-          metadata: { name: 'runtime-smoke-lb' },
+          metadata: {
+            name: 'runtime-smoke-lb',
+            annotations: {
+              'service.beta.kubernetes.io/azure-dns-label-name': `gsmoke${suffix.slice(-4)}`,
+            },
+          },
           spec: {
             type: 'LoadBalancer',
             selector: { app: 'runtime-smoke' },
@@ -935,10 +1116,12 @@ async function runControlPlaneMatrix() {
           token: adminKubeToken,
         });
         assert.equal(current.status, 200);
-        assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.hostname);
+        assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.ip);
         return current;
       }, { timeoutMs: 120000, delayMs: 1000 });
-      const hostname = service.body.status.loadBalancer.ingress[0].hostname;
+      const ingressIp = service.body.status.loadBalancer.ingress[0].ip;
+      assert.match(ingressIp, /^203\.0\.\d{1,3}\.\d{1,3}$/);
+      const hostname = `gsmoke${suffix.slice(-4)}.eastus.cloudapp.azure.com`;
       const response = await waitFor(async () => {
         const current = await edgeText(edgePort, 'GET', '/', {
           host: hostname,
@@ -951,11 +1134,52 @@ async function runControlPlaneMatrix() {
       return {
         status: response.status,
         hostname,
+        ingressIp,
         route: response.headers['x-globalstack-edge-route'] ?? null,
       };
     });
 
-    await record('agent pool child put adds a live burst pool with a third node', async () => {
+    await recordDataPlane('internal load balancer service gets private ingress and no public edge route', async () => {
+      const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: {
+            name: 'runtime-smoke-ilb',
+            annotations: {
+              'service.beta.kubernetes.io/azure-load-balancer-internal': 'true',
+              'service.beta.kubernetes.io/azure-load-balancer-ipv4': '10.224.10.25',
+            },
+          },
+          spec: {
+            type: 'LoadBalancer',
+            selector: { app: 'runtime-smoke' },
+            ports: [{ port: 80, targetPort: 5678 }],
+          },
+        },
+      });
+      assert.equal(created.status, 201);
+      const service = await waitFor(async () => {
+        const current = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-ilb', {
+          host: clusterHost,
+          token: adminKubeToken,
+        });
+        assert.equal(current.status, 200);
+        assert.equal(current.body.status?.loadBalancer?.ingress?.[0]?.ip, '10.224.10.25');
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+      const response = await edgeText(edgePort, 'GET', '/', {
+        host: '10.224.10.25',
+        protocol: 'http',
+      });
+      assert.equal(response.status, 404);
+      return { status: service.status, ingressIp: service.body.status.loadBalancer.ingress[0].ip };
+    });
+
+    await record('agent pool child put adds a live burst pool after scale-to-zero user pool', async () => {
       const result = await httpJson(
         armPort,
         'PUT',
@@ -973,7 +1197,7 @@ async function runControlPlaneMatrix() {
       const nodes = await waitFor(async () => {
         const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
         assert.equal(ready.status, 200);
-        assert.ok(ready.body.items.length >= 3);
+        assert.equal(ready.body.items.length, 2);
         assert.ok(ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'burstpool'));
         return ready;
       }, { timeoutMs: 240000 });
@@ -999,7 +1223,7 @@ async function runControlPlaneMatrix() {
       const nodes = await waitFor(async () => {
         const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
         assert.equal(ready.status, 200);
-        assert.equal(ready.body.items.length, 2);
+        assert.equal(ready.body.items.length, 1);
         assert.ok(!ready.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'burstpool'));
         return ready;
       }, { timeoutMs: 240000 });

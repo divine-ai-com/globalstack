@@ -60,6 +60,7 @@ async function withRuntimeServer(fn) {
   try {
     return await fn({ port, runtime });
   } finally {
+    server.closeAllConnections?.();
     await new Promise(resolve => server.close(resolve));
     await runtime.dispose();
   }
@@ -526,6 +527,7 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     });
     assert.equal(nodes.status, 200);
     assert.equal(nodes.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
+    assert.equal(nodes.body.items[0].metadata.labels['kubernetes.azure.com/nodepool-type'], 'VirtualMachineScaleSets');
 
     const poolList = await httpJson(
       armPort,
@@ -559,7 +561,12 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
       body: {
         apiVersion: 'v1',
         kind: 'Service',
-        metadata: { name: 'runtime-smoke-lb' },
+        metadata: {
+          name: 'runtime-smoke-lb',
+          annotations: {
+            'service.beta.kubernetes.io/azure-dns-label-name': 'runtimesmokesync',
+          },
+        },
         spec: {
           type: 'LoadBalancer',
           selector: { app: 'runtime-smoke' },
@@ -575,10 +582,10 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
         auth: `Bearer ${adminToken}`,
       });
       assert.equal(current.status, 200);
-      assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.hostname);
+      assert.match(String(current.body.status?.loadBalancer?.ingress?.[0]?.ip ?? ''), /^203\.0\.\d{1,3}\.\d{1,3}$/);
       return current;
     });
-    const exposureHost = exposedService.body.status.loadBalancer.ingress[0].hostname;
+    const exposureHost = 'runtimesmokesync.eastus.cloudapp.azure.com';
 
     const exposedResponse = await waitFor(async () => {
       const current = await edgeJson(edgePort, 'GET', '/', {
@@ -591,6 +598,46 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     });
     assert.equal(exposedResponse.headers['x-globalstack-edge-route'], 'aks-service/runtime-smoke-runtime-smoke-lb');
 
+    const internalService = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          name: 'runtime-smoke-ilb',
+          annotations: {
+            'service.beta.kubernetes.io/azure-load-balancer-internal': 'true',
+            'service.beta.kubernetes.io/azure-load-balancer-ipv4': '10.224.10.25',
+          },
+        },
+        spec: {
+          type: 'LoadBalancer',
+          selector: { app: 'runtime-smoke' },
+          ports: [{ port: 80, targetPort: 5678 }],
+        },
+      },
+    });
+    assert.equal(internalService.status, 201);
+
+    const internalResolved = await waitFor(async () => {
+      const current = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-ilb', {
+        host,
+        auth: `Bearer ${adminToken}`,
+      });
+      assert.equal(current.status, 200);
+      assert.equal(current.body.status?.loadBalancer?.ingress?.[0]?.ip, '10.224.10.25');
+      return current;
+    });
+    assert.equal(internalResolved.body.status.loadBalancer.ingress[0].ip, '10.224.10.25');
+
+    const internalEdge = await edgeJson(edgePort, 'GET', '/', {
+      host: '10.224.10.25',
+      protocol: 'http',
+    });
+    assert.equal(internalEdge.status, 404);
+
     const deleted = await httpJson(
       armPort,
       'DELETE',
@@ -601,6 +648,9 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     const afterDelete = await kubeJson(kubePort, '/version', { host });
     assert.equal(afterDelete.status, 404);
   } finally {
+    edgeServer.closeAllConnections?.();
+    kubeServer.closeAllConnections?.();
+    armServer.closeAllConnections?.();
     await new Promise(resolve => edgeServer.close(resolve));
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => armServer.close(resolve));

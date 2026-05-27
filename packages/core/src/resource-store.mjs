@@ -239,11 +239,13 @@ function aksNodeResourceGroup(resourceGroupName, name, location) {
 }
 
 function materializeAksAgentPoolProfile(pool = {}, existingPool = {}) {
+  const poolType = pool.type ?? existingPool.type ?? 'VirtualMachineScaleSets';
   return {
     ...existingPool,
     ...deepClone(pool),
     provisioningState: 'Succeeded',
     powerState: { code: 'Running' },
+    type: poolType,
     mode: pool.mode ?? existingPool.mode ?? 'User',
     osType: pool.osType ?? existingPool.osType ?? 'Linux',
     orchestratorVersion: pool.orchestratorVersion ?? existingPool.orchestratorVersion ?? null,

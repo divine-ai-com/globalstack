@@ -661,11 +661,13 @@ function validateContainerRegistryPayload(resourceType, body) {
 function validateAksPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
     const pool = body.properties ?? {};
-    if (!Number.isInteger(pool.count) || pool.count < 1 || pool.count > 100) {
+    const poolMode = pool.mode ?? 'User';
+    const minCount = poolMode === 'System' ? 1 : 0;
+    if (!Number.isInteger(pool.count) || pool.count < minCount || pool.count > 1000) {
       return envelopedError(
         400,
         'InvalidAgentPoolCount',
-        'AKS agent pool count must be an integer between 1 and 100.',
+        `AKS agent pool count must be an integer between ${minCount} and 1000 for ${poolMode} pools.`,
       );
     }
     if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
@@ -687,6 +689,20 @@ function validateAksPayload(resourceType, body) {
         400,
         'InvalidParameter',
         'AKS agent pool osType must be Linux or Windows when provided.',
+      );
+    }
+    if (pool.type && !['VirtualMachineScaleSets', 'AvailabilitySet'].includes(pool.type)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
+      );
+    }
+    if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool availabilityZones requires type VirtualMachineScaleSets.',
       );
     }
     return null;
@@ -723,6 +739,20 @@ function validateAksPayload(resourceType, body) {
       'AKS properties.dnsPrefix must be 1 through 54 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
     );
   }
+  if (Object.hasOwn(properties, 'disableLocalAccounts') && typeof properties.disableLocalAccounts !== 'boolean') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS properties.disableLocalAccounts must be a boolean when provided.',
+    );
+  }
+  if (properties.disableLocalAccounts === true && properties.aadProfile?.managed !== true) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS properties.disableLocalAccounts can only be enabled on Microsoft Entra managed clusters.',
+    );
+  }
   if (!Array.isArray(properties.agentPoolProfiles) || properties.agentPoolProfiles.length === 0) {
     return envelopedError(
       400,
@@ -738,11 +768,13 @@ function validateAksPayload(resourceType, body) {
         'AKS agent pool names must start with a lowercase letter, use lowercase alphanumerics only, and be 1 through 12 characters.',
       );
     }
-    if (!Number.isInteger(pool.count) || pool.count < 1 || pool.count > 100) {
+    const poolMode = pool.mode ?? 'User';
+    const minCount = poolMode === 'System' ? 1 : 0;
+    if (!Number.isInteger(pool.count) || pool.count < minCount || pool.count > 1000) {
       return envelopedError(
         400,
         'InvalidAgentPoolCount',
-        'AKS agent pool count must be an integer between 1 and 100.',
+        `AKS agent pool count must be an integer between ${minCount} and 1000 for ${poolMode} pools.`,
       );
     }
     if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
@@ -764,6 +796,20 @@ function validateAksPayload(resourceType, body) {
         400,
         'InvalidParameter',
         'AKS agent pool osType must be Linux or Windows when provided.',
+      );
+    }
+    if (pool.type && !['VirtualMachineScaleSets', 'AvailabilitySet'].includes(pool.type)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
+      );
+    }
+    if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS agent pool availabilityZones requires type VirtualMachineScaleSets.',
       );
     }
   }
