@@ -10,6 +10,7 @@ const outMdPath = join(outRoot, 'azure-99-roadmap.md');
 const distRoot = join(root, 'dist', 'e2e');
 const complexBundleSummaryPath = join(root, 'dist', 'complex-pulumi-bundles', 'latest-results.json');
 const verifiedBundleSummaryPath = join(root, 'dist', 'verified-bundles', 'latest-results.json');
+const verifiedPlatformWaveHistoryPath = join(outRoot, 'azure-verified-platform-waves.json');
 
 const waveDefinitions = [
   {
@@ -481,29 +482,77 @@ async function loadStressVerificationSnapshot() {
 }
 
 async function loadVerifiedPlatformSnapshot() {
+  const waveFromReport = (raw) => {
+    const platformIds = [...new Set((raw.bundles ?? []).map(result => result.platformId).filter(Boolean))];
+    return platformIds.map(platformId => {
+      const bundles = (raw.bundles ?? []).filter(result => result.platformId === platformId);
+      return {
+        platformId,
+        generatedAt: raw.generatedAt ?? null,
+        model: raw.model ?? null,
+        location: raw.location ?? null,
+        source: 'dist/verified-bundles/latest-results.json',
+        total: bundles.length,
+        passCount: bundles.filter(result => result.ok === true).length,
+        results: bundles.map((result) => ({
+          prId: result.prId,
+          scenarioId: result.scenarioId,
+          ok: result.ok === true,
+          finalStatus: result.finalStatus ?? 'UNKNOWN',
+          finalStage: result.finalStage ?? 'unknown',
+          error: result.error ?? null,
+        })),
+      };
+    });
+  };
+
+  const wavesByPlatform = new Map();
+  let updatedAt = null;
+  try {
+    const history = JSON.parse(await readFile(verifiedPlatformWaveHistoryPath, 'utf8'));
+    updatedAt = history.updatedAt ?? null;
+    for (const wave of history.waves ?? []) {
+      wavesByPlatform.set(wave.platformId, wave);
+    }
+  } catch {
+    // The history file is optional; the latest ignored dist report is enough for local renders.
+  }
+
   try {
     const raw = JSON.parse(await readFile(verifiedBundleSummaryPath, 'utf8'));
-    const results = (raw.bundles ?? []).map((result) => ({
-      platformId: result.platformId,
-      prId: result.prId,
-      scenarioId: result.scenarioId,
-      ok: result.ok === true,
-      finalStatus: result.finalStatus ?? 'UNKNOWN',
-      finalStage: result.finalStage ?? 'unknown',
-    }));
-    return {
-      source: 'dist/verified-bundles/latest-results.json',
-      generatedAt: raw.generatedAt ?? null,
-      model: raw.model ?? null,
-      location: raw.location ?? null,
-      scope: 'Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.',
-      total: results.length,
-      passCount: results.filter((item) => item.ok).length,
-      results,
-    };
+    updatedAt = raw.generatedAt ?? updatedAt;
+    for (const wave of waveFromReport(raw)) {
+      wavesByPlatform.set(wave.platformId, wave);
+    }
   } catch {
-    return null;
+    // Local checkout may not have an ignored latest report.
   }
+
+  const waves = [...wavesByPlatform.values()].sort((left, right) => left.platformId.localeCompare(right.platformId));
+  if (waves.length === 0) return null;
+  const results = waves.flatMap(wave => wave.results.map(result => ({
+    platformId: wave.platformId,
+    generatedAt: wave.generatedAt,
+    model: wave.model,
+    location: wave.location,
+    prId: result.prId,
+    scenarioId: result.scenarioId,
+    ok: result.ok === true,
+    finalStatus: result.finalStatus ?? 'UNKNOWN',
+    finalStage: result.finalStage ?? 'unknown',
+  })));
+  return {
+    source: 'docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present',
+    generatedAt: updatedAt ?? waves.at(-1)?.generatedAt ?? null,
+    model: [...new Set(waves.map(wave => wave.model).filter(Boolean))].join(', ') || null,
+    location: [...new Set(waves.map(wave => wave.location).filter(Boolean))].join(', ') || null,
+    scope: 'Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.',
+    waveCount: waves.length,
+    total: results.length,
+    passCount: results.filter((item) => item.ok).length,
+    waves,
+    results,
+  };
 }
 
 function programEstimate(services) {
@@ -655,15 +704,16 @@ function markdown(doc) {
       `- Model: ${doc.verifiedPlatformSnapshot.model ?? 'unknown'}`,
       `- Location: ${doc.verifiedPlatformSnapshot.location ?? 'unknown'}`,
       `- Scope: ${doc.verifiedPlatformSnapshot.scope}`,
-      `- Bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.total}`,
-      `- Passing bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.passCount}/${doc.verifiedPlatformSnapshot.total}`,
+      `- Platform waves recorded: ${doc.verifiedPlatformSnapshot.waveCount ?? 1}`,
+      `- Bundles across recorded platform waves: ${doc.verifiedPlatformSnapshot.total}`,
+      `- Passing bundles across recorded platform waves: ${doc.verifiedPlatformSnapshot.passCount}/${doc.verifiedPlatformSnapshot.total}`,
       '',
-      '| Platform | Bundle | Scenario | Overall | Final Stage |',
-      '|---|---|---|---|---|',
+      '| Platform | Generated | Bundle | Scenario | Overall | Final Stage |',
+      '|---|---|---|---|---|---|',
     );
 
     for (const result of doc.verifiedPlatformSnapshot.results) {
-      lines.push(`| ${result.platformId} | ${result.prId} | ${result.scenarioId} | ${result.finalStatus} | ${result.finalStage} |`);
+      lines.push(`| ${result.platformId} | ${result.generatedAt ?? 'unknown'} | ${result.prId} | ${result.scenarioId} | ${result.finalStatus} | ${result.finalStage} |`);
     }
 
     lines.push('');

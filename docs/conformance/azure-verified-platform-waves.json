@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-27T19:11:16.649Z",
+  "waves": [
+    {
+      "platformId": "azure-bicep",
+      "generatedAt": "2026-05-27T18:12:38.219Z",
+      "model": "gpt-5.5",
+      "location": "eastus",
+      "source": "dist/verified-bundles/latest-results.json",
+      "total": 5,
+      "passCount": 5,
+      "results": [
+        {
+          "prId": "Pr91311",
+          "scenarioId": "claims-evidence-command-ring",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91312",
+          "scenarioId": "partner-order-ingest-buffer",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91313",
+          "scenarioId": "warehouse-dispatch-event-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91314",
+          "scenarioId": "billing-audit-notification-mesh",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91315",
+          "scenarioId": "regional-catalog-command-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        }
+      ]
+    },
+    {
+      "platformId": "azure-opentofu-hcl",
+      "generatedAt": "2026-05-27T18:52:14.961Z",
+      "model": "gpt-5.5",
+      "location": "eastus",
+      "source": "dist/verified-bundles/latest-results.json",
+      "total": 5,
+      "passCount": 5,
+      "results": [
+        {
+          "prId": "Pr91321",
+          "scenarioId": "claims-evidence-command-ring",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91322",
+          "scenarioId": "partner-order-ingest-buffer",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91323",
+          "scenarioId": "warehouse-dispatch-event-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91324",
+          "scenarioId": "billing-audit-notification-mesh",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91325",
+          "scenarioId": "regional-catalog-command-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        }
+      ]
+    },
+    {
+      "platformId": "azure-pulumi-py",
+      "generatedAt": "2026-05-27T19:11:16.649Z",
+      "model": "gpt-5.5",
+      "location": "eastus",
+      "source": "dist/verified-bundles/latest-results.json",
+      "total": 5,
+      "passCount": 5,
+      "results": [
+        {
+          "prId": "Pr91331",
+          "scenarioId": "claims-evidence-command-ring",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91332",
+          "scenarioId": "partner-order-ingest-buffer",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91333",
+          "scenarioId": "warehouse-dispatch-event-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91334",
+          "scenarioId": "billing-audit-notification-mesh",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        },
+        {
+          "prId": "Pr91335",
+          "scenarioId": "regional-catalog-command-plane",
+          "ok": true,
+          "finalStatus": "PASS",
+          "finalStage": "destroy",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

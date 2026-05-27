@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T18:14:11.786Z",
+    "generatedAt": "2026-05-27T19:14:24.618Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -132,16 +132,175 @@
     ]
   },
   "verifiedPlatformSnapshot": {
-    "source": "dist/verified-bundles/latest-results.json",
-    "generatedAt": "2026-05-27T18:12:38.219Z",
+    "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
+    "generatedAt": "2026-05-27T19:11:16.649Z",
     "model": "gpt-5.5",
     "location": "eastus",
     "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
-    "total": 5,
-    "passCount": 5,
+    "waveCount": 3,
+    "total": 15,
+    "passCount": 15,
+    "waves": [
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91311",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91312",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91313",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91314",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91315",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91321",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91322",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91323",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91324",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91325",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91331",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91332",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91333",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91334",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91335",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      }
+    ],
     "results": [
       {
         "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
         "prId": "Pr91311",
         "scenarioId": "claims-evidence-command-ring",
         "ok": true,
@@ -150,6 +309,9 @@
       },
       {
         "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
         "prId": "Pr91312",
         "scenarioId": "partner-order-ingest-buffer",
         "ok": true,
@@ -158,6 +320,9 @@
       },
       {
         "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
         "prId": "Pr91313",
         "scenarioId": "warehouse-dispatch-event-plane",
         "ok": true,
@@ -166,6 +331,9 @@
       },
       {
         "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
         "prId": "Pr91314",
         "scenarioId": "billing-audit-notification-mesh",
         "ok": true,
@@ -174,7 +342,120 @@
       },
       {
         "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
         "prId": "Pr91315",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91321",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91322",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91323",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91324",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91325",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91331",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91332",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91333",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91334",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91335",
         "scenarioId": "regional-catalog-command-plane",
         "ok": true,
         "finalStatus": "PASS",

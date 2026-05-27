@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T18:14:11.786Z
+Generated: 2026-05-27T19:14:24.618Z
 
 ## Guardrails
 
@@ -48,21 +48,32 @@ Method:
 
 ## Platform Verification Snapshot
 
-- Source: `dist/verified-bundles/latest-results.json`
-- Generated: 2026-05-27T18:12:38.219Z
+- Source: `docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present`
+- Generated: 2026-05-27T19:11:16.649Z
 - Model: gpt-5.5
 - Location: eastus
 - Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
-- Bundles in latest platform wave: 5
-- Passing bundles in latest platform wave: 5/5
+- Platform waves recorded: 3
+- Bundles across recorded platform waves: 15
+- Passing bundles across recorded platform waves: 15/15
 
-| Platform | Bundle | Scenario | Overall | Final Stage |
-|---|---|---|---|---|
-| azure-bicep | Pr91311 | claims-evidence-command-ring | PASS | destroy |
-| azure-bicep | Pr91312 | partner-order-ingest-buffer | PASS | destroy |
-| azure-bicep | Pr91313 | warehouse-dispatch-event-plane | PASS | destroy |
-| azure-bicep | Pr91314 | billing-audit-notification-mesh | PASS | destroy |
-| azure-bicep | Pr91315 | regional-catalog-command-plane | PASS | destroy |
+| Platform | Generated | Bundle | Scenario | Overall | Final Stage |
+|---|---|---|---|---|---|
+| azure-bicep | 2026-05-27T18:12:38.219Z | Pr91311 | claims-evidence-command-ring | PASS | destroy |
+| azure-bicep | 2026-05-27T18:12:38.219Z | Pr91312 | partner-order-ingest-buffer | PASS | destroy |
+| azure-bicep | 2026-05-27T18:12:38.219Z | Pr91313 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-bicep | 2026-05-27T18:12:38.219Z | Pr91314 | billing-audit-notification-mesh | PASS | destroy |
+| azure-bicep | 2026-05-27T18:12:38.219Z | Pr91315 | regional-catalog-command-plane | PASS | destroy |
+| azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91321 | claims-evidence-command-ring | PASS | destroy |
+| azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91322 | partner-order-ingest-buffer | PASS | destroy |
+| azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91323 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91324 | billing-audit-notification-mesh | PASS | destroy |
+| azure-opentofu-hcl | 2026-05-27T18:52:14.961Z | Pr91325 | regional-catalog-command-plane | PASS | destroy |
+| azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91331 | claims-evidence-command-ring | PASS | destroy |
+| azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91332 | partner-order-ingest-buffer | PASS | destroy |
+| azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91333 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91334 | billing-audit-notification-mesh | PASS | destroy |
+| azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91335 | regional-catalog-command-plane | PASS | destroy |
 
 ## Cross-Cutting Pending Backlog
 

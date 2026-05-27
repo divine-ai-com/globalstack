@@ -9,6 +9,7 @@ const verifiedRoot = verifiedWorkspacePath(root);
 const verificationRoot = verificationRepoRoot(root);
 const runtimeRoot = distPath(root, 'verified-bundle-runtime');
 const latestResultsPath = join(distPath(root, 'verified-bundles'), 'latest-results.json');
+const platformWaveHistoryPath = join(root, 'docs', 'conformance', 'azure-verified-platform-waves.json');
 const model = process.env.OPENAI_MODEL ?? 'gpt-5.5';
 const location = process.env.AZURE_LOCATION ?? 'eastus';
 const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot/i;
@@ -462,6 +463,7 @@ const platformInstructions = new Map([
       'Name the stack factory function create_stack and import that exact symbol from tap.py.',
       'Use a conservative requirements.txt dependency set that is known to resolve in the runner: pulumi>=3.0.0 and pulumi-azure-native>=2.80.0.',
       'Export exactly the requested output keys with pulumi.export.',
+      'For child resources, export the exact logical names from this prompt, not provider-computed composite names such as account/default/container or namespace/topic.',
       'Use the exact resource names provided and do not generate random suffixes.',
       'Keep all resource construction inside create_stack in lib/tap_stack.py.',
     ].join(' '),
@@ -550,6 +552,46 @@ async function removeWithFallback(targetPath) {
   const direct = await run('rm', ['-rf', targetPath], { stdio: 'ignore' });
   if (direct === 0) return;
   await run('sudo', ['-n', 'rm', '-rf', targetPath], { stdio: 'ignore' });
+}
+
+async function updatePlatformWaveHistory(report) {
+  let history = { version: 1, updatedAt: report.generatedAt, waves: [] };
+  try {
+    history = JSON.parse(await readFile(platformWaveHistoryPath, 'utf8'));
+  } catch {
+    // First verified platform wave on this checkout.
+  }
+
+  const wavesByPlatform = new Map((history.waves ?? []).map(wave => [wave.platformId, wave]));
+  const platformIds = [...new Set(report.bundles.map(bundle => bundle.platformId).filter(Boolean))];
+  for (const platformId of platformIds) {
+    const bundles = report.bundles.filter(bundle => bundle.platformId === platformId);
+    wavesByPlatform.set(platformId, {
+      platformId,
+      generatedAt: report.generatedAt,
+      model: report.model ?? null,
+      location: report.location ?? null,
+      source: 'dist/verified-bundles/latest-results.json',
+      total: bundles.length,
+      passCount: bundles.filter(bundle => bundle.ok).length,
+      results: bundles.map(bundle => ({
+        prId: bundle.prId ?? null,
+        scenarioId: bundle.scenarioId,
+        ok: bundle.ok === true,
+        finalStatus: bundle.finalStatus ?? 'UNKNOWN',
+        finalStage: bundle.finalStage ?? 'unknown',
+        error: bundle.error ?? null,
+      })),
+    });
+  }
+
+  const next = {
+    version: 1,
+    updatedAt: report.generatedAt,
+    waves: [...wavesByPlatform.values()].sort((left, right) => left.platformId.localeCompare(right.platformId)),
+  };
+  await mkdir(dirname(platformWaveHistoryPath), { recursive: true });
+  await writeFile(platformWaveHistoryPath, `${JSON.stringify(next, null, 2)}\n`);
 }
 
 async function dockerCommand() {
@@ -642,6 +684,25 @@ function promptText(platformId, scenarioId, scenario, platform, names) {
       '- Event Hubs namespace API version 2024-01-01 with sku name Standard, tier Standard, capacity 1.',
       '- Event Hub API version 2024-01-01 with partitionCount = 2 and messageRetentionInDays = 1.',
       '- App Configuration store API version 2023-03-01 with sku name free and disableLocalAuth = false.',
+      '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
+    ]
+    : platformId === 'azure-pulumi-py'
+    ? [
+      'Use this exact Azure resource contract:',
+      '- Use the unversioned top-level pulumi_azure_native modules: resources, storage, servicebus, eventgrid, eventhub, and appconfiguration. Do not import versioned namespace paths.',
+      '- Storage account ARM contract is API version 2023-01-01 with kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, supportsHttpsTrafficOnly=true. In Pulumi Azure Native Python, map that ARM property by setting enable_https_traffic_only=True on the StorageAccount resource.',
+      '- For Pulumi storage child resources, create BlobContainer, Queue, FileShare, and Table directly with account_name + resource_group_name + container_name/queue_name/share_name/table_name. Do not introduce blobServices/default, queueServices/default, fileServices/default, or tableServices/default helper resources in this platform.',
+      '- Blob container API version 2023-01-01 with publicAccess None.',
+      '- Queue API version 2023-01-01 with no extra properties.',
+      '- File share API version 2023-01-01 with shareQuota 32.',
+      '- Table API version 2023-01-01 with no extra properties.',
+      '- Service Bus namespace API version 2021-11-01 with sku name Standard and tier Standard.',
+      '- Service Bus topic API version 2021-11-01 with maxSizeInMegabytes = 1024.',
+      '- Event Grid topic API version 2022-06-15 with inputSchema = EventGridSchema.',
+      '- Event Hubs namespace API version 2024-01-01 with sku name Standard, tier Standard, capacity 1.',
+      '- Event Hub API version 2024-01-01 with partitionCount = 2 and messageRetentionInDays = 1.',
+      '- App Configuration store API version 2023-03-01 with sku name free and disableLocalAuth = false.',
+      '- Export the exact logical child names from this prompt. Do not export Pulumi child resource .name values when the provider resolves them to composite Azure names containing parent segments.',
       '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
     ]
     : [
@@ -2017,6 +2078,7 @@ async function main() {
   };
   await mkdir(dirname(latestResultsPath), { recursive: true });
   await writeFile(latestResultsPath, `${JSON.stringify(report, null, 2)}\n`);
+  await updatePlatformWaveHistory(report);
   console.log(JSON.stringify(report, null, 2));
 
   if (report.bundles.some(bundle => !bundle.ok)) process.exit(1);
