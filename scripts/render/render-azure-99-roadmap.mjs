@@ -9,6 +9,7 @@ const outJsonPath = join(outRoot, 'azure-99-roadmap.json');
 const outMdPath = join(outRoot, 'azure-99-roadmap.md');
 const distRoot = join(root, 'dist', 'e2e');
 const complexBundleSummaryPath = join(root, 'dist', 'complex-pulumi-bundles', 'latest-results.json');
+const verifiedBundleSummaryPath = join(root, 'dist', 'verified-bundles', 'latest-results.json');
 
 const waveDefinitions = [
   {
@@ -207,6 +208,7 @@ const crossCuttingBacklog = [
     detail: 'Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target.',
     commands: [
       'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>',
       'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
     ],
   },
@@ -259,9 +261,10 @@ const extendedContinuationRoadmap = [
       'Run 5-bundle adversarial waves across Bicep and ARM JSON with the same service graphs, outputs, and destroy guarantees.',
       'Run 5-bundle adversarial waves across Pulumi Python, Pulumi YAML, and Ansible YAML.',
       'Treat every platform-specific mismatch as either generator defect, runner defect, or emulator parity defect; do not blur them together.',
+      'Keep the deep Pulumi-only adversarial runner separate from the platform-aware verified runner until the complex runner is explicitly made platform-aware.',
     ],
     defaultCommands: [
-      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=<platform>',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>',
       'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
       'git diff --check',
     ],
@@ -342,22 +345,31 @@ const extendedContinuationRoadmap = [
 const immediateNextWork = [
   {
     rank: 1,
-    label: 'Run the next adversarial 5-bundle wave against Terraform HCL',
-    why: 'Pulumi TypeScript is now well stressed. The highest-value next move is to pressure a different provider and state engine with the same deep service graphs.',
+    label: 'Run the next verified 5-bundle wave against Bicep',
+    why: 'Terraform HCL now has a green platform wave. Bicep is the next highest-value target because it exercises ARM-native dependency and child-resource identity behavior.',
     commands: [
-      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-terraform-hcl',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-bicep',
     ],
   },
   {
     rank: 2,
-    label: 'Run the same adversarial wave against Bicep',
-    why: 'Bicep exercises ARM-native deployment semantics and catches a different class of naming, dependency, and child-resource identity issues than provider-based flows.',
+    label: 'Run the next verified 5-bundle wave against OpenTofu HCL',
+    why: 'OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.',
     commands: [
-      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl',
     ],
   },
   {
     rank: 3,
+    label: 'Make the complex adversarial runner platform-aware',
+    why: 'The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.',
+    commands: [
+      'node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep',
+    ],
+  },
+  {
+    rank: 4,
     label: 'Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations',
     why: 'The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.',
     commands: [
@@ -366,7 +378,7 @@ const immediateNextWork = [
     ],
   },
   {
-    rank: 4,
+    rank: 5,
     label: 'Keep narrow real-Azure differential reruns running on timing-sensitive services',
     why: 'The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.',
     commands: [
@@ -461,6 +473,31 @@ async function loadStressVerificationSnapshot() {
       generatedAt: raw.generatedAt ?? null,
       total: results.length,
       passCount: results.filter((item) => item.overallStatus === 'PASS').length,
+      results,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function loadVerifiedPlatformSnapshot() {
+  try {
+    const raw = JSON.parse(await readFile(verifiedBundleSummaryPath, 'utf8'));
+    const results = (raw.bundles ?? []).map((result) => ({
+      platformId: result.platformId,
+      prId: result.prId,
+      scenarioId: result.scenarioId,
+      ok: result.ok === true,
+      finalStatus: result.finalStatus ?? 'UNKNOWN',
+      finalStage: result.finalStage ?? 'unknown',
+    }));
+    return {
+      source: 'dist/verified-bundles/latest-results.json',
+      generatedAt: raw.generatedAt ?? null,
+      model: raw.model ?? null,
+      location: raw.location ?? null,
+      total: results.length,
+      passCount: results.filter((item) => item.ok).length,
       results,
     };
   } catch {
@@ -603,6 +640,28 @@ function markdown(doc) {
 
     for (const result of doc.stressVerificationSnapshot.results) {
       lines.push(`| ${result.prId} | ${result.scenarioId} | ${result.overallStatus} | ${result.finalStage} |`);
+    }
+
+    lines.push('');
+  }
+
+  if (doc.verifiedPlatformSnapshot) {
+    lines.push(
+      '## Platform Verification Snapshot',
+      '',
+      `- Source: \`${doc.verifiedPlatformSnapshot.source}\``,
+      `- Generated: ${doc.verifiedPlatformSnapshot.generatedAt ?? 'unknown'}`,
+      `- Model: ${doc.verifiedPlatformSnapshot.model ?? 'unknown'}`,
+      `- Location: ${doc.verifiedPlatformSnapshot.location ?? 'unknown'}`,
+      `- Bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.total}`,
+      `- Passing bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.passCount}/${doc.verifiedPlatformSnapshot.total}`,
+      '',
+      '| Platform | Bundle | Scenario | Overall | Final Stage |',
+      '|---|---|---|---|---|',
+    );
+
+    for (const result of doc.verifiedPlatformSnapshot.results) {
+      lines.push(`| ${result.platformId} | ${result.prId} | ${result.scenarioId} | ${result.finalStatus} | ${result.finalStage} |`);
     }
 
     lines.push('');
@@ -780,6 +839,7 @@ const logicParityEvidence = logicParity
     }
   : null;
 const stressVerificationSnapshot = await loadStressVerificationSnapshot();
+const verifiedPlatformSnapshot = await loadVerifiedPlatformSnapshot();
 const azureFunctionsEstimatePercent = azureFunctionsService ? serviceEstimate(azureFunctionsService, functionsParityEvidence) : null;
 const logicWorkflowsEstimatePercent = logicWorkflowsService ? serviceEstimate(logicWorkflowsService, logicParityEvidence) : null;
 const prioritizedServices = waves
@@ -826,6 +886,7 @@ const doc = {
     },
   },
   stressVerificationSnapshot,
+  verifiedPlatformSnapshot,
   crossCuttingBacklog,
   extendedContinuationRoadmap,
   immediateNextWork,

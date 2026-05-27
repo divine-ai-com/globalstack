@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-26T15:55:08.244Z
+Generated: 2026-05-27T17:44:25.971Z
 
 ## Guardrails
 
@@ -46,6 +46,23 @@ Method:
 | Pr91249 | global-release-governance-ring | PASS | destroy |
 | Pr91250 | cutover-telemetry-command-fabric | PASS | destroy |
 
+## Platform Verification Snapshot
+
+- Source: `dist/verified-bundles/latest-results.json`
+- Generated: 2026-05-27T17:41:47.364Z
+- Model: gpt-5.5
+- Location: eastus
+- Bundles in latest platform wave: 5
+- Passing bundles in latest platform wave: 5/5
+
+| Platform | Bundle | Scenario | Overall | Final Stage |
+|---|---|---|---|---|
+| azure-terraform-hcl | Pr91301 | claims-evidence-command-ring | PASS | destroy |
+| azure-terraform-hcl | Pr91302 | partner-order-ingest-buffer | PASS | destroy |
+| azure-terraform-hcl | Pr91303 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-terraform-hcl | Pr91304 | billing-audit-notification-mesh | PASS | destroy |
+| azure-terraform-hcl | Pr91305 | regional-catalog-command-plane | PASS | destroy |
+
 ## Cross-Cutting Pending Backlog
 
 These items remain open across the whole Azure program even when a service-specific parity pack is green.
@@ -60,7 +77,7 @@ These items remain open across the whole Azure program even when a service-speci
 | RBAC and authorization behavior | Expand allow/deny matrices for ARM and service data planes, including propagation lag and inherited-scope behavior where Azure actually enforces it. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true`<br>`npm run conformance:local -- --capability=identity-rbac` |
 | Repeat captures for timing-sensitive behavior | Re-capture ambiguous or unstable Azure behavior before encoding it into local expectations, especially delete/read races and async completion windows. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` |
 | Deeper service-specific data planes where applicable | Broaden bounded local facades and official-emulator integrations for services such as Cosmos, Files, Event Hubs, App Configuration, Key Vault, PostgreSQL, MySQL, and Redis. | `npm run hybrid:render`<br>`npm run smoke`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true` |
-| Adversarial new task waves | Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
+| Adversarial new task waves | Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
 | Real-Azure differential reruns | Re-run the same deployment and inspection flows against real Azure and GlobalStack so the parity claim is continuously challenged instead of frozen at one historical capture set. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` |
 | Conformance runner completion determinism | Harden the real-Azure conformance runner so it exits deterministically after capture and cleanup. Some scoped reruns still write fresh fixtures and then go quiet instead of finishing cleanly. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations`<br>`npm run validate` |
 | Repeated timing and drift checks | Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:parity && npm run conformance:roadmap` |
@@ -79,8 +96,9 @@ Tracks:
 - Run 5-bundle adversarial waves across Bicep and ARM JSON with the same service graphs, outputs, and destroy guarantees.
 - Run 5-bundle adversarial waves across Pulumi Python, Pulumi YAML, and Ansible YAML.
 - Treat every platform-specific mismatch as either generator defect, runner defect, or emulator parity defect; do not blur them together.
+- Keep the deep Pulumi-only adversarial runner separate from the platform-aware verified runner until the complex runner is explicitly made platform-aware.
 
-Default commands: `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=<platform>`, `npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>`, `git diff --check`
+Default commands: `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>`, `npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>`, `git diff --check`
 
 Acceptance bar: Every supported Azure IaC platform has at least one recent adversarial wave with all bundles green through build, lint, unit-tests, deploy, provider-lifecycle, integration-tests, and destroy.
 
@@ -144,10 +162,11 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Rank | Next Work | Why Now | Commands |
 |---:|---|---|---|
-| 1 | Run the next adversarial 5-bundle wave against Terraform HCL | Pulumi TypeScript is now well stressed. The highest-value next move is to pressure a different provider and state engine with the same deep service graphs. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-terraform-hcl` |
-| 2 | Run the same adversarial wave against Bicep | Bicep exercises ARM-native deployment semantics and catches a different class of naming, dependency, and child-resource identity issues than provider-based flows. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
-| 3 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
-| 4 | Keep narrow real-Azure differential reruns running on timing-sensitive services | The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` |
+| 1 | Run the next verified 5-bundle wave against Bicep | Terraform HCL now has a green platform wave. Bicep is the next highest-value target because it exercises ARM-native dependency and child-resource identity behavior. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-bicep` |
+| 2 | Run the next verified 5-bundle wave against OpenTofu HCL | OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl` |
+| 3 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
+| 4 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
+| 5 | Keep narrow real-Azure differential reruns running on timing-sensitive services | The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` |
 
 ## Wave Summary
 

@@ -8,11 +8,15 @@ const root = workspaceRoot(import.meta.url);
 const verifiedRoot = verifiedWorkspacePath(root);
 const verificationRoot = verificationRepoRoot(root);
 const runtimeRoot = distPath(root, 'verified-bundle-runtime');
+const latestResultsPath = join(distPath(root, 'verified-bundles'), 'latest-results.json');
 const model = process.env.OPENAI_MODEL ?? 'gpt-5.5';
 const location = process.env.AZURE_LOCATION ?? 'eastus';
 const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot/i;
 const requestedItems = process.argv
   .filter(arg => arg.startsWith('--bundle='))
+  .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean));
+const requestedPlatforms = process.argv
+  .filter(arg => arg.startsWith('--platform='))
   .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean));
 
 const platformById = new Map(azurePlatforms.map(platform => [platform.id, platform]));
@@ -157,6 +161,14 @@ const starterBundles = [
     prId: 'Pr91305',
   },
 ];
+
+const platformWaveScenarioIds = new Set([
+  'claims-evidence-command-ring',
+  'partner-order-ingest-buffer',
+  'warehouse-dispatch-event-plane',
+  'billing-audit-notification-mesh',
+  'regional-catalog-command-plane',
+]);
 
 const scenarios = new Map([
   ['mlops-feature-intake-lake', {
@@ -1916,10 +1928,19 @@ async function generateBundle(task, docker) {
 }
 
 async function main() {
-  const selected = requestedItems.length === 0
-    ? starterBundles
+  const baseSelection = requestedItems.length === 0
+    ? requestedPlatforms.length === 0
+      ? starterBundles
+      : starterBundles.filter(item => platformWaveScenarioIds.has(item.scenarioId))
     : starterBundles.filter(item => requestedItems.includes(`${item.platformId}/${item.scenarioId}`));
-  if (selected.length === 0) {
+  const platformSelected = requestedPlatforms.length === 0
+    ? baseSelection
+    : baseSelection.filter(item => requestedPlatforms.includes(item.platformId));
+  const unknownPlatforms = requestedPlatforms.filter(platformId => !platformById.has(platformId));
+  if (unknownPlatforms.length > 0) {
+    throw new Error(`Unknown platform(s): ${unknownPlatforms.join(', ')}. Available: ${azurePlatforms.map(platform => platform.id).join(', ')}`);
+  }
+  if (platformSelected.length === 0) {
     throw new Error(`No matching bundles selected. Available: ${starterBundles.map(item => `${item.platformId}/${item.scenarioId}`).join(', ')}`);
   }
 
@@ -1932,7 +1953,7 @@ async function main() {
   const docker = await dockerCommand();
 
   const results = [];
-  for (const task of selected) {
+  for (const task of platformSelected) {
     console.log(`Generating ${task.platformId}/${task.scenarioId} with ${model}...`);
     try {
       results.push(await generateBundle(task, docker));
@@ -1963,6 +1984,8 @@ async function main() {
       error: result.error ?? null,
     })),
   };
+  await mkdir(dirname(latestResultsPath), { recursive: true });
+  await writeFile(latestResultsPath, `${JSON.stringify(report, null, 2)}\n`);
   console.log(JSON.stringify(report, null, 2));
 
   if (report.bundles.some(bundle => !bundle.ok)) process.exit(1);
