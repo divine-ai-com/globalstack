@@ -245,6 +245,7 @@ In practice:
 - treat metadata-only or validation-only surfaces as transitional and document them plainly
 - when a bundle exposes a real runtime gap, fix the runtime gap instead of adding another narrow façade success path
 - when the user says "go for it" on parity or service expansion, assume they mean "deepen real emulation" unless they explicitly ask for control-plane-only coverage
+- from now on, do not accept facade-only workarounds for runtime-heavy services just to get a task green; the acceptable fix is a real local engine or executable runtime under the Azure-shaped facade
 
 Anti-patterns that must be rejected:
 
@@ -253,6 +254,7 @@ Anti-patterns that must be rejected:
 - using bounded router behavior as a substitute for a real local backend when the scenario needs executable service semantics
 - describing metadata-only coverage as if it were full service emulation
 - keeping a transitional façade-only implementation after it is clear the service needs a concrete runtime to support realistic workloads
+- using another facade-only patch, validator tweak, or synthetic response after the missing piece is already known to be a real local engine/backend problem
 
 Supported-surface standard:
 

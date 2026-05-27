@@ -106,6 +106,13 @@ This means:
 - do not count another route or validation patch as “good enough” when the exposed gap really needs executable local runtime behavior
 - if a workload is supposed to deploy and actually run, GlobalStack must aim to let that mix of services execute locally, not merely provision Azure-shaped metadata
 
+From this point forward, do not accept facade-only workarounds for runtime-heavy services. The required end-state is:
+
+- Azure-shaped facade on the outside
+- real executable local engine, backend, or runtime underneath
+
+If that substrate does not exist yet, keep the surface explicitly bounded or unsupported instead of adding another facade-only success path.
+
 ## What We Were Doing Wrong
 
 These are the recurring mistakes that future work must not repeat:
@@ -117,6 +124,7 @@ These are the recurring mistakes that future work must not repeat:
 - letting “bounded local subset” implementations linger as if they were acceptable end-state emulation
 - using façade-only success to make complex tasks pass instead of deepening the runtime that the task actually needed
 - speaking too loosely about parity when the repo itself still documented bounded or metadata-only behavior
+- treating façade-only patches as acceptable progress after it is already clear that the service needs a real local engine
 
 ## What We Must Not Do
 
@@ -127,6 +135,7 @@ These are the recurring mistakes that future work must not repeat:
 - do not let convenience, speed, or checklist progress justify façade-only implementations for runtime-heavy services
 - do not hide this distinction in docs, summaries, or roadmap language; the implementation class must stay explicit
 - do not default to “make the next task green” if that means avoiding the deeper runtime work the service actually requires
+- do not add another facade-only workaround once the correct fix is a real local engine, broker, database, workflow runner, registry, Kubernetes backend, or equivalent executable substrate
 
 ## Supported-Surface Identity Rule
 

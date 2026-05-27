@@ -25,6 +25,7 @@ The goal is not to make Azure calls "work" by returning friendly local success. 
 - Treat official Microsoft emulators as useful local data planes, not proof of full Azure management-plane parity.
 - For any Azure surface we claim to support, the target is the same externally observable behavior as real Azure. If Azure and GlobalStack differ, that is a product gap.
 - Keep dataset-visible Azure IaC artifacts Azure-only. Prompts, IaC, unit tests, and integration tests must not mention GlobalStack, local endpoints, or emulator-only runtime details. See `docs/product/azure-iac-principals.md`.
+- For runtime-heavy services, do not settle for a facade-only success path. The intended shape is an Azure-shaped facade backed by a real local engine, backend, broker, database, workflow runtime, registry, Kubernetes substrate, or equivalent executable local system.
 
 ## Current Scope
 
