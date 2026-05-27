@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T17:44:25.971Z
+Generated: 2026-05-27T18:14:11.786Z
 
 ## Guardrails
 
@@ -49,19 +49,20 @@ Method:
 ## Platform Verification Snapshot
 
 - Source: `dist/verified-bundles/latest-results.json`
-- Generated: 2026-05-27T17:41:47.364Z
+- Generated: 2026-05-27T18:12:38.219Z
 - Model: gpt-5.5
 - Location: eastus
+- Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
 - Bundles in latest platform wave: 5
 - Passing bundles in latest platform wave: 5/5
 
 | Platform | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|---|
-| azure-terraform-hcl | Pr91301 | claims-evidence-command-ring | PASS | destroy |
-| azure-terraform-hcl | Pr91302 | partner-order-ingest-buffer | PASS | destroy |
-| azure-terraform-hcl | Pr91303 | warehouse-dispatch-event-plane | PASS | destroy |
-| azure-terraform-hcl | Pr91304 | billing-audit-notification-mesh | PASS | destroy |
-| azure-terraform-hcl | Pr91305 | regional-catalog-command-plane | PASS | destroy |
+| azure-bicep | Pr91311 | claims-evidence-command-ring | PASS | destroy |
+| azure-bicep | Pr91312 | partner-order-ingest-buffer | PASS | destroy |
+| azure-bicep | Pr91313 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-bicep | Pr91314 | billing-audit-notification-mesh | PASS | destroy |
+| azure-bicep | Pr91315 | regional-catalog-command-plane | PASS | destroy |
 
 ## Cross-Cutting Pending Backlog
 
@@ -162,8 +163,8 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Rank | Next Work | Why Now | Commands |
 |---:|---|---|---|
-| 1 | Run the next verified 5-bundle wave against Bicep | Terraform HCL now has a green platform wave. Bicep is the next highest-value target because it exercises ARM-native dependency and child-resource identity behavior. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-bicep` |
-| 2 | Run the next verified 5-bundle wave against OpenTofu HCL | OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl` |
+| 1 | Run the next verified 5-bundle wave against OpenTofu HCL | Terraform HCL and Bicep now have green platform waves. OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl` |
+| 2 | Run the next verified 5-bundle wave against Pulumi Python | Pulumi Python exercises a different SDK surface and packaging path than Pulumi TypeScript while still targeting Azure Native resources. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-py` |
 | 3 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
 | 4 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
 | 5 | Keep narrow real-Azure differential reruns running on timing-sensitive services | The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` |

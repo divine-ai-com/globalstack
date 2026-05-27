@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T17:44:25.971Z",
+    "generatedAt": "2026-05-27T18:14:11.786Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -133,47 +133,48 @@
   },
   "verifiedPlatformSnapshot": {
     "source": "dist/verified-bundles/latest-results.json",
-    "generatedAt": "2026-05-27T17:41:47.364Z",
+    "generatedAt": "2026-05-27T18:12:38.219Z",
     "model": "gpt-5.5",
     "location": "eastus",
+    "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
     "total": 5,
     "passCount": 5,
     "results": [
       {
-        "platformId": "azure-terraform-hcl",
-        "prId": "Pr91301",
+        "platformId": "azure-bicep",
+        "prId": "Pr91311",
         "scenarioId": "claims-evidence-command-ring",
         "ok": true,
         "finalStatus": "PASS",
         "finalStage": "destroy"
       },
       {
-        "platformId": "azure-terraform-hcl",
-        "prId": "Pr91302",
+        "platformId": "azure-bicep",
+        "prId": "Pr91312",
         "scenarioId": "partner-order-ingest-buffer",
         "ok": true,
         "finalStatus": "PASS",
         "finalStage": "destroy"
       },
       {
-        "platformId": "azure-terraform-hcl",
-        "prId": "Pr91303",
+        "platformId": "azure-bicep",
+        "prId": "Pr91313",
         "scenarioId": "warehouse-dispatch-event-plane",
         "ok": true,
         "finalStatus": "PASS",
         "finalStage": "destroy"
       },
       {
-        "platformId": "azure-terraform-hcl",
-        "prId": "Pr91304",
+        "platformId": "azure-bicep",
+        "prId": "Pr91314",
         "scenarioId": "billing-audit-notification-mesh",
         "ok": true,
         "finalStatus": "PASS",
         "finalStage": "destroy"
       },
       {
-        "platformId": "azure-terraform-hcl",
-        "prId": "Pr91305",
+        "platformId": "azure-bicep",
+        "prId": "Pr91315",
         "scenarioId": "regional-catalog-command-plane",
         "ok": true,
         "finalStatus": "PASS",
@@ -398,18 +399,18 @@
   "immediateNextWork": [
     {
       "rank": 1,
-      "label": "Run the next verified 5-bundle wave against Bicep",
-      "why": "Terraform HCL now has a green platform wave. Bicep is the next highest-value target because it exercises ARM-native dependency and child-resource identity behavior.",
+      "label": "Run the next verified 5-bundle wave against OpenTofu HCL",
+      "why": "Terraform HCL and Bicep now have green platform waves. OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.",
       "commands": [
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-bicep"
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl"
       ]
     },
     {
       "rank": 2,
-      "label": "Run the next verified 5-bundle wave against OpenTofu HCL",
-      "why": "OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.",
+      "label": "Run the next verified 5-bundle wave against Pulumi Python",
+      "why": "Pulumi Python exercises a different SDK surface and packaging path than Pulumi TypeScript while still targeting Azure Native resources.",
       "commands": [
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl"
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-py"
       ]
     },
     {

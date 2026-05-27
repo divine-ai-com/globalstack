@@ -345,18 +345,18 @@ const extendedContinuationRoadmap = [
 const immediateNextWork = [
   {
     rank: 1,
-    label: 'Run the next verified 5-bundle wave against Bicep',
-    why: 'Terraform HCL now has a green platform wave. Bicep is the next highest-value target because it exercises ARM-native dependency and child-resource identity behavior.',
+    label: 'Run the next verified 5-bundle wave against OpenTofu HCL',
+    why: 'Terraform HCL and Bicep now have green platform waves. OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.',
     commands: [
-      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-bicep',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl',
     ],
   },
   {
     rank: 2,
-    label: 'Run the next verified 5-bundle wave against OpenTofu HCL',
-    why: 'OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.',
+    label: 'Run the next verified 5-bundle wave against Pulumi Python',
+    why: 'Pulumi Python exercises a different SDK surface and packaging path than Pulumi TypeScript while still targeting Azure Native resources.',
     commands: [
-      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl',
+      'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-py',
     ],
   },
   {
@@ -496,6 +496,7 @@ async function loadVerifiedPlatformSnapshot() {
       generatedAt: raw.generatedAt ?? null,
       model: raw.model ?? null,
       location: raw.location ?? null,
+      scope: 'Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.',
       total: results.length,
       passCount: results.filter((item) => item.ok).length,
       results,
@@ -653,6 +654,7 @@ function markdown(doc) {
       `- Generated: ${doc.verifiedPlatformSnapshot.generatedAt ?? 'unknown'}`,
       `- Model: ${doc.verifiedPlatformSnapshot.model ?? 'unknown'}`,
       `- Location: ${doc.verifiedPlatformSnapshot.location ?? 'unknown'}`,
+      `- Scope: ${doc.verifiedPlatformSnapshot.scope}`,
       `- Bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.total}`,
       `- Passing bundles in latest platform wave: ${doc.verifiedPlatformSnapshot.passCount}/${doc.verifiedPlatformSnapshot.total}`,
       '',

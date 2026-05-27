@@ -493,6 +493,8 @@ const platformInstructions = new Map([
     instruction: [
       'Use Azure Bicep with a subscription-scoped lib/main.bicep that creates the resource group and calls a resource-group-scoped lib/workload.bicep module.',
       'Keep parameters in lib/parameters.json.',
+      'Do not hardcode resource names in lib/main.bicep or lib/workload.bicep; every resource name listed in this prompt must be supplied through lib/parameters.json and passed from main.bicep into workload.bicep.',
+      'Use string parameters for the resource group, storage account, blob container, queue, file share, table, Service Bus namespace, Service Bus topic, Event Grid topic, Event Hubs namespace, event hub, App Configuration store, and deployment suffix.',
       'Declare the workload outputs in lib/workload.bicep and re-export them from lib/main.bicep as output <Key> string = workload.outputs.<Key>.',
       'Expose exactly the requested output keys as Bicep outputs.',
       'Do not embed raw ARM JSON strings inside Bicep resources.',
@@ -872,6 +874,7 @@ function validateFiles(platformId, scenario, platform, names, files) {
   if (platformId === 'azure-bicep') {
     const main = files.get('lib/main.bicep') ?? '';
     const workload = files.get('lib/workload.bicep') ?? '';
+    const resources = scenarioResources(scenario, names);
     for (const outputKey of scenario.outputKeys) {
       if (!main.includes(`output ${outputKey} string = workload.outputs.${outputKey}`)) {
         errors.push(`Bicep main.bicep must re-export output ${outputKey} from workload.outputs.${outputKey}`);
@@ -879,6 +882,34 @@ function validateFiles(platformId, scenario, platform, names, files) {
       if (!workload.includes(`output ${outputKey} string =`)) {
         errors.push(`Bicep workload.bicep must declare output ${outputKey}`);
       }
+    }
+    const parametersText = files.get('lib/parameters.json') ?? '';
+    try {
+      const parameterDocument = JSON.parse(parametersText);
+      const parameterValues = Object.values(parameterDocument.parameters ?? {})
+        .map((value) => value?.value)
+        .filter((value) => typeof value === 'string');
+      for (const expectedValue of [
+        resources.resourceGroup,
+        resources.storageAccount,
+        resources.blobContainerName,
+        resources.queueName,
+        resources.fileShareName,
+        resources.tableName,
+        resources.serviceBusNamespace,
+        resources.serviceBusTopicName,
+        resources.eventGridTopic,
+        resources.eventHubNamespace,
+        resources.eventHubName,
+        resources.appConfigStore,
+        resources.environmentSuffix,
+      ]) {
+        if (!parameterValues.includes(expectedValue)) {
+          errors.push(`Bicep parameters.json must contain value ${expectedValue}`);
+        }
+      }
+    } catch (error) {
+      errors.push(`Bicep parameters.json must be valid JSON: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   if (errors.length > 0) throw new Error(errors.join('; '));
