@@ -394,6 +394,22 @@ export function normalizeProviderRoute(providerRoute) {
   if (!providerRoute?.typePath) return providerRoute;
   const parts = providerRoute.typePath.split('/');
 
+  if (providerRoute.providerNamespace === 'Microsoft.Storage') {
+    if (parts[0] !== 'storageAccounts') return providerRoute;
+    const normalizeStorageChild = (serviceType, childType) => {
+      if (parts.length !== 6 || parts[1] !== serviceType || parts[2] !== childType || !parts[3] || !parts[4] || !parts[5]) return null;
+      return {
+        ...providerRoute,
+        typePath: `storageAccounts/${parts[3]}/${serviceType}/${parts[4]}/${childType}/${parts[5]}`,
+      };
+    };
+    return normalizeStorageChild('blobServices', 'containers')
+      ?? normalizeStorageChild('queueServices', 'queues')
+      ?? normalizeStorageChild('fileServices', 'shares')
+      ?? normalizeStorageChild('tableServices', 'tables')
+      ?? providerRoute;
+  }
+
   if (providerRoute.providerNamespace === 'Microsoft.DocumentDB') {
     if (parts[0] !== 'databaseAccounts' || !parts[1]) return providerRoute;
     const accountName = parts[1];
@@ -488,8 +504,51 @@ export function normalizeProviderRoute(providerRoute) {
     }
   }
 
+  if (providerRoute.providerNamespace === 'Microsoft.EventHub') {
+    if (parts[0] !== 'namespaces' || !parts[1]) return providerRoute;
+
+    if (parts.length === 4 && parts[1] === 'eventhubs' && parts[2] && parts[3]) {
+      return {
+        ...providerRoute,
+        typePath: `namespaces/${parts[2]}/eventhubs/${parts[3]}`,
+      };
+    }
+
+    const namespaceName = parts[1];
+    if (parts.length === 4 && parts[2] === 'eventhubs' && parts[3]) {
+      return {
+        ...providerRoute,
+        typePath: `namespaces/${namespaceName}/eventhubs/${stripParentQualifiedName(parts[3], namespaceName)}`,
+      };
+    }
+
+    if (parts.length === 5 && parts[2] === 'eventhubs' && parts[3] && parts[4]) {
+      return {
+        ...providerRoute,
+        typePath: `namespaces/${namespaceName}/eventhubs/${stripParentQualifiedName(`${parts[3]}/${parts[4]}`, namespaceName)}`,
+      };
+    }
+
+    return providerRoute;
+  }
+
   if (providerRoute.providerNamespace !== 'Microsoft.ServiceBus') return providerRoute;
   if (parts[0] !== 'namespaces' || !parts[1]) return providerRoute;
+
+  if (parts.length === 4 && ['queues', 'topics'].includes(parts[1]) && parts[2] && parts[3]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${parts[2]}/${parts[1]}/${parts[3]}`,
+    };
+  }
+
+  if (parts.length === 6 && parts[1] === 'topics' && parts[2] === 'subscriptions' && parts[3] && parts[4] && parts[5]) {
+    return {
+      ...providerRoute,
+      typePath: `namespaces/${parts[3]}/topics/${parts[4]}/subscriptions/${parts[5]}`,
+    };
+  }
+
   const namespaceName = parts[1];
 
   if (parts.length === 4 && parts[2] === 'queues' && parts[3]) {

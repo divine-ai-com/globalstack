@@ -422,7 +422,10 @@ ansible_inventory_path() {
 write_native_ansible_deployment_response() {
   local resource_group="$1"
   local storage_account="$2"
+  local metadata
+  metadata="$(task_metadata_path)"
   jq -n \
+    --slurpfile metadata "${metadata}" \
     --arg platform "${PLATFORM_ID}" \
     --arg resourceGroupName "${resource_group}" \
     --arg storageAccountName "${storage_account}" \
@@ -437,10 +440,10 @@ write_native_ansible_deployment_response() {
         platform: $platform,
         toolchain: "ansible",
         endpoint: $endpoint,
-        outputs: {
+        outputs: (($metadata[0].expectedOutputs // {}) + {
           resourceGroupName: { type: "string", value: $resourceGroupName },
           storageAccountName: { type: "string", value: $storageAccountName }
-        },
+        }),
         globalstackDeploymentSteps: [
           {
             operation: "ansible-playbook",

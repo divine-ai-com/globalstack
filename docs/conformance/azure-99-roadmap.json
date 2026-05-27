@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T22:01:07.062Z",
+    "generatedAt": "2026-05-27T22:54:00.587Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -133,14 +133,65 @@
   },
   "verifiedPlatformSnapshot": {
     "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
-    "generatedAt": "2026-05-27T22:01:01.147Z",
+    "generatedAt": "2026-05-27T22:53:55.432Z",
     "model": "gpt-5.5",
     "location": "eastus",
     "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
-    "waveCount": 7,
-    "total": 35,
-    "passCount": 35,
+    "waveCount": 8,
+    "total": 40,
+    "passCount": 40,
     "waves": [
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91371",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91372",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91373",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91374",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91375",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
       {
         "platformId": "azure-arm-json",
         "generatedAt": "2026-05-27T20:17:23.723Z",
@@ -500,6 +551,61 @@
       }
     ],
     "results": [
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91371",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91372",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91373",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91374",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91375",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
       {
         "platformId": "azure-arm-json",
         "generatedAt": "2026-05-27T20:17:23.723Z",
@@ -1104,15 +1210,6 @@
   "immediateNextWork": [
     {
       "rank": 1,
-      "label": "Enable and run the verified 5-bundle wave for Ansible YAML",
-      "why": "Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave.",
-      "commands": [
-        "node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml"
-      ]
-    },
-    {
-      "rank": 2,
       "label": "Make the complex adversarial runner platform-aware",
       "why": "The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.",
       "commands": [
@@ -1121,7 +1218,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "label": "Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations",
       "why": "The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.",
       "commands": [
@@ -1130,7 +1227,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 3,
       "label": "Keep narrow real-Azure differential reruns running on timing-sensitive services",
       "why": "The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.",
       "commands": [

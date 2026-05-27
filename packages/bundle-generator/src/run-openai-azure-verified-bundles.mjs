@@ -96,6 +96,36 @@ const starterBundles = [
     prId: 'Pr91365',
   },
   {
+    platformId: 'azure-ansible-yaml',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: 'c4c1c78e-503d-44f5-9212-401449b6aa31',
+    prId: 'Pr91371',
+  },
+  {
+    platformId: 'azure-ansible-yaml',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '1979c2e9-b042-4f13-967e-53481d5d46e0',
+    prId: 'Pr91372',
+  },
+  {
+    platformId: 'azure-ansible-yaml',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: '8f6bfcbd-11d7-4e14-9357-d5d0cc866327',
+    prId: 'Pr91373',
+  },
+  {
+    platformId: 'azure-ansible-yaml',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'aee3ea86-d179-47cb-a353-df28eddd66e9',
+    prId: 'Pr91374',
+  },
+  {
+    platformId: 'azure-ansible-yaml',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '5655640f-0b48-4270-b595-8fa43fc13d4d',
+    prId: 'Pr91375',
+  },
+  {
     platformId: 'azure-bicep',
     scenarioId: 'regulated-genai-knowledge-ingestion',
     poId: '0fb57f73-b5c4-4d8d-bf1e-e88f2164c103',
@@ -573,6 +603,47 @@ const platformInstructions = new Map([
     unitTestCommand: 'python3 test/pulumi_yaml.unit.test.py',
     integrationTestCommand: 'python3 test/pulumi_yaml.int.test.py',
   }],
+  ['azure-ansible-yaml', {
+    files: ['ansible.cfg', 'inventory.yml', 'lib/playbook.yml'],
+    instruction: [
+      'Use Ansible YAML with the azure.azcollection collection.',
+      'Put all deployment tasks in lib/playbook.yml and run against localhost with gather_facts: false.',
+      'Return ansible.cfg, inventory.yml, and lib/playbook.yml only.',
+      'Set ansible.cfg to use inventory.yml and disable host key checking.',
+      'Set inventory.yml to define localhost with ansible_connection: local.',
+      'Use azure.azcollection.azure_rm_resourcegroup for the resource group and azure.azcollection.azure_rm_resource for every workload resource.',
+      'Every azure_rm_resource task must set auth_source: env, polling_timeout: 60, and polling_interval: 1.',
+      'Create resources sequentially in dependency order: resource group, storage account, storage children, Service Bus namespace, Service Bus topic, Event Grid topic, Event Hubs namespace, event hub, and App Configuration store.',
+      'For storage children, use resource_type values storageAccounts/blobServices/containers, storageAccounts/queueServices/queues, storageAccounts/fileServices/shares, and storageAccounts/tableServices/tables with resource_name formatted as storageAccountName/default/childName.',
+      'For the Service Bus topic, use provider ServiceBus, resource_type namespaces/topics, and resource_name formatted as namespaceName/topicName.',
+      'For the Event Hub, use provider EventHub, resource_type namespaces/eventhubs, and resource_name formatted as namespaceName/eventHubName.',
+      'Do not include deletion tasks in lib/playbook.yml; the runner owns destroy.',
+      'Use the exact resource names provided and do not generate random suffixes.',
+    ].join(' '),
+    requiredMarkers: [
+      'azure.azcollection',
+      'azure_rm_resourcegroup',
+      'azure_rm_resource',
+      'provider: Storage',
+      'provider: ServiceBus',
+      'provider: EventGrid',
+      'provider: EventHub',
+      'provider: AppConfiguration',
+      'resource_type: storageAccounts',
+      'resource_type: storageAccounts/blobServices/containers',
+      'resource_type: storageAccounts/queueServices/queues',
+      'resource_type: storageAccounts/fileServices/shares',
+      'resource_type: storageAccounts/tableServices/tables',
+      'resource_type: namespaces',
+      'resource_type: namespaces/topics',
+      'resource_type: topics',
+      'resource_type: namespaces/eventhubs',
+      'resource_type: configurationStores',
+      'auth_source: env',
+    ],
+    unitTestCommand: 'python3 test/ansible.unit.test.py',
+    integrationTestCommand: 'python3 test/ansible.int.test.py',
+  }],
   ['azure-pulumi-py', {
     files: ['Pulumi.yaml', 'requirements.txt', 'tap.py', 'lib/__init__.py', 'lib/tap_stack.py'],
     instruction: [
@@ -881,6 +952,26 @@ function promptText(platformId, scenarioId, scenario, platform, names) {
       '- Export the exact logical child names from this prompt. Do not export Pulumi child resource .name values when the provider resolves them to composite Azure names containing parent segments.',
       '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
     ]
+    : platformId === 'azure-ansible-yaml'
+    ? [
+      'Use this exact Azure resource contract:',
+      '- Use Ansible azure.azcollection modules only. Do not use ARM JSON templates, Terraform, Pulumi, Bicep, shell scripts, or azure CLI commands.',
+      '- Resource group must be created with azure.azcollection.azure_rm_resourcegroup, name set to the exact resource group name, location set to eastus, state present, and auth_source env.',
+      '- Workload resources must be created with azure.azcollection.azure_rm_resource.',
+      '- Storage account ARM contract is API version 2023-01-01 with provider Storage, resource_type storageAccounts, kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, supportsHttpsTrafficOnly=true.',
+      '- Blob container uses provider Storage, resource_type storageAccounts/blobServices/containers, api_version 2023-01-01, resource_name storageAccountName/default/containerName, and publicAccess None.',
+      '- Queue uses provider Storage, resource_type storageAccounts/queueServices/queues, api_version 2023-01-01, resource_name storageAccountName/default/queueName, and an empty properties object.',
+      '- File share uses provider Storage, resource_type storageAccounts/fileServices/shares, api_version 2023-01-01, resource_name storageAccountName/default/shareName, and shareQuota 32.',
+      '- Table uses provider Storage, resource_type storageAccounts/tableServices/tables, api_version 2023-01-01, resource_name storageAccountName/default/tableName, and an empty properties object.',
+      '- Service Bus namespace uses provider ServiceBus, resource_type namespaces, api_version 2021-11-01, sku name Standard and tier Standard.',
+      '- Service Bus topic uses provider ServiceBus, resource_type namespaces/topics, api_version 2021-11-01, resource_name namespaceName/topicName, and maxSizeInMegabytes 1024.',
+      '- Event Grid topic uses provider EventGrid, resource_type topics, api_version 2022-06-15, and inputSchema EventGridSchema.',
+      '- Event Hubs namespace uses provider EventHub, resource_type namespaces, api_version 2024-01-01, sku Standard tier Standard capacity 1.',
+      '- Event Hub uses provider EventHub, resource_type namespaces/eventhubs, api_version 2024-01-01, resource_name namespaceName/eventHubName, partitionCount 2, and messageRetentionInDays 1.',
+      '- App Configuration store uses provider AppConfiguration, resource_type configurationStores, api_version 2023-03-01, sku name free, and disableLocalAuth false.',
+      '- Every azure_rm_resource task must include auth_source: env, polling_timeout: 60, and polling_interval: 1.',
+      '- Do not add extra properties such as publicNetworkAccess, defaultToOAuthAuthentication, enablePurgeProtection, softDeleteRetentionInDays, status, or unsupported preview-only fields unless they are explicitly required above.',
+    ]
     : [
       'Use this exact Azure resource contract:',
       '- Storage account API version 2023-01-01 with kind StorageV2, sku Standard_LRS, and only these properties: allowBlobPublicAccess=false, minimumTlsVersion=TLS1_2, supportsHttpsTrafficOnly=true.',
@@ -1139,6 +1230,63 @@ function validateFiles(platformId, scenario, platform, names, files) {
       if (!new RegExp(`^\\s{2}${outputKey}:`, 'm').test(pulumiYaml)) {
         errors.push(`Pulumi YAML bundle must export ${outputKey}`);
       }
+    }
+  }
+  if (platformId === 'azure-ansible-yaml') {
+    const ansibleCfg = files.get('ansible.cfg') ?? '';
+    const inventory = files.get('inventory.yml') ?? '';
+    const playbook = files.get('lib/playbook.yml') ?? '';
+    if (!ansibleCfg.includes('inventory.yml')) errors.push('Ansible cfg must point at inventory.yml');
+    if (!ansibleCfg.toLowerCase().includes('host_key_checking') || !ansibleCfg.toLowerCase().includes('false')) {
+      errors.push('Ansible cfg must disable host key checking');
+    }
+    if (!inventory.includes('ansible_connection: local')) errors.push('Ansible inventory must run localhost with ansible_connection: local');
+    if (!playbook.includes('hosts: localhost')) errors.push('Ansible playbook must target localhost');
+    if (!playbook.includes('gather_facts: false')) errors.push('Ansible playbook must set gather_facts: false');
+    if (!playbook.includes('azure.azcollection.azure_rm_resourcegroup') && !playbook.includes('azure_rm_resourcegroup:')) {
+      errors.push('Ansible playbook must create the resource group with azure_rm_resourcegroup');
+    }
+    if (!playbook.includes('azure.azcollection.azure_rm_resource') && !playbook.includes('azure_rm_resource:')) {
+      errors.push('Ansible playbook must create workload resources with azure_rm_resource');
+    }
+    if (/az\s+|azure-cli|command:|shell:/.test(playbook)) {
+      errors.push('Ansible bundle must not use shell or Azure CLI commands');
+    }
+    for (const marker of [
+      'auth_source: env',
+      'polling_timeout: 60',
+      'polling_interval: 1',
+      'provider: Storage',
+      'provider: ServiceBus',
+      'provider: EventGrid',
+      'provider: EventHub',
+      'provider: AppConfiguration',
+      'resource_type: storageAccounts',
+      'resource_type: storageAccounts/blobServices/containers',
+      'resource_type: storageAccounts/queueServices/queues',
+      'resource_type: storageAccounts/fileServices/shares',
+      'resource_type: storageAccounts/tableServices/tables',
+      'resource_type: namespaces',
+      'resource_type: namespaces/topics',
+      'resource_type: topics',
+      'resource_type: namespaces/eventhubs',
+      'resource_type: configurationStores',
+      'api_version: "2023-01-01"',
+      'api_version: "2021-11-01"',
+      'api_version: "2022-06-15"',
+      'api_version: "2024-01-01"',
+    ]) {
+      if (!playbook.includes(marker)) errors.push(`Ansible playbook must include ${marker}`);
+    }
+    for (const resourceNameExpression of [
+      `${resources.storageAccount}/default/${resources.blobContainerName}`,
+      `${resources.storageAccount}/default/${resources.queueName}`,
+      `${resources.storageAccount}/default/${resources.fileShareName}`,
+      `${resources.storageAccount}/default/${resources.tableName}`,
+      `${resources.serviceBusNamespace}/${resources.serviceBusTopicName}`,
+      `${resources.eventHubNamespace}/${resources.eventHubName}`,
+    ]) {
+      if (!playbook.includes(resourceNameExpression)) errors.push(`Ansible playbook must include composite resource_name ${resourceNameExpression}`);
     }
   }
   if (platformId === 'azure-pulumi-py') {
@@ -1519,6 +1667,47 @@ function fileContainsAssertions(platformId, scenario, names) {
         'azure-native:eventhub:EventHub',
         'azure-native:appconfiguration:ConfigurationStore',
         ...scenario.outputKeys,
+      ],
+    };
+  }
+  if (platformId === 'azure-ansible-yaml') {
+    return {
+      'ansible.cfg': ['inventory.yml', 'host_key_checking'],
+      'inventory.yml': ['localhost', 'ansible_connection: local'],
+      'lib/playbook.yml': [
+        'hosts: localhost',
+        'gather_facts: false',
+        'azure.azcollection',
+        'azure_rm_resourcegroup',
+        'azure_rm_resource',
+        'auth_source: env',
+        'provider: Storage',
+        'provider: ServiceBus',
+        'provider: EventGrid',
+        'provider: EventHub',
+        'provider: AppConfiguration',
+        'resource_type: storageAccounts',
+        'resource_type: storageAccounts/blobServices/containers',
+        'resource_type: storageAccounts/queueServices/queues',
+        'resource_type: storageAccounts/fileServices/shares',
+        'resource_type: storageAccounts/tableServices/tables',
+        'resource_type: namespaces',
+        'resource_type: namespaces/topics',
+        'resource_type: topics',
+        'resource_type: namespaces/eventhubs',
+        'resource_type: configurationStores',
+        resources.resourceGroup,
+        resources.storageAccount,
+        resources.blobContainerName,
+        resources.queueName,
+        resources.fileShareName,
+        resources.tableName,
+        resources.serviceBusNamespace,
+        resources.serviceBusTopicName,
+        resources.eventGridTopic,
+        resources.eventHubNamespace,
+        resources.eventHubName,
+        resources.appConfigStore,
       ],
     };
   }
@@ -1986,6 +2175,80 @@ elif metadata["platformId"] == "azure-pulumi-yaml":
 
     for output_key in metadata["expectedOutputKeys"]:
         assert f"  {output_key}:" in pulumi_yaml, f"Pulumi.yaml is missing output {output_key}"
+elif metadata["platformId"] == "azure-ansible-yaml":
+    ansible_cfg = (root / "ansible.cfg").read_text()
+    inventory = (root / "inventory.yml").read_text()
+    playbook = (root / "lib/playbook.yml").read_text()
+
+    assert "inventory.yml" in ansible_cfg
+    assert "host_key_checking" in ansible_cfg.lower()
+    assert "false" in ansible_cfg.lower()
+    assert "localhost" in inventory
+    assert "ansible_connection: local" in inventory
+    assert "hosts: localhost" in playbook
+    assert "gather_facts: false" in playbook
+    assert "azure.azcollection" in playbook
+    assert "azure_rm_resourcegroup" in playbook
+    assert "azure_rm_resource" in playbook
+
+    for forbidden in [
+        "command:",
+        "shell:",
+        "az ",
+        "publicNetworkAccess",
+        "defaultToOAuthAuthentication",
+        "enablePurgeProtection",
+        "softDeleteRetentionInDays",
+    ]:
+        assert forbidden not in playbook, f"playbook.yml contains forbidden marker {forbidden}"
+
+    for marker in [
+        "auth_source: env",
+        "polling_timeout: 60",
+        "polling_interval: 1",
+        "provider: Storage",
+        "provider: ServiceBus",
+        "provider: EventGrid",
+        "provider: EventHub",
+        "provider: AppConfiguration",
+        "resource_type: storageAccounts",
+        "resource_type: storageAccounts/blobServices/containers",
+        "resource_type: storageAccounts/queueServices/queues",
+        "resource_type: storageAccounts/fileServices/shares",
+        "resource_type: storageAccounts/tableServices/tables",
+        "resource_type: namespaces",
+        "resource_type: namespaces/topics",
+        "resource_type: topics",
+        "resource_type: namespaces/eventhubs",
+        "resource_type: configurationStores",
+        'api_version: "2023-01-01"',
+        'api_version: "2021-11-01"',
+        'api_version: "2022-06-15"',
+        'api_version: "2024-01-01"',
+    ]:
+        assert marker in playbook, f"playbook.yml is missing {marker}"
+
+    for value in [
+        resource_names["resourceGroup"],
+        resource_names["storageAccount"],
+        resource_names["serviceBusNamespace"],
+        resource_names["eventGridTopic"],
+        resource_names["eventHubNamespace"],
+        resource_names["appConfigStore"],
+        resource_names["blobContainerName"],
+        resource_names["queueName"],
+        resource_names["fileShareName"],
+        resource_names["tableName"],
+        resource_names["serviceBusTopicName"],
+        resource_names["eventHubName"],
+        f'{resource_names["storageAccount"]}/default/{resource_names["blobContainerName"]}',
+        f'{resource_names["storageAccount"]}/default/{resource_names["queueName"]}',
+        f'{resource_names["storageAccount"]}/default/{resource_names["fileShareName"]}',
+        f'{resource_names["storageAccount"]}/default/{resource_names["tableName"]}',
+        f'{resource_names["serviceBusNamespace"]}/{resource_names["serviceBusTopicName"]}',
+        f'{resource_names["eventHubNamespace"]}/{resource_names["eventHubName"]}',
+    ]:
+        assert value in playbook, f"playbook.yml is missing resource contract value {value}"
 elif metadata["platformId"] == "azure-pulumi-py":
     pulumi_yaml = (root / "Pulumi.yaml").read_text()
     requirements = (root / "requirements.txt").read_text()
@@ -2304,6 +2567,9 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
   } else if (platformId === 'azure-pulumi-yaml') {
     await writeFile(join(bundleDir, 'test', 'pulumi_yaml.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'pulumi_yaml.int.test.py'), pythonIntegrationTest());
+  } else if (platformId === 'azure-ansible-yaml') {
+    await writeFile(join(bundleDir, 'test', 'ansible.unit.test.py'), pythonUnitTest());
+    await writeFile(join(bundleDir, 'test', 'ansible.int.test.py'), pythonIntegrationTest());
   } else if (platformId === 'azure-terraform-hcl' || platformId === 'azure-opentofu-hcl') {
     await writeFile(join(bundleDir, 'test', 'terraform.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'terraform.int.test.py'), pythonIntegrationTest());
@@ -2492,7 +2758,7 @@ async function runBundleLifecycle(task, visibleBundleDirPath) {
       lint: 'structural contract validation',
       'unit-tests': 'task-authored unit tests plus deterministic hygiene checks',
       deploy: 'native provider deployment against Azure-shaped control plane',
-      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' || task.platformId === 'azure-pulumi-yaml' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : 'Bicep redeploy and read-after-deploy evidence',
+      'provider-lifecycle': task.platformId === 'azure-terraform-hcl' || task.platformId === 'azure-opentofu-hcl' ? 'Terraform/OpenTofu plan, refresh, drift, import, and reconcile evidence' : task.platformId === 'azure-pulumi-ts' || task.platformId === 'azure-pulumi-py' || task.platformId === 'azure-pulumi-yaml' ? 'Pulumi preview, refresh, drift, and reconcile evidence' : task.platformId === 'azure-ansible-yaml' ? 'Ansible idempotency and ARM read-after-apply evidence' : 'Bicep redeploy and read-after-deploy evidence',
       'integration-tests': 'task-authored deployed-resource assertions',
       destroy: 'resource teardown',
     },

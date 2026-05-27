@@ -143,6 +143,76 @@ test('storage account child lifecycle requires parent and supports create/get/li
   });
 });
 
+test('storage child resources normalize generic Ansible resource path shape', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-storage-ansible?api-version=2021-04-01`, { location: 'eastus' });
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-storage-ansible/providers/Microsoft.Storage/storageAccounts/ansiblestore?api-version=2023-01-01`,
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2', properties: { supportsHttpsTrafficOnly: true } },
+    );
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await httpJson(
+        port,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-storage-ansible/providers/Microsoft.Storage/storageAccounts/ansiblestore?api-version=2023-01-01`,
+      );
+    }
+
+    const children = [
+      {
+        label: 'blob container',
+        requestTypePath: 'storageAccounts/blobServices/containers/ansiblestore/default/raw',
+        canonicalTypePath: 'storageAccounts/ansiblestore/blobServices/default/containers/raw',
+        expectedType: 'Microsoft.Storage/storageAccounts/blobServices/containers',
+        body: { properties: { publicAccess: 'None' } },
+      },
+      {
+        label: 'queue',
+        requestTypePath: 'storageAccounts/queueServices/queues/ansiblestore/default/jobs',
+        canonicalTypePath: 'storageAccounts/ansiblestore/queueServices/default/queues/jobs',
+        expectedType: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+        body: { properties: {} },
+      },
+      {
+        label: 'file share',
+        requestTypePath: 'storageAccounts/fileServices/shares/ansiblestore/default/files',
+        canonicalTypePath: 'storageAccounts/ansiblestore/fileServices/default/shares/files',
+        expectedType: 'Microsoft.Storage/storageAccounts/fileServices/shares',
+        body: { properties: { shareQuota: 16 } },
+      },
+      {
+        label: 'table',
+        requestTypePath: 'storageAccounts/tableServices/tables/ansiblestore/default/ledger',
+        canonicalTypePath: 'storageAccounts/ansiblestore/tableServices/default/tables/ledger',
+        expectedType: 'Microsoft.Storage/storageAccounts/tableServices/tables',
+        body: { properties: {} },
+      },
+    ];
+
+    for (const child of children) {
+      const put = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-storage-ansible/providers/Microsoft.Storage/${child.requestTypePath}?api-version=2023-01-01`,
+        child.body,
+      );
+      assert.equal([200, 201].includes(put.status), true, child.label);
+      assert.equal(put.body.id.endsWith(`/Microsoft.Storage/${child.canonicalTypePath}`), true, child.label);
+      assert.equal(put.body.type, child.expectedType, child.label);
+
+      const get = await httpJson(
+        port,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-storage-ansible/providers/Microsoft.Storage/${child.canonicalTypePath}?api-version=2023-01-01`,
+      );
+      assert.equal(get.status, 200, child.label);
+      assert.equal(get.body.type, child.expectedType, child.label);
+    }
+  });
+});
+
 test('event hubs namespace lifecycle supports child list and delete', async () => {
   await withServer(async (port) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-events?api-version=2021-04-01`, { location: 'eastus' });
@@ -183,6 +253,36 @@ test('event hubs namespace lifecycle supports child list and delete', async () =
     );
     assert.equal(listAfterDelete.status, 200);
     assert.equal(listAfterDelete.body.value.length, 0);
+  });
+});
+
+test('event hubs child resources normalize generic Ansible resource path shape', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-events-ansible?api-version=2021-04-01`, { location: 'eastus' });
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-events-ansible/providers/Microsoft.EventHub/namespaces/ansiblehub?api-version=2024-01-01`,
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard', capacity: 1 }, properties: {} },
+    );
+
+    const hub = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-events-ansible/providers/Microsoft.EventHub/namespaces/eventhubs/ansiblehub/telemetry?api-version=2024-01-01`,
+      { properties: { partitionCount: 2, messageRetentionInDays: 1 } },
+    );
+    assert.equal(hub.status, 201);
+    assert.equal(hub.body.id.endsWith('/Microsoft.EventHub/namespaces/ansiblehub/eventhubs/telemetry'), true);
+    assert.equal(hub.body.type, 'Microsoft.EventHub/namespaces/eventhubs');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-events-ansible/providers/Microsoft.EventHub/namespaces/ansiblehub/eventhubs/telemetry?api-version=2024-01-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.name, 'ansiblehub/telemetry');
   });
 });
 
@@ -291,6 +391,46 @@ test('service bus namespace listKeys supports encoded authorization rule names',
     assert.match(keys.body.primaryConnectionString, /^Endpoint=sb:\/\/lifesb\.servicebus\.windows\.net\/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=/);
     assert.ok(keys.body.primaryKey);
     assert.ok(keys.body.secondaryKey);
+  });
+});
+
+test('service bus child resources normalize generic Ansible resource path shape', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-sb-ansible?api-version=2021-04-01`, { location: 'eastus' });
+    await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sb-ansible/providers/Microsoft.ServiceBus/namespaces/ansiblesb?api-version=2021-11-01`,
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' } },
+    );
+
+    const topic = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sb-ansible/providers/Microsoft.ServiceBus/namespaces/topics/ansiblesb/claims?api-version=2021-11-01`,
+      { properties: { maxSizeInMegabytes: 1024 } },
+    );
+    assert.equal(topic.status, 201);
+    assert.equal(topic.body.id.endsWith('/Microsoft.ServiceBus/namespaces/ansiblesb/topics/claims'), true);
+    assert.equal(topic.body.type, 'Microsoft.ServiceBus/namespaces/topics');
+
+    const subscription = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-sb-ansible/providers/Microsoft.ServiceBus/namespaces/topics/subscriptions/ansiblesb/claims/audit?api-version=2021-11-01`,
+      { properties: { maxDeliveryCount: 10 } },
+    );
+    assert.equal(subscription.status, 201);
+    assert.equal(subscription.body.id.endsWith('/Microsoft.ServiceBus/namespaces/ansiblesb/topics/claims/subscriptions/audit'), true);
+    assert.equal(subscription.body.type, 'Microsoft.ServiceBus/namespaces/topics/subscriptions');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `${subscriptionPath}/resourceGroups/rg-sb-ansible/providers/Microsoft.ServiceBus/namespaces/ansiblesb/topics/claims?api-version=2021-11-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.name, 'ansiblesb/claims');
   });
 });
 
