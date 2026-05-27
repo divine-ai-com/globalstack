@@ -2862,14 +2862,17 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 4) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 4 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 7) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 7 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
     'local kubernetes api version succeeds for kubeconfig host',
     'local kubernetes api namespaces list succeeds',
     'local kubernetes api nodes list reflects cluster agent pools',
+    'cluster user credentials are read only on live kubernetes surface',
+    'cluster admin credentials can create namespace and configmap on live backend',
+    'cluster admin credentials can create deployment and service on live backend',
   ]) {
     if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure AKS metadata parity E2E missing passing data-plane case: ${required}`);

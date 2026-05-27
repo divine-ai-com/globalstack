@@ -66,6 +66,7 @@ const shutdown = async () => {
     new Promise(resolve => functionsServer.close(resolve)),
     new Promise(resolve => kubernetesServer.close(resolve)),
   ]);
+  await runtime.dispose?.();
   process.exit(0);
 };
 

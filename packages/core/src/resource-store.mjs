@@ -227,6 +227,13 @@ function aksFqdn(name, location, dnsPrefix) {
   return `${dnsPrefix}-${digest}.hcp.${location}.azmk8s.io`;
 }
 
+export function aksKubeToken(resourceId, role = 'user') {
+  const normalizedRole = role === 'admin' ? 'admin' : 'user';
+  return createHash('sha256')
+    .update(`globalstack:aks:kube:${normalizedRole}:${String(resourceId ?? '').toLowerCase()}`)
+    .digest('hex');
+}
+
 function aksNodeResourceGroup(resourceGroupName, name, location) {
   return `MC_${resourceGroupName}_${name}_${location}`;
 }
@@ -1211,6 +1218,7 @@ export class ResourceStore {
     if (!resource || resource.type !== 'Microsoft.ContainerService/managedClusters') return null;
     const clusterName = resource.name;
     const userName = role === 'admin' ? 'clusterAdmin' : 'clusterUser';
+    const token = aksKubeToken(resource.id, role);
     const kubeconfig = [
       'apiVersion: v1',
       'kind: Config',
@@ -1228,7 +1236,7 @@ export class ResourceStore {
       'users:',
       `- name: ${userName}`,
       '  user:',
-      `    token: globalstack-aks-${role}-token`,
+      `    token: ${token}`,
       '',
     ].join('\n');
     return {

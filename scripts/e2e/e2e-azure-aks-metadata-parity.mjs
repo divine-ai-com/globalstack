@@ -63,6 +63,7 @@ async function withArmServer(fn) {
   } finally {
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => server.close(resolve));
+    await runtime.dispose();
   }
 }
 
@@ -194,13 +195,15 @@ function kubeconfigValue(kubeconfig, key) {
   return line ? line.split(':').slice(1).join(':').trim() : '';
 }
 
-async function httpKube(port, path, { host, token: kubeToken, auth = true } = {}) {
+async function httpKube(port, path, { host, token: kubeToken, auth = true, method = 'GET', body } = {}) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
-    method: 'GET',
+    method,
     headers: {
       ...(host ? { 'x-forwarded-host': host } : {}),
       ...(auth ? { authorization: `Bearer ${kubeToken}` } : {}),
+      ...(body ? { 'content-type': 'application/json' } : {}),
     },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
   const text = await response.text();
   let parsed = text;
@@ -214,6 +217,20 @@ async function httpKube(port, path, { host, token: kubeToken, auth = true } = {}
     headers: Object.fromEntries(response.headers.entries()),
     body: parsed,
   };
+}
+
+async function waitFor(assertion, { timeoutMs = 180000, delayMs = 1000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let lastError = null;
+  while (Date.now() < deadline) {
+    try {
+      return await assertion();
+    } catch (error) {
+      lastError = error;
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+  throw lastError ?? new Error(`condition did not become true within ${timeoutMs}ms`);
 }
 
 async function runControlPlaneMatrix() {
@@ -655,8 +672,11 @@ async function runControlPlaneMatrix() {
     });
 
     await recordDataPlane('local kubernetes api version succeeds for kubeconfig host', async () => {
-      const result = await httpKube(kubePort, '/version', { host: clusterHost, token: userKubeToken });
-      assert.equal(result.status, 200);
+      const result = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/version', { host: clusterHost, token: userKubeToken });
+        assert.equal(ready.status, 200);
+        return ready;
+      });
       assert.equal(result.body.gitVersion, 'v1.29.2');
       return { status: result.status, gitVersion: result.body.gitVersion };
     });
@@ -669,11 +689,90 @@ async function runControlPlaneMatrix() {
     });
 
     await recordDataPlane('local kubernetes api nodes list reflects cluster agent pools', async () => {
-      const result = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+      const result = await waitFor(async () => {
+        const ready = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(ready.status, 200);
+        assert.ok(ready.body.items.length >= 1);
+        return ready;
+      });
       assert.equal(result.status, 200);
-      assert.equal(result.body.items.length, 1);
       assert.equal(result.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
       return { status: result.status, count: result.body.items.length };
+    });
+
+    await recordDataPlane('cluster user credentials are read only on live kubernetes surface', async () => {
+      const result = await httpKube(kubePort, '/api/v1/namespaces', {
+        host: clusterHost,
+        token: userKubeToken,
+        method: 'POST',
+        body: { apiVersion: 'v1', kind: 'Namespace', metadata: { name: 'user-denied' } },
+      });
+      assert.equal(result.status, 403);
+      assert.equal(result.body.reason, 'Forbidden');
+      return { status: result.status, reason: result.body.reason };
+    });
+
+    await recordDataPlane('cluster admin credentials can create namespace and configmap on live backend', async () => {
+      const namespace = await httpKube(kubePort, '/api/v1/namespaces', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: { apiVersion: 'v1', kind: 'Namespace', metadata: { name: 'runtime-smoke' } },
+      });
+      assert.equal(namespace.status, 201);
+      const configMap = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/configmaps', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'ConfigMap',
+          metadata: { name: 'runtime-smoke-config' },
+          data: { mode: 'live' },
+        },
+      });
+      assert.equal(configMap.status, 201);
+      return { status: configMap.status, namespace: namespace.body.metadata.name, configMap: configMap.body.metadata.name };
+    });
+
+    await recordDataPlane('cluster admin credentials can create deployment and service on live backend', async () => {
+      const deployment = await httpKube(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: { name: 'runtime-smoke-deploy' },
+          spec: {
+            replicas: 1,
+            selector: { matchLabels: { app: 'runtime-smoke' } },
+            template: {
+              metadata: { labels: { app: 'runtime-smoke' } },
+              spec: {
+                containers: [{ name: 'pause', image: 'registry.k8s.io/pause:3.9' }],
+              },
+            },
+          },
+        },
+      });
+      assert.equal(deployment.status, 201);
+      const service = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: { name: 'runtime-smoke-svc' },
+          spec: {
+            selector: { app: 'runtime-smoke' },
+            ports: [{ port: 80, targetPort: 80 }],
+          },
+        },
+      });
+      assert.equal(service.status, 201);
+      return { status: service.status, deployment: deployment.body.metadata.name, service: service.body.metadata.name };
     });
 
     await record('unsupported AKS action fails closed', async () => {
@@ -805,7 +904,7 @@ async function runPlatformMatrix() {
 
 function markdown(report) {
   const lines = [
-    '# Azure Kubernetes Service Metadata Parity E2E Report',
+    '# Azure Kubernetes Service Runtime Parity E2E Report',
     '',
     `Status: ${report.ok ? 'pass' : 'fail'}`,
     `Generated: ${report.generatedAt}`,
@@ -864,8 +963,8 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster metadata lifecycle, bounded local Kubernetes API behavior behind the AKS FQDN, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
-  claimBoundary: 'Bounded local AKS metadata and Kubernetes API evidence for the enumerated cases only; not a full AKS or Kubernetes runtime cloudValidated claim.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,
   platformMatrix,
@@ -874,5 +973,5 @@ const report = {
 await writeFile(join(outRoot, 'results.json'), `${JSON.stringify(report, null, 2)}\n`);
 await writeFile(join(outRoot, 'report.md'), markdown(report));
 
-console.log(`Azure AKS metadata parity E2E ${report.ok ? 'passed' : 'failed'}; report: ${join(outRoot, 'report.md')}`);
+console.log(`Azure AKS parity E2E ${report.ok ? 'passed' : 'failed'}; report: ${join(outRoot, 'report.md')}`);
 if (!report.ok) process.exit(1);

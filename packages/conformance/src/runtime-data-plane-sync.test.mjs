@@ -60,15 +60,19 @@ async function withRuntimeServer(fn) {
     return await fn({ port, runtime });
   } finally {
     await new Promise(resolve => server.close(resolve));
+    await runtime.dispose();
   }
 }
 
-async function kubeJson(port, path, { host, auth = 'Bearer globalstack-aks-user-token' } = {}) {
+async function kubeJson(port, path, { host, auth = null, method = 'GET', body } = {}) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
     headers: {
       ...(host ? { 'x-forwarded-host': host } : {}),
       ...(auth ? { authorization: auth } : {}),
+      ...(body ? { 'content-type': 'application/json' } : {}),
     },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
   const text = await response.text();
   let parsed = text;
@@ -82,6 +86,34 @@ async function kubeJson(port, path, { host, auth = 'Bearer globalstack-aks-user-
     body: parsed,
     headers: Object.fromEntries(response.headers.entries()),
   };
+}
+
+function decodeKubeconfigValue(responseBody) {
+  return Buffer.from(responseBody.kubeconfigs[0].value, 'base64').toString('utf8');
+}
+
+function kubeconfigToken(kubeconfigText) {
+  return String(kubeconfigText)
+    .split('\n')
+    .find(line => line.trim().startsWith('token:'))
+    ?.split(':')
+    .slice(1)
+    .join(':')
+    .trim() ?? '';
+}
+
+async function waitFor(assertion, { timeoutMs = 180000, delayMs = 1000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let lastError = null;
+  while (Date.now() < deadline) {
+    try {
+      return await assertion();
+    } catch (error) {
+      lastError = error;
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+  throw lastError ?? new Error(`condition did not become true within ${timeoutMs}ms`);
 }
 
 async function edgeJson(port, method, path, options = {}) {
@@ -310,7 +342,7 @@ test('metric store follows alert lifecycle and evaluates bounded alert transitio
   });
 });
 
-test('kubernetes router follows managed cluster lifecycle and serves bounded kube api metadata', async () => {
+test('kubernetes router follows managed cluster lifecycle and serves a real AKS-backed kube api slice', async () => {
   const store = new ResourceStore();
   const runtime = createEmulatorRuntime({ store });
   const armServer = createArmServer({
@@ -352,16 +384,116 @@ test('kubernetes router follows managed cluster lifecycle and serves bounded kub
       `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync?api-version=2024-02-01`,
     );
     const host = cluster.body.properties.fqdn;
-    const unauthorized = await kubeJson(kubePort, '/version', { host, auth: null });
+    const userCredentials = await httpJson(
+      armPort,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/listClusterUserCredential?api-version=2024-02-01`,
+      {},
+    );
+    const adminCredentials = await httpJson(
+      armPort,
+      'POST',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/listClusterAdminCredential?api-version=2024-02-01`,
+      {},
+    );
+    assert.equal(userCredentials.status, 200);
+    assert.equal(adminCredentials.status, 200);
+    const userToken = kubeconfigToken(decodeKubeconfigValue(userCredentials.body));
+    const adminToken = kubeconfigToken(decodeKubeconfigValue(adminCredentials.body));
+
+    const unauthorized = await kubeJson(kubePort, '/version', { host });
     assert.equal(unauthorized.status, 401);
 
-    const version = await kubeJson(kubePort, '/version', { host });
-    assert.equal(version.status, 200);
+    const version = await waitFor(async () => {
+      const result = await kubeJson(kubePort, '/version', { host, auth: `Bearer ${userToken}` });
+      assert.equal(result.status, 200);
+      return result;
+    });
     assert.equal(version.body.gitVersion, 'v1.29.2');
 
-    const nodes = await kubeJson(kubePort, '/api/v1/nodes', { host });
+    const userWrite = await kubeJson(kubePort, '/api/v1/namespaces', {
+      host,
+      auth: `Bearer ${userToken}`,
+      method: 'POST',
+      body: { apiVersion: 'v1', kind: 'Namespace', metadata: { name: 'user-denied' } },
+    });
+    assert.equal(userWrite.status, 403);
+
+    const namespaceCreate = await kubeJson(kubePort, '/api/v1/namespaces', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: { apiVersion: 'v1', kind: 'Namespace', metadata: { name: 'runtime-smoke' } },
+    });
+    assert.equal(namespaceCreate.status, 201);
+
+    const configMapCreate = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/configmaps', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'ConfigMap',
+        metadata: { name: 'runtime-smoke-config' },
+        data: { mode: 'live' },
+      },
+    });
+    assert.equal(configMapCreate.status, 201);
+
+    const deploymentCreate = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: { name: 'runtime-smoke-deploy' },
+        spec: {
+          replicas: 1,
+          selector: { matchLabels: { app: 'runtime-smoke' } },
+          template: {
+            metadata: { labels: { app: 'runtime-smoke' } },
+            spec: {
+              containers: [
+                {
+                  name: 'pause',
+                  image: 'registry.k8s.io/pause:3.9',
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+    assert.equal(deploymentCreate.status, 201);
+
+    const serviceCreate = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: { name: 'runtime-smoke-svc' },
+        spec: {
+          selector: { app: 'runtime-smoke' },
+          ports: [{ port: 80, targetPort: 80 }],
+        },
+      },
+    });
+    assert.equal(serviceCreate.status, 201);
+
+    const namespaces = await kubeJson(kubePort, '/api/v1/namespaces', { host, auth: `Bearer ${userToken}` });
+    assert.equal(namespaces.status, 200);
+    assert.ok(namespaces.body.items.some(item => item.metadata.name === 'runtime-smoke'));
+
+    const nodes = await waitFor(async () => {
+      const ready = await kubeJson(kubePort, '/api/v1/nodes', { host, auth: `Bearer ${adminToken}` });
+      assert.equal(ready.status, 200);
+      assert.ok(ready.body.items.length >= 1);
+      return ready;
+    });
     assert.equal(nodes.status, 200);
-    assert.equal(nodes.body.items.length, 1);
     assert.equal(nodes.body.items[0].metadata.labels['kubernetes.azure.com/agentpool'], 'systempool');
 
     const deleted = await httpJson(
@@ -376,6 +508,7 @@ test('kubernetes router follows managed cluster lifecycle and serves bounded kub
   } finally {
     await new Promise(resolve => kubeServer.close(resolve));
     await new Promise(resolve => armServer.close(resolve));
+    await runtime.dispose();
   }
 });
 
@@ -489,23 +622,35 @@ test('edge router applies synced front door routing and attached waf policy', as
       await httpJson(
         port,
         'PUT',
-        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-sync?api-version=2023-09-01`,
+        `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-sync?api-version=2023-09-01`,
         {
-          location: 'eastus',
+          location: 'global',
+          sku: { name: 'Premium_AzureFrontDoor' },
           properties: {
-            policySettings: { state: 'Enabled', mode: 'Prevention', requestBodyCheck: true },
-            managedRules: { managedRuleSets: [{ ruleSetType: 'OWASP', ruleSetVersion: '3.2' }] },
-            customRules: [{
-              name: 'BlockBadBotHeader',
-              priority: 100,
-              ruleType: 'MatchRule',
-              action: 'Block',
-              matchConditions: [{
-                matchVariables: [{ variableName: 'RequestHeaders', selector: 'User-Agent' }],
-                operator: 'Contains',
-                matchValues: ['bad-bot'],
+            policySettings: {
+              enabledState: 'Enabled',
+              mode: 'Prevention',
+              requestBodyCheck: 'Enabled',
+              customBlockResponseStatusCode: 403,
+            },
+            managedRules: { managedRuleSets: [{ ruleSetType: 'DefaultRuleSet', ruleSetVersion: '1.0' }] },
+            customRules: {
+              rules: [{
+                name: 'BlockBadBotHeader',
+                priority: 100,
+                ruleType: 'MatchRule',
+                action: 'Block',
+                enabledState: 'Enabled',
+                matchConditions: [{
+                  matchVariable: 'RequestHeaders',
+                  selector: 'User-Agent',
+                  operator: 'Contains',
+                  negateCondition: false,
+                  matchValue: ['bad-bot'],
+                  transforms: ['Lowercase'],
+                }],
               }],
-            }],
+            },
           },
         },
       );
@@ -579,7 +724,7 @@ test('edge router applies synced front door routing and attached waf policy', as
             parameters: {
               type: 'WebApplicationFirewall',
               wafPolicy: {
-                id: `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/waf-sync`,
+                id: `${subscriptionPath}/resourceGroups/rg-edge-sync/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-sync`,
               },
               associations: [{
                 domains: [{

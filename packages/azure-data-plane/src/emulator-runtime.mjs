@@ -1194,6 +1194,10 @@ export function createEmulatorRuntime({ store }) {
     }
   }
 
+  async function dispose() {
+    await kubernetesRouter.dispose?.();
+  }
+
   return {
     storageRouter,
     appConfigurationRouter,
@@ -1213,5 +1217,6 @@ export function createEmulatorRuntime({ store }) {
     wafEvaluator,
     syncResource,
     unsyncResource,
+    dispose,
   };
 }
