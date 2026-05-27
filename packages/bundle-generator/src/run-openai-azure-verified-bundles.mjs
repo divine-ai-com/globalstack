@@ -36,6 +36,36 @@ const starterBundles = [
     prId: 'Pr91002',
   },
   {
+    platformId: 'azure-pulumi-ts',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: 'e59981bf-6d16-44f6-bf69-c245d3629402',
+    prId: 'Pr91351',
+  },
+  {
+    platformId: 'azure-pulumi-ts',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: 'ef5e9ca9-903f-4171-84df-ecb1836683aa',
+    prId: 'Pr91352',
+  },
+  {
+    platformId: 'azure-pulumi-ts',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: '84f77242-7052-4ac4-a796-53fef478d3ec',
+    prId: 'Pr91353',
+  },
+  {
+    platformId: 'azure-pulumi-ts',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'b60978f4-9c6a-403a-a10b-f0472eabd6ca',
+    prId: 'Pr91354',
+  },
+  {
+    platformId: 'azure-pulumi-ts',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: 'a9685e4f-f9f1-4829-a741-d03e904a8eb3',
+    prId: 'Pr91355',
+  },
+  {
     platformId: 'azure-bicep',
     scenarioId: 'regulated-genai-knowledge-ingestion',
     poId: '0fb57f73-b5c4-4d8d-bf1e-e88f2164c103',

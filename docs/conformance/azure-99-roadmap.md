@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T20:59:06.238Z
+Generated: 2026-05-27T21:19:51.415Z
 
 ## Guardrails
 
@@ -49,13 +49,13 @@ Method:
 ## Platform Verification Snapshot
 
 - Source: `docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present`
-- Generated: 2026-05-27T20:59:00.516Z
+- Generated: 2026-05-27T21:19:46.126Z
 - Model: gpt-5.5
 - Location: eastus
 - Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
-- Platform waves recorded: 5
-- Bundles across recorded platform waves: 25
-- Passing bundles across recorded platform waves: 25/25
+- Platform waves recorded: 6
+- Bundles across recorded platform waves: 30
+- Passing bundles across recorded platform waves: 30/30
 
 | Platform | Generated | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|---|---|
@@ -79,6 +79,11 @@ Method:
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91333 | warehouse-dispatch-event-plane | PASS | destroy |
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91334 | billing-audit-notification-mesh | PASS | destroy |
 | azure-pulumi-py | 2026-05-27T19:11:16.649Z | Pr91335 | regional-catalog-command-plane | PASS | destroy |
+| azure-pulumi-ts | 2026-05-27T21:19:46.126Z | Pr91351 | claims-evidence-command-ring | PASS | destroy |
+| azure-pulumi-ts | 2026-05-27T21:19:46.126Z | Pr91352 | partner-order-ingest-buffer | PASS | destroy |
+| azure-pulumi-ts | 2026-05-27T21:19:46.126Z | Pr91353 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-pulumi-ts | 2026-05-27T21:19:46.126Z | Pr91354 | billing-audit-notification-mesh | PASS | destroy |
+| azure-pulumi-ts | 2026-05-27T21:19:46.126Z | Pr91355 | regional-catalog-command-plane | PASS | destroy |
 | azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91301 | claims-evidence-command-ring | PASS | destroy |
 | azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91302 | partner-order-ingest-buffer | PASS | destroy |
 | azure-terraform-hcl | 2026-05-27T20:59:00.516Z | Pr91303 | warehouse-dispatch-event-plane | PASS | destroy |
@@ -184,11 +189,11 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Rank | Next Work | Why Now | Commands |
 |---:|---|---|---|
-| 1 | Enable and run the verified 5-bundle wave for Pulumi TypeScript | Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts` |
-| 2 | Enable and run the verified 5-bundle wave for Pulumi YAML | Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml` |
-| 3 | Enable and run the verified 5-bundle wave for Ansible YAML | Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml` |
-| 4 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
-| 5 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
+| 1 | Enable and run the verified 5-bundle wave for Pulumi YAML | Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml` |
+| 2 | Enable and run the verified 5-bundle wave for Ansible YAML | Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml` |
+| 3 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
+| 4 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
+| 5 | Keep narrow real-Azure differential reruns running on timing-sensitive services | The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` |
 
 ## Wave Summary
 

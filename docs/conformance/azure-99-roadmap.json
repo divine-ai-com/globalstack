@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T20:59:06.238Z",
+    "generatedAt": "2026-05-27T21:19:51.415Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -133,13 +133,13 @@
   },
   "verifiedPlatformSnapshot": {
     "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
-    "generatedAt": "2026-05-27T20:59:00.516Z",
+    "generatedAt": "2026-05-27T21:19:46.126Z",
     "model": "gpt-5.5",
     "location": "eastus",
     "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
-    "waveCount": 5,
-    "total": 25,
-    "passCount": 25,
+    "waveCount": 6,
+    "total": 30,
+    "passCount": 30,
     "waves": [
       {
         "platformId": "azure-arm-json",
@@ -337,6 +337,57 @@
           },
           {
             "prId": "Pr91335",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91351",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91352",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91353",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91354",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91355",
             "scenarioId": "regional-catalog-command-plane",
             "ok": true,
             "finalStatus": "PASS",
@@ -619,6 +670,61 @@
         "finalStage": "destroy"
       },
       {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91351",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91352",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91353",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91354",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91355",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
         "platformId": "azure-terraform-hcl",
         "generatedAt": "2026-05-27T20:59:00.516Z",
         "model": "gpt-5.5",
@@ -892,15 +998,6 @@
   "immediateNextWork": [
     {
       "rank": 1,
-      "label": "Enable and run the verified 5-bundle wave for Pulumi TypeScript",
-      "why": "Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence.",
-      "commands": [
-        "node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts"
-      ]
-    },
-    {
-      "rank": 2,
       "label": "Enable and run the verified 5-bundle wave for Pulumi YAML",
       "why": "Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave.",
       "commands": [
@@ -909,7 +1006,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "label": "Enable and run the verified 5-bundle wave for Ansible YAML",
       "why": "Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave.",
       "commands": [
@@ -918,7 +1015,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 3,
       "label": "Make the complex adversarial runner platform-aware",
       "why": "The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.",
       "commands": [
@@ -927,12 +1024,22 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 4,
       "label": "Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations",
       "why": "The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.",
       "commands": [
         "npm run smoke:platform-runners",
         "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>"
+      ]
+    },
+    {
+      "rank": 5,
+      "label": "Keep narrow real-Azure differential reruns running on timing-sensitive services",
+      "why": "The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true"
       ]
     }
   ],
