@@ -898,13 +898,26 @@ export class AksClusterManager {
     this.stopAutoscaler(entry);
     if (this.autoscaledPools(entry).length === 0) return;
     entry.autoscalerTimer = setInterval(() => {
-      void this.reconcileAutoscaler(entry).catch(error => {
-        console.error('[globalstack:aks-runtime] autoscaler reconciliation failed', {
-          cluster: entry.name,
-          resourceId: entry.id,
-          message: error instanceof Error ? error.message : String(error),
-        });
-      });
+      void (async () => {
+        try {
+          await this.reconcileAutoscaler(entry);
+        } catch (error) {
+          console.error('[globalstack:aks-runtime] autoscaler reconciliation failed', {
+            cluster: entry.name,
+            resourceId: entry.id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+        try {
+          await this.syncServiceExposureEndpoints(entry);
+        } catch (error) {
+          console.error('[globalstack:aks-runtime] service exposure reconciliation failed', {
+            cluster: entry.name,
+            resourceId: entry.id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+      })();
     }, 5000);
     entry.autoscalerTimer.unref?.();
   }
@@ -1041,24 +1054,81 @@ export class AksClusterManager {
     });
   }
 
+  podMatchesServiceSelector(pod, service) {
+    const selector = service?.spec?.selector ?? {};
+    const selectorEntries = Object.entries(selector);
+    if (selectorEntries.length === 0) return false;
+    const labels = pod?.metadata?.labels ?? {};
+    return selectorEntries.every(([key, value]) => labels[key] === value);
+  }
+
+  podReady(pod) {
+    return (pod?.status?.conditions ?? []).some(condition =>
+      condition?.type === 'Ready' && condition?.status === 'True');
+  }
+
+  async nodeOriginMap(entry) {
+    const origins = new Map();
+    for (const [nodeName, assignment] of Object.entries(entry.nodeAssignments ?? {})) {
+      const ipAddress = await this.inspectContainerIp(assignment.containerName, entry.networkName);
+      if (!ipAddress) continue;
+      origins.set(nodeName, {
+        name: String(nodeName),
+        hostName: ipAddress,
+        httpPort: null,
+        httpsPort: null,
+        role: assignment.role ?? 'agent',
+      });
+    }
+    return origins;
+  }
+
+  async serviceOrigins(entry, service, nodeOriginMap) {
+    const nodePort = Number(service?.spec?.ports?.[0]?.nodePort ?? 0);
+    if (!nodePort) return [];
+    const externalTrafficPolicy = String(service?.spec?.externalTrafficPolicy ?? 'Cluster');
+    if (externalTrafficPolicy !== 'Local') {
+      return [...nodeOriginMap.values()].map(origin => ({
+        name: origin.name,
+        hostName: origin.hostName,
+        httpPort: nodePort,
+        httpsPort: nodePort,
+      }));
+    }
+    const namespace = String(service?.metadata?.namespace ?? 'default');
+    const podsResponse = await backendJsonRequest(entry, { path: `/api/v1/namespaces/${namespace}/pods` });
+    const pods = Array.isArray(podsResponse.body?.items) ? podsResponse.body.items : [];
+    const matchedNodeNames = new Set(
+      pods
+        .filter(pod => this.podMatchesServiceSelector(pod, service))
+        .filter(pod => String(pod?.status?.phase ?? '') === 'Running' && this.podReady(pod))
+        .map(pod => String(pod?.spec?.nodeName ?? ''))
+        .filter(Boolean),
+    );
+    return [...matchedNodeNames]
+      .map(nodeName => nodeOriginMap.get(nodeName))
+      .filter(Boolean)
+      .map(origin => ({
+        name: origin.name,
+        hostName: origin.hostName,
+        httpPort: nodePort,
+        httpsPort: nodePort,
+      }));
+  }
+
   async syncServiceExposureEndpoints(entry) {
     if (!this.edgeRouter || !entry?.ready) return;
     const previousHosts = entry.serviceExposureHosts ?? new Set();
     const nextHosts = new Set();
     const listed = await backendJsonRequest(entry, { path: '/api/v1/services' });
     const services = Array.isArray(listed.body?.items) ? listed.body.items : [];
-    const nodeOrigins = [];
-    for (const containerName of [entry.serverContainerName, ...(entry.agentContainerNames ?? [])]) {
-      const ipAddress = await this.inspectContainerIp(containerName, entry.networkName);
-      if (!ipAddress) continue;
-      nodeOrigins.push(ipAddress);
-    }
+    const nodeOrigins = await this.nodeOriginMap(entry);
     for (const service of services) {
       const serviceType = String(service?.spec?.type ?? 'ClusterIP');
       if (serviceType !== 'LoadBalancer') continue;
-      const nodePort = Number(service?.spec?.ports?.[0]?.nodePort ?? 0);
-      if (!nodePort || nodeOrigins.length === 0) continue;
+      const origins = await this.serviceOrigins(entry, service, nodeOrigins);
       const exposure = this.serviceExposureDetails(entry, service);
+      if (!exposure.ip || origins.length === 0) continue;
       await this.patchServiceExposureStatus(entry, service, exposure);
       for (const hostName of exposure.exposureHosts) {
         this.edgeRouter.registerEndpoint({
@@ -1067,12 +1137,7 @@ export class AksClusterManager {
           kind: 'aks-service',
           enabledState: 'Enabled',
           proxyMode: 'http-forward',
-          origins: nodeOrigins.map((originHost, index) => ({
-            name: `node-${index + 1}`,
-            hostName: originHost,
-            httpPort: nodePort,
-            httpsPort: nodePort,
-          })),
+          origins,
           routePatterns: ['/*'],
         });
         nextHosts.add(hostName.toLowerCase());

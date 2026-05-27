@@ -783,6 +783,130 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
       assert.ok(!nodesNow.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
     }, { timeoutMs: 300000, delayMs: 3000 });
 
+    const localDeployment = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: { name: 'runtime-smoke-local' },
+        spec: {
+          replicas: 1,
+          selector: { matchLabels: { app: 'runtime-smoke-local' } },
+          template: {
+            metadata: { labels: { app: 'runtime-smoke-local' } },
+            spec: {
+              nodeSelector: {
+                'kubernetes.azure.com/agentpool': 'userpool',
+              },
+              containers: [
+                {
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke-local', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+    assert.equal(localDeployment.status, 201);
+
+    const localService = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          name: 'runtime-smoke-local',
+          annotations: {
+            'service.beta.kubernetes.io/azure-dns-label-name': 'localsync',
+          },
+        },
+        spec: {
+          type: 'LoadBalancer',
+          externalTrafficPolicy: 'Local',
+          selector: { app: 'runtime-smoke-local' },
+          ports: [{ port: 80, targetPort: 5678 }],
+        },
+      },
+    });
+    assert.equal(localService.status, 201);
+
+    const localResolved = await waitFor(async () => {
+      const current = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-local', {
+        host,
+        auth: `Bearer ${adminToken}`,
+      });
+      assert.equal(current.status, 200);
+      assert.ok(Number(current.body.spec?.healthCheckNodePort ?? 0) > 0);
+      assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.ip);
+      const pool = await httpJson(
+        armPort,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools/userpool?api-version=2024-02-01`,
+      );
+      assert.equal(pool.status, 200);
+      assert.equal(pool.body.properties.count, 1);
+      return current;
+    }, { timeoutMs: 240000, delayMs: 2000 });
+
+    const clusterEntry = runtime.kubernetesRouter.clusterManager.clustersByHost.get(String(host).toLowerCase());
+    assert.ok(clusterEntry);
+    const userpoolAssignment = Object.entries(clusterEntry.nodeAssignments)
+      .find(([, assignment]) => assignment.name === 'userpool');
+    assert.ok(userpoolAssignment);
+    const userpoolOriginIp = await runtime.kubernetesRouter.clusterManager.inspectContainerIp(
+      userpoolAssignment[1].containerName,
+      clusterEntry.networkName,
+    );
+
+    const localEdge = await waitFor(async () => {
+      const current = await edgeJson(edgePort, 'GET', '/', {
+        host: 'localsync.eastus.cloudapp.azure.com',
+        protocol: 'http',
+      });
+      assert.equal(current.status, 200);
+      assert.match(String(current.body), /runtime-smoke-local/);
+      assert.equal(current.headers['x-globalstack-origin-host'], userpoolOriginIp);
+      return current;
+    }, { timeoutMs: 120000, delayMs: 1000 });
+    assert.equal(localEdge.headers['x-globalstack-edge-route'], 'aks-service/runtime-smoke-runtime-smoke-local');
+
+    const localDelete = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments/runtime-smoke-local', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'DELETE',
+    });
+    assert.equal(localDelete.status, 200);
+
+    const localServiceDelete = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-local', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'DELETE',
+    });
+    assert.equal(localServiceDelete.status, 200);
+
+    await waitFor(async () => {
+      const pool = await httpJson(
+        armPort,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools/userpool?api-version=2024-02-01`,
+      );
+      assert.equal(pool.status, 200);
+      assert.equal(pool.body.properties.count, 0);
+      const edgeGone = await edgeJson(edgePort, 'GET', '/', {
+        host: 'localsync.eastus.cloudapp.azure.com',
+        protocol: 'http',
+      });
+      assert.equal(edgeGone.status, 404);
+    }, { timeoutMs: 300000, delayMs: 3000 });
+
     const deleted = await httpJson(
       armPort,
       'DELETE',

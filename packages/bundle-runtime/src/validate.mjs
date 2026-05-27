@@ -2877,8 +2877,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 12) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 12 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 13) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 13 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
@@ -2891,6 +2891,7 @@ if (!aksMetadataParityText) {
     'cluster admin credentials can create deployment and service on live backend',
     'autoscaled user pool scales from zero for targeted workload and returns to minCount after deletion',
     'load balancer service exposes live backend through AKS edge integration',
+    'local traffic load balancer routes only to nodes with matching local endpoints',
     'load balancer service can bind to an ARM public IP resource',
     'internal load balancer service gets private ingress and no public edge route',
   ]) {

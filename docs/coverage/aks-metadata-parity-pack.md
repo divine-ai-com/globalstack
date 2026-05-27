@@ -20,6 +20,7 @@ This pack is the current local evidence boundary for the Tier 1 `aks-metadata` c
   - user write rejection plus secret-read rejection through backend Kubernetes RBAC
 - Bounded `LoadBalancer` service exposure through the AKS facade, with:
   - public services receiving Azure-shaped ingress IPs plus optional `*.cloudapp.azure.com` DNS labels that route through the GlobalStack edge router into the live cluster backend
+  - `externalTrafficPolicy: Local` honoring only nodes with matching ready local endpoints and surfacing a live `healthCheckNodePort`
   - public services optionally binding to real ARM `Microsoft.Network/publicIPAddresses` resources via AKS service annotations
   - internal services receiving private ingress IPs without public edge exposure
 - Workload preservation when node-pool topology changes through parent updates or child pool create/delete operations.
@@ -51,7 +52,7 @@ This is local AKS facade plus real local cluster runtime evidence for the enumer
 Still explicit gaps:
 
 - Only a bounded VMSS-like node-pool and autoscaler slice is implemented; real VMSS instance lifecycle, richer autoscaler policies, node image, and upgrade semantics remain open.
-- No CNI, Azure-managed load balancer semantics beyond the bounded public/internal and ARM-public-IP service-exposure slice, private clusters, ingress, addons, maintenance windows, diagnostics, or broader Kubernetes API parity.
+- No CNI, Azure-managed load balancer semantics beyond the bounded public/internal, `externalTrafficPolicy: Local`, and ARM-public-IP service-exposure slice, private clusters, ingress, addons, maintenance windows, diagnostics, or broader Kubernetes API parity.
 - No exact Azure AD / kubelogin / local account / credential rotation / cluster extension fidelity beyond the bounded user/admin credential paths exercised here.
 - Exhaustive live Azure parameter variance, async state, retry, identity/RBAC, and provider/IaC edge captures remain required.
 

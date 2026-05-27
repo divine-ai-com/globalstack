@@ -320,7 +320,7 @@ async function runControlPlaneMatrix() {
     }
   }
 
-  await withArmServer(async ({ armPort, kubePort, edgePort }) => {
+  await withArmServer(async ({ armPort, kubePort, edgePort, runtime }) => {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
     const aadClusterPath = `managedClusters/${aadClusterName}`;
@@ -1332,6 +1332,130 @@ async function runControlPlaneMatrix() {
       };
     });
 
+    await recordDataPlane('local traffic load balancer routes only to nodes with matching local endpoints', async () => {
+      const deploymentName = 'runtime-smoke-local';
+      const created = await httpKube(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: { name: deploymentName },
+          spec: {
+            replicas: 1,
+            selector: { matchLabels: { app: 'runtime-smoke-local' } },
+            template: {
+              metadata: { labels: { app: 'runtime-smoke-local' } },
+              spec: {
+                nodeSelector: {
+                  'kubernetes.azure.com/agentpool': 'userpool',
+                },
+                containers: [{
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke-local', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
+                }],
+              },
+            },
+          },
+        },
+      });
+      assert.equal(created.status, 201);
+
+      const serviceName = 'runtime-smoke-local';
+      const service = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: {
+            name: serviceName,
+            annotations: {
+              'service.beta.kubernetes.io/azure-dns-label-name': `local${suffix.slice(-4)}`,
+            },
+          },
+          spec: {
+            type: 'LoadBalancer',
+            externalTrafficPolicy: 'Local',
+            selector: { app: 'runtime-smoke-local' },
+            ports: [{ port: 80, targetPort: 5678 }],
+          },
+        },
+      });
+      assert.equal(service.status, 201);
+
+      const currentService = await waitFor(async () => {
+        const current = await httpKube(kubePort, `/api/v1/namespaces/runtime-smoke/services/${serviceName}`, {
+          host: clusterHost,
+          token: adminKubeToken,
+        });
+        assert.equal(current.status, 200);
+        assert.ok(Number(current.body.spec?.healthCheckNodePort ?? 0) > 0);
+        assert.ok(current.body.status?.loadBalancer?.ingress?.[0]?.ip);
+        const pool = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+        assert.equal(pool.status, 200);
+        assert.equal(pool.body.properties.count, 1);
+        return current;
+      }, { timeoutMs: 240000, delayMs: 2000 });
+
+      const clusterEntry = runtime.kubernetesRouter.clusterManager.clustersByHost.get(String(clusterHost).toLowerCase());
+      assert.ok(clusterEntry);
+      const userpoolAssignment = Object.entries(clusterEntry.nodeAssignments)
+        .find(([, assignment]) => assignment.name === 'userpool');
+      assert.ok(userpoolAssignment);
+      const userpoolOriginIp = await runtime.kubernetesRouter.clusterManager.inspectContainerIp(
+        userpoolAssignment[1].containerName,
+        clusterEntry.networkName,
+      );
+
+      const hostname = `local${suffix.slice(-4)}.eastus.cloudapp.azure.com`;
+      const response = await waitFor(async () => {
+        const current = await edgeText(edgePort, 'GET', '/', {
+          host: hostname,
+          protocol: 'http',
+        });
+        assert.equal(current.status, 200);
+        assert.match(current.body, /runtime-smoke-local/);
+        assert.equal(current.headers['x-globalstack-origin-host'], userpoolOriginIp);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+
+      const deleted = await httpKube(kubePort, `/apis/apps/v1/namespaces/runtime-smoke/deployments/${deploymentName}`, {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'DELETE',
+      });
+      assert.equal(deleted.status, 200);
+      const deletedService = await httpKube(kubePort, `/api/v1/namespaces/runtime-smoke/services/${serviceName}`, {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'DELETE',
+      });
+      assert.equal(deletedService.status, 200);
+
+      await waitFor(async () => {
+        const pool = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+        assert.equal(pool.status, 200);
+        assert.equal(pool.body.properties.count, 0);
+        const edgeGone = await edgeText(edgePort, 'GET', '/', {
+          host: hostname,
+          protocol: 'http',
+        });
+        assert.equal(edgeGone.status, 404);
+      }, { timeoutMs: 300000, delayMs: 3000 });
+
+      return {
+        status: response.status,
+        hostname,
+        ingressIp: currentService.body.status.loadBalancer.ingress[0].ip,
+        originHost: response.headers['x-globalstack-origin-host'] ?? null,
+      };
+    });
+
     await recordDataPlane('internal load balancer service gets private ingress and no public edge route', async () => {
       const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
         host: clusterHost,
@@ -1610,7 +1734,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal and ARM-public-IP service slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal, externalTrafficPolicy=Local, and ARM-public-IP service slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1622,7 +1746,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded Microsoft Entra-managed credential formats, bounded AKS runCommand execution, bounded VMSS-like pool create/update/delete runtime reconciliation, bounded autoscaler scale-up/down behavior for targeted workloads, bounded LoadBalancer service exposure through the edge router including ARM public-IP attachment, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded Microsoft Entra-managed credential formats, bounded AKS runCommand execution, bounded VMSS-like pool create/update/delete runtime reconciliation, bounded autoscaler scale-up/down behavior for targeted workloads, bounded LoadBalancer service exposure through the edge router including externalTrafficPolicy=Local locality and ARM public-IP attachment, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,
