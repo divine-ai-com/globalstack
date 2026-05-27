@@ -638,6 +638,151 @@ test('kubernetes router follows managed cluster lifecycle and serves a real AKS-
     });
     assert.equal(internalEdge.status, 404);
 
+    const publicIp = await httpJson(
+      armPort,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.Network/publicIPAddresses/pip-sync?api-version=2023-09-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard' },
+        properties: {
+          publicIPAllocationMethod: 'Static',
+          dnsSettings: { domainNameLabel: 'akspipsync' },
+        },
+      },
+    );
+    assert.equal(publicIp.status, 201);
+
+    const pipService = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          name: 'runtime-smoke-pip',
+          annotations: {
+            'service.beta.kubernetes.io/azure-load-balancer-resource-group': 'rg-aks-sync',
+            'service.beta.kubernetes.io/azure-pip-name': 'pip-sync',
+          },
+        },
+        spec: {
+          type: 'LoadBalancer',
+          selector: { app: 'runtime-smoke' },
+          ports: [{ port: 80, targetPort: 5678 }],
+        },
+      },
+    });
+    assert.equal(pipService.status, 201);
+
+    const pipResolved = await waitFor(async () => {
+      const current = await kubeJson(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-pip', {
+        host,
+        auth: `Bearer ${adminToken}`,
+      });
+      assert.equal(current.status, 200);
+      assert.equal(current.body.status?.loadBalancer?.ingress?.[0]?.ip, publicIp.body.properties.ipAddress);
+      return current;
+    });
+    assert.equal(pipResolved.body.status.loadBalancer.ingress[0].ip, publicIp.body.properties.ipAddress);
+
+    const pipEdge = await waitFor(async () => {
+      const current = await edgeJson(edgePort, 'GET', '/', {
+        host: publicIp.body.properties.dnsSettings.fqdn,
+        protocol: 'http',
+      });
+      assert.equal(current.status, 200);
+      assert.match(String(current.body), /runtime-smoke/);
+      return current;
+    });
+    assert.equal(pipEdge.headers['x-globalstack-edge-route'], 'aks-service/runtime-smoke-runtime-smoke-pip');
+
+    const autoscaledPool = await httpJson(
+      armPort,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools/userpool?api-version=2024-02-01`,
+      {
+        properties: {
+          count: 0,
+          vmSize: 'Standard_DS3_v2',
+          mode: 'User',
+          osType: 'Linux',
+          type: 'VirtualMachineScaleSets',
+          enableAutoScaling: true,
+          minCount: 0,
+          maxCount: 1,
+        },
+      },
+    );
+    assert.ok([200, 201].includes(autoscaledPool.status));
+
+    const autoscaleDeployment = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'POST',
+      body: {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: { name: 'runtime-smoke-autoscale' },
+        spec: {
+          replicas: 1,
+          selector: { matchLabels: { app: 'runtime-smoke-autoscale' } },
+          template: {
+            metadata: { labels: { app: 'runtime-smoke-autoscale' } },
+            spec: {
+              nodeSelector: {
+                'kubernetes.azure.com/agentpool': 'userpool',
+              },
+              containers: [
+                {
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke-autoscale', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+    assert.equal(autoscaleDeployment.status, 201);
+
+    await waitFor(async () => {
+      const pool = await httpJson(
+        armPort,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools/userpool?api-version=2024-02-01`,
+      );
+      assert.equal(pool.status, 200);
+      assert.equal(pool.body.properties.enableAutoScaling, true);
+      assert.equal(pool.body.properties.count, 1);
+      const nodesNow = await kubeJson(kubePort, '/api/v1/nodes', { host, auth: `Bearer ${adminToken}` });
+      assert.equal(nodesNow.status, 200);
+      assert.ok(nodesNow.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
+    }, { timeoutMs: 240000, delayMs: 2000 });
+
+    const autoscaleDelete = await kubeJson(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments/runtime-smoke-autoscale', {
+      host,
+      auth: `Bearer ${adminToken}`,
+      method: 'DELETE',
+    });
+    assert.equal(autoscaleDelete.status, 200);
+
+    await waitFor(async () => {
+      const pool = await httpJson(
+        armPort,
+        'GET',
+        `${subscriptionPath}/resourceGroups/rg-aks-sync/providers/Microsoft.ContainerService/managedClusters/aks-sync/agentPools/userpool?api-version=2024-02-01`,
+      );
+      assert.equal(pool.status, 200);
+      assert.equal(pool.body.properties.count, 0);
+      const nodesNow = await kubeJson(kubePort, '/api/v1/nodes', { host, auth: `Bearer ${adminToken}` });
+      assert.equal(nodesNow.status, 200);
+      assert.ok(!nodesNow.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
+    }, { timeoutMs: 300000, delayMs: 3000 });
+
     const deleted = await httpJson(
       armPort,
       'DELETE',

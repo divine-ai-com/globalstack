@@ -2833,8 +2833,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity control-plane matrix has failures');
   }
-  if ((aksMetadataParity.controlPlane?.total ?? 0) < 58) {
-    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 58 cases');
+  if ((aksMetadataParity.controlPlane?.total ?? 0) < 60) {
+    errors.push('Azure AKS metadata parity control-plane matrix should exercise at least 60 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2859,9 +2859,11 @@ if (!aksMetadataParityText) {
     'agent pool child collection reflects cluster pool metadata',
     'cluster update can add a live user pool with a second node',
     'agent pool child item reflects updated user pool metadata',
+    'agent pool child put rejects invalid autoscaler bounds',
     'AKS runCommand returns commandResults location and completes successfully',
     'agent pool child put scales user pool out with VMSS metadata preserved across repeated reads',
     'agent pool child put scales user pool to zero and repeated drift reads stay stable',
+    'agent pool child put enables autoscaling bounds on user pool',
     'agent pool child put adds a live burst pool after scale-to-zero user pool',
     'agent pool child delete removes burst pool and preserves workload state',
     'agent pool child get after delete is rejected',
@@ -2875,8 +2877,8 @@ if (!aksMetadataParityText) {
   if (aksMetadataParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure AKS metadata parity data-plane matrix has failures');
   }
-  if ((aksMetadataParity.dataPlane?.total ?? 0) < 10) {
-    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 10 cases');
+  if ((aksMetadataParity.dataPlane?.total ?? 0) < 12) {
+    errors.push('Azure AKS metadata parity data-plane matrix should exercise at least 12 cases');
   }
   for (const required of [
     'local kubernetes api rejects missing bearer token',
@@ -2887,7 +2889,9 @@ if (!aksMetadataParityText) {
     'cluster admin credentials can create namespace and configmap on live backend',
     'cluster user credentials are restricted by backend RBAC on secrets',
     'cluster admin credentials can create deployment and service on live backend',
+    'autoscaled user pool scales from zero for targeted workload and returns to minCount after deletion',
     'load balancer service exposes live backend through AKS edge integration',
+    'load balancer service can bind to an ARM public IP resource',
     'internal load balancer service gets private ingress and no public edge route',
   ]) {
     if (!aksMetadataParity.dataPlane?.cases?.some(item => item.name === required && item.ok === true)) {

@@ -658,54 +658,101 @@ function validateContainerRegistryPayload(resourceType, body) {
   return null;
 }
 
+function validateAksAgentPoolProperties(pool = {}) {
+  const poolMode = pool.mode ?? 'User';
+  const minimumCount = poolMode === 'System' ? 1 : 0;
+  if (!Number.isInteger(pool.count) || pool.count < minimumCount || pool.count > 1000) {
+    return envelopedError(
+      400,
+      'InvalidAgentPoolCount',
+      `AKS agent pool count must be an integer between ${minimumCount} and 1000 for ${poolMode} pools.`,
+    );
+  }
+  if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool vmSize is required.',
+    );
+  }
+  if (pool.mode && !['System', 'User'].includes(pool.mode)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool mode must be System or User when provided.',
+    );
+  }
+  if (pool.osType && !['Linux', 'Windows'].includes(pool.osType)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool osType must be Linux or Windows when provided.',
+    );
+  }
+  if (pool.type && !['VirtualMachineScaleSets', 'AvailabilitySet'].includes(pool.type)) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
+    );
+  }
+  if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool availabilityZones requires type VirtualMachineScaleSets.',
+    );
+  }
+  if (Object.hasOwn(pool, 'enableAutoScaling') && typeof pool.enableAutoScaling !== 'boolean') {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS agent pool enableAutoScaling must be a boolean when provided.',
+    );
+  }
+  if (pool.enableAutoScaling === true) {
+    if (!Number.isInteger(pool.minCount) || !Number.isInteger(pool.maxCount)) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS autoscaled agent pools require integer minCount and maxCount values.',
+      );
+    }
+    if (pool.minCount < minimumCount || pool.minCount > 1000 || pool.maxCount < minimumCount || pool.maxCount > 1000) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        `AKS autoscaled agent pools require minCount and maxCount between ${minimumCount} and 1000 for ${poolMode} pools.`,
+      );
+    }
+    if (pool.minCount > pool.maxCount) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS autoscaled agent pools require minCount to be less than or equal to maxCount.',
+      );
+    }
+    if (pool.count < pool.minCount || pool.count > pool.maxCount) {
+      return envelopedError(
+        400,
+        'InvalidParameter',
+        'AKS autoscaled agent pool count must stay within minCount and maxCount.',
+      );
+    }
+  } else if (Object.hasOwn(pool, 'minCount') || Object.hasOwn(pool, 'maxCount')) {
+    return envelopedError(
+      400,
+      'InvalidParameter',
+      'AKS minCount and maxCount require enableAutoScaling to be true.',
+    );
+  }
+  return null;
+}
+
 function validateAksPayload(resourceType, body) {
   if (resourceType === 'Microsoft.ContainerService/managedClusters/agentPools') {
     const pool = body.properties ?? {};
-    const poolMode = pool.mode ?? 'User';
-    const minCount = poolMode === 'System' ? 1 : 0;
-    if (!Number.isInteger(pool.count) || pool.count < minCount || pool.count > 1000) {
-      return envelopedError(
-        400,
-        'InvalidAgentPoolCount',
-        `AKS agent pool count must be an integer between ${minCount} and 1000 for ${poolMode} pools.`,
-      );
-    }
-    if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool vmSize is required.',
-      );
-    }
-    if (pool.mode && !['System', 'User'].includes(pool.mode)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool mode must be System or User when provided.',
-      );
-    }
-    if (pool.osType && !['Linux', 'Windows'].includes(pool.osType)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool osType must be Linux or Windows when provided.',
-      );
-    }
-    if (pool.type && !['VirtualMachineScaleSets', 'AvailabilitySet'].includes(pool.type)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
-      );
-    }
-    if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool availabilityZones requires type VirtualMachineScaleSets.',
-      );
-    }
-    return null;
+    return validateAksAgentPoolProperties(pool);
   }
   if (resourceType !== 'Microsoft.ContainerService/managedClusters') return null;
   const properties = body.properties ?? {};
@@ -768,50 +815,8 @@ function validateAksPayload(resourceType, body) {
         'AKS agent pool names must start with a lowercase letter, use lowercase alphanumerics only, and be 1 through 12 characters.',
       );
     }
-    const poolMode = pool.mode ?? 'User';
-    const minCount = poolMode === 'System' ? 1 : 0;
-    if (!Number.isInteger(pool.count) || pool.count < minCount || pool.count > 1000) {
-      return envelopedError(
-        400,
-        'InvalidAgentPoolCount',
-        `AKS agent pool count must be an integer between ${minCount} and 1000 for ${poolMode} pools.`,
-      );
-    }
-    if (typeof pool.vmSize !== 'string' || pool.vmSize.trim() === '') {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool vmSize is required.',
-      );
-    }
-    if (pool.mode && !['System', 'User'].includes(pool.mode)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool mode must be System or User when provided.',
-      );
-    }
-    if (pool.osType && !['Linux', 'Windows'].includes(pool.osType)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool osType must be Linux or Windows when provided.',
-      );
-    }
-    if (pool.type && !['VirtualMachineScaleSets', 'AvailabilitySet'].includes(pool.type)) {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool type must be VirtualMachineScaleSets or AvailabilitySet when provided.',
-      );
-    }
-    if (Array.isArray(pool.availabilityZones) && pool.availabilityZones.length > 0 && (pool.type ?? 'VirtualMachineScaleSets') !== 'VirtualMachineScaleSets') {
-      return envelopedError(
-        400,
-        'InvalidParameter',
-        'AKS agent pool availabilityZones requires type VirtualMachineScaleSets.',
-      );
-    }
+    const poolValidation = validateAksAgentPoolProperties(pool);
+    if (poolValidation) return poolValidation;
   }
   if (properties.kubernetesVersion && !/^\d+\.\d+(?:\.\d+)?$/.test(properties.kubernetesVersion)) {
     return envelopedError(

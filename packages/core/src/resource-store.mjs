@@ -248,7 +248,11 @@ function materializeAksAgentPoolProfile(pool = {}, existingPool = {}) {
     type: poolType,
     mode: pool.mode ?? existingPool.mode ?? 'User',
     osType: pool.osType ?? existingPool.osType ?? 'Linux',
+    enableAutoScaling: pool.enableAutoScaling ?? existingPool.enableAutoScaling ?? false,
+    minCount: pool.minCount ?? existingPool.minCount ?? null,
+    maxCount: pool.maxCount ?? existingPool.maxCount ?? null,
     orchestratorVersion: pool.orchestratorVersion ?? existingPool.orchestratorVersion ?? null,
+    nodeImageVersion: pool.nodeImageVersion ?? existingPool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
   };
 }
 
@@ -1348,6 +1352,36 @@ export class ResourceStore {
         },
       ],
     };
+  }
+
+  updateAksRuntimePoolState(clusterId, poolName, updates = {}) {
+    const normalizedClusterId = String(clusterId ?? '').toLowerCase();
+    const normalizedPoolName = String(poolName ?? '').toLowerCase();
+    if (!normalizedClusterId || !normalizedPoolName) return false;
+    const cluster = this.resources.get(normalizedClusterId);
+    if (!cluster || cluster.type !== 'Microsoft.ContainerService/managedClusters') return false;
+    const childId = `${cluster.id}/agentPools/${poolName}`.toLowerCase();
+    const child = this.resources.get(childId);
+
+    const applyUpdates = (target) => {
+      if (!target?.properties) return;
+      if (Object.hasOwn(updates, 'count')) target.properties.count = updates.count;
+      if (Object.hasOwn(updates, 'enableAutoScaling')) target.properties.enableAutoScaling = updates.enableAutoScaling;
+      if (Object.hasOwn(updates, 'minCount')) target.properties.minCount = updates.minCount;
+      if (Object.hasOwn(updates, 'maxCount')) target.properties.maxCount = updates.maxCount;
+      if (Object.hasOwn(updates, 'provisioningState')) target.properties.provisioningState = updates.provisioningState;
+      if (Object.hasOwn(updates, 'powerState')) target.properties.powerState = deepClone(updates.powerState);
+      if (Object.hasOwn(updates, 'nodeImageVersion')) target.properties.nodeImageVersion = updates.nodeImageVersion;
+    };
+
+    const profiles = Array.isArray(cluster.properties?.agentPoolProfiles)
+      ? cluster.properties.agentPoolProfiles
+      : [];
+    const profile = profiles.find(item => String(item?.name ?? '').toLowerCase() === normalizedPoolName);
+    if (!profile) return false;
+    applyUpdates({ properties: profile });
+    if (child) applyUpdates(child);
+    return true;
   }
 
   exportSnapshot() {

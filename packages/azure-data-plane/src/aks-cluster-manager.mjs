@@ -137,6 +137,22 @@ function serviceAnnotation(service, key) {
   return service?.metadata?.annotations?.[key] ?? null;
 }
 
+function resourceIdSegments(id) {
+  return String(id ?? '').split('/').filter(Boolean);
+}
+
+function subscriptionIdFromResourceId(id) {
+  const parts = resourceIdSegments(id);
+  const index = parts.findIndex(part => part.toLowerCase() === 'subscriptions');
+  return index >= 0 ? parts[index + 1] ?? null : null;
+}
+
+function resourceGroupFromResourceId(id) {
+  const parts = resourceIdSegments(id);
+  const index = parts.findIndex(part => part.toLowerCase() === 'resourcegroups');
+  return index >= 0 ? parts[index + 1] ?? null : null;
+}
+
 function clusterImageFor(resource) {
   const version = String(resource?.properties?.kubernetesVersion ?? resource?.properties?.currentKubernetesVersion ?? '').trim();
   if (!version) return DEFAULT_K3S_IMAGE;
@@ -155,6 +171,11 @@ function clusterSignature(resource) {
         vmSize: pool?.vmSize ?? null,
         mode: pool?.mode ?? null,
         osType: pool?.osType ?? null,
+        type: pool?.type ?? null,
+        enableAutoScaling: pool?.enableAutoScaling ?? null,
+        minCount: pool?.minCount ?? null,
+        maxCount: pool?.maxCount ?? null,
+        availabilityZones: Array.isArray(pool?.availabilityZones) ? pool.availabilityZones : [],
       })),
     }))
     .digest('hex');
@@ -326,6 +347,7 @@ export class AksClusterManager {
   constructor({
     dockerSocketPath = DEFAULT_DOCKER_SOCKET,
     edgeRouter = null,
+    store = null,
   } = {}) {
     this.dockerSocketPath = dockerSocketPath;
     this.docker = new Docker({ socketPath: dockerSocketPath });
@@ -333,6 +355,7 @@ export class AksClusterManager {
     this.networkName = null;
     this.ready = false;
     this.edgeRouter = edgeRouter;
+    this.store = store;
     this.clustersByHost = new Map();
     this.clustersById = new Map();
   }
@@ -522,6 +545,7 @@ export class AksClusterManager {
 
   async cleanupEntry(entry) {
     if (!entry) return;
+    this.stopAutoscaler(entry);
     if (entry.disposed !== true) {
       await Promise.resolve(entry.readyPromise).catch(() => {});
     }
@@ -619,6 +643,279 @@ export class AksClusterManager {
     throw new Error(`AKS backend '${entry.serverContainerName}' did not reach ${expectedNodeCount} ready nodes within 180s.`);
   }
 
+  async waitForNodeAbsent(entry, nodeName) {
+    for (let attempt = 0; attempt < 180; attempt += 1) {
+      const backend = await backendJsonRequest(entry, { path: '/api/v1/nodes' });
+      const items = Array.isArray(backend.body?.items) ? backend.body.items : [];
+      if (!items.some(node => node?.metadata?.name === nodeName)) return;
+      await delay(1000);
+    }
+    throw new Error(`AKS backend '${entry.serverContainerName}' did not remove node '${nodeName}' within 180s.`);
+  }
+
+  autoscaledPools(entry) {
+    return (entry?.agentPools ?? [])
+      .filter(pool => pool?.enableAutoScaling === true)
+      .map(pool => ({
+        ...pool,
+        minCount: Number(pool?.minCount ?? 0),
+        maxCount: Number(pool?.maxCount ?? pool?.count ?? 0),
+      }));
+  }
+
+  poolAssignments(entry, poolName) {
+    return Object.entries(entry?.nodeAssignments ?? {})
+      .filter(([, assignment]) => String(assignment?.name ?? '').toLowerCase() === String(poolName ?? '').toLowerCase())
+      .map(([nodeName, assignment]) => ({ nodeName, ...assignment }))
+      .sort((left, right) => Number(left.ordinal ?? 0) - Number(right.ordinal ?? 0));
+  }
+
+  runtimePoolCount(entry, poolName) {
+    return this.poolAssignments(entry, poolName).length;
+  }
+
+  nextPoolOrdinal(entry, poolName) {
+    const ordinals = this.poolAssignments(entry, poolName).map(assignment => Number(assignment.ordinal ?? 0));
+    let ordinal = 0;
+    while (ordinals.includes(ordinal)) ordinal += 1;
+    return ordinal;
+  }
+
+  persistRuntimePoolCount(entry, poolName, updates = {}) {
+    const normalizedPoolName = String(poolName ?? '').toLowerCase();
+    const pool = (entry.agentPools ?? []).find(item => String(item?.name ?? '').toLowerCase() === normalizedPoolName);
+    if (pool) {
+      if (Object.hasOwn(updates, 'count')) pool.count = updates.count;
+      if (Object.hasOwn(updates, 'enableAutoScaling')) pool.enableAutoScaling = updates.enableAutoScaling;
+      if (Object.hasOwn(updates, 'minCount')) pool.minCount = updates.minCount;
+      if (Object.hasOwn(updates, 'maxCount')) pool.maxCount = updates.maxCount;
+      if (Object.hasOwn(updates, 'nodeImageVersion')) pool.nodeImageVersion = updates.nodeImageVersion;
+      if (Object.hasOwn(updates, 'provisioningState')) pool.provisioningState = updates.provisioningState;
+      if (Object.hasOwn(updates, 'powerState')) pool.powerState = updates.powerState;
+    }
+    this.store?.updateAksRuntimePoolState(entry.id, poolName, updates);
+  }
+
+  publicIpRoute(entry, resourceGroupName, publicIpName) {
+    return {
+      subscriptionId: entry.subscriptionId,
+      resourceGroupName,
+      providerNamespace: 'Microsoft.Network',
+      typePath: `publicIPAddresses/${publicIpName}`,
+    };
+  }
+
+  resolveServicePublicIpResource(entry, service) {
+    if (!this.store) return null;
+    const publicIpName = String(serviceAnnotation(service, 'service.beta.kubernetes.io/azure-pip-name') ?? '').trim();
+    if (!publicIpName) return null;
+    const configuredResourceGroup = String(
+      serviceAnnotation(service, 'service.beta.kubernetes.io/azure-load-balancer-resource-group')
+      ?? entry.nodeResourceGroup
+      ?? entry.resourceGroupName
+      ?? '',
+    ).trim();
+    if (!configuredResourceGroup) return null;
+    return this.store.getResource(this.publicIpRoute(entry, configuredResourceGroup, publicIpName));
+  }
+
+  async createAgentNode(entry, pool, ordinal) {
+    const resourceShape = { id: entry.id, name: entry.name };
+    const nodeName = poolNodeName(resourceShape, pool.name ?? 'userpool', ordinal);
+    const agentContainerName = clusterAgentContainerName(resourceShape, pool.name ?? 'userpool', ordinal);
+    const agentBody = {
+      name: agentContainerName,
+      Image: entry.image,
+      Hostname: agentContainerName,
+      Cmd: [
+        'agent',
+        '--server',
+        `https://${entry.serverContainerName}:6443`,
+        '--token',
+        entry.joinToken,
+        '--node-name',
+        nodeName,
+        '--node-label',
+        `kubernetes.azure.com/agentpool=${pool.name ?? 'userpool'}`,
+        '--node-label',
+        `kubernetes.azure.com/mode=${pool.mode ?? 'User'}`,
+        '--node-label',
+        `kubernetes.azure.com/nodepool-type=${pool.type ?? 'VirtualMachineScaleSets'}`,
+        '--node-label',
+        `node.kubernetes.io/instance-type=${pool.vmSize ?? 'Standard_DS2_v2'}`,
+        '--node-label',
+        `kubernetes.io/os=${String(pool.osType ?? 'Linux').toLowerCase()}`,
+        '--node-label',
+        `topology.kubernetes.io/region=${String(entry.location ?? 'eastus').toLowerCase()}`,
+        ...(Array.isArray(pool.availabilityZones) && pool.availabilityZones[0]
+          ? ['--node-label', `topology.kubernetes.io/zone=${String(pool.availabilityZones[0])}`]
+          : []),
+      ],
+      Labels: {
+        ...entry.commonLabels,
+        'io.globalstack.aks.role': 'agent',
+      },
+      HostConfig: {
+        Privileged: true,
+        Tmpfs: {
+          '/run': 'rw',
+          '/var/run': 'rw',
+        },
+        RestartPolicy: {
+          Name: 'unless-stopped',
+        },
+        NetworkMode: entry.networkName,
+      },
+    };
+    const agentContainer = await this.docker.createContainer(agentBody);
+    await agentContainer.start();
+    entry.nodeAssignments[nodeName] = {
+      name: pool.name ?? 'userpool',
+      vmSize: pool.vmSize ?? 'Standard_DS2_v2',
+      osType: pool.osType ?? 'Linux',
+      mode: pool.mode ?? 'User',
+      type: pool.type ?? 'VirtualMachineScaleSets',
+      availabilityZones: Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [],
+      containerName: agentContainerName,
+      ordinal,
+      role: 'agent',
+    };
+    entry.agentContainerNames.push(agentContainerName);
+    entry.agentContainerIds.push(agentContainer.id);
+    await this.waitForNodeCount(entry, Object.keys(entry.nodeAssignments).length);
+    return { nodeName, agentContainerName };
+  }
+
+  async removeAgentNode(entry, assignment) {
+    const container = this.docker.getContainer(entry.serverContainerName);
+    await this.execCommand(container, [
+      'sh',
+      '-lc',
+      [
+        'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml',
+        `kubectl drain ${assignment.nodeName} --ignore-daemonsets --delete-emptydir-data --force --grace-period=0 --timeout=120s >/dev/null 2>&1 || true`,
+        `kubectl delete node ${assignment.nodeName} --ignore-not-found=true >/dev/null 2>&1 || true`,
+      ].join('; '),
+    ]);
+    await this.removeContainer(assignment.containerName);
+    entry.agentContainerNames = entry.agentContainerNames.filter(name => name !== assignment.containerName);
+    delete entry.nodeAssignments[assignment.nodeName];
+    await this.waitForNodeAbsent(entry, assignment.nodeName);
+  }
+
+  async scalePoolToCount(entry, pool, desiredCount) {
+    const currentAssignments = this.poolAssignments(entry, pool.name);
+    const currentCount = currentAssignments.length;
+    if (desiredCount === currentCount) return false;
+    this.persistRuntimePoolCount(entry, pool.name, { provisioningState: 'Scaling' });
+    if (desiredCount > currentCount) {
+      for (let needed = currentCount; needed < desiredCount; needed += 1) {
+        const ordinal = this.nextPoolOrdinal(entry, pool.name);
+        await this.createAgentNode(entry, pool, ordinal);
+      }
+    } else {
+      const removable = currentAssignments
+        .filter(assignment => assignment.role === 'agent')
+        .sort((left, right) => Number(right.ordinal ?? 0) - Number(left.ordinal ?? 0))
+        .slice(0, currentCount - desiredCount);
+      for (const assignment of removable) {
+        await this.removeAgentNode(entry, assignment);
+      }
+    }
+    this.persistRuntimePoolCount(entry, pool.name, {
+      count: desiredCount,
+      provisioningState: 'Succeeded',
+      powerState: { code: desiredCount === 0 ? 'Stopped' : 'Running' },
+    });
+    await this.syncServiceExposureEndpoints(entry);
+    return true;
+  }
+
+  podTargetsPool(pod, poolName) {
+    const selectedPool = String(pod?.spec?.nodeSelector?.['kubernetes.azure.com/agentpool'] ?? '').toLowerCase();
+    return selectedPool ? selectedPool === String(poolName ?? '').toLowerCase() : false;
+  }
+
+  workloadPodsOnPool(pods, poolNodes) {
+    const nodeSet = new Set(poolNodes);
+    const systemNamespaces = new Set(['kube-system', 'kube-public', 'kube-node-lease']);
+    return pods.filter((pod) => {
+      const namespace = String(pod?.metadata?.namespace ?? '');
+      const nodeName = String(pod?.spec?.nodeName ?? '');
+      if (!nodeSet.has(nodeName) || systemNamespaces.has(namespace)) return false;
+      const ownerKinds = new Set((pod?.metadata?.ownerReferences ?? []).map(ref => String(ref?.kind ?? '')));
+      return !ownerKinds.has('DaemonSet');
+    });
+  }
+
+  async reconcileAutoscaler(entry) {
+    if (!entry?.ready || entry.disposed || entry.autoscalerRunning) return;
+    const autoscaledPools = this.autoscaledPools(entry).filter(pool => String(pool.mode ?? 'User') === 'User');
+    if (autoscaledPools.length === 0) return;
+    entry.autoscalerRunning = true;
+    try {
+      const podsResponse = await backendJsonRequest(entry, { path: '/api/v1/pods' });
+      const pods = Array.isArray(podsResponse.body?.items) ? podsResponse.body.items : [];
+      const unschedulable = pods.filter((pod) => {
+        if (String(pod?.status?.phase ?? '') !== 'Pending') return false;
+        return (pod?.status?.conditions ?? []).some(condition =>
+          condition?.type === 'PodScheduled'
+          && condition?.status === 'False'
+          && condition?.reason === 'Unschedulable');
+      });
+
+      for (const pendingPod of unschedulable) {
+        const preferredPoolName = String(pendingPod?.spec?.nodeSelector?.['kubernetes.azure.com/agentpool'] ?? '').trim();
+        const candidatePools = preferredPoolName
+          ? autoscaledPools.filter(pool => String(pool.name ?? '').toLowerCase() === preferredPoolName.toLowerCase())
+          : autoscaledPools;
+        const targetPool = candidatePools.find(pool => this.runtimePoolCount(entry, pool.name) < Number(pool.maxCount ?? 0));
+        if (targetPool) {
+          await this.scalePoolToCount(entry, targetPool, this.runtimePoolCount(entry, targetPool.name) + 1);
+          return;
+        }
+      }
+
+      for (const pool of autoscaledPools) {
+        const currentCount = this.runtimePoolCount(entry, pool.name);
+        const minimumCount = Number(pool.minCount ?? 0);
+        if (currentCount <= minimumCount) continue;
+        const poolAssignments = this.poolAssignments(entry, pool.name);
+        const poolNodeNames = poolAssignments.map(assignment => assignment.nodeName);
+        const workloadPods = this.workloadPodsOnPool(pods, poolNodeNames);
+        const hasPendingTargetedWorkload = unschedulable.some(pod => this.podTargetsPool(pod, pool.name));
+        if (workloadPods.length === 0 && !hasPendingTargetedWorkload) {
+          await this.scalePoolToCount(entry, pool, minimumCount);
+          return;
+        }
+      }
+    } finally {
+      entry.autoscalerRunning = false;
+    }
+  }
+
+  startAutoscaler(entry) {
+    this.stopAutoscaler(entry);
+    if (this.autoscaledPools(entry).length === 0) return;
+    entry.autoscalerTimer = setInterval(() => {
+      void this.reconcileAutoscaler(entry).catch(error => {
+        console.error('[globalstack:aks-runtime] autoscaler reconciliation failed', {
+          cluster: entry.name,
+          resourceId: entry.id,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      });
+    }, 5000);
+    entry.autoscalerTimer.unref?.();
+  }
+
+  stopAutoscaler(entry) {
+    if (entry?.autoscalerTimer) {
+      clearInterval(entry.autoscalerTimer);
+      entry.autoscalerTimer = null;
+    }
+  }
+
   async inspectContainerIp(containerName, networkName) {
     const inspect = await this.docker.getContainer(containerName).inspect();
     const networks = inspect?.NetworkSettings?.Networks ?? {};
@@ -694,20 +991,29 @@ export class AksClusterManager {
   serviceExposureDetails(entry, service) {
     const annotations = service?.metadata?.annotations ?? {};
     const internal = String(annotations['service.beta.kubernetes.io/azure-load-balancer-internal'] ?? 'false').toLowerCase() === 'true';
+    const requestedPublicIpName = String(annotations['service.beta.kubernetes.io/azure-pip-name'] ?? '').trim();
     const configuredIp = String(
       annotations['service.beta.kubernetes.io/azure-load-balancer-ipv4']
       ?? service?.spec?.loadBalancerIP
       ?? '',
     ).trim();
-    const ip = configuredIp || (internal ? aksInternalServiceIp(entry, service) : aksPublicServiceIp(entry, service));
+    const publicIpResource = !internal ? this.resolveServicePublicIpResource(entry, service) : null;
+    const publicIpAddress = publicIpResource?.properties?.ipAddress ?? null;
+    const ip = requestedPublicIpName && !publicIpResource
+      ? null
+      : (publicIpAddress || configuredIp || (internal ? aksInternalServiceIp(entry, service) : aksPublicServiceIp(entry, service)));
     const dnsLabel = String(annotations['service.beta.kubernetes.io/azure-dns-label-name'] ?? '').trim().toLowerCase();
-    const hostname = !internal && dnsLabel ? `${dnsLabel}.${String(entry.location ?? 'eastus').toLowerCase()}.cloudapp.azure.com` : null;
+    const hostname = !internal
+      ? (publicIpResource?.properties?.dnsSettings?.fqdn
+        ?? (dnsLabel ? `${dnsLabel}.${String(entry.location ?? 'eastus').toLowerCase()}.cloudapp.azure.com` : null))
+      : null;
     const exposureHosts = internal ? [] : [ip, ...(hostname ? [hostname] : [])];
     return {
       internal,
       ip,
       hostname,
       exposureHosts,
+      publicIpResourceId: publicIpResource?.id ?? null,
     };
   }
 
@@ -1135,6 +1441,9 @@ export class AksClusterManager {
         mode: systemPool.mode ?? 'System',
         type: systemPool.type ?? 'VirtualMachineScaleSets',
         availabilityZones: Array.isArray(systemPool.availabilityZones) ? [...systemPool.availabilityZones] : [],
+        containerName: serverContainerName,
+        ordinal: 0,
+        role: 'server',
       },
     };
     const commonLabels = {
@@ -1230,6 +1539,9 @@ export class AksClusterManager {
           mode: pool.mode ?? 'User',
           type: pool.type ?? 'VirtualMachineScaleSets',
           availabilityZones: Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [],
+          containerName: agentContainerName,
+          ordinal,
+          role: 'agent',
         };
         const agentBody = {
           name: agentContainerName,
@@ -1308,6 +1620,9 @@ export class AksClusterManager {
       endpointHost: backend.endpointHost,
       endpointPort: backend.endpointPort,
       endpointTls: backend.endpointTls,
+      image,
+      joinToken,
+      commonLabels,
     };
   }
 
@@ -1351,6 +1666,8 @@ export class AksClusterManager {
       signature,
       name: resource.name,
       id: resource.id,
+      subscriptionId: resource.subscriptionId ?? subscriptionIdFromResourceId(resource.id),
+      resourceGroupName: resource.resourceGroupName ?? resourceGroupFromResourceId(resource.id),
       fqdn,
       location: String(resource.location ?? 'eastus').toLowerCase(),
       version: resource.properties?.currentKubernetesVersion ?? resource.properties?.kubernetesVersion ?? '1.29.2',
@@ -1382,6 +1699,7 @@ export class AksClusterManager {
         }
         entry.ready = true;
         await this.syncServiceExposureEndpoints(entry);
+        this.startAutoscaler(entry);
       }))
       .catch((error) => {
         entry.error = error;
@@ -1410,6 +1728,7 @@ export class AksClusterManager {
     for (const hostName of entry.serviceExposureHosts ?? []) {
       this.edgeRouter?.unregisterEndpoint(hostName);
     }
+    this.stopAutoscaler(entry);
     void this.cleanupEntry(entry);
   }
 
@@ -1422,6 +1741,7 @@ export class AksClusterManager {
       for (const hostName of entry.serviceExposureHosts ?? []) {
         this.edgeRouter?.unregisterEndpoint(hostName);
       }
+      this.stopAutoscaler(entry);
       await this.cleanupEntry(entry);
     }));
   }
@@ -1528,6 +1848,23 @@ export class AksClusterManager {
       ) {
         void this.syncServiceExposureEndpoints(entry).catch(error => {
           console.error('[globalstack:aks-runtime] failed to reconcile service exposure', {
+            cluster: entry.name,
+            resourceId: entry.id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        });
+      }
+      if (
+        proxied.status < 500
+        && method !== 'GET'
+        && (
+          /\/deployments(?:\/|$)/.test(url.pathname)
+          || /\/pods(?:\/|$)/.test(url.pathname)
+          || /\/replicasets(?:\/|$)/.test(url.pathname)
+        )
+      ) {
+        void this.reconcileAutoscaler(entry).catch(error => {
+          console.error('[globalstack:aks-runtime] failed to reconcile autoscaler after workload mutation', {
             cluster: entry.name,
             resourceId: entry.id,
             message: error instanceof Error ? error.message : String(error),

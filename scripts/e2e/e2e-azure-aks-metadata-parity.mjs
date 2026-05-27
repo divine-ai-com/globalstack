@@ -995,6 +995,29 @@ async function runControlPlaneMatrix() {
       return { status: result.status, pool: leafResourceName(result.body.name) };
     });
 
+    await record('agent pool child put rejects invalid autoscaler bounds', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
+        {
+          properties: {
+            count: 0,
+            vmSize: 'Standard_DS3_v2',
+            mode: 'User',
+            osType: 'Linux',
+            type: 'VirtualMachineScaleSets',
+            enableAutoScaling: true,
+            minCount: 2,
+            maxCount: 1,
+          },
+        },
+      );
+      assert.equal(result.status, 400);
+      assert.equal(errorCode(result), 'InvalidParameter');
+      return { status: result.status, errorCode: errorCode(result) };
+    });
+
     await record('AKS runCommand returns commandResults location and completes successfully', async () => {
       const result = await httpJson(armPort, 'POST', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/runCommand`), {
         command: 'kubectl get namespaces -o name',
@@ -1088,6 +1111,104 @@ async function runControlPlaneMatrix() {
       return { status: result.status, nodeCount: nodes.body.items.length, userPoolCount: second.body.properties.count };
     });
 
+    await record('agent pool child put enables autoscaling bounds on user pool', async () => {
+      const result = await httpJson(
+        armPort,
+        'PUT',
+        providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`),
+        {
+          properties: {
+            count: 0,
+            vmSize: 'Standard_DS3_v2',
+            mode: 'User',
+            osType: 'Linux',
+            type: 'VirtualMachineScaleSets',
+            enableAutoScaling: true,
+            minCount: 0,
+            maxCount: 2,
+          },
+        },
+      );
+      assert.ok([200, 201].includes(result.status));
+      const first = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      const second = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+      assert.equal(first.status, 200);
+      assert.equal(second.status, 200);
+      assert.equal(second.body.properties.count, 0);
+      assert.equal(second.body.properties.enableAutoScaling, true);
+      assert.equal(second.body.properties.minCount, 0);
+      assert.equal(second.body.properties.maxCount, 2);
+      return { status: result.status, minCount: second.body.properties.minCount, maxCount: second.body.properties.maxCount };
+    });
+
+    await recordDataPlane('autoscaled user pool scales from zero for targeted workload and returns to minCount after deletion', async () => {
+      const deploymentName = 'runtime-smoke-autoscale';
+      const created = await httpKube(kubePort, '/apis/apps/v1/namespaces/runtime-smoke/deployments', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: { name: deploymentName },
+          spec: {
+            replicas: 1,
+            selector: { matchLabels: { app: 'runtime-smoke-autoscale' } },
+            template: {
+              metadata: { labels: { app: 'runtime-smoke-autoscale' } },
+              spec: {
+                nodeSelector: {
+                  'kubernetes.azure.com/agentpool': 'userpool',
+                },
+                containers: [{
+                  name: 'http-echo',
+                  image: 'hashicorp/http-echo:1.0.0',
+                  args: ['-text=runtime-smoke-autoscale', '-listen=:5678'],
+                  ports: [{ containerPort: 5678 }],
+                }],
+              },
+            },
+          },
+        },
+      });
+      assert.equal(created.status, 201);
+
+      const scaledUp = await waitFor(async () => {
+        const pool = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+        assert.equal(pool.status, 200);
+        assert.equal(pool.body.properties.enableAutoScaling, true);
+        assert.ok(pool.body.properties.count >= 1);
+        const nodes = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(nodes.status, 200);
+        const userNodes = nodes.body.items.filter(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool');
+        assert.ok(userNodes.length >= 1);
+        return { pool, nodes };
+      }, { timeoutMs: 240000, delayMs: 2000 });
+
+      const deleted = await httpKube(kubePort, `/apis/apps/v1/namespaces/runtime-smoke/deployments/${deploymentName}`, {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'DELETE',
+      });
+      assert.equal(deleted.status, 200);
+
+      const scaledDown = await waitFor(async () => {
+        const pool = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', `${clusterPath}/agentPools/userpool`));
+        assert.equal(pool.status, 200);
+        assert.equal(pool.body.properties.count, 0);
+        const nodes = await httpKube(kubePort, '/api/v1/nodes', { host: clusterHost, token: adminKubeToken });
+        assert.equal(nodes.status, 200);
+        assert.ok(!nodes.body.items.some(item => item.metadata.labels['kubernetes.azure.com/agentpool'] === 'userpool'));
+        return { pool, nodes };
+      }, { timeoutMs: 300000, delayMs: 3000 });
+
+      return {
+        status: 200,
+        scaledUpCount: scaledUp.pool.body.properties.count,
+        scaledDownCount: scaledDown.pool.body.properties.count,
+      };
+    });
+
     await recordDataPlane('load balancer service exposes live backend through AKS edge integration', async () => {
       const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
         host: clusterHost,
@@ -1135,6 +1256,78 @@ async function runControlPlaneMatrix() {
         status: response.status,
         hostname,
         ingressIp,
+        route: response.headers['x-globalstack-edge-route'] ?? null,
+      };
+    });
+
+    await recordDataPlane('load balancer service can bind to an ARM public IP resource', async () => {
+      const publicIpName = `akspip${suffix.slice(-5)}`;
+      const publicIp = await httpJson(
+        armPort,
+        'PUT',
+        `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Network/publicIPAddresses/${publicIpName}?api-version=2023-09-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'Standard' },
+          properties: {
+            publicIPAllocationMethod: 'Static',
+            dnsSettings: {
+              domainNameLabel: `akspip${suffix.slice(-5)}`,
+            },
+          },
+        },
+      );
+      assert.equal(publicIp.status, 201);
+      const publicIpAddress = publicIp.body.properties.ipAddress;
+      const publicIpFqdn = publicIp.body.properties.dnsSettings.fqdn;
+
+      const created = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services', {
+        host: clusterHost,
+        token: adminKubeToken,
+        method: 'POST',
+        body: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          metadata: {
+            name: 'runtime-smoke-pip',
+            annotations: {
+              'service.beta.kubernetes.io/azure-load-balancer-resource-group': resourceGroup,
+              'service.beta.kubernetes.io/azure-pip-name': publicIpName,
+            },
+          },
+          spec: {
+            type: 'LoadBalancer',
+            selector: { app: 'runtime-smoke' },
+            ports: [{ port: 80, targetPort: 5678 }],
+          },
+        },
+      });
+      assert.equal(created.status, 201);
+
+      const service = await waitFor(async () => {
+        const current = await httpKube(kubePort, '/api/v1/namespaces/runtime-smoke/services/runtime-smoke-pip', {
+          host: clusterHost,
+          token: adminKubeToken,
+        });
+        assert.equal(current.status, 200);
+        assert.equal(current.body.status?.loadBalancer?.ingress?.[0]?.ip, publicIpAddress);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+
+      const response = await waitFor(async () => {
+        const current = await edgeText(edgePort, 'GET', '/', {
+          host: publicIpFqdn,
+          protocol: 'http',
+        });
+        assert.equal(current.status, 200);
+        assert.match(current.body, /runtime-smoke/);
+        return current;
+      }, { timeoutMs: 120000, delayMs: 1000 });
+
+      return {
+        status: response.status,
+        ingressIp: service.body.status.loadBalancer.ingress[0].ip,
+        hostname: publicIpFqdn,
         route: response.headers['x-globalstack-edge-route'] ?? null,
       };
     });
@@ -1417,7 +1610,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, async provisioning-state smoke, local kubeconfig action metadata, backend-RBAC-backed user/admin Kubernetes access, bounded multi-pool k3s-backed runtime behavior, bounded LoadBalancer service exposure through the edge router, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded service-exposure slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
+  lines.push('This run proves local GlobalStack handling for the listed AKS ARM managed-cluster lifecycle, agent-pool child resources, bounded Microsoft Entra-managed credential formats, backend-RBAC-backed user/admin Kubernetes access, bounded VMSS-like pool semantics, bounded autoscaler scale-up/down behavior on targeted workloads, bounded LoadBalancer service exposure through the edge router including ARM public-IP attachment, workload preservation across pool create/update/delete, bounded runCommand execution, ARM-template deployment, post-delete errors, and all-platform runner deployment paths. It does not mark AKS as 99%-complete or cloudValidated for full VMSS semantics, CNI, Azure-managed load balancer behavior beyond the bounded public/internal and ARM-public-IP service slice, addons, upgrades, private clusters, Azure AD/RBAC integration, admission control, scheduler parity, or every live Azure validation edge.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -1429,7 +1622,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: parity.controlPlane.ok && parity.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded AKS runCommand execution, bounded LoadBalancer service exposure through the edge router, bounded pool create/update/delete runtime reconciliation, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
+  scope: 'Azure Kubernetes Service ARM managed-cluster and agent-pool lifecycle, real local k3s-backed Kubernetes API behavior behind the AKS FQDN, backend-RBAC-backed user/admin credential behavior, bounded Microsoft Entra-managed credential formats, bounded AKS runCommand execution, bounded VMSS-like pool create/update/delete runtime reconciliation, bounded autoscaler scale-up/down behavior for targeted workloads, bounded LoadBalancer service exposure through the edge router including ARM public-IP attachment, ARM-template deployment, and all-platform GlobalStack lifecycle smoke.',
   claimBoundary: 'AKS facade plus real local cluster runtime evidence for the enumerated cases only; not a full AKS or cloudValidated claim.',
   controlPlane: parity.controlPlane,
   dataPlane: parity.dataPlane,

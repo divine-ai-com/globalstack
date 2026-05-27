@@ -145,7 +145,7 @@ export function createEmulatorRuntime({ store }) {
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
-  const kubernetesRouter = createKubernetesRouter({ edgeRouter });
+  const kubernetesRouter = createKubernetesRouter({ edgeRouter, store });
   const activityLogStore = createActivityLogStore();
   const keyVaultRouter = createKeyVaultRouter({
     onSecretSet({ subscriptionId, resourceGroupName, vaultName, secretName, value, contentType, tags, attributes }) {
