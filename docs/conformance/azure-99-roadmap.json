@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T19:14:24.618Z",
+    "generatedAt": "2026-05-27T20:19:28.698Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -133,14 +133,65 @@
   },
   "verifiedPlatformSnapshot": {
     "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
-    "generatedAt": "2026-05-27T19:11:16.649Z",
+    "generatedAt": "2026-05-27T20:17:23.723Z",
     "model": "gpt-5.5",
     "location": "eastus",
     "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
-    "waveCount": 3,
-    "total": 15,
-    "passCount": 15,
+    "waveCount": 4,
+    "total": 20,
+    "passCount": 20,
     "waves": [
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91341",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91342",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91343",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91344",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91345",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
       {
         "platformId": "azure-bicep",
         "generatedAt": "2026-05-27T18:12:38.219Z",
@@ -296,6 +347,61 @@
       }
     ],
     "results": [
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91341",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91342",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91343",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91344",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91345",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
       {
         "platformId": "azure-bicep",
         "generatedAt": "2026-05-27T18:12:38.219Z",
@@ -680,46 +786,46 @@
   "immediateNextWork": [
     {
       "rank": 1,
-      "label": "Run the next verified 5-bundle wave against OpenTofu HCL",
-      "why": "Terraform HCL and Bicep now have green platform waves. OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence.",
+      "label": "Run the verified 5-bundle wave against Terraform HCL",
+      "why": "Terraform HCL has no complete recorded 5-bundle platform wave yet, so platform breadth is still not fully proven.",
       "commands": [
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl"
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-terraform-hcl"
       ]
     },
     {
       "rank": 2,
-      "label": "Run the next verified 5-bundle wave against Pulumi Python",
-      "why": "Pulumi Python exercises a different SDK surface and packaging path than Pulumi TypeScript while still targeting Azure Native resources.",
+      "label": "Enable and run the verified 5-bundle wave for Pulumi TypeScript",
+      "why": "Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence.",
       "commands": [
-        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-py"
+        "node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts"
       ]
     },
     {
       "rank": 3,
+      "label": "Enable and run the verified 5-bundle wave for Pulumi YAML",
+      "why": "Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave.",
+      "commands": [
+        "node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml"
+      ]
+    },
+    {
+      "rank": 4,
+      "label": "Enable and run the verified 5-bundle wave for Ansible YAML",
+      "why": "Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave.",
+      "commands": [
+        "node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml"
+      ]
+    },
+    {
+      "rank": 5,
       "label": "Make the complex adversarial runner platform-aware",
       "why": "The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.",
       "commands": [
         "node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs",
         "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep"
-      ]
-    },
-    {
-      "rank": 4,
-      "label": "Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations",
-      "why": "The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.",
-      "commands": [
-        "npm run smoke:platform-runners",
-        "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>"
-      ]
-    },
-    {
-      "rank": 5,
-      "label": "Keep narrow real-Azure differential reruns running on timing-sensitive services",
-      "why": "The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.",
-      "commands": [
-        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true",
-        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true",
-        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true"
       ]
     }
   ],

@@ -132,6 +132,36 @@ const starterBundles = [
     prId: 'Pr91315',
   },
   {
+    platformId: 'azure-arm-json',
+    scenarioId: 'claims-evidence-command-ring',
+    poId: '54ac717e-3ac8-44b5-8248-cb0663f809e2',
+    prId: 'Pr91341',
+  },
+  {
+    platformId: 'azure-arm-json',
+    scenarioId: 'partner-order-ingest-buffer',
+    poId: '3cea2825-d66c-467b-bea5-89bd3dc4ee15',
+    prId: 'Pr91342',
+  },
+  {
+    platformId: 'azure-arm-json',
+    scenarioId: 'warehouse-dispatch-event-plane',
+    poId: 'eff745c3-534e-44b8-a68b-df8379da919b',
+    prId: 'Pr91343',
+  },
+  {
+    platformId: 'azure-arm-json',
+    scenarioId: 'billing-audit-notification-mesh',
+    poId: 'c38d443d-7798-4b0c-b10e-ba1b08e537c5',
+    prId: 'Pr91344',
+  },
+  {
+    platformId: 'azure-arm-json',
+    scenarioId: 'regional-catalog-command-plane',
+    poId: '92451cbc-ee45-4654-9991-b483393c30aa',
+    prId: 'Pr91345',
+  },
+  {
     platformId: 'azure-terraform-hcl',
     scenarioId: 'claims-evidence-command-ring',
     poId: '2c1d6f0e-3640-4fc2-a41a-5d2b8c0d2f01',
@@ -505,6 +535,35 @@ const platformInstructions = new Map([
     unitTestCommand: 'python3 test/bicep.unit.test.py',
     integrationTestCommand: 'python3 test/bicep.int.test.py',
   }],
+  ['azure-arm-json', {
+    files: ['lib/azuredeploy.json', 'lib/azuredeploy.parameters.json'],
+    instruction: [
+      'Use a subscription-scoped ARM JSON template in lib/azuredeploy.json and parameters in lib/azuredeploy.parameters.json.',
+      'Create the resource group as a Microsoft.Resources/resourceGroups resource, then create every workload resource with explicit dependsOn relationships.',
+      'Every resource name listed in this prompt must be supplied through lib/azuredeploy.parameters.json and referenced through ARM parameters from lib/azuredeploy.json.',
+      'Model blobServices/default, queueServices/default, fileServices/default, and tableServices/default as explicit parent resources. Then create the container, queue, share, and table as nested resources whose final segment is only the target resource name.',
+      'Expose exactly the requested output keys as ARM template outputs, and make each output value the exact logical resource name from this prompt rather than an ARM id or composite parent/name path.',
+      'Do not embed Bicep, Terraform, Pulumi, or script-based deployment logic.',
+    ].join(' '),
+    requiredMarkers: [
+      '"$schema"',
+      '"parameters"',
+      '"resources"',
+      '"outputs"',
+      'Microsoft.Resources/resourceGroups',
+      'Microsoft.Storage/storageAccounts',
+      'Microsoft.Storage/storageAccounts/blobServices',
+      'Microsoft.Storage/storageAccounts/queueServices',
+      'Microsoft.Storage/storageAccounts/fileServices',
+      'Microsoft.Storage/storageAccounts/tableServices',
+      'Microsoft.ServiceBus/namespaces',
+      'Microsoft.EventGrid/topics',
+      'Microsoft.EventHub/namespaces',
+      'Microsoft.AppConfiguration/configurationStores',
+    ],
+    unitTestCommand: 'python3 test/arm.unit.test.py',
+    integrationTestCommand: 'python3 test/arm.int.test.py',
+  }],
 ]);
 
 function run(command, args, options = {}) {
@@ -805,16 +864,51 @@ function repairPrompt(originalPrompt, validationOrRunError, previousResponse) {
   ].join('\n');
 }
 
+function armTemplateResourceEntries(template) {
+  const resources = template?.resources ?? [];
+  if (Array.isArray(resources)) return resources;
+  if (resources && typeof resources === 'object') return Object.values(resources);
+  return [];
+}
+
+function armFullChildType(parentType, childType) {
+  if (!parentType || childType.startsWith('Microsoft.')) return childType;
+  if (childType.startsWith(`${parentType}/`)) return childType;
+  return `${parentType}/${childType}`;
+}
+
+function collectArmResourceTypes(template, parentType = null) {
+  const types = [];
+  for (const resource of armTemplateResourceEntries(template)) {
+    const rawType = String(resource?.type ?? '');
+    if (!rawType) continue;
+    const fullType = armFullChildType(parentType, rawType);
+    types.push(fullType);
+    if (resource?.properties?.template) types.push(...collectArmResourceTypes(resource.properties.template));
+    if (resource?.resources) types.push(...collectArmResourceTypes(resource, fullType));
+  }
+  return types;
+}
+
+function isSupportedArmTemplateSchema(schema) {
+  return [
+    'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+    'https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#',
+  ].includes(schema);
+}
+
 function validateFiles(platformId, scenario, platform, names, files) {
   const errors = [];
+  const resources = scenarioResources(scenario, names);
   for (const required of platform.files) {
     if (!files.has(required)) errors.push(`missing required file ${required}`);
   }
   const joined = [...files.values()].join('\n');
   for (const marker of platform.requiredMarkers) {
+    if (platformId === 'azure-arm-json') continue;
     if (!joined.includes(marker)) errors.push(`missing expected IaC marker ${marker}`);
   }
-  for (const requiredName of Object.values(scenarioResources(scenario, names))) {
+  for (const requiredName of Object.values(resources)) {
     if (typeof requiredName === 'string' && !joined.includes(requiredName)) {
       errors.push(`missing requested resource name ${requiredName}`);
     }
@@ -935,7 +1029,6 @@ function validateFiles(platformId, scenario, platform, names, files) {
   if (platformId === 'azure-bicep') {
     const main = files.get('lib/main.bicep') ?? '';
     const workload = files.get('lib/workload.bicep') ?? '';
-    const resources = scenarioResources(scenario, names);
     for (const outputKey of scenario.outputKeys) {
       if (!main.includes(`output ${outputKey} string = workload.outputs.${outputKey}`)) {
         errors.push(`Bicep main.bicep must re-export output ${outputKey} from workload.outputs.${outputKey}`);
@@ -971,6 +1064,69 @@ function validateFiles(platformId, scenario, platform, names, files) {
       }
     } catch (error) {
       errors.push(`Bicep parameters.json must be valid JSON: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  if (platformId === 'azure-arm-json') {
+    const templateText = files.get('lib/azuredeploy.json') ?? '';
+    const parametersText = files.get('lib/azuredeploy.parameters.json') ?? '';
+    try {
+      const template = JSON.parse(templateText);
+      if (!isSupportedArmTemplateSchema(template.$schema)) {
+        errors.push('ARM template must use the Azure deploymentTemplate or subscriptionDeploymentTemplate schema');
+      }
+      for (const outputKey of scenario.outputKeys) {
+        if (!template.outputs?.[outputKey]) errors.push(`ARM template must declare output ${outputKey}`);
+      }
+      const resourceTypes = new Set(collectArmResourceTypes(template));
+      for (const marker of [
+        'Microsoft.Resources/resourceGroups',
+        'Microsoft.Storage/storageAccounts',
+        'Microsoft.Storage/storageAccounts/blobServices',
+        'Microsoft.Storage/storageAccounts/blobServices/containers',
+        'Microsoft.Storage/storageAccounts/queueServices',
+        'Microsoft.Storage/storageAccounts/queueServices/queues',
+        'Microsoft.Storage/storageAccounts/fileServices',
+        'Microsoft.Storage/storageAccounts/fileServices/shares',
+        'Microsoft.Storage/storageAccounts/tableServices',
+        'Microsoft.Storage/storageAccounts/tableServices/tables',
+        'Microsoft.ServiceBus/namespaces',
+        'Microsoft.ServiceBus/namespaces/topics',
+        'Microsoft.EventGrid/topics',
+        'Microsoft.EventHub/namespaces',
+        'Microsoft.EventHub/namespaces/eventhubs',
+        'Microsoft.AppConfiguration/configurationStores',
+      ]) {
+        if (!resourceTypes.has(marker)) errors.push(`ARM template is missing ${marker}`);
+      }
+    } catch (error) {
+      errors.push(`ARM template must be valid JSON: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    try {
+      const parameterDocument = JSON.parse(parametersText);
+      const parameterValues = Object.values(parameterDocument.parameters ?? {})
+        .map((value) => value?.value)
+        .filter((value) => typeof value === 'string');
+      for (const expectedValue of [
+        resources.resourceGroup,
+        resources.storageAccount,
+        resources.blobContainerName,
+        resources.queueName,
+        resources.fileShareName,
+        resources.tableName,
+        resources.serviceBusNamespace,
+        resources.serviceBusTopicName,
+        resources.eventGridTopic,
+        resources.eventHubNamespace,
+        resources.eventHubName,
+        resources.appConfigStore,
+        resources.environmentSuffix,
+      ]) {
+        if (!parameterValues.includes(expectedValue)) {
+          errors.push(`ARM parameters file must contain value ${expectedValue}`);
+        }
+      }
+    } catch (error) {
+      errors.push(`ARM parameters file must be valid JSON: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   if (errors.length > 0) throw new Error(errors.join('; '));
@@ -1203,6 +1359,43 @@ function fileContainsAssertions(platformId, scenario, names) {
       ],
     };
   }
+  if (platformId === 'azure-arm-json') {
+    return {
+      'lib/azuredeploy.json': [
+        'Microsoft.Resources/resourceGroups',
+        'Microsoft.Storage/storageAccounts',
+        'Microsoft.Storage/storageAccounts/blobServices',
+        'Microsoft.Storage/storageAccounts/blobServices/containers',
+        'Microsoft.Storage/storageAccounts/queueServices',
+        'Microsoft.Storage/storageAccounts/queueServices/queues',
+        'Microsoft.Storage/storageAccounts/fileServices',
+        'Microsoft.Storage/storageAccounts/fileServices/shares',
+        'Microsoft.Storage/storageAccounts/tableServices',
+        'Microsoft.Storage/storageAccounts/tableServices/tables',
+        'Microsoft.ServiceBus/namespaces',
+        'Microsoft.ServiceBus/namespaces/topics',
+        'Microsoft.EventGrid/topics',
+        'Microsoft.EventHub/namespaces',
+        'Microsoft.EventHub/namespaces/eventhubs',
+        'Microsoft.AppConfiguration/configurationStores',
+        ...scenario.outputKeys,
+      ],
+      'lib/azuredeploy.parameters.json': [
+        resources.resourceGroup,
+        resources.storageAccount,
+        resources.blobContainerName,
+        resources.queueName,
+        resources.fileShareName,
+        resources.tableName,
+        resources.serviceBusNamespace,
+        resources.serviceBusTopicName,
+        resources.eventGridTopic,
+        resources.eventHubNamespace,
+        resources.eventHubName,
+        resources.appConfigStore,
+      ],
+    };
+  }
   return {
     'lib/main.bicep': [...scenario.outputKeys, "targetScope = 'subscription'", "module workload './workload.bicep'"],
     'lib/workload.bicep': [
@@ -1285,7 +1478,85 @@ for relative_path in metadata["solutionFiles"]:
 
 resource_names = metadata["resourceNames"]
 
-if metadata["platformId"] == "azure-bicep":
+if metadata["platformId"] == "azure-arm-json":
+    template = json.loads((root / "lib/azuredeploy.json").read_text())
+    parameters = json.loads((root / "lib/azuredeploy.parameters.json").read_text())["parameters"]
+    parameter_values = {name: details["value"] for name, details in parameters.items()}
+
+    supported_schemas = {
+        "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    }
+    assert template["$schema"] in supported_schemas
+
+    def arm_entries(document):
+        resources = document.get("resources", [])
+        if isinstance(resources, dict):
+            return list(resources.values())
+        return resources
+
+    def arm_full_type(parent_type, child_type):
+        if not parent_type or child_type.startswith("Microsoft."):
+            return child_type
+        if child_type.startswith(f"{parent_type}/"):
+            return child_type
+        return f"{parent_type}/{child_type}"
+
+    def collect_types(document, parent_type=None):
+        seen = []
+        for resource in arm_entries(document):
+            resource_type = arm_full_type(parent_type, resource.get("type", ""))
+            if not resource_type:
+                continue
+            seen.append(resource_type)
+            nested_template = resource.get("properties", {}).get("template")
+            if nested_template:
+                seen.extend(collect_types(nested_template))
+            if "resources" in resource:
+                seen.extend(collect_types(resource, resource_type))
+        return seen
+
+    resource_types = set(collect_types(template))
+
+    for marker in [
+        "Microsoft.Resources/resourceGroups",
+        "Microsoft.Storage/storageAccounts",
+        "Microsoft.Storage/storageAccounts/blobServices",
+        "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "Microsoft.Storage/storageAccounts/queueServices",
+        "Microsoft.Storage/storageAccounts/queueServices/queues",
+        "Microsoft.Storage/storageAccounts/fileServices",
+        "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "Microsoft.Storage/storageAccounts/tableServices",
+        "Microsoft.Storage/storageAccounts/tableServices/tables",
+        "Microsoft.ServiceBus/namespaces",
+        "Microsoft.ServiceBus/namespaces/topics",
+        "Microsoft.EventGrid/topics",
+        "Microsoft.EventHub/namespaces",
+        "Microsoft.EventHub/namespaces/eventhubs",
+        "Microsoft.AppConfiguration/configurationStores",
+    ]:
+        assert marker in resource_types, f"azuredeploy.json is missing {marker}"
+
+    for expected_value in [
+        resource_names["resourceGroup"],
+        resource_names["storageAccount"],
+        resource_names["blobContainerName"],
+        resource_names["queueName"],
+        resource_names["fileShareName"],
+        resource_names["tableName"],
+        resource_names["serviceBusNamespace"],
+        resource_names["serviceBusTopicName"],
+        resource_names["eventGridTopic"],
+        resource_names["eventHubNamespace"],
+        resource_names["eventHubName"],
+        resource_names["appConfigStore"],
+    ]:
+        assert expected_value in parameter_values.values(), f"azuredeploy.parameters.json is missing value {expected_value}"
+
+    for output_key in metadata["expectedOutputKeys"]:
+        assert output_key in template["outputs"], f"azuredeploy.json is missing output {output_key}"
+elif metadata["platformId"] == "azure-bicep":
     main = (root / "lib/main.bicep").read_text()
     workload = (root / "lib/workload.bicep").read_text()
     parameters = json.loads((root / "lib/parameters.json").read_text())["parameters"]
@@ -1751,6 +2022,9 @@ async function writeBundleSupportFiles(bundleDir, platformId, scenarioId, scenar
   } else if (platformId === 'azure-pulumi-py') {
     await writeFile(join(bundleDir, 'test', 'tap_stack.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'tap_stack.int.test.py'), pythonIntegrationTest());
+  } else if (platformId === 'azure-arm-json') {
+    await writeFile(join(bundleDir, 'test', 'arm.unit.test.py'), pythonUnitTest());
+    await writeFile(join(bundleDir, 'test', 'arm.int.test.py'), pythonIntegrationTest());
   } else {
     await writeFile(join(bundleDir, 'test', 'bicep.unit.test.py'), pythonUnitTest());
     await writeFile(join(bundleDir, 'test', 'bicep.int.test.py'), pythonIntegrationTest());

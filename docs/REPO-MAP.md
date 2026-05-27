@@ -114,6 +114,7 @@ flowchart TD
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
 - `packages/azure-data-plane/src/workflow-runner.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
+- `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`

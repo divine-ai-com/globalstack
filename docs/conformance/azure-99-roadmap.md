@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T19:14:24.618Z
+Generated: 2026-05-27T20:19:28.698Z
 
 ## Guardrails
 
@@ -49,16 +49,21 @@ Method:
 ## Platform Verification Snapshot
 
 - Source: `docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present`
-- Generated: 2026-05-27T19:11:16.649Z
+- Generated: 2026-05-27T20:17:23.723Z
 - Model: gpt-5.5
 - Location: eastus
 - Scope: Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.
-- Platform waves recorded: 3
-- Bundles across recorded platform waves: 15
-- Passing bundles across recorded platform waves: 15/15
+- Platform waves recorded: 4
+- Bundles across recorded platform waves: 20
+- Passing bundles across recorded platform waves: 20/20
 
 | Platform | Generated | Bundle | Scenario | Overall | Final Stage |
 |---|---|---|---|---|---|
+| azure-arm-json | 2026-05-27T20:17:23.723Z | Pr91341 | claims-evidence-command-ring | PASS | destroy |
+| azure-arm-json | 2026-05-27T20:17:23.723Z | Pr91342 | partner-order-ingest-buffer | PASS | destroy |
+| azure-arm-json | 2026-05-27T20:17:23.723Z | Pr91343 | warehouse-dispatch-event-plane | PASS | destroy |
+| azure-arm-json | 2026-05-27T20:17:23.723Z | Pr91344 | billing-audit-notification-mesh | PASS | destroy |
+| azure-arm-json | 2026-05-27T20:17:23.723Z | Pr91345 | regional-catalog-command-plane | PASS | destroy |
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91311 | claims-evidence-command-ring | PASS | destroy |
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91312 | partner-order-ingest-buffer | PASS | destroy |
 | azure-bicep | 2026-05-27T18:12:38.219Z | Pr91313 | warehouse-dispatch-event-plane | PASS | destroy |
@@ -174,11 +179,11 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 
 | Rank | Next Work | Why Now | Commands |
 |---:|---|---|---|
-| 1 | Run the next verified 5-bundle wave against OpenTofu HCL | Terraform HCL and Bicep now have green platform waves. OpenTofu should match Terraform semantics where the providers and state engine overlap, and divergence there is valuable runner evidence. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-opentofu-hcl` |
-| 2 | Run the next verified 5-bundle wave against Pulumi Python | Pulumi Python exercises a different SDK surface and packaging path than Pulumi TypeScript while still targeting Azure Native resources. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-py` |
-| 3 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
-| 4 | Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations | The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state. | `npm run smoke:platform-runners`<br>`npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>` |
-| 5 | Keep narrow real-Azure differential reruns running on timing-sensitive services | The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true`<br>`GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true` |
+| 1 | Run the verified 5-bundle wave against Terraform HCL | Terraform HCL has no complete recorded 5-bundle platform wave yet, so platform breadth is still not fully proven. | `OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-terraform-hcl` |
+| 2 | Enable and run the verified 5-bundle wave for Pulumi TypeScript | Pulumi TypeScript has no complete recorded 5-bundle platform wave yet. Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts` |
+| 3 | Enable and run the verified 5-bundle wave for Pulumi YAML | Pulumi YAML has no complete recorded 5-bundle platform wave yet. Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml` |
+| 4 | Enable and run the verified 5-bundle wave for Ansible YAML | Ansible YAML has no complete recorded 5-bundle platform wave yet. Add generator validation and a real native output contract for Ansible before running the verified wave. | `node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml` |
+| 5 | Make the complex adversarial runner platform-aware | The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms. | `node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs`<br>`OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep` |
 
 ## Wave Summary
 

@@ -343,7 +343,96 @@ const extendedContinuationRoadmap = [
   },
 ];
 
-const immediateNextWork = [
+const verifiedPlatformTargets = [
+  {
+    platformId: 'azure-terraform-hcl',
+    label: 'Terraform HCL',
+    command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-terraform-hcl',
+  },
+  {
+    platformId: 'azure-pulumi-ts',
+    label: 'Pulumi TypeScript',
+    enablement: 'Add the five standard platform-wave bundle entries before running the verified wave; the older single-bundle smoke is not enough evidence.',
+    command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-ts',
+  },
+  {
+    platformId: 'azure-pulumi-yaml',
+    label: 'Pulumi YAML',
+    enablement: 'Add generator validation, task-defined tests, and native output expectations for Pulumi YAML before running the verified wave.',
+    command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-pulumi-yaml',
+  },
+  {
+    platformId: 'azure-ansible-yaml',
+    label: 'Ansible YAML',
+    enablement: 'Add generator validation and a real native output contract for Ansible before running the verified wave.',
+    command: 'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=azure-ansible-yaml',
+  },
+];
+
+function platformWaveComplete(verifiedPlatformSnapshot, platformId) {
+  const results = verifiedPlatformSnapshot?.results?.filter(result => result.platformId === platformId) ?? [];
+  const requiredScenarios = new Set([
+    'claims-evidence-command-ring',
+    'partner-order-ingest-buffer',
+    'warehouse-dispatch-event-plane',
+    'billing-audit-notification-mesh',
+    'regional-catalog-command-plane',
+  ]);
+  for (const result of results) {
+    if (result.ok) requiredScenarios.delete(result.scenarioId);
+  }
+  return requiredScenarios.size === 0;
+}
+
+function buildImmediateNextWork(verifiedPlatformSnapshot) {
+  const platformItems = verifiedPlatformTargets
+    .filter(target => !platformWaveComplete(verifiedPlatformSnapshot, target.platformId))
+    .map((target) => ({
+      label: target.enablement
+        ? `Enable and run the verified 5-bundle wave for ${target.label}`
+        : `Run the verified 5-bundle wave against ${target.label}`,
+      why: target.enablement
+        ? `${target.label} has no complete recorded 5-bundle platform wave yet. ${target.enablement}`
+        : `${target.label} has no complete recorded 5-bundle platform wave yet, so platform breadth is still not fully proven.`,
+      commands: target.enablement
+        ? [
+            'node --check packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs',
+            target.command,
+          ]
+        : [target.command],
+    }));
+
+  return [
+    ...platformItems,
+    {
+      label: 'Make the complex adversarial runner platform-aware',
+      why: 'The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.',
+      commands: [
+        'node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs',
+        'OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep',
+      ],
+    },
+    {
+      label: 'Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations',
+      why: 'The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.',
+      commands: [
+        'npm run smoke:platform-runners',
+        'npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>',
+      ],
+    },
+    {
+      label: 'Keep narrow real-Azure differential reruns running on timing-sensitive services',
+      why: 'The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.',
+      commands: [
+        'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true',
+        'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true',
+        'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true',
+      ],
+    },
+  ].slice(0, 5).map((item, index) => ({ rank: index + 1, ...item }));
+}
+
+const fallbackImmediateNextWork = [
   {
     rank: 1,
     label: 'Run the next verified 5-bundle wave against OpenTofu HCL',
@@ -941,7 +1030,9 @@ const doc = {
   verifiedPlatformSnapshot,
   crossCuttingBacklog,
   extendedContinuationRoadmap,
-  immediateNextWork,
+  immediateNextWork: verifiedPlatformSnapshot
+    ? buildImmediateNextWork(verifiedPlatformSnapshot)
+    : fallbackImmediateNextWork,
   waves,
   prioritizedServices,
   workItemSummary: summarizeWorkItems(allWorkItems),

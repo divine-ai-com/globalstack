@@ -1361,6 +1361,15 @@ export function sortDeploymentOperations(operations) {
   });
 }
 
+function armTemplateResourceEntries(template) {
+  const resources = template?.resources ?? [];
+  if (Array.isArray(resources)) return resources.map(rawResource => ({ symbolicName: null, rawResource }));
+  if (resources && typeof resources === 'object') {
+    return Object.entries(resources).map(([symbolicName, rawResource]) => ({ symbolicName, rawResource }));
+  }
+  return [];
+}
+
 export function expandDeploymentTemplate({
   template,
   parameters = {},
@@ -1377,16 +1386,18 @@ export function expandDeploymentTemplate({
     __deploymentOutputs: deploymentOutputs,
   });
   const operations = [];
-  for (const rawResource of template?.resources ?? []) {
+  const symbolicResourceNames = new Map();
+  function emitResource(rawResource, symbolicName = null, parentResource = null) {
     if (rawResource.type === 'Microsoft.Resources/resourceGroups') {
       const resource = evaluateArmValue(rawResource, context);
+      if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
       operations.push({
         kind: 'resourceGroup',
         subscriptionId,
         name: resource.name,
         body: { location: resource.location, tags: resource.tags ?? {} },
       });
-      continue;
+      return;
     }
     if (rawResource.type === 'Microsoft.Resources/deployments') {
       const resource = {
@@ -1413,9 +1424,23 @@ export function expandDeploymentTemplate({
       const nestedId = deploymentResourceId(subscriptionId, nestedResourceGroupName, resource.name);
       deploymentOutputs[nestedId.toLowerCase()] = nested.outputs;
       deploymentOutputs[resource.name] = nested.outputs;
-      continue;
+      if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
+      return;
     }
     const resource = evaluateArmValue(rawResource, context);
+    if (parentResource) {
+      const childType = String(resource.type);
+      const childName = String(resource.name);
+      resource.type = childType.startsWith(`${parentResource.type}/`) ? childType : `${parentResource.type}/${childType}`;
+      const typeSegments = resource.type.split('/').slice(1);
+      const nameSegments = childName.split('/');
+      resource.name = nameSegments.length >= typeSegments.length ? childName : `${parentResource.name}/${childName}`;
+    }
+    if (resource.parent) {
+      const parentName = symbolicResourceNames.get(resource.parent) ?? evaluateArmValue(resource.parent, context);
+      resource.name = `${parentName}/${resource.name}`;
+      delete resource.parent;
+    }
     const [providerNamespace, ...types] = resource.type.split('/');
     const names = String(resource.name).split('/');
     if (types.length !== names.length) {
@@ -1425,7 +1450,7 @@ export function expandDeploymentTemplate({
         code: 'InvalidTemplate',
         message: `Resource type/name segment mismatch for ${resource.type} ${resource.name}`,
       });
-      continue;
+      return;
     }
     operations.push({
       kind: 'resource',
@@ -1440,6 +1465,14 @@ export function expandDeploymentTemplate({
         .filter(key => resource[key] !== undefined)
         .map(key => [key, resource[key]])),
     });
+    if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
+    for (const { symbolicName: childSymbolicName, rawResource: childRawResource } of armTemplateResourceEntries(rawResource)) {
+      emitResource(childRawResource, childSymbolicName, resource);
+    }
+  }
+
+  for (const { symbolicName, rawResource } of armTemplateResourceEntries(template)) {
+    emitResource(rawResource, symbolicName);
   }
   const outputs = templateOutputs(template, context);
   if (deploymentName) deploymentOutputs[deploymentName] = outputs;

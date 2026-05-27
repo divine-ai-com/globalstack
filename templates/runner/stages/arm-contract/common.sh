@@ -16,7 +16,11 @@ set -euo pipefail
 : "${GLOBALSTACK_TARGET_PROVIDER:=globalstack}"
 
 export PLATFORM_WORK_DIR="${WORK_DIR}/${PLATFORM_ID}"
-export PLATFORM_CONTRACT_DIR="${PLATFORM_WORK_DIR}/globalstack"
+if [ "${PLATFORM_ID}" = "azure-arm-json" ]; then
+  export PLATFORM_CONTRACT_DIR="${PLATFORM_WORK_DIR}/lib"
+else
+  export PLATFORM_CONTRACT_DIR="${PLATFORM_WORK_DIR}/globalstack"
+fi
 export PLATFORM_TEMPLATE="${PLATFORM_CONTRACT_DIR}/azuredeploy.json"
 export PLATFORM_PARAMETERS="${PLATFORM_CONTRACT_DIR}/azuredeploy.parameters.json"
 export PLATFORM_DEPLOYMENT_BODY="${REPORT_DIR}/deployment-body.json"
