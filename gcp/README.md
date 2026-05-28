@@ -72,6 +72,9 @@ All real-GCP scripts must create resources with a unique run id, clean up in a
 The first successful Cloud Storage baseline capture is documented at
 `gcp/docs/services/cloud-storage.md`.
 
+Cloud Storage currently has a bounded local runtime for the captured
+bucket/object lifecycle. Terraform and Pulumi lifecycle gates are still pending.
+
 ## Local Validation
 
 ```bash

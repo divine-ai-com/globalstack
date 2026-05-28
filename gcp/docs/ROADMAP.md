@@ -79,6 +79,8 @@ Status:
 
 - complete for ADC validation, Cloud Storage capture, and Cloud Storage cleanup
   sweep
+- complete for bounded Cloud Storage local runtime replay against the captured
+  bucket/object lifecycle
 - next service capture targets still need to be added
 
 ## Phase 1: GCP Foundation Layer
@@ -154,6 +156,10 @@ Current first service evidence:
 - Cloud Storage real-GCP capture is saved under
   `gcp/fixtures/captures/cloud-storage/cloud-storage-20260528113308-9ce4a0/capture.json`
 - service note is saved under `gcp/docs/services/cloud-storage.md`
+- bounded local replay test is saved under
+  `gcp/tests/e2e/storage-capture-replay.test.mjs`
+- Terraform lifecycle template is saved under
+  `gcp/templates/terraform/cloud-storage/`
 
 ## Phase 3: Compute And Container Runtime
 

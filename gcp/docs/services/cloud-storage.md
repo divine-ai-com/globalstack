@@ -2,10 +2,12 @@
 
 ## Current State
 
-Support class: `unsupported`
+Support class: `bounded-runtime`
 
-GlobalStack GCP does not yet emulate Cloud Storage. This page records the real
-GCP evidence collected before implementing the local runtime.
+GlobalStack GCP now has a bounded local Cloud Storage runtime for the captured
+JSON API bucket/object lifecycle. It is not marked `real-engine-backed` or
+`differentially-validated` yet because Terraform/Pulumi provider lifecycle runs
+are still pending.
 
 ## Capture Evidence
 
@@ -38,8 +40,22 @@ Cleanup result:
 
 Cloud Storage code must remain under `gcp/src/services/storage/`.
 
-The next implementation step is to add a real local object-store backed runtime
-with Google Cloud Storage JSON API compatibility for the captured subset. The
-service should stay `unsupported` until local replay passes against this capture
-and Terraform can perform a create/read/update/destroy lifecycle against the
-local endpoint.
+Implemented local module files:
+
+- `gcp/src/services/storage/service.mjs`
+- `gcp/src/services/storage/routes.mjs`
+- `gcp/src/services/storage/store.mjs`
+- `gcp/src/services/storage/errors.mjs`
+- `gcp/src/services/storage/google-api.mjs`
+
+Current validation:
+
+- local replay passes against the real-GCP capture
+- bucket/object side effects are backed by local filesystem state
+- unsupported services still fail closed
+
+Remaining promotion gates:
+
+- Terraform Google provider create/read/update/destroy lifecycle
+- Pulumi Google Native lifecycle
+- broader auth, IAM, object upload mode, and error-shape captures

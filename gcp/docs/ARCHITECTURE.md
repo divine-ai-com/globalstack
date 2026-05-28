@@ -75,8 +75,9 @@ Every one currently has support class `unsupported`. The declaration only
 records the intended real-engine strategy.
 
 Cloud Storage is the first service template. Its service-owned files live under
-`gcp/src/services/storage/`, and its first real-GCP capture is documented in
-`gcp/docs/services/cloud-storage.md`.
+`gcp/src/services/storage/`, its first real-GCP capture is documented in
+`gcp/docs/services/cloud-storage.md`, and its bounded local replay test lives in
+`gcp/tests/e2e/storage-capture-replay.test.mjs`.
 
 ## Promotion Rule
 

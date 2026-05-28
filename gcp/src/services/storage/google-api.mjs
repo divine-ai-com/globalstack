@@ -1,13 +1,15 @@
-const storageRoot = 'https://storage.googleapis.com/storage/v1';
-const uploadRoot = 'https://storage.googleapis.com/upload/storage/v1';
+const defaultStorageRoot = 'https://storage.googleapis.com/storage/v1';
+const defaultUploadRoot = 'https://storage.googleapis.com/upload/storage/v1';
 
 export class StorageApi {
-  constructor(client) {
+  constructor(client, { storageRoot = defaultStorageRoot, uploadRoot = defaultUploadRoot } = {}) {
     this.client = client;
+    this.storageRoot = storageRoot;
+    this.uploadRoot = uploadRoot;
   }
 
   async createBucket({ projectId, bucketName, location, labels }) {
-    const url = new URL(`${storageRoot}/b`);
+    const url = new URL(`${this.storageRoot}/b`);
     url.searchParams.set('project', projectId);
     return this.client.requestJson({
       method: 'POST',
@@ -30,12 +32,12 @@ export class StorageApi {
 
   async getBucket(bucketName) {
     return this.client.requestJson({
-      url: new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}`),
+      url: new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}`),
     });
   }
 
   async listBuckets(projectId) {
-    const url = new URL(`${storageRoot}/b`);
+    const url = new URL(`${this.storageRoot}/b`);
     url.searchParams.set('project', projectId);
     url.searchParams.set('projection', 'full');
     return this.client.requestJson({ url });
@@ -44,13 +46,13 @@ export class StorageApi {
   async patchBucketLabels({ bucketName, labels }) {
     return this.client.requestJson({
       method: 'PATCH',
-      url: new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}`),
+      url: new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}`),
       body: { labels },
     });
   }
 
   async insertObject({ bucketName, objectName, content, contentType = 'application/json' }) {
-    const url = new URL(`${uploadRoot}/b/${encodeURIComponent(bucketName)}/o`);
+    const url = new URL(`${this.uploadRoot}/b/${encodeURIComponent(bucketName)}/o`);
     url.searchParams.set('uploadType', 'media');
     url.searchParams.set('name', objectName);
     return this.client.requestJson({
@@ -65,18 +67,18 @@ export class StorageApi {
 
   async getObject({ bucketName, objectName }) {
     return this.client.requestJson({
-      url: new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}/o/${encodeURIComponent(objectName)}`),
+      url: new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}/o/${encodeURIComponent(objectName)}`),
     });
   }
 
   async listObjects(bucketName) {
     return this.client.requestJson({
-      url: new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}/o`),
+      url: new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}/o`),
     });
   }
 
   async deleteObject({ bucketName, objectName, generation }) {
-    const url = new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}/o/${encodeURIComponent(objectName)}`);
+    const url = new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}/o/${encodeURIComponent(objectName)}`);
     if (generation) url.searchParams.set('generation', generation);
     return this.client.requestJson({
       method: 'DELETE',
@@ -88,7 +90,7 @@ export class StorageApi {
   async deleteBucket(bucketName) {
     return this.client.requestJson({
       method: 'DELETE',
-      url: new URL(`${storageRoot}/b/${encodeURIComponent(bucketName)}`),
+      url: new URL(`${this.storageRoot}/b/${encodeURIComponent(bucketName)}`),
       allowEmpty: true,
     });
   }

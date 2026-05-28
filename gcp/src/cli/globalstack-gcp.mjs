@@ -1,5 +1,6 @@
 import { listen } from '../server/server.mjs';
 import { listServices } from '../services/catalog.mjs';
+import { createDefaultServices } from '../services/index.mjs';
 
 function parseArgs(argv) {
   const args = {
@@ -21,7 +22,10 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const runtime = await listen(args);
+const runtime = await listen({
+  ...args,
+  services: createDefaultServices(),
+});
 console.log(JSON.stringify({
   status: 'listening',
   url: runtime.url,

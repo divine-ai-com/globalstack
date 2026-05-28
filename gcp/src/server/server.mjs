@@ -1,11 +1,12 @@
 import http from 'node:http';
 import { createRouter } from '../router/router.mjs';
+import { createDefaultServices } from '../services/index.mjs';
 
-export function createServer({ services = [] } = {}) {
+export function createServer({ services = createDefaultServices() } = {}) {
   return http.createServer(createRouter({ services }));
 }
 
-export async function listen({ host = '127.0.0.1', port = 8765, services = [] } = {}) {
+export async function listen({ host = '127.0.0.1', port = 8765, services = createDefaultServices() } = {}) {
   const server = createServer({ services });
   await new Promise((resolve, reject) => {
     server.once('error', reject);

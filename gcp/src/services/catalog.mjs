@@ -7,6 +7,8 @@ const firstBucket = [
     category: 'storage',
     engineStrategy: 'real object-store backend with Google Cloud Storage JSON/XML API compatibility',
     serviceModule: './storage/service.mjs',
+    supportClass: supportClasses.boundedRuntime,
+    supportClaim: 'Bounded local runtime for captured Cloud Storage JSON API bucket/object lifecycle. Terraform and Pulumi lifecycle validation are still pending.',
   },
   {
     key: 'pub-sub',
@@ -60,9 +62,9 @@ const firstBucket = [
 ];
 
 export const serviceCatalog = Object.freeze(firstBucket.map(service => freezeService({
-  ...service,
   supportClass: supportClasses.unsupported,
   supportClaim: 'Not implemented in GlobalStack GCP yet. This entry records the intended real-engine strategy only.',
+  ...service,
 })));
 
 function freezeService(service) {
