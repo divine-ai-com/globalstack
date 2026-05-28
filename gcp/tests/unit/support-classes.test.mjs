@@ -11,9 +11,14 @@ test('first GCP service bucket is explicit about supported and unsupported claim
   assert.equal(countsTowardSeriousParity(storage.supportClass), false);
   assert.match(storage.supportClaim, /Bounded local runtime/);
 
+  const pubsub = services.find(service => service.key === 'pub-sub');
+  assert.equal(pubsub.supportClass, supportClasses.officialEmulatorBacked);
+  assert.equal(countsTowardSeriousParity(pubsub.supportClass), true);
+  assert.match(pubsub.supportClaim, /Official Google Pub\/Sub emulator-backed runtime/);
+
   for (const service of services) {
     assert.match(service.engineStrategy, /\S/);
-    if (service.key === 'cloud-storage') continue;
+    if (['cloud-storage', 'pub-sub'].includes(service.key)) continue;
     assert.equal(service.supportClass, supportClasses.unsupported);
     assert.equal(countsTowardSeriousParity(service.supportClass), false);
     assert.match(service.supportClaim, /Not implemented/);

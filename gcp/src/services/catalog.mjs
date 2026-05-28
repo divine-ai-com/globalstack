@@ -16,6 +16,8 @@ const firstBucket = [
     category: 'messaging',
     engineStrategy: 'official Pub/Sub emulator first, broker-backed behavior where the official emulator is insufficient',
     serviceModule: './pubsub/service.mjs',
+    supportClass: supportClasses.officialEmulatorBacked,
+    supportClaim: 'Official Google Pub/Sub emulator-backed runtime. Node.js SDK lifecycle passes for topic/subscription create, publish, delivery, ack, and cleanup; Terraform, OpenTofu, Pulumi, gcloud, Config Connector, Crossplane, and real-GCP differential gates are still pending.',
   },
   {
     key: 'firestore',

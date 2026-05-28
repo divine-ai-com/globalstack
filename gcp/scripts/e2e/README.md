@@ -21,6 +21,10 @@ Current scripts:
 - `sdk-node-cloud-storage.mjs`: starts local GlobalStack GCP, installs the
   official Node.js Cloud Storage client in a temporary workspace, and runs
   bucket/object create/save/list/delete.
+- `sdk-node-pubsub.mjs`: starts the official Google Pub/Sub emulator through
+  the GlobalStack service-owned engine adapter, installs the official Node.js
+  Pub/Sub client in a temporary workspace, and runs topic/subscription
+  create/publish/deliver/ack/delete.
 
 ```bash
 cd gcp
@@ -29,4 +33,5 @@ npm run e2e:opentofu:storage
 npm run e2e:pulumi:storage
 npm run e2e:gcloud:storage
 npm run e2e:sdk-node:storage
+npm run e2e:sdk-node:pubsub
 ```

@@ -181,6 +181,12 @@ Current first service evidence:
   `gcp/templates/sdk/nodejs/cloud-storage/`
 - Node.js SDK lifecycle runner is saved under
   `gcp/scripts/e2e/sdk-node-cloud-storage.mjs`
+- Pub/Sub official emulator adapter is saved under
+  `gcp/src/services/pubsub/emulator-engine.mjs`
+- Pub/Sub Node.js SDK lifecycle template is saved under
+  `gcp/templates/sdk/nodejs/pubsub/`
+- Pub/Sub Node.js SDK lifecycle runner is saved under
+  `gcp/scripts/e2e/sdk-node-pubsub.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
