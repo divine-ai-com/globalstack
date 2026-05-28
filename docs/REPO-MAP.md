@@ -99,6 +99,7 @@ flowchart TD
 - `packages/azure-data-plane/src/event-grid-router.mjs`
 - `packages/azure-data-plane/src/event-hubs-router.mjs`
 - `packages/azure-data-plane/src/functions-router.mjs`
+- `packages/azure-data-plane/src/iot-hub-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
 - `packages/azure-data-plane/src/kubernetes-router.mjs`
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
@@ -130,6 +131,7 @@ flowchart TD
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
+- `packages/conformance/src/iot-hub-router.test.mjs`
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/platform-registry/src/index.mjs`

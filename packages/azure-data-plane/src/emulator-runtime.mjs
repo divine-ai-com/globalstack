@@ -7,6 +7,7 @@ import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
 import { createFunctionsRouter } from './functions-router.mjs';
+import { createIotHubRouter } from './iot-hub-router.mjs';
 import { createKubernetesRouter } from './kubernetes-router.mjs';
 import { createKeyVaultRouter } from './key-vault-router.mjs';
 import { createMetricStore } from './metric-store.mjs';
@@ -139,6 +140,7 @@ export function createEmulatorRuntime({ store }) {
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
   const functionsRouter = createFunctionsRouter();
+  const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();
   const networkModel = createNetworkModel();
@@ -598,6 +600,14 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Devices/IotHubs') {
+      iotHubRouter.registerHub({
+        hubName: resource.name,
+        hostName: resource.properties?.hostName,
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
@@ -956,6 +966,11 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Devices/IotHubs') {
+      iotHubRouter.unregisterHub(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1244,6 +1259,7 @@ export function createEmulatorRuntime({ store }) {
     eventGridRouter,
     edgeRouter,
     functionsRouter,
+    iotHubRouter,
     kubernetesRouter,
     keyVaultRouter,
     workflowRunner,

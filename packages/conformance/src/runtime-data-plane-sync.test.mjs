@@ -6,6 +6,7 @@ import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
 import { createDigitalTwinsRouterServer } from '../../azure-data-plane/src/digital-twins-router.mjs';
 import { createEdgeRouterServer } from '../../azure-data-plane/src/edge-router.mjs';
+import { createIotHubRouterServer } from '../../azure-data-plane/src/iot-hub-router.mjs';
 import { createKubernetesRouterServer } from '../../azure-data-plane/src/kubernetes-router.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
@@ -175,6 +176,33 @@ async function digitalTwinsJson(port, method, path, body, headers = {}) {
   };
 }
 
+async function iotHubJson(port, method, path, body, headers = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      'x-forwarded-host': 'iot-sync.azure-devices.net',
+      authorization: 'Bearer globalstack-local-token',
+      'content-type': 'application/json',
+      ...headers,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    body: parsed,
+    headers: Object.fromEntries(response.headers.entries()),
+  };
+}
+
 test('dns registry follows private zone record and vnet link lifecycle', async () => {
   await withRuntimeServer(async ({ port, runtime }) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-dns-sync?api-version=2021-04-01`, { location: 'eastus' });
@@ -245,6 +273,60 @@ test('dns registry follows private zone record and vnet link lifecycle', async (
     });
     assert.equal(unresolved.status, 'NXDOMAIN');
     assert.equal(unresolved.reason, 'ZONE_NOT_LINKED');
+  });
+});
+
+test('iot hub data-plane follows ARM hub lifecycle', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    const server = createIotHubRouterServer(runtime.iotHubRouter);
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const iotPort = server.address().port;
+    try {
+      await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-iot-sync?api-version=2021-04-01`, { location: 'eastus' });
+
+      const beforeCreate = await iotHubJson(iotPort, 'GET', '/devices?api-version=2021-04-12');
+      assert.equal(beforeCreate.status, 404);
+      assert.equal(beforeCreate.body.ExceptionType, 'IotHubNotFound');
+
+      const create = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-iot-sync/providers/Microsoft.Devices/IotHubs/iot-sync?api-version=2023-06-30`,
+        {
+          location: 'eastus',
+          sku: { name: 'S1', tier: 'Standard', capacity: 1 },
+          properties: {},
+        },
+      );
+      assert.equal(create.status, 201);
+      assert.equal(create.body.properties.hostName, 'iot-sync.azure-devices.net');
+
+      const device = await iotHubJson(iotPort, 'PUT', '/devices/sensor-01?api-version=2021-04-12', {
+        status: 'enabled',
+      });
+      assert.equal(device.status, 200);
+      assert.equal(device.body.deviceId, 'sensor-01');
+
+      const telemetry = await iotHubJson(iotPort, 'POST', '/devices/sensor-01/messages/events?api-version=2021-04-12', {
+        pressure: 31.2,
+      });
+      assert.equal(telemetry.status, 204);
+      assert.equal(runtime.iotHubRouter.listTelemetry('iot-sync').length, 1);
+
+      const deleted = await httpJson(
+        port,
+        'DELETE',
+        `${subscriptionPath}/resourceGroups/rg-iot-sync/providers/Microsoft.Devices/IotHubs/iot-sync?api-version=2023-06-30`,
+      );
+      assert.equal(deleted.status, 200);
+
+      const afterDelete = await iotHubJson(iotPort, 'GET', '/devices?api-version=2021-04-12');
+      assert.equal(afterDelete.status, 404);
+      assert.equal(afterDelete.body.ExceptionType, 'IotHubNotFound');
+    } finally {
+      server.closeAllConnections?.();
+      await new Promise(resolve => server.close(resolve));
+    }
   });
 });
 
