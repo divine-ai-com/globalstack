@@ -59,6 +59,8 @@ const firstBucket = [
     category: 'observability',
     engineStrategy: 'local log store with write/list/query subset',
     serviceModule: './logging/service.mjs',
+    supportClass: supportClasses.boundedRuntime,
+    supportClaim: 'Bounded executable local Cloud Logging runtime for entries.write, entries.list, project resource filtering, logName filtering, severity filtering, and structured payload preservation. Real-GCP differential and IaC gates are still pending.',
   },
   {
     key: 'cloud-tasks',

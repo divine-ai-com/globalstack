@@ -71,5 +71,5 @@ be captured as a service gap and fixed in the emulator.
 | Datastore mode | pending | pending | pending | pending | pending | pending | pending | pending | pending |
 | Secret Manager | pending | passed bounded local versioned-secret runtime | pending | pending | pending | pending | pending | pending | pending |
 | Cloud KMS | pending | passed bounded local key ring/key encrypt/decrypt runtime | pending | pending | pending | pending | pending | pending | pending |
-| Cloud Logging | pending | pending | pending | pending | pending | pending | pending | pending | pending |
+| Cloud Logging | pending | passed bounded local write/list/filter runtime | pending | pending | pending | pending | pending | pending | pending |
 | Cloud Tasks | pending | pending | pending | pending | pending | pending | pending | pending | pending |

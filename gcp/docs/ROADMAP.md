@@ -244,6 +244,13 @@ Current first service evidence:
   `gcp/src/services/kms/routes.mjs` and `gcp/src/services/kms/google-api.mjs`
 - Cloud KMS local encrypt/decrypt lifecycle test is saved under
   `gcp/tests/e2e/kms-runtime.test.mjs`
+- Cloud Logging executable log store is saved under
+  `gcp/src/services/logging/store.mjs`
+- Cloud Logging Google-shaped routes and API wrapper are saved under
+  `gcp/src/services/logging/routes.mjs` and
+  `gcp/src/services/logging/google-api.mjs`
+- Cloud Logging local write/list/filter test is saved under
+  `gcp/tests/e2e/logging-runtime.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
