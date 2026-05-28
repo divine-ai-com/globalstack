@@ -50,6 +50,8 @@ const firstBucket = [
     category: 'security',
     engineStrategy: 'executable local key engine for encrypt/decrypt/sign/verify subset',
     serviceModule: './kms/service.mjs',
+    supportClass: supportClasses.boundedRuntime,
+    supportClaim: 'Bounded executable local Cloud KMS runtime for key ring create/get, crypto key create/get, AES-GCM encrypt/decrypt, AAD validation, and Google-shaped errors. Real-GCP differential and IaC gates are still pending.',
   },
   {
     key: 'cloud-logging',

@@ -238,6 +238,12 @@ Current first service evidence:
   `gcp/src/services/secret-manager/google-api.mjs`
 - Secret Manager local version lifecycle test is saved under
   `gcp/tests/e2e/secret-manager-runtime.test.mjs`
+- Cloud KMS executable key engine is saved under
+  `gcp/src/services/kms/store.mjs`
+- Cloud KMS Google-shaped routes and API wrapper are saved under
+  `gcp/src/services/kms/routes.mjs` and `gcp/src/services/kms/google-api.mjs`
+- Cloud KMS local encrypt/decrypt lifecycle test is saved under
+  `gcp/tests/e2e/kms-runtime.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
