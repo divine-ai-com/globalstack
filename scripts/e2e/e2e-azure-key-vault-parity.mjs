@@ -253,8 +253,12 @@ async function runControlAndDataPlaneMatrix() {
   const recoverableSecretName = `recoverable-${suffix}`.slice(0, 80);
   const keyName = `key-${suffix}`.slice(0, 80);
   const encryptOnlyKeyName = `encrypt-only-${suffix}`.slice(0, 80);
+  const signingKeyName = `signing-${suffix}`.slice(0, 80);
+  const wrapKeyName = `wrap-${suffix}`.slice(0, 80);
   let vaultHost = null;
   let cipherText = null;
+  let signatureText = null;
+  let wrappedKeyText = null;
   let firstSecretVersion = null;
 
   async function record(name, fn) {
@@ -986,6 +990,112 @@ async function runControlAndDataPlaneMatrix() {
         const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${keyName}/decrypt?api-version=7.4`, {
           alg: 'RSA-OAEP',
           value: Buffer.from('not-valid-ciphertext').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane signing key create succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${signingKeyName}/create?api-version=7.4`, {
+          kty: 'RSA',
+          key_size: 2048,
+          key_ops: ['sign', 'verify'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.key.key_ops, ['sign', 'verify']);
+        return { status: result.status, kid: result.body.key.kid };
+      });
+
+      await record('data-plane signing key rejects unsupported algorithm', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${signingKeyName}/sign?api-version=7.4`, {
+          alg: 'ES256',
+          value: Buffer.from('payload-to-sign').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadParameter');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane signing key sign succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${signingKeyName}/sign?api-version=7.4`, {
+          alg: 'RS256',
+          value: Buffer.from('payload-to-sign').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.value);
+        signatureText = result.body.value;
+        return { status: result.status, kid: result.body.kid };
+      });
+
+      await record('data-plane signing key verify succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${signingKeyName}/verify?api-version=7.4`, {
+          alg: 'RS256',
+          digest: Buffer.from('payload-to-sign').toString('base64url'),
+          value: signatureText,
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, true);
+        return { status: result.status, kid: result.body.kid, verified: result.body.value };
+      });
+
+      await record('data-plane signing key verify returns false for mismatched payload', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${signingKeyName}/verify?api-version=7.4`, {
+          alg: 'RS256',
+          digest: Buffer.from('different-payload').toString('base64url'),
+          value: signatureText,
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(result.body.value, false);
+        return { status: result.status, kid: result.body.kid, verified: result.body.value };
+      });
+
+      await record('data-plane wrap key create succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${wrapKeyName}/create?api-version=7.4`, {
+          kty: 'RSA',
+          key_size: 2048,
+          key_ops: ['wrapKey', 'unwrapKey'],
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.deepEqual(result.body.key.key_ops, ['wrapKey', 'unwrapKey']);
+        return { status: result.status, kid: result.body.key.kid };
+      });
+
+      await record('data-plane wrap key rejects decrypt operation', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${wrapKeyName}/decrypt?api-version=7.4`, {
+          alg: 'RSA-OAEP',
+          value: Buffer.from('wrapped-secret-material').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 403);
+        assert.equal(errorCode(result), 'Forbidden');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('data-plane wrap key wrapKey succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${wrapKeyName}/wrapkey?api-version=7.4`, {
+          alg: 'RSA-OAEP-256',
+          value: Buffer.from('wrapped-secret-material').toString('base64url'),
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.ok(result.body.value);
+        wrappedKeyText = result.body.value;
+        return { status: result.status, kid: result.body.kid };
+      });
+
+      await record('data-plane wrap key unwrapKey succeeds', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${wrapKeyName}/unwrapkey?api-version=7.4`, {
+          alg: 'RSA-OAEP-256',
+          value: wrappedKeyText,
+        }, { host: vaultHost, authorization: authHeader });
+        assert.equal(result.status, 200);
+        assert.equal(Buffer.from(result.body.value, 'base64url').toString('utf8'), 'wrapped-secret-material');
+        return { status: result.status, kid: result.body.kid };
+      });
+
+      await record('data-plane wrap key unwrapKey invalid ciphertext is rejected', async () => {
+        const result = await httpDataPlaneJson(routerPort, 'POST', `/keys/${wrapKeyName}/unwrapkey?api-version=7.4`, {
+          alg: 'RSA-OAEP-256',
+          value: Buffer.from('not-valid-wrapped-material').toString('base64url'),
         }, { host: vaultHost, authorization: authHeader });
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'BadParameter');

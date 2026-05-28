@@ -72,7 +72,7 @@ const dataPlaneEvidenceByCapability = new Map([
   }],
   ['key-vault-keys', {
     script: 'e2e:key-vault-parity',
-    scope: 'local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke',
+    scope: 'local Key Vault key create/get/list/encrypt/decrypt/sign/verify/wrapKey/unwrapKey/delete and key_ops rejection smoke',
   }],
   ['key-vault-secrets', {
     script: 'e2e:key-vault-parity',

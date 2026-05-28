@@ -138,3 +138,63 @@ test('key vault data-plane missing bearer token returns a bearer challenge', asy
     await new Promise(resolve => server.close(resolve));
   }
 });
+
+test('key vault data-plane RSA operations use the local crypto backend', async () => {
+  const router = createKeyVaultRouter();
+  router.registerVault({
+    vaultName: 'vaultsync',
+    vaultUri: 'https://vaultsync.vault.azure.net/',
+  });
+  const server = createKeyVaultRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+
+  try {
+    const createSigningKey = await httpJson(port, 'POST', '/keys/signing-key/create?api-version=7.5', {
+      kty: 'RSA',
+      key_size: 2048,
+      key_ops: ['sign', 'verify'],
+    });
+    assert.equal(createSigningKey.status, 200);
+
+    const digest = Buffer.from('payload-to-sign').toString('base64url');
+    const sign = await httpJson(port, 'POST', '/keys/signing-key/sign?api-version=7.5', {
+      alg: 'RS256',
+      value: digest,
+    });
+    assert.equal(sign.status, 200);
+    assert.ok(sign.body.value);
+
+    const verify = await httpJson(port, 'POST', '/keys/signing-key/verify?api-version=7.5', {
+      alg: 'RS256',
+      digest,
+      value: sign.body.value,
+    });
+    assert.equal(verify.status, 200);
+    assert.equal(verify.body.value, true);
+
+    const createWrapKey = await httpJson(port, 'POST', '/keys/wrap-key/create?api-version=7.5', {
+      kty: 'RSA',
+      key_size: 2048,
+      key_ops: ['wrapKey', 'unwrapKey'],
+    });
+    assert.equal(createWrapKey.status, 200);
+
+    const secretMaterial = Buffer.from('secret-material').toString('base64url');
+    const wrap = await httpJson(port, 'POST', '/keys/wrap-key/wrapkey?api-version=7.5', {
+      alg: 'RSA-OAEP-256',
+      value: secretMaterial,
+    });
+    assert.equal(wrap.status, 200);
+    assert.ok(wrap.body.value);
+
+    const unwrap = await httpJson(port, 'POST', '/keys/wrap-key/unwrapkey?api-version=7.5', {
+      alg: 'RSA-OAEP-256',
+      value: wrap.body.value,
+    });
+    assert.equal(unwrap.status, 200);
+    assert.equal(Buffer.from(unwrap.body.value, 'base64url').toString('utf8'), 'secret-material');
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+});

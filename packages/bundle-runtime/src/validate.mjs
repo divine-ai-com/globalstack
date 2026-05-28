@@ -2725,8 +2725,8 @@ if (!keyVaultParityText) {
   if (keyVaultParity.controlAndDataPlane?.failedCount !== 0) {
     errors.push('Azure Key Vault parity control/data-plane matrix has failures');
   }
-  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 77) {
-    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 77 cases');
+  if ((keyVaultParity.controlAndDataPlane?.total ?? 0) < 98) {
+    errors.push('Azure Key Vault parity control/data-plane matrix should exercise at least 98 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -2767,6 +2767,14 @@ if (!keyVaultParityText) {
     'data-plane key decrypt succeeds',
     'data-plane repeated key decrypt remains stable across repeated reads',
     'data-plane key decrypt invalid ciphertext is rejected',
+    'data-plane signing key create succeeds',
+    'data-plane signing key sign succeeds',
+    'data-plane signing key verify succeeds',
+    'data-plane signing key verify returns false for mismatched payload',
+    'data-plane wrap key create succeeds',
+    'data-plane wrap key wrapKey succeeds',
+    'data-plane wrap key unwrapKey succeeds',
+    'data-plane wrap key unwrapKey invalid ciphertext is rejected',
     'data-plane unsupported secret action fails closed',
     'ARM template deployment can create vault secret and key',
     'secret create after vault delete reports missing parent',

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-27T23:15:22.077Z",
+    "generatedAt": "2026-05-28T19:11:55.253Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -68,7 +68,7 @@
         "Microsoft.Storage/storageAccounts",
         "Microsoft.Storage/storageAccounts/blobServices/containers"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 232,
@@ -82,8 +82,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -152,16 +152,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -204,7 +201,7 @@
         "Microsoft.Web/serverfarms",
         "Microsoft.Web/sites/functions"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 418,
@@ -217,8 +214,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -283,16 +280,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-functions-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -330,7 +324,7 @@
         "Microsoft.ApiManagement/service",
         "Microsoft.ApiManagement/service/apis"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 511,
@@ -343,8 +337,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -410,16 +404,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:api-management-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -458,7 +449,7 @@
         "Microsoft.Authorization/roleAssignments",
         "Microsoft.Authorization/roleDefinitions"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 15,
@@ -472,8 +463,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -539,16 +530,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:identity-rbac-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -584,7 +572,7 @@
         "Microsoft.KeyVault/vaults",
         "Microsoft.KeyVault/vaults/secrets"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 96,
@@ -598,8 +586,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -639,7 +627,7 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=5, provider-validation=9, arm-surface=2, subscription-or-provider-readiness=1, provider-accepted=3",
-            "e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks"
+            "e2e:key-vault-parity asserts 100 status checks, 51 error-code checks, 0 header checks"
           ],
           "gaps": []
         },
@@ -663,16 +651,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -710,7 +695,7 @@
         "Microsoft.KeyVault/vaults",
         "Microsoft.KeyVault/vaults/keys"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 105,
@@ -724,8 +709,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -765,7 +750,7 @@
           "status": "complete",
           "evidence": [
             "validation depths: provider-routing-or-parent-validation=5, arm-surface=2, provider-validation=8, subscription-or-provider-readiness=1, provider-accepted=3",
-            "e2e:key-vault-parity asserts 90 status checks, 48 error-code checks, 0 header checks"
+            "e2e:key-vault-parity asserts 100 status checks, 51 error-code checks, 0 header checks"
           ],
           "gaps": []
         },
@@ -789,22 +774,19 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
           "evidence": [
             "e2e:key-vault-parity is wired into npm run smoke",
-            "local Key Vault key create/get/list/encrypt/decrypt/delete and key_ops rejection smoke",
+            "local Key Vault key create/get/list/encrypt/decrypt/sign/verify/wrapKey/unwrapKey/delete and key_ops rejection smoke",
             "parity result sections: controlAndDataPlane"
           ],
           "gaps": []
@@ -836,7 +818,7 @@
         "Microsoft.DBforPostgreSQL/flexibleServers",
         "Microsoft.DBforPostgreSQL/flexibleServers/databases"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 89,
@@ -851,8 +833,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -916,16 +898,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:postgresql-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -963,7 +942,7 @@
         "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
         "Microsoft.Storage/storageAccounts/tableServices/tables"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 16,
         "providerOperationCount": 366,
@@ -976,8 +955,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1044,16 +1023,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:cosmos-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1090,7 +1066,7 @@
         "Microsoft.ServiceBus/namespaces/topics",
         "Microsoft.ServiceBus/namespaces/topics/subscriptions"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 116,
@@ -1103,8 +1079,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1170,16 +1146,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-bus-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1217,7 +1190,7 @@
         "Microsoft.EventGrid/topics",
         "Microsoft.EventGrid/eventSubscriptions"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 35,
@@ -1231,8 +1204,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1296,16 +1269,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:event-grid-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1342,7 +1312,7 @@
       "resourceTypes": [
         "Microsoft.ContainerRegistry/registries"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 4,
         "providerOperationCount": 118,
@@ -1356,8 +1326,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1421,16 +1391,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:container-registry-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1468,13 +1435,13 @@
         "Microsoft.ContainerService/managedClusters",
         "Microsoft.ContainerService/managedClusters/agentPools"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 4,
         "providerOperationCount": 453,
-        "liveCaptureCount": 12,
+        "liveCaptureCount": 13,
         "validationDepthCounts": {
-          "provider-validation": 7,
+          "provider-validation": 8,
           "arm-surface": 1,
           "subscription-or-provider-readiness": 1,
           "provider-accepted": 2,
@@ -1482,8 +1449,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1499,9 +1466,9 @@
         "parameterVarianceCaptures": {
           "status": "complete",
           "evidence": [
-            "12 live ARM captures",
-            "variance cases: empty-body=1, invalid-cluster-name=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
-            "service-specific negative variance ids: invalid-cluster-name"
+            "13 live ARM captures",
+            "variance cases: invalid-network-policy=1, empty-body=1, invalid-cluster-name=1, invalid-location=1, invalid-tags-shape=1, missing-api-version=1, missing-location=1, null-properties=1, unsupported-api-version=1, valid-minimal=1, not-found=2, empty-list=1",
+            "service-specific negative variance ids: invalid-network-policy, invalid-cluster-name"
           ],
           "gaps": []
         },
@@ -1522,8 +1489,8 @@
         "errorShapeFidelity": {
           "status": "complete",
           "evidence": [
-            "validation depths: provider-validation=7, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1",
-            "e2e:aks-metadata-parity asserts 158 status checks, 42 error-code checks, 2 header checks"
+            "validation depths: provider-validation=8, arm-surface=1, subscription-or-provider-readiness=1, provider-accepted=2, provider-routing-or-parent-validation=1",
+            "e2e:aks-metadata-parity asserts 161 status checks, 41 error-code checks, 4 header checks"
           ],
           "gaps": []
         },
@@ -1548,16 +1515,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:aks-metadata-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1594,7 +1558,7 @@
         "Microsoft.Insights/components",
         "Microsoft.Insights/diagnosticSettings"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 1013,
@@ -1607,8 +1571,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1672,16 +1636,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:monitor-logs-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1718,7 +1679,7 @@
         "Microsoft.Insights/actionGroups",
         "Microsoft.Insights/activityLogAlerts"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 12,
@@ -1732,8 +1693,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1797,16 +1758,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1845,7 +1803,7 @@
         "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
         "Microsoft.Network/privateDnsZones"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 110,
@@ -1858,8 +1816,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -1924,16 +1882,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:virtual-network-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -1969,7 +1924,7 @@
         "Microsoft.DBforMySQL/flexibleServers",
         "Microsoft.DBforMySQL/flexibleServers/databases"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 67,
@@ -1982,8 +1937,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2047,16 +2002,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:mysql-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2092,7 +2044,7 @@
         "Microsoft.Storage/storageAccounts/queueServices/queues",
         "Microsoft.ServiceBus/namespaces/queues"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 22,
@@ -2105,8 +2057,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2175,16 +2127,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:storage-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2224,7 +2173,7 @@
         "Microsoft.Cache/redis",
         "Microsoft.Cache/redisEnterprise"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 73,
@@ -2239,8 +2188,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2305,16 +2254,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:redis-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2350,7 +2296,7 @@
         "Microsoft.Logic/workflows",
         "Microsoft.Web/sites"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 425,
@@ -2364,8 +2310,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2429,16 +2375,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:logic-workflows-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2493,7 +2436,7 @@
         "Microsoft.Network/privateDnsZones/TXT",
         "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 84,
         "providerOperationCount": 136,
@@ -2507,8 +2450,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2573,16 +2516,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:dns-zones-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2619,7 +2559,7 @@
         "Microsoft.Network/loadBalancers",
         "Microsoft.Network/publicIPAddresses"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 67,
@@ -2633,8 +2573,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2698,16 +2638,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:load-balancing-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2747,7 +2684,7 @@
         "Microsoft.Cdn/profiles/originGroups/origins",
         "Microsoft.Cdn/profiles/afdEndpoints/routes"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 133,
@@ -2761,8 +2698,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2826,16 +2763,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:front-door-cdn-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2872,7 +2806,7 @@
         "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
         "Microsoft.Cdn/profiles/securityPolicies"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 9,
@@ -2886,8 +2820,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -2951,16 +2885,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:waf-policy-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -2996,7 +2927,7 @@
         "Microsoft.Insights/diagnosticSettings",
         "Microsoft.EventGrid/systemTopics"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 15,
@@ -3010,8 +2941,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3075,16 +3006,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:activity-log-audit-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3120,7 +3048,7 @@
         "Microsoft.Storage/storageAccounts/fileServices/shares",
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 70,
@@ -3133,8 +3061,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3201,16 +3129,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:azure-files-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3246,7 +3171,7 @@
         "Microsoft.EventHub/namespaces",
         "Microsoft.EventHub/namespaces/eventhubs"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 93,
@@ -3259,8 +3184,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3324,16 +3249,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:event-hubs-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3369,7 +3291,7 @@
         "Microsoft.Synapse/workspaces",
         "Microsoft.Synapse/workspaces/sqlPools"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 244,
@@ -3383,8 +3305,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3448,16 +3370,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:synapse-warehouse-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3493,7 +3412,7 @@
         "Microsoft.AppConfiguration/configurationStores",
         "Microsoft.KeyVault/vaults/secrets"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 57,
@@ -3507,8 +3426,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3572,16 +3491,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:app-configuration-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3632,8 +3548,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 4,
-        "partial": 5,
+        "complete": 5,
+        "partial": 4,
         "notStarted": 1
       },
       "dimensions": {
@@ -3702,16 +3618,13 @@
           ]
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:database-migration-service-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",
@@ -3748,7 +3661,7 @@
         "Microsoft.App/managedEnvironments",
         "Microsoft.App/containerApps"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 131,
@@ -3761,8 +3674,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3827,16 +3740,13 @@
           "gaps": []
         },
         "iacProviderBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:service-discovery-parity is wired into npm run smoke",
             "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-            null
+            "all platform lifecycle runners passed provider lifecycle validation for this service"
           ],
-          "gaps": [
-            "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-            "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-          ]
+          "gaps": []
         },
         "dataPlaneBehavior": {
           "status": "complete",

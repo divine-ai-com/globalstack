@@ -1,4 +1,13 @@
-import { createHash, generateKeyPairSync, privateDecrypt, publicEncrypt, randomUUID } from 'node:crypto';
+import {
+  constants,
+  createHash,
+  generateKeyPairSync,
+  privateDecrypt,
+  publicEncrypt,
+  randomUUID,
+  sign as cryptoSign,
+  verify as cryptoVerify,
+} from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 
@@ -96,6 +105,33 @@ function publicJwk(publicKey, kid, keyOps) {
     n: jwk.n,
     e: jwk.e,
   };
+}
+
+function rsaOaepOptions(publicOrPrivateKey, alg) {
+  if (alg === 'RSA-OAEP') return { key: publicOrPrivateKey, oaepHash: 'sha1' };
+  if (alg === 'RSA-OAEP-256') return { key: publicOrPrivateKey, oaepHash: 'sha256' };
+  return null;
+}
+
+function rsaSignOptions(privateOrPublicKey, alg) {
+  if (alg === 'RS256') return { algorithm: 'RSA-SHA256', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PADDING } };
+  if (alg === 'RS384') return { algorithm: 'RSA-SHA384', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PADDING } };
+  if (alg === 'RS512') return { algorithm: 'RSA-SHA512', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PADDING } };
+  if (alg === 'PS256') return { algorithm: 'RSA-SHA256', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PSS_PADDING, saltLength: 32 } };
+  if (alg === 'PS384') return { algorithm: 'RSA-SHA384', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PSS_PADDING, saltLength: 48 } };
+  if (alg === 'PS512') return { algorithm: 'RSA-SHA512', key: { key: privateOrPublicKey, padding: constants.RSA_PKCS1_PSS_PADDING, saltLength: 64 } };
+  return null;
+}
+
+function requireBase64UrlString(value, label) {
+  if (typeof value !== 'string' || value.length === 0 || !/^[A-Za-z0-9_-]+={0,2}$/.test(value) || value.length % 4 === 1) {
+    return { ok: false, error: `${label} must be a non-empty base64url string.` };
+  }
+  try {
+    return { ok: true, value: base64UrlToBuffer(value) };
+  } catch {
+    return { ok: false, error: `${label} must be a non-empty base64url string.` };
+  }
 }
 
 export class KeyVaultRouter {
@@ -479,25 +515,82 @@ export class KeyVaultRouter {
         if (method === 'POST' && action === 'encrypt') {
           const body = await readBody(req);
           if (!key.keyOps.includes('encrypt')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to encrypt.`);
-          if (body?.alg !== 'RSA-OAEP' || typeof body?.value !== 'string') {
-            return sendError(res, 400, 'BadParameter', 'Encrypt requires alg RSA-OAEP and base64url value.');
+          const options = rsaOaepOptions(key.publicKey, body?.alg);
+          const plain = requireBase64UrlString(body?.value, 'Encrypt value');
+          if (!options || !plain.ok) {
+            return sendError(res, 400, 'BadParameter', 'Encrypt requires alg RSA-OAEP or RSA-OAEP-256 and base64url value.');
           }
-          const encrypted = publicEncrypt({ key: key.publicKey, oaepHash: 'sha1' }, base64UrlToBuffer(body.value));
+          const encrypted = publicEncrypt(options, plain.value);
           return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(encrypted) });
         }
 
         if (method === 'POST' && action === 'decrypt') {
           const body = await readBody(req);
           if (!key.keyOps.includes('decrypt')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to decrypt.`);
-          if (body?.alg !== 'RSA-OAEP' || typeof body?.value !== 'string') {
-            return sendError(res, 400, 'BadParameter', 'Decrypt requires alg RSA-OAEP and base64url value.');
+          const options = rsaOaepOptions(key.privateKey, body?.alg);
+          const cipher = requireBase64UrlString(body?.value, 'Decrypt value');
+          if (!options || !cipher.ok) {
+            return sendError(res, 400, 'BadParameter', 'Decrypt requires alg RSA-OAEP or RSA-OAEP-256 and base64url value.');
           }
           try {
-            const decrypted = privateDecrypt({ key: key.privateKey, oaepHash: 'sha1' }, base64UrlToBuffer(body.value));
+            const decrypted = privateDecrypt(options, cipher.value);
             return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(decrypted) });
           } catch {
             return sendError(res, 400, 'BadParameter', 'Decrypt value is not valid ciphertext for this key.');
           }
+        }
+
+        if (method === 'POST' && action === 'wrapkey') {
+          const body = await readBody(req);
+          if (!key.keyOps.includes('wrapKey')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to wrap keys.`);
+          const options = rsaOaepOptions(key.publicKey, body?.alg);
+          const plain = requireBase64UrlString(body?.value, 'WrapKey value');
+          if (!options || !plain.ok) {
+            return sendError(res, 400, 'BadParameter', 'WrapKey requires alg RSA-OAEP or RSA-OAEP-256 and base64url value.');
+          }
+          const wrapped = publicEncrypt(options, plain.value);
+          return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(wrapped) });
+        }
+
+        if (method === 'POST' && action === 'unwrapkey') {
+          const body = await readBody(req);
+          if (!key.keyOps.includes('unwrapKey')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to unwrap keys.`);
+          const options = rsaOaepOptions(key.privateKey, body?.alg);
+          const wrapped = requireBase64UrlString(body?.value, 'UnwrapKey value');
+          if (!options || !wrapped.ok) {
+            return sendError(res, 400, 'BadParameter', 'UnwrapKey requires alg RSA-OAEP or RSA-OAEP-256 and base64url value.');
+          }
+          try {
+            const unwrapped = privateDecrypt(options, wrapped.value);
+            return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(unwrapped) });
+          } catch {
+            return sendError(res, 400, 'BadParameter', 'UnwrapKey value is not valid ciphertext for this key.');
+          }
+        }
+
+        if (method === 'POST' && action === 'sign') {
+          const body = await readBody(req);
+          if (!key.keyOps.includes('sign')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to sign.`);
+          const options = rsaSignOptions(key.privateKey, body?.alg);
+          const value = requireBase64UrlString(body?.value, 'Sign value');
+          if (!options || !value.ok) {
+            return sendError(res, 400, 'BadParameter', 'Sign requires alg RS256, RS384, RS512, PS256, PS384, or PS512 and base64url value.');
+          }
+          const signature = cryptoSign(options.algorithm, value.value, options.key);
+          return sendJson(res, 200, { kid: key.kid, value: bufferToBase64Url(signature) });
+        }
+
+        if (method === 'POST' && action === 'verify') {
+          const body = await readBody(req);
+          if (!key.keyOps.includes('verify')) return sendError(res, 403, 'Forbidden', `Key '${name}' is not permitted to verify.`);
+          const options = rsaSignOptions(key.publicKey, body?.alg);
+          const value = requireBase64UrlString(body?.digest, 'Verify digest');
+          const signature = requireBase64UrlString(body?.value, 'Verify value');
+          if (!options || !value.ok || !signature.ok) {
+            return sendError(res, 400, 'BadParameter', 'Verify requires alg RS256, RS384, RS512, PS256, PS384, or PS512 plus base64url digest and value.');
+          }
+          const verified = cryptoVerify(options.algorithm, value.value, options.key, signature.value);
+          return sendJson(res, 200, { kid: key.kid, value: verified });
         }
 
         if (method === 'DELETE' && !action) {

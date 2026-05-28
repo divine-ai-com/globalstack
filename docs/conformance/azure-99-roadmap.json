@@ -1,17 +1,17 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T18:22:30.412Z",
+    "generatedAt": "2026-05-28T19:11:57.531Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 35,
+    "workItemCount": 5,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 94.6,
-      "displayRange": "90-95%",
+      "percent": 99.1,
+      "displayRange": "95-100%",
       "methodology": "status-derived average across all services and dimensions"
     },
     "azureFunctionsDurable": {
@@ -1364,339 +1364,139 @@
           "tier": 1,
           "awsAnalogue": "DynamoDB",
           "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 51,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "cosmos-nosql-table.iacProviderBehavior",
-              "serviceId": "cosmos-nosql-table",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:cosmos-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 44,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "blob-storage",
           "tier": 1,
           "awsAnalogue": "S3",
           "azureEquivalent": "Azure Blob Storage / Storage Account",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 50,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "blob-storage.iacProviderBehavior",
-              "serviceId": "blob-storage",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:storage-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 43,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "service-bus-topics",
           "tier": 1,
           "awsAnalogue": "SNS",
           "azureEquivalent": "Service Bus topics / Event Grid topics",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 49,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "service-bus-topics.iacProviderBehavior",
-              "serviceId": "service-bus-topics",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:service-bus-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 42,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "event-grid",
           "tier": 1,
           "awsAnalogue": "EventBridge",
           "azureEquivalent": "Event Grid",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 48,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "event-grid.iacProviderBehavior",
-              "serviceId": "event-grid",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-grid-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 41,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "queue-storage",
           "tier": 2,
           "awsAnalogue": "SQS",
           "azureEquivalent": "Azure Queue Storage / Service Bus queues",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 36,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "queue-storage.iacProviderBehavior",
-              "serviceId": "queue-storage",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:storage-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "azure-files",
           "tier": 2,
           "awsAnalogue": "EFS",
           "azureEquivalent": "Azure Files / Azure NetApp Files",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 36,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "azure-files.iacProviderBehavior",
-              "serviceId": "azure-files",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:azure-files-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "event-hubs-streams",
           "tier": 2,
           "awsAnalogue": "Kinesis Data Streams",
           "azureEquivalent": "Azure Event Hubs",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 36,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "event-hubs-streams.iacProviderBehavior",
-              "serviceId": "event-hubs-streams",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:event-hubs-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "app-configuration-parameters",
           "tier": 2,
           "awsAnalogue": "SSM Parameter Store",
           "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 36,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "app-configuration-parameters.iacProviderBehavior",
-              "serviceId": "app-configuration-parameters",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:app-configuration-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 8
+      "workItemCount": 0
     },
     {
       "id": "wave-2-identity-security-and-secrets",
@@ -1708,213 +1508,88 @@
           "tier": 1,
           "awsAnalogue": "KMS",
           "azureEquivalent": "Key Vault keys / Managed HSM",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 46,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "key-vault-keys.iacProviderBehavior",
-              "serviceId": "key-vault-keys",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "identity-rbac",
           "tier": 1,
           "awsAnalogue": "IAM/STS",
           "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 45,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "identity-rbac.iacProviderBehavior",
-              "serviceId": "identity-rbac",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:identity-rbac-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "key-vault-secrets",
           "tier": 1,
           "awsAnalogue": "Secrets Manager",
           "azureEquivalent": "Key Vault secrets",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 45,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "key-vault-secrets.iacProviderBehavior",
-              "serviceId": "key-vault-secrets",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:key-vault-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "waf-policy",
           "tier": 2,
           "awsAnalogue": "WAF",
           "azureEquivalent": "Azure Web Application Firewall policy",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 33,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "waf-policy.iacProviderBehavior",
-              "serviceId": "waf-policy",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:waf-policy-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "activity-log-audit",
           "tier": 2,
           "awsAnalogue": "CloudTrail",
           "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 33,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "activity-log-audit.iacProviderBehavior",
-              "serviceId": "activity-log-audit",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:activity-log-audit-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 5
+      "workItemCount": 0
     },
     {
       "id": "wave-3-compute-api-and-edge",
@@ -1926,339 +1601,139 @@
           "tier": 1,
           "awsAnalogue": "API Gateway",
           "azureEquivalent": "Azure API Management",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 47,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "api-management.iacProviderBehavior",
-              "serviceId": "api-management",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:api-management-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 40,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "azure-functions",
           "tier": 1,
           "awsAnalogue": "Lambda",
           "azureEquivalent": "Azure Functions / Function Apps",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 46,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "azure-functions.iacProviderBehavior",
-              "serviceId": "azure-functions",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:azure-functions-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "aks-metadata",
           "tier": 1,
           "awsAnalogue": "EKS",
           "azureEquivalent": "Azure Kubernetes Service",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 46,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "aks-metadata.iacProviderBehavior",
-              "serviceId": "aks-metadata",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:aks-metadata-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "container-registry",
           "tier": 1,
           "awsAnalogue": "ECR",
           "azureEquivalent": "Azure Container Registry",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 43,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "container-registry.iacProviderBehavior",
-              "serviceId": "container-registry",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:container-registry-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 36,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "logic-workflows",
           "tier": 2,
           "awsAnalogue": "Step Functions",
           "azureEquivalent": "Azure Logic Apps / Durable Functions",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 34,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "logic-workflows.iacProviderBehavior",
-              "serviceId": "logic-workflows",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:logic-workflows-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 27,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "front-door-cdn",
           "tier": 2,
           "awsAnalogue": "CloudFront",
           "azureEquivalent": "Azure Front Door / Azure CDN",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 31,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "front-door-cdn.iacProviderBehavior",
-              "serviceId": "front-door-cdn",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:front-door-cdn-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "service-discovery",
           "tier": 2,
           "awsAnalogue": "Service Discovery / Cloud Map",
           "azureEquivalent": "Azure Private DNS / Container Apps service discovery",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 31,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "service-discovery.iacProviderBehavior",
-              "serviceId": "service-discovery",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:service-discovery-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "load-balancing",
           "tier": 2,
           "awsAnalogue": "ALB/NLB",
           "azureEquivalent": "Azure Application Gateway / Load Balancer",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 30,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "load-balancing.iacProviderBehavior",
-              "serviceId": "load-balancing",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:load-balancing-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 23,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 8
+      "workItemCount": 0
     },
     {
       "id": "wave-4-data-platforms",
@@ -2272,42 +1747,20 @@
           "azureEquivalent": "Azure Database Migration Service",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 4,
-            "partial": 5,
+            "complete": 5,
+            "partial": 4,
             "notStarted": 1
           },
-          "score": 0.6623,
-          "priority": 59,
-          "workItemCount": 6,
+          "score": 0.7344,
+          "priority": 52,
+          "workItemCount": 5,
           "nextDimensions": [
-            "iacProviderBehavior",
             "stateTransitionCaptures",
             "errorShapeFidelity",
-            "identityRbacBehavior"
+            "identityRbacBehavior",
+            "retryEventualConsistency"
           ],
           "workItems": [
-            {
-              "id": "database-migration-service.iacProviderBehavior",
-              "serviceId": "database-migration-service",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:database-migration-service-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            },
             {
               "id": "database-migration-service.stateTransitionCaptures",
               "serviceId": "database-migration-service",
@@ -2415,171 +1868,71 @@
           "tier": 1,
           "awsAnalogue": "RDS PostgreSQL",
           "azureEquivalent": "Azure Database for PostgreSQL Flexible Server",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 39,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "postgresql-flexible-server.iacProviderBehavior",
-              "serviceId": "postgresql-flexible-server",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:postgresql-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 32,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "synapse-warehouse",
           "tier": 2,
           "awsAnalogue": "Redshift",
           "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 29,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "synapse-warehouse.iacProviderBehavior",
-              "serviceId": "synapse-warehouse",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:synapse-warehouse-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 22,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "mysql-flexible-server",
           "tier": 2,
           "awsAnalogue": "RDS MySQL",
           "azureEquivalent": "Azure Database for MySQL Flexible Server",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 27,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "mysql-flexible-server.iacProviderBehavior",
-              "serviceId": "mysql-flexible-server",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:mysql-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "redis-cache",
           "tier": 2,
           "awsAnalogue": "ElastiCache Redis",
           "azureEquivalent": "Azure Cache for Redis",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 27,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "redis-cache.iacProviderBehavior",
-              "serviceId": "redis-cache",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:redis-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 10
+      "workItemCount": 5
     },
     {
       "id": "wave-5-networking-observability-and-dns",
@@ -2591,171 +1944,71 @@
           "tier": 1,
           "awsAnalogue": "CloudWatch Logs",
           "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 46,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "monitor-logs.iacProviderBehavior",
-              "serviceId": "monitor-logs",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-logs-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "virtual-network",
           "tier": 1,
           "awsAnalogue": "VPC",
           "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 37,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "virtual-network.iacProviderBehavior",
-              "serviceId": "virtual-network",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:virtual-network-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 30,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "monitor-metrics-alerts",
           "tier": 1,
           "awsAnalogue": "CloudWatch Metrics/Alarms",
           "azureEquivalent": "Azure Monitor metrics and alerts",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 36,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "monitor-metrics-alerts.iacProviderBehavior",
-              "serviceId": "monitor-metrics-alerts",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:monitor-metrics-alerts-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         },
         {
           "serviceId": "dns-zones",
           "tier": 2,
           "awsAnalogue": "Route 53",
           "azureEquivalent": "Azure DNS / Private DNS Zones",
-          "currentStatus": "in-progress",
+          "currentStatus": "99-ready",
           "dimensionCounts": {
-            "complete": 9,
-            "partial": 1,
+            "complete": 10,
+            "partial": 0,
             "notStarted": 0
           },
-          "score": 0.9279,
-          "priority": 25,
-          "workItemCount": 1,
-          "nextDimensions": [
-            "iacProviderBehavior"
-          ],
-          "workItems": [
-            {
-              "id": "dns-zones.iacProviderBehavior",
-              "serviceId": "dns-zones",
-              "dimensionId": "iacProviderBehavior",
-              "dimension": "IaC-provider behavior",
-              "status": "partial",
-              "action": "complete",
-              "evidence": [
-                "e2e:dns-zones-parity is wired into npm run smoke",
-                "9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON",
-                null
-              ],
-              "gaps": [
-                "Extend beyond create/destroy lifecycle smoke to provider refresh, diff/preview, update, import, and drift checks where relevant.",
-                "Capture provider-specific Azure errors, retry behavior, and non-happy-path IaC operations before claiming full provider parity."
-              ],
-              "commands": [
-                "npm run smoke:prompts",
-                "npm run smoke:deploy"
-              ],
-              "acceptanceGate": "Terraform, OpenTofu, Pulumi, Bicep/ARM, and Ansible provider calls can deploy, refresh, diff, update, import where relevant, and destroy against GlobalStack."
-            }
-          ]
+          "score": 1,
+          "priority": 18,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
         }
       ],
-      "workItemCount": 4
+      "workItemCount": 0
     }
   ],
   "prioritizedServices": [
@@ -2764,18 +2017,18 @@
       "waveId": "wave-4-data-platforms",
       "serviceId": "database-migration-service",
       "tier": 2,
-      "score": 0.6623,
-      "priority": 59,
+      "score": 0.7344,
+      "priority": 52,
       "dimensionCounts": {
-        "complete": 4,
-        "partial": 5,
+        "complete": 5,
+        "partial": 4,
         "notStarted": 1
       },
       "nextDimensions": [
-        "iacProviderBehavior",
         "stateTransitionCaptures",
         "errorShapeFidelity",
-        "identityRbacBehavior"
+        "identityRbacBehavior",
+        "retryEventualConsistency"
       ]
     },
     {
@@ -2783,473 +2036,414 @@
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "cosmos-nosql-table",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 51,
+      "score": 1,
+      "priority": 44,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 3,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "blob-storage",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 50,
+      "score": 1,
+      "priority": 43,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 4,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "service-bus-topics",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 49,
+      "score": 1,
+      "priority": 42,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 5,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-grid",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 48,
+      "score": 1,
+      "priority": 41,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 6,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "api-management",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 47,
+      "score": 1,
+      "priority": 40,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 7,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-keys",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 46,
+      "score": 1,
+      "priority": 39,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 8,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "azure-functions",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 46,
+      "score": 1,
+      "priority": 39,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 9,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "aks-metadata",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 46,
+      "score": 1,
+      "priority": 39,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 10,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-logs",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 46,
+      "score": 1,
+      "priority": 39,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 11,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "identity-rbac",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 45,
+      "score": 1,
+      "priority": 38,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 12,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "key-vault-secrets",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 45,
+      "score": 1,
+      "priority": 38,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 13,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "container-registry",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 43,
+      "score": 1,
+      "priority": 36,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 14,
       "waveId": "wave-4-data-platforms",
       "serviceId": "postgresql-flexible-server",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 39,
+      "score": 1,
+      "priority": 32,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 15,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "virtual-network",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 37,
+      "score": 1,
+      "priority": 30,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 16,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "queue-storage",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 36,
+      "score": 1,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 17,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "azure-files",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 36,
+      "score": 1,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 18,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "event-hubs-streams",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 36,
+      "score": 1,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 19,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "app-configuration-parameters",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 36,
+      "score": 1,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 20,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "monitor-metrics-alerts",
       "tier": 1,
-      "score": 0.9279,
-      "priority": 36,
+      "score": 1,
+      "priority": 29,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 21,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "logic-workflows",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 34,
+      "score": 1,
+      "priority": 27,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 22,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "waf-policy",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 33,
+      "score": 1,
+      "priority": 26,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 23,
       "waveId": "wave-2-identity-security-and-secrets",
       "serviceId": "activity-log-audit",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 33,
+      "score": 1,
+      "priority": 26,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 24,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "front-door-cdn",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 31,
+      "score": 1,
+      "priority": 24,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 25,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "service-discovery",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 31,
+      "score": 1,
+      "priority": 24,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 26,
       "waveId": "wave-3-compute-api-and-edge",
       "serviceId": "load-balancing",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 30,
+      "score": 1,
+      "priority": 23,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 27,
       "waveId": "wave-4-data-platforms",
       "serviceId": "synapse-warehouse",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 29,
+      "score": 1,
+      "priority": 22,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 28,
       "waveId": "wave-4-data-platforms",
       "serviceId": "mysql-flexible-server",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 27,
+      "score": 1,
+      "priority": 20,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 29,
       "waveId": "wave-4-data-platforms",
       "serviceId": "redis-cache",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 27,
+      "score": 1,
+      "priority": 20,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     },
     {
       "rank": 30,
       "waveId": "wave-5-networking-observability-and-dns",
       "serviceId": "dns-zones",
       "tier": 2,
-      "score": 0.9279,
-      "priority": 25,
+      "score": 1,
+      "priority": 18,
       "dimensionCounts": {
-        "complete": 9,
-        "partial": 1,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
-      "nextDimensions": [
-        "iacProviderBehavior"
-      ]
+      "nextDimensions": []
     }
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 34,
+      "complete": 4,
       "start": 1
     },
     "byDimension": {
-      "iacProviderBehavior": 30,
       "stateTransitionCaptures": 1,
       "errorShapeFidelity": 1,
       "identityRbacBehavior": 1,
