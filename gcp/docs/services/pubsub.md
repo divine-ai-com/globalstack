@@ -16,6 +16,10 @@ Baseline capture:
 
 - `gcp/fixtures/captures/pubsub/pubsub-20260528181924-0681af/capture.json`
 
+Advanced capture:
+
+- `gcp/fixtures/captures/pubsub/pubsub-advanced-20260528183303-0e0494/capture.json`
+
 Covered real-GCP operations:
 
 - get missing topic before create
@@ -33,10 +37,28 @@ Covered real-GCP operations:
 - delete topic
 - verify subscription and topic are gone after cleanup
 
+Covered advanced real-GCP operations:
+
+- create topic
+- create subscription with message ordering, retained acked messages, and retry
+  policy
+- verify advanced subscription policy after read
+- publish two ordered messages with ordering key and attributes
+- pull and verify ordered payloads, ordering key, and attributes
+- acknowledge ordered messages
+- create snapshot
+- get snapshot
+- seek subscription to snapshot
+- delete snapshot, subscription, and topic
+- verify snapshot, subscription, and topic are gone after cleanup
+
 Cleanup result:
 
 - subscription deleted
 - topic deleted
+- advanced snapshot deleted
+- advanced subscription deleted
+- advanced topic deleted
 
 ## Runtime Evidence
 
@@ -50,7 +72,8 @@ Current validation:
 
 - Google Cloud SDK `570.0.0` Pub/Sub emulator package is installed locally
 - Java runtime is installed for the official emulator
-- local replay passes against the real-GCP capture using the official emulator
+- local replay passes against baseline and advanced real-GCP captures using the
+  official emulator
 - Node.js `@google-cloud/pubsub` `5.3.0` passes topic create, subscription
   create, publish, message delivery, ack, subscription delete, and topic delete
   against the official emulator
@@ -65,6 +88,9 @@ Current validation:
 - Google Cloud SDK `570.0.0` passes `gcloud pubsub` topic create, subscription
   create, publish, pull with auto-ack, subscription delete, and topic delete
   against the official emulator through `api_endpoint_overrides/pubsub`
+- advanced replay passes message ordering, retained acked messages, retry
+  policy, snapshot creation, snapshot read, and seek-to-snapshot status against
+  the official emulator
 - the runner uses a temporary emulator data directory and removes it after each
   run
 
@@ -72,8 +98,7 @@ Remaining promotion gates:
 
 - Config Connector and Crossplane lifecycle if Kubernetes-native Pub/Sub
   support is claimed
-- broader real-GCP differential captures for IAM, ordering keys, dead-letter
-  topics, retry policy, push subscriptions, snapshots, seek, schema, and error
-  shapes
+- broader real-GCP differential captures for IAM, dead-letter topics, push
+  subscriptions, schema, richer seek redelivery semantics, and error shapes
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.

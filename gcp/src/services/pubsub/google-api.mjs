@@ -6,12 +6,13 @@ export class PubSubApi {
     this.pubsubRoot = pubsubRoot.replace(/\/+$/g, '');
   }
 
-  async createTopic({ projectId, topicName, labels }) {
+  async createTopic({ projectId, topicName, labels, body = {} }) {
     return this.client.requestJson({
       method: 'PUT',
       url: new URL(`${this.pubsubRoot}/projects/${projectId}/topics/${topicName}`),
       body: {
         labels,
+        ...body,
       },
     });
   }
@@ -36,7 +37,7 @@ export class PubSubApi {
     });
   }
 
-  async createSubscription({ projectId, subscriptionName, topicName, labels }) {
+  async createSubscription({ projectId, subscriptionName, topicName, labels, body = {} }) {
     return this.client.requestJson({
       method: 'PUT',
       url: new URL(`${this.pubsubRoot}/projects/${projectId}/subscriptions/${subscriptionName}`),
@@ -45,6 +46,7 @@ export class PubSubApi {
         labels,
         ackDeadlineSeconds: 20,
         messageRetentionDuration: '604800s',
+        ...body,
       },
     });
   }
@@ -77,6 +79,7 @@ export class PubSubApi {
         messages: messages.map(message => ({
           data: Buffer.from(JSON.stringify(message.data)).toString('base64'),
           attributes: message.attributes ?? {},
+          orderingKey: message.orderingKey,
         })),
       },
     });
@@ -100,6 +103,47 @@ export class PubSubApi {
         ackIds,
       },
       allowEmpty: true,
+    });
+  }
+
+  async createSnapshot({ projectId, snapshotName, subscriptionName, labels }) {
+    return this.client.requestJson({
+      method: 'PUT',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/snapshots/${snapshotName}`),
+      body: {
+        subscription: `projects/${projectId}/subscriptions/${subscriptionName}`,
+        labels,
+      },
+    });
+  }
+
+  async getSnapshot({ projectId, snapshotName }) {
+    return this.client.requestJson({
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/snapshots/${snapshotName}`),
+    });
+  }
+
+  async listSnapshots(projectId) {
+    return this.client.requestJson({
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/snapshots`),
+    });
+  }
+
+  async deleteSnapshot({ projectId, snapshotName }) {
+    return this.client.requestJson({
+      method: 'DELETE',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/snapshots/${snapshotName}`),
+      allowEmpty: true,
+    });
+  }
+
+  async seekToSnapshot({ projectId, subscriptionName, snapshotName }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/subscriptions/${subscriptionName}:seek`),
+      body: {
+        snapshot: `projects/${projectId}/snapshots/${snapshotName}`,
+      },
     });
   }
 }

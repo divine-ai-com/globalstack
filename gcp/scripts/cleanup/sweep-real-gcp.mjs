@@ -1,5 +1,6 @@
 import { createRunContext } from '../../src/conformance/run-context.mjs';
 import { GoogleRestClient } from '../../src/google/rest-client.mjs';
+import { PubSubApi } from '../../src/services/pubsub/google-api.mjs';
 import { StorageApi } from '../../src/services/storage/google-api.mjs';
 
 const labels = {
@@ -38,6 +39,25 @@ async function listBuckets(projectId) {
   );
 }
 
+async function listPubSubResources(projectId) {
+  const pubsub = new PubSubApi(new GoogleRestClient());
+  const [topics, subscriptions, snapshots] = await Promise.all([
+    pubsub.listTopics(projectId),
+    pubsub.listSubscriptions(projectId),
+    pubsub.listSnapshots(projectId),
+  ]);
+  for (const [kind, result] of Object.entries({ topics, subscriptions, snapshots })) {
+    if (!result.response.ok) {
+      throw new Error(`Failed to list Pub/Sub ${kind}: ${result.response.status} ${JSON.stringify(result.response.body)}`);
+    }
+  }
+  return {
+    topics: (topics.response.body.topics ?? []).filter(hasGlobalStackLabels),
+    subscriptions: (subscriptions.response.body.subscriptions ?? []).filter(hasGlobalStackLabels),
+    snapshots: (snapshots.response.body.snapshots ?? []).filter(hasGlobalStackLabels),
+  };
+}
+
 async function deleteBucket(bucketName) {
   const storage = new StorageApi(new GoogleRestClient());
   const objects = await storage.listObjects(bucketName);
@@ -59,12 +79,49 @@ async function deleteBucket(bucketName) {
   }
 }
 
+async function deletePubSubResources(projectId, resources) {
+  const pubsub = new PubSubApi(new GoogleRestClient());
+  const deleted = {
+    subscriptions: [],
+    snapshots: [],
+    topics: [],
+  };
+  for (const subscription of resources.subscriptions) {
+    const subscriptionName = resourceNameTail(subscription.name);
+    const result = await pubsub.deleteSubscription({ projectId, subscriptionName });
+    if (![200, 204, 404].includes(result.response.status)) {
+      throw new Error(`Failed to delete Pub/Sub subscription ${subscription.name}: ${result.response.status}`);
+    }
+    deleted.subscriptions.push(subscription.name);
+  }
+  for (const snapshot of resources.snapshots) {
+    const snapshotName = resourceNameTail(snapshot.name);
+    const result = await pubsub.deleteSnapshot({ projectId, snapshotName });
+    if (![200, 204, 404].includes(result.response.status)) {
+      throw new Error(`Failed to delete Pub/Sub snapshot ${snapshot.name}: ${result.response.status}`);
+    }
+    deleted.snapshots.push(snapshot.name);
+  }
+  for (const topic of resources.topics) {
+    const topicName = resourceNameTail(topic.name);
+    const result = await pubsub.deleteTopic({ projectId, topicName });
+    if (![200, 204, 404].includes(result.response.status)) {
+      throw new Error(`Failed to delete Pub/Sub topic ${topic.name}: ${result.response.status}`);
+    }
+    deleted.topics.push(topic.name);
+  }
+  return deleted;
+}
+
 const args = parseArgs(process.argv.slice(2));
 const context = await createRunContext({
   service: 'cleanup',
   projectId: args.projectId,
 });
-const buckets = await listBuckets(context.project_id);
+const [buckets, pubsub] = await Promise.all([
+  listBuckets(context.project_id),
+  listPubSubResources(context.project_id),
+]);
 const report = {
   project_id: context.project_id,
   apply: args.apply,
@@ -74,6 +131,11 @@ const report = {
     url: bucket.storage_url ?? `gs://${bucket.name}`,
     location: bucket.location ?? null,
   })),
+  pubsub: {
+    topics: pubsub.topics.map(resource => resource.name),
+    subscriptions: pubsub.subscriptions.map(resource => resource.name),
+    snapshots: pubsub.snapshots.map(resource => resource.name),
+  },
   deleted: [],
 };
 
@@ -82,6 +144,15 @@ if (args.apply) {
     await deleteBucket(bucket.name);
     report.deleted.push(bucket.url);
   }
+  report.deleted_pubsub = await deletePubSubResources(context.project_id, pubsub);
 }
 
 console.log(JSON.stringify(report, null, 2));
+
+function hasGlobalStackLabels(resource) {
+  return resource.labels?.purpose === labels.purpose && resource.labels?.owner === labels.owner;
+}
+
+function resourceNameTail(name) {
+  return name.split('/').at(-1);
+}

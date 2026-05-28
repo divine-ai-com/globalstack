@@ -8,6 +8,8 @@ Run scripts without `--apply` first to inspect the plan:
 ```bash
 cd gcp
 npm run capture:storage
+npm run capture:pubsub
+npm run capture:pubsub:advanced
 ```
 
 Real captures require `--apply` and always execute cleanup in a `finally` path:
@@ -15,4 +17,15 @@ Real captures require `--apply` and always execute cleanup in a `finally` path:
 ```bash
 cd gcp
 npm run capture:storage -- --apply --bucket-location=US
+npm run capture:pubsub -- --apply
+npm run capture:pubsub:advanced -- --apply
+```
+
+The real-GCP sweeper reports stale GlobalStack-labeled Cloud Storage buckets and
+Pub/Sub topics, subscriptions, and snapshots before any delete is attempted:
+
+```bash
+cd gcp
+npm run sweep
+npm run sweep -- --apply
 ```

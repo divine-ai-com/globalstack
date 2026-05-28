@@ -84,6 +84,8 @@ Status:
 
 - complete for ADC validation, Cloud Storage capture, and Cloud Storage cleanup
   sweep
+- complete for Pub/Sub capture cleanup plus stale topic, subscription, and
+  snapshot sweep reporting/deletion by GlobalStack labels
 - complete for bounded Cloud Storage local runtime replay against the captured
   bucket/object lifecycle
 - next service capture targets still need to be added
@@ -201,6 +203,10 @@ Current first service evidence:
 - Pub/Sub real-GCP capture is saved under
   `gcp/fixtures/captures/pubsub/pubsub-20260528181924-0681af/capture.json`
 - Pub/Sub capture runner is saved under `gcp/scripts/capture/pubsub-baseline.mjs`
+- Pub/Sub advanced real-GCP capture is saved under
+  `gcp/fixtures/captures/pubsub/pubsub-advanced-20260528183303-0e0494/capture.json`
+- Pub/Sub advanced capture runner is saved under
+  `gcp/scripts/capture/pubsub-advanced-baseline.mjs`
 - Pub/Sub local replay test is saved under
   `gcp/tests/e2e/pubsub-capture-replay.test.mjs`
 

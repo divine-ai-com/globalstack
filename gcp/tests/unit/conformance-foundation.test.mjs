@@ -53,6 +53,8 @@ test('sanitizer redacts credentials and dynamic Google response ids', () => {
         name: 'stable-name',
         projectNumber: '123456789',
         generation: '123',
+        publishTime: '2026-05-28T18:33:25.350Z',
+        expireTime: '2026-06-04T18:33:25.206Z',
       },
     },
   });
@@ -63,6 +65,8 @@ test('sanitizer redacts credentials and dynamic Google response ids', () => {
   assert.equal(sanitized.response.body.id, '<redacted>');
   assert.equal(sanitized.response.body.mediaLink, '<redacted>');
   assert.equal(sanitized.response.body.projectNumber, '<redacted>');
+  assert.equal(sanitized.response.body.publishTime, '<redacted>');
+  assert.equal(sanitized.response.body.expireTime, '<redacted>');
   assert.equal(sanitized.response.body.name, 'stable-name');
 });
 
