@@ -44,6 +44,18 @@ export function createStorageRoutes({ store }) {
     },
     {
       method: 'GET',
+      match: matchBucketStorageLayoutPath,
+      handle: async ({ response, match }) => {
+        const layout = store.getBucketStorageLayout(match.bucketName);
+        if (!layout) {
+          writeStorageError(response, 404, 'notFound', missingBucketMessage());
+          return;
+        }
+        writeJson(response, 200, layout);
+      },
+    },
+    {
+      method: 'GET',
       match: matchBucketPath,
       handle: async ({ response, match }) => {
         const bucket = store.getBucket(match.bucketName);
@@ -181,7 +193,7 @@ async function readObjectUpload(request, url) {
 }
 
 function parseMultipartUpload({ text, contentType, fallbackObjectName }) {
-  const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+  const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|'([^']+)'|([^;]+))/i);
   if (!boundaryMatch) {
     return {
       objectName: fallbackObjectName,
@@ -189,10 +201,10 @@ function parseMultipartUpload({ text, contentType, fallbackObjectName }) {
       contentType,
     };
   }
-  const boundary = boundaryMatch[1] ?? boundaryMatch[2];
+  const boundary = boundaryMatch[1] ?? boundaryMatch[2] ?? boundaryMatch[3];
   const parts = text
     .split(`--${boundary}`)
-    .map(part => part.trim())
+    .map(cleanMultipartSegment)
     .filter(part => part && part !== '--')
     .map(parseMultipartPart);
   const metadataPart = parts.find(part => part.contentType.includes('application/json'));
@@ -203,6 +215,14 @@ function parseMultipartUpload({ text, contentType, fallbackObjectName }) {
     content: contentPart?.body ?? '',
     contentType: metadata.contentType ?? contentPart?.contentType ?? 'application/octet-stream',
   };
+}
+
+function cleanMultipartSegment(segment) {
+  if (!segment) return '';
+  if (segment.startsWith('--')) return '--';
+  return segment
+    .replace(/^\r?\n/, '')
+    .replace(/\r?\n$/, '');
 }
 
 function parseMultipartPart(part) {
@@ -217,12 +237,17 @@ function parseMultipartPart(part) {
   return {
     headers,
     contentType: headers['content-type'] ?? 'application/octet-stream',
-    body: bodyParts.join(separator).replace(/\r?\n$/, ''),
+    body: bodyParts.join(separator),
   };
 }
 
 function matchBucketPath(url) {
   const match = url.pathname.match(/^\/storage\/v1\/b\/([^/]+)$/);
+  return match ? { bucketName: decodeURIComponent(match[1]) } : null;
+}
+
+function matchBucketStorageLayoutPath(url) {
+  const match = url.pathname.match(/^\/storage\/v1\/b\/([^/]+)\/storageLayout$/);
   return match ? { bucketName: decodeURIComponent(match[1]) } : null;
 }
 

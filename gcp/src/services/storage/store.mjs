@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import { crc32cBase64 } from './checksums.mjs';
 
 const defaultDataRoot = process.env.GLOBALSTACK_GCP_STORAGE_DIR ?? '/tmp/globalstack-gcp/storage';
 
@@ -61,6 +62,20 @@ export class StorageStore {
       .map(bucket => cloneBucket(bucket));
   }
 
+  getBucketStorageLayout(name) {
+    const bucket = this.buckets.get(name);
+    if (!bucket) return null;
+    return {
+      kind: 'storage#storageLayout',
+      bucket: bucket.name,
+      location: bucket.location,
+      locationType: bucket.locationType,
+      hierarchicalNamespace: {
+        enabled: false,
+      },
+    };
+  }
+
   async patchBucket({ name, labels }) {
     const bucket = this.buckets.get(name);
     if (!bucket) return null;
@@ -87,7 +102,8 @@ export class StorageStore {
     const now = this.clock().toISOString();
     const generation = String(Date.now() * 1000);
     const text = typeof content === 'string' ? content : JSON.stringify(content);
-    const md5Hash = createHash('md5').update(text).digest('base64');
+    const contentBuffer = Buffer.from(text);
+    const md5Hash = createHash('md5').update(contentBuffer).digest('base64');
     const object = {
       kind: 'storage#object',
       id: `${bucketName}/${objectName}/${generation}`,
@@ -99,9 +115,9 @@ export class StorageStore {
       metageneration: '1',
       contentType,
       storageClass: 'STANDARD',
-      size: String(Buffer.byteLength(text)),
+      size: String(contentBuffer.byteLength),
       md5Hash,
-      crc32c: 'AAAAAA==',
+      crc32c: crc32cBase64(contentBuffer),
       timeCreated: now,
       updated: now,
       timeStorageClassUpdated: now,

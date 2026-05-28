@@ -87,6 +87,12 @@ test('Cloud Storage local runtime replays captured bucket/object lifecycle seman
     assert.equal(getBucket.response.status, expectedStatus.get('get-bucket-after-create'));
     assert.equal(getBucket.response.body.labels.owner, 'globalstack');
 
+    const storageLayout = await fetch(`${runtime.url}/storage/v1/b/${bucketName}/storageLayout`);
+    assert.equal(storageLayout.status, 200);
+    const storageLayoutBody = await storageLayout.json();
+    assert.equal(storageLayoutBody.kind, 'storage#storageLayout');
+    assert.equal(storageLayoutBody.hierarchicalNamespace.enabled, false);
+
     const listBuckets = await storage.listBuckets(projectId);
     assert.equal(listBuckets.response.status, expectedStatus.get('list-buckets-after-create'));
     assert.ok(listBuckets.response.body.items.some(bucket => bucket.name === bucketName));

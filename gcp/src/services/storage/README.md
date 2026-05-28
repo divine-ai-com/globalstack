@@ -5,6 +5,7 @@ This module owns every Cloud Storage concern:
 - `service.mjs`: local GlobalStack route and lifecycle surface
 - `routes.mjs`: Google Cloud Storage JSON API route handlers
 - `store.mjs`: filesystem-backed bucket/object metadata and content state
+- `checksums.mjs`: Google-compatible object checksum helpers
 - `errors.mjs`: Cloud Storage specific Google error shapes
 - `google-api.mjs`: real-GCP API wrapper used by capture and differential tests
 - future `engine.mjs`: real object-store runtime adapter

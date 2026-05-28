@@ -175,6 +175,12 @@ Current first service evidence:
 - Pulumi lifecycle template is saved under `gcp/templates/pulumi/cloud-storage/`
 - Pulumi lifecycle runner is saved under
   `gcp/scripts/e2e/pulumi-cloud-storage.mjs`
+- `gcloud storage` lifecycle runner is saved under
+  `gcp/scripts/e2e/gcloud-cloud-storage.mjs`
+- Node.js SDK lifecycle template is saved under
+  `gcp/templates/sdk/nodejs/cloud-storage/`
+- Node.js SDK lifecycle runner is saved under
+  `gcp/scripts/e2e/sdk-node-cloud-storage.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

@@ -1,0 +1,13 @@
+{
+  "name": "globalstack-gcp-cloud-storage-sdk-node",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Official Node.js Cloud Storage SDK lifecycle target for GlobalStack.",
+  "main": "index.cjs",
+  "dependencies": {
+    "@google-cloud/storage": "7.19.0"
+  },
+  "engines": {
+    "node": ">=20.20.0"
+  }
+}

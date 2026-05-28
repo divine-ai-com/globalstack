@@ -3,7 +3,13 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { crc32cBase64 } from '../../src/services/storage/checksums.mjs';
 import { StorageStore } from '../../src/services/storage/store.mjs';
+
+test('Cloud Storage CRC32C metadata uses Google-compatible base64 encoding', () => {
+  assert.equal(crc32cBase64(''), 'AAAAAA==');
+  assert.equal(crc32cBase64('abc'), 'Nks/tw==');
+});
 
 test('storage store persists bucket/object metadata and enforces duplicate bucket names', async () => {
   const root = await mkdtemp(join(tmpdir(), 'globalstack-gcp-storage-'));
@@ -27,6 +33,15 @@ test('storage store persists bucket/object metadata and enforces duplicate bucke
     });
     assert.equal(created.name, 'gst-capture-test');
     assert.equal(created.iamConfiguration.uniformBucketLevelAccess.enabled, true);
+    assert.deepEqual(store.getBucketStorageLayout('gst-capture-test'), {
+      kind: 'storage#storageLayout',
+      bucket: 'gst-capture-test',
+      location: 'US',
+      locationType: 'multi-region',
+      hierarchicalNamespace: {
+        enabled: false,
+      },
+    });
     assert.equal(await store.createBucket({
       projectId: 'globalstack-test',
       name: 'gst-capture-test',

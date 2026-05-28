@@ -6,8 +6,8 @@ Support class: `bounded-runtime`
 
 GlobalStack GCP now has a bounded local Cloud Storage runtime for the captured
 JSON API bucket/object lifecycle. It is not marked `real-engine-backed` or
-`differentially-validated` yet because Kubernetes-control-plane, `gcloud`, SDK,
-broader auth, and broader data-plane lifecycle gates are still pending.
+`differentially-validated` yet because Kubernetes-control-plane, broader auth,
+and broader data-plane lifecycle gates are still pending.
 
 ## Capture Evidence
 
@@ -59,14 +59,19 @@ Current validation:
   init/apply/no-drift plan/destroy against the same Terraform-family template
 - Pulumi `3.243.0` with Pulumi GCP provider `9.24.0` passes
   login/stack init/up/no-drift preview/destroy against the local endpoint
+- Google Cloud SDK `570.0.0` passes `gcloud storage` bucket/object
+  create/copy/list/delete against an isolated local endpoint override
+- Node.js `@google-cloud/storage` `7.19.0` passes bucket/object
+  create/save/list/delete with official SDK integrity checks enabled
 - bucket/object side effects are backed by local filesystem state
+- object metadata returns real MD5 and CRC32C hashes for uploaded content
+- `storageLayout` metadata is implemented for Cloud SDK capability discovery
 - unsupported services still fail closed
 
 Remaining promotion gates:
 
 - Config Connector and Crossplane lifecycle if Kubernetes-native Storage
   support is claimed
-- `gcloud` and SDK direct lifecycle checks
 - broader auth, IAM, object upload mode, and error-shape captures
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.
