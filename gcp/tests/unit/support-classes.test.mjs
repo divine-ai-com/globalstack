@@ -36,9 +36,22 @@ test('first GCP service bucket is explicit about supported and unsupported claim
   assert.equal(countsTowardSeriousParity(logging.supportClass), false);
   assert.match(logging.supportClaim, /Bounded executable local Cloud Logging runtime/);
 
+  const tasks = services.find(service => service.key === 'cloud-tasks');
+  assert.equal(tasks.supportClass, supportClasses.boundedRuntime);
+  assert.equal(countsTowardSeriousParity(tasks.supportClass), false);
+  assert.match(tasks.supportClaim, /Bounded executable local Cloud Tasks runtime/);
+
   for (const service of services) {
     assert.match(service.engineStrategy, /\S/);
-    if (['cloud-storage', 'pub-sub', 'firestore', 'secret-manager', 'cloud-key-management', 'cloud-logging'].includes(service.key)) continue;
+    if ([
+      'cloud-storage',
+      'pub-sub',
+      'firestore',
+      'secret-manager',
+      'cloud-key-management',
+      'cloud-logging',
+      'cloud-tasks',
+    ].includes(service.key)) continue;
     assert.equal(service.supportClass, supportClasses.unsupported);
     assert.equal(countsTowardSeriousParity(service.supportClass), false);
     assert.match(service.supportClaim, /Not implemented/);

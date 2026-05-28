@@ -251,6 +251,13 @@ Current first service evidence:
   `gcp/src/services/logging/google-api.mjs`
 - Cloud Logging local write/list/filter test is saved under
   `gcp/tests/e2e/logging-runtime.test.mjs`
+- Cloud Tasks executable queue/dispatcher is saved under
+  `gcp/src/services/cloud-tasks/store.mjs`
+- Cloud Tasks Google-shaped routes and API wrapper are saved under
+  `gcp/src/services/cloud-tasks/routes.mjs` and
+  `gcp/src/services/cloud-tasks/google-api.mjs`
+- Cloud Tasks local HTTP dispatch test is saved under
+  `gcp/tests/e2e/cloud-tasks-runtime.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

@@ -1,4 +1,5 @@
 import { createService as createComputeService } from './compute/service.mjs';
+import { createService as createCloudTasksService } from './cloud-tasks/service.mjs';
 import { createService as createKmsService } from './kms/service.mjs';
 import { createService as createLoggingService } from './logging/service.mjs';
 import { createService as createPubSubService } from './pubsub/service.mjs';
@@ -8,6 +9,7 @@ import { createService as createStorageService } from './storage/service.mjs';
 export function createDefaultServices(options = {}) {
   return [
     createComputeService(options.compute),
+    createCloudTasksService(options.cloudTasks),
     createKmsService(options.kms),
     createLoggingService(options.logging),
     createPubSubService(options.pubsub),

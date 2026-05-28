@@ -68,6 +68,8 @@ const firstBucket = [
     category: 'messaging',
     engineStrategy: 'executable scheduler and HTTP dispatcher with retry semantics',
     serviceModule: './cloud-tasks/service.mjs',
+    supportClass: supportClasses.boundedRuntime,
+    supportClaim: 'Bounded executable local Cloud Tasks runtime for queue create/get, HTTP task create/get, explicit run dispatch to real HTTP endpoints, and dispatch status tracking. Real-GCP differential and IaC gates are still pending.',
   },
 ];
 
