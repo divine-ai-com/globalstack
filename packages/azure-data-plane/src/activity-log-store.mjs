@@ -5,8 +5,10 @@ function lower(value) {
 }
 
 export class ActivityLogStore {
-  constructor() {
+  constructor({ onDiagnosticRecord = null } = {}) {
     this.records = [];
+    this.diagnosticSettings = new Map();
+    this.onDiagnosticRecord = onDiagnosticRecord;
   }
 
   emit({
@@ -33,7 +35,53 @@ export class ActivityLogStore {
       properties,
     };
     this.records.push(record);
+    this.deliverDiagnostics(record);
     return record;
+  }
+
+  registerDiagnosticSetting({ settingId, scope, workspaceId, logs = [] }) {
+    if (!settingId || !scope || !workspaceId) return;
+    this.diagnosticSettings.set(lower(settingId), {
+      settingId,
+      scope,
+      workspaceId,
+      categories: new Set(
+        logs
+          .filter(log => log?.enabled !== false)
+          .map(log => log.category)
+          .filter(Boolean),
+      ),
+    });
+  }
+
+  unregisterDiagnosticSetting(settingId) {
+    this.diagnosticSettings.delete(lower(settingId));
+  }
+
+  deliverDiagnostics(record) {
+    if (typeof this.onDiagnosticRecord !== 'function') return;
+    for (const setting of this.diagnosticSettings.values()) {
+      const scope = lower(setting.scope);
+      const resourceId = lower(record.resourceId);
+      const scopeMatches = resourceId === scope || resourceId.startsWith(`${scope}/`);
+      if (!scopeMatches) continue;
+      if (setting.categories.size > 0 && !setting.categories.has(record.category)) continue;
+      this.onDiagnosticRecord({
+        workspaceId: setting.workspaceId,
+        tableName: 'AzureActivity',
+        record: {
+          TimeGenerated: record.eventTimestamp,
+          ResourceId: record.resourceId,
+          ResourceGroup: record.resourceGroup,
+          OperationName: record.operationName,
+          ActivityStatus: record.status,
+          Category: record.category,
+          Caller: record.caller,
+          CorrelationId: record.correlationId,
+          Properties: JSON.stringify(record.properties ?? {}),
+        },
+      });
+    }
   }
 
   query({ resourceGroup, category, status, operationName, correlationId, since } = {}) {
@@ -50,6 +98,6 @@ export class ActivityLogStore {
   }
 }
 
-export function createActivityLogStore() {
-  return new ActivityLogStore();
+export function createActivityLogStore(options = {}) {
+  return new ActivityLogStore(options);
 }

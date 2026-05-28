@@ -936,7 +936,7 @@ export const tier2Capabilities = [
     azureEquivalent: 'Azure Activity Log / Diagnostic Settings',
     resourceTypes: ['Microsoft.Insights/diagnosticSettings', 'Microsoft.EventGrid/systemTopics'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
-    backingEngines: ['globalstack-audit-log'],
+    backingEngines: ['globalstack-audit-log', 'globalstack-log-store'],
     implementedOperations: [
       'ActivityLog.RecordLocal',
       'DiagnosticSettings.RejectUnsupportedRootScope',
@@ -947,12 +947,13 @@ export const tier2Capabilities = [
       'SystemTopics.Delete',
       'SystemTopicRoutes.RejectUnsupportedRoutes',
       'Events.ListLocal',
+      'DiagnosticSettings.ActivityLogFanoutLocal',
     ],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['activity log schema', 'diagnostic setting fanout failures', 'retention behavior'],
     knownGaps: [
-      'MVP records local ARM calls and selected data-plane traces only.',
+      'MVP records local ARM calls and can fan out scoped Administrative diagnostics into the local Log Analytics store.',
       'No tenant-wide Activity Log, immutable audit storage, policy integration, or exact event schema parity in MVP.',
     ],
   },

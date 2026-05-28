@@ -10,6 +10,7 @@ import { createFunctionsRouter } from './functions-router.mjs';
 import { createIotHubRouter } from './iot-hub-router.mjs';
 import { createKubernetesRouter } from './kubernetes-router.mjs';
 import { createKeyVaultRouter } from './key-vault-router.mjs';
+import { createLogAnalyticsStore } from './log-analytics-store.mjs';
 import { createMetricStore } from './metric-store.mjs';
 import { createMigrationPlanRunner } from './migration-plan-runner.mjs';
 import { createNetworkModel } from './network-model.mjs';
@@ -145,12 +146,21 @@ export function createEmulatorRuntime({ store }) {
   const dnsRegistry = createDnsRegistry();
   const networkModel = createNetworkModel();
   const metricStore = createMetricStore();
+  const logAnalyticsStore = createLogAnalyticsStore();
   const relationalBackends = createRelationalBackendManager();
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
   const kubernetesRouter = createKubernetesRouter({ edgeRouter, store });
-  const activityLogStore = createActivityLogStore();
+  const activityLogStore = createActivityLogStore({
+    onDiagnosticRecord({ workspaceId, tableName, record }) {
+      logAnalyticsStore.ingest({
+        workspaceName: resourceNameFromId(workspaceId),
+        tableName,
+        records: [record],
+      });
+    },
+  });
   const keyVaultRouter = createKeyVaultRouter({
     onSecretSet({ subscriptionId, resourceGroupName, vaultName, secretName, value, contentType, tags, attributes }) {
       if (!subscriptionId || !resourceGroupName) return;
@@ -592,6 +602,21 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.OperationalInsights/workspaces') {
+      logAnalyticsStore.registerWorkspace({ workspaceName: resource.name });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
+      activityLogStore.registerDiagnosticSetting({
+        settingId: resource.id,
+        scope: resource.properties?.scope,
+        workspaceId: resource.properties?.workspaceId,
+        logs: resource.properties?.logs ?? [],
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.registerInstance({
         instanceName: resource.name,
@@ -961,6 +986,16 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.OperationalInsights/workspaces') {
+      logAnalyticsStore.unregisterWorkspace({ workspaceName: resource?.name ?? providerRoute.typePath.split('/')[1] });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
+      activityLogStore.unregisterDiagnosticSetting(resource?.id ?? resourcePath(providerRoute));
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.unregisterInstance(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1267,6 +1302,7 @@ export function createEmulatorRuntime({ store }) {
     relationalBackends,
     serviceDiscoveryRegistry,
     activityLogStore,
+    logAnalyticsStore,
     dnsRegistry,
     networkModel,
     metricStore,

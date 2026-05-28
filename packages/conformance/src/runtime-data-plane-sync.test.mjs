@@ -1344,6 +1344,18 @@ test('edge router applies synced front door routing and attached waf policy', as
 test('activity log store records resource write and delete events through runtime hooks', async () => {
   await withRuntimeServer(async ({ port, runtime }) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-audit-sync?api-version=2021-04-01`, { location: 'eastus' });
+    const workspaceId = `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.OperationalInsights/workspaces/law-audit-sync`;
+
+    const workspace = await httpJson(
+      port,
+      'PUT',
+      `${workspaceId}?api-version=2022-10-01`,
+      {
+        location: 'eastus',
+        properties: { sku: { name: 'PerGB2018' }, retentionInDays: 30 },
+      },
+    );
+    assert.equal(workspace.status, 201);
 
     const created = await httpJson(
       port,
@@ -1365,6 +1377,70 @@ test('activity log store records resource write and delete events through runtim
     });
     assert.equal(writeEvents.length, 1);
     assert.equal(writeEvents[0].status, 'Succeeded');
+
+    const diagnostic = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync/providers/Microsoft.Insights/diagnosticSettings/to-law?api-version=2021-05-01-preview`,
+      {
+        properties: {
+          workspaceId,
+          logs: [{ category: 'Administrative', enabled: true }],
+        },
+      },
+    );
+    assert.equal(diagnostic.status, 201);
+
+    const updated = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync?api-version=2022-06-15`,
+      {
+        location: 'eastus',
+        tags: { revision: 'after-diagnostic' },
+        properties: {
+          source: `${subscriptionPath}/resourceGroups/rg-audit-sync`,
+          topicType: 'Microsoft.Resources.ResourceGroups',
+        },
+      },
+    );
+    assert.equal(updated.status, 200);
+
+    const delivered = runtime.logAnalyticsStore.query({
+      workspaceName: 'law-audit-sync',
+      query: 'AzureActivity | where OperationName == "Microsoft.EventGrid/systemTopics/write" | count',
+    });
+    assert.equal(delivered.status, 200);
+    assert.equal(delivered.body.tables[0].rows[0][0], 1);
+
+    const removeDiagnostic = await httpJson(
+      port,
+      'DELETE',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync/providers/Microsoft.Insights/diagnosticSettings/to-law?api-version=2021-05-01-preview`,
+    );
+    assert.equal(removeDiagnostic.status, 200);
+
+    const updatedAfterDelete = await httpJson(
+      port,
+      'PUT',
+      `${subscriptionPath}/resourceGroups/rg-audit-sync/providers/Microsoft.EventGrid/systemTopics/audit-sync?api-version=2022-06-15`,
+      {
+        location: 'eastus',
+        tags: { revision: 'after-diagnostic-delete' },
+        properties: {
+          source: `${subscriptionPath}/resourceGroups/rg-audit-sync`,
+          topicType: 'Microsoft.Resources.ResourceGroups',
+        },
+      },
+    );
+    assert.equal(updatedAfterDelete.status, 200);
+
+    const afterDiagnosticDelete = runtime.logAnalyticsStore.query({
+      workspaceName: 'law-audit-sync',
+      query: 'AzureActivity | where OperationName == "Microsoft.EventGrid/systemTopics/write" | count',
+    });
+    assert.equal(afterDiagnosticDelete.status, 200);
+    assert.equal(afterDiagnosticDelete.body.tables[0].rows[0][0], 1);
 
     const deleted = await httpJson(
       port,

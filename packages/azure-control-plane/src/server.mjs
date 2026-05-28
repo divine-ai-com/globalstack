@@ -805,6 +805,17 @@ export function createArmRequestHandler({
               apiVersion,
               capability,
             });
+            if (typeof onResourcePut === 'function') {
+              onResourcePut({
+                store,
+                providerRoute: scopedDiagnosticIdentity,
+                resourceType: 'Microsoft.Insights/diagnosticSettings',
+                body,
+                apiVersion,
+                capability,
+                resource,
+              });
+            }
             return sendJson(res, created ? 201 : 200, resource);
           }
           if (method === 'GET') {
@@ -815,9 +826,17 @@ export function createArmRequestHandler({
             return sendJson(res, 200, resource);
           }
           if (method === 'DELETE') {
+            const resource = store.getResource(scopedDiagnosticIdentity);
             const existed = store.deleteResource(scopedDiagnosticIdentity);
             if (!existed) {
               return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedDiagnosticRoute.diagnosticRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            if (typeof onResourceDelete === 'function') {
+              onResourceDelete({
+                providerRoute: scopedDiagnosticIdentity,
+                resourceType: 'Microsoft.Insights/diagnosticSettings',
+                resource,
+              });
             }
             return sendJson(res, 200, {
               status: 'Deleted',
