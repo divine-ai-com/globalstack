@@ -1,0 +1,6 @@
+name: globalstack-gcp-cloud-storage
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Cloud Storage Pulumi lifecycle template.

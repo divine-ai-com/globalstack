@@ -8,7 +8,7 @@ const firstBucket = [
     engineStrategy: 'real object-store backend with Google Cloud Storage JSON/XML API compatibility',
     serviceModule: './storage/service.mjs',
     supportClass: supportClasses.boundedRuntime,
-    supportClaim: 'Bounded local runtime for captured Cloud Storage JSON API bucket/object lifecycle. Terraform lifecycle passes; Pulumi, OpenTofu, Config Connector, Crossplane, gcloud, and SDK gates are still pending.',
+    supportClaim: 'Bounded local runtime for captured Cloud Storage JSON API bucket/object lifecycle. Terraform and Pulumi lifecycles pass; OpenTofu, Config Connector, Crossplane, gcloud, and SDK gates are still pending.',
   },
   {
     key: 'pub-sub',

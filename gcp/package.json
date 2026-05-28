@@ -8,6 +8,7 @@
     "check": "node scripts/check-credentials.mjs --adc",
     "capture:storage": "node scripts/capture/storage-baseline.mjs",
     "coverage": "node scripts/fetch-coverage.mjs",
+    "e2e:pulumi:storage": "node scripts/e2e/pulumi-cloud-storage.mjs",
     "e2e:terraform:storage": "node scripts/e2e/terraform-cloud-storage.mjs",
     "start": "node src/cli/globalstack-gcp.mjs",
     "sweep": "node scripts/cleanup/sweep-real-gcp.mjs",
