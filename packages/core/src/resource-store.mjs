@@ -215,6 +215,10 @@ function digitalTwinsHostName(name, location = 'global') {
   return `${name}.api.${location}.digitaltwins.azure.net`;
 }
 
+function searchServiceEndpoint(name) {
+  return `https://${name}.search.windows.net`;
+}
+
 function redisHostName(name) {
   return `${name}.redis.cache.windows.net`;
 }
@@ -734,6 +738,14 @@ export class ResourceStore {
         ...(type === 'Microsoft.DigitalTwins/digitalTwinsInstances'
           ? {
               hostName: existing?.properties?.hostName ?? digitalTwinsHostName(name, body.location ?? existing?.location ?? 'global'),
+              provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
+              publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
+            }
+          : {}),
+        ...(type === 'Microsoft.Search/searchServices'
+          ? {
+              endpoint: existing?.properties?.endpoint ?? searchServiceEndpoint(name),
+              hostName: existing?.properties?.hostName ?? `${name}.search.windows.net`,
               provisioningState: lifecycleSequence ? lifecycleSequence[0] : existing?.properties?.provisioningState ?? 'Succeeded',
               publicNetworkAccess: body.properties?.publicNetworkAccess ?? existing?.properties?.publicNetworkAccess ?? 'Enabled',
             }

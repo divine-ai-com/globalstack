@@ -8,6 +8,7 @@ import { createDigitalTwinsRouterServer } from '../../azure-data-plane/src/digit
 import { createEdgeRouterServer } from '../../azure-data-plane/src/edge-router.mjs';
 import { createIotHubRouterServer } from '../../azure-data-plane/src/iot-hub-router.mjs';
 import { createKubernetesRouterServer } from '../../azure-data-plane/src/kubernetes-router.mjs';
+import { createSearchRouterServer } from '../../azure-data-plane/src/search-router.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
 
@@ -203,6 +204,33 @@ async function iotHubJson(port, method, path, body, headers = {}) {
   };
 }
 
+async function searchJson(port, method, path, body, headers = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      'x-forwarded-host': 'srch-sync.search.windows.net',
+      'api-key': 'local-search-key',
+      'content-type': 'application/json',
+      ...headers,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    body: parsed,
+    headers: Object.fromEntries(response.headers.entries()),
+  };
+}
+
 test('dns registry follows private zone record and vnet link lifecycle', async () => {
   await withRuntimeServer(async ({ port, runtime }) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-dns-sync?api-version=2021-04-01`, { location: 'eastus' });
@@ -273,6 +301,68 @@ test('dns registry follows private zone record and vnet link lifecycle', async (
     });
     assert.equal(unresolved.status, 'NXDOMAIN');
     assert.equal(unresolved.reason, 'ZONE_NOT_LINKED');
+  });
+});
+
+test('azure ai search data-plane follows ARM search service lifecycle', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    const server = createSearchRouterServer(runtime.searchRouter);
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const searchPort = server.address().port;
+    try {
+      await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-search-sync?api-version=2021-04-01`, { location: 'eastus' });
+
+      const beforeCreate = await searchJson(searchPort, 'GET', '/indexes?api-version=2024-07-01');
+      assert.equal(beforeCreate.status, 404);
+      assert.equal(beforeCreate.body.error.code, 'SearchServiceNotFound');
+
+      const create = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-search-sync/providers/Microsoft.Search/searchServices/srch-sync?api-version=2023-11-01`,
+        {
+          location: 'eastus',
+          sku: { name: 'basic' },
+          properties: { replicaCount: 1, partitionCount: 1 },
+        },
+      );
+      assert.equal(create.status, 201);
+      assert.equal(create.body.properties.endpoint, 'https://srch-sync.search.windows.net');
+
+      const index = await searchJson(searchPort, 'PUT', "/indexes('cases')?api-version=2024-07-01", {
+        name: 'cases',
+        fields: [
+          { name: 'id', type: 'Edm.String', key: true, searchable: false },
+          { name: 'summary', type: 'Edm.String', searchable: true },
+        ],
+      });
+      assert.equal(index.status, 201);
+
+      const batch = await searchJson(searchPort, 'POST', "/indexes('cases')/docs/search.index?api-version=2024-07-01", {
+        value: [{ '@search.action': 'upload', id: 'case-1', summary: 'Escalated warranty replacement' }],
+      });
+      assert.equal(batch.status, 200);
+
+      const search = await searchJson(searchPort, 'POST', "/indexes('cases')/docs/search?api-version=2024-07-01", {
+        search: 'warranty',
+      });
+      assert.equal(search.status, 200);
+      assert.equal(search.body.value[0].id, 'case-1');
+
+      const deleted = await httpJson(
+        port,
+        'DELETE',
+        `${subscriptionPath}/resourceGroups/rg-search-sync/providers/Microsoft.Search/searchServices/srch-sync?api-version=2023-11-01`,
+      );
+      assert.equal(deleted.status, 200);
+
+      const afterDelete = await searchJson(searchPort, 'GET', '/indexes?api-version=2024-07-01');
+      assert.equal(afterDelete.status, 404);
+      assert.equal(afterDelete.body.error.code, 'SearchServiceNotFound');
+    } finally {
+      server.closeAllConnections?.();
+      await new Promise(resolve => server.close(resolve));
+    }
   });
 });
 

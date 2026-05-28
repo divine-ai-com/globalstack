@@ -1192,6 +1192,33 @@ export const extendedCapabilities = [
       'No full DTDL validation, full query language, event route execution, endpoint delivery, or managed identity parity yet.',
     ],
   },
+  {
+    id: 'ai-search-extension',
+    tier: null,
+    awsAnalogue: 'OpenSearch / CloudSearch',
+    azureEquivalent: 'Azure AI Search',
+    resourceTypes: ['Microsoft.Search/searchServices'],
+    primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
+    backingEngines: ['globalstack-search-index-runtime'],
+    implementedOperations: [
+      'SearchServices.CreateOrUpdate',
+      'SearchServices.Get',
+      'SearchServices.List',
+      'SearchServices.Delete',
+      'SearchIndexes.CreateOrUpdateLocal',
+      'SearchIndexes.GetListDeleteLocal',
+      'SearchDocuments.IndexLocal',
+      'SearchDocuments.SearchLocal',
+      'SearchDocuments.CountLocal',
+    ],
+    contractTested: false,
+    cloudValidated: false,
+    realAzureCaptureRequired: ['analyzers', 'scoring profiles', 'semantic search', 'vector query behavior', 'indexer data source execution'],
+    knownGaps: [
+      'Local runtime covers bounded index definition storage, document batch indexing, substring search, and document count behavior.',
+      'No full Lucene analyzer parity, vector search, semantic ranking, synonym maps, skillsets, indexers, data sources, RBAC, or service capacity behavior yet.',
+    ],
+  },
 ];
 export const supportedCapabilities = [...allCapabilities, ...extendedCapabilities];
 

@@ -72,6 +72,7 @@ export const defaultApiVersions = {
   'Microsoft.ServiceBus/namespaces': '2021-11-01',
   'Microsoft.ServiceBus/namespaces/queues': '2021-11-01',
   'Microsoft.ServiceBus/namespaces/topics': '2021-11-01',
+  'Microsoft.Search/searchServices': '2023-11-01',
   'Microsoft.Storage/storageAccounts': '2023-01-01',
   'Microsoft.Storage/storageAccounts/blobServices/containers': '2023-01-01',
   'Microsoft.Storage/storageAccounts/fileServices/shares': '2023-01-01',

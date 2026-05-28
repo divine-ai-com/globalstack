@@ -15,6 +15,7 @@ import { createMetricStore } from './metric-store.mjs';
 import { createMigrationPlanRunner } from './migration-plan-runner.mjs';
 import { createNetworkModel } from './network-model.mjs';
 import { createRelationalBackendManager } from './relational-backend-manager.mjs';
+import { createSearchRouter } from './search-router.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
 import { createWafEvaluator } from './waf-evaluator.mjs';
@@ -148,6 +149,7 @@ export function createEmulatorRuntime({ store }) {
   const metricStore = createMetricStore();
   const logAnalyticsStore = createLogAnalyticsStore();
   const relationalBackends = createRelationalBackendManager();
+  const searchRouter = createSearchRouter();
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
@@ -617,6 +619,14 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Search/searchServices') {
+      searchRouter.registerService({
+        serviceName: resource.name,
+        endpoint: resource.properties?.endpoint,
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.registerInstance({
         instanceName: resource.name,
@@ -996,6 +1006,11 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Search/searchServices') {
+      searchRouter.unregisterService(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.unregisterInstance(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1303,6 +1318,7 @@ export function createEmulatorRuntime({ store }) {
     serviceDiscoveryRegistry,
     activityLogStore,
     logAnalyticsStore,
+    searchRouter,
     dnsRegistry,
     networkModel,
     metricStore,
