@@ -75,6 +75,7 @@ flowchart TD
 
 ## Package Files
 
+- `packages/core/src/azure-differential-scenarios.mjs`
 - `packages/core/src/azure-live-api-catalog.mjs`
 - `packages/core/src/azure-tier1-capabilities.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
@@ -118,6 +119,7 @@ flowchart TD
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`
+- `packages/conformance/src/azure-differential-harness.test.mjs`
 - `packages/conformance/src/azure-lifecycle-local-expectations.test.mjs`
 - `packages/conformance/src/azure-local-lifecycle.test.mjs`
 - `packages/conformance/src/azure-storage-data-plane-expectations.test.mjs`
@@ -196,6 +198,7 @@ flowchart TD
 - `scripts/capture/capture-azure-storage-lifecycle.mjs`
 - `scripts/capture/capture-real-azure-operation.mjs`
 - `scripts/capture/fetch-localstack-azure-coverage.mjs`
+- `scripts/capture/run-azure-differential.mjs`
 - `scripts/conformance/classify-azure-captures.mjs`
 - `scripts/conformance/report-provider-registration-gaps.mjs`
 - `scripts/conformance/rerun-registered-shallow-azure-captures.mjs`
@@ -274,6 +277,8 @@ flowchart TD
 - `npm run conformance:local`
 - `npm run conformance:parity`
 - `npm run conformance:roadmap`
+- `npm run differential:azure`
+- `npm run differential:azure:aks`
 - `npm run docker:janitor`
 - `npm run docker:janitor:dry-run`
 - `npm run docker:prewarm`

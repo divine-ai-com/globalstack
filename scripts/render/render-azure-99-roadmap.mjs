@@ -250,6 +250,16 @@ const crossCuttingBacklog = [
       'git diff --check',
     ],
   },
+  {
+    id: 'aks-deferred-validation-differential',
+    label: 'AKS deferred validation and async failure semantics',
+    detail: 'The 2026-05-28 real-Azure differential run showed that AKS can accept an invalid networkPlugin request into async creation when Kubernetes version and VM size are valid, while GlobalStack rejects it synchronously. Model Azure deferred validation, async operation failure/readback, and cleanup behavior before treating this surface as cloudValidated.',
+    commands: [
+      'GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning',
+      'npm run e2e:aks-metadata-parity',
+      'npm run conformance:roadmap',
+    ],
+  },
 ];
 
 const extendedContinuationRoadmap = [

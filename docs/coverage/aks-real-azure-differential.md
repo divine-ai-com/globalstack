@@ -1,12 +1,19 @@
 # AKS Real Azure Differential Capture
 
-This capture path records real Azure AKS request/response behavior for the private-cluster, network-profile, load-balancer, and upgrade constraints that GlobalStack is tightening locally.
+This differential path records GlobalStack and real Azure AKS request/response behavior for the private-cluster, network-profile, load-balancer, and upgrade constraints that GlobalStack is tightening locally.
 
-It is intentionally guarded and does not run during normal validation.
+It is intentionally guarded and does not run real Azure calls during normal validation.
 
 ## Command
 
-Validation-only capture:
+Local GlobalStack-only differential:
+
+```bash
+GLOBALSTACK_AZURE_CAPTURE_SALT=localcheck \
+npm run differential:azure:aks -- --target=globalstack
+```
+
+Real Azure validation-only capture:
 
 ```bash
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 \
@@ -30,9 +37,17 @@ AZURE_SUBSCRIPTION_ID=... \
 npm run aks:capture:differential -- --all --include-provisioning
 ```
 
+Side-by-side GlobalStack versus real Azure comparison:
+
+```bash
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 \
+AZURE_SUBSCRIPTION_ID=... \
+npm run differential:azure:aks -- --target=both --case=invalid-network-plugin
+```
+
 ## Current Cases
 
-- `invalid-network-plugin`
+- `invalid-network-plugin` with `--include-provisioning` because real Azure accepted this request into async cluster creation during the 2026-05-28 differential run.
 - `invalid-network-policy`
 - `dns-service-ip-outside-service-cidr`
 - `private-dns-none-public-fqdn-disabled`
@@ -42,12 +57,18 @@ npm run aks:capture:differential -- --all --include-provisioning
 ## Outputs
 
 - Sanitized fixtures: `fixtures/azure-captures/aks-metadata.differential.<case>.json`
-- Run summary: `dist/captures/azure-aks-differential/results.json`
+- Run summary: `dist/differential/azure/aks-metadata/results.json`
+- Markdown report: `dist/differential/azure/aks-metadata/report.md`
 
 ## Safety Rules
 
-- The script uses ARM bearer tokens from `az account get-access-token`; tokens are never written to fixtures.
+- The script uses `GLOBALSTACK_REAL_AZURE_ACCESS_TOKEN`, `AZURE_ACCESS_TOKEN`, `ARM_ACCESS_TOKEN`, service-principal env vars, or `az account get-access-token`; tokens are never written to fixtures.
 - Subscription and tenant IDs are sanitized before fixture write.
-- Every run creates a disposable resource group and verifies deletion before reporting success.
+- Every real Azure run creates a disposable resource group, deletes it in the same process, and verifies deletion before reporting success.
+- Any real Azure run with failed cleanup verification must be treated as a failed run and investigated immediately to avoid billing drift.
 - Validation-only is the default. Real cluster provisioning requires `--include-provisioning`.
 - A captured fixture is evidence, not a parity claim. Marking behavior `cloudValidated` requires normalization into local conformance and a reviewed local test.
+
+## Open Product Gap
+
+- `invalid-network-plugin`: real Azure accepted the request as `201 Creating` when the runner used a supported Kubernetes version and an allowed VM size, while GlobalStack returned `400 InvalidParameter` synchronously. Treat this as an AKS deferred-validation / async failure-model gap before changing the local route; the observed Azure run created a temporary resource group and it was explicitly deleted and verified gone.

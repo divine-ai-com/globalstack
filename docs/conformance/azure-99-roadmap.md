@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-27T23:23:53.477Z
+Generated: 2026-05-28T17:18:02.431Z
 
 ## Guardrails
 
@@ -124,6 +124,7 @@ These items remain open across the whole Azure program even when a service-speci
 | Conformance runner completion determinism | Harden the real-Azure conformance runner so it exits deterministically after capture and cleanup. Some scoped reruns still write fresh fixtures and then go quiet instead of finishing cleanly. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:classify && npm run conformance:expectations`<br>`npm run validate` |
 | Repeated timing and drift checks | Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true`<br>`npm run conformance:parity && npm run conformance:roadmap` |
 | Treat every surviving mismatch as a product gap | Classify each new failure as bundle-generation defect, provider defect, or emulator/runtime parity defect, then convert every true Azure mismatch into an explicit product work item instead of a one-off workaround. | `npm run validate`<br>`git diff --check` |
+| AKS deferred validation and async failure semantics | The 2026-05-28 real-Azure differential run showed that AKS can accept an invalid networkPlugin request into async creation when Kubernetes version and VM size are valid, while GlobalStack rejects it synchronously. Model Azure deferred validation, async operation failure/readback, and cleanup behavior before treating this surface as cloudValidated. | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning`<br>`npm run e2e:aks-metadata-parity`<br>`npm run conformance:roadmap` |
 
 ## Extended Continuation Roadmap
 

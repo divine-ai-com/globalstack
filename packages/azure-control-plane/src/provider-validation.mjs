@@ -818,8 +818,8 @@ function validateAksNetworkProfile(networkProfile = {}) {
   if (networkProfile.networkPolicy && !['azure', 'calico', 'none'].includes(networkProfile.networkPolicy)) {
     return envelopedError(
       400,
-      'InvalidParameter',
-      'AKS networkProfile.networkPolicy must be azure, calico, or none when provided.',
+      'NetworkPolicyNotSupported',
+      'NetworkPolicy is not supported (only azure, calico, and cilium are supported)',
     );
   }
   const serviceCidr = networkProfile.serviceCidr ?? networkProfile.serviceCIDR;

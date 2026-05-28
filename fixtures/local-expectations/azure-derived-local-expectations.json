@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-26T14:37:32.216Z",
+  "generatedAt": "2026-05-28T17:24:18.229Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 440,
+  "expectationCount": 441,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -402,6 +402,50 @@
         "method": "GET",
         "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6a8855d2f4/providers/Microsoft.Insights/diagnosticSettings?api-version=2021-05-01-preview",
         "body": null
+      },
+      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    },
+    {
+      "id": "aks-metadata.differential.invalid-network-policy",
+      "capabilityId": "aks-metadata",
+      "resourceType": "Microsoft.ContainerService/managedClusters",
+      "operation": "CreateOrUpdate",
+      "varianceId": "invalid-network-policy",
+      "validationDepth": "provider-validation",
+      "expected": {
+        "status": 400,
+        "errorCode": "NetworkPolicyNotSupported",
+        "message": "NetworkPolicy is not supported (only azure, calico, and cilium are supported)"
+      },
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-aks-metadata-diff-aksvdiff5/providers/Microsoft.ContainerService/managedClusters/aksdiffinvalidnetworkpolicyiff5?api-version=2024-02-01",
+        "body": {
+          "location": "eastus",
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "properties": {
+            "dnsPrefix": "aksdiffinvalidnetworkpolicyiff5",
+            "kubernetesVersion": "1.34",
+            "servicePrincipalProfile": {
+              "clientId": "msi"
+            },
+            "agentPoolProfiles": [
+              {
+                "name": "systempool",
+                "count": 1,
+                "vmSize": "Standard_DC2s_v3",
+                "mode": "System",
+                "osType": "Linux",
+                "type": "VirtualMachineScaleSets"
+              }
+            ],
+            "networkProfile": {
+              "networkPolicy": "invalid-policy"
+            }
+          }
+        }
       },
       "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },

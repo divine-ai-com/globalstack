@@ -41,11 +41,11 @@ export function facadeOrigin(req) {
 }
 
 export const localIdentity = {
-  subscriptionId: process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000',
-  tenantId: process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000',
-  clientId: process.env.GLOBALSTACK_AZURE_CLIENT_ID ?? process.env.ARM_CLIENT_ID ?? '11111111-1111-1111-1111-111111111111',
+  subscriptionId: process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? process.env.ARM_SUBSCRIPTION_ID ?? process.env.AZURE_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000',
+  tenantId: process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? process.env.AZURE_TENANT_ID ?? '00000000-0000-0000-0000-000000000000',
+  clientId: process.env.GLOBALSTACK_AZURE_CLIENT_ID ?? process.env.ARM_CLIENT_ID ?? process.env.AZURE_CLIENT_ID ?? '11111111-1111-1111-1111-111111111111',
   objectId: process.env.GLOBALSTACK_AZURE_OBJECT_ID ?? '22222222-2222-2222-2222-222222222222',
-  clientSecret: process.env.GLOBALSTACK_AZURE_CLIENT_SECRET ?? process.env.ARM_CLIENT_SECRET ?? 'globalstack',
+  clientSecret: process.env.GLOBALSTACK_AZURE_CLIENT_SECRET ?? process.env.ARM_CLIENT_SECRET ?? process.env.AZURE_CLIENT_SECRET ?? 'globalstack',
 };
 
 function base64UrlEncodeJson(value) {

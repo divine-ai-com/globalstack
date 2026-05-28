@@ -573,7 +573,7 @@ async function runControlPlaneMatrix() {
         aksBody({ properties: { networkProfile: { networkPolicy: 'invalid-policy' } } }),
       );
       assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'InvalidParameter');
+      assert.equal(errorCode(result), 'NetworkPolicyNotSupported');
       return { status: result.status, errorCode: errorCode(result) };
     });
 

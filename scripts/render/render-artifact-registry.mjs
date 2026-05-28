@@ -432,6 +432,22 @@ const artifacts = [
     purpose: 'Captures guarded real Azure AKS validation and opt-in provisioning differentials for local parity hardening.',
   }),
   artifact({
+    path: 'scripts/capture/run-azure-differential.mjs',
+    kind: 'differential-tool',
+    owner: 'azure-conformance',
+    command: 'npm run differential:azure',
+    editPolicy: 'edit directly when adding provider-level differential scenarios or cleanup gates',
+    purpose: 'Runs reusable GlobalStack, real Azure, or side-by-side differential scenarios with mandatory real Azure cleanup verification.',
+  }),
+  artifact({
+    path: 'packages/differential/src/azure-runner.mjs',
+    kind: 'package-runtime',
+    owner: 'azure-conformance',
+    command: 'npm run differential:azure:aks',
+    editPolicy: 'package-owned runner; keep target selection, sanitization, fixture output, and cleanup semantics here',
+    purpose: 'Reusable Azure differential runner for GlobalStack-only, real Azure, and side-by-side comparison modes.',
+  }),
+  artifact({
     path: 'scripts/e2e/e2e-azure-storage*.mjs',
     kind: 'e2e-tools',
     owner: 'storage',
