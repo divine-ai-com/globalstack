@@ -280,13 +280,13 @@ export const tier1Capabilities = [
     resourceTypes: ['Microsoft.KeyVault/vaults', 'Microsoft.KeyVault/vaults/secrets'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-secret-store'],
-    implementedOperations: ['Vaults.CreateOrUpdate', 'Secrets.Set', 'Secrets.Get', 'Secrets.GetVersion', 'Secrets.ListVersions', 'Secrets.DeleteLocal'],
+    implementedOperations: ['Vaults.CreateOrUpdate', 'Secrets.Set', 'Secrets.Get', 'Secrets.GetVersion', 'Secrets.ListVersions', 'Secrets.DeleteLocal', 'Secrets.RecoverLocal', 'Secrets.PurgeLocal'],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['soft-delete conflicts', 'purge protection behavior', 'RBAC denied reads'],
     knownGaps: [
       'No full soft-delete, purge-protection, private endpoint, or audit parity in MVP.',
-      'Secret versions are local metadata until cloud validated.',
+      'Secret versions use a local version store with recoverable delete and purge smoke coverage, but still require live Azure drift capture for retention and policy edge cases.',
     ],
   },
   {

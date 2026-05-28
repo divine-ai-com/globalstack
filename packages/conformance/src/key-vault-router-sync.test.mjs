@@ -198,3 +198,65 @@ test('key vault data-plane RSA operations use the local crypto backend', async (
     await new Promise(resolve => server.close(resolve));
   }
 });
+
+test('key vault data-plane secret versions and recoverable delete use local version store', async () => {
+  const router = createKeyVaultRouter();
+  router.registerVault({
+    vaultName: 'vaultsync',
+    vaultUri: 'https://vaultsync.vault.azure.net/',
+  });
+  const server = createKeyVaultRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+
+  try {
+    const first = await httpJson(port, 'PUT', '/secrets/versioned?api-version=7.5', {
+      value: 'first',
+      tags: { slot: 'blue' },
+    });
+    assert.equal(first.status, 200);
+    const firstVersion = first.body.id.split('/').at(-1);
+
+    const second = await httpJson(port, 'PUT', '/secrets/versioned?api-version=7.5', {
+      value: 'second',
+      tags: { slot: 'green' },
+    });
+    assert.equal(second.status, 200);
+    const secondVersion = second.body.id.split('/').at(-1);
+    assert.notEqual(secondVersion, firstVersion);
+
+    const readFirst = await httpJson(port, 'GET', `/secrets/versioned/${firstVersion}?api-version=7.5`);
+    assert.equal(readFirst.status, 200);
+    assert.equal(readFirst.body.value, 'first');
+    assert.equal(readFirst.body.tags.slot, 'blue');
+
+    const versions = await httpJson(port, 'GET', '/secrets/versioned/versions?api-version=7.5');
+    assert.equal(versions.status, 200);
+    assert.deepEqual(
+      versions.body.value.map(item => item.id.split('/').at(-1)).sort(),
+      [firstVersion, secondVersion].sort(),
+    );
+
+    const deleted = await httpJson(port, 'DELETE', '/secrets/versioned?api-version=7.5');
+    assert.equal(deleted.status, 200);
+    assert.ok(deleted.body.recoveryId.endsWith('/deletedsecrets/versioned'));
+
+    const missingAfterDelete = await httpJson(port, 'GET', '/secrets/versioned?api-version=7.5');
+    assert.equal(missingAfterDelete.status, 404);
+
+    const recover = await httpJson(port, 'POST', '/deletedsecrets/versioned/recover?api-version=7.5', {});
+    assert.equal(recover.status, 200);
+    assert.equal(recover.body.value, 'second');
+
+    const recoveredFirst = await httpJson(port, 'GET', `/secrets/versioned/${firstVersion}?api-version=7.5`);
+    assert.equal(recoveredFirst.status, 200);
+    assert.equal(recoveredFirst.body.value, 'first');
+
+    const deletedAgain = await httpJson(port, 'DELETE', '/secrets/versioned?api-version=7.5');
+    assert.equal(deletedAgain.status, 200);
+    const purge = await httpJson(port, 'DELETE', '/deletedsecrets/versioned?api-version=7.5');
+    assert.equal(purge.status, 204);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+});
