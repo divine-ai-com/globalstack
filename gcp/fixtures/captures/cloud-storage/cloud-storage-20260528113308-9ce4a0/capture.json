@@ -1,0 +1,684 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "context": {
+    "project_id": "globalstack-conformance-runner",
+    "location": "europe-north2",
+    "bucket_location": "US",
+    "service": "cloud-storage",
+    "run_id": "cloud-storage-20260528113308-9ce4a0",
+    "labels": {
+      "purpose": "globalstack-conformance",
+      "owner": "globalstack",
+      "run_id": "cloud-storage-20260528113308-9ce4a0"
+    },
+    "started_at": "2026-05-28T11:33:08.596Z",
+    "resources": {
+      "bucket_name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+      "object_name": "artifacts/cloud-storage-20260528113308-9ce4a0/sample.json"
+    }
+  },
+  "cleanup": [
+    {
+      "name": "delete object artifacts/cloud-storage-20260528113308-9ce4a0/sample.json",
+      "status": "deleted"
+    },
+    {
+      "name": "delete bucket gst-capture-cloud-storage-20260528113308-9ce4a0",
+      "status": "deleted"
+    }
+  ],
+  "events": [
+    {
+      "name": "get-missing-bucket-before-create",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:09.876Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "The specified bucket does not exist.",
+              "errors": [
+                {
+                  "message": "The specified bucket does not exist.",
+                  "domain": "global",
+                  "reason": "notFound"
+                }
+              ]
+            }
+          },
+          "ended_at": "2026-05-28T11:33:10.760Z"
+        }
+      }
+    },
+    {
+      "name": "create-bucket",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://storage.googleapis.com/storage/v1/b?project=globalstack-conformance-runner",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "location": "US",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "cloud-storage-20260528113308-9ce4a0"
+            },
+            "versioning": {
+              "enabled": true
+            },
+            "iamConfiguration": {
+              "uniformBucketLevelAccess": {
+                "enabled": true
+              }
+            }
+          },
+          "started_at": "2026-05-28T11:33:11.947Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "etag": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#bucket",
+            "selfLink": "<redacted>",
+            "id": "<redacted>",
+            "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "projectNumber": "<redacted>",
+            "generation": "<redacted>",
+            "metageneration": "<redacted>",
+            "location": "US",
+            "storageClass": "STANDARD",
+            "etag": "<redacted>",
+            "timeCreated": "<redacted>",
+            "updated": "<redacted>",
+            "versioning": {
+              "enabled": true
+            },
+            "labels": {
+              "owner": "globalstack",
+              "run_id": "cloud-storage-20260528113308-9ce4a0",
+              "purpose": "globalstack-conformance"
+            },
+            "softDeletePolicy": {
+              "retentionDurationSeconds": "604800",
+              "effectiveTime": "2026-05-28T11:33:13.080Z"
+            },
+            "iamConfiguration": {
+              "bucketPolicyOnly": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "uniformBucketLevelAccess": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "publicAccessPrevention": "inherited"
+            },
+            "locationType": "multi-region",
+            "rpo": "DEFAULT"
+          },
+          "ended_at": "2026-05-28T11:33:13.269Z"
+        }
+      }
+    },
+    {
+      "name": "insert-object",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://storage.googleapis.com/upload/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0/o?uploadType=media&name=artifacts%2Fcloud-storage-20260528113308-9ce4a0%2Fsample.json",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "content-type": "application/json",
+            "authorization": "<redacted>"
+          },
+          "body": {
+            "run_id": "cloud-storage-20260528113308-9ce4a0",
+            "purpose": "globalstack gcp storage capture",
+            "created_at": "2026-05-28T11:33:13.269Z"
+          },
+          "started_at": "2026-05-28T11:33:14.380Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "etag": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#object",
+            "id": "<redacted>",
+            "selfLink": "<redacted>",
+            "mediaLink": "<redacted>",
+            "name": "artifacts/cloud-storage-20260528113308-9ce4a0/sample.json",
+            "bucket": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "generation": "<redacted>",
+            "metageneration": "<redacted>",
+            "contentType": "application/json",
+            "storageClass": "STANDARD",
+            "size": "132",
+            "md5Hash": "<redacted>",
+            "crc32c": "<redacted>",
+            "etag": "<redacted>",
+            "timeCreated": "<redacted>",
+            "updated": "<redacted>",
+            "timeStorageClassUpdated": "<redacted>",
+            "timeFinalized": "<redacted>"
+          },
+          "ended_at": "2026-05-28T11:33:14.834Z"
+        }
+      }
+    },
+    {
+      "name": "get-bucket-after-create",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:16.170Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "private, max-age=0, must-revalidate, no-transform",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "etag": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#bucket",
+            "selfLink": "<redacted>",
+            "id": "<redacted>",
+            "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "projectNumber": "<redacted>",
+            "generation": "<redacted>",
+            "metageneration": "<redacted>",
+            "location": "US",
+            "storageClass": "STANDARD",
+            "etag": "<redacted>",
+            "timeCreated": "<redacted>",
+            "updated": "<redacted>",
+            "versioning": {
+              "enabled": true
+            },
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "cloud-storage-20260528113308-9ce4a0",
+              "owner": "globalstack"
+            },
+            "softDeletePolicy": {
+              "retentionDurationSeconds": "604800",
+              "effectiveTime": "2026-05-28T11:33:13.080Z"
+            },
+            "iamConfiguration": {
+              "bucketPolicyOnly": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "uniformBucketLevelAccess": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "publicAccessPrevention": "inherited"
+            },
+            "locationType": "multi-region",
+            "rpo": "DEFAULT"
+          },
+          "ended_at": "2026-05-28T11:33:17.247Z"
+        }
+      }
+    },
+    {
+      "name": "list-buckets-after-create",
+      "metadata": {
+        "expected_status": 200,
+        "expected_bucket_name": "gst-capture-cloud-storage-20260528113308-9ce4a0"
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b?project=globalstack-conformance-runner&projection=full",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:18.345Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "private, max-age=0, must-revalidate, no-transform",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#buckets",
+            "items": [
+              {
+                "kind": "storage#bucket",
+                "selfLink": "<redacted>",
+                "id": "<redacted>",
+                "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+                "projectNumber": "<redacted>",
+                "generation": "<redacted>",
+                "metageneration": "<redacted>",
+                "location": "US",
+                "storageClass": "STANDARD",
+                "etag": "<redacted>",
+                "timeCreated": "<redacted>",
+                "updated": "<redacted>",
+                "versioning": {
+                  "enabled": true
+                },
+                "labels": {
+                  "owner": "globalstack",
+                  "purpose": "globalstack-conformance",
+                  "run_id": "cloud-storage-20260528113308-9ce4a0"
+                },
+                "softDeletePolicy": {
+                  "retentionDurationSeconds": "604800",
+                  "effectiveTime": "2026-05-28T11:33:13.080Z"
+                },
+                "iamConfiguration": {
+                  "bucketPolicyOnly": {
+                    "enabled": true,
+                    "lockedTime": "2026-08-26T11:33:13.080Z"
+                  },
+                  "uniformBucketLevelAccess": {
+                    "enabled": true,
+                    "lockedTime": "2026-08-26T11:33:13.080Z"
+                  },
+                  "publicAccessPrevention": "inherited"
+                },
+                "locationType": "multi-region",
+                "rpo": "DEFAULT"
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T11:33:19.059Z"
+        }
+      }
+    },
+    {
+      "name": "get-object-after-insert",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0/o/artifacts%2Fcloud-storage-20260528113308-9ce4a0%2Fsample.json",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:20.214Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "private, max-age=0, must-revalidate, no-transform",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "etag": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#object",
+            "id": "<redacted>",
+            "selfLink": "<redacted>",
+            "mediaLink": "<redacted>",
+            "name": "artifacts/cloud-storage-20260528113308-9ce4a0/sample.json",
+            "bucket": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "generation": "<redacted>",
+            "metageneration": "<redacted>",
+            "contentType": "application/json",
+            "storageClass": "STANDARD",
+            "size": "132",
+            "md5Hash": "<redacted>",
+            "crc32c": "<redacted>",
+            "etag": "<redacted>",
+            "timeCreated": "<redacted>",
+            "updated": "<redacted>",
+            "timeStorageClassUpdated": "<redacted>",
+            "timeFinalized": "<redacted>"
+          },
+          "ended_at": "2026-05-28T11:33:20.534Z"
+        }
+      }
+    },
+    {
+      "name": "list-objects-after-insert",
+      "metadata": {
+        "expected_status": 200,
+        "expected_object_name": "artifacts/cloud-storage-20260528113308-9ce4a0/sample.json"
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0/o",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:21.815Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "private, max-age=0, must-revalidate, no-transform",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#objects",
+            "items": [
+              {
+                "kind": "storage#object",
+                "id": "<redacted>",
+                "selfLink": "<redacted>",
+                "mediaLink": "<redacted>",
+                "name": "artifacts/cloud-storage-20260528113308-9ce4a0/sample.json",
+                "bucket": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+                "generation": "<redacted>",
+                "metageneration": "<redacted>",
+                "contentType": "application/json",
+                "storageClass": "STANDARD",
+                "size": "132",
+                "md5Hash": "<redacted>",
+                "crc32c": "<redacted>",
+                "etag": "<redacted>",
+                "timeCreated": "<redacted>",
+                "updated": "<redacted>",
+                "timeStorageClassUpdated": "<redacted>",
+                "timeFinalized": "<redacted>"
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T11:33:22.775Z"
+        }
+      }
+    },
+    {
+      "name": "create-duplicate-bucket-error",
+      "metadata": {
+        "expected_status": 409
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://storage.googleapis.com/storage/v1/b?project=globalstack-conformance-runner",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "location": "US",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "cloud-storage-20260528113308-9ce4a0"
+            },
+            "versioning": {
+              "enabled": true
+            },
+            "iamConfiguration": {
+              "uniformBucketLevelAccess": {
+                "enabled": true
+              }
+            }
+          },
+          "started_at": "2026-05-28T11:33:24.075Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 409,
+          "status_text": "Conflict",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "error": {
+              "code": 409,
+              "message": "Your previous request to create the named bucket succeeded and you already own it.",
+              "errors": [
+                {
+                  "message": "Your previous request to create the named bucket succeeded and you already own it.",
+                  "domain": "global",
+                  "reason": "conflict"
+                }
+              ]
+            }
+          },
+          "ended_at": "2026-05-28T11:33:24.905Z"
+        }
+      }
+    },
+    {
+      "name": "patch-bucket-labels",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PATCH",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "cloud-storage-20260528113308-9ce4a0",
+              "capture_stage": "patched"
+            }
+          },
+          "started_at": "2026-05-28T11:33:26.088Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "etag": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "kind": "storage#bucket",
+            "selfLink": "<redacted>",
+            "id": "<redacted>",
+            "name": "gst-capture-cloud-storage-20260528113308-9ce4a0",
+            "projectNumber": "<redacted>",
+            "generation": "<redacted>",
+            "metageneration": "<redacted>",
+            "location": "US",
+            "storageClass": "STANDARD",
+            "etag": "<redacted>",
+            "timeCreated": "<redacted>",
+            "updated": "<redacted>",
+            "versioning": {
+              "enabled": true
+            },
+            "labels": {
+              "capture_stage": "patched",
+              "owner": "globalstack",
+              "purpose": "globalstack-conformance",
+              "run_id": "cloud-storage-20260528113308-9ce4a0"
+            },
+            "softDeletePolicy": {
+              "retentionDurationSeconds": "604800",
+              "effectiveTime": "2026-05-28T11:33:13.080Z"
+            },
+            "iamConfiguration": {
+              "bucketPolicyOnly": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "uniformBucketLevelAccess": {
+                "enabled": true,
+                "lockedTime": "2026-08-26T11:33:13.080Z"
+              },
+              "publicAccessPrevention": "inherited"
+            },
+            "locationType": "multi-region",
+            "rpo": "DEFAULT"
+          },
+          "ended_at": "2026-05-28T11:33:26.683Z"
+        }
+      }
+    },
+    {
+      "name": "get-bucket-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://storage.googleapis.com/storage/v1/b/gst-capture-cloud-storage-20260528113308-9ce4a0",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T11:33:35.482Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "UploadServer",
+            "vary": "Origin, X-Origin",
+            "x-guploader-uploadid": "<redacted>"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "The specified bucket does not exist.",
+              "errors": [
+                {
+                  "message": "The specified bucket does not exist.",
+                  "domain": "global",
+                  "reason": "notFound"
+                }
+              ]
+            }
+          },
+          "ended_at": "2026-05-28T11:33:36.133Z"
+        }
+      }
+    }
+  ],
+  "written_at": "2026-05-28T11:33:36.134Z"
+}

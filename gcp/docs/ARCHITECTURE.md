@@ -13,7 +13,9 @@ gcp/
     server/              HTTP/gRPC server lifecycle
     router/              Google API host/path dispatch
     auth/                ADC and token handling
+    conformance/         Capture, cleanup, sanitizer, run context
     errors/              Google-shaped error envelopes
+    google/              Google REST clients and service API wrappers
     operations/          Long-running operation state
     project-registry/    Project, service, and resource registry
     orchestrator/        Lazy local engine lifecycle
@@ -32,7 +34,9 @@ gcp/
 Each service module must own its runtime contract:
 
 - `service`: route registration and service lifecycle
+- `google-api`: real-GCP client wrapper used by capture and differential tests
 - `store`: local state, if the service needs state
+- `engine`: local runtime or official emulator lifecycle, when applicable
 - `errors`: service-specific Google error shapes
 - tests: unit, local conformance, and runtime E2E as support deepens
 
@@ -69,6 +73,10 @@ The first bucket is declared but not implemented:
 
 Every one currently has support class `unsupported`. The declaration only
 records the intended real-engine strategy.
+
+Cloud Storage is the first service template. Its service-owned files live under
+`gcp/src/services/storage/`, and its first real-GCP capture is documented in
+`gcp/docs/services/cloud-storage.md`.
 
 ## Promotion Rule
 

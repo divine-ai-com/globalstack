@@ -72,7 +72,14 @@ Exit criteria:
 - ADC token lookup works without printing tokens
 - a cleanup sweeper can list and remove stale resources for the first service
   group
+- Cloud Storage baseline capture runs with cleanup in `finally`
 - no Azure source paths are touched by GCP setup
+
+Status:
+
+- complete for ADC validation, Cloud Storage capture, and Cloud Storage cleanup
+  sweep
+- next service capture targets still need to be added
 
 ## Phase 1: GCP Foundation Layer
 
@@ -141,6 +148,12 @@ Exit criteria:
 - auth failures and permission failures match captured GCP shape
 - destroy is complete and verified
 - every service has support class at least `bounded-runtime`
+
+Current first service evidence:
+
+- Cloud Storage real-GCP capture is saved under
+  `gcp/fixtures/captures/cloud-storage/cloud-storage-20260528113308-9ce4a0/capture.json`
+- service note is saved under `gcp/docs/services/cloud-storage.md`
 
 ## Phase 3: Compute And Container Runtime
 

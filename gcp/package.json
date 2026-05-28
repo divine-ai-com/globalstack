@@ -6,11 +6,12 @@
   "type": "module",
   "scripts": {
     "check": "node scripts/check-credentials.mjs --adc",
+    "capture:storage": "node scripts/capture/storage-baseline.mjs",
     "coverage": "node scripts/fetch-coverage.mjs",
     "start": "node src/cli/globalstack-gcp.mjs",
     "sweep": "node scripts/cleanup/sweep-real-gcp.mjs",
     "test": "node --test tests/**/*.test.mjs",
-    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --test tests/**/*.test.mjs"
+    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --check scripts/capture/storage-baseline.mjs && node --test tests/**/*.test.mjs"
   },
   "engines": {
     "node": ">=20.20.0"

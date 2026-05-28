@@ -12,6 +12,8 @@ Current contents:
 - `scripts/fetch-coverage.mjs` builds the GCP emulator landscape snapshot.
 - `scripts/check-credentials.mjs` validates ADC or service-account credentials
   without printing private key or token material.
+- `scripts/capture/storage-baseline.mjs` captures real Cloud Storage baseline
+  behavior with cleanup-first execution.
 - `scripts/cleanup/sweep-real-gcp.mjs` performs dry-run cleanup discovery for
   real-GCP conformance resources through ADC-backed REST calls.
 - `docs/emulators/coverage.json` records broad Google Cloud catalog coverage,
@@ -66,6 +68,9 @@ print the token in logs.
 
 All real-GCP scripts must create resources with a unique run id, clean up in a
 `finally` path, and verify that no billable resources remain.
+
+The first successful Cloud Storage baseline capture is documented at
+`gcp/docs/services/cloud-storage.md`.
 
 ## Local Validation
 
