@@ -21,9 +21,14 @@ test('first GCP service bucket is explicit about supported and unsupported claim
   assert.equal(countsTowardSeriousParity(firestore.supportClass), true);
   assert.match(firestore.supportClaim, /Official Google Firestore emulator-backed runtime/);
 
+  const secretManager = services.find(service => service.key === 'secret-manager');
+  assert.equal(secretManager.supportClass, supportClasses.boundedRuntime);
+  assert.equal(countsTowardSeriousParity(secretManager.supportClass), false);
+  assert.match(secretManager.supportClaim, /Bounded executable local Secret Manager runtime/);
+
   for (const service of services) {
     assert.match(service.engineStrategy, /\S/);
-    if (['cloud-storage', 'pub-sub', 'firestore'].includes(service.key)) continue;
+    if (['cloud-storage', 'pub-sub', 'firestore', 'secret-manager'].includes(service.key)) continue;
     assert.equal(service.supportClass, supportClasses.unsupported);
     assert.equal(countsTowardSeriousParity(service.supportClass), false);
     assert.match(service.supportClaim, /Not implemented/);

@@ -1,9 +1,13 @@
-import { createUnsupportedService } from '../unsupported-service.mjs';
+import { createSecretManagerRoutes } from './routes.mjs';
+import { SecretManagerStore } from './store.mjs';
 
-export function createService() {
-  return createUnsupportedService({
+export function createService({ store = new SecretManagerStore() } = {}) {
+  return {
     key: 'secret-manager',
     name: 'Secret Manager',
     engineStrategy: 'executable versioned local secret store',
-  });
+    routes() {
+      return createSecretManagerRoutes({ store });
+    },
+  };
 }

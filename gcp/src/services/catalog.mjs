@@ -41,6 +41,8 @@ const firstBucket = [
     category: 'security',
     engineStrategy: 'executable versioned local secret store',
     serviceModule: './secret-manager/service.mjs',
+    supportClass: supportClasses.boundedRuntime,
+    supportClaim: 'Bounded executable local Secret Manager runtime for secret CRUD, version add/access/destroy, latest alias, and Google-shaped errors. Real-GCP differential and IaC gates are still pending.',
   },
   {
     key: 'cloud-key-management',
