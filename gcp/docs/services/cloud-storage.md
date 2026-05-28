@@ -57,5 +57,11 @@ Current validation:
 Remaining promotion gates:
 
 - Terraform Google provider create/read/update/destroy lifecycle
-- Pulumi Google Native lifecycle
+- Pulumi provider create/read/update/destroy lifecycle
+- OpenTofu provider create/read/update/destroy lifecycle
+- Config Connector and Crossplane lifecycle if Kubernetes-native Storage
+  support is claimed
+- `gcloud` and SDK direct lifecycle checks
 - broader auth, IAM, object upload mode, and error-shape captures
+
+The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.

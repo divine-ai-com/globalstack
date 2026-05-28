@@ -48,6 +48,10 @@ must use one of these real substrates:
   store
 - bounded executable runtime with documented limits
 
+IaC tools are not separate implementation targets. They are conformance clients
+of the same API surface. The tool matrix and promotion gates are defined in
+`gcp/docs/IAC-CONFORMANCE.md`.
+
 ## Foundation
 
 The foundation layer is intentionally provider-generic for GCP:

@@ -9,6 +9,8 @@ Current contents:
   and promotion criteria.
 - `docs/ARCHITECTURE.md` defines the isolated GCP workspace architecture and
   service contract.
+- `docs/IAC-CONFORMANCE.md` defines the IaC tool matrix and service promotion
+  gates.
 - `scripts/fetch-coverage.mjs` builds the GCP emulator landscape snapshot.
 - `scripts/check-credentials.mjs` validates ADC or service-account credentials
   without printing private key or token material.

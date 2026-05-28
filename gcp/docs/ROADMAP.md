@@ -20,6 +20,7 @@ The current GCP emulator landscape snapshot is:
 Source:
 
 - `gcp/docs/emulators/coverage.json`
+- `gcp/docs/IAC-CONFORMANCE.md`
 
 ## Non-Negotiables
 
@@ -34,6 +35,10 @@ Source:
 - Every real-GCP capture must clean up in a `finally` path and verify cleanup.
 - Every billable resource must use a unique run id and cleanup labels where GCP
   supports labels.
+- IaC clients must be treated as clients of one Google-shaped API surface, not
+  as separate mocked paths.
+- Terraform, Pulumi, OpenTofu, Config Connector, Crossplane, `gcloud`, and SDK
+  failures are product gaps when the same scenario succeeds on real GCP.
 - Any support claim must state the support class:
   `unsupported`, `control-plane-only`, `bounded-runtime`,
   `official-emulator-backed`, `real-engine-backed`, or
@@ -109,6 +114,9 @@ Engine strategy:
 IaC target:
 
 - Terraform Google provider first
+- Pulumi, OpenTofu, Config Connector, Crossplane, `gcloud`, and SDKs follow the
+  same API surface; the required matrix is tracked in
+  `gcp/docs/IAC-CONFORMANCE.md`
 
 Exit criteria:
 
