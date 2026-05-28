@@ -62,13 +62,14 @@ Current validation:
 - Pulumi `3.243.0` with Pulumi GCP provider `9.24.0` passes
   login/stack init/up/message-flow/no-drift preview/destroy against the
   official emulator
+- Google Cloud SDK `570.0.0` passes `gcloud pubsub` topic create, subscription
+  create, publish, pull with auto-ack, subscription delete, and topic delete
+  against the official emulator through `api_endpoint_overrides/pubsub`
 - the runner uses a temporary emulator data directory and removes it after each
   run
 
 Remaining promotion gates:
 
-- `gcloud pubsub` or a documented adapter path if Cloud SDK only supports REST
-  endpoint overrides for that command group
 - Config Connector and Crossplane lifecycle if Kubernetes-native Pub/Sub
   support is claimed
 - broader real-GCP differential captures for IAM, ordering keys, dead-letter

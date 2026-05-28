@@ -196,6 +196,8 @@ Current first service evidence:
   `gcp/templates/pulumi/pubsub/`
 - Pub/Sub Pulumi lifecycle runner is saved under
   `gcp/scripts/e2e/pulumi-pubsub.mjs`
+- Pub/Sub `gcloud` lifecycle runner is saved under
+  `gcp/scripts/e2e/gcloud-pubsub.mjs`
 - Pub/Sub real-GCP capture is saved under
   `gcp/fixtures/captures/pubsub/pubsub-20260528181924-0681af/capture.json`
 - Pub/Sub capture runner is saved under `gcp/scripts/capture/pubsub-baseline.mjs`
