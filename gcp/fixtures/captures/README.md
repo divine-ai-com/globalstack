@@ -19,3 +19,4 @@ Current captures:
 - `pubsub/pubsub-advanced-20260528183303-0e0494/capture.json`
 - `pubsub/pubsub-errors-20260528183941-57ee3e/capture.json`
 - `pubsub/pubsub-schema-20260528185046-acfa7d/capture.json`
+- `pubsub/pubsub-seek-20260528185442-6edd4c/capture.json`

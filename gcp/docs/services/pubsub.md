@@ -28,6 +28,10 @@ Schema capture:
 
 - `gcp/fixtures/captures/pubsub/pubsub-schema-20260528185046-acfa7d/capture.json`
 
+Seek redelivery capture:
+
+- `gcp/fixtures/captures/pubsub/pubsub-seek-20260528185442-6edd4c/capture.json`
+
 Covered real-GCP operations:
 
 - get missing topic before create
@@ -85,6 +89,19 @@ Covered real-GCP schema operations:
 - delete schema-backed topic and schema
 - verify topic and schema are gone after cleanup
 
+Covered real-GCP seek redelivery operations:
+
+- create topic and retain-acked subscription
+- publish message
+- pull message before snapshot
+- create snapshot while the message is outstanding
+- acknowledge original delivery
+- seek subscription back to snapshot
+- pull the message again after seek
+- acknowledge redelivery
+- delete snapshot, subscription, and topic
+- verify snapshot, subscription, and topic are gone after cleanup
+
 Cleanup result:
 
 - subscription deleted
@@ -96,6 +113,9 @@ Cleanup result:
 - error-shape topic deleted
 - schema-backed topic deleted
 - schema deleted
+- seek snapshot deleted
+- seek subscription deleted
+- seek topic deleted
 
 ## Runtime Evidence
 
@@ -134,6 +154,8 @@ Current validation:
 - schema replay passes captured schema validation, schema-backed topic publish,
   invalid message rejection, invalid publish rejection, and cleanup reads against
   the official emulator
+- seek redelivery replay passes captured snapshot-before-ack, seek, redelivery,
+  and cleanup behavior against the official emulator
 - push subscription runtime passes against the official emulator by delivering a
   published message to a real local HTTP server and verifying subscription
   identity, message attributes, and decoded payload
@@ -151,7 +173,7 @@ Remaining promotion gates:
 - real dead-letter redrive semantics, including IAM/service-agent setup for real
   GCP capture and a local runtime extension if the official emulator remains
   incomplete
-- broader real-GCP differential captures for IAM, push subscription delivery
-  through a disposable HTTPS endpoint, and richer seek redelivery semantics
+- broader real-GCP differential captures for IAM and push subscription delivery
+  through a disposable HTTPS endpoint
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.

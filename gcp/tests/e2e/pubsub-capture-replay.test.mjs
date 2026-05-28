@@ -409,6 +409,91 @@ test('Pub/Sub official emulator replays captured schema validation and publish s
   }
 });
 
+test('Pub/Sub official emulator replays captured seek snapshot redelivery semantics', async () => {
+  const capture = await readLatestCapture(capture => capture.context.scenario === 'seek-redelivery');
+  const expected = new Map(capture.events.map(event => [event.name, event.exchange?.response]));
+  const emulator = await startPubSubEmulator();
+  const pubsub = new PubSubApi(new GoogleRestClient({
+    tokenProvider: async () => 'local-test-token',
+  }), {
+    pubsubRoot: `http://${emulator.endpoint}/v1`,
+  });
+
+  try {
+    const { project_id: projectId, labels, resources } = capture.context;
+    const topicName = resources.topic_name;
+    const subscriptionName = resources.subscription_name;
+    const snapshotName = resources.snapshot_name;
+
+    assert.equal((await pubsub.createTopic({ projectId, topicName, labels })).response.status, expected.get('create-topic').status);
+    assert.equal((await pubsub.createSubscription({
+      projectId,
+      subscriptionName,
+      topicName,
+      labels,
+      body: {
+        ackDeadlineSeconds: 20,
+        retainAckedMessages: true,
+      },
+    })).response.status, expected.get('create-subscription').status);
+    assert.equal((await pubsub.publish({
+      projectId,
+      topicName,
+      messages: [{
+        data: {
+          run_id: capture.context.run_id,
+          route: 'seek-redelivery',
+        },
+        attributes: {
+          run_id: capture.context.run_id,
+        },
+      }],
+    })).response.status, expected.get('publish-message').status);
+
+    const firstPull = await pollForMessage(pubsub, { projectId, subscriptionName });
+    assert.equal(firstPull.response.status, expected.get('pull-before-snapshot').status);
+    const firstMessage = firstPull.response.body.receivedMessages[0];
+    assert.equal(decodePubSubMessageData(firstMessage.message).run_id, capture.context.run_id);
+
+    assert.equal((await pubsub.createSnapshot({
+      projectId,
+      snapshotName,
+      subscriptionName,
+      labels,
+    })).response.status, expected.get('create-snapshot-before-ack').status);
+    assert.equal((await pubsub.acknowledge({
+      projectId,
+      subscriptionName,
+      ackIds: [firstMessage.ackId],
+    })).response.status, expected.get('acknowledge-original-delivery').status);
+    assert.equal((await pubsub.seekToSnapshot({
+      projectId,
+      subscriptionName,
+      snapshotName,
+    })).response.status, expected.get('seek-to-snapshot').status);
+
+    const redeliveryPull = await pollForMessage(pubsub, { projectId, subscriptionName });
+    assert.equal(redeliveryPull.response.status, expected.get('pull-after-seek-redelivery').status);
+    const redeliveredMessage = redeliveryPull.response.body.receivedMessages[0];
+    assert.equal(decodePubSubMessageData(redeliveredMessage.message).run_id, capture.context.run_id);
+    assert.equal(redeliveredMessage.message.attributes.run_id, capture.context.run_id);
+    assert.equal((await pubsub.acknowledge({
+      projectId,
+      subscriptionName,
+      ackIds: [redeliveredMessage.ackId],
+    })).response.status, expected.get('acknowledge-redelivery').status);
+
+    assert.ok([200, 204].includes((await pubsub.deleteSnapshot({ projectId, snapshotName })).response.status));
+    assert.ok([200, 204].includes((await pubsub.deleteSubscription({ projectId, subscriptionName })).response.status));
+    assert.ok([200, 204].includes((await pubsub.deleteTopic({ projectId, topicName })).response.status));
+    assertErrorLike(await pubsub.getSnapshot({ projectId, snapshotName }), expected.get('get-snapshot-after-cleanup'));
+    assertErrorLike(await pubsub.getSubscription({ projectId, subscriptionName }), expected.get('get-subscription-after-cleanup'));
+    assertErrorLike(await pubsub.getTopic({ projectId, topicName }), expected.get('get-topic-after-cleanup'));
+  } finally {
+    await emulator.stop();
+  }
+});
+
 async function readLatestCapture(predicate) {
   const directories = await readdir(capturesRoot, { withFileTypes: true });
   const captures = await Promise.all(directories
@@ -422,6 +507,17 @@ async function readLatestCapture(predicate) {
   const matchingCaptures = captures.filter(predicate);
   assert.ok(matchingCaptures.length > 0, 'No matching Pub/Sub capture fixtures found');
   return matchingCaptures[matchingCaptures.length - 1];
+}
+
+async function pollForMessage(pubsub, { projectId, subscriptionName, attempts = 10 }) {
+  let latest = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    latest = await pubsub.pull({ projectId, subscriptionName, maxMessages: 1 });
+    assert.equal(latest.response.status, 200);
+    if (latest.response.body.receivedMessages?.length) return latest;
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+  throw new Error(`No Pub/Sub message received from ${subscriptionName}; latest=${JSON.stringify(latest?.response.body)}`);
 }
 
 function assertErrorLike(actualExchange, expectedResponse) {

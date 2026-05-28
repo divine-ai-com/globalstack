@@ -1,0 +1,556 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "context": {
+    "project_id": "globalstack-conformance-runner",
+    "location": "europe-north2",
+    "bucket_location": "US",
+    "service": "pubsub-seek",
+    "run_id": "pubsub-seek-20260528185442-6edd4c",
+    "labels": {
+      "purpose": "globalstack-conformance",
+      "owner": "globalstack",
+      "run_id": "pubsub-seek-20260528185442-6edd4c"
+    },
+    "started_at": "2026-05-28T18:54:42.989Z",
+    "scenario": "seek-redelivery",
+    "resources": {
+      "topic_name": "gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+      "subscription_name": "gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+      "snapshot_name": "gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c"
+    }
+  },
+  "cleanup": [
+    {
+      "name": "delete snapshot gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c",
+      "status": "deleted"
+    },
+    {
+      "name": "delete subscription gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+      "status": "deleted"
+    },
+    {
+      "name": "delete topic gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+      "status": "deleted"
+    }
+  ],
+  "events": [
+    {
+      "name": "create-topic",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-seek-20260528185442-6edd4c"
+            }
+          },
+          "started_at": "2026-05-28T18:54:44.377Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-seek-20260528185442-6edd4c"
+            }
+          },
+          "ended_at": "2026-05-28T18:54:48.887Z"
+        }
+      }
+    },
+    {
+      "name": "create-subscription",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-seek-20260528185442-6edd4c"
+            },
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s",
+            "retainAckedMessages": true
+          },
+          "started_at": "2026-05-28T18:54:50.186Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+            "pushConfig": {},
+            "ackDeadlineSeconds": 20,
+            "retainAckedMessages": true,
+            "messageRetentionDuration": "604800s",
+            "labels": {
+              "run_id": "pubsub-seek-20260528185442-6edd4c",
+              "owner": "globalstack",
+              "purpose": "globalstack-conformance"
+            },
+            "expirationPolicy": {
+              "ttl": "2678400s"
+            },
+            "state": "ACTIVE"
+          },
+          "ended_at": "2026-05-28T18:55:02.628Z"
+        }
+      }
+    },
+    {
+      "name": "publish-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c:publish",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "messages": [
+              {
+                "data": "eyJydW5faWQiOiJwdWJzdWItc2Vlay0yMDI2MDUyODE4NTQ0Mi02ZWRkNGMiLCJyb3V0ZSI6InNlZWstcmVkZWxpdmVyeSJ9",
+                "attributes": {
+                  "run_id": "pubsub-seek-20260528185442-6edd4c"
+                }
+              }
+            ]
+          },
+          "started_at": "2026-05-28T18:55:03.683Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "messageIds": "<redacted>"
+          },
+          "ended_at": "2026-05-28T18:55:03.785Z"
+        }
+      }
+    },
+    {
+      "name": "pull-before-snapshot",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c:pull",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "maxMessages": 1
+          },
+          "started_at": "2026-05-28T18:55:04.943Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "receivedMessages": [
+              {
+                "ackId": "<redacted>",
+                "message": {
+                  "data": "eyJydW5faWQiOiJwdWJzdWItc2Vlay0yMDI2MDUyODE4NTQ0Mi02ZWRkNGMiLCJyb3V0ZSI6InNlZWstcmVkZWxpdmVyeSJ9",
+                  "attributes": {
+                    "run_id": "pubsub-seek-20260528185442-6edd4c"
+                  },
+                  "messageId": "<redacted>",
+                  "publishTime": "<redacted>"
+                }
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T18:55:08.144Z"
+        }
+      }
+    },
+    {
+      "name": "create-snapshot-before-ack",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/snapshots/gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "subscription": "projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-seek-20260528185442-6edd4c"
+            }
+          },
+          "started_at": "2026-05-28T18:55:09.227Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/snapshots/gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c",
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+            "expireTime": "<redacted>",
+            "labels": {
+              "run_id": "pubsub-seek-20260528185442-6edd4c",
+              "owner": "globalstack",
+              "purpose": "globalstack-conformance"
+            }
+          },
+          "ended_at": "2026-05-28T18:55:20.832Z"
+        }
+      }
+    },
+    {
+      "name": "acknowledge-original-delivery",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c:acknowledge",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "ackIds": "<redacted>"
+          },
+          "started_at": "2026-05-28T18:55:21.979Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:55:22.076Z"
+        }
+      }
+    },
+    {
+      "name": "seek-to-snapshot",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c:seek",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "snapshot": "projects/globalstack-conformance-runner/snapshots/gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c"
+          },
+          "started_at": "2026-05-28T18:55:23.260Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:55:29.022Z"
+        }
+      }
+    },
+    {
+      "name": "pull-after-seek-redelivery",
+      "metadata": {
+        "expected_status": 200,
+        "expected_redelivery": true
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c:pull",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "maxMessages": 1
+          },
+          "started_at": "2026-05-28T18:55:30.429Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "receivedMessages": [
+              {
+                "ackId": "<redacted>",
+                "message": {
+                  "data": "eyJydW5faWQiOiJwdWJzdWItc2Vlay0yMDI2MDUyODE4NTQ0Mi02ZWRkNGMiLCJyb3V0ZSI6InNlZWstcmVkZWxpdmVyeSJ9",
+                  "attributes": {
+                    "run_id": "pubsub-seek-20260528185442-6edd4c"
+                  },
+                  "messageId": "<redacted>",
+                  "publishTime": "<redacted>"
+                }
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T18:55:38.781Z"
+        }
+      }
+    },
+    {
+      "name": "acknowledge-redelivery",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c:acknowledge",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "ackIds": "<redacted>"
+          },
+          "started_at": "2026-05-28T18:55:39.919Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:55:39.993Z"
+        }
+      }
+    },
+    {
+      "name": "get-snapshot-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/snapshots/gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:56:05.963Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-seek-snap-pubsub-seek-20260528185442-6edd4c).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:56:06.306Z"
+        }
+      }
+    },
+    {
+      "name": "get-subscription-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:56:07.375Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-seek-sub-pubsub-seek-20260528185442-6edd4c).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:56:07.960Z"
+        }
+      }
+    },
+    {
+      "name": "get-topic-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:56:09.041Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-seek-topic-pubsub-seek-20260528185442-6edd4c).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:56:09.649Z"
+        }
+      }
+    }
+  ],
+  "written_at": "2026-05-28T18:56:09.649Z"
+}

@@ -215,6 +215,10 @@ Current first service evidence:
   `gcp/fixtures/captures/pubsub/pubsub-schema-20260528185046-acfa7d/capture.json`
 - Pub/Sub schema capture runner is saved under
   `gcp/scripts/capture/pubsub-schema-baseline.mjs`
+- Pub/Sub seek-redelivery real-GCP capture is saved under
+  `gcp/fixtures/captures/pubsub/pubsub-seek-20260528185442-6edd4c/capture.json`
+- Pub/Sub seek-redelivery capture runner is saved under
+  `gcp/scripts/capture/pubsub-seek-redelivery-baseline.mjs`
 - Pub/Sub local replay test is saved under
   `gcp/tests/e2e/pubsub-capture-replay.test.mjs`
 - Pub/Sub local push subscription runtime test is saved under
