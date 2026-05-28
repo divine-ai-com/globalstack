@@ -32,6 +32,10 @@ terraform apply \
 terraform destroy
 ```
 
-The current workspace does not have `terraform` or `tofu` installed, so this
-template is committed as the next provider-handshake target rather than a passed
-gate.
+The repeatable local runners are:
+
+```bash
+cd gcp
+npm run e2e:terraform:storage
+npm run e2e:opentofu:storage
+```

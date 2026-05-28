@@ -170,6 +170,8 @@ Current first service evidence:
   `gcp/templates/terraform/cloud-storage/`
 - Terraform lifecycle runner is saved under
   `gcp/scripts/e2e/terraform-cloud-storage.mjs`
+- OpenTofu lifecycle runner is saved under
+  `gcp/scripts/e2e/opentofu-cloud-storage.mjs`
 - Pulumi lifecycle template is saved under `gcp/templates/pulumi/cloud-storage/`
 - Pulumi lifecycle runner is saved under
   `gcp/scripts/e2e/pulumi-cloud-storage.mjs`

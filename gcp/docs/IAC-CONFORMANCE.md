@@ -65,7 +65,7 @@ be captured as a service gap and fixed in the emulator.
 
 | Service | Real-GCP Capture | Local Replay | Terraform | Pulumi | OpenTofu | Config Connector | Crossplane | `gcloud` | SDK |
 |---|---|---|---|---|---|---|---|---|---|
-| Cloud Storage | passed | passed | passed with Terraform 1.15.5 and Google provider 5.45.2 | passed with Pulumi 3.243.0 and Pulumi GCP provider 9.24.0 | pending | pending | pending | pending | pending |
+| Cloud Storage | passed | passed | passed with Terraform 1.15.5 and Google provider 5.45.2 | passed with Pulumi 3.243.0 and Pulumi GCP provider 9.24.0 | passed with OpenTofu 1.12.1 and Google provider 5.45.2 | pending | pending | pending | pending |
 | Pub/Sub | pending | pending | pending | pending | pending | pending | pending | pending | pending |
 | Firestore | pending | pending | pending | pending | pending | pending | pending | pending | pending |
 | Datastore mode | pending | pending | pending | pending | pending | pending | pending | pending | pending |

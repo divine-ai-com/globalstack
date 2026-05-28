@@ -6,9 +6,8 @@ Support class: `bounded-runtime`
 
 GlobalStack GCP now has a bounded local Cloud Storage runtime for the captured
 JSON API bucket/object lifecycle. It is not marked `real-engine-backed` or
-`differentially-validated` yet because OpenTofu, Kubernetes-control-plane,
-`gcloud`, SDK, broader auth, and broader data-plane lifecycle gates are still
-pending.
+`differentially-validated` yet because Kubernetes-control-plane, `gcloud`, SDK,
+broader auth, and broader data-plane lifecycle gates are still pending.
 
 ## Capture Evidence
 
@@ -56,6 +55,8 @@ Current validation:
   local endpoint
 - Terraform CLI `1.15.5` with Google provider `5.45.2` passed in the local
   runner
+- OpenTofu `1.12.1` with Google provider `5.45.2` passes
+  init/apply/no-drift plan/destroy against the same Terraform-family template
 - Pulumi `3.243.0` with Pulumi GCP provider `9.24.0` passes
   login/stack init/up/no-drift preview/destroy against the local endpoint
 - bucket/object side effects are backed by local filesystem state
@@ -63,7 +64,6 @@ Current validation:
 
 Remaining promotion gates:
 
-- OpenTofu provider create/read/update/destroy lifecycle
 - Config Connector and Crossplane lifecycle if Kubernetes-native Storage
   support is claimed
 - `gcloud` and SDK direct lifecycle checks
