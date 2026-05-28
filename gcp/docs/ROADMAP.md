@@ -215,6 +215,8 @@ Current first service evidence:
   `gcp/tests/e2e/pubsub-capture-replay.test.mjs`
 - Pub/Sub local push subscription runtime test is saved under
   `gcp/tests/e2e/pubsub-push-runtime.test.mjs`
+- Pub/Sub dead-letter gap test is saved under
+  `gcp/tests/e2e/pubsub-dead-letter-gap.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

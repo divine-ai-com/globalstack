@@ -115,6 +115,10 @@ Current validation:
 - push subscription runtime passes against the official emulator by delivering a
   published message to a real local HTTP server and verifying subscription
   identity, message attributes, and decoded payload
+- dead-letter policy configuration is accepted by the official emulator, but a
+  bounded local redrive probe does not deliver the repeatedly nacked message to
+  the dead-letter subscription; this remains a runtime fidelity gap, not a
+  supported parity claim
 - the runner uses a temporary emulator data directory and removes it after each
   run
 
@@ -122,8 +126,11 @@ Remaining promotion gates:
 
 - Config Connector and Crossplane lifecycle if Kubernetes-native Pub/Sub
   support is claimed
-- broader real-GCP differential captures for IAM, dead-letter topics, push
-  subscription delivery through a disposable HTTPS endpoint, schema, and richer
-  seek redelivery semantics
+- real dead-letter redrive semantics, including IAM/service-agent setup for real
+  GCP capture and a local runtime extension if the official emulator remains
+  incomplete
+- broader real-GCP differential captures for IAM, push subscription delivery
+  through a disposable HTTPS endpoint, schema, and richer seek redelivery
+  semantics
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.

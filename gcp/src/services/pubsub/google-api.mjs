@@ -106,6 +106,18 @@ export class PubSubApi {
     });
   }
 
+  async modifyAckDeadline({ projectId, subscriptionName, ackIds, ackDeadlineSeconds }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/subscriptions/${subscriptionName}:modifyAckDeadline`),
+      body: {
+        ackIds,
+        ackDeadlineSeconds,
+      },
+      allowEmpty: true,
+    });
+  }
+
   async createSnapshot({ projectId, snapshotName, subscriptionName, labels }) {
     return this.client.requestJson({
       method: 'PUT',

@@ -22,9 +22,14 @@ export async function getAdcAccessToken() {
 }
 
 export class GoogleRestClient {
-  constructor({ tokenProvider = getAdcAccessToken, userAgent = 'globalstack-gcp-conformance/0.0.0' } = {}) {
+  constructor({
+    tokenProvider = getAdcAccessToken,
+    userAgent = 'globalstack-gcp-conformance/0.0.0',
+    timeoutMs = 30000,
+  } = {}) {
     this.tokenProvider = tokenProvider;
     this.userAgent = userAgent;
+    this.timeoutMs = timeoutMs;
   }
 
   async requestJson({ method = 'GET', url, body, headers = {}, allowEmpty = false }) {
@@ -44,6 +49,7 @@ export class GoogleRestClient {
       method,
       headers: requestHeaders,
       body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(this.timeoutMs),
     });
     const text = await response.text();
     const responseBody = parseBody(text, response.headers.get('content-type'));
