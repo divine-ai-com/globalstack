@@ -8,6 +8,8 @@ Implemented files:
 - `service.mjs`: service registration and emulator entry point
 - `emulator-engine.mjs`: starts/stops `gcloud beta emulators pubsub start`
   with an isolated data directory and exposes `PUBSUB_EMULATOR_HOST`
+- `google-api.mjs`: Pub/Sub REST API wrapper used by capture and differential
+  tests
 
 Future local broker extensions, Google API wrappers, service routes, stores,
 error shapes, and tests stay inside this directory.

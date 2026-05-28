@@ -1,0 +1,606 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "context": {
+    "project_id": "globalstack-conformance-runner",
+    "location": "europe-north2",
+    "bucket_location": "US",
+    "service": "pubsub",
+    "run_id": "pubsub-20260528181924-0681af",
+    "labels": {
+      "purpose": "globalstack-conformance",
+      "owner": "globalstack",
+      "run_id": "pubsub-20260528181924-0681af"
+    },
+    "started_at": "2026-05-28T18:19:24.466Z",
+    "resources": {
+      "topic_name": "gst-capture-topic-pubsub-20260528181924-0681af",
+      "subscription_name": "gst-capture-sub-pubsub-20260528181924-0681af"
+    }
+  },
+  "cleanup": [
+    {
+      "name": "delete subscription gst-capture-sub-pubsub-20260528181924-0681af",
+      "status": "deleted"
+    },
+    {
+      "name": "delete topic gst-capture-topic-pubsub-20260528181924-0681af",
+      "status": "deleted"
+    }
+  ],
+  "events": [
+    {
+      "name": "get-missing-topic-before-create",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:19:25.646Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-topic-pubsub-20260528181924-0681af).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:19:26.320Z"
+        }
+      }
+    },
+    {
+      "name": "create-topic",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-20260528181924-0681af"
+            }
+          },
+          "started_at": "2026-05-28T18:19:27.462Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "pubsub-20260528181924-0681af",
+              "owner": "globalstack"
+            }
+          },
+          "ended_at": "2026-05-28T18:19:32.004Z"
+        }
+      }
+    },
+    {
+      "name": "create-subscription",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-20260528181924-0681af"
+            },
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s"
+          },
+          "started_at": "2026-05-28T18:19:33.241Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+            "pushConfig": {},
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "pubsub-20260528181924-0681af",
+              "owner": "globalstack"
+            },
+            "expirationPolicy": {
+              "ttl": "2678400s"
+            },
+            "state": "ACTIVE"
+          },
+          "ended_at": "2026-05-28T18:19:42.357Z"
+        }
+      }
+    },
+    {
+      "name": "get-topic-after-create",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:19:43.412Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "pubsub-20260528181924-0681af",
+              "owner": "globalstack"
+            }
+          },
+          "ended_at": "2026-05-28T18:19:43.747Z"
+        }
+      }
+    },
+    {
+      "name": "list-topics-after-create",
+      "metadata": {
+        "expected_status": 200,
+        "expected_topic_name": "gst-capture-topic-pubsub-20260528181924-0681af"
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:19:44.844Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "topics": [
+              {
+                "name": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+                "labels": {
+                  "purpose": "globalstack-conformance",
+                  "owner": "globalstack",
+                  "run_id": "pubsub-20260528181924-0681af"
+                }
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T18:19:45.190Z"
+        }
+      }
+    },
+    {
+      "name": "get-subscription-after-create",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:19:46.249Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+            "pushConfig": {},
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "pubsub-20260528181924-0681af",
+              "owner": "globalstack"
+            },
+            "expirationPolicy": {
+              "ttl": "2678400s"
+            },
+            "state": "ACTIVE"
+          },
+          "ended_at": "2026-05-28T18:19:47.619Z"
+        }
+      }
+    },
+    {
+      "name": "list-subscriptions-after-create",
+      "metadata": {
+        "expected_status": 200,
+        "expected_subscription_name": "gst-capture-sub-pubsub-20260528181924-0681af"
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:19:48.791Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "subscriptions": [
+              {
+                "name": "projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+                "topic": "projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+                "pushConfig": {},
+                "ackDeadlineSeconds": 20,
+                "messageRetentionDuration": "604800s",
+                "labels": {
+                  "run_id": "pubsub-20260528181924-0681af",
+                  "purpose": "globalstack-conformance",
+                  "owner": "globalstack"
+                },
+                "expirationPolicy": {
+                  "ttl": "2678400s"
+                },
+                "state": "ACTIVE"
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T18:19:49.392Z"
+        }
+      }
+    },
+    {
+      "name": "create-duplicate-topic-error",
+      "metadata": {
+        "expected_status": 409
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-20260528181924-0681af"
+            }
+          },
+          "started_at": "2026-05-28T18:19:50.498Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 409,
+          "status_text": "Conflict",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 409,
+              "message": "Resource already exists in the project (resource=gst-capture-topic-pubsub-20260528181924-0681af).",
+              "status": "ALREADY_EXISTS"
+            }
+          },
+          "ended_at": "2026-05-28T18:19:52.914Z"
+        }
+      }
+    },
+    {
+      "name": "publish-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af:publish",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "messages": [
+              {
+                "data": "eyJydW5faWQiOiJwdWJzdWItMjAyNjA1MjgxODE5MjQtMDY4MWFmIiwicHVycG9zZSI6Imdsb2JhbHN0YWNrIGdjcCBwdWJzdWIgY2FwdHVyZSJ9",
+                "attributes": {
+                  "run_id": "pubsub-20260528181924-0681af"
+                }
+              }
+            ]
+          },
+          "started_at": "2026-05-28T18:19:53.985Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "messageIds": "<redacted>"
+          },
+          "ended_at": "2026-05-28T18:19:54.079Z"
+        }
+      }
+    },
+    {
+      "name": "pull-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af:pull",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "maxMessages": 1
+          },
+          "started_at": "2026-05-28T18:19:55.168Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "receivedMessages": [
+              {
+                "ackId": "<redacted>",
+                "message": {
+                  "data": "eyJydW5faWQiOiJwdWJzdWItMjAyNjA1MjgxODE5MjQtMDY4MWFmIiwicHVycG9zZSI6Imdsb2JhbHN0YWNrIGdjcCBwdWJzdWIgY2FwdHVyZSJ9",
+                  "attributes": {
+                    "run_id": "pubsub-20260528181924-0681af"
+                  },
+                  "messageId": "<redacted>",
+                  "publishTime": "2026-05-28T18:19:54.074Z"
+                }
+              }
+            ]
+          },
+          "ended_at": "2026-05-28T18:19:58.260Z"
+        }
+      }
+    },
+    {
+      "name": "acknowledge-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af:acknowledge",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "ackIds": "<redacted>"
+          },
+          "started_at": "2026-05-28T18:19:59.383Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:19:59.461Z"
+        }
+      }
+    },
+    {
+      "name": "get-subscription-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-sub-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:20:15.154Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-sub-pubsub-20260528181924-0681af).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:20:15.738Z"
+        }
+      }
+    },
+    {
+      "name": "get-topic-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-topic-pubsub-20260528181924-0681af",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:20:16.773Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-topic-pubsub-20260528181924-0681af).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:20:17.353Z"
+        }
+      }
+    }
+  ],
+  "written_at": "2026-05-28T18:20:17.354Z"
+}

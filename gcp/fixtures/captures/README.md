@@ -11,3 +11,8 @@ fixtures/captures/<service>/<run-id>/capture.json
 
 The committed capture files must not include access tokens, private keys, raw
 authorization headers, or unredacted dynamic server ids.
+
+Current captures:
+
+- `cloud-storage/cloud-storage-20260528113308-9ce4a0/capture.json`
+- `pubsub/pubsub-20260528181924-0681af/capture.json`

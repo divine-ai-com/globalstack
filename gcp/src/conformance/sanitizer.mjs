@@ -1,5 +1,7 @@
 const dynamicKeys = new Set([
   'access_token',
+  'ackId',
+  'ackIds',
   'authorization',
   'client_secret',
   'etag',
@@ -9,6 +11,8 @@ const dynamicKeys = new Set([
   'metageneration',
   'md5Hash',
   'mediaLink',
+  'messageId',
+  'messageIds',
   'private_key',
   'projectNumber',
   'refresh_token',
