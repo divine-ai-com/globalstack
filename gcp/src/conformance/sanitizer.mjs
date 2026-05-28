@@ -18,6 +18,8 @@ const dynamicKeys = new Set([
   'publishTime',
   'projectNumber',
   'refresh_token',
+  'revisionCreateTime',
+  'revisionId',
   'selfLink',
   'timeCreated',
   'timeFinalized',

@@ -11,6 +11,7 @@ npm run capture:storage
 npm run capture:pubsub
 npm run capture:pubsub:advanced
 npm run capture:pubsub:errors
+npm run capture:pubsub:schema
 ```
 
 Real captures require `--apply` and always execute cleanup in a `finally` path:
@@ -21,10 +22,12 @@ npm run capture:storage -- --apply --bucket-location=US
 npm run capture:pubsub -- --apply
 npm run capture:pubsub:advanced -- --apply
 npm run capture:pubsub:errors -- --apply
+npm run capture:pubsub:schema -- --apply
 ```
 
 The real-GCP sweeper reports stale GlobalStack-labeled Cloud Storage buckets and
-Pub/Sub topics, subscriptions, and snapshots before any delete is attempted:
+Pub/Sub topics, subscriptions, snapshots, and schema capture resources before
+any delete is attempted:
 
 ```bash
 cd gcp

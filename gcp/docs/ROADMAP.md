@@ -211,6 +211,10 @@ Current first service evidence:
   `gcp/fixtures/captures/pubsub/pubsub-errors-20260528183941-57ee3e/capture.json`
 - Pub/Sub error-shape capture runner is saved under
   `gcp/scripts/capture/pubsub-error-baseline.mjs`
+- Pub/Sub schema real-GCP capture is saved under
+  `gcp/fixtures/captures/pubsub/pubsub-schema-20260528185046-acfa7d/capture.json`
+- Pub/Sub schema capture runner is saved under
+  `gcp/scripts/capture/pubsub-schema-baseline.mjs`
 - Pub/Sub local replay test is saved under
   `gcp/tests/e2e/pubsub-capture-replay.test.mjs`
 - Pub/Sub local push subscription runtime test is saved under

@@ -298,6 +298,117 @@ test('Pub/Sub official emulator replays captured error status and envelope seman
   }
 });
 
+test('Pub/Sub official emulator replays captured schema validation and publish semantics', async () => {
+  const capture = await readLatestCapture(capture => capture.context.scenario === 'schema');
+  const expected = new Map(capture.events.map(event => [event.name, event.exchange?.response]));
+  const emulator = await startPubSubEmulator();
+  const pubsub = new PubSubApi(new GoogleRestClient({
+    tokenProvider: async () => 'local-test-token',
+  }), {
+    pubsubRoot: `http://${emulator.endpoint}/v1`,
+  });
+
+  try {
+    const { project_id: projectId, resources } = capture.context;
+    const schemaId = resources.schema_id;
+    const topicName = resources.topic_name;
+    const definition = resources.schema_definition;
+
+    const validateSchema = await pubsub.validateSchema({
+      projectId,
+      type: 'AVRO',
+      definition,
+    });
+    assert.equal(validateSchema.response.status, expected.get('validate-schema-definition').status);
+
+    const createSchema = await pubsub.createSchema({
+      projectId,
+      schemaId,
+      type: 'AVRO',
+      definition,
+    });
+    assert.equal(createSchema.response.status, expected.get('create-schema').status);
+    assert.match(createSchema.response.body.name, new RegExp(`/schemas/${schemaId}$`));
+
+    const getSchema = await pubsub.getSchema({ projectId, schemaId });
+    assert.equal(getSchema.response.status, expected.get('get-schema').status);
+    assert.equal(getSchema.response.body.definition, definition);
+
+    const schemaName = createSchema.response.body.name;
+    const validateValidMessage = await pubsub.validateMessage({
+      projectId,
+      schemaName,
+      message: {
+        run_id: capture.context.run_id,
+        count: 1,
+      },
+    });
+    assert.equal(validateValidMessage.response.status, expected.get('validate-valid-message').status);
+
+    assertErrorLike(await pubsub.validateMessage({
+      projectId,
+      schemaName,
+      message: {
+        run_id: capture.context.run_id,
+        count: 'not-an-int',
+      },
+    }), expected.get('validate-invalid-message'));
+
+    const createTopic = await pubsub.createTopic({
+      projectId,
+      topicName,
+      labels: capture.context.labels,
+      body: {
+        schemaSettings: {
+          schema: schemaName,
+          encoding: 'JSON',
+        },
+      },
+    });
+    assert.equal(createTopic.response.status, expected.get('create-topic-with-schema-settings').status);
+    assert.equal(createTopic.response.body.schemaSettings.schema, schemaName);
+    assert.equal(createTopic.response.body.schemaSettings.encoding, 'JSON');
+
+    const publishValid = await pubsub.publish({
+      projectId,
+      topicName,
+      messages: [{
+        data: {
+          run_id: capture.context.run_id,
+          count: 1,
+        },
+        attributes: {
+          run_id: capture.context.run_id,
+        },
+      }],
+    });
+    assert.equal(publishValid.response.status, expected.get('publish-valid-schema-message').status);
+
+    assertErrorLike(await pubsub.publish({
+      projectId,
+      topicName,
+      messages: [{
+        data: {
+          run_id: capture.context.run_id,
+          count: 'not-an-int',
+        },
+        attributes: {
+          run_id: capture.context.run_id,
+        },
+      }],
+    }), expected.get('publish-invalid-schema-message'));
+
+    const deleteTopic = await pubsub.deleteTopic({ projectId, topicName });
+    assert.ok([200, 204].includes(deleteTopic.response.status));
+    const deleteSchema = await pubsub.deleteSchema({ projectId, schemaId });
+    assert.ok([200, 204].includes(deleteSchema.response.status));
+    assertErrorLike(await pubsub.getTopic({ projectId, topicName }), expected.get('get-topic-after-cleanup'));
+    assertErrorLike(await pubsub.getSchema({ projectId, schemaId }), expected.get('get-schema-after-cleanup'));
+  } finally {
+    await emulator.stop();
+  }
+});
+
 async function readLatestCapture(predicate) {
   const directories = await readdir(capturesRoot, { withFileTypes: true });
   const captures = await Promise.all(directories

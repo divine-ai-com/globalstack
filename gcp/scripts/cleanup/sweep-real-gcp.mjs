@@ -41,12 +41,13 @@ async function listBuckets(projectId) {
 
 async function listPubSubResources(projectId) {
   const pubsub = new PubSubApi(new GoogleRestClient());
-  const [topics, subscriptions, snapshots] = await Promise.all([
+  const [topics, subscriptions, snapshots, schemas] = await Promise.all([
     pubsub.listTopics(projectId),
     pubsub.listSubscriptions(projectId),
     pubsub.listSnapshots(projectId),
+    pubsub.listSchemas(projectId),
   ]);
-  for (const [kind, result] of Object.entries({ topics, subscriptions, snapshots })) {
+  for (const [kind, result] of Object.entries({ topics, subscriptions, snapshots, schemas })) {
     if (!result.response.ok) {
       throw new Error(`Failed to list Pub/Sub ${kind}: ${result.response.status} ${JSON.stringify(result.response.body)}`);
     }
@@ -55,6 +56,7 @@ async function listPubSubResources(projectId) {
     topics: (topics.response.body.topics ?? []).filter(hasGlobalStackLabels),
     subscriptions: (subscriptions.response.body.subscriptions ?? []).filter(hasGlobalStackLabels),
     snapshots: (snapshots.response.body.snapshots ?? []).filter(hasGlobalStackLabels),
+    schemas: (schemas.response.body.schemas ?? []).filter(resource => resource.name.split('/').at(-1).startsWith('gst-capture-schema-')),
   };
 }
 
@@ -85,6 +87,7 @@ async function deletePubSubResources(projectId, resources) {
     subscriptions: [],
     snapshots: [],
     topics: [],
+    schemas: [],
   };
   for (const subscription of resources.subscriptions) {
     const subscriptionName = resourceNameTail(subscription.name);
@@ -109,6 +112,14 @@ async function deletePubSubResources(projectId, resources) {
       throw new Error(`Failed to delete Pub/Sub topic ${topic.name}: ${result.response.status}`);
     }
     deleted.topics.push(topic.name);
+  }
+  for (const schema of resources.schemas) {
+    const schemaId = resourceNameTail(schema.name);
+    const result = await pubsub.deleteSchema({ projectId, schemaId });
+    if (![200, 204, 404].includes(result.response.status)) {
+      throw new Error(`Failed to delete Pub/Sub schema ${schema.name}: ${result.response.status}`);
+    }
+    deleted.schemas.push(schema.name);
   }
   return deleted;
 }
@@ -135,6 +146,7 @@ const report = {
     topics: pubsub.topics.map(resource => resource.name),
     subscriptions: pubsub.subscriptions.map(resource => resource.name),
     snapshots: pubsub.snapshots.map(resource => resource.name),
+    schemas: pubsub.schemas.map(resource => resource.name),
   },
   deleted: [],
 };

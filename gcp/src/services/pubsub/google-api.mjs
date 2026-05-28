@@ -158,6 +158,67 @@ export class PubSubApi {
       },
     });
   }
+
+  async createSchema({ projectId, schemaId, type, definition }) {
+    const url = new URL(`${this.pubsubRoot}/projects/${projectId}/schemas`);
+    url.searchParams.set('schemaId', schemaId);
+    return this.client.requestJson({
+      method: 'POST',
+      url,
+      body: {
+        type,
+        definition,
+      },
+    });
+  }
+
+  async getSchema({ projectId, schemaId }) {
+    return this.client.requestJson({
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/schemas/${schemaId}`),
+    });
+  }
+
+  async listSchemas(projectId) {
+    return this.client.requestJson({
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/schemas`),
+    });
+  }
+
+  async deleteSchema({ projectId, schemaId }) {
+    return this.client.requestJson({
+      method: 'DELETE',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/schemas/${schemaId}`),
+      allowEmpty: true,
+    });
+  }
+
+  async validateSchema({ projectId, type, definition }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/schemas:validate`),
+      body: {
+        schema: {
+          type,
+          definition,
+        },
+      },
+      allowEmpty: true,
+    });
+  }
+
+  async validateMessage({ projectId, schemaName, message, encoding = 'JSON' }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.pubsubRoot}/projects/${projectId}/schemas:validateMessage`),
+      body: {
+        name: schemaName,
+        message: Buffer.from(JSON.stringify(message)).toString('base64'),
+        encoding,
+      },
+      allowEmpty: true,
+    });
+  }
+
 }
 
 export function decodePubSubMessageData(message) {

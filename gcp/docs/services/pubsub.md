@@ -24,6 +24,10 @@ Error-shape capture:
 
 - `gcp/fixtures/captures/pubsub/pubsub-errors-20260528183941-57ee3e/capture.json`
 
+Schema capture:
+
+- `gcp/fixtures/captures/pubsub/pubsub-schema-20260528185046-acfa7d/capture.json`
+
 Covered real-GCP operations:
 
 - get missing topic before create
@@ -68,6 +72,19 @@ Covered real-GCP error-shape operations:
 - delete missing snapshot
 - verify subscription and topic missing after cleanup
 
+Covered real-GCP schema operations:
+
+- validate AVRO schema definition
+- create schema
+- get schema
+- validate matching JSON message
+- reject invalid JSON message
+- create topic with schema settings
+- publish valid schema-conforming message
+- reject invalid schema-violating publish
+- delete schema-backed topic and schema
+- verify topic and schema are gone after cleanup
+
 Cleanup result:
 
 - subscription deleted
@@ -77,6 +94,8 @@ Cleanup result:
 - advanced topic deleted
 - error-shape subscription deleted
 - error-shape topic deleted
+- schema-backed topic deleted
+- schema deleted
 
 ## Runtime Evidence
 
@@ -112,6 +131,9 @@ Current validation:
 - error-shape replay passes captured status and Google error envelope checks for
   missing resources, duplicate subscription, missing snapshot, and cleanup reads
   against the official emulator
+- schema replay passes captured schema validation, schema-backed topic publish,
+  invalid message rejection, invalid publish rejection, and cleanup reads against
+  the official emulator
 - push subscription runtime passes against the official emulator by delivering a
   published message to a real local HTTP server and verifying subscription
   identity, message attributes, and decoded payload
@@ -130,7 +152,6 @@ Remaining promotion gates:
   GCP capture and a local runtime extension if the official emulator remains
   incomplete
 - broader real-GCP differential captures for IAM, push subscription delivery
-  through a disposable HTTPS endpoint, schema, and richer seek redelivery
-  semantics
+  through a disposable HTTPS endpoint, and richer seek redelivery semantics
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.
