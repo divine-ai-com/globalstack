@@ -1,4 +1,5 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
 const defaultDataRoot = process.env.GLOBALSTACK_GCP_STORAGE_DIR ?? '/tmp/globalstack-gcp/storage';
@@ -18,8 +19,10 @@ export class StorageStore {
     const bucket = {
       kind: 'storage#bucket',
       id: name,
+      selfLink: `https://www.googleapis.com/storage/v1/b/${name}`,
       name,
-      projectNumber: projectId,
+      project: projectId,
+      projectNumber: projectNumberFor(projectId),
       metageneration: '1',
       location,
       storageClass: 'STANDARD',
@@ -54,7 +57,7 @@ export class StorageStore {
 
   listBuckets(projectId) {
     return [...this.buckets.values()]
-      .filter(bucket => bucket.projectNumber === projectId)
+      .filter(bucket => bucket.project === projectId)
       .map(bucket => cloneBucket(bucket));
   }
 
@@ -84,9 +87,12 @@ export class StorageStore {
     const now = this.clock().toISOString();
     const generation = String(Date.now() * 1000);
     const text = typeof content === 'string' ? content : JSON.stringify(content);
+    const md5Hash = createHash('md5').update(text).digest('base64');
     const object = {
       kind: 'storage#object',
       id: `${bucketName}/${objectName}/${generation}`,
+      selfLink: `https://www.googleapis.com/storage/v1/b/${bucketName}/o/${encodeURIComponent(objectName)}`,
+      mediaLink: `https://storage.googleapis.com/download/storage/v1/b/${bucketName}/o/${encodeURIComponent(objectName)}?generation=${generation}&alt=media`,
       name: objectName,
       bucket: bucketName,
       generation,
@@ -94,6 +100,8 @@ export class StorageStore {
       contentType,
       storageClass: 'STANDARD',
       size: String(Buffer.byteLength(text)),
+      md5Hash,
+      crc32c: 'AAAAAA==',
       timeCreated: now,
       updated: now,
       timeStorageClassUpdated: now,
@@ -170,4 +178,10 @@ function cloneObject(object) {
 
 function encodePathSegment(value) {
   return Buffer.from(value).toString('base64url');
+}
+
+function projectNumberFor(projectId) {
+  const hash = createHash('sha256').update(projectId ?? 'globalstack-local').digest('hex');
+  const numeric = BigInt(`0x${hash.slice(0, 12)}`) % 900000000000n;
+  return String(numeric + 100000000000n);
 }

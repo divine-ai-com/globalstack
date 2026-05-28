@@ -168,6 +168,8 @@ Current first service evidence:
   `gcp/tests/e2e/storage-capture-replay.test.mjs`
 - Terraform lifecycle template is saved under
   `gcp/templates/terraform/cloud-storage/`
+- Terraform lifecycle runner is saved under
+  `gcp/scripts/e2e/terraform-cloud-storage.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

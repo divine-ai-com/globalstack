@@ -1,4 +1,4 @@
-import { readRequestJson, writeEmpty, writeJson } from '../../http/body.mjs';
+import { readRequestJson, readRequestText, writeEmpty, writeJson } from '../../http/body.mjs';
 import {
   bucketNotEmptyMessage,
   duplicateBucketMessage,
@@ -90,13 +90,13 @@ export function createStorageRoutes({ store }) {
       method: 'POST',
       match: matchObjectUploadPath,
       handle: async ({ request, response, url, match }) => {
-        const objectName = url.searchParams.get('name');
-        const body = await readRequestJson(request);
+        const upload = await readObjectUpload(request, url);
+        const objectName = upload.objectName;
         const object = await store.insertObject({
           bucketName: match.bucketName,
           objectName,
-          content: body,
-          contentType: request.headers['content-type'] ?? 'application/octet-stream',
+          content: upload.content,
+          contentType: upload.contentType,
         });
         if (!object) {
           writeStorageError(response, 404, 'notFound', missingBucketMessage());
@@ -153,6 +153,72 @@ export function createStorageRoutes({ store }) {
       },
     },
   ];
+}
+
+async function readObjectUpload(request, url) {
+  const contentType = request.headers['content-type'] ?? 'application/octet-stream';
+  if (contentType.startsWith('multipart/')) {
+    const text = await readRequestText(request);
+    return parseMultipartUpload({
+      text,
+      contentType,
+      fallbackObjectName: url.searchParams.get('name'),
+    });
+  }
+  if (contentType.includes('application/json')) {
+    const body = await readRequestJson(request);
+    return {
+      objectName: url.searchParams.get('name') ?? body.name,
+      content: body,
+      contentType,
+    };
+  }
+  return {
+    objectName: url.searchParams.get('name'),
+    content: await readRequestText(request),
+    contentType,
+  };
+}
+
+function parseMultipartUpload({ text, contentType, fallbackObjectName }) {
+  const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+  if (!boundaryMatch) {
+    return {
+      objectName: fallbackObjectName,
+      content: text,
+      contentType,
+    };
+  }
+  const boundary = boundaryMatch[1] ?? boundaryMatch[2];
+  const parts = text
+    .split(`--${boundary}`)
+    .map(part => part.trim())
+    .filter(part => part && part !== '--')
+    .map(parseMultipartPart);
+  const metadataPart = parts.find(part => part.contentType.includes('application/json'));
+  const contentPart = parts.find(part => part !== metadataPart) ?? metadataPart;
+  const metadata = metadataPart ? JSON.parse(metadataPart.body) : {};
+  return {
+    objectName: fallbackObjectName ?? metadata.name,
+    content: contentPart?.body ?? '',
+    contentType: metadata.contentType ?? contentPart?.contentType ?? 'application/octet-stream',
+  };
+}
+
+function parseMultipartPart(part) {
+  const separator = part.includes('\r\n\r\n') ? '\r\n\r\n' : '\n\n';
+  const [rawHeaders, ...bodyParts] = part.split(separator);
+  const headers = {};
+  for (const line of rawHeaders.split(/\r?\n/)) {
+    const index = line.indexOf(':');
+    if (index < 0) continue;
+    headers[line.slice(0, index).trim().toLowerCase()] = line.slice(index + 1).trim();
+  }
+  return {
+    headers,
+    contentType: headers['content-type'] ?? 'application/octet-stream',
+    body: bodyParts.join(separator).replace(/\r?\n$/, ''),
+  };
 }
 
 function matchBucketPath(url) {

@@ -51,12 +51,15 @@ Implemented local module files:
 Current validation:
 
 - local replay passes against the real-GCP capture
+- Terraform Google provider init/apply/no-drift plan/destroy passes against the
+  local endpoint
+- Terraform CLI `1.15.5` with Google provider `5.45.2` passed in the local
+  runner
 - bucket/object side effects are backed by local filesystem state
 - unsupported services still fail closed
 
 Remaining promotion gates:
 
-- Terraform Google provider create/read/update/destroy lifecycle
 - Pulumi provider create/read/update/destroy lifecycle
 - OpenTofu provider create/read/update/destroy lifecycle
 - Config Connector and Crossplane lifecycle if Kubernetes-native Storage

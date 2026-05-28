@@ -61,6 +61,28 @@ test('Cloud Storage local runtime replays captured bucket/object lifecycle seman
     assert.equal(insertObject.response.status, expectedStatus.get('insert-object'));
     assert.equal(insertObject.response.body.name, objectName);
 
+    const multipartObject = await fetch(`${runtime.url}/upload/storage/v1/b/${bucketName}/o?uploadType=multipart&name=artifacts%2Fmultipart%2Fsample.json`, {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer local-test-token',
+        'content-type': 'multipart/related; boundary=globalstack-boundary',
+      },
+      body: [
+        '--globalstack-boundary',
+        'content-type: application/json; charset=UTF-8',
+        '',
+        '{"name":"artifacts/multipart/sample.json","contentType":"application/json"}',
+        '--globalstack-boundary',
+        'content-type: application/json',
+        '',
+        '{"ok":true}',
+        '--globalstack-boundary--',
+        '',
+      ].join('\r\n'),
+    });
+    assert.equal(multipartObject.status, 200);
+    assert.equal((await multipartObject.json()).name, 'artifacts/multipart/sample.json');
+
     const getBucket = await storage.getBucket(bucketName);
     assert.equal(getBucket.response.status, expectedStatus.get('get-bucket-after-create'));
     assert.equal(getBucket.response.body.labels.owner, 'globalstack');
@@ -98,6 +120,12 @@ test('Cloud Storage local runtime replays captured bucket/object lifecycle seman
 
     const deleteObject = await storage.deleteObject({ bucketName, objectName });
     assert.equal(deleteObject.response.status, 204);
+
+    const deleteMultipartObject = await storage.deleteObject({
+      bucketName,
+      objectName: 'artifacts/multipart/sample.json',
+    });
+    assert.equal(deleteMultipartObject.response.status, 204);
 
     const deleteBucket = await storage.deleteBucket(bucketName);
     assert.equal(deleteBucket.response.status, 204);
