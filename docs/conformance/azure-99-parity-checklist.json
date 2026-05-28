@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T19:11:55.253Z",
+    "generatedAt": "2026-05-28T19:24:11.478Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -3548,9 +3548,9 @@
         }
       },
       "dimensionCounts": {
-        "complete": 5,
+        "complete": 6,
         "partial": 4,
-        "notStarted": 1
+        "notStarted": 0
       },
       "dimensions": {
         "liveApiSurfaceInventory": {
@@ -3588,7 +3588,7 @@
           "status": "partial",
           "evidence": [
             "validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3",
-            "e2e:database-migration-service-parity asserts 20 status checks, 3 error-code checks, 0 header checks"
+            "e2e:database-migration-service-parity asserts 30 status checks, 3 error-code checks, 0 header checks"
           ],
           "gaps": [
             "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
@@ -3634,16 +3634,16 @@
           "gaps": []
         },
         "ambiguousRepeatCaptures": {
-          "status": "not-started",
-          "evidence": [],
-          "gaps": [
-            "Repeat timing-sensitive captures and record stabilization rules before normalization."
-          ]
+          "status": "complete",
+          "evidence": [
+            "parity pack asserts repeated or timing-sensitive behavior remains stable across reruns"
+          ],
+          "gaps": []
         },
         "serviceSpecificFacade": {
           "status": "complete",
           "evidence": [
-            "17 registry operations declared",
+            "18 registry operations declared",
             "backing engines: globalstack-migration-plan-store, local-postgres, local-mysql",
             "dedicated parity pack passed against the local facade/runtime path"
           ],

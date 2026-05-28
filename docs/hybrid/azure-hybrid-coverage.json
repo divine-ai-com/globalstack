@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T14:36:51.947Z",
+    "generatedAt": "2026-05-28T19:24:03.477Z",
     "source": "globalstack-hybrid-registry",
     "tiers": [
       1,
@@ -1562,6 +1562,7 @@
         "MigrationPlans.ValidateLocal",
         "MigrationPlans.ConnectLocal",
         "MigrationPlans.GetUserTablesLocal",
+        "MigrationPlans.CopySelectedTablesLocal",
         "MigrationRoutes.RejectUnsupportedRoutes"
       ],
       "contractTested": false,
@@ -1572,8 +1573,8 @@
         "network/auth failures"
       ],
       "knownGaps": [
-        "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-        "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+        "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+        "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
       ],
       "implementationKind": "facade-plus-local-runtime",
       "realAzureApiComplete": false
@@ -7735,8 +7736,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Services.Get": {
@@ -7751,8 +7752,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Services.List": {
@@ -7767,8 +7768,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Services.Delete": {
@@ -7783,8 +7784,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Projects.CreateOrUpdate": {
@@ -7799,8 +7800,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Projects.Get": {
@@ -7815,8 +7816,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Projects.List": {
@@ -7831,8 +7832,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Projects.Delete": {
@@ -7847,8 +7848,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Tasks.CreateOrUpdate": {
@@ -7863,8 +7864,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Tasks.Get": {
@@ -7879,8 +7880,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Tasks.List": {
@@ -7895,8 +7896,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Tasks.Delete": {
@@ -7911,8 +7912,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "Tasks.Command": {
@@ -7927,8 +7928,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "MigrationPlans.ValidateLocal": {
@@ -7943,8 +7944,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "MigrationPlans.ConnectLocal": {
@@ -7959,8 +7960,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "MigrationPlans.GetUserTablesLocal": {
@@ -7975,8 +7976,24 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
+        ]
+      },
+      "MigrationPlans.CopySelectedTablesLocal": {
+        "implemented": true,
+        "implementationKind": "facade-plus-local-runtime",
+        "realAzureApiComplete": false,
+        "contractTested": false,
+        "cloudValidated": false,
+        "backingEngines": [
+          "globalstack-migration-plan-store",
+          "local-postgres",
+          "local-mysql"
+        ],
+        "knownGaps": [
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       },
       "MigrationRoutes.RejectUnsupportedRoutes": {
@@ -7991,8 +8008,8 @@
           "local-mysql"
         ],
         "knownGaps": [
-          "Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.",
-          "No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP."
+          "Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.",
+          "No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP."
         ]
       }
     },

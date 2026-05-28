@@ -85,6 +85,27 @@ function quoteMysqlIdentifier(name) {
   return `\`${String(name).replaceAll('`', '``')}\``;
 }
 
+function normalizeSelectedDatabases(input) {
+  const selected = input?.selectedDatabases;
+  if (Array.isArray(selected) && selected.length) return selected;
+  return [input?.databaseName].filter(Boolean).map(name => ({ name, targetDatabaseName: name }));
+}
+
+function selectedTableMap(selection, discoveredTables) {
+  const selectedTables = Array.isArray(selection.selectedTables)
+    ? new Set(selection.selectedTables.map(item => String(item?.name ?? item)).filter(Boolean))
+    : null;
+  const tableMap = selection.tableMap && typeof selection.tableMap === 'object' && !Array.isArray(selection.tableMap)
+    ? selection.tableMap
+    : {};
+  return discoveredTables
+    .filter(table => !selectedTables || selectedTables.has(table.tableName))
+    .map(table => ({
+      ...table,
+      targetTableName: String(tableMap[table.tableName] ?? table.tableName),
+    }));
+}
+
 async function withPgClient(endpoint, database, fn) {
   const client = new PgClient(pgConnectConfig(endpoint, database));
   await client.connect();
@@ -330,6 +351,121 @@ export class RelationalBackendManager {
       });
     }
     return results;
+  }
+
+  async migrateSelectedDatabases({ engine, sourceConnectionInfo, targetConnectionInfo, selectedDatabases = [] }) {
+    const sourceServer = this.resolveServer(engine, sourceConnectionInfo);
+    const targetServer = this.resolveServer(engine, targetConnectionInfo);
+    if (sourceServer) this.verifyConnectionCredentials(engine, sourceServer, sourceConnectionInfo);
+    if (targetServer) this.verifyConnectionCredentials(engine, targetServer, targetConnectionInfo);
+    const sourceEndpoint = engine === 'postgres' ? this.postgresEndpoint : this.mysqlEndpoint;
+    const targetEndpoint = engine === 'postgres' ? this.postgresEndpoint : this.mysqlAdminEndpoint;
+    const selections = normalizeSelectedDatabases({ selectedDatabases, databaseName: sourceConnectionInfo?.databaseName });
+    if (!selections.length) {
+      throw Object.assign(new Error('Migration task input.selectedDatabases must include at least one database.'), {
+        status: 400,
+        code: 'InvalidMigrationInput',
+      });
+    }
+
+    const migratedDatabases = [];
+    for (const selection of selections) {
+      const sourceDatabaseName = selection.name ?? selection.databaseName;
+      const targetDatabaseName = selection.targetDatabaseName ?? sourceDatabaseName;
+      if (!sourceDatabaseName || !targetDatabaseName) {
+        throw Object.assign(new Error('Each selected database requires name and targetDatabaseName.'), {
+          status: 400,
+          code: 'InvalidMigrationInput',
+        });
+      }
+      const sourcePhysical = sourceServer
+        ? this.databaseNameFor(engine, { serverName: sourceServer.name, databaseName: sourceDatabaseName })
+        : sourceDatabaseName;
+      const targetPhysical = targetServer
+        ? this.databaseNameFor(engine, { serverName: targetServer.name, databaseName: targetDatabaseName })
+        : targetDatabaseName;
+      if (targetServer) {
+        await this.ensureDatabase({ engine, serverName: targetServer.name, databaseName: targetDatabaseName });
+      }
+      const discovered = await this.listUserTables({
+        engine,
+        connectionInfo: sourceConnectionInfo,
+        databaseNames: [sourceDatabaseName],
+      });
+      const tables = selectedTableMap(selection, discovered[0]?.tables ?? []);
+      const migratedTables = [];
+      if (engine === 'mysql') {
+        await withMysqlConnection(this.mysqlAdminEndpoint, undefined, async (connection) => {
+          for (const table of tables) {
+            const sourceTable = quoteMysqlIdentifier(table.tableName);
+            const targetTable = quoteMysqlIdentifier(table.targetTableName);
+            await connection.query(`DROP TABLE IF EXISTS ${quoteMysqlIdentifier(targetPhysical)}.${targetTable}`);
+            await connection.query(`CREATE TABLE ${quoteMysqlIdentifier(targetPhysical)}.${targetTable} LIKE ${quoteMysqlIdentifier(sourcePhysical)}.${sourceTable}`);
+            const [result] = await connection.query(
+              `INSERT INTO ${quoteMysqlIdentifier(targetPhysical)}.${targetTable} SELECT * FROM ${quoteMysqlIdentifier(sourcePhysical)}.${sourceTable}`,
+            );
+            migratedTables.push({
+              sourceTableName: table.tableName,
+              targetTableName: table.targetTableName,
+              rowsCopied: Number(result?.affectedRows ?? 0),
+            });
+          }
+        });
+      } else {
+        await withPgClient(sourceEndpoint, sourcePhysical, async (sourceClient) => {
+          await withPgClient(targetEndpoint, targetPhysical, async (targetClient) => {
+            for (const table of tables) {
+              const columns = (await sourceClient.query(
+                `SELECT a.attname AS column_name,
+                        pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type,
+                        a.attnotnull AS not_null
+                   FROM pg_catalog.pg_attribute a
+                   JOIN pg_catalog.pg_class c ON c.oid = a.attrelid
+                   JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                  WHERE n.nspname = $1
+                    AND c.relname = $2
+                    AND a.attnum > 0
+                    AND NOT a.attisdropped
+                  ORDER BY a.attnum`,
+                [table.schemaName ?? 'public', table.tableName],
+              )).rows;
+              const columnSql = columns
+                .map(column => `${quotePostgresIdentifier(column.column_name)} ${column.data_type}${column.not_null ? ' NOT NULL' : ''}`)
+                .join(', ');
+              await targetClient.query(`DROP TABLE IF EXISTS ${quotePostgresIdentifier(table.targetTableName)}`);
+              await targetClient.query(`CREATE TABLE ${quotePostgresIdentifier(table.targetTableName)} (${columnSql || 'id text'})`);
+              const rows = (await sourceClient.query(`SELECT * FROM ${quotePostgresIdentifier(table.schemaName ?? 'public')}.${quotePostgresIdentifier(table.tableName)}`)).rows;
+              for (const row of rows) {
+                const names = Object.keys(row);
+                const placeholders = names.map((_, index) => `$${index + 1}`).join(', ');
+                await targetClient.query(
+                  `INSERT INTO ${quotePostgresIdentifier(table.targetTableName)} (${names.map(quotePostgresIdentifier).join(', ')}) VALUES (${placeholders})`,
+                  names.map(name => row[name]),
+                );
+              }
+              migratedTables.push({
+                sourceTableName: table.tableName,
+                targetTableName: table.targetTableName,
+                rowsCopied: rows.length,
+              });
+            }
+          });
+        });
+      }
+      migratedDatabases.push({
+        name: sourceDatabaseName,
+        targetDatabaseName,
+        sourcePhysicalDatabaseName: sourcePhysical,
+        targetPhysicalDatabaseName: targetPhysical,
+        tables: migratedTables,
+      });
+    }
+    return {
+      migrationState: 'Completed',
+      migratedDatabases,
+      sourceConnectionInfo: redactedConnectionInfo(sourceConnectionInfo),
+      targetConnectionInfo: redactedConnectionInfo(targetConnectionInfo),
+    };
   }
 }
 

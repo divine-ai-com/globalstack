@@ -1330,12 +1330,15 @@ function validateDataMigrationPayload(resourceType, body) {
       'ConnectToTarget.AzureDbForPostgreSql.Sync',
       'GetUserTables.MySql',
       'GetUserTables.PostgreSql',
+      'Migrate.MySql.AzureDbForMySql',
+      'Migrate.MySql.AzureDbForMySql.Sync',
+      'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2',
     ]);
     if (typeof properties.taskType !== 'string' || !supportedTaskTypes.has(properties.taskType)) {
       return envelopedError(
         400,
         'InvalidTaskProperties',
-        'Migration task properties.taskType must be one of ConnectToSource.MySql, ConnectToSource.PostgreSql.Sync, ConnectToTarget.AzureDbForMySql, ConnectToTarget.AzureDbForPostgreSql.Sync, GetUserTables.MySql, or GetUserTables.PostgreSql.',
+        'Migration task properties.taskType must be one of ConnectToSource.MySql, ConnectToSource.PostgreSql.Sync, ConnectToTarget.AzureDbForMySql, ConnectToTarget.AzureDbForPostgreSql.Sync, GetUserTables.MySql, GetUserTables.PostgreSql, Migrate.MySql.AzureDbForMySql, Migrate.MySql.AzureDbForMySql.Sync, or Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2.',
       );
     }
     if (properties.input !== undefined && (typeof properties.input !== 'object' || Array.isArray(properties.input) || !properties.input)) {

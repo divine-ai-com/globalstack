@@ -1090,14 +1090,15 @@ export const tier2Capabilities = [
       'MigrationPlans.ValidateLocal',
       'MigrationPlans.ConnectLocal',
       'MigrationPlans.GetUserTablesLocal',
+      'MigrationPlans.CopySelectedTablesLocal',
       'MigrationRoutes.RejectUnsupportedRoutes',
     ],
     contractTested: false,
     cloudValidated: false,
     realAzureCaptureRequired: ['source/target validation', 'migration task state machine', 'network/auth failures'],
     knownGaps: [
-      'Current DMS local runtime executes bounded connect and table-inspection tasks against local MySQL/PostgreSQL backends only.',
-      'No live CDC, schema conversion, network tunnel, or full migration/cutover task parity in MVP.',
+      'Current DMS local runtime executes bounded connect, table-inspection, and selected-table copy tasks against local MySQL/PostgreSQL backends only.',
+      'No live CDC, schema conversion, network tunnel, online cutover, or full Azure-managed DMS runtime parity in MVP.',
     ],
   },
   {

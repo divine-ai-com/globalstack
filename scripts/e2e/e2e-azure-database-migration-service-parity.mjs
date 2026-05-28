@@ -436,8 +436,10 @@ async function runControlPlaneMatrix() {
   const projectName = `proj-${suffix}`;
   const mysqlServerName = `mysql${suffix}`;
   const mysqlDatabaseName = `inventory`;
+  const mysqlTargetDatabaseName = `inventorytarget`;
   const postgresServerName = `pg${suffix}`;
   const postgresDatabaseName = `warehouse`;
+  const postgresTargetDatabaseName = `warehousetarget`;
 
   async function record(name, fn) {
     const startedAt = Date.now();
@@ -482,10 +484,14 @@ async function runControlPlaneMatrix() {
           assert.equal(mysqlServer.status, 201);
           const mysqlDatabase = await httpJson(armPort, 'PUT', mysqlDatabasePath(resourceGroup, mysqlServerName, mysqlDatabaseName), mysqlDatabaseBody());
           assert.equal(mysqlDatabase.status, 201);
+          const mysqlTargetDatabase = await httpJson(armPort, 'PUT', mysqlDatabasePath(resourceGroup, mysqlServerName, mysqlTargetDatabaseName), mysqlDatabaseBody());
+          assert.equal(mysqlTargetDatabase.status, 201);
           const postgresServer = await httpJson(armPort, 'PUT', postgresServerPath(resourceGroup, postgresServerName), postgresServerBody());
           assert.equal(postgresServer.status, 201);
           const postgresDatabase = await httpJson(armPort, 'PUT', postgresDatabasePath(resourceGroup, postgresServerName, postgresDatabaseName), postgresDatabaseBody());
           assert.equal(postgresDatabase.status, 201);
+          const postgresTargetDatabase = await httpJson(armPort, 'PUT', postgresDatabasePath(resourceGroup, postgresServerName, postgresTargetDatabaseName), postgresDatabaseBody());
+          assert.equal(postgresTargetDatabase.status, 201);
 
           await waitFor(
             () => mysql(mysqlContainer, 'SELECT 1', { database: physicalDatabaseName('mysql', mysqlServerName, mysqlDatabaseName) }),
@@ -494,6 +500,14 @@ async function runControlPlaneMatrix() {
           await waitFor(
             () => psql(postgresContainer, 'SELECT 1', { database: physicalDatabaseName('postgres', postgresServerName, postgresDatabaseName) }),
             { description: 'PostgreSQL database provisioning' },
+          );
+          await waitFor(
+            () => mysql(mysqlContainer, 'SELECT 1', { database: physicalDatabaseName('mysql', mysqlServerName, mysqlTargetDatabaseName) }),
+            { description: 'MySQL target database provisioning' },
+          );
+          await waitFor(
+            () => psql(postgresContainer, 'SELECT 1', { database: physicalDatabaseName('postgres', postgresServerName, postgresTargetDatabaseName) }),
+            { description: 'PostgreSQL target database provisioning' },
           );
 
           await mysql(mysqlContainer, 'CREATE TABLE telemetry (id INT PRIMARY KEY, payload JSON NOT NULL)', {
@@ -624,10 +638,130 @@ async function runControlPlaneMatrix() {
           return { status: completed.status, state: completed.body.properties.state, tableCount: tables.length };
         });
 
+        await record('mysql migration task copies selected table into target database', async () => {
+          const taskName = `migrate-mysql-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'Migrate.MySql.AzureDbForMySql.Sync',
+              input: {
+                sourceConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+                targetConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlTargetDatabaseName),
+                selectedDatabases: [
+                  {
+                    name: mysqlDatabaseName,
+                    targetDatabaseName: mysqlTargetDatabaseName,
+                    tableMap: { telemetry: 'telemetry_archive' },
+                  },
+                ],
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+          assert.equal(created.body.properties.input.sourceConnectionInfo.password, undefined);
+          assert.equal(created.body.properties.input.targetConnectionInfo.password, undefined);
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'mysql selected-table migration completion' });
+
+          const targetPhysical = physicalDatabaseName('mysql', mysqlServerName, mysqlTargetDatabaseName);
+          const copied = await mysql(mysqlContainer, 'SELECT COUNT(*) FROM telemetry_archive', { database: targetPhysical });
+          assert.equal(copied.stdout.trim(), '1');
+          assert.equal(completed.body.properties.output[0].migrationState, 'Completed');
+          assert.equal(completed.body.properties.output[0].migratedDatabases[0].tables[0].targetTableName, 'telemetry_archive');
+          assert.equal(completed.body.properties.output[0].migratedDatabases[0].tables[0].rowsCopied, 1);
+          return { status: completed.status, state: completed.body.properties.state, rowsCopied: 1 };
+        });
+
+        await record('postgres migration task copies selected table into target database', async () => {
+          const taskName = `migrate-postgres-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2',
+              input: {
+                sourceConnectionInfo: postgresConnectionInfo(postgresServerName, postgresDatabaseName),
+                targetConnectionInfo: postgresConnectionInfo(postgresServerName, postgresTargetDatabaseName),
+                selectedDatabases: [
+                  {
+                    name: postgresDatabaseName,
+                    targetDatabaseName: postgresTargetDatabaseName,
+                    selectedTables: [{ name: 'telemetry' }],
+                  },
+                ],
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'postgres selected-table migration completion' });
+
+          const targetPhysical = physicalDatabaseName('postgres', postgresServerName, postgresTargetDatabaseName);
+          const copied = await psql(postgresContainer, 'SELECT COUNT(*) FROM telemetry', { database: targetPhysical });
+          assert.equal(copied.stdout.trim(), '1');
+          assert.equal(completed.body.properties.output[0].migrationState, 'Completed');
+          assert.equal(completed.body.properties.output[0].migratedDatabases[0].tables[0].targetTableName, 'telemetry');
+          assert.equal(completed.body.properties.output[0].migratedDatabases[0].tables[0].rowsCopied, 1);
+          return { status: completed.status, state: completed.body.properties.state, rowsCopied: 1 };
+        });
+
+        await record('migration task with wrong credentials records Failed state and Azure-shaped error', async () => {
+          const taskName = `migrate-failed-${suffix}`;
+          const badSource = {
+            ...mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+            password: 'wrong-password',
+          };
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'Migrate.MySql.AzureDbForMySql',
+              input: {
+                sourceConnectionInfo: badSource,
+                targetConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlTargetDatabaseName),
+                selectedDatabases: [
+                  {
+                    name: mysqlDatabaseName,
+                    targetDatabaseName: mysqlTargetDatabaseName,
+                  },
+                ],
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+
+          const failed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Failed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'failed migration task terminal state' });
+          assert.equal(failed.body.properties.errors[0].code, 'InvalidConnectionInfo');
+          assert.match(failed.body.properties.errors[0].message, /Authentication failed/);
+          return { status: failed.status, state: failed.body.properties.state, errorCode: failed.body.properties.errors[0].code };
+        });
+
+        await record('completed migration task readback remains stable across repeated reads', async () => {
+          const taskName = `migrate-mysql-${suffix}`;
+          const first = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+          const second = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+          assert.equal(first.status, 200);
+          assert.equal(second.status, 200);
+          assert.equal(first.body.properties.state, 'Completed');
+          assert.equal(second.body.properties.state, 'Completed');
+          assert.deepEqual(second.body.properties.output, first.body.properties.output);
+          return { status: second.status, state: second.body.properties.state };
+        });
+
         await record('task collection lists runtime-backed tasks with current state', async () => {
           const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks`, '2022-03-30-preview'));
           assert.equal(result.status, 200);
-          assert.equal(result.body.value.length, 4);
+          assert.equal(result.body.value.length, 7);
           assert.ok(result.body.value.every(item => ['Queued', 'Running', 'Completed', 'Failed'].includes(item.properties.state)));
           return { status: result.status, count: result.body.value.length };
         });
@@ -659,6 +793,10 @@ async function runControlPlaneMatrix() {
     'postgres target connect task completes against real backend',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
+    'mysql migration task copies selected table into target database',
+    'postgres migration task copies selected table into target database',
+    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',
   ]);
@@ -751,7 +889,7 @@ function markdown(report) {
   lines.push('');
   lines.push('## Claim Boundary');
   lines.push('');
-  lines.push('This run proves local GlobalStack handling for Database Migration Service, project, and task ARM lifecycle; runtime-backed MySQL/PostgreSQL connection validation; runtime-backed user-table inspection; command routing on task resources; local relational backend provisioning from PostgreSQL/MySQL flexible server database resources; unsupported child/action routes failing closed; and all-platform runner deployment paths. It does not yet prove live CDC, online cutover semantics, schema conversion, network tunnel behavior, or full Azure DMS runtime parity.');
+  lines.push('This run proves local GlobalStack handling for Database Migration Service, project, and task ARM lifecycle; runtime-backed MySQL/PostgreSQL connection validation; runtime-backed user-table inspection; bounded selected-table migration into target local databases; failed-task readback for invalid credentials; command routing on task resources; local relational backend provisioning from PostgreSQL/MySQL flexible server database resources; unsupported child/action routes failing closed; and all-platform runner deployment paths. It does not yet prove live CDC, online cutover semantics, schema conversion, network tunnel behavior, or full Azure DMS runtime parity.');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -763,7 +901,7 @@ const platformMatrix = await runPlatformMatrix();
 const report = {
   generatedAt: new Date().toISOString(),
   ok: controlPlane.ok && controlPlane.dataPlane.ok && platformMatrix.ok,
-  scope: 'Azure Database Migration Service ARM lifecycle plus runtime-backed DMS task execution against local MySQL/PostgreSQL backends.',
+  scope: 'Azure Database Migration Service ARM lifecycle plus runtime-backed DMS connection, table inspection, and bounded selected-table migration execution against local MySQL/PostgreSQL backends.',
   claimBoundary: 'Local parity evidence for the enumerated DMS task types and lifecycle cases only; not a full Azure DMS cloudValidated claim.',
   controlPlane,
   dataPlane: controlPlane.dataPlane,

@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-28T19:11:57.531Z
+Generated: 2026-05-28T19:24:11.682Z
 
 ## Guardrails
 
@@ -13,7 +13,7 @@ Generated: 2026-05-28T19:11:57.531Z
 
 ## Dynamic Estimate Snapshot
 
-- Overall 30-service Azure program: 99.1% (95-100%)
+- Overall 30-service Azure program: 99.4% (95-100%)
 - Azure Functions / Durable cluster: 99% (95-100%)
 - Azure Logic Apps cluster: 99% (95-100%)
 
@@ -216,17 +216,17 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 | Wave 1: official emulator and storage-family depth | 8 | 0 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
 | Wave 2: identity, security, secrets, and encryption | 5 | 0 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
 | Wave 3: compute, API, containers, and edge routing | 8 | 0 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
-| Wave 4: relational, cache, migration, and analytics platforms | 5 | 5 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
+| Wave 4: relational, cache, migration, and analytics platforms | 5 | 4 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
 | Wave 5: networking, DNS, and observability | 4 | 0 | Harden cross-cutting dependencies that most other services reference during deployment. |
 
 ## Service Priority
 
 | Rank | Service | Tier | Wave | Score | Priority | Complete | Partial | Not Started | Next Dimensions |
 |---:|---|---:|---|---:|---:|---:|---:|---:|---|
-| 1 | database-migration-service | 2 | wave-4-data-platforms | 0.7344 | 52 | 5 | 4 | 1 | stateTransitionCaptures<br>errorShapeFidelity<br>identityRbacBehavior<br>retryEventualConsistency |
-| 2 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 1 | 44 | 10 | 0 | 0 |  |
-| 3 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 1 | 43 | 10 | 0 | 0 |  |
-| 4 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 1 | 42 | 10 | 0 | 0 |  |
+| 1 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 1 | 44 | 10 | 0 | 0 |  |
+| 2 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 1 | 43 | 10 | 0 | 0 |  |
+| 3 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 1 | 42 | 10 | 0 | 0 |  |
+| 4 | database-migration-service | 2 | wave-4-data-platforms | 0.7836 | 42 | 6 | 4 | 0 | stateTransitionCaptures<br>errorShapeFidelity<br>identityRbacBehavior<br>retryEventualConsistency |
 | 5 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 1 | 41 | 10 | 0 | 0 |  |
 | 6 | api-management | 1 | wave-3-compute-api-and-edge | 1 | 40 | 10 | 0 | 0 |  |
 | 7 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 1 | 39 | 10 | 0 | 0 |  |
@@ -422,7 +422,7 @@ Validate managed-data-service control planes and wire local protocol engines wit
 
 ### database-migration-service
 
-Priority: 52; current score: 0.7344; current status: in-progress.
+Priority: 42; current score: 0.7836; current status: in-progress.
 
 | Work Item | Status | Action | Commands | Acceptance Gate |
 |---|---|---|---|---|
@@ -430,7 +430,6 @@ Priority: 52; current score: 0.7344; current status: in-progress.
 | Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=database-migration-service` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
 | Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
 | Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-| Repeat captures for ambiguous behavior | not-started | start | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Timing-sensitive or inconsistent captures have repeat evidence before normalization. |
 
 ### postgresql-flexible-server
 

@@ -989,14 +989,14 @@ if (!databaseMigrationServiceParityText) {
   if (databaseMigrationServiceParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity control/data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 12) {
-    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 12 cases');
+  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 16) {
+    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 16 cases');
   }
   if (databaseMigrationServiceParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 7) {
-    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 7 cases');
+  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 11) {
+    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 11 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
@@ -1008,6 +1008,10 @@ if (!databaseMigrationServiceParityText) {
     'postgres target connect task completes against real backend',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
+    'mysql migration task copies selected table into target database',
+    'postgres migration task copies selected table into target database',
+    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',
     'unsupported service worker route still fails closed',
@@ -1022,6 +1026,10 @@ if (!databaseMigrationServiceParityText) {
     'postgres target connect task completes against real backend',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
+    'mysql migration task copies selected table into target database',
+    'postgres migration task copies selected table into target database',
+    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',
   ]) {

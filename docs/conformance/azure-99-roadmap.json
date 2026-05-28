@@ -1,16 +1,16 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T19:11:57.531Z",
+    "generatedAt": "2026-05-28T19:24:11.682Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
     "waveCount": 5,
-    "workItemCount": 5,
+    "workItemCount": 4,
     "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
   },
   "estimateSnapshot": {
     "overall": {
-      "percent": 99.1,
+      "percent": 99.4,
       "displayRange": "95-100%",
       "methodology": "status-derived average across all services and dimensions"
     },
@@ -1747,13 +1747,13 @@
           "azureEquivalent": "Azure Database Migration Service",
           "currentStatus": "in-progress",
           "dimensionCounts": {
-            "complete": 5,
+            "complete": 6,
             "partial": 4,
-            "notStarted": 1
+            "notStarted": 0
           },
-          "score": 0.7344,
-          "priority": 52,
-          "workItemCount": 5,
+          "score": 0.7836,
+          "priority": 42,
+          "workItemCount": 4,
           "nextDimensions": [
             "stateTransitionCaptures",
             "errorShapeFidelity",
@@ -1793,7 +1793,7 @@
               "action": "complete",
               "evidence": [
                 "validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3",
-                "e2e:database-migration-service-parity asserts 20 status checks, 3 error-code checks, 0 header checks"
+                "e2e:database-migration-service-parity asserts 30 status checks, 3 error-code checks, 0 header checks"
               ],
               "gaps": [
                 "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
@@ -1843,23 +1843,6 @@
                 "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true"
               ],
               "acceptanceGate": "Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope."
-            },
-            {
-              "id": "database-migration-service.ambiguousRepeatCaptures",
-              "serviceId": "database-migration-service",
-              "dimensionId": "ambiguousRepeatCaptures",
-              "dimension": "Repeat captures for ambiguous behavior",
-              "status": "not-started",
-              "action": "start",
-              "evidence": [],
-              "gaps": [
-                "Repeat timing-sensitive captures and record stabilization rules before normalization."
-              ],
-              "commands": [
-                "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true",
-                "npm run conformance:classify && npm run conformance:expectations"
-              ],
-              "acceptanceGate": "Timing-sensitive or inconsistent captures have repeat evidence before normalization."
             }
           ]
         },
@@ -1932,7 +1915,7 @@
           "workItems": []
         }
       ],
-      "workItemCount": 5
+      "workItemCount": 4
     },
     {
       "id": "wave-5-networking-observability-and-dns",
@@ -2014,25 +1997,6 @@
   "prioritizedServices": [
     {
       "rank": 1,
-      "waveId": "wave-4-data-platforms",
-      "serviceId": "database-migration-service",
-      "tier": 2,
-      "score": 0.7344,
-      "priority": 52,
-      "dimensionCounts": {
-        "complete": 5,
-        "partial": 4,
-        "notStarted": 1
-      },
-      "nextDimensions": [
-        "stateTransitionCaptures",
-        "errorShapeFidelity",
-        "identityRbacBehavior",
-        "retryEventualConsistency"
-      ]
-    },
-    {
-      "rank": 2,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "cosmos-nosql-table",
       "tier": 1,
@@ -2046,7 +2010,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 3,
+      "rank": 2,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "blob-storage",
       "tier": 1,
@@ -2060,7 +2024,7 @@
       "nextDimensions": []
     },
     {
-      "rank": 4,
+      "rank": 3,
       "waveId": "wave-1-official-emulator-and-storage-family",
       "serviceId": "service-bus-topics",
       "tier": 1,
@@ -2072,6 +2036,25 @@
         "notStarted": 0
       },
       "nextDimensions": []
+    },
+    {
+      "rank": 4,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "database-migration-service",
+      "tier": 2,
+      "score": 0.7836,
+      "priority": 42,
+      "dimensionCounts": {
+        "complete": 6,
+        "partial": 4,
+        "notStarted": 0
+      },
+      "nextDimensions": [
+        "stateTransitionCaptures",
+        "errorShapeFidelity",
+        "identityRbacBehavior",
+        "retryEventualConsistency"
+      ]
     },
     {
       "rank": 5,
@@ -2440,15 +2423,13 @@
   ],
   "workItemSummary": {
     "byAction": {
-      "complete": 4,
-      "start": 1
+      "complete": 4
     },
     "byDimension": {
       "stateTransitionCaptures": 1,
       "errorShapeFidelity": 1,
       "identityRbacBehavior": 1,
-      "retryEventualConsistency": 1,
-      "ambiguousRepeatCaptures": 1
+      "retryEventualConsistency": 1
     }
   }
 }

@@ -38,6 +38,9 @@ const supportedTaskTypes = new Set([
   'ConnectToTarget.AzureDbForPostgreSql.Sync',
   'GetUserTables.MySql',
   'GetUserTables.PostgreSql',
+  'Migrate.MySql.AzureDbForMySql',
+  'Migrate.MySql.AzureDbForMySql.Sync',
+  'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2',
 ]);
 
 function azureTaskBody(task) {
@@ -206,6 +209,22 @@ export class MigrationPlanRunner {
         connectionInfo: input.sourceConnectionInfo ?? input.connectionInfo ?? {},
         databaseNames: databases,
       });
+    }
+    if (['Migrate.MySql.AzureDbForMySql', 'Migrate.MySql.AzureDbForMySql.Sync'].includes(task.taskType)) {
+      return [await this.relationalBackends.migrateSelectedDatabases({
+        engine: 'mysql',
+        sourceConnectionInfo: input.sourceConnectionInfo ?? {},
+        targetConnectionInfo: input.targetConnectionInfo ?? {},
+        selectedDatabases: input.selectedDatabases ?? [],
+      })];
+    }
+    if (task.taskType === 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2') {
+      return [await this.relationalBackends.migrateSelectedDatabases({
+        engine: 'postgres',
+        sourceConnectionInfo: input.sourceConnectionInfo ?? {},
+        targetConnectionInfo: input.targetConnectionInfo ?? {},
+        selectedDatabases: input.selectedDatabases ?? [],
+      })];
     }
     throw Object.assign(new Error(`Unsupported DMS task type ${task.taskType}.`), {
       code: 'UnsupportedTaskType',
