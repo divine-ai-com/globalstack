@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
+import { createDigitalTwinsRouterServer } from '../../azure-data-plane/src/digital-twins-router.mjs';
 import { createEdgeRouterServer } from '../../azure-data-plane/src/edge-router.mjs';
 import { createKubernetesRouterServer } from '../../azure-data-plane/src/kubernetes-router.mjs';
 
@@ -147,6 +148,33 @@ async function edgeJson(port, method, path, options = {}) {
   };
 }
 
+async function digitalTwinsJson(port, method, path, body, headers = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: {
+      'x-forwarded-host': 'adt-sync.api.eastus.digitaltwins.azure.net',
+      authorization: 'Bearer globalstack-local-token',
+      'content-type': 'application/json',
+      ...headers,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await response.text();
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = text;
+    }
+  }
+  return {
+    status: response.status,
+    body: parsed,
+    headers: Object.fromEntries(response.headers.entries()),
+  };
+}
+
 test('dns registry follows private zone record and vnet link lifecycle', async () => {
   await withRuntimeServer(async ({ port, runtime }) => {
     await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-dns-sync?api-version=2021-04-01`, { location: 'eastus' });
@@ -217,6 +245,63 @@ test('dns registry follows private zone record and vnet link lifecycle', async (
     });
     assert.equal(unresolved.status, 'NXDOMAIN');
     assert.equal(unresolved.reason, 'ZONE_NOT_LINKED');
+  });
+});
+
+test('digital twins data-plane follows ARM instance lifecycle', async () => {
+  await withRuntimeServer(async ({ port, runtime }) => {
+    const server = createDigitalTwinsRouterServer(runtime.digitalTwinsRouter);
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const twinsPort = server.address().port;
+    try {
+      await httpJson(port, 'PUT', `${subscriptionPath}/resourceGroups/rg-twins-sync?api-version=2021-04-01`, { location: 'eastus' });
+
+      const beforeCreate = await digitalTwinsJson(twinsPort, 'GET', '/models?api-version=2023-10-31');
+      assert.equal(beforeCreate.status, 404);
+      assert.equal(beforeCreate.body.error.code, 'DigitalTwinsInstanceNotFound');
+
+      const create = await httpJson(
+        port,
+        'PUT',
+        `${subscriptionPath}/resourceGroups/rg-twins-sync/providers/Microsoft.DigitalTwins/digitalTwinsInstances/adt-sync?api-version=2023-01-31`,
+        {
+          location: 'eastus',
+          properties: { publicNetworkAccess: 'Enabled' },
+        },
+      );
+      assert.equal(create.status, 201);
+      assert.equal(create.body.properties.hostName, 'adt-sync.api.eastus.digitaltwins.azure.net');
+
+      const modelId = 'dtmi:globalstack:SyncTwin;1';
+      const model = await digitalTwinsJson(twinsPort, 'POST', '/models?api-version=2023-10-31', [{
+        '@id': modelId,
+        '@type': 'Interface',
+        '@context': 'dtmi:dtdl:context;3',
+        contents: [{ '@type': 'Property', name: 'state', schema: 'string' }],
+      }]);
+      assert.equal(model.status, 201);
+
+      const twin = await digitalTwinsJson(twinsPort, 'PUT', '/digitaltwins/sync-01?api-version=2023-10-31', {
+        $metadata: { $model: modelId },
+        state: 'ready',
+      });
+      assert.equal(twin.status, 200);
+      assert.equal(twin.body.state, 'ready');
+
+      const deleted = await httpJson(
+        port,
+        'DELETE',
+        `${subscriptionPath}/resourceGroups/rg-twins-sync/providers/Microsoft.DigitalTwins/digitalTwinsInstances/adt-sync?api-version=2023-01-31`,
+      );
+      assert.equal(deleted.status, 200);
+
+      const afterDelete = await digitalTwinsJson(twinsPort, 'GET', '/models?api-version=2023-10-31');
+      assert.equal(afterDelete.status, 404);
+      assert.equal(afterDelete.body.error.code, 'DigitalTwinsInstanceNotFound');
+    } finally {
+      server.closeAllConnections?.();
+      await new Promise(resolve => server.close(resolve));
+    }
   });
 });
 

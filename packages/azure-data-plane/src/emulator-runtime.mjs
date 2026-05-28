@@ -2,6 +2,7 @@ import { URL } from 'node:url';
 import { capabilityForResourceType } from '../../core/src/azure-tier1-capabilities.mjs';
 import { createActivityLogStore } from './activity-log-store.mjs';
 import { createAppConfigurationRouter } from './app-configuration-router.mjs';
+import { createDigitalTwinsRouter } from './digital-twins-router.mjs';
 import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
@@ -135,6 +136,7 @@ function logAsyncRuntimeFailure(surface, error) {
 export function createEmulatorRuntime({ store }) {
   const storageRouter = createStorageDataPlaneRouter();
   const appConfigurationRouter = createAppConfigurationRouter();
+  const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
   const functionsRouter = createFunctionsRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
@@ -588,6 +590,14 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
+      digitalTwinsRouter.registerInstance({
+        instanceName: resource.name,
+        hostName: resource.properties?.hostName,
+      });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
@@ -941,6 +951,11 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
+      digitalTwinsRouter.unregisterInstance(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1225,6 +1240,7 @@ export function createEmulatorRuntime({ store }) {
   return {
     storageRouter,
     appConfigurationRouter,
+    digitalTwinsRouter,
     eventGridRouter,
     edgeRouter,
     functionsRouter,
