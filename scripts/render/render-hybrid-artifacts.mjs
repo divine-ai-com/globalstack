@@ -38,7 +38,7 @@ function markdownFor(coverage) {
     lines.push('| Capability | AWS Analogue | Azure Equivalent | Implementation Kind | Cloud Validated | Known Gaps |');
     lines.push('|---|---|---|---|---|---|');
     for (const capability of coverage.capabilities.filter(item => item.tier === tier)) {
-      lines.push(`| ${capability.id} | ${capability.awsAnalogue} | ${capability.azureEquivalent} | ${capability.primaryModes.includes('official-emulator') ? 'official-emulator-backed-local' : 'metadata-only-control-plane'} | ${capability.cloudValidated ? 'yes' : 'no'} | ${capability.knownGaps.length} |`);
+      lines.push(`| ${capability.id} | ${capability.awsAnalogue} | ${capability.azureEquivalent} | ${capability.implementationKind} | ${capability.cloudValidated ? 'yes' : 'no'} | ${capability.knownGaps.length} |`);
     }
   }
 
@@ -46,7 +46,6 @@ function markdownFor(coverage) {
   lines.push('## Real Azure Capture Rule');
   lines.push('');
   lines.push('Any unclear validation, default, error, async, auth, or side-effect behavior must be captured from a disposable real Azure resource before it can be marked `cloudValidated`.');
-  lines.push('');
   return `${lines.join('\n')}\n`;
 }
 

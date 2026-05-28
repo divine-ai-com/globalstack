@@ -33,39 +33,39 @@ Unknown Azure resource types and incomplete ARM requests must fail closed rather
 |---|---|---|---|---|---|
 | blob-storage | S3 | Azure Blob Storage / Storage Account | official-emulator-backed-local | no | 3 |
 | azure-functions | Lambda | Azure Functions / Function Apps | official-emulator-backed-local | no | 3 |
-| api-management | API Gateway | Azure API Management | metadata-only-control-plane | no | 2 |
-| identity-rbac | IAM/STS | Microsoft Entra ID, Azure RBAC, Managed Identity | metadata-only-control-plane | no | 2 |
-| key-vault-secrets | Secrets Manager | Key Vault secrets | metadata-only-control-plane | no | 2 |
-| key-vault-keys | KMS | Key Vault keys / Managed HSM | metadata-only-control-plane | no | 1 |
-| postgresql-flexible-server | RDS PostgreSQL | Azure Database for PostgreSQL Flexible Server | metadata-only-control-plane | no | 2 |
+| api-management | API Gateway | Azure API Management | facade-plus-local-runtime | no | 2 |
+| identity-rbac | IAM/STS | Microsoft Entra ID, Azure RBAC, Managed Identity | facade-plus-local-runtime | no | 2 |
+| key-vault-secrets | Secrets Manager | Key Vault secrets | facade-plus-local-runtime | no | 2 |
+| key-vault-keys | KMS | Key Vault keys / Managed HSM | facade-plus-local-runtime | no | 1 |
+| postgresql-flexible-server | RDS PostgreSQL | Azure Database for PostgreSQL Flexible Server | facade-plus-local-runtime | no | 2 |
 | cosmos-nosql-table | DynamoDB | Cosmos DB for NoSQL / Table Storage | official-emulator-backed-local | no | 2 |
 | service-bus-topics | SNS | Service Bus topics / Event Grid topics | official-emulator-backed-local | no | 2 |
-| event-grid | EventBridge | Event Grid | metadata-only-control-plane | no | 2 |
-| container-registry | ECR | Azure Container Registry | metadata-only-control-plane | no | 1 |
+| event-grid | EventBridge | Event Grid | facade-plus-local-runtime | no | 2 |
+| container-registry | ECR | Azure Container Registry | facade-plus-local-runtime | no | 1 |
 | aks-metadata | EKS | Azure Kubernetes Service | facade-plus-local-runtime | no | 2 |
-| monitor-logs | CloudWatch Logs | Log Analytics / Application Insights / Azure Monitor Logs | metadata-only-control-plane | no | 1 |
-| monitor-metrics-alerts | CloudWatch Metrics/Alarms | Azure Monitor metrics and alerts | metadata-only-control-plane | no | 1 |
-| virtual-network | VPC | Virtual Network / Private Endpoint / Private DNS | metadata-only-control-plane | no | 2 |
+| monitor-logs | CloudWatch Logs | Log Analytics / Application Insights / Azure Monitor Logs | facade-plus-local-runtime | no | 1 |
+| monitor-metrics-alerts | CloudWatch Metrics/Alarms | Azure Monitor metrics and alerts | facade-plus-local-runtime | no | 1 |
+| virtual-network | VPC | Virtual Network / Private Endpoint / Private DNS | facade-plus-local-runtime | no | 2 |
 
 ## Tier 2 Capabilities
 
 | Capability | AWS Analogue | Azure Equivalent | Implementation Kind | Cloud Validated | Known Gaps |
 |---|---|---|---|---|---|
-| mysql-flexible-server | RDS MySQL | Azure Database for MySQL Flexible Server | metadata-only-control-plane | no | 2 |
+| mysql-flexible-server | RDS MySQL | Azure Database for MySQL Flexible Server | facade-plus-local-runtime | no | 2 |
 | queue-storage | SQS | Azure Queue Storage / Service Bus queues | official-emulator-backed-local | no | 2 |
-| redis-cache | ElastiCache Redis | Azure Cache for Redis | metadata-only-control-plane | no | 2 |
-| logic-workflows | Step Functions | Azure Logic Apps / Durable Functions | metadata-only-control-plane | no | 2 |
-| dns-zones | Route 53 | Azure DNS / Private DNS Zones | metadata-only-control-plane | no | 2 |
-| load-balancing | ALB/NLB | Azure Application Gateway / Load Balancer | metadata-only-control-plane | no | 3 |
-| front-door-cdn | CloudFront | Azure Front Door / Azure CDN | metadata-only-control-plane | no | 2 |
-| waf-policy | WAF | Azure Web Application Firewall policy | metadata-only-control-plane | no | 2 |
-| activity-log-audit | CloudTrail | Azure Activity Log / Diagnostic Settings | metadata-only-control-plane | no | 2 |
-| azure-files | EFS | Azure Files / Azure NetApp Files | metadata-only-control-plane | no | 2 |
+| redis-cache | ElastiCache Redis | Azure Cache for Redis | facade-plus-local-runtime | no | 2 |
+| logic-workflows | Step Functions | Azure Logic Apps / Durable Functions | facade-plus-local-runtime | no | 2 |
+| dns-zones | Route 53 | Azure DNS / Private DNS Zones | facade-plus-local-runtime | no | 2 |
+| load-balancing | ALB/NLB | Azure Application Gateway / Load Balancer | facade-plus-local-runtime | no | 3 |
+| front-door-cdn | CloudFront | Azure Front Door / Azure CDN | facade-plus-local-runtime | no | 2 |
+| waf-policy | WAF | Azure Web Application Firewall policy | facade-plus-local-runtime | no | 2 |
+| activity-log-audit | CloudTrail | Azure Activity Log / Diagnostic Settings | facade-plus-local-runtime | no | 2 |
+| azure-files | EFS | Azure Files / Azure NetApp Files | facade-plus-local-runtime | no | 2 |
 | event-hubs-streams | Kinesis Data Streams | Azure Event Hubs | official-emulator-backed-local | no | 2 |
-| synapse-warehouse | Redshift | Azure Synapse Analytics dedicated SQL pool | metadata-only-control-plane | no | 2 |
+| synapse-warehouse | Redshift | Azure Synapse Analytics dedicated SQL pool | facade-plus-local-runtime | no | 2 |
 | app-configuration-parameters | SSM Parameter Store | Azure App Configuration / Key Vault configuration values | official-emulator-backed-local | no | 2 |
-| database-migration-service | DMS | Azure Database Migration Service | metadata-only-control-plane | no | 2 |
-| service-discovery | Service Discovery / Cloud Map | Azure Private DNS / Container Apps service discovery | metadata-only-control-plane | no | 2 |
+| database-migration-service | DMS | Azure Database Migration Service | facade-plus-local-runtime | no | 2 |
+| service-discovery | Service Discovery / Cloud Map | Azure Private DNS / Container Apps service discovery | facade-plus-local-runtime | no | 2 |
 
 ## Real Azure Capture Rule
 

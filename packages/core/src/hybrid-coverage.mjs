@@ -3,6 +3,9 @@ import { allCapabilities, officialEmulatorOptions, tier1Capabilities, tier2Capab
 function implementationKind(capability) {
   if (capability.cloudValidated) return 'cloud-validated';
   if (capability.primaryModes.includes('official-emulator')) return 'official-emulator-backed-local';
+  if (capability.primaryModes.includes('globalstack-facade') && capability.backingEngines.length > 0) {
+    return 'facade-plus-local-runtime';
+  }
   return 'metadata-only-control-plane';
 }
 

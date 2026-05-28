@@ -263,7 +263,14 @@ if (!hybridCoverageText) {
     if (capability.realAzureApiComplete !== false) {
       errors.push(`${capability.id} must not claim realAzureApiComplete until every relevant live Azure API call is conformance-proven`);
     }
-    if (!['official-emulator-backed-local', 'metadata-only-control-plane', 'cloud-validated'].includes(capability.implementationKind)) {
+    if (
+      ![
+        'official-emulator-backed-local',
+        'facade-plus-local-runtime',
+        'metadata-only-control-plane',
+        'cloud-validated',
+      ].includes(capability.implementationKind)
+    ) {
       errors.push(`${capability.id} has an unknown implementation kind`);
     }
     if (capability.cloudValidated === true && capability.knownGaps?.length > 0) {
