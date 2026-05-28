@@ -464,6 +464,43 @@ async function runControlPlaneMatrix() {
           return { status: result.status, errorCode: errorCode(result) };
         });
 
+        await record('malformed bearer token is rejected', async () => {
+          const result = await httpJson(
+            armPort,
+            'GET',
+            resourceGroupPath(resourceGroup),
+            undefined,
+            { headers: { authorization: 'Bearer' } },
+          );
+          assert.equal(result.status, 401);
+          assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
+
+        await record('wrong bearer token is rejected', async () => {
+          const result = await httpJson(
+            armPort,
+            'GET',
+            resourceGroupPath(resourceGroup),
+            undefined,
+            { headers: { authorization: 'Bearer not-the-globalstack-local-token' } },
+          );
+          assert.equal(result.status, 401);
+          assert.equal(errorCode(result), 'InvalidAuthenticationToken');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
+
+        await record('subscription mismatch is rejected', async () => {
+          const result = await httpJson(
+            armPort,
+            'GET',
+            `/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/${resourceGroup}?api-version=2021-04-01`,
+          );
+          assert.equal(result.status, 403);
+          assert.equal(errorCode(result), 'AuthorizationFailed');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
+
         await record('resource group create succeeds', async () => {
           const result = await httpJson(armPort, 'PUT', resourceGroupPath(resourceGroup), { location: 'eastus', tags: { purpose: 'globalstack-dms-parity' } });
           assert.equal(result.status, 201);
@@ -477,6 +514,34 @@ async function runControlPlaneMatrix() {
           assert.equal(project.status, 201);
           assert.equal(project.body.properties.migrationState, 'Ready');
           return { status: project.status };
+        });
+
+        await record('migration project update preserves Ready state', async () => {
+          const project = await httpJson(armPort, 'PUT', dmsProjectPath(resourceGroup, serviceName, projectName), dmsProjectBody({
+            tags: { workload: 'cutover-readiness' },
+            properties: {
+              sourcePlatform: 'PostgreSql',
+              targetPlatform: 'AzureDbForPostgreSql',
+            },
+          }));
+          assert.equal(project.status, 200);
+          assert.equal(project.body.properties.migrationState, 'Ready');
+          assert.equal(project.body.tags.workload, 'cutover-readiness');
+          return { status: project.status, migrationState: project.body.properties.migrationState };
+        });
+
+        await record('task create with missing parent reports missing parent', async () => {
+          const result = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, `missing-${suffix}`, `orphan-${suffix}`), {
+            properties: {
+              taskType: 'ConnectToSource.MySql',
+              input: {
+                sourceConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+              },
+            },
+          });
+          assert.equal(result.status, 404);
+          assert.equal(errorCode(result), 'ParentResourceNotFound');
+          return { status: result.status, errorCode: errorCode(result) };
         });
 
         await record('mysql and postgres flexible servers and databases materialize real local databases', async () => {
@@ -586,6 +651,28 @@ async function runControlPlaneMatrix() {
 
           assert.ok(completed.body.properties.output[0].targetServerVersion);
           return { status: completed.status, state: completed.body.properties.state };
+        });
+
+        await record('migration task creating state is observed before completion', async () => {
+          const taskName = `creating-${suffix}`;
+          const created = await httpJson(armPort, 'PUT', dmsTaskPath(resourceGroup, serviceName, projectName, taskName), {
+            properties: {
+              taskType: 'ConnectToSource.MySql',
+              input: {
+                sourceConnectionInfo: mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
+              },
+            },
+          });
+          assert.equal(created.status, 201);
+          assert.equal(created.body.properties.state, 'Queued');
+
+          const completed = await waitFor(async () => {
+            const result = await httpJson(armPort, 'GET', dmsTaskPath(resourceGroup, serviceName, projectName, taskName));
+            assert.equal(result.status, 200);
+            if (result.body.properties.state !== 'Completed') throw new Error(`task state ${result.body.properties.state}`);
+            return result;
+          }, { description: 'creating task completion' });
+          return { status: completed.status, state: completed.body.properties.state, initialState: created.body.properties.state };
         });
 
         await record('mysql user tables task returns actual tables from real backend', async () => {
@@ -712,7 +799,7 @@ async function runControlPlaneMatrix() {
           return { status: completed.status, state: completed.body.properties.state, rowsCopied: 1 };
         });
 
-        await record('migration task with wrong credentials records Failed state and Azure-shaped error', async () => {
+        await record('migration task with unauthorized source credentials records Failed state and Azure-shaped error', async () => {
           const taskName = `migrate-failed-${suffix}`;
           const badSource = {
             ...mysqlConnectionInfo(mysqlServerName, mysqlDatabaseName),
@@ -761,7 +848,7 @@ async function runControlPlaneMatrix() {
         await record('task collection lists runtime-backed tasks with current state', async () => {
           const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.DataMigration', `services/${serviceName}/projects/${projectName}/tasks`, '2022-03-30-preview'));
           assert.equal(result.status, 200);
-          assert.equal(result.body.value.length, 7);
+          assert.equal(result.body.value.length, 8);
           assert.ok(result.body.value.every(item => ['Queued', 'Running', 'Completed', 'Failed'].includes(item.properties.state)));
           return { status: result.status, count: result.body.value.length };
         });
@@ -782,6 +869,26 @@ async function runControlPlaneMatrix() {
           assert.equal(errorCode(result), 'GlobalStackResourceTypeNotEmulated');
           return { status: result.status, errorCode: errorCode(result) };
         });
+
+        await record('migration service delete succeeds', async () => {
+          const result = await httpJson(armPort, 'DELETE', dmsServicePath(resourceGroup, serviceName));
+          assert.equal(result.status, 200);
+          return { status: result.status };
+        });
+
+        await record('migration service get after delete is not found', async () => {
+          const result = await httpJson(armPort, 'GET', dmsServicePath(resourceGroup, serviceName));
+          assert.equal(result.status, 404);
+          assert.equal(errorCode(result), 'ResourceNotFound');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
+
+        await record('project create after service delete reports missing parent', async () => {
+          const result = await httpJson(armPort, 'PUT', dmsProjectPath(resourceGroup, serviceName, `after-delete-${suffix}`), dmsProjectBody());
+          assert.equal(result.status, 404);
+          assert.equal(errorCode(result), 'ParentResourceNotFound');
+          return { status: result.status, errorCode: errorCode(result) };
+        });
       });
     });
   });
@@ -791,11 +898,12 @@ async function runControlPlaneMatrix() {
     'mysql and postgres flexible servers and databases materialize real local databases',
     'mysql source connect task queues, redacts password, and completes against real backend',
     'postgres target connect task completes against real backend',
+    'migration task creating state is observed before completion',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
     'mysql migration task copies selected table into target database',
     'postgres migration task copies selected table into target database',
-    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'migration task with unauthorized source credentials records Failed state and Azure-shaped error',
     'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',

@@ -261,7 +261,7 @@ Run the Azure Database Migration Service parity pack after changing migration se
 GLOBALSTACK_AUTH_TOKEN=... npm run e2e:database-migration-service-parity
 ```
 
-Expected result is `dist/e2e/azure-database-migration-service-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 16 control/data-plane cases, at least 11 runtime-backed data-plane cases, and all nine platform runners passing. This suite covers auth rejection, DMS service/project lifecycle registration, runtime-backed MySQL/PostgreSQL connection checks, user-table discovery, bounded selected-table migration into target local databases, failed-task readback for invalid credentials, unsupported child/action route fail-closed behavior, and representative IaC deployment lifecycles.
+Expected result is `dist/e2e/azure-database-migration-service-parity/results.json` with `ok == true`, zero control/data-plane failures, at least 25 control/data-plane cases, at least 12 runtime-backed data-plane cases, and all nine platform runners passing. This suite covers auth and subscription rejection, DMS service/project lifecycle registration, missing-parent and post-delete behavior, runtime-backed MySQL/PostgreSQL connection checks, user-table discovery, bounded selected-table migration into target local databases, failed-task readback for invalid credentials, unsupported child/action route fail-closed behavior, and representative IaC deployment lifecycles.
 
 Run the Azure Service Discovery parity pack after changing Private DNS, Container Apps managed environment, Container App, unsupported service-discovery route handling, or platform deployment routing:
 

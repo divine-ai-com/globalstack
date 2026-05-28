@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-28T19:24:11.682Z
+Generated: 2026-05-28T19:33:56.770Z
 
 ## Guardrails
 
@@ -13,7 +13,7 @@ Generated: 2026-05-28T19:24:11.682Z
 
 ## Dynamic Estimate Snapshot
 
-- Overall 30-service Azure program: 99.4% (95-100%)
+- Overall 30-service Azure program: 100% (95-100%)
 - Azure Functions / Durable cluster: 99% (95-100%)
 - Azure Logic Apps cluster: 99% (95-100%)
 
@@ -216,7 +216,7 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 | Wave 1: official emulator and storage-family depth | 8 | 0 | Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests. |
 | Wave 2: identity, security, secrets, and encryption | 5 | 0 | Make authorization, denial, audit, and secure configuration behavior credible across the emulator. |
 | Wave 3: compute, API, containers, and edge routing | 8 | 0 | Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests. |
-| Wave 4: relational, cache, migration, and analytics platforms | 5 | 4 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
+| Wave 4: relational, cache, migration, and analytics platforms | 5 | 0 | Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals. |
 | Wave 5: networking, DNS, and observability | 4 | 0 | Harden cross-cutting dependencies that most other services reference during deployment. |
 
 ## Service Priority
@@ -226,32 +226,32 @@ Acceptance bar: Scoped real-Azure reruns remain part of the default engineering 
 | 1 | cosmos-nosql-table | 1 | wave-1-official-emulator-and-storage-family | 1 | 44 | 10 | 0 | 0 |  |
 | 2 | blob-storage | 1 | wave-1-official-emulator-and-storage-family | 1 | 43 | 10 | 0 | 0 |  |
 | 3 | service-bus-topics | 1 | wave-1-official-emulator-and-storage-family | 1 | 42 | 10 | 0 | 0 |  |
-| 4 | database-migration-service | 2 | wave-4-data-platforms | 0.7836 | 42 | 6 | 4 | 0 | stateTransitionCaptures<br>errorShapeFidelity<br>identityRbacBehavior<br>retryEventualConsistency |
-| 5 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 1 | 41 | 10 | 0 | 0 |  |
-| 6 | api-management | 1 | wave-3-compute-api-and-edge | 1 | 40 | 10 | 0 | 0 |  |
-| 7 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 1 | 39 | 10 | 0 | 0 |  |
-| 8 | azure-functions | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
-| 9 | aks-metadata | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
-| 10 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 1 | 39 | 10 | 0 | 0 |  |
-| 11 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
-| 12 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
-| 13 | container-registry | 1 | wave-3-compute-api-and-edge | 1 | 36 | 10 | 0 | 0 |  |
-| 14 | postgresql-flexible-server | 1 | wave-4-data-platforms | 1 | 32 | 10 | 0 | 0 |  |
-| 15 | virtual-network | 1 | wave-5-networking-observability-and-dns | 1 | 30 | 10 | 0 | 0 |  |
-| 16 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 17 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 18 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 19 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
-| 20 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 1 | 29 | 10 | 0 | 0 |  |
-| 21 | logic-workflows | 2 | wave-3-compute-api-and-edge | 1 | 27 | 10 | 0 | 0 |  |
-| 22 | waf-policy | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
-| 23 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
-| 24 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
-| 25 | service-discovery | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
-| 26 | load-balancing | 2 | wave-3-compute-api-and-edge | 1 | 23 | 10 | 0 | 0 |  |
-| 27 | synapse-warehouse | 2 | wave-4-data-platforms | 1 | 22 | 10 | 0 | 0 |  |
-| 28 | mysql-flexible-server | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
-| 29 | redis-cache | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
+| 4 | event-grid | 1 | wave-1-official-emulator-and-storage-family | 1 | 41 | 10 | 0 | 0 |  |
+| 5 | api-management | 1 | wave-3-compute-api-and-edge | 1 | 40 | 10 | 0 | 0 |  |
+| 6 | key-vault-keys | 1 | wave-2-identity-security-and-secrets | 1 | 39 | 10 | 0 | 0 |  |
+| 7 | azure-functions | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
+| 8 | aks-metadata | 1 | wave-3-compute-api-and-edge | 1 | 39 | 10 | 0 | 0 |  |
+| 9 | monitor-logs | 1 | wave-5-networking-observability-and-dns | 1 | 39 | 10 | 0 | 0 |  |
+| 10 | identity-rbac | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
+| 11 | key-vault-secrets | 1 | wave-2-identity-security-and-secrets | 1 | 38 | 10 | 0 | 0 |  |
+| 12 | container-registry | 1 | wave-3-compute-api-and-edge | 1 | 36 | 10 | 0 | 0 |  |
+| 13 | postgresql-flexible-server | 1 | wave-4-data-platforms | 1 | 32 | 10 | 0 | 0 |  |
+| 14 | virtual-network | 1 | wave-5-networking-observability-and-dns | 1 | 30 | 10 | 0 | 0 |  |
+| 15 | queue-storage | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 16 | azure-files | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 17 | event-hubs-streams | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 18 | app-configuration-parameters | 2 | wave-1-official-emulator-and-storage-family | 1 | 29 | 10 | 0 | 0 |  |
+| 19 | monitor-metrics-alerts | 1 | wave-5-networking-observability-and-dns | 1 | 29 | 10 | 0 | 0 |  |
+| 20 | logic-workflows | 2 | wave-3-compute-api-and-edge | 1 | 27 | 10 | 0 | 0 |  |
+| 21 | waf-policy | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
+| 22 | activity-log-audit | 2 | wave-2-identity-security-and-secrets | 1 | 26 | 10 | 0 | 0 |  |
+| 23 | front-door-cdn | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
+| 24 | service-discovery | 2 | wave-3-compute-api-and-edge | 1 | 24 | 10 | 0 | 0 |  |
+| 25 | load-balancing | 2 | wave-3-compute-api-and-edge | 1 | 23 | 10 | 0 | 0 |  |
+| 26 | synapse-warehouse | 2 | wave-4-data-platforms | 1 | 22 | 10 | 0 | 0 |  |
+| 27 | mysql-flexible-server | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
+| 28 | redis-cache | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
+| 29 | database-migration-service | 2 | wave-4-data-platforms | 1 | 20 | 10 | 0 | 0 |  |
 | 30 | dns-zones | 2 | wave-5-networking-observability-and-dns | 1 | 18 | 10 | 0 | 0 |  |
 
 ## Wave 1: official emulator and storage-family depth
@@ -420,17 +420,6 @@ Priority: 23; current score: 1; current status: 99-ready.
 
 Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals.
 
-### database-migration-service
-
-Priority: 42; current score: 0.7836; current status: in-progress.
-
-| Work Item | Status | Action | Commands | Acceptance Gate |
-|---|---|---|---|---|
-| State transition captures | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true`<br>`npm run conformance:classify && npm run conformance:expectations` | Create, update, get, list, delete, post-delete, async provisioning, failed provisioning, and parent readiness are captured and normalized. |
-| Error-shape fidelity | partial | complete | `npm run conformance:local -- --capability=database-migration-service` | Status, Azure error code, response body shape, headers, request IDs, async-operation headers, and retry headers match captured Azure behavior. |
-| Identity/RBAC behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true` | Allowed and denied cases are captured for ARM, local token facade, and service data-plane authorization where applicable. |
-| Retry/eventual consistency behavior | partial | complete | `GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=database-migration-service --all=true` | Poll intervals, transitional states, eventual read/list behavior, delete timing, and retryable failures are captured or explicitly out of scope. |
-
 ### postgresql-flexible-server
 
 Priority: 32; current score: 1; current status: 99-ready.
@@ -453,6 +442,13 @@ Priority: 20; current score: 1; current status: 99-ready.
 |---|---|---|---|---|
 
 ### redis-cache
+
+Priority: 20; current score: 1; current status: 99-ready.
+
+| Work Item | Status | Action | Commands | Acceptance Gate |
+|---|---|---|---|---|
+
+### database-migration-service
 
 Priority: 20; current score: 1; current status: 99-ready.
 

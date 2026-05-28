@@ -989,32 +989,41 @@ if (!databaseMigrationServiceParityText) {
   if (databaseMigrationServiceParity.controlPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity control/data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 16) {
-    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 16 cases');
+  if ((databaseMigrationServiceParity.controlPlane?.total ?? 0) < 25) {
+    errors.push('Azure Database Migration Service parity control/data-plane matrix should exercise at least 25 cases');
   }
   if (databaseMigrationServiceParity.dataPlane?.failedCount !== 0) {
     errors.push('Azure Database Migration Service parity data-plane matrix has failures');
   }
-  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 11) {
-    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 11 cases');
+  if ((databaseMigrationServiceParity.dataPlane?.total ?? 0) < 12) {
+    errors.push('Azure Database Migration Service parity data-plane matrix should exercise at least 12 cases');
   }
   for (const required of [
     'unauthenticated ARM request is rejected',
+    'malformed bearer token is rejected',
+    'wrong bearer token is rejected',
+    'subscription mismatch is rejected',
     'resource group create succeeds',
     'migration service and project create succeed',
+    'migration project update preserves Ready state',
+    'task create with missing parent reports missing parent',
     'mysql and postgres flexible servers and databases materialize real local databases',
     'unsupported DMS task type is rejected',
     'mysql source connect task queues, redacts password, and completes against real backend',
     'postgres target connect task completes against real backend',
+    'migration task creating state is observed before completion',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
     'mysql migration task copies selected table into target database',
     'postgres migration task copies selected table into target database',
-    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'migration task with unauthorized source credentials records Failed state and Azure-shaped error',
     'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',
     'unsupported service worker route still fails closed',
+    'migration service delete succeeds',
+    'migration service get after delete is not found',
+    'project create after service delete reports missing parent',
   ]) {
     if (!databaseMigrationServiceParity.controlPlane?.cases?.some(item => item.name === required && item.ok === true)) {
       errors.push(`Azure Database Migration Service parity E2E missing passing case: ${required}`);
@@ -1024,11 +1033,12 @@ if (!databaseMigrationServiceParityText) {
     'mysql and postgres flexible servers and databases materialize real local databases',
     'mysql source connect task queues, redacts password, and completes against real backend',
     'postgres target connect task completes against real backend',
+    'migration task creating state is observed before completion',
     'mysql user tables task returns actual tables from real backend',
     'postgres user tables task returns actual tables from real backend',
     'mysql migration task copies selected table into target database',
     'postgres migration task copies selected table into target database',
-    'migration task with wrong credentials records Failed state and Azure-shaped error',
+    'migration task with unauthorized source credentials records Failed state and Azure-shaped error',
     'completed migration task readback remains stable across repeated reads',
     'task collection lists runtime-backed tasks with current state',
     'supported task command route completes against an existing task resource',

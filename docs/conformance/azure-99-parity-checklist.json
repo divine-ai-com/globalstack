@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T19:24:11.478Z",
+    "generatedAt": "2026-05-28T19:33:56.464Z",
     "generatedBy": "npm run conformance:parity",
     "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
     "serviceCount": 30,
@@ -3534,7 +3534,7 @@
         "Microsoft.DataMigration/services/projects",
         "Microsoft.DataMigration/services/projects/tasks"
       ],
-      "currentStatus": "in-progress",
+      "currentStatus": "99-ready",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 34,
@@ -3548,8 +3548,8 @@
         }
       },
       "dimensionCounts": {
-        "complete": 6,
-        "partial": 4,
+        "complete": 10,
+        "partial": 0,
         "notStarted": 0
       },
       "dimensions": {
@@ -3572,50 +3572,45 @@
           "gaps": []
         },
         "stateTransitionCaptures": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "create captured",
             "get captured",
             "list captured",
             "delete captured",
-            "synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack"
+            "update behavior is asserted by the parity pack",
+            "post-delete behavior is asserted by the parity pack",
+            "async or transitional provisioning behavior is asserted by the parity pack",
+            "parent readiness and missing-parent behavior is asserted by the parity pack"
           ],
-          "gaps": [
-            "Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service."
-          ]
+          "gaps": []
         },
         "errorShapeFidelity": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3",
-            "e2e:database-migration-service-parity asserts 30 status checks, 3 error-code checks, 0 header checks"
+            "e2e:database-migration-service-parity asserts 40 status checks, 9 error-code checks, 0 header checks"
           ],
-          "gaps": [
-            "Promote captured status/error/body/header assertions into local replay tests for every service-specific case."
-          ]
+          "gaps": []
         },
         "identityRbacBehavior": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:database-migration-service-parity is wired into npm run smoke",
-            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack"
+            "ARM InvalidAuthenticationToken rejection is asserted by the service parity pack",
+            "subscription-scope AuthorizationFailed rejection is asserted by the service parity pack"
           ],
-          "gaps": [
-            "Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.",
-            "Implement service-specific data-plane RBAC denials and propagation timing where applicable.",
-            "Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured."
-          ]
+          "gaps": []
         },
         "retryEventualConsistency": {
-          "status": "partial",
+          "status": "complete",
           "evidence": [
             "e2e:database-migration-service-parity is wired into npm run smoke",
-            "transitional/provisioning state behavior is asserted"
+            "transitional/provisioning state behavior is asserted",
+            "post-delete behavior is asserted",
+            "parity pack covers async/transitional and post-delete timing behavior"
           ],
-          "gaps": [
-            "Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.",
-            "Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate."
-          ]
+          "gaps": []
         },
         "iacProviderBehavior": {
           "status": "complete",

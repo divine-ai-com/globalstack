@@ -8,9 +8,10 @@ GLOBALSTACK_AUTH_TOKEN=... npm run e2e:database-migration-service-parity
 
 The pack covers the current GlobalStack Azure Database Migration Service boundary:
 
-- ARM authentication rejection and resource group prerequisite behavior.
-- `Microsoft.DataMigration/services` and `Microsoft.DataMigration/services/projects` create behavior with local runtime registration.
+- ARM authentication, subscription mismatch rejection, and resource group prerequisite behavior.
+- `Microsoft.DataMigration/services` and `Microsoft.DataMigration/services/projects` create/update/delete behavior with local runtime registration and post-delete checks.
 - `Microsoft.DataMigration/services/projects/tasks` create/get/list behavior for supported task types.
+- Missing-parent rejection for task creation and project creation after service delete.
 - Runtime-backed MySQL/PostgreSQL source and target connection checks against real local database containers.
 - Runtime-backed user-table discovery against real local MySQL/PostgreSQL tables.
 - Bounded selected-table migration for `Migrate.MySql.AzureDbForMySql`, `Migrate.MySql.AzureDbForMySql.Sync`, and `Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2` task shapes.

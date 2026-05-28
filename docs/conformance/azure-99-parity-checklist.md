@@ -4,7 +4,7 @@ This checklist is the service-by-service work queue for making GlobalStack Azure
 
 A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
 
-Generated: 2026-05-28T19:24:11.478Z
+Generated: 2026-05-28T19:33:56.464Z
 
 ## Dimensions
 
@@ -51,7 +51,7 @@ Generated: 2026-05-28T19:24:11.478Z
 | event-hubs-streams | 2 | 99-ready | 10 | 0 | 0 | 8 | 31 | 93 |
 | synapse-warehouse | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 244 |
 | app-configuration-parameters | 2 | 99-ready | 10 | 0 | 0 | 8 | 18 | 57 |
-| database-migration-service | 2 | in-progress | 6 | 4 | 0 | 8 | 23 | 34 |
+| database-migration-service | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 34 |
 | service-discovery | 2 | 99-ready | 10 | 0 | 0 | 12 | 37 | 131 |
 
 ## blob-storage
@@ -647,17 +647,17 @@ Generated: 2026-05-28T19:24:11.478Z
 - Tier: 2
 - AWS analogue: DMS
 - Azure equivalent: Azure Database Migration Service
-- Current status: in-progress
+- Current status: 99-ready
 - Resource types: Microsoft.DataMigration/services, Microsoft.DataMigration/services/projects, Microsoft.DataMigration/services/projects/tasks
 
 | Dimension | Status | Evidence | Remaining Gaps |
 |---|---|---|---|
 | Complete live Azure API surface inventory | complete | 8 candidate catalog calls<br>34 provider operations matched<br>ARM/provider inventory is reconciled and any scoped data-plane inventory is present |  |
 | Parameter variance captures | complete | 23 live ARM captures<br>variance cases: empty-body=2, invalid-location=2, invalid-source-platform=1, invalid-tags-shape=2, missing-api-version=2, missing-location=2, null-properties=2, unsupported-api-version=2, valid-minimal=2, not-found=4, empty-list=2<br>service-specific negative variance ids: invalid-source-platform |  |
-| State transition captures | partial | create captured<br>get captured<br>list captured<br>delete captured<br>synchronous create/get/list/delete lifecycle behavior is asserted by the parity pack | Capture update, async provisioning, failed provisioning, parent readiness, delete polling, and post-delete behavior for this specific service. |
-| Error-shape fidelity | partial | validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3<br>e2e:database-migration-service-parity asserts 30 status checks, 3 error-code checks, 0 header checks | Promote captured status/error/body/header assertions into local replay tests for every service-specific case. |
-| Identity/RBAC behavior | partial | e2e:database-migration-service-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack | Capture real Azure allow/deny matrices for ARM actions, role assignments, deny assignments, and inherited scopes.<br>Implement service-specific data-plane RBAC denials and propagation timing where applicable.<br>Keep exact Entra ID, Microsoft Graph, conditional access, token claim signing, and managed identity endpoint semantics out of parity claims until captured. |
-| Retry/eventual consistency behavior | partial | e2e:database-migration-service-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted | Capture poll intervals, retry timing, throttling, eventual read/list windows, and repeated delete consistency from real Azure for this service.<br>Promote timing-sensitive behavior only after repeat captures prove it is stable enough to emulate. |
+| State transition captures | complete | create captured<br>get captured<br>list captured<br>delete captured<br>update behavior is asserted by the parity pack<br>post-delete behavior is asserted by the parity pack<br>async or transitional provisioning behavior is asserted by the parity pack<br>parent readiness and missing-parent behavior is asserted by the parity pack |  |
+| Error-shape fidelity | complete | validation depths: provider-validation=10, provider-routing-or-parent-validation=6, arm-surface=2, subscription-or-provider-readiness=2, provider-accepted=3<br>e2e:database-migration-service-parity asserts 40 status checks, 9 error-code checks, 0 header checks |  |
+| Identity/RBAC behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>ARM InvalidAuthenticationToken rejection is asserted by the service parity pack<br>subscription-scope AuthorizationFailed rejection is asserted by the service parity pack |  |
+| Retry/eventual consistency behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>transitional/provisioning state behavior is asserted<br>post-delete behavior is asserted<br>parity pack covers async/transitional and post-delete timing behavior |  |
 | IaC-provider behavior | complete | e2e:database-migration-service-parity is wired into npm run smoke<br>9 platform lifecycle runners: Terraform Azure HCL, OpenTofu Azure HCL, Pulumi Azure TypeScript, Pulumi Azure Python, Pulumi Azure YAML, Ansible Azure YAML, CLI REST Bash, Bicep, ARM JSON<br>all platform lifecycle runners passed provider lifecycle validation for this service |  |
 | Data-plane behavior | complete | parity result sections: controlPlane, dataPlane |  |
 | Repeat captures for ambiguous behavior | complete | parity pack asserts repeated or timing-sensitive behavior remains stable across reruns |  |
