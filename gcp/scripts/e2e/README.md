@@ -11,10 +11,22 @@ Current scripts:
 - `opentofu-cloud-storage.mjs`: starts local GlobalStack GCP, runs the OpenTofu
   Google provider Cloud Storage template through init/apply/no-drift
   plan/destroy, and removes temporary state unless `--keep-workdir` is passed.
+- `terraform-pubsub.mjs`: starts the official Google Pub/Sub emulator, runs the
+  Terraform Google provider Pub/Sub template through init/apply/message-flow
+  check/no-drift plan/destroy, and removes temporary state unless
+  `--keep-workdir` is passed.
+- `opentofu-pubsub.mjs`: starts the official Google Pub/Sub emulator, runs the
+  OpenTofu Google provider Pub/Sub template through init/apply/message-flow
+  check/no-drift plan/destroy, and removes temporary state unless
+  `--keep-workdir` is passed.
 - `pulumi-cloud-storage.mjs`: starts local GlobalStack GCP, runs the Pulumi GCP
   provider Cloud Storage template through login/stack init/up/no-drift
   preview/destroy, and removes temporary state unless `--keep-workdir` is
   passed.
+- `pulumi-pubsub.mjs`: starts the official Google Pub/Sub emulator, runs the
+  Pulumi GCP provider Pub/Sub template through login/stack init/up/message-flow
+  check/no-drift preview/destroy, and removes temporary state unless
+  `--keep-workdir` is passed.
 - `gcloud-cloud-storage.mjs`: starts local GlobalStack GCP, configures an
   isolated Cloud SDK profile, and runs Cloud Storage bucket/object
   create/copy/list/delete.
@@ -34,4 +46,7 @@ npm run e2e:pulumi:storage
 npm run e2e:gcloud:storage
 npm run e2e:sdk-node:storage
 npm run e2e:sdk-node:pubsub
+npm run e2e:terraform:pubsub
+npm run e2e:opentofu:pubsub
+npm run e2e:pulumi:pubsub
 ```

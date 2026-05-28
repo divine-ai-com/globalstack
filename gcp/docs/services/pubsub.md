@@ -24,6 +24,14 @@ Current validation:
 - Node.js `@google-cloud/pubsub` `5.3.0` passes topic create, subscription
   create, publish, message delivery, ack, subscription delete, and topic delete
   against the official emulator
+- Terraform `1.15.5` with Google provider `5.45.2` passes topic/subscription
+  init/apply/message-flow/no-drift plan/destroy against the official emulator
+- OpenTofu `1.12.1` with Google provider `5.45.2` passes the same
+  topic/subscription lifecycle and message-flow check against the official
+  emulator
+- Pulumi `3.243.0` with Pulumi GCP provider `9.24.0` passes
+  login/stack init/up/message-flow/no-drift preview/destroy against the
+  official emulator
 - the runner uses a temporary emulator data directory and removes it after each
   run
 
@@ -31,9 +39,6 @@ Remaining promotion gates:
 
 - real-GCP capture and differential comparison for the same topic/subscription
   lifecycle
-- Terraform Google provider lifecycle
-- OpenTofu Google provider lifecycle
-- Pulumi GCP provider lifecycle
 - `gcloud pubsub` or a documented adapter path if Cloud SDK only supports REST
   endpoint overrides for that command group
 - Config Connector and Crossplane lifecycle if Kubernetes-native Pub/Sub

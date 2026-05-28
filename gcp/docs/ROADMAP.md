@@ -187,6 +187,15 @@ Current first service evidence:
   `gcp/templates/sdk/nodejs/pubsub/`
 - Pub/Sub Node.js SDK lifecycle runner is saved under
   `gcp/scripts/e2e/sdk-node-pubsub.mjs`
+- Pub/Sub Terraform lifecycle template is saved under
+  `gcp/templates/terraform/pubsub/`
+- Pub/Sub Terraform/OpenTofu lifecycle runners are saved under
+  `gcp/scripts/e2e/terraform-pubsub.mjs` and
+  `gcp/scripts/e2e/opentofu-pubsub.mjs`
+- Pub/Sub Pulumi lifecycle template is saved under
+  `gcp/templates/pulumi/pubsub/`
+- Pub/Sub Pulumi lifecycle runner is saved under
+  `gcp/scripts/e2e/pulumi-pubsub.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
