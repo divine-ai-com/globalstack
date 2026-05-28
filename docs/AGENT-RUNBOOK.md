@@ -366,7 +366,7 @@ GLOBALSTACK_AZURE_CAPTURE_SALT=localcheck npm run differential:azure:aks -- --ta
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential -- --case=private-dns-none-public-fqdn-disabled
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run aks:capture:differential -- --all --include-provisioning
-GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin
+GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning
 ```
 
 The AKS differential path is validation-only by default. Provisioning cases require `--include-provisioning`, a quota-aware subscription, and cleanup verification. Real Azure differential runs must use disposable resource groups, must delete them in the same run, and must fail if deletion verification does not pass. Do not leave provisioned AKS clusters, node resource groups, load balancers, public IPs, disks, or DNS resources behind for later cleanup.

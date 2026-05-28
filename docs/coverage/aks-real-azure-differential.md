@@ -42,7 +42,7 @@ Side-by-side GlobalStack versus real Azure comparison:
 ```bash
 GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 \
 AZURE_SUBSCRIPTION_ID=... \
-npm run differential:azure:aks -- --target=both --case=invalid-network-plugin
+npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning
 ```
 
 ## Current Cases
@@ -71,4 +71,4 @@ npm run differential:azure:aks -- --target=both --case=invalid-network-plugin
 
 ## Open Product Gap
 
-- `invalid-network-plugin`: real Azure accepted the request as `201 Creating` when the runner used a supported Kubernetes version and an allowed VM size, while GlobalStack returned `400 InvalidParameter` synchronously. Treat this as an AKS deferred-validation / async failure-model gap before changing the local route; the observed Azure run created a temporary resource group and it was explicitly deleted and verified gone.
+- `invalid-network-plugin`: real Azure accepted the request as `201 Creating` when the runner used a supported Kubernetes version and an allowed VM size. GlobalStack now accepts that request as an async ARM operation and transitions the local operation/resource readback to `Failed` with `InvalidParameter`. A 2026-05-28 `--target=both --case=invalid-network-plugin --include-provisioning --no-fixtures` rerun passed and verified disposable resource-group deletion. The remaining gap is deeper real Azure operation-polling capture for the exact delayed terminal body and any provider-specific cleanup side effects.

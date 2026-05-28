@@ -279,6 +279,7 @@ async function runControlPlaneMatrix() {
   const missingClusterName = `aks-missing-${suffix}`.slice(0, 40);
   const aadClusterName = `aks-aad-${suffix}`.slice(0, 40);
   let asyncOperation = null;
+  let invalidNetworkPluginAsyncOperation = null;
   let clusterHost = null;
   let userKubeToken = null;
   let adminKubeToken = null;
@@ -331,6 +332,7 @@ async function runControlPlaneMatrix() {
     const clusterPath = `managedClusters/${clusterName}`;
     const missingClusterPath = `managedClusters/${missingClusterName}`;
     const aadClusterPath = `managedClusters/${aadClusterName}`;
+    const invalidNetworkPluginClusterPath = `managedClusters/aks-badnp-${suffix}`.slice(0, 63 + 'managedClusters/'.length);
 
     await record('unauthenticated ARM request is rejected', async () => {
       const result = await httpJson(armPort, 'GET', `/subscriptions/${subscriptionId}`, undefined, { auth: false });
@@ -553,16 +555,50 @@ async function runControlPlaneMatrix() {
       return { status: result.status, errorCode: errorCode(result) };
     });
 
-    await record('cluster invalid network plugin is rejected', async () => {
+    await record('cluster invalid network plugin is accepted into async failure', async () => {
       const result = await httpJson(
         armPort,
         'PUT',
-        providerPath(resourceGroup, 'Microsoft.ContainerService', clusterPath),
-        aksBody({ properties: { networkProfile: { networkPlugin: 'invalid-plugin' } } }),
+        providerPath(resourceGroup, 'Microsoft.ContainerService', invalidNetworkPluginClusterPath),
+        aksBody({
+          properties: {
+            dnsPrefix: `badnp-${suffix}`,
+            networkProfile: { networkPlugin: 'invalid-plugin' },
+          },
+        }),
       );
-      assert.equal(result.status, 400);
-      assert.equal(errorCode(result), 'InvalidParameter');
-      return { status: result.status, errorCode: errorCode(result) };
+      assert.equal(result.status, 201);
+      assert.ok(result.headers['azure-asyncoperation']);
+      assert.equal(result.body.properties.provisioningState, 'Creating');
+      assert.equal(result.body.properties.networkProfile.networkPlugin, 'invalid-plugin');
+      invalidNetworkPluginAsyncOperation = result.headers['azure-asyncoperation'];
+      return {
+        status: result.status,
+        provisioningState: result.body.properties.provisioningState,
+        asyncOperation: invalidNetworkPluginAsyncOperation,
+      };
+    });
+
+    await record('cluster invalid network plugin async operation fails', async () => {
+      const result = await httpJson(armPort, 'GET', operationStatusPath(invalidNetworkPluginAsyncOperation));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.status, 'Failed');
+      assert.equal(result.body.error.code, 'InvalidParameter');
+      assert.equal(result.body.error.target, 'networkProfile.networkPlugin');
+      return { status: result.status, operationStatus: result.body.status, errorCode: result.body.error.code };
+    });
+
+    await record('cluster invalid network plugin readback is failed', async () => {
+      const result = await httpJson(armPort, 'GET', providerPath(resourceGroup, 'Microsoft.ContainerService', invalidNetworkPluginClusterPath));
+      assert.equal(result.status, 200);
+      assert.equal(result.body.properties.provisioningState, 'Failed');
+      assert.equal(result.body.properties.error.code, 'InvalidParameter');
+      assert.equal(result.body.properties.networkProfile.networkPlugin, 'invalid-plugin');
+      return {
+        status: result.status,
+        provisioningState: result.body.properties.provisioningState,
+        errorCode: result.body.properties.error.code,
+      };
     });
 
     await record('cluster invalid network policy is rejected', async () => {

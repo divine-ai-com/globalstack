@@ -799,6 +799,7 @@ export class AksClusterManager {
     const resourceShape = { id: entry.id, name: entry.name };
     const nodeName = poolNodeName(resourceShape, pool.name ?? 'userpool', ordinal);
     const agentContainerName = clusterAgentContainerName(resourceShape, pool.name ?? 'userpool', ordinal);
+    let agentContainer = null;
     const agentBody = {
       name: agentContainerName,
       Image: entry.image,
@@ -846,24 +847,32 @@ export class AksClusterManager {
         NetworkMode: entry.networkName,
       },
     };
-    const agentContainer = await this.docker.createContainer(agentBody);
-    await agentContainer.start();
-    entry.nodeAssignments[nodeName] = {
-      name: pool.name ?? 'userpool',
-      vmSize: pool.vmSize ?? 'Standard_DS2_v2',
-      osType: pool.osType ?? 'Linux',
-      mode: pool.mode ?? 'User',
-      type: pool.type ?? 'VirtualMachineScaleSets',
-      availabilityZones: Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [],
-      containerName: agentContainerName,
-      ordinal,
-      role: 'agent',
-      nodeImageVersion: pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
-    };
-    entry.agentContainerNames.push(agentContainerName);
-    entry.agentContainerIds.push(agentContainer.id);
-    await this.waitForNodeCount(entry, Object.keys(entry.nodeAssignments).length);
-    return { nodeName, agentContainerName };
+    try {
+      agentContainer = await this.docker.createContainer(agentBody);
+      await agentContainer.start();
+      entry.nodeAssignments[nodeName] = {
+        name: pool.name ?? 'userpool',
+        vmSize: pool.vmSize ?? 'Standard_DS2_v2',
+        osType: pool.osType ?? 'Linux',
+        mode: pool.mode ?? 'User',
+        type: pool.type ?? 'VirtualMachineScaleSets',
+        availabilityZones: Array.isArray(pool.availabilityZones) ? [...pool.availabilityZones] : [],
+        containerName: agentContainerName,
+        ordinal,
+        role: 'agent',
+        nodeImageVersion: pool.nodeImageVersion ?? 'AKSUbuntu-2026.05.27',
+      };
+      entry.agentContainerNames.push(agentContainerName);
+      entry.agentContainerIds.push(agentContainer.id);
+      await this.waitForNodeCount(entry, Object.keys(entry.nodeAssignments).length);
+      return { nodeName, agentContainerName };
+    } catch (error) {
+      delete entry.nodeAssignments[nodeName];
+      entry.agentContainerNames = entry.agentContainerNames.filter(name => name !== agentContainerName);
+      if (agentContainer?.id) entry.agentContainerIds = entry.agentContainerIds.filter(id => id !== agentContainer.id);
+      await this.removeContainer(agentContainerName).catch(() => {});
+      throw error;
+    }
   }
 
   async removeAgentNode(entry, assignment) {
@@ -888,19 +897,28 @@ export class AksClusterManager {
     const currentCount = currentAssignments.length;
     if (desiredCount === currentCount) return false;
     this.persistRuntimePoolCount(entry, pool.name, { provisioningState: 'Scaling' });
-    if (desiredCount > currentCount) {
-      for (let needed = currentCount; needed < desiredCount; needed += 1) {
-        const ordinal = this.nextPoolOrdinal(entry, pool.name);
-        await this.createAgentNode(entry, pool, ordinal);
+    try {
+      if (desiredCount > currentCount) {
+        for (let needed = currentCount; needed < desiredCount; needed += 1) {
+          const ordinal = this.nextPoolOrdinal(entry, pool.name);
+          await this.createAgentNode(entry, pool, ordinal);
+        }
+      } else {
+        const removable = currentAssignments
+          .filter(assignment => assignment.role === 'agent')
+          .sort((left, right) => Number(right.ordinal ?? 0) - Number(left.ordinal ?? 0))
+          .slice(0, currentCount - desiredCount);
+        for (const assignment of removable) {
+          await this.removeAgentNode(entry, assignment);
+        }
       }
-    } else {
-      const removable = currentAssignments
-        .filter(assignment => assignment.role === 'agent')
-        .sort((left, right) => Number(right.ordinal ?? 0) - Number(left.ordinal ?? 0))
-        .slice(0, currentCount - desiredCount);
-      for (const assignment of removable) {
-        await this.removeAgentNode(entry, assignment);
-      }
+    } catch (error) {
+      this.persistRuntimePoolCount(entry, pool.name, {
+        count: currentCount,
+        provisioningState: 'Failed',
+        powerState: { code: currentCount === 0 ? 'Stopped' : 'Running' },
+      });
+      throw error;
     }
     this.persistRuntimePoolCount(entry, pool.name, {
       count: desiredCount,

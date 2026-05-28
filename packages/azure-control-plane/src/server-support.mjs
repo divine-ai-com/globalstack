@@ -88,6 +88,13 @@ function deterministicJwtAccessToken() {
 
 localIdentity.accessToken = deterministicJwtAccessToken();
 
+function activeSubscriptionId() {
+  return process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID
+    ?? process.env.ARM_SUBSCRIPTION_ID
+    ?? process.env.AZURE_SUBSCRIPTION_ID
+    ?? localIdentity.subscriptionId;
+}
+
 export function requireGlobalStackAuthToken() {
   const token = process.env.GLOBALSTACK_AUTH_TOKEN;
   if (!token || token.trim() === '') {
@@ -133,7 +140,7 @@ export function authenticationFailure(message = 'Authentication failed. The Auth
         message,
         details: [{
           code: 'GlobalStackLocalIdentity',
-          message: `Use the deterministic local Azure identity for this emulator: subscription ${localIdentity.subscriptionId}, tenant ${localIdentity.tenantId}.`,
+          message: `Use the deterministic local Azure identity for this emulator: subscription ${activeSubscriptionId()}, tenant ${localIdentity.tenantId}.`,
         }],
       },
     },
@@ -152,7 +159,7 @@ export function authorizationFailure(subscriptionId) {
         message: `The client '${localIdentity.clientId}' with object id '${localIdentity.clientId}' does not have authorization to perform this action over scope '/subscriptions/${subscriptionId}' or the scope is invalid.`,
         details: [{
           code: 'GlobalStackSubscriptionMismatch',
-          message: `GlobalStack Azure accepts only local subscription ${localIdentity.subscriptionId} unless GLOBALSTACK_AZURE_SUBSCRIPTION_ID is changed.`,
+          message: `GlobalStack Azure accepts only local subscription ${activeSubscriptionId()} unless GLOBALSTACK_AZURE_SUBSCRIPTION_ID is changed.`,
         }],
       },
     },
@@ -176,7 +183,7 @@ export function authorizeRequest(req, method, pathname) {
     return authenticationFailure('The access token is not valid for the GlobalStack Azure local identity.');
   }
   const subscriptionId = requestSubscriptionId(pathname);
-  if (subscriptionId && subscriptionId !== localIdentity.subscriptionId) return authorizationFailure(subscriptionId);
+  if (subscriptionId && subscriptionId !== activeSubscriptionId()) return authorizationFailure(subscriptionId);
   return null;
 }
 

@@ -82,6 +82,17 @@ function asyncLifecycleSequence(type) {
   return null;
 }
 
+function aksDeferredProvisioningError(type, body = {}) {
+  if (type !== 'Microsoft.ContainerService/managedClusters') return null;
+  const networkPlugin = body.properties?.networkProfile?.networkPlugin;
+  if (!networkPlugin || ['azure', 'kubenet'].includes(networkPlugin)) return null;
+  return {
+    code: 'InvalidParameter',
+    message: 'AKS networkProfile.networkPlugin must be azure or kubenet when provided.',
+    target: 'networkProfile.networkPlugin',
+  };
+}
+
 function apiManagementGatewayUrl(name) {
   return `https://${name}.azure-api.net`;
 }
@@ -388,6 +399,7 @@ export class ResourceStore {
     this.resourceGroups = new Map();
     this.resources = new Map();
     this.deployments = new Map();
+    this.asyncOperations = new Map();
     this.calls = [];
   }
 
@@ -476,7 +488,12 @@ export class ResourceStore {
     const name = typeParts.filter((_, index) => index % 2 === 1).join('/');
     const leafName = typeParts.at(-1);
     const supportLevel = capability.primaryModes.join('+');
-    const lifecycleSequence = !existing ? asyncLifecycleSequence(type) : null;
+    const deferredProvisioningError = aksDeferredProvisioningError(type, body);
+    const lifecycleSequence = deferredProvisioningError
+      ? [existing ? 'Updating' : 'Creating', 'Failed']
+      : !existing
+        ? asyncLifecycleSequence(type)
+        : null;
     const resource = {
       id,
       name,
@@ -1097,7 +1114,18 @@ export class ResourceStore {
         cloudValidated: capability.cloudValidated,
         knownGaps: capability.knownGaps,
         ...(lifecycleSequence
-          ? { lifecycleState: { provisioningSequence: lifecycleSequence, readCount: 0 } }
+          ? {
+              lifecycleState: {
+                provisioningSequence: lifecycleSequence,
+                readCount: 0,
+                ...(deferredProvisioningError
+                  ? {
+                      terminalStatus: 'Failed',
+                      error: deferredProvisioningError,
+                    }
+                  : {}),
+              },
+            }
           : existing?.globalstack?.lifecycleState
             ? { lifecycleState: existing.globalstack.lifecycleState }
             : {}),
@@ -1198,7 +1226,14 @@ export class ResourceStore {
         parentResource.properties.agentPoolProfiles = profiles;
       }
     }
-    return { resource: deepClone(resource), created: !existing, asyncAccepted: Boolean(lifecycleSequence) };
+    return {
+      resource: deepClone(resource),
+      created: !existing,
+      asyncAccepted: Boolean(lifecycleSequence),
+      asyncStatus: deferredProvisioningError && !existing ? 201 : undefined,
+      asyncResponseBody: Boolean(deferredProvisioningError),
+      deferredProvisioningError: deferredProvisioningError ? deepClone(deferredProvisioningError) : null,
+    };
   }
 
   getResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null }) {
@@ -1226,19 +1261,71 @@ export class ResourceStore {
     return resource?.properties?.provisioningState ?? null;
   }
 
+  completeResourceAsync(resource, { terminalStatus = null, error = null } = {}) {
+    const lifecycleState = lifecycleStateFor(resource);
+    if (!lifecycleState?.provisioningSequence) return;
+    const finalState = terminalStatus ?? lifecycleState.terminalStatus ?? lifecycleState.provisioningSequence.at(-1);
+    resource.properties.provisioningState = finalState;
+    if (resource.type === 'Microsoft.ServiceBus/namespaces') {
+      resource.properties.status = finalState;
+    }
+    if (resource.type === 'Microsoft.Web/sites') {
+      resource.properties.state = finalState === 'Succeeded' ? 'Running' : 'Stopped';
+    }
+    if (resource.type === 'Microsoft.ContainerService/managedClusters' && Array.isArray(resource.properties.agentPoolProfiles)) {
+      resource.properties.agentPoolProfiles = resource.properties.agentPoolProfiles.map(pool => ({
+        ...pool,
+        provisioningState: finalState,
+      }));
+    }
+    if (error) {
+      resource.properties.error = deepClone(error);
+    }
+    lifecycleState.readCount = lifecycleState.provisioningSequence.length - 1;
+  }
+
+  registerAsyncOperation(operationId, { providerRoute, result }) {
+    if (!operationId || !providerRoute) return;
+    const resourceId = normalizeResourceId(
+      providerRoute.subscriptionId,
+      providerRoute.resourceGroupName,
+      providerRoute.providerNamespace,
+      providerRoute.typePath,
+      providerRoute.scopeId ?? null,
+    ).toLowerCase();
+    this.asyncOperations.set(String(operationId).toLowerCase(), {
+      resourceId,
+      terminalStatus: result?.deferredProvisioningError ? 'Failed' : 'Succeeded',
+      error: result?.deferredProvisioningError ? deepClone(result.deferredProvisioningError) : null,
+    });
+  }
+
+  asyncOperationStatus(operationId) {
+    const operation = this.asyncOperations.get(String(operationId ?? '').toLowerCase());
+    if (!operation) return null;
+    const resource = this.resources.get(operation.resourceId);
+    if (resource) {
+      this.completeResourceAsync(resource, {
+        terminalStatus: operation.terminalStatus,
+        error: operation.error,
+      });
+    }
+    return {
+      status: operation.terminalStatus,
+      properties: {
+        provisioningState: operation.terminalStatus,
+      },
+      ...(operation.error ? { error: deepClone(operation.error) } : {}),
+    };
+  }
+
   completeAsyncProvisioning() {
     for (const resource of this.resources.values()) {
       const lifecycleState = lifecycleStateFor(resource);
-      if (lifecycleState?.provisioningSequence) {
-        resource.properties.provisioningState = lifecycleState.provisioningSequence.at(-1);
-        if (resource.type === 'Microsoft.ServiceBus/namespaces') {
-          resource.properties.status = lifecycleState.provisioningSequence.at(-1);
-        }
-        if (resource.type === 'Microsoft.Web/sites') {
-          resource.properties.state = 'Running';
-        }
-        lifecycleState.readCount = lifecycleState.provisioningSequence.length - 1;
-      }
+      this.completeResourceAsync(resource, {
+        terminalStatus: lifecycleState?.terminalStatus ?? lifecycleState?.provisioningSequence?.at(-1),
+        error: lifecycleState?.error ?? null,
+      });
     }
   }
 

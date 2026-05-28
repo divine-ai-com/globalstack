@@ -349,7 +349,7 @@ export function createArmRequestHandler({
       apiVersion,
       capability,
     });
-    if (typeof onResourcePut === 'function') {
+    if (typeof onResourcePut === 'function' && !result.deferredProvisioningError) {
       onResourcePut({
         store,
         providerRoute,
@@ -378,10 +378,16 @@ export function createArmRequestHandler({
       'Microsoft.Web/sites',
       'Microsoft.ServiceBus/namespaces',
     ]);
+    const status = result.asyncStatus
+      ?? (result.asyncAccepted && !asyncBodyTypes.has(resourceType) ? 202 : result.created ? createdStatus : 200);
+    const responseBody = result.asyncAccepted && !result.asyncResponseBody && !asyncBodyTypes.has(resourceType)
+      ? undefined
+      : result.resource;
     return {
-      status: result.asyncAccepted && !asyncBodyTypes.has(resourceType) ? 202 : result.created ? createdStatus : 200,
-      body: result.asyncAccepted && !asyncBodyTypes.has(resourceType) ? undefined : result.resource,
+      status,
+      body: responseBody,
       asyncOperation: result.asyncAccepted,
+      deferredProvisioningError: result.deferredProvisioningError,
     };
   }
 
@@ -540,6 +546,11 @@ export function createArmRequestHandler({
       }
 
       if (method === 'GET' && lowerSegments(pathname).includes('operationstatuses')) {
+        const rawOperationSegments = segments(pathname);
+        const operationIndex = rawOperationSegments.findIndex(segment => segment.toLowerCase() === 'operationstatuses');
+        const operationId = operationIndex >= 0 ? rawOperationSegments[operationIndex + 1] : null;
+        const operationStatus = store.asyncOperationStatus?.(operationId);
+        if (operationStatus) return sendJson(res, 200, operationStatus);
         store.completeAsyncProvisioning();
         return sendJson(res, 200, {
           status: 'Succeeded',
@@ -1772,6 +1783,9 @@ export function createArmRequestHandler({
           }
           const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
           const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+          if (result.asyncOperation) {
+            store.registerAsyncOperation?.(operationId, { providerRoute, result });
+          }
           return sendJson(res, result.status, result.body, result.asyncOperation ? {
             'azure-asyncoperation': operationUrl,
             location: operationUrl,

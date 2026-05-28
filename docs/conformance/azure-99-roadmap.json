@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T17:18:02.431Z",
+    "generatedAt": "2026-05-28T18:22:30.412Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -1225,7 +1225,7 @@
     {
       "id": "aks-deferred-validation-differential",
       "label": "AKS deferred validation and async failure semantics",
-      "detail": "The 2026-05-28 real-Azure differential run showed that AKS can accept an invalid networkPlugin request into async creation when Kubernetes version and VM size are valid, while GlobalStack rejects it synchronously. Model Azure deferred validation, async operation failure/readback, and cleanup behavior before treating this surface as cloudValidated.",
+      "detail": "The 2026-05-28 real-Azure differential run showed that AKS can accept an invalid networkPlugin request into async creation when Kubernetes version and VM size are valid. GlobalStack now mirrors that acceptance and local async failure/readback path; keep extending this with cleanup-verified real Azure operation polling captures before treating the whole surface as cloudValidated.",
       "commands": [
         "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning",
         "npm run e2e:aks-metadata-parity",

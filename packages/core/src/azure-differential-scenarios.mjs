@@ -60,10 +60,10 @@ export const azureDifferentialScenarios = {
     cases: [
       {
         id: 'invalid-network-plugin',
-        description: 'AKS may accept unsupported networkProfile.networkPlugin values into async provisioning before later reconciliation.',
-        expectedLocalCase: 'known gap: GlobalStack currently rejects invalid networkPlugin synchronously',
+        description: 'AKS accepts unsupported networkProfile.networkPlugin values into async provisioning before the operation fails.',
+        expectedLocalCase: 'cluster invalid network plugin is accepted into async failure',
         provisioning: true,
-        expected: { status: [200, 201, 202], errorCode: null },
+        expected: { status: 201, errorCode: null },
         body: context => aksBody(context, {
           properties: {
             networkProfile: {

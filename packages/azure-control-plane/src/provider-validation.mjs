@@ -808,13 +808,6 @@ function ipv4InCidr(address, cidr) {
 }
 
 function validateAksNetworkProfile(networkProfile = {}) {
-  if (networkProfile.networkPlugin && !['azure', 'kubenet'].includes(networkProfile.networkPlugin)) {
-    return envelopedError(
-      400,
-      'InvalidParameter',
-      'AKS networkProfile.networkPlugin must be azure or kubenet when provided.',
-    );
-  }
   if (networkProfile.networkPolicy && !['azure', 'calico', 'none'].includes(networkProfile.networkPolicy)) {
     return envelopedError(
       400,
