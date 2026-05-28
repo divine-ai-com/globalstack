@@ -225,6 +225,12 @@ Current first service evidence:
   `gcp/tests/e2e/pubsub-push-runtime.test.mjs`
 - Pub/Sub dead-letter gap test is saved under
   `gcp/tests/e2e/pubsub-dead-letter-gap.test.mjs`
+- Firestore official emulator adapter is saved under
+  `gcp/src/services/firestore/emulator-engine.mjs`
+- Firestore REST API wrapper is saved under
+  `gcp/src/services/firestore/google-api.mjs`
+- Firestore local document lifecycle test is saved under
+  `gcp/tests/e2e/firestore-emulator-runtime.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

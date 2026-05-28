@@ -67,7 +67,7 @@ be captured as a service gap and fixed in the emulator.
 |---|---|---|---|---|---|---|---|---|---|
 | Cloud Storage | passed | passed | passed with Terraform 1.15.5 and Google provider 5.45.2 | passed with Pulumi 3.243.0 and Pulumi GCP provider 9.24.0 | passed with OpenTofu 1.12.1 and Google provider 5.45.2 | pending | pending | passed with Google Cloud SDK 570.0.0 | passed with Node.js `@google-cloud/storage` 7.19.0 |
 | Pub/Sub | passed baseline, advanced, error-shape, schema, and seek-redelivery captures | passed baseline, ordering/retry/snapshot/seek, error envelope, schema validation/publish, seek redelivery replay, and local HTTP push delivery with official Pub/Sub emulator 570.0.0; dead-letter redrive is documented as a runtime gap | passed with Terraform 1.15.5 and Google provider 5.45.2 | passed with Pulumi 3.243.0 and Pulumi GCP provider 9.24.0 | passed with OpenTofu 1.12.1 and Google provider 5.45.2 | pending | pending | passed with Google Cloud SDK 570.0.0 against the official Pub/Sub emulator endpoint override | passed with Node.js `@google-cloud/pubsub` 5.3.0 |
-| Firestore | pending | pending | pending | pending | pending | pending | pending | pending | pending |
+| Firestore | pending | passed local REST document lifecycle with official Firestore emulator 570.0.0 | pending | pending | pending | pending | pending | pending | pending |
 | Datastore mode | pending | pending | pending | pending | pending | pending | pending | pending | pending |
 | Secret Manager | pending | pending | pending | pending | pending | pending | pending | pending | pending |
 | Cloud KMS | pending | pending | pending | pending | pending | pending | pending | pending | pending |

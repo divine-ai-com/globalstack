@@ -33,13 +33,13 @@ export class GoogleRestClient {
   }
 
   async requestJson({ method = 'GET', url, body, headers = {}, allowEmpty = false }) {
-    const token = await this.tokenProvider();
+    const token = this.tokenProvider ? await this.tokenProvider() : null;
     const requestHeaders = {
       accept: 'application/json',
       'user-agent': this.userAgent,
       ...headers,
-      authorization: `Bearer ${token}`,
     };
+    if (token) requestHeaders.authorization = `Bearer ${token}`;
     if (body !== undefined && !requestHeaders['content-type']) {
       requestHeaders['content-type'] = 'application/json';
     }

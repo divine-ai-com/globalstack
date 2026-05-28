@@ -25,6 +25,8 @@ const firstBucket = [
     category: 'database',
     engineStrategy: 'official Firestore emulator',
     serviceModule: './firestore/service.mjs',
+    supportClass: supportClasses.officialEmulatorBacked,
+    supportClaim: 'Official Google Firestore emulator-backed runtime for local REST document create, read, list, update, delete, and missing-document checks. Real-GCP differential and IaC gates are still pending.',
   },
   {
     key: 'datastore-mode',
