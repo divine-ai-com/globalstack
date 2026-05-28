@@ -17,3 +17,4 @@ Current captures:
 - `cloud-storage/cloud-storage-20260528113308-9ce4a0/capture.json`
 - `pubsub/pubsub-20260528181924-0681af/capture.json`
 - `pubsub/pubsub-advanced-20260528183303-0e0494/capture.json`
+- `pubsub/pubsub-errors-20260528183941-57ee3e/capture.json`

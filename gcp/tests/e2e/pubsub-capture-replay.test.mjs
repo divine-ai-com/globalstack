@@ -214,6 +214,90 @@ test('Pub/Sub official emulator replays captured advanced ordering, retry, and s
   }
 });
 
+test('Pub/Sub official emulator replays captured error status and envelope semantics', async () => {
+  const capture = await readLatestCapture(capture => capture.context.scenario === 'errors');
+  const expected = new Map(capture.events.map(event => [event.name, event.exchange?.response]));
+  const emulator = await startPubSubEmulator();
+  const pubsub = new PubSubApi(new GoogleRestClient({
+    tokenProvider: async () => 'local-test-token',
+  }), {
+    pubsubRoot: `http://${emulator.endpoint}/v1`,
+  });
+
+  try {
+    const { project_id: projectId, labels, resources } = capture.context;
+    const topicName = resources.topic_name;
+    const subscriptionName = resources.subscription_name;
+    const missingTopicName = resources.missing_topic_name;
+    const missingSubscriptionName = resources.missing_subscription_name;
+    const missingSnapshotName = resources.missing_snapshot_name;
+
+    assertErrorLike(await pubsub.getTopic({ projectId, topicName: missingTopicName }), expected.get('get-missing-topic'));
+    assertErrorLike(await pubsub.createSubscription({
+      projectId,
+      subscriptionName: missingSubscriptionName,
+      topicName: missingTopicName,
+      labels,
+    }), expected.get('create-subscription-missing-topic'));
+    assertErrorLike(await pubsub.publish({
+      projectId,
+      topicName: missingTopicName,
+      messages: [{
+        data: {
+          run_id: capture.context.run_id,
+          case: 'missing-topic',
+        },
+      }],
+    }), expected.get('publish-missing-topic'));
+    assertErrorLike(await pubsub.pull({
+      projectId,
+      subscriptionName: missingSubscriptionName,
+    }), expected.get('pull-missing-subscription'));
+
+    const createTopic = await pubsub.createTopic({ projectId, topicName, labels });
+    assert.equal(createTopic.response.status, expected.get('create-topic-for-error-cases').status);
+    const createSubscription = await pubsub.createSubscription({
+      projectId,
+      subscriptionName,
+      topicName,
+      labels,
+    });
+    assert.equal(createSubscription.response.status, expected.get('create-subscription-for-error-cases').status);
+
+    assertErrorLike(await pubsub.createSubscription({
+      projectId,
+      subscriptionName,
+      topicName,
+      labels,
+    }), expected.get('create-duplicate-subscription'));
+    assertErrorLike(await pubsub.createSnapshot({
+      projectId,
+      snapshotName: missingSnapshotName,
+      subscriptionName: missingSubscriptionName,
+      labels,
+    }), expected.get('create-snapshot-missing-subscription'));
+    assertErrorLike(await pubsub.seekToSnapshot({
+      projectId,
+      subscriptionName,
+      snapshotName: missingSnapshotName,
+    }), expected.get('seek-missing-snapshot'));
+    assertErrorLike(await pubsub.deleteSnapshot({
+      projectId,
+      snapshotName: missingSnapshotName,
+    }), expected.get('delete-missing-snapshot'));
+
+    const deleteSubscription = await pubsub.deleteSubscription({ projectId, subscriptionName });
+    assert.ok([200, 204].includes(deleteSubscription.response.status));
+    const deleteTopic = await pubsub.deleteTopic({ projectId, topicName });
+    assert.ok([200, 204].includes(deleteTopic.response.status));
+
+    assertErrorLike(await pubsub.getSubscription({ projectId, subscriptionName }), expected.get('get-subscription-after-cleanup'));
+    assertErrorLike(await pubsub.getTopic({ projectId, topicName }), expected.get('get-topic-after-cleanup'));
+  } finally {
+    await emulator.stop();
+  }
+});
+
 async function readLatestCapture(predicate) {
   const directories = await readdir(capturesRoot, { withFileTypes: true });
   const captures = await Promise.all(directories
@@ -227,4 +311,14 @@ async function readLatestCapture(predicate) {
   const matchingCaptures = captures.filter(predicate);
   assert.ok(matchingCaptures.length > 0, 'No matching Pub/Sub capture fixtures found');
   return matchingCaptures[matchingCaptures.length - 1];
+}
+
+function assertErrorLike(actualExchange, expectedResponse) {
+  assert.equal(actualExchange.response.status, expectedResponse.status);
+  if (expectedResponse.body?.error?.status) {
+    assert.equal(actualExchange.response.body?.error?.status, expectedResponse.body.error.status);
+  }
+  if (expectedResponse.body?.error?.code) {
+    assert.equal(actualExchange.response.body?.error?.code, expectedResponse.body.error.code);
+  }
 }

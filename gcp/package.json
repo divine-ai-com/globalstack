@@ -7,6 +7,7 @@
   "scripts": {
     "check": "node scripts/check-credentials.mjs --adc",
     "capture:pubsub:advanced": "node scripts/capture/pubsub-advanced-baseline.mjs",
+    "capture:pubsub:errors": "node scripts/capture/pubsub-error-baseline.mjs",
     "capture:pubsub": "node scripts/capture/pubsub-baseline.mjs",
     "capture:storage": "node scripts/capture/storage-baseline.mjs",
     "coverage": "node scripts/fetch-coverage.mjs",
@@ -23,7 +24,7 @@
     "start": "node src/cli/globalstack-gcp.mjs",
     "sweep": "node scripts/cleanup/sweep-real-gcp.mjs",
     "test": "node --test tests/**/*.test.mjs",
-    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --check scripts/capture/storage-baseline.mjs && node --check scripts/capture/pubsub-baseline.mjs && node --check scripts/capture/pubsub-advanced-baseline.mjs && node --check scripts/e2e/gcloud-cloud-storage.mjs && node --check scripts/e2e/gcloud-pubsub.mjs && node --check scripts/e2e/sdk-node-cloud-storage.mjs && node --check scripts/e2e/sdk-node-pubsub.mjs && node --check scripts/e2e/pubsub-message-flow.mjs && node --check scripts/e2e/tf-family-pubsub.mjs && node --check scripts/e2e/terraform-pubsub.mjs && node --check scripts/e2e/opentofu-pubsub.mjs && node --check scripts/e2e/pulumi-pubsub.mjs && node --check templates/sdk/nodejs/cloud-storage/index.cjs && node --check templates/sdk/nodejs/pubsub/index.cjs && node --check templates/pulumi/pubsub/index.js && node --test tests/**/*.test.mjs"
+    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --check scripts/capture/storage-baseline.mjs && node --check scripts/capture/pubsub-baseline.mjs && node --check scripts/capture/pubsub-advanced-baseline.mjs && node --check scripts/capture/pubsub-error-baseline.mjs && node --check scripts/e2e/gcloud-cloud-storage.mjs && node --check scripts/e2e/gcloud-pubsub.mjs && node --check scripts/e2e/sdk-node-cloud-storage.mjs && node --check scripts/e2e/sdk-node-pubsub.mjs && node --check scripts/e2e/pubsub-message-flow.mjs && node --check scripts/e2e/tf-family-pubsub.mjs && node --check scripts/e2e/terraform-pubsub.mjs && node --check scripts/e2e/opentofu-pubsub.mjs && node --check scripts/e2e/pulumi-pubsub.mjs && node --check templates/sdk/nodejs/cloud-storage/index.cjs && node --check templates/sdk/nodejs/pubsub/index.cjs && node --check templates/pulumi/pubsub/index.js && node --test tests/**/*.test.mjs"
   },
   "engines": {
     "node": ">=20.20.0"
