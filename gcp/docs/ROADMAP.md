@@ -213,6 +213,8 @@ Current first service evidence:
   `gcp/scripts/capture/pubsub-error-baseline.mjs`
 - Pub/Sub local replay test is saved under
   `gcp/tests/e2e/pubsub-capture-replay.test.mjs`
+- Pub/Sub local push subscription runtime test is saved under
+  `gcp/tests/e2e/pubsub-push-runtime.test.mjs`
 
 ## Phase 3: Compute And Container Runtime
 

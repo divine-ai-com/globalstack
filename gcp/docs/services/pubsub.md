@@ -112,6 +112,9 @@ Current validation:
 - error-shape replay passes captured status and Google error envelope checks for
   missing resources, duplicate subscription, missing snapshot, and cleanup reads
   against the official emulator
+- push subscription runtime passes against the official emulator by delivering a
+  published message to a real local HTTP server and verifying subscription
+  identity, message attributes, and decoded payload
 - the runner uses a temporary emulator data directory and removes it after each
   run
 
@@ -120,6 +123,7 @@ Remaining promotion gates:
 - Config Connector and Crossplane lifecycle if Kubernetes-native Pub/Sub
   support is claimed
 - broader real-GCP differential captures for IAM, dead-letter topics, push
-  subscriptions, schema, and richer seek redelivery semantics
+  subscription delivery through a disposable HTTPS endpoint, schema, and richer
+  seek redelivery semantics
 
 The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.
