@@ -17,7 +17,9 @@
     "e2e:gcloud:pubsub": "node scripts/e2e/gcloud-pubsub.mjs",
     "e2e:gcloud:storage": "node scripts/e2e/gcloud-cloud-storage.mjs",
     "e2e:opentofu:pubsub": "node scripts/e2e/opentofu-pubsub.mjs",
+    "e2e:opentofu:cloud-tasks": "node scripts/e2e/opentofu-cloud-tasks.mjs",
     "e2e:opentofu:kms": "node scripts/e2e/opentofu-kms.mjs",
+    "e2e:opentofu:logging": "node scripts/e2e/opentofu-logging.mjs",
     "e2e:opentofu:secret-manager": "node scripts/e2e/opentofu-secret-manager.mjs",
     "e2e:opentofu:storage": "node scripts/e2e/opentofu-cloud-storage.mjs",
     "e2e:pulumi:pubsub": "node scripts/e2e/pulumi-pubsub.mjs",
@@ -28,14 +30,16 @@
     "e2e:rest:secret-manager": "node scripts/e2e/rest-secret-manager.mjs",
     "e2e:sdk-node:storage": "node scripts/e2e/sdk-node-cloud-storage.mjs",
     "e2e:sdk-node:pubsub": "node scripts/e2e/sdk-node-pubsub.mjs",
+    "e2e:terraform:cloud-tasks": "node scripts/e2e/terraform-cloud-tasks.mjs",
     "e2e:terraform:kms": "node scripts/e2e/terraform-kms.mjs",
+    "e2e:terraform:logging": "node scripts/e2e/terraform-logging.mjs",
     "e2e:terraform:pubsub": "node scripts/e2e/terraform-pubsub.mjs",
     "e2e:terraform:secret-manager": "node scripts/e2e/terraform-secret-manager.mjs",
     "e2e:terraform:storage": "node scripts/e2e/terraform-cloud-storage.mjs",
     "start": "node src/cli/globalstack-gcp.mjs",
     "sweep": "node scripts/cleanup/sweep-real-gcp.mjs",
     "test": "node --test tests/**/*.test.mjs",
-    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --check scripts/capture/storage-baseline.mjs && node --check scripts/capture/datastore-baseline.mjs && node --check scripts/capture/pubsub-baseline.mjs && node --check scripts/capture/pubsub-advanced-baseline.mjs && node --check scripts/capture/pubsub-error-baseline.mjs && node --check scripts/capture/pubsub-schema-baseline.mjs && node --check scripts/capture/pubsub-seek-redelivery-baseline.mjs && node --check scripts/e2e/lib/local-rest-gate.mjs && node --check scripts/e2e/gcloud-cloud-storage.mjs && node --check scripts/e2e/gcloud-pubsub.mjs && node --check scripts/e2e/rest-cloud-tasks.mjs && node --check scripts/e2e/rest-kms.mjs && node --check scripts/e2e/rest-logging.mjs && node --check scripts/e2e/rest-secret-manager.mjs && node --check scripts/e2e/sdk-node-cloud-storage.mjs && node --check scripts/e2e/sdk-node-pubsub.mjs && node --check scripts/e2e/pubsub-message-flow.mjs && node --check scripts/e2e/tf-family-kms.mjs && node --check scripts/e2e/tf-family-pubsub.mjs && node --check scripts/e2e/tf-family-secret-manager.mjs && node --check scripts/e2e/terraform-kms.mjs && node --check scripts/e2e/terraform-pubsub.mjs && node --check scripts/e2e/terraform-secret-manager.mjs && node --check scripts/e2e/opentofu-kms.mjs && node --check scripts/e2e/opentofu-pubsub.mjs && node --check scripts/e2e/opentofu-secret-manager.mjs && node --check scripts/e2e/pulumi-pubsub.mjs && node --check templates/sdk/nodejs/cloud-storage/index.cjs && node --check templates/sdk/nodejs/pubsub/index.cjs && node --check templates/pulumi/pubsub/index.js && node --test tests/**/*.test.mjs"
+    "validate": "node --check scripts/check-credentials.mjs && node --check scripts/fetch-coverage.mjs && node --check scripts/cleanup/sweep-real-gcp.mjs && node --check scripts/capture/storage-baseline.mjs && node --check scripts/capture/datastore-baseline.mjs && node --check scripts/capture/pubsub-baseline.mjs && node --check scripts/capture/pubsub-advanced-baseline.mjs && node --check scripts/capture/pubsub-error-baseline.mjs && node --check scripts/capture/pubsub-schema-baseline.mjs && node --check scripts/capture/pubsub-seek-redelivery-baseline.mjs && node --check scripts/e2e/lib/local-rest-gate.mjs && node --check scripts/e2e/gcloud-cloud-storage.mjs && node --check scripts/e2e/gcloud-pubsub.mjs && node --check scripts/e2e/rest-cloud-tasks.mjs && node --check scripts/e2e/rest-kms.mjs && node --check scripts/e2e/rest-logging.mjs && node --check scripts/e2e/rest-secret-manager.mjs && node --check scripts/e2e/sdk-node-cloud-storage.mjs && node --check scripts/e2e/sdk-node-pubsub.mjs && node --check scripts/e2e/pubsub-message-flow.mjs && node --check scripts/e2e/tf-family-cloud-tasks.mjs && node --check scripts/e2e/tf-family-kms.mjs && node --check scripts/e2e/tf-family-logging.mjs && node --check scripts/e2e/tf-family-pubsub.mjs && node --check scripts/e2e/tf-family-secret-manager.mjs && node --check scripts/e2e/terraform-cloud-tasks.mjs && node --check scripts/e2e/terraform-kms.mjs && node --check scripts/e2e/terraform-logging.mjs && node --check scripts/e2e/terraform-pubsub.mjs && node --check scripts/e2e/terraform-secret-manager.mjs && node --check scripts/e2e/opentofu-cloud-tasks.mjs && node --check scripts/e2e/opentofu-kms.mjs && node --check scripts/e2e/opentofu-logging.mjs && node --check scripts/e2e/opentofu-pubsub.mjs && node --check scripts/e2e/opentofu-secret-manager.mjs && node --check scripts/e2e/pulumi-pubsub.mjs && node --check templates/sdk/nodejs/cloud-storage/index.cjs && node --check templates/sdk/nodejs/pubsub/index.cjs && node --check templates/pulumi/pubsub/index.js && node --test tests/**/*.test.mjs"
   },
   "engines": {
     "node": ">=20.20.0"

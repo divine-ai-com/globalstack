@@ -12,12 +12,15 @@ Implemented files:
 - `google-api.mjs`: REST API wrapper used by local runtime and future
   differential tests
 
-Current scope is bounded to queue create/get, HTTP task create/get, and explicit
-`tasks.run` dispatch to a real HTTP endpoint. Schedule-time execution, retry
-backoff, rate limiting, leasing, auth headers, App Engine targets, IAM, and
-real-GCP differential captures remain pending.
+Current scope is bounded to queue create/get/delete, HTTP task create/get, and
+explicit `tasks.run` dispatch to a real HTTP endpoint. Schedule-time execution,
+retry backoff, rate limiting, leasing, auth headers, App Engine targets, IAM,
+and real-GCP differential captures remain pending.
 
 Client gates:
 
 - `gcp/scripts/e2e/rest-cloud-tasks.mjs` validates the local Google-shaped REST
   queue/task lifecycle and dispatches to a real local HTTP receiver end to end.
+- `gcp/scripts/e2e/terraform-cloud-tasks.mjs` and
+  `gcp/scripts/e2e/opentofu-cloud-tasks.mjs` validate Google provider queue
+  create/read/no-drift/destroy behavior plus HTTP task dispatch side effects.

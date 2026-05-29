@@ -1,6 +1,7 @@
 export class LoggingStore {
   constructor() {
     this.entries = [];
+    this.metrics = new Map();
   }
 
   writeEntries({ entries = [], resource, labels = {} }) {
@@ -23,6 +24,34 @@ export class LoggingStore {
       matchesResource(entry, resourceNames) && matchesFilter(entry, filter)
     );
   }
+
+  createMetric({ projectId, metric }) {
+    const key = metricName(projectId, metric.name);
+    if (this.metrics.has(key)) return null;
+    const stored = {
+      ...metric,
+      projectId,
+      name: metric.name,
+    };
+    this.metrics.set(key, stored);
+    return stored;
+  }
+
+  getMetric({ projectId, metricId }) {
+    return this.metrics.get(metricName(projectId, metricId)) ?? null;
+  }
+
+  listMetrics(projectId) {
+    return [...this.metrics.values()].filter(metric => metric.projectId === projectId);
+  }
+
+  deleteMetric({ projectId, metricId }) {
+    return this.metrics.delete(metricName(projectId, metricId));
+  }
+}
+
+export function metricName(projectId, metricId) {
+  return `projects/${projectId}/metrics/${metricId}`;
 }
 
 function matchesResource(entry, resourceNames) {

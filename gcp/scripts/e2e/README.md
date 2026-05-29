@@ -27,6 +27,14 @@ Current scripts:
   the Google provider Cloud KMS template through init/apply/encrypt-decrypt
   check/no-drift plan/destroy, and remove temporary state unless
   `--keep-workdir` is passed.
+- `terraform-cloud-tasks.mjs` and `opentofu-cloud-tasks.mjs`: start local
+  GlobalStack GCP, run the Google provider Cloud Tasks queue template through
+  init/apply, create and dispatch an HTTP task to a real local receiver, then
+  run no-drift plan/destroy.
+- `terraform-logging.mjs` and `opentofu-logging.mjs`: start local GlobalStack
+  GCP, run the Google provider Cloud Logging metric template through
+  init/apply, write and filter structured log entries, then run no-drift
+  plan/destroy.
 - `pulumi-cloud-storage.mjs`: starts local GlobalStack GCP, runs the Pulumi GCP
   provider Cloud Storage template through login/stack init/up/no-drift
   preview/destroy, and removes temporary state unless `--keep-workdir` is
@@ -78,6 +86,10 @@ npm run e2e:terraform:secret-manager
 npm run e2e:opentofu:secret-manager
 npm run e2e:terraform:kms
 npm run e2e:opentofu:kms
+npm run e2e:terraform:cloud-tasks
+npm run e2e:opentofu:cloud-tasks
+npm run e2e:terraform:logging
+npm run e2e:opentofu:logging
 npm run e2e:terraform:pubsub
 npm run e2e:opentofu:pubsub
 npm run e2e:pulumi:pubsub

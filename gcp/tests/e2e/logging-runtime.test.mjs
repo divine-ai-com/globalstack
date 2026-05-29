@@ -11,6 +11,7 @@ test('Cloud Logging local runtime writes and filters structured log entries', as
   const projectId = 'globalstack-local';
   const logName = `projects/${projectId}/logs/globalstack-app`;
   const otherLogName = `projects/${projectId}/logs/other`;
+  const metricId = `gst_${runId.replace(/-/g, '_')}`;
   const logging = new LoggingApi(new GoogleRestClient({
     tokenProvider: async () => null,
   }), {
@@ -18,6 +19,31 @@ test('Cloud Logging local runtime writes and filters structured log entries', as
   });
 
   try {
+    const createMetric = await logging.createMetric({
+      projectId,
+      metric: {
+        name: metricId,
+        description: 'GlobalStack conformance workflow error counter',
+        filter: `logName="${logName}" severity="ERROR"`,
+        metricDescriptor: {
+          displayName: 'GlobalStack workflow errors',
+          metricKind: 'DELTA',
+          valueType: 'INT64',
+          unit: '1',
+        },
+      },
+    });
+    assert.equal(createMetric.response.status, 200);
+    assert.equal(createMetric.response.body.name, metricId);
+
+    const getMetric = await logging.getMetric({ projectId, metricId });
+    assert.equal(getMetric.response.status, 200);
+    assert.equal(getMetric.response.body.filter, `logName="${logName}" severity="ERROR"`);
+
+    const listMetrics = await logging.listMetrics(projectId);
+    assert.equal(listMetrics.response.status, 200);
+    assert.ok(listMetrics.response.body.metrics.some(metric => metric.name === metricId));
+
     const write = await logging.writeEntries({
       resource: {
         type: 'global',
@@ -79,6 +105,11 @@ test('Cloud Logging local runtime writes and filters structured log entries', as
     assert.equal(errors.response.body.entries.length, 1);
     assert.equal(errors.response.body.entries[0].jsonPayload.step, 'failed');
     assert.equal(errors.response.body.entries[0].labels.run_id, runId);
+
+    const deleteMetric = await logging.deleteMetric({ projectId, metricId });
+    assert.equal(deleteMetric.response.status, 200);
+    const missingMetric = await logging.getMetric({ projectId, metricId });
+    assert.equal(missingMetric.response.status, 404);
   } finally {
     await runtime.close();
   }

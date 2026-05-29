@@ -10,12 +10,12 @@ export function createCloudTasksRoutes({ store }) {
         return match ? { projectId: decodeURIComponent(match[1]), location: decodeURIComponent(match[2]) } : null;
       },
       handle: async ({ request, response, url, match }) => {
-        const queueId = url.searchParams.get('queueId');
+        const body = await readRequestJson(request);
+        const queueId = url.searchParams.get('queueId') ?? body.name?.split('/').at(-1);
         if (!queueId) {
           writeTasksError(response, 400, 'INVALID_ARGUMENT', 'Missing required queueId query parameter.');
           return;
         }
-        const body = await readRequestJson(request);
         const queue = store.createQueue({ ...match, queueId, body });
         if (!queue) {
           writeTasksError(response, 409, 'ALREADY_EXISTS', `Queue ${queueId} already exists.`);
@@ -34,6 +34,17 @@ export function createCloudTasksRoutes({ store }) {
           return;
         }
         writeJson(response, 200, queue);
+      },
+    },
+    {
+      method: 'DELETE',
+      match: matchQueuePath,
+      handle: async ({ response, match }) => {
+        if (!store.deleteQueue(match)) {
+          writeTasksError(response, 404, 'NOT_FOUND', `Queue ${match.queueId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, {});
       },
     },
     {

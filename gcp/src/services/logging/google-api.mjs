@@ -28,4 +28,31 @@ export class LoggingApi {
       },
     });
   }
+
+  async createMetric({ projectId, metric }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.loggingRoot}/projects/${projectId}/metrics`),
+      body: metric,
+    });
+  }
+
+  async getMetric({ projectId, metricId }) {
+    return this.client.requestJson({
+      url: new URL(`${this.loggingRoot}/projects/${projectId}/metrics/${metricId}`),
+    });
+  }
+
+  async listMetrics(projectId) {
+    return this.client.requestJson({
+      url: new URL(`${this.loggingRoot}/projects/${projectId}/metrics`),
+    });
+  }
+
+  async deleteMetric({ projectId, metricId }) {
+    return this.client.requestJson({
+      method: 'DELETE',
+      url: new URL(`${this.loggingRoot}/projects/${projectId}/metrics/${metricId}`),
+    });
+  }
 }

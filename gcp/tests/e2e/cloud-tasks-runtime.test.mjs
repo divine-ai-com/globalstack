@@ -73,6 +73,11 @@ test('Cloud Tasks local runtime creates a queue and dispatches an HTTP task to a
       run_id: runId,
       action: 'dispatch',
     });
+
+    const deleted = await tasks.deleteQueue({ projectId, location, queueId });
+    assert.equal(deleted.response.status, 200);
+    const missingQueue = await tasks.getQueue({ projectId, location, queueId });
+    assert.equal(missingQueue.response.status, 404);
   } finally {
     await receiver.close();
     await runtime.close();

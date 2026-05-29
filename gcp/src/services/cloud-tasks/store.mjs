@@ -12,6 +12,7 @@ export class CloudTasksStore {
       state: 'RUNNING',
       rateLimits: body.rateLimits ?? {},
       retryConfig: body.retryConfig ?? {},
+      stackdriverLoggingConfig: body.stackdriverLoggingConfig ?? {},
     };
     this.queues.set(name, queue);
     return queue;
@@ -19,6 +20,18 @@ export class CloudTasksStore {
 
   getQueue({ projectId, location, queueId }) {
     return this.queues.get(queueName(projectId, location, queueId)) ?? null;
+  }
+
+  deleteQueue({ projectId, location, queueId }) {
+    const name = queueName(projectId, location, queueId);
+    if (!this.queues.has(name)) return false;
+    this.queues.delete(name);
+    for (const taskName of this.tasks.keys()) {
+      if (taskName.startsWith(`${name}/tasks/`)) {
+        this.tasks.delete(taskName);
+      }
+    }
+    return true;
   }
 
   createTask({ projectId, location, queueId, task }) {

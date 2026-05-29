@@ -25,6 +25,13 @@ export class CloudTasksApi {
     });
   }
 
+  async deleteQueue({ projectId, location, queueId }) {
+    return this.client.requestJson({
+      method: 'DELETE',
+      url: new URL(`${this.tasksRoot}/projects/${projectId}/locations/${location}/queues/${queueId}`),
+    });
+  }
+
   async createHttpTask({ projectId, location, queueId, taskId, url, body, headers = {}, httpMethod = 'POST' }) {
     return this.client.requestJson({
       method: 'POST',
