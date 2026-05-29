@@ -13,11 +13,15 @@ Implemented files:
   differential tests
 
 Current scope is bounded to key ring create/get, symmetric crypto key
-create/get, encrypt, decrypt, and AAD validation. Asymmetric signing, key
-versions beyond the primary version, rotation, import jobs, IAM, and real-GCP
-differential captures remain pending.
+create/get, label preservation, primary crypto key version listing and destroy,
+encrypt, decrypt, and AAD validation. Asymmetric signing, key versions beyond
+the primary version, rotation, import jobs, IAM, and real-GCP differential
+captures remain pending.
 
 Client gates:
 
 - `gcp/scripts/e2e/rest-kms.mjs` validates the local Google-shaped REST
   lifecycle, crypto side effects, and AAD error envelope end to end.
+- `gcp/scripts/e2e/terraform-kms.mjs` and `gcp/scripts/e2e/opentofu-kms.mjs`
+  validate Google provider create/read/no-drift/destroy behavior plus local
+  encrypt/decrypt side effects.

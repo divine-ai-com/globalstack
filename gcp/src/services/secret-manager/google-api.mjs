@@ -59,10 +59,33 @@ export class SecretManagerApi {
     });
   }
 
+  async getVersion({ projectId, secretId, versionId }) {
+    return this.client.requestJson({
+      url: new URL(`${this.secretManagerRoot}/projects/${projectId}/secrets/${secretId}/versions/${versionId}`),
+    });
+  }
+
+  async enableVersion({ projectId, secretId, versionId }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.secretManagerRoot}/projects/${projectId}/secrets/${secretId}/versions/${versionId}:enable`),
+      body: {},
+    });
+  }
+
+  async disableVersion({ projectId, secretId, versionId }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.secretManagerRoot}/projects/${projectId}/secrets/${secretId}/versions/${versionId}:disable`),
+      body: {},
+    });
+  }
+
   async destroyVersion({ projectId, secretId, versionId }) {
     return this.client.requestJson({
       method: 'POST',
       url: new URL(`${this.secretManagerRoot}/projects/${projectId}/secrets/${secretId}/versions/${versionId}:destroy`),
+      body: {},
     });
   }
 }

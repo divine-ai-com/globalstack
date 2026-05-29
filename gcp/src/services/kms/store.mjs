@@ -18,7 +18,7 @@ export class KmsStore {
     return this.keyRings.get(keyRingName(projectId, location, keyRingId)) ?? null;
   }
 
-  createCryptoKey({ projectId, location, keyRingId, cryptoKeyId, purpose = 'ENCRYPT_DECRYPT' }) {
+  createCryptoKey({ projectId, location, keyRingId, cryptoKeyId, purpose = 'ENCRYPT_DECRYPT', labels = {} }) {
     const ringName = keyRingName(projectId, location, keyRingId);
     if (!this.keyRings.has(ringName)) return { missingKeyRing: true };
     const name = cryptoKeyName(projectId, location, keyRingId, cryptoKeyId);
@@ -27,6 +27,7 @@ export class KmsStore {
     const cryptoKey = {
       name,
       purpose,
+      labels,
       createTime: now,
       primary: {
         name: `${name}/cryptoKeyVersions/1`,
@@ -76,6 +77,23 @@ export class KmsStore {
       plaintext: plaintext.toString('base64'),
     };
   }
+
+  listCryptoKeyVersions({ projectId, location, keyRingId, cryptoKeyId }) {
+    const cryptoKey = this.cryptoKeys.get(cryptoKeyName(projectId, location, keyRingId, cryptoKeyId));
+    if (!cryptoKey) return null;
+    return [cryptoKey.primary];
+  }
+
+  destroyCryptoKeyVersion({ projectId, location, keyRingId, cryptoKeyId, versionId }) {
+    const cryptoKey = this.cryptoKeys.get(cryptoKeyName(projectId, location, keyRingId, cryptoKeyId));
+    if (!cryptoKey || !cryptoKey.primary.name.endsWith(`/cryptoKeyVersions/${versionId}`)) return null;
+    cryptoKey.primary = {
+      ...cryptoKey.primary,
+      state: 'DESTROY_SCHEDULED',
+      destroyTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    };
+    return cryptoKey.primary;
+  }
 }
 
 export function keyRingName(projectId, location, keyRingId) {
@@ -90,6 +108,7 @@ function publicCryptoKey(cryptoKey) {
   return {
     name: cryptoKey.name,
     purpose: cryptoKey.purpose,
+    labels: cryptoKey.labels,
     createTime: cryptoKey.createTime,
     primary: cryptoKey.primary,
   };

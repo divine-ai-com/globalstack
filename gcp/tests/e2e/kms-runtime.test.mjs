@@ -31,13 +31,28 @@ test('Cloud KMS local runtime creates keys and performs authenticated encrypt/de
     const getRing = await kms.getKeyRing({ projectId, location, keyRingId });
     assert.equal(getRing.response.status, 200);
 
-    const createKey = await kms.createCryptoKey({ projectId, location, keyRingId, cryptoKeyId });
+    const createKey = await kms.createCryptoKey({
+      projectId,
+      location,
+      keyRingId,
+      cryptoKeyId,
+      labels: {
+        purpose: 'globalstack-conformance',
+        run_id: runId,
+      },
+    });
     assert.equal(createKey.response.status, 200);
     assert.equal(createKey.response.body.purpose, 'ENCRYPT_DECRYPT');
     assert.equal(createKey.response.body.primary.state, 'ENABLED');
+    assert.equal(createKey.response.body.labels.run_id, runId);
 
     const getKey = await kms.getCryptoKey({ projectId, location, keyRingId, cryptoKeyId });
     assert.equal(getKey.response.status, 200);
+
+    const versions = await kms.listCryptoKeyVersions({ projectId, location, keyRingId, cryptoKeyId });
+    assert.equal(versions.response.status, 200);
+    assert.equal(versions.response.body.cryptoKeyVersions.length, 1);
+    assert.equal(versions.response.body.cryptoKeyVersions[0].state, 'ENABLED');
 
     const encrypt = await kms.encrypt({
       projectId,
@@ -72,6 +87,16 @@ test('Cloud KMS local runtime creates keys and performs authenticated encrypt/de
     });
     assert.equal(badAad.response.status, 400);
     assert.equal(badAad.response.body.error.status, 'INVALID_ARGUMENT');
+
+    const destroyVersion = await kms.destroyCryptoKeyVersion({
+      projectId,
+      location,
+      keyRingId,
+      cryptoKeyId,
+      versionId: '1',
+    });
+    assert.equal(destroyVersion.response.status, 200);
+    assert.equal(destroyVersion.response.body.state, 'DESTROY_SCHEDULED');
   } finally {
     await runtime.close();
   }

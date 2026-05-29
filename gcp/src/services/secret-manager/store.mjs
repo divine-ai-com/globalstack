@@ -59,6 +59,29 @@ export class SecretManagerStore {
     };
   }
 
+  getVersion({ projectId, secretId, versionId }) {
+    const version = this.resolveVersion({ projectId, secretId, versionId });
+    return version ? publicVersion(version) : null;
+  }
+
+  enableVersion({ projectId, secretId, versionId }) {
+    const version = this.resolveVersion({ projectId, secretId, versionId });
+    if (!version) return null;
+    if (version.state !== 'DESTROYED') {
+      version.state = 'ENABLED';
+    }
+    return publicVersion(version);
+  }
+
+  disableVersion({ projectId, secretId, versionId }) {
+    const version = this.resolveVersion({ projectId, secretId, versionId });
+    if (!version) return null;
+    if (version.state !== 'DESTROYED') {
+      version.state = 'DISABLED';
+    }
+    return publicVersion(version);
+  }
+
   destroyVersion({ projectId, secretId, versionId }) {
     const version = this.resolveVersion({ projectId, secretId, versionId });
     if (!version) return null;

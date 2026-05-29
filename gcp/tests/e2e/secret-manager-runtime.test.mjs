@@ -45,9 +45,23 @@ test('Secret Manager local runtime stores versions and enforces destroyed versio
     const secondVersion = await api.addVersion({ projectId, secretId, data: `second:${runId}` });
     assert.equal(secondVersion.response.status, 200);
 
+    const getFirstVersion = await api.getVersion({ projectId, secretId, versionId: '1' });
+    assert.equal(getFirstVersion.response.status, 200);
+    assert.equal(getFirstVersion.response.body.state, 'ENABLED');
+
     const accessLatest = await api.accessVersion({ projectId, secretId });
     assert.equal(accessLatest.response.status, 200);
     assert.equal(decodeSecretPayload(accessLatest.response.body), `second:${runId}`);
+
+    const disableFirst = await api.disableVersion({ projectId, secretId, versionId: '1' });
+    assert.equal(disableFirst.response.status, 200);
+    assert.equal(disableFirst.response.body.state, 'DISABLED');
+    const accessDisabled = await api.accessVersion({ projectId, secretId, versionId: '1' });
+    assert.equal(accessDisabled.response.status, 404);
+
+    const enableFirst = await api.enableVersion({ projectId, secretId, versionId: '1' });
+    assert.equal(enableFirst.response.status, 200);
+    assert.equal(enableFirst.response.body.state, 'ENABLED');
 
     const accessFirst = await api.accessVersion({ projectId, secretId, versionId: '1' });
     assert.equal(accessFirst.response.status, 200);

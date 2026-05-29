@@ -52,7 +52,12 @@ export function createKmsRoutes({ store }) {
           return;
         }
         const body = await readRequestJson(request);
-        const result = store.createCryptoKey({ ...match, cryptoKeyId, purpose: body.purpose });
+        const result = store.createCryptoKey({
+          ...match,
+          cryptoKeyId,
+          purpose: body.purpose,
+          labels: body.labels,
+        });
         if (result.missingKeyRing) {
           writeKmsError(response, 404, 'NOT_FOUND', `Key ring ${match.keyRingId} was not found.`);
           return;
@@ -106,6 +111,30 @@ export function createKmsRoutes({ store }) {
         }
       },
     },
+    {
+      method: 'GET',
+      match: matchCryptoKeyVersionsPath,
+      handle: async ({ response, match }) => {
+        const cryptoKeyVersions = store.listCryptoKeyVersions(match);
+        if (!cryptoKeyVersions) {
+          writeKmsError(response, 404, 'NOT_FOUND', `Crypto key ${match.cryptoKeyId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, { cryptoKeyVersions });
+      },
+    },
+    {
+      method: 'POST',
+      match: matchDestroyCryptoKeyVersionPath,
+      handle: async ({ response, match }) => {
+        const cryptoKeyVersion = store.destroyCryptoKeyVersion(match);
+        if (!cryptoKeyVersion) {
+          writeKmsError(response, 404, 'NOT_FOUND', `Crypto key version ${match.versionId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, cryptoKeyVersion);
+      },
+    },
   ];
 }
 
@@ -125,6 +154,27 @@ function matchCryptoKeyPath(url) {
     location: decodeURIComponent(match[2]),
     keyRingId: decodeURIComponent(match[3]),
     cryptoKeyId: decodeURIComponent(match[4]),
+  } : null;
+}
+
+function matchCryptoKeyVersionsPath(url) {
+  const match = normalizePath(url.pathname).match(/^\/v1\/projects\/([^/]+)\/locations\/([^/]+)\/keyRings\/([^/]+)\/cryptoKeys\/([^/]+)\/cryptoKeyVersions$/);
+  return match ? {
+    projectId: decodeURIComponent(match[1]),
+    location: decodeURIComponent(match[2]),
+    keyRingId: decodeURIComponent(match[3]),
+    cryptoKeyId: decodeURIComponent(match[4]),
+  } : null;
+}
+
+function matchDestroyCryptoKeyVersionPath(url) {
+  const match = normalizePath(url.pathname).match(/^\/v1\/projects\/([^/]+)\/locations\/([^/]+)\/keyRings\/([^/]+)\/cryptoKeys\/([^/]+)\/cryptoKeyVersions\/([^/]+):destroy$/);
+  return match ? {
+    projectId: decodeURIComponent(match[1]),
+    location: decodeURIComponent(match[2]),
+    keyRingId: decodeURIComponent(match[3]),
+    cryptoKeyId: decodeURIComponent(match[4]),
+    versionId: decodeURIComponent(match[5]),
   } : null;
 }
 
@@ -150,4 +200,8 @@ function matchDecryptPath(url) {
 
 function writeKmsError(response, status, reason, message) {
   writeGoogleError(response, googleError(status, reason, message));
+}
+
+function normalizePath(pathname) {
+  return pathname.replace(/^\/v1\/v1\//, '/v1/');
 }

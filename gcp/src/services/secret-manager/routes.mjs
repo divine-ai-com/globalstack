@@ -1,4 +1,4 @@
-import { readRequestJson, writeEmpty, writeJson } from '../../http/body.mjs';
+import { readRequestJson, writeJson } from '../../http/body.mjs';
 import { googleError, writeGoogleError } from '../../errors/google-error.mjs';
 
 export function createSecretManagerRoutes({ store }) {
@@ -61,7 +61,7 @@ export function createSecretManagerRoutes({ store }) {
           writeSecretError(response, 404, 'NOT_FOUND', `Secret ${match.secretId} was not found.`);
           return;
         }
-        writeEmpty(response, 200);
+        writeJson(response, 200, {});
       },
     },
     {
@@ -92,6 +92,42 @@ export function createSecretManagerRoutes({ store }) {
           return;
         }
         writeJson(response, 200, access);
+      },
+    },
+    {
+      method: 'GET',
+      match: matchVersionPath,
+      handle: async ({ response, match }) => {
+        const version = store.getVersion(match);
+        if (!version) {
+          writeSecretError(response, 404, 'NOT_FOUND', `Secret version ${match.versionId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, version);
+      },
+    },
+    {
+      method: 'POST',
+      match: matchEnableVersionPath,
+      handle: async ({ response, match }) => {
+        const version = store.enableVersion(match);
+        if (!version) {
+          writeSecretError(response, 404, 'NOT_FOUND', `Secret version ${match.versionId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, version);
+      },
+    },
+    {
+      method: 'POST',
+      match: matchDisableVersionPath,
+      handle: async ({ response, match }) => {
+        const version = store.disableVersion(match);
+        if (!version) {
+          writeSecretError(response, 404, 'NOT_FOUND', `Secret version ${match.versionId} was not found.`);
+          return;
+        }
+        writeJson(response, 200, version);
       },
     },
     {
@@ -127,6 +163,33 @@ function matchAddVersionPath(url) {
 
 function matchAccessVersionPath(url) {
   const match = url.pathname.match(/^\/v1\/projects\/([^/]+)\/secrets\/([^/]+)\/versions\/([^/]+):access$/);
+  return match ? {
+    projectId: decodeURIComponent(match[1]),
+    secretId: decodeURIComponent(match[2]),
+    versionId: decodeURIComponent(match[3]),
+  } : null;
+}
+
+function matchVersionPath(url) {
+  const match = url.pathname.match(/^\/v1\/projects\/([^/]+)\/secrets\/([^/]+)\/versions\/([^/]+)$/);
+  return match ? {
+    projectId: decodeURIComponent(match[1]),
+    secretId: decodeURIComponent(match[2]),
+    versionId: decodeURIComponent(match[3]),
+  } : null;
+}
+
+function matchEnableVersionPath(url) {
+  const match = url.pathname.match(/^\/v1\/projects\/([^/]+)\/secrets\/([^/]+)\/versions\/([^/]+):enable$/);
+  return match ? {
+    projectId: decodeURIComponent(match[1]),
+    secretId: decodeURIComponent(match[2]),
+    versionId: decodeURIComponent(match[3]),
+  } : null;
+}
+
+function matchDisableVersionPath(url) {
+  const match = url.pathname.match(/^\/v1\/projects\/([^/]+)\/secrets\/([^/]+)\/versions\/([^/]+):disable$/);
   return match ? {
     projectId: decodeURIComponent(match[1]),
     secretId: decodeURIComponent(match[2]),

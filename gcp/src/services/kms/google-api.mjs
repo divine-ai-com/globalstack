@@ -18,13 +18,13 @@ export class KmsApi {
     });
   }
 
-  async createCryptoKey({ projectId, location, keyRingId, cryptoKeyId, purpose = 'ENCRYPT_DECRYPT' }) {
+  async createCryptoKey({ projectId, location, keyRingId, cryptoKeyId, purpose = 'ENCRYPT_DECRYPT', labels }) {
     const url = new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys`);
     url.searchParams.set('cryptoKeyId', cryptoKeyId);
     return this.client.requestJson({
       method: 'POST',
       url,
-      body: { purpose },
+      body: { purpose, labels },
     });
   }
 
@@ -53,6 +53,20 @@ export class KmsApi {
         ciphertext,
         additionalAuthenticatedData,
       },
+    });
+  }
+
+  async listCryptoKeyVersions({ projectId, location, keyRingId, cryptoKeyId }) {
+    return this.client.requestJson({
+      url: new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys/${cryptoKeyId}/cryptoKeyVersions`),
+    });
+  }
+
+  async destroyCryptoKeyVersion({ projectId, location, keyRingId, cryptoKeyId, versionId }) {
+    return this.client.requestJson({
+      method: 'POST',
+      url: new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys/${cryptoKeyId}/cryptoKeyVersions/${versionId}:destroy`),
+      body: {},
     });
   }
 }

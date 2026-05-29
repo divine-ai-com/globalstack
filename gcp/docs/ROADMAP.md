@@ -274,6 +274,13 @@ Current first service evidence:
   `gcp/scripts/e2e/rest-logging.mjs`
 - Cloud Tasks REST dispatch gate is saved under
   `gcp/scripts/e2e/rest-cloud-tasks.mjs`
+- Secret Manager Terraform/OpenTofu templates and lifecycle gates are saved
+  under `gcp/templates/terraform/secret-manager/`,
+  `gcp/scripts/e2e/terraform-secret-manager.mjs`, and
+  `gcp/scripts/e2e/opentofu-secret-manager.mjs`
+- Cloud KMS Terraform/OpenTofu templates and lifecycle gates are saved under
+  `gcp/templates/terraform/kms/`, `gcp/scripts/e2e/terraform-kms.mjs`, and
+  `gcp/scripts/e2e/opentofu-kms.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
@@ -530,15 +537,17 @@ runtime product code should move into package-owned modules.
 
 ## Immediate Next Work
 
-1. Add Terraform/Pulumi/OpenTofu templates for Secret Manager, Cloud KMS,
-   Cloud Logging, and Cloud Tasks once their provider endpoint behavior is
-   captured or known to route cleanly through the local Google-shaped API.
-2. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
+1. Add Terraform/OpenTofu templates for Cloud Logging and Cloud Tasks once
+   their provider endpoint behavior is captured or known to route cleanly
+   through the local Google-shaped API.
+2. Add Pulumi templates for Secret Manager, Cloud KMS, Cloud Logging, and Cloud
+   Tasks after matching the provider endpoint override behavior.
+3. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
    Logging, and Cloud Tasks after service enablement and sweeper coverage are in
    place.
-3. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
+4. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
    Functions, GKE, Artifact Registry, Cloud SQL, and Memorystore.
-4. Build the first GCP shipment bundle and require service existence plus
+5. Build the first GCP shipment bundle and require service existence plus
    runtime side-effect integration tests.
 
 ## Current Open Risks
