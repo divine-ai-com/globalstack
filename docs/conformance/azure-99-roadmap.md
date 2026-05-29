@@ -2,7 +2,7 @@
 
 This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
 
-Generated: 2026-05-28T19:33:56.770Z
+Generated: 2026-05-29T03:29:48.962Z
 
 ## Guardrails
 
@@ -129,6 +129,51 @@ These items remain open across the whole Azure program even when a service-speci
 ## Extended Continuation Roadmap
 
 The tracked 30-service program is closed. These are the next phases that continue expanding confidence instead of freezing the claim.
+
+### Existing 30: Parity Deepening Roadmap
+
+| Area | Focus |
+|---|---|
+| Live Azure differential capture | Capture cleanup-verified real Azure success, error, async, delete, and retry behavior per service, then replay those fixtures locally. |
+| Runtime depth | Deepen concrete local runtimes for AKS, Functions, Logic Apps, APIM, messaging, storage, databases, networking, DNS, WAF, and observability instead of expanding metadata-only success paths. |
+| Provider lifecycle parity | Exercise refresh, update, import/adopt, drift, replacement, rollback, delete/recreate races, and destroy behavior across every supported IaC platform. |
+| Error and timing fidelity | Match captured Azure status codes, error bodies, async-operation headers, retry headers, eventual-consistency windows, and post-delete read behavior. |
+| Auth and RBAC fidelity | Move from permissive local token behavior toward captured ARM and data-plane allow/deny matrices, inherited scopes, and propagation-delay behavior. |
+
+### Next 30: Service Expansion Roadmap
+
+A next-wave Azure service must be Azure-shaped facade plus concrete local backend/runtime plus live Azure differential evidence. Metadata-only acceptance is allowed only when it is explicitly marked as a gap and fails closed outside captured behavior.
+
+Started services:
+
+| Service | Resource Types | Runtime | Current Depth |
+|---|---|---|---|
+| Azure IoT Hub | `Microsoft.Devices/IotHubs` | globalstack-iot-hub-device-runtime | bounded service REST identity registry, device twin, query, and HTTP telemetry ingestion behavior |
+| Azure Digital Twins | `Microsoft.DigitalTwins/digitalTwinsInstances` | globalstack-digital-twins-graph-runtime | bounded model upload, twin CRUD, relationship CRUD, and SELECT * graph query behavior |
+| Azure AI Search | `Microsoft.Search/searchServices` | globalstack-search-index-runtime | bounded index definition storage, document batch indexing, substring search, and document count behavior |
+
+Candidate wave: Next best service wave
+- Azure SQL Database with a local SQL backend contract
+- Azure Data Factory with a local pipeline runner
+- Azure Data Lake Storage Gen2 with hierarchical namespace behavior
+- Azure SignalR with official/local emulator path
+- Azure Web PubSub with a local WebSocket hub
+- Azure Batch with a local job scheduler/container runner
+- Azure Container Instances with a Docker-backed runtime
+- Azure Policy with local policy evaluation
+- Azure Data Explorer/Kusto with a bounded KQL store
+- Azure Stream Analytics with a local stream processor
+
+Candidate wave: Enterprise service wave
+- Microsoft Fabric / Power BI workspace surfaces with query/runtime where possible
+- Microsoft Purview catalog with a local metadata graph
+- Recovery Services / Backup with a local snapshot catalog
+- Automation Accounts with a local runbook runner
+- API Center with a local API catalog
+- Notification Hubs with a local push-message sink
+- Communication Services with local email, SMS, and chat sinks
+- Azure Machine Learning workspace with a local job and model registry runtime
+- Azure OpenAI only with a real model-runtime contract, never a fake response facade
 
 ### Phase 6: Platform breadth pressure
 

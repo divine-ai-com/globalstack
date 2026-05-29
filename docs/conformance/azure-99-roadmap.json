@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-28T19:33:56.770Z",
+    "generatedAt": "2026-05-29T03:29:48.962Z",
     "generatedBy": "npm run conformance:roadmap",
     "source": "docs/conformance/azure-99-parity-checklist.json",
     "serviceCount": 30,
@@ -1233,6 +1233,88 @@
       ]
     }
   ],
+  "existingThirtyDeepeningRoadmap": [
+    {
+      "area": "Live Azure differential capture",
+      "focus": "Capture cleanup-verified real Azure success, error, async, delete, and retry behavior per service, then replay those fixtures locally."
+    },
+    {
+      "area": "Runtime depth",
+      "focus": "Deepen concrete local runtimes for AKS, Functions, Logic Apps, APIM, messaging, storage, databases, networking, DNS, WAF, and observability instead of expanding metadata-only success paths."
+    },
+    {
+      "area": "Provider lifecycle parity",
+      "focus": "Exercise refresh, update, import/adopt, drift, replacement, rollback, delete/recreate races, and destroy behavior across every supported IaC platform."
+    },
+    {
+      "area": "Error and timing fidelity",
+      "focus": "Match captured Azure status codes, error bodies, async-operation headers, retry headers, eventual-consistency windows, and post-delete read behavior."
+    },
+    {
+      "area": "Auth and RBAC fidelity",
+      "focus": "Move from permissive local token behavior toward captured ARM and data-plane allow/deny matrices, inherited scopes, and propagation-delay behavior."
+    }
+  ],
+  "nextThirtyExpansionRoadmap": {
+    "operatingRule": "A next-wave Azure service must be Azure-shaped facade plus concrete local backend/runtime plus live Azure differential evidence. Metadata-only acceptance is allowed only when it is explicitly marked as a gap and fails closed outside captured behavior.",
+    "started": [
+      {
+        "service": "Azure IoT Hub",
+        "resourceTypes": [
+          "Microsoft.Devices/IotHubs"
+        ],
+        "runtime": "globalstack-iot-hub-device-runtime",
+        "currentDepth": "bounded service REST identity registry, device twin, query, and HTTP telemetry ingestion behavior"
+      },
+      {
+        "service": "Azure Digital Twins",
+        "resourceTypes": [
+          "Microsoft.DigitalTwins/digitalTwinsInstances"
+        ],
+        "runtime": "globalstack-digital-twins-graph-runtime",
+        "currentDepth": "bounded model upload, twin CRUD, relationship CRUD, and SELECT * graph query behavior"
+      },
+      {
+        "service": "Azure AI Search",
+        "resourceTypes": [
+          "Microsoft.Search/searchServices"
+        ],
+        "runtime": "globalstack-search-index-runtime",
+        "currentDepth": "bounded index definition storage, document batch indexing, substring search, and document count behavior"
+      }
+    ],
+    "candidateWaves": [
+      {
+        "label": "Next best service wave",
+        "services": [
+          "Azure SQL Database with a local SQL backend contract",
+          "Azure Data Factory with a local pipeline runner",
+          "Azure Data Lake Storage Gen2 with hierarchical namespace behavior",
+          "Azure SignalR with official/local emulator path",
+          "Azure Web PubSub with a local WebSocket hub",
+          "Azure Batch with a local job scheduler/container runner",
+          "Azure Container Instances with a Docker-backed runtime",
+          "Azure Policy with local policy evaluation",
+          "Azure Data Explorer/Kusto with a bounded KQL store",
+          "Azure Stream Analytics with a local stream processor"
+        ]
+      },
+      {
+        "label": "Enterprise service wave",
+        "services": [
+          "Microsoft Fabric / Power BI workspace surfaces with query/runtime where possible",
+          "Microsoft Purview catalog with a local metadata graph",
+          "Recovery Services / Backup with a local snapshot catalog",
+          "Automation Accounts with a local runbook runner",
+          "API Center with a local API catalog",
+          "Notification Hubs with a local push-message sink",
+          "Communication Services with local email, SMS, and chat sinks",
+          "Azure Machine Learning workspace with a local job and model registry runtime",
+          "Azure OpenAI only with a real model-runtime contract, never a fake response facade"
+        ]
+      }
+    ]
+  },
   "extendedContinuationRoadmap": [
     {
       "id": "phase-6-platform-breadth-pressure",
