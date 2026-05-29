@@ -41,6 +41,17 @@ Current scripts:
   the GlobalStack service-owned engine adapter, installs the official Node.js
   Pub/Sub client in a temporary workspace, and runs topic/subscription
   create/publish/deliver/ack/delete.
+- `rest-secret-manager.mjs`: starts local GlobalStack GCP and runs
+  Secret Manager create/get/list/version access/destroy/delete plus duplicate
+  and destroyed-version error checks through the Google-shaped REST wrapper.
+- `rest-kms.mjs`: starts local GlobalStack GCP and runs Cloud KMS key ring,
+  crypto key, encrypt/decrypt, and AAD mismatch checks through the
+  Google-shaped REST wrapper.
+- `rest-logging.mjs`: starts local GlobalStack GCP and runs Cloud Logging
+  `entries.write` plus project, log name, and severity filter checks through
+  the Google-shaped REST wrapper.
+- `rest-cloud-tasks.mjs`: starts local GlobalStack GCP and runs Cloud Tasks
+  queue/task creation plus explicit HTTP dispatch to a real local receiver.
 
 ```bash
 cd gcp
@@ -51,6 +62,10 @@ npm run e2e:gcloud:storage
 npm run e2e:gcloud:pubsub
 npm run e2e:sdk-node:storage
 npm run e2e:sdk-node:pubsub
+npm run e2e:rest:secret-manager
+npm run e2e:rest:kms
+npm run e2e:rest:logging
+npm run e2e:rest:cloud-tasks
 npm run e2e:terraform:pubsub
 npm run e2e:opentofu:pubsub
 npm run e2e:pulumi:pubsub

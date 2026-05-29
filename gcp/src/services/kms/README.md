@@ -16,3 +16,8 @@ Current scope is bounded to key ring create/get, symmetric crypto key
 create/get, encrypt, decrypt, and AAD validation. Asymmetric signing, key
 versions beyond the primary version, rotation, import jobs, IAM, and real-GCP
 differential captures remain pending.
+
+Client gates:
+
+- `gcp/scripts/e2e/rest-kms.mjs` validates the local Google-shaped REST
+  lifecycle, crypto side effects, and AAD error envelope end to end.

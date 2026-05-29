@@ -16,3 +16,8 @@ Current scope is bounded to `entries.write` and `entries.list` with project,
 `logName`, and severity filtering. Sinks, metrics, exclusions, log buckets,
 views, pagination, ordering, advanced filters, IAM, and real-GCP differential
 captures remain pending.
+
+Client gates:
+
+- `gcp/scripts/e2e/rest-logging.mjs` validates the local Google-shaped REST
+  write/list/filter behavior end to end.

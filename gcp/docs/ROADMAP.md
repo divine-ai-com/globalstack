@@ -266,6 +266,14 @@ Current first service evidence:
   `gcp/src/services/cloud-tasks/google-api.mjs`
 - Cloud Tasks local HTTP dispatch test is saved under
   `gcp/tests/e2e/cloud-tasks-runtime.test.mjs`
+- Secret Manager REST lifecycle gate is saved under
+  `gcp/scripts/e2e/rest-secret-manager.mjs`
+- Cloud KMS REST crypto lifecycle gate is saved under
+  `gcp/scripts/e2e/rest-kms.mjs`
+- Cloud Logging REST write/list/filter gate is saved under
+  `gcp/scripts/e2e/rest-logging.mjs`
+- Cloud Tasks REST dispatch gate is saved under
+  `gcp/scripts/e2e/rest-cloud-tasks.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
@@ -522,16 +530,15 @@ runtime product code should move into package-owned modules.
 
 ## Immediate Next Work
 
-1. Add a cleanup-first real-GCP conformance harness under `gcp/scripts/`.
-2. Add a tiny Service Usage/project/auth capture that creates no billable
-   resource.
-3. Add the first Cloud Storage capture with create/read/delete and cleanup
-   verification.
-4. Add a local Cloud Storage engine prototype backed by a real object store.
-5. Add Terraform Google provider runner only after the auth and storage capture
-   path is stable.
-6. Repeat for Pub/Sub using the official emulator.
-7. Build the first GCP shipment bundle and require service existence plus
+1. Add Terraform/Pulumi/OpenTofu templates for Secret Manager, Cloud KMS,
+   Cloud Logging, and Cloud Tasks once their provider endpoint behavior is
+   captured or known to route cleanly through the local Google-shaped API.
+2. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
+   Logging, and Cloud Tasks after service enablement and sweeper coverage are in
+   place.
+3. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
+   Functions, GKE, Artifact Registry, Cloud SQL, and Memorystore.
+4. Build the first GCP shipment bundle and require service existence plus
    runtime side-effect integration tests.
 
 ## Current Open Risks
