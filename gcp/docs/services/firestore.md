@@ -43,7 +43,11 @@ Current validation:
 Remaining promotion gates:
 
 - real-GCP document lifecycle capture and local replay
-- real-GCP Datastore-mode entity lifecycle capture and local replay
+- real-GCP Datastore-mode entity lifecycle capture and local replay after the
+  project has a default Datastore/Firestore database; the current conformance
+  project has `datastore.googleapis.com` enabled but no default database, and
+  GlobalStack does not create persistent database project configuration as a
+  disposable capture side effect
 - Terraform, Pulumi, and OpenTofu lifecycle templates
 - `gcloud firestore` and SDK lifecycle
 - query, transaction, batch write, composite index, watch/listen, Datastore

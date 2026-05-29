@@ -8,6 +8,7 @@ Run scripts without `--apply` first to inspect the plan:
 ```bash
 cd gcp
 npm run capture:storage
+npm run capture:datastore
 npm run capture:pubsub
 npm run capture:pubsub:advanced
 npm run capture:pubsub:errors
@@ -20,6 +21,7 @@ Real captures require `--apply` and always execute cleanup in a `finally` path:
 ```bash
 cd gcp
 npm run capture:storage -- --apply --bucket-location=US
+npm run capture:datastore -- --apply
 npm run capture:pubsub -- --apply
 npm run capture:pubsub:advanced -- --apply
 npm run capture:pubsub:errors -- --apply
@@ -36,3 +38,8 @@ cd gcp
 npm run sweep
 npm run sweep -- --apply
 ```
+
+Datastore capture requires the target project to already have a default
+Datastore/Firestore database. The capture runner intentionally does not create
+that database because database creation is persistent project configuration, not
+a disposable test resource.

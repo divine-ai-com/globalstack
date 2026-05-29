@@ -235,6 +235,10 @@ Current first service evidence:
   `gcp/src/services/firestore/datastore-api.mjs`
 - Datastore mode local entity lifecycle test is saved under
   `gcp/tests/e2e/datastore-emulator-runtime.test.mjs`
+- Datastore mode real-GCP capture runner is saved under
+  `gcp/scripts/capture/datastore-baseline.mjs`; execution is blocked until the
+  conformance project has a default Datastore/Firestore database because
+  creating that database is persistent project configuration
 - Secret Manager executable versioned store is saved under
   `gcp/src/services/secret-manager/store.mjs`
 - Secret Manager Google-shaped routes and API wrapper are saved under
