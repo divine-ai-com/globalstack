@@ -1,0 +1,6 @@
+name: globalstack-gcp-cloud-tasks
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Cloud Tasks Pulumi lifecycle template.

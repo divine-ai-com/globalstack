@@ -289,6 +289,9 @@ Current first service evidence:
   under `gcp/templates/terraform/logging/`,
   `gcp/scripts/e2e/terraform-logging.mjs`, and
   `gcp/scripts/e2e/opentofu-logging.mjs`
+- Secret Manager, Cloud KMS, Cloud Tasks, and Cloud Logging Pulumi templates
+  and lifecycle gates are saved under `gcp/templates/pulumi/` and
+  `gcp/scripts/e2e/pulumi-*.mjs`
 
 ## Phase 3: Compute And Container Runtime
 
@@ -545,11 +548,11 @@ runtime product code should move into package-owned modules.
 
 ## Immediate Next Work
 
-1. Add Pulumi templates for Secret Manager, Cloud KMS, Cloud Logging, and Cloud
-   Tasks after matching the provider endpoint override behavior.
-2. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
+1. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
    Logging, and Cloud Tasks after service enablement and sweeper coverage are in
    place.
+2. Add Config Connector and Crossplane feasibility gates for the first service
+   bucket.
 3. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
    Functions, GKE, Artifact Registry, Cloud SQL, and Memorystore.
 4. Build the first GCP shipment bundle and require service existence plus

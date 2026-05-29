@@ -1,0 +1,6 @@
+name: globalstack-gcp-secret-manager
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Secret Manager Pulumi lifecycle template.

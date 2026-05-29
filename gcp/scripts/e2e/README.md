@@ -43,6 +43,10 @@ Current scripts:
   Pulumi GCP provider Pub/Sub template through login/stack init/up/message-flow
   check/no-drift preview/destroy, and removes temporary state unless
   `--keep-workdir` is passed.
+- `pulumi-secret-manager.mjs`, `pulumi-kms.mjs`,
+  `pulumi-cloud-tasks.mjs`, and `pulumi-logging.mjs`: start local GlobalStack
+  GCP, run the Pulumi GCP provider templates through login/stack init/up,
+  verify runtime side effects, run no-drift preview, and destroy.
 - `gcloud-cloud-storage.mjs`: starts local GlobalStack GCP, configures an
   isolated Cloud SDK profile, and runs Cloud Storage bucket/object
   create/copy/list/delete.
@@ -90,6 +94,10 @@ npm run e2e:terraform:cloud-tasks
 npm run e2e:opentofu:cloud-tasks
 npm run e2e:terraform:logging
 npm run e2e:opentofu:logging
+npm run e2e:pulumi:secret-manager
+npm run e2e:pulumi:kms
+npm run e2e:pulumi:cloud-tasks
+npm run e2e:pulumi:logging
 npm run e2e:terraform:pubsub
 npm run e2e:opentofu:pubsub
 npm run e2e:pulumi:pubsub
