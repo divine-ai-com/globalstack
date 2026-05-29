@@ -86,6 +86,8 @@ Status:
   sweep
 - complete for Pub/Sub capture cleanup plus stale topic, subscription, and
   snapshot sweep reporting/deletion by GlobalStack labels
+- complete for cleanup sweep reporting/deletion readiness across Secret
+  Manager secrets, Cloud Tasks queues, and Cloud Logging metrics
 - complete for bounded Cloud Storage local runtime replay against the captured
   bucket/object lifecycle
 - next service capture targets still need to be added
@@ -548,14 +550,15 @@ runtime product code should move into package-owned modules.
 
 ## Immediate Next Work
 
-1. Add cleanup-first real-GCP captures for Secret Manager, Cloud KMS, Cloud
-   Logging, and Cloud Tasks after service enablement and sweeper coverage are in
-   place.
-2. Add Config Connector and Crossplane feasibility gates for the first service
+1. Add cleanup-first real-GCP captures for Secret Manager, Cloud Logging, and
+   Cloud Tasks after service enablement is explicitly approved.
+2. Define a separate KMS capture strategy because key rings and crypto keys are
+   not hard-deletable like the other first-bucket resources.
+3. Add Config Connector and Crossplane feasibility gates for the first service
    bucket.
-3. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
+4. Add the Phase 3 compute/container runtime bucket: Cloud Run, Cloud
    Functions, GKE, Artifact Registry, Cloud SQL, and Memorystore.
-4. Build the first GCP shipment bundle and require service existence plus
+5. Build the first GCP shipment bundle and require service existence plus
    runtime side-effect integration tests.
 
 ## Current Open Risks

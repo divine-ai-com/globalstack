@@ -18,6 +18,12 @@ export class KmsApi {
     });
   }
 
+  async listKeyRings({ projectId, location }) {
+    return this.client.requestJson({
+      url: new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings`),
+    });
+  }
+
   async createCryptoKey({ projectId, location, keyRingId, cryptoKeyId, purpose = 'ENCRYPT_DECRYPT', labels }) {
     const url = new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys`);
     url.searchParams.set('cryptoKeyId', cryptoKeyId);
@@ -31,6 +37,12 @@ export class KmsApi {
   async getCryptoKey({ projectId, location, keyRingId, cryptoKeyId }) {
     return this.client.requestJson({
       url: new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys/${cryptoKeyId}`),
+    });
+  }
+
+  async listCryptoKeys({ projectId, location, keyRingId }) {
+    return this.client.requestJson({
+      url: new URL(`${this.kmsRoot}/projects/${projectId}/locations/${location}/keyRings/${keyRingId}/cryptoKeys`),
     });
   }
 

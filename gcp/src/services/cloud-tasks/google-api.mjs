@@ -25,6 +25,12 @@ export class CloudTasksApi {
     });
   }
 
+  async listQueues({ projectId, location }) {
+    return this.client.requestJson({
+      url: new URL(`${this.tasksRoot}/projects/${projectId}/locations/${location}/queues`),
+    });
+  }
+
   async deleteQueue({ projectId, location, queueId }) {
     return this.client.requestJson({
       method: 'DELETE',
