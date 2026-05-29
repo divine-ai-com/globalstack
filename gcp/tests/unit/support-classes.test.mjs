@@ -21,6 +21,11 @@ test('first GCP service bucket is explicit about supported and unsupported claim
   assert.equal(countsTowardSeriousParity(firestore.supportClass), true);
   assert.match(firestore.supportClaim, /Official Google Firestore emulator-backed runtime/);
 
+  const datastore = services.find(service => service.key === 'datastore-mode');
+  assert.equal(datastore.supportClass, supportClasses.officialEmulatorBacked);
+  assert.equal(countsTowardSeriousParity(datastore.supportClass), true);
+  assert.match(datastore.supportClaim, /Official Google Firestore emulator-backed Datastore mode runtime/);
+
   const secretManager = services.find(service => service.key === 'secret-manager');
   assert.equal(secretManager.supportClass, supportClasses.boundedRuntime);
   assert.equal(countsTowardSeriousParity(secretManager.supportClass), false);
@@ -47,6 +52,7 @@ test('first GCP service bucket is explicit about supported and unsupported claim
       'cloud-storage',
       'pub-sub',
       'firestore',
+      'datastore-mode',
       'secret-manager',
       'cloud-key-management',
       'cloud-logging',

@@ -34,6 +34,8 @@ const firstBucket = [
     category: 'database',
     engineStrategy: 'official Firestore emulator in Datastore mode',
     serviceModule: './firestore/service.mjs',
+    supportClass: supportClasses.officialEmulatorBacked,
+    supportClaim: 'Official Google Firestore emulator-backed Datastore mode runtime for entity upsert, lookup, kind query, update, delete, and missing lookup. Real-GCP differential and IaC gates are still pending.',
   },
   {
     key: 'secret-manager',

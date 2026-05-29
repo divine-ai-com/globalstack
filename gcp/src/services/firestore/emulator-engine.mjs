@@ -5,6 +5,7 @@ export async function startFirestoreEmulator({
   gcloud = process.env.GCLOUD_BIN ?? 'gcloud',
   host = '127.0.0.1',
   port,
+  databaseMode = 'firestore-native',
   startupTimeoutMs = 15000,
 } = {}) {
   const resolvedPort = port ?? await findFreePort(host);
@@ -14,6 +15,7 @@ export async function startFirestoreEmulator({
     'firestore',
     'start',
     `--host-port=${host}:${resolvedPort}`,
+    `--database-mode=${databaseMode}`,
   ];
   const child = spawn(gcloud, args, {
     detached: true,
@@ -47,6 +49,7 @@ export async function startFirestoreEmulator({
     output,
     env: {
       FIRESTORE_EMULATOR_HOST: `${host}:${resolvedPort}`,
+      DATASTORE_EMULATOR_HOST: `${host}:${resolvedPort}`,
       GOOGLE_CLOUD_PROJECT: 'globalstack-local',
     },
     async stop() {

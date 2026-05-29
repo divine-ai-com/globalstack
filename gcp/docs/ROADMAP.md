@@ -231,6 +231,10 @@ Current first service evidence:
   `gcp/src/services/firestore/google-api.mjs`
 - Firestore local document lifecycle test is saved under
   `gcp/tests/e2e/firestore-emulator-runtime.test.mjs`
+- Datastore mode REST API wrapper is saved under
+  `gcp/src/services/firestore/datastore-api.mjs`
+- Datastore mode local entity lifecycle test is saved under
+  `gcp/tests/e2e/datastore-emulator-runtime.test.mjs`
 - Secret Manager executable versioned store is saved under
   `gcp/src/services/secret-manager/store.mjs`
 - Secret Manager Google-shaped routes and API wrapper are saved under

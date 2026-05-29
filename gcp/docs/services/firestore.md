@@ -6,8 +6,10 @@ Support class: `official-emulator-backed`
 
 GlobalStack GCP starts Firestore with the official Google Firestore emulator.
 This is a real local runtime for the documented document lifecycle subset, not a
-metadata facade. Real-GCP differential capture, Terraform, Pulumi, OpenTofu,
-Config Connector, Crossplane, `gcloud`, and SDK gates are still pending.
+metadata facade. The same service module also starts the official emulator in
+Datastore mode for a documented entity lifecycle subset. Real-GCP differential
+capture, Terraform, Pulumi, OpenTofu, Config Connector, Crossplane, `gcloud`,
+and SDK gates are still pending.
 
 ## Runtime Evidence
 
@@ -16,6 +18,7 @@ Implemented local module files:
 - `gcp/src/services/firestore/service.mjs`
 - `gcp/src/services/firestore/emulator-engine.mjs`
 - `gcp/src/services/firestore/google-api.mjs`
+- `gcp/src/services/firestore/datastore-api.mjs`
 
 Current validation:
 
@@ -27,16 +30,24 @@ Current validation:
   - replace/update document
   - delete document
   - verify deleted document returns Google-shaped `NOT_FOUND`
+- local Datastore-mode entity lifecycle passes against the official emulator:
+  - upsert entity
+  - lookup entity
+  - query entities by kind
+  - update entity
+  - delete entity
+  - verify deleted entity returns in Datastore `missing`
 - the runner starts the official emulator on an isolated port and stops the
   process group after the test
 
 Remaining promotion gates:
 
 - real-GCP document lifecycle capture and local replay
+- real-GCP Datastore-mode entity lifecycle capture and local replay
 - Terraform, Pulumi, and OpenTofu lifecycle templates
 - `gcloud firestore` and SDK lifecycle
-- query, transaction, batch write, composite index, watch/listen, and error
-  shape differentials
+- query, transaction, batch write, composite index, watch/listen, Datastore
+  allocation/transactions, and error shape differentials
 - Config Connector and Crossplane lifecycle if Kubernetes-native Firestore
   support is claimed
 
