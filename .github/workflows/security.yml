@@ -41,6 +41,10 @@ jobs:
           node-version: 22
       - run: npm ci --ignore-scripts
       - run: npm audit --audit-level=moderate
+      - name: Audit the locked Pulumi TypeScript sample
+        run: |
+          npm run render
+          npm --prefix dist/platform-images/azure-pulumi-ts/sample-task audit --omit=dev --audit-level=moderate
       - name: Review new dependencies and license metadata
         if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
