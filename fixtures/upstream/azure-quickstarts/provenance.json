@@ -1,0 +1,23 @@
+{
+  "repository": "https://github.com/Azure/azure-quickstart-templates",
+  "revision": "ae174d1dfa4409b198b00e0baf0a74ce8919c865",
+  "license": "MIT",
+  "modifications": "None. Local values are supplied as deployment parameters.",
+  "templates": [
+    {
+      "file": "storage-account-create.json",
+      "source": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/ae174d1dfa4409b198b00e0baf0a74ce8919c865/quickstarts/microsoft.storage/storage-account-create/azuredeploy.json",
+      "sha256": "6bbe38101a57d9f87a4606b6e7dbf26c42a6dccd11d786080e77530144ecaa69"
+    },
+    {
+      "file": "key-vault-create.json",
+      "source": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/ae174d1dfa4409b198b00e0baf0a74ce8919c865/quickstarts/microsoft.keyvault/key-vault-create/azuredeploy.json",
+      "sha256": "1027f8df90e7fabd08846f5bd9c0dbd661144806b7f73d388a45c35067278ded"
+    },
+    {
+      "file": "event-grid.json",
+      "source": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/ae174d1dfa4409b198b00e0baf0a74ce8919c865/quickstarts/microsoft.eventgrid/event-grid/azuredeploy.json",
+      "sha256": "7e0c1ccdaf41ce82ee048dca25fe17d624eacb4b90562858a249c792bbbb9a80"
+    }
+  ]
+}

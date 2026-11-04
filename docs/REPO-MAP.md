@@ -137,6 +137,7 @@ flowchart TD
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
+- `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/platform-registry/src/index.mjs`
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
@@ -276,6 +277,7 @@ flowchart TD
 - `scripts/runtime/smoke-deploy-azure-usecases.mjs`
 - `scripts/runtime/smoke-platform-runner-lifecycles.mjs`
 - `scripts/runtime/start-local.mjs`
+- `scripts/runtime/test-local-services.mjs`
 - `scripts/runtime/test-local.mjs`
 - `scripts/runtime/validate.mjs`
 - `scripts/verified/generate-azure-smoke-prompts.mjs`
@@ -371,6 +373,7 @@ flowchart TD
 - `npm run test:gcp:unit`
 - `npm run test:local`
 - `npm run test:repository`
+- `npm run test:services:local`
 - `npm run trial:openai-arm-json`
 - `npm run trial:openai-complex-pulumi-bundles`
 - `npm run trial:openai-platforms`

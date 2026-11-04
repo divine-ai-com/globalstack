@@ -251,6 +251,15 @@ export function createArmRequestHandler({
     providerRoute = normalizeProviderRoute(providerRoute);
     const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
     const capability = capabilityForResourceType(resourceType);
+    if (providerRoute.scopeId) {
+      const scopeRoute = providerRouteFromResourceId(providerRoute.scopeId);
+      if (!scopeRoute || !store.getResource(scopeRoute)) {
+        return { status: 404, body: { error: { code: 'ResourceNotFound', message: 'The extension resource scope was not found.', details: [] } } };
+      }
+      if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
+        body = { ...body, properties: { ...body.properties, scope: providerRoute.scopeId } };
+      }
+    }
     if (!apiVersion) {
       return {
         status: 400,
@@ -450,7 +459,7 @@ export function createArmRequestHandler({
       }
       steps.push({
         operation: 'PUT',
-        id: `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`,
+        id: `${operation.providerRoute.scopeId ?? `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}`}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`,
         status: result.status,
         error: result.body?.error,
       });

@@ -1460,8 +1460,8 @@ export function sortDeploymentOperations(operations) {
     if (left.kind === 'resourceGroup' && right.kind !== 'resourceGroup') return -1;
     if (right.kind === 'resourceGroup' && left.kind !== 'resourceGroup') return 1;
     if (left.kind !== 'resource' || right.kind !== 'resource') return 0;
-    const leftSegments = left.providerRoute.typePath.split('/').length;
-    const rightSegments = right.providerRoute.typePath.split('/').length;
+    const leftSegments = left.providerRoute.typePath.split('/').length + (left.providerRoute.scopeId?.split('/').length ?? 0);
+    const rightSegments = right.providerRoute.typePath.split('/').length + (right.providerRoute.scopeId?.split('/').length ?? 0);
     return leftSegments - rightSegments;
   });
 }
@@ -1557,9 +1557,21 @@ export function expandDeploymentTemplate({
       });
       return;
     }
+    let scopeId;
+    if (resource.scope !== undefined) {
+      const groupId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}`;
+      scopeId = String(resource.scope).startsWith('/') ? String(resource.scope) : `${groupId}/providers/${resource.scope}`;
+      const scopeRoute = providerRouteFromResourceId(scopeId);
+      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings'].includes(resource.type);
+      if (!supported || !scopeRoute || scopeRoute.subscriptionId !== subscriptionId || scopeRoute.resourceGroupName !== resourceGroupName) {
+        operations.push({ kind: 'error', status: 501, code: 'GlobalStackUnsupportedResourceScope', message: 'Only supported resource extensions in the deployment resource group are emulated.' });
+        return;
+      }
+    }
     operations.push({
       kind: 'resource',
       providerRoute: {
+        ...(scopeId ? { scopeId } : {}),
         subscriptionId,
         resourceGroupName,
         providerNamespace,
