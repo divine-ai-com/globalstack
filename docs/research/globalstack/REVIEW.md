@@ -2,6 +2,18 @@
 
 This is a scoped technical draft. Author names and affiliations will be supplied later. No arXiv submission has been made.
 
+## Research extension review
+
+The manuscript now adds a controlled comparison of five checking layers over 12 configuration mutations in the existing two HTTP scenarios. Three repetitions contain 108 episodes: 36 mutated and 72 connected/restored positives. Management acceptance detects 0/12 distinct mutations, workflow status 2/12, arrival 5/12, exact-at-target 10/12, and exclusive outcome 12/12. All positive controls pass. These denominators describe a purposive first-party study, not Azure compatibility or real-world fault prevalence. The new comparison does not expand the number of application architectures or replace the earlier validation snapshot.
+
+The most useful observation is that an exact intended delivery can coexist with an extra delivery elsewhere. The earlier predicate filters out that destination and therefore accepts the episode. The new predicate checks all observed receiver deliveries in the synchronous invocation interval. It does not observe arbitrary external side effects or delayed cloud events. Valid fan-out workloads require a different expected-outcome contract.
+
+The protocol and cases were committed before the initial run. That run is retained as `study/evidence/initial-results.json`. Manual review found an instrumentation bookkeeping issue: the previous trigger response was carried into the next setup record. The corrected clean-checkout run retains the trigger solely in the workflow observation. An intermediate corrected run reported a dirty tree because its dependency-directory symlink was untracked; it is retained as `study/evidence/setup-corrected-results.json`. The final checkout uses an ignored dependency directory and is clean. All three complete reports have identical per-episode check vectors and totals. The renderer checks this agreement and does not pool their observations. A focused oracle regression test initially failed because its synthetic expected and actual payload shared one object; isolating the fixture fixed the test. This did not affect the study runner, which builds expected payloads separately.
+
+The fault-study regression checks pass, including wrong values, missing routes, duplicates, extra destinations, and restoration. The full local suite reports 572 passes and one explicit Docker-dependent skip. Repository policy tests report 19 passes. The 559-pass record below belongs to the earlier native/flow snapshot and is retained unchanged. No native client or live Azure comparison was rerun for the research extension. The new study is local HTTP and uses no model calls or paid services.
+
+The contribution is an applied validation method, its implementation, and the measured distinction between checking layers. It does not claim invention of mutation testing, test oracles, or differential testing. Added references are primary papers on those topics. The [readiness checklist](study/READINESS.md) lists independent workloads, independent reproduction, and claim-dependent live Azure measurements as remaining evidence needs. Authors and publication remain deferred.
+
 ## Claims review
 
 - Native coverage means one reference configuration in each of nine platforms. Terraform and OpenTofu use AzAPI. No AzureRM claim is made.

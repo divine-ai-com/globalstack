@@ -131,6 +131,7 @@ flowchart TD
 - `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`
+- `packages/conformance/src/flow-study.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
 - `packages/conformance/src/iot-hub-router.test.mjs`
@@ -251,6 +252,9 @@ flowchart TD
 - `scripts/e2e/e2e-azure-synapse-warehouse-parity.mjs`
 - `scripts/e2e/e2e-azure-virtual-network-parity.mjs`
 - `scripts/e2e/e2e-azure-waf-policy-parity.mjs`
+- `scripts/e2e/flow-study-cases.mjs`
+- `scripts/e2e/flow-study-oracles.mjs`
+- `scripts/e2e/run-flow-study.mjs`
 - `scripts/render/render-artifact-registry.mjs`
 - `scripts/render/render-azure-99-parity-checklist.mjs`
 - `scripts/render/render-azure-99-roadmap.mjs`

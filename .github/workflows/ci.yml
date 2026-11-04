@@ -42,7 +42,8 @@ jobs:
       - name: Verify paper evidence and generated tables
         run: |
           node docs/research/globalstack/render-evidence.mjs
-          git diff --exit-code -- docs/research/globalstack/evidence
+          node docs/research/globalstack/render-study.mjs
+          git diff --exit-code -- docs/research/globalstack/evidence docs/research/globalstack/study/evidence
           (cd docs/research/globalstack && sha256sum --check SHA256SUMS)
       - run: npm run demo
   gate:
