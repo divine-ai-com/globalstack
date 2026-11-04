@@ -47,6 +47,7 @@ export class GoogleRestClient {
     const startedAt = new Date().toISOString();
     const response = await fetch(url, {
       method,
+      redirect: 'error',
       headers: requestHeaders,
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(this.timeoutMs),

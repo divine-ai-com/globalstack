@@ -1,4 +1,5 @@
 import http from 'node:http';
+import https from 'node:https';
 import { normalizeStorageResponse } from './storage-normalizer.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 
@@ -69,19 +70,34 @@ export function createStorageProxyServer({
       if (body.length > 0 && !requestHeaders['content-length']) {
         requestHeaders['content-length'] = String(body.length);
       }
-      const upstream = await fetch(targetUrl, {
-        method: req.method,
-        redirect: 'manual',
-        signal: AbortSignal.timeout(30000),
-        headers: requestHeaders,
-        body: body.length === 0 ? undefined : body,
+      // The transport destination comes only from operator configuration. Requests supply a path.
+      const upstreamResponse = await new Promise((resolve, reject) => {
+        const transport = targetBase.protocol === 'https:' ? https : http;
+        const upstream = transport.request({
+          protocol: targetBase.protocol,
+          hostname: targetBase.hostname,
+          port: targetBase.port || undefined,
+          path: targetUrl.pathname + targetUrl.search,
+          method: req.method,
+          headers: requestHeaders,
+        }, response => {
+          const chunks = [];
+          let bytes = 0;
+          response.on('data', chunk => {
+            bytes += chunk.length;
+            if (bytes > 8 * 1024 * 1024) {
+              response.destroy(new Error('Backend response exceeds the local proxy limit.'));
+              return;
+            }
+            chunks.push(chunk);
+          });
+          response.on('error', reject);
+          response.on('end', () => resolve({ status: response.statusCode, headers: response.headers, body: Buffer.concat(chunks) }));
+        });
+        upstream.setTimeout(30000, () => upstream.destroy(new Error('Storage backend timed out.')));
+        upstream.on('error', reject);
+        upstream.end(body.length ? body : undefined);
       });
-      const upstreamBody = Buffer.from(await upstream.arrayBuffer());
-      const upstreamResponse = {
-        status: upstream.status,
-        headers: Object.fromEntries(upstream.headers.entries()),
-        body: upstreamBody.toString('utf8'),
-      };
       const requestPath = targetUrl.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
       const queueName = service === 'queue' ? requestPath[1] ?? requestPath[0] ?? '' : '';
 
@@ -89,7 +105,7 @@ export function createStorageProxyServer({
         queueDeleteTracker.recordPeek({
           accountName: requestPath[0] ?? '',
           queueName,
-          body: upstreamResponse.body,
+          body: upstreamResponse.body.toString('utf8'),
         });
       }
 

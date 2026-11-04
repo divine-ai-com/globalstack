@@ -42,7 +42,7 @@ function sendError(res, status, code, message, headers = {}) {
   }, headers);
 }
 
-function authChallenge(vault) {
+function bearerChallengeHeaders(vault) {
   const tenantId = process.env.GLOBALSTACK_ARM_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
   const authorization = `https://login.windows.net/${tenantId}`;
   const resource = 'https://vault.azure.net';
@@ -76,7 +76,7 @@ function requireAuth(req, vault = null) {
       status: 401,
       code: 'Unauthorized',
       message: 'AKV10000: Request is missing a Bearer authorization token.',
-      headers: authChallenge(vault),
+      headers: bearerChallengeHeaders(vault),
     };
   }
   return null;
