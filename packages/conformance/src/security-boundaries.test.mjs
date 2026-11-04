@@ -4,6 +4,7 @@ import { request } from 'node:http';
 import { Readable } from 'node:stream';
 import test from 'node:test';
 import { parse } from 'yaml';
+import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { maxArmBodyBytes, readBody } from '../../azure-control-plane/src/server-support.mjs';
 import { renderOfficialEmulatorCompose } from '../../azure-data-plane/src/official-emulator-compose.mjs';
@@ -41,4 +42,18 @@ test('generated emulator ports are published only on loopback', () => {
   for (const service of Object.values(compose.services)) {
     for (const port of service.ports ?? []) assert.match(port, /^127\.0\.0\.1:/);
   }
+});
+
+test('ARM internal failures do not expose exception details to clients', async t => {
+  const store = new ResourceStore();
+  store.listResourceGroups = () => { throw new Error('sensitive-internal-detail'); };
+  const server = createArmServer({ store });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(() => { server.closeAllConnections(); server.close(); });
+  const response = await fetch(`http://127.0.0.1:${server.address().port}/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups?api-version=2021-04-01`, { headers: { authorization: 'Bearer globalstack-local-token' } });
+  assert.equal(response.status, 500);
+  const body = await response.text();
+  assert.equal(body.includes('sensitive-internal-detail'), false);
+  assert.equal(JSON.parse(body).error.code, 'GlobalStackInternalError');
 });

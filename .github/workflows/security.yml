@@ -51,6 +51,13 @@ jobs:
           comment-summary-in-pr: never
       - name: Generate dependency inventory
         run: npm sbom --sbom-format cyclonedx > "$RUNNER_TEMP/globalstack-sbom.json"
+      - name: Retain the dependency inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dependency-inventory
+          path: ${{ runner.temp }}/globalstack-sbom.json
+          retention-days: 14
+          if-no-files-found: error
   codeql:
     name: CodeQL JavaScript
     runs-on: ubuntu-latest

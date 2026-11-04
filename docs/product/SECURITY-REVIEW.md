@@ -12,6 +12,12 @@ This document records the scope of the November 4, 2026 review. It is a release 
 - Added Gitleaks, CodeQL security-extended analysis, dependency review, full dependency audit, and CycloneDX inventory generation to CI. The stable Security gate requires all component checks to pass.
 - Added Apache-2.0 metadata to first-party package manifests. The source license does not replace third-party dependency or runtime-image terms.
 
+## Validation evidence
+
+The initial hosted security run passed secret scanning, dependency review/audit, and CodeQL security-extended analysis. CodeQL reported zero high or critical findings; GitHub returned no code-scanning alerts for that analyzed PR revision. This is a scanner result, not proof that no vulnerabilities exist.
+
+Local validation also exercised all ten full-emulator listener bindings, built the container, and deployed/read/deleted the ARM demo through the container. The test-owned container was removed. The dependency inventory is retained as a CI artifact for 14 days; retain a release-specific inventory alongside a future published release.
+
 ## Research and release gates
 
 | Area | Evidence needed before a stable release or a corresponding paper claim |
