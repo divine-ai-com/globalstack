@@ -10,6 +10,7 @@ import {
 } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { localIdentity } from '../../azure-control-plane/src/server-support.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -69,7 +70,8 @@ function requireApiVersion(url) {
 
 function requireAuth(req, vault = null) {
   const auth = String(req.headers.authorization ?? '');
-  if (!auth.match(/^Bearer\s+.+/i)) {
+  const token = auth.match(/^Bearer[ \t]+(\S+)$/i)?.[1];
+  if (token !== localIdentity.accessToken && token !== 'globalstack-local-token') {
     return {
       status: 401,
       code: 'Unauthorized',

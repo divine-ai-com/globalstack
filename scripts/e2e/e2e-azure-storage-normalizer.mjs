@@ -1,3 +1,4 @@
+import { markdownCell } from '../../packages/workspace-utils/src/markdown-cell.mjs';
 import assert from 'node:assert/strict';
 import net from 'node:net';
 import { spawn } from 'node:child_process';
@@ -122,7 +123,7 @@ function markdown(report) {
     '|---|---|---:|---|---|',
   ];
   for (const step of report.steps) {
-    lines.push(`| ${step.name} | ${step.ok ? 'pass' : 'fail'} | ${step.httpStatus ?? ''} | ${step.errorCode ?? ''} | ${String(step.detail ?? '').replace(/\|/g, '\\|')} |`);
+    lines.push(`| ${step.name} | ${step.ok ? 'pass' : 'fail'} | ${step.httpStatus ?? ''} | ${step.errorCode ?? ''} | ${markdownCell(step.detail)} |`);
   }
   lines.push('');
   return `${lines.join('\n')}\n`;

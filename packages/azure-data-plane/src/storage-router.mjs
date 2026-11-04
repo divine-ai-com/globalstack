@@ -131,7 +131,7 @@ function accountFromHost(req, suffix) {
 
 function parseAuthorization(req) {
   const auth = String(req.headers.authorization ?? '');
-  const match = auth.match(/^(SharedKeyLite|SharedKey)\s+([^:]+):(.+)$/);
+  const match = auth.match(/^(SharedKeyLite|SharedKey)[ \t]+([^:\s]+):(\S+)$/);
   if (!match) return null;
   return {
     scheme: match[1],

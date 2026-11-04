@@ -92,11 +92,12 @@ exit 1
 }
 
 async function waitForHealth() {
+  const ca = await readFile(certPath);
   for (let attempt = 0; attempt < 30; attempt += 1) {
     const healthy = await new Promise((resolve) => {
       const req = httpsRequest(`${endpoint}/_globalstack/health`, {
-        ca: existsSync(certPath) ? undefined : undefined,
-        rejectUnauthorized: false,
+        ca,
+        rejectUnauthorized: true,
       }, (res) => {
         res.resume();
         resolve(res.statusCode === 200);

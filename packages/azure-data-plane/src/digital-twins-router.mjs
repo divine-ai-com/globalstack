@@ -251,7 +251,8 @@ export class DigitalTwinsRouter {
           return sendJson(res, 200, { value: [...instance.twins.values()] });
         }
       } catch (cause) {
-        return sendError(res, cause.status ?? 500, cause.code ?? 'InternalServerError', cause.message ?? String(cause));
+        const status = cause.status >= 400 && cause.status < 500 ? cause.status : 500;
+        return sendError(res, status, status === 500 ? 'InternalServerError' : cause.code ?? 'InvalidArgument', status === 500 ? 'The local service could not complete the request.' : cause.message);
       }
 
       return sendError(res, 404, 'RouteNotFound', `No Digital Twins data-plane route handled ${url.pathname}.`);

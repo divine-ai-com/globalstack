@@ -321,17 +321,8 @@ const curatedIacRuntimeInventory = [
 ];
 
 function decodeEntities(value) {
-  return value
-    .replace(/&quot;/g, '"')
-    .replace(/&#34;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&#x27;/g, "'")
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&rsquo;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\\u0026/g, '&');
+  const entities = { '&quot;': '"', '&#34;': '"', '&#39;': "'", '&#x27;': "'", '&amp;': '&', '&lt;': '<', '&gt;': '>', '&rsquo;': "'", '&nbsp;': ' ', '\\u0026': '&' };
+  return value.replace(/&(?:quot|#34|#39|#x27|amp|lt|gt|rsquo|nbsp);|\\u0026/g, entity => entities[entity]);
 }
 
 function stripTags(value) {

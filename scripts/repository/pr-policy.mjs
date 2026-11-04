@@ -16,7 +16,7 @@ export function validatePullRequest({ title = '', body = '', head = '' }) {
     && !/^dependabot\/[a-z0-9_./-]+$/.test(head)) {
     errors.push('Use a topic branch such as fix/request-validation.');
   }
-  const cleanBody = body.replace(/<!--[\s\S]*?-->/g, '');
+  const cleanBody = body.replace(/<!--[\s\S]*?-->/g, ' ');
   for (const heading of ['Why', 'What changed', 'How it was tested']) {
     const section = cleanBody.match(new RegExp(`^## ${heading}\\s*\\n([\\s\\S]*?)(?=^## |$(?![\\s\\S]))`, 'm'))?.[1]?.trim();
     if (!section || !/[a-zA-Z0-9]/.test(section)) errors.push(`Fill in the "${heading}" section.`);

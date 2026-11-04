@@ -191,11 +191,10 @@ export function requestSubscriptionId(pathname) {
 export function authorizeRequest(req, method, pathname) {
   if (isPublicRoute(method, pathname)) return null;
   const auth = String(req.headers.authorization ?? '');
-  const match = auth.match(/^Bearer\s+(.+)$/i);
+  const match = auth.match(/^Bearer[ \t]+(\S+)$/i);
   if (!match) return authenticationFailure();
   const presentedToken = match[1];
-  const acceptedTokens = new Set([localIdentity.accessToken, 'globalstack-local-token']);
-  if (!acceptedTokens.has(presentedToken)) {
+  if (presentedToken !== localIdentity.accessToken && presentedToken !== 'globalstack-local-token') {
     return authenticationFailure('The access token is not valid for the GlobalStack Azure local identity.');
   }
   const subscriptionId = requestSubscriptionId(pathname);

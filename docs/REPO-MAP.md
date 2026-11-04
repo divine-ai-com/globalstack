@@ -135,6 +135,7 @@ flowchart TD
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
+- `packages/conformance/src/runtime-security-boundaries.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`

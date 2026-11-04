@@ -74,3 +74,20 @@ test('storage store persists bucket/object metadata and enforces duplicate bucke
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test('default storage roots are private, unique and removed by disposal', async () => {
+  const { stat } = await import('node:fs/promises');
+  const previous = process.env.GLOBALSTACK_GCP_STORAGE_DIR;
+  delete process.env.GLOBALSTACK_GCP_STORAGE_DIR;
+  const first = new StorageStore();
+  const second = new StorageStore();
+  try {
+    assert.notEqual(first.root, second.root);
+    assert.equal((await stat(first.root)).mode & 0o077, 0);
+  } finally {
+    await first.dispose();
+    await second.dispose();
+    if (previous !== undefined) process.env.GLOBALSTACK_GCP_STORAGE_DIR = previous;
+  }
+  await assert.rejects(stat(first.root), { code: 'ENOENT' });
+});

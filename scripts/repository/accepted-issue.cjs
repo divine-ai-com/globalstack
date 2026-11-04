@@ -2,7 +2,7 @@
 const acceptedLabel = 'accepted';
 
 function issueNumbers(body = '') {
-  const clean = body.replace(/<!--[\s\S]*?-->/g, '').replace(/```[\s\S]*?```/g, '');
+  const clean = body.replace(/<!--[\s\S]*?-->/g, ' ').replace(/```[\s\S]*?```/g, ' ');
   return [...new Set([...clean.matchAll(/^Accepted issue:\s*#([1-9]\d*)\s*$/gm)].map(match => Number(match[1])))];
 }
 

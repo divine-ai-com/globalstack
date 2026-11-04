@@ -4,7 +4,7 @@
 
 GlobalStack runs a bounded Azure management API locally so you can develop and test infrastructure without creating Azure resources. It also provides adapters for selected local service runtimes.
 
-Status: development preview. The [preview validation record](docs/releases/v0.1.0-preview.1.md) describes the tested scope and remaining gaps. Supported operations vary by service. Registration of a resource type does not mean complete Azure compatibility. See [service scope](docs/SERVICE-SCOPE.md) and the [conformance model](docs/CONFORMANCE-MODEL.md).
+Status: development. Preview publication is paused for [security review](docs/product/SECURITY-REVIEW.md). The [preview validation record](docs/releases/v0.1.0-preview.1.md) describes the tested scope and remaining gaps. Supported operations vary by service. Registration of a resource type does not mean complete Azure compatibility. See [service scope](docs/SERVICE-SCOPE.md) and the [conformance model](docs/CONFORMANCE-MODEL.md).
 
 ## Run your first example
 
