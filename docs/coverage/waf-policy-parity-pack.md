@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Application Gateway WAF polici
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:waf-policy-parity
+npm run e2e:waf-policy-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:waf-policy-parity -- --skip-platforms
+npm run e2e:waf-policy-parity -- --skip-platforms
 ```
 
 ## Scope

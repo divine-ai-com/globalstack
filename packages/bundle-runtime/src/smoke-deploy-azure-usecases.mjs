@@ -499,10 +499,6 @@ async function startHybridArmFacade() {
 }
 
 async function startGlobalStackSidecar() {
-  if (!process.env.GLOBALSTACK_AUTH_TOKEN) {
-    throw new Error('GLOBALSTACK_AUTH_TOKEN is required in the environment for GlobalStack Azure sidecar deploy smoke.');
-  }
-
   const docker = await dockerCommand();
   const composePath = join(root, 'templates', 'docker-compose.globalstack-azure.yml');
   const code = await run(docker.command, [

@@ -14,7 +14,7 @@ All platform runners execute the same stage sequence:
 6. `integration-tests`
 7. `destroy`
 
-The sidecar must be started with an already-exported `GLOBALSTACK_AUTH_TOKEN` when `provider=GlobalStack`. Runner containers resolve the target provider from task `metadata.json` first, then `PROVIDER` / `CLOUD_PROVIDER`, then default to `GlobalStack`.
+Local smoke runs need no activation key. Azure-shaped requests use the local Azure identity. Runner containers resolve the target provider from task `metadata.json` first, then `PROVIDER` / `CLOUD_PROVIDER`, then default to `GlobalStack`.
 
 For `provider=GlobalStack`, runners receive deterministic Azure-shaped local identity settings and send ARM requests to the sidecar endpoint. For `provider=Azure`, the same task is routed to `https://management.azure.com` and requires real Azure authentication plus a real `ARM_SUBSCRIPTION_ID`.
 
@@ -60,18 +60,26 @@ ARM JSON is already the native ARM contract format. Its runner validates the tas
 
 Bicep is the current native reference because the Bicep file is compiled by Azure CLI and the compiled ARM output is deployed through the same Azure-shaped REST path.
 
+## Image Reuse and Storage
+
+Set `GLOBALSTACK_IMAGE_BUILD_STRATEGY=reuse` to require existing images. Missing images fail before Compose starts; the lifecycle command does not implicitly pull or build them. `GLOBALSTACK_RUNNER_IMAGE` and `GLOBALSTACK_AZURE_IMAGE` select locally available overrides.
+
+Set `GLOBALSTACK_ARM_HOST_PORT=0` to allocate an ephemeral loopback host port when the default port is occupied. The runner continues to use port 4566 inside its shared network.
+
+Each attempt replaces its generated report directory. Passing requires all seven stage reports to match the platform and stage, every provider operation to pass, successful deployment and destruction, and successful Compose cleanup. Preserve reports before retrying if you need the earlier attempt's evidence.
+
 ## Smoke Command
 
 Run the full matrix:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```
 
 Run one or more platforms:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners -- --platform=azure-terraform-hcl,azure-bicep
+npm run smoke:platform-runners -- --platform=azure-terraform-hcl,azure-bicep
 ```
 
 The matrix writes:
@@ -81,12 +89,12 @@ The matrix writes:
 - `dist/platform-images/<platform>/reports/deployment-response.json`
 - `dist/platform-images/<platform>/reports/provider-lifecycle-response.json`
 
-## Latest Local Smoke
+## Historical Local Smoke
 
-The latest strict local smoke completed all `9/9` platforms across the combined matrix with final stage `destroy`, final status `PASS`, deployment provisioning state `Succeeded`, and provider-lifecycle evidence present for each platform.
+A previous local smoke recorded all `9/9` platforms across the combined matrix with final stage `destroy`, final status `PASS`, deployment provisioning state `Succeeded`, and provider-lifecycle evidence present for each platform.
 
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=globalstack-platform-smoke npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```

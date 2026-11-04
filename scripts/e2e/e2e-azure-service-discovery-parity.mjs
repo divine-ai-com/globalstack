@@ -547,7 +547,6 @@ async function runPlatformMatrix() {
 
   const env = {
     ...process.env,
-    GLOBALSTACK_AUTH_TOKEN: process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-service-discovery-parity-local-token',
     PROVIDER: 'GlobalStack',
     CLOUD_PROVIDER: 'GlobalStack',
   };

@@ -28,7 +28,6 @@ import {
   providerOperations,
   providerRouteFromResourceId,
   readBody,
-  requireGlobalStackAuthToken,
   scopedDiagnosticSettingsRoute,
   scopedEventGridEventSubscriptionRoute,
   segments,
@@ -1995,9 +1994,7 @@ export function createArmServer(options = {}) {
 export function startArmServer({
   port = Number(process.env.GLOBALSTACK_ARM_PORT ?? 4570),
   host = process.env.GLOBALSTACK_ARM_HOST ?? '127.0.0.1',
-  requireProductAuth = true,
 } = {}) {
-  if (requireProductAuth) requireGlobalStackAuthToken();
   const server = createArmServer();
   server.listen(port, host, () => {
     const address = server.address();

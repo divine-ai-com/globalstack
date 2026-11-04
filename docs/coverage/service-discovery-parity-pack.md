@@ -3,7 +3,7 @@
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:service-discovery-parity
+npm run e2e:service-discovery-parity
 ```
 
 The pack covers the current GlobalStack Azure Service Discovery boundary:

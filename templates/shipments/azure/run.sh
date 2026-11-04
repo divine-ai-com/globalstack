@@ -102,23 +102,6 @@ esac
 export GLOBALSTACK_AZURE_IMAGE="${GLOBALSTACK_AZURE_IMAGE:-globalstack/azure-emulator:local}"
 export GLOBALSTACK_RUNNER_IMAGE="${GLOBALSTACK_RUNNER_IMAGE:-$DEFAULT_RUNNER_IMAGE}"
 
-normalized_provider="$(printf '%s' "$PROVIDER" | tr '[:upper:]' '[:lower:]' | tr -d ' _-')"
-if [ "$normalized_provider" = "globalstack" ] || [ -z "$normalized_provider" ]; then
-  if [ -z "${GLOBALSTACK_AUTH_TOKEN:-}" ]; then
-    case "$GLOBALSTACK_AZURE_IMAGE" in
-      *:local)
-        export GLOBALSTACK_AUTH_TOKEN="globalstack-local-token"
-        ;;
-      *)
-        echo "Error: GLOBALSTACK_AUTH_TOKEN must be set for non-local GlobalStack images" >&2
-        exit 1
-        ;;
-    esac
-  fi
-else
-  export GLOBALSTACK_AUTH_TOKEN="${GLOBALSTACK_AUTH_TOKEN:-globalstack-local-token}"
-fi
-
 docker_prefix=()
 if docker info >/dev/null 2>&1; then
   :

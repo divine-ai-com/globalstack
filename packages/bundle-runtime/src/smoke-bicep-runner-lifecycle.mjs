@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 
 const root = workspaceRoot(import.meta.url);
 const platformDir = join(root, 'dist', 'platform-images', 'azure-bicep');
-const token = process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-local-development';
 
 
 function run(command, args, options = {}) {
@@ -37,7 +36,6 @@ await mkdir(join(platformDir, 'work'), { recursive: true });
 const docker = await dockerCommand();
 const composeEnv = {
   ...process.env,
-  GLOBALSTACK_AUTH_TOKEN: token,
   PIPELINE_STAGE_SCOPE: process.env.PIPELINE_STAGE_SCOPE ?? 'full',
 };
 

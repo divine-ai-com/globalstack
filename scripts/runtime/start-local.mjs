@@ -1,7 +1,7 @@
 import { startArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 
 // Local development uses Azure-shaped request authentication without activation.
-const server = startArmServer({ requireProductAuth: false });
+const server = startArmServer();
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.once(signal, () => {
     server.closeAllConnections?.();

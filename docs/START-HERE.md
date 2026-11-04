@@ -80,7 +80,7 @@ npm run docs:artifacts
 npm run conformance:parity
 npm run conformance:roadmap
 npm run smoke
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+npm run smoke:platform-runners
 npm run providers:gaps
 az group list --query "[?starts_with(name, 'rg-gs-life-') || starts_with(name, 'rg-gs-conf-') || tags.purpose == 'globalstack-conformance' || tags.purpose == 'globalstack-lifecycle'].name" --output json
 ```

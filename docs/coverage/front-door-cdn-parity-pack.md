@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Front Door and Azure CDN profi
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:front-door-cdn-parity
+npm run e2e:front-door-cdn-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:front-door-cdn-parity -- --skip-platforms
+npm run e2e:front-door-cdn-parity -- --skip-platforms
 ```
 
 ## Scope

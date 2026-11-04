@@ -154,7 +154,7 @@ const crossCuttingBacklog = [
     commands: [
       'npm run smoke:prompts',
       'npm run smoke:deploy',
-      'GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
+      'PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
     ],
   },
   {
@@ -294,7 +294,7 @@ const extendedContinuationRoadmap = [
     defaultCommands: [
       'npm run smoke:prompts',
       'npm run smoke:deploy',
-      'GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
+      'PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners',
     ],
     acceptanceBar: 'Replacement, refresh, drift-reconcile, import/adopt, and rollback semantics are covered by dedicated adversarial tasks and produce the same qualitative behavior against GlobalStack that the provider expects from Azure.',
   },

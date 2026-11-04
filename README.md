@@ -74,6 +74,6 @@ Local checks require no Azure credentials or model API calls. Tests that start a
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
 
-## License proposal
+## License
 
 GlobalStack is licensed under Apache 2.0. See LICENSE. Dependencies and optional Microsoft emulator images retain their own licenses and terms.

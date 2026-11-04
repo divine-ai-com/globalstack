@@ -37,13 +37,13 @@ This pack is the current local evidence boundary for the Tier 1 `aks-metadata` c
 ## Commands
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity
+npm run e2e:aks-metadata-parity
 ```
 
 For a faster control-plane-only iteration:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:aks-metadata-parity -- --skip-platforms
+npm run e2e:aks-metadata-parity -- --skip-platforms
 ```
 
 For guarded real Azure differential captures:

@@ -13,13 +13,13 @@ This pack is the current local evidence boundary for the Tier 1 `container-regis
 ## Commands
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:container-registry-parity
+npm run e2e:container-registry-parity
 ```
 
 For a faster control/data-plane-only iteration:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:container-registry-parity -- --skip-platforms
+npm run e2e:container-registry-parity -- --skip-platforms
 ```
 
 ## Outputs

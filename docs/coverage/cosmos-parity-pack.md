@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Cosmos DB account, NoSQL SQL d
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:cosmos-parity
+npm run e2e:cosmos-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:cosmos-parity -- --skip-platforms
+npm run e2e:cosmos-parity -- --skip-platforms
 ```
 
 ## Scope

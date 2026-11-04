@@ -26,7 +26,7 @@ Verified bundles are part of the verification workspace, not the product core. K
 - Do not claim Azure parity for behavior that is not backed by real Azure capture, official emulator behavior, or an explicit documented contract.
 - Do not invent successful Azure responses just to make a platform deploy pass.
 - Unknown resource types, unsupported methods, unsupported child routes, and incomplete data-plane calls must fail closed.
-- `GLOBALSTACK_AUTH_TOKEN` is required for local GlobalStack API access for the legacy runner startup path.
+- Local GlobalStack startup needs no activation key. Azure-shaped requests use the local Azure identity.
 - Real Azure capture work must be opt-in, tracked, quickly deprovisioned, and followed by cleanup verification.
 - Commit and push meaningful batches after implementation and validation. Do not add generated assistant signatures.
 
@@ -211,19 +211,19 @@ Keep pushing the remaining breadth and mutation pressure across the other platfo
 Use the fast loop while changing a service:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:<service>-parity -- --skip-platforms
+npm run e2e:<service>-parity -- --skip-platforms
 ```
 
 Before committing that service batch, run the full service pack once:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:<service>-parity
+npm run e2e:<service>-parity
 ```
 
 For shared behavior, auth, provider routing, generated docs, or platform-runner changes, run the full gate:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke
+npm run smoke
 npm run validate
 ```
 

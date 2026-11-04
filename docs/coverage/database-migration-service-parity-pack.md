@@ -3,7 +3,7 @@
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:database-migration-service-parity
+npm run e2e:database-migration-service-parity
 ```
 
 The pack covers the current GlobalStack Azure Database Migration Service boundary:

@@ -1,12 +1,12 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { distPath, workspaceRoot } from '../../workspace-utils/src/index.mjs';
+import { readStageResults } from './stage-results.mjs';
 import { azurePlatforms } from '../../platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
 const outPath = distPath(root, 'platform-lifecycle-smoke-results.json');
-const token = process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-local-development';
 
 
 function run(command, args, options = {}) {
@@ -15,6 +15,10 @@ function run(command, args, options = {}) {
       cwd: options.cwd ?? root,
       env: options.env ?? process.env,
       stdio: options.stdio ?? 'inherit',
+    });
+    child.on('error', error => {
+      if (options.stdio !== 'ignore') console.error(`${command}: ${error.message}`);
+      resolve(1);
     });
     child.on('close', code => resolve(code ?? 1));
   });
@@ -38,11 +42,27 @@ async function imageExists(docker, image) {
 }
 
 async function prewarmImagesIfNeeded(docker, strategy) {
-  if (strategy === 'reuse') return;
-  const requiredImages = ['globalstack/azure-emulator:local', ...platforms.map(platform => platform.imageTag)];
+  const required = new Set([
+    process.env.GLOBALSTACK_AZURE_IMAGE ?? 'globalstack/azure-emulator:local',
+    ...platforms.map(platform => process.env.GLOBALSTACK_RUNNER_IMAGE ?? platform.imageTag),
+  ]);
+  if (strategy === 'reuse') {
+    for (const image of required) {
+      if (!(await imageExists(docker, image))) {
+        throw new Error(`Image reuse requested but ${image} is unavailable. Build the image before running the smoke test.`);
+      }
+    }
+    return;
+  }
+  const requiredImages = [...required];
   const missing = [];
   for (const image of requiredImages) {
-    if (!(await imageExists(docker, image))) missing.push(image);
+    if (!(await imageExists(docker, image))) {
+      if ([process.env.GLOBALSTACK_AZURE_IMAGE, process.env.GLOBALSTACK_RUNNER_IMAGE].includes(image)) {
+        throw new Error(`Image override ${image} is unavailable. Build it before running the smoke test.`);
+      }
+      missing.push(image);
+    }
   }
   if (strategy === 'build' || missing.length > 0) {
     const platformArg = platforms.length > 0
@@ -65,7 +85,8 @@ async function normalizeHostOwnership(docker, targets) {
       '--rm',
       '-v',
       `${target}:/target`,
-      'globalstack/azure-emulator:local',
+      '--pull=never',
+      process.env.GLOBALSTACK_AZURE_IMAGE ?? 'globalstack/azure-emulator:local',
       'sh',
       '-lc',
       `chown -R ${uid}:${gid} /target`,
@@ -78,11 +99,16 @@ const selected = new Set(
     .filter(arg => arg.startsWith('--platform='))
     .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean)),
 );
+const unknown = [...selected].filter(id => !azurePlatforms.some(platform => platform.id === id));
+if (unknown.length) throw new Error(`Unknown platforms: ${unknown.join(', ')}`);
 const platforms = selected.size > 0 ? azurePlatforms.filter(platform => selected.has(platform.id)) : azurePlatforms;
 if (platforms.length === 0) throw new Error(`No platforms selected from: ${[...selected].join(', ')}`);
 
 const docker = await dockerCommand();
 const imageBuildStrategy = process.env.GLOBALSTACK_IMAGE_BUILD_STRATEGY ?? 'auto';
+if (!['auto', 'build', 'reuse'].includes(imageBuildStrategy)) {
+  throw new Error(`Unknown image build strategy: ${imageBuildStrategy}`);
+}
 if (docker.command === 'sudo') {
   await run('sudo', [
     '-n',
@@ -93,6 +119,8 @@ if (docker.command === 'sudo') {
   ], { stdio: 'ignore' });
 }
 
+await mkdir(join(root, 'dist'), { recursive: true });
+await writeFile(outPath, `${JSON.stringify({ generatedAt: new Date().toISOString(), complete: false, results: [] }, null, 2)}\n`);
 const renderCode = await run('node', ['scripts/render/render-platform-templates.mjs']);
 if (renderCode !== 0) process.exit(renderCode);
 await prewarmImagesIfNeeded(docker, imageBuildStrategy);
@@ -101,28 +129,34 @@ const results = [];
 
 for (const platform of platforms) {
   const platformDir = join(root, 'dist', 'platform-images', platform.id);
+  // Reports belong to one attempt; stale evidence must never satisfy a retry.
+  await normalizeHostOwnership(docker, [join(platformDir, 'reports')]);
+  await rm(join(platformDir, 'reports'), { recursive: true, force: true });
   await mkdir(join(platformDir, 'reports'), { recursive: true });
   await mkdir(join(platformDir, 'work'), { recursive: true });
   const env = {
     ...process.env,
-    GLOBALSTACK_AUTH_TOKEN: token,
     PIPELINE_STAGE_SCOPE: process.env.PIPELINE_STAGE_SCOPE ?? 'full',
   };
 
   const startedAt = Date.now();
   let code = 1;
+  let cleanupCode = 1;
   try {
     code = await run(docker.command, [
       ...docker.prefix,
       'compose',
       'up',
+      '--no-build',
+      '--pull',
+      'never',
       '--abort-on-container-exit',
       '--exit-code-from',
       'runner',
       'runner',
     ], { cwd: platformDir, env });
   } finally {
-    await run(docker.command, [
+    cleanupCode = await run(docker.command, [
       ...docker.prefix,
       'compose',
       'down',
@@ -152,7 +186,10 @@ for (const platform of platforms) {
     && Array.isArray(providerLifecycle.operations)
     && providerLifecycle.operations.length > 0
     && providerLifecycle.operations.every(operation => operation.status === 'PASS');
+  const stageResults = await readStageResults(join(platformDir, 'reports'), platform.id);
   const ok = code === 0
+    && cleanupCode === 0
+    && stageResults.every(result => result.ok)
     && report?.status === 'PASS'
     && report?.stage === 'destroy'
     && deployment?.properties?.provisioningState === 'Succeeded'
@@ -161,6 +198,8 @@ for (const platform of platforms) {
     platformId: platform.id,
     ok,
     exitCode: code,
+    cleanupExitCode: cleanupCode,
+    stages: stageResults,
     durationMs: Date.now() - startedAt,
     finalStage: report?.stage ?? null,
     finalStatus: report?.status ?? null,
@@ -174,6 +213,7 @@ for (const platform of platforms) {
 
   await writeFile(outPath, `${JSON.stringify({
     generatedAt: new Date().toISOString(),
+    complete: results.length === platforms.length,
     results,
   }, null, 2)}\n`);
 

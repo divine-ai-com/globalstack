@@ -3,7 +3,7 @@
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:activity-log-audit-parity
+npm run e2e:activity-log-audit-parity
 ```
 
 The pack covers the current GlobalStack Azure Activity Log Audit boundary:
