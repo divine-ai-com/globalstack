@@ -1,0 +1,45 @@
+{
+  "id": "blob-storage.microsoft-storage-storageaccounts.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:08:15.975Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "blob-storage",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa12dff14a/providers/Microsoft.Storage/storageAccounts/gsfa12dff14a?api-version=2023-01-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "821fc078-9a1a-438a-a22e-d3a2ec208ee3",
+      "x-ms-request-id": "821fc078-9a1a-438a-a22e-d3a2ec208ee3",
+      "x-ms-routing-request-id": "EASTUS:20260516T150809Z:821fc078-9a1a-438a-a22e-d3a2ec208ee3"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fa12dff14a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

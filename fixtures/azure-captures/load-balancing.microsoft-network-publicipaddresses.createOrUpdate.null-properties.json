@@ -1,0 +1,53 @@
+{
+  "id": "load-balancing.microsoft-network-publicipaddresses.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T13:42:36.393Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/publicIPAddresses",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-57b86f7902/providers/Microsoft.Network/publicIPAddresses/{publicIPAddressesName}?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "96e2e7b5-c6bc-4473-a5b7-bca7f449d6a4",
+      "x-ms-request-id": "4b3559dc-2fcb-4d50-9579-db64bed83838",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T134235Z:96e2e7b5-c6bc-4473-a5b7-bca7f449d6a4"
+    },
+    "body": {
+      "error": {
+        "code": "StandardAndStandardV2SkuPublicIPAddressesMustBeStatic",
+        "message": "Standard sku publicIp /subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-57b86f7902/providers/Microsoft.Network/publicIPAddresses/{publicIPAddressesName} must have AllocationMethod set to Static.",
+        "details": []
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-57b86f7902",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

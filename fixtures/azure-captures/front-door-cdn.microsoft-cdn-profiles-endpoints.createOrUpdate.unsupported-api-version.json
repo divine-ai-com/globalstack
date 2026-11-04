@@ -1,0 +1,62 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:36:32.478Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/endpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c7bebfa0d2/providers/Microsoft.Cdn/profiles/cdn-c7bebfa0d2/endpoints/endpoint-c7bebfa0d2?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "origins": [
+          {
+            "name": "origin1",
+            "properties": {
+              "hostName": "example.org",
+              "httpPort": 80,
+              "httpsPort": 443
+            }
+          }
+        ],
+        "isHttpAllowed": true,
+        "isHttpsAllowed": true
+      }
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "37435dff-4cbd-4ecc-a32b-67d65ed8c4f9",
+      "x-ms-request-id": "37435dff-4cbd-4ecc-a32b-67d65ed8c4f9",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T133626Z:37435dff-4cbd-4ecc-a32b-67d65ed8c4f9"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'profiles/endpoints'. The supported api-versions are '2015-06-01, 2016-04-02, 2016-10-02, 2017-04-02, 2017-10-12, 2018-04-02, 2019-04-15, 2019-06-15-preview, 2019-12-31, 2020-03-31, 2020-04-15, 2020-09-01, 2021-06-01, 2022-05-01-preview, 2022-11-01-preview, 2023-02-01-preview, 2023-05-01, 2023-07-01-preview, 2024-01-01-preview, 2024-02-01, 2024-05-01-preview, 2024-06-01-preview, 2024-09-01, 2024-10-01-preview, 2025-01-01-preview, 2025-04-15, 2025-05-01-preview, 2025-06-01, 2025-07-01-preview, 2025-09-01-preview, 2025-12-01, 2026-02-01-preview, 2026-04-01-preview'. The supported locations are 'global, australiaeast, australiasoutheast, brazilsouth, canadacentral, canadaeast, centralindia, centralus, eastasia, eastus, eastus2, japaneast, japanwest, northcentralus, northeurope, southcentralus, southindia, southeastasia, westeurope, westindia, westus, westcentralus'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c7bebfa0d2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

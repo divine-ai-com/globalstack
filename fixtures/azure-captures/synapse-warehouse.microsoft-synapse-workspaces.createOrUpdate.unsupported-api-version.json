@@ -1,0 +1,49 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:43:39.173Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6e5e4fe6d5/providers/Microsoft.Synapse/workspaces/ws-6e5e4fe6d5?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2caa8920-377b-4855-af18-d18a76692079",
+      "x-ms-request-id": "2caa8920-377b-4855-af18-d18a76692079",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T134338Z:2caa8920-377b-4855-af18-d18a76692079"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'workspaces'. The supported api-versions are '2019-06-01-preview, 2020-12-01, 2021-03-01, 2021-04-01-preview, 2021-05-01, 2021-06-01-preview, 2021-06-01, 2023-05-01'. The supported locations are 'westus2, eastus, northeurope, westeurope, southeastasia, australiaeast, westcentralus, southcentralus, eastus2, uksouth, westus, australiasoutheast, eastasia, brazilsouth, centralus, centralindia, japaneast, northcentralus, canadacentral, canadaeast, koreacentral, southafricanorth, ukwest, japanwest, francecentral, switzerlandnorth, germanywestcentral, norwayeast, uaenorth, westus3, jioindiawest, southindia, swedencentral, polandcentral, switzerlandwest, israelcentral, italynorth, mexicocentral, spaincentral, malaysiawest, qatarcentral'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6e5e4fe6d5",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

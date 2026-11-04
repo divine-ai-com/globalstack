@@ -1,0 +1,47 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:16:40.889Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/actionGroups",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-146c05499a/providers/Microsoft.Insights/actionGroups/ag-146c05499a?api-version=2023-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "315be2c6-dabd-4c60-877d-e069c8cd029f",
+      "x-ms-request-id": "315be2c6-dabd-4c60-877d-e069c8cd029f",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T131638Z:315be2c6-dabd-4c60-877d-e069c8cd029f"
+    },
+    "body": {
+      "code": "BadRequest",
+      "message": "'Group Short Name' must not be empty."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-146c05499a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

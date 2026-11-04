@@ -1,0 +1,72 @@
+{
+  "id": "azure-functions.microsoft-web-sites.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:57:04.551Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/sites",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d119c92a3c/providers/Microsoft.Web/sites/site-d119c92a3c?api-version=2023-12-01",
+    "body": {
+      "location": "{location}",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "{serverFarmId}",
+        "httpsOnly": true
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4ffd21f9-da72-4a94-87ab-1c3bbe2713b7",
+      "x-ms-request-id": "4ffd21f9-da72-4a94-87ab-1c3bbe2713b7",
+      "x-ms-routing-request-id": "EASTUS:20260516T155702Z:4ffd21f9-da72-4a94-87ab-1c3bbe2713b7"
+    },
+    "body": {
+      "Code": "NotFound",
+      "Message": "Cannot find serverFarm with name plan-d119c92a3c.",
+      "Target": null,
+      "Details": [
+        {
+          "Message": "Cannot find serverFarm with name plan-d119c92a3c."
+        },
+        {
+          "Code": "NotFound"
+        },
+        {
+          "ErrorEntity": {
+            "ExtendedCode": "51004",
+            "MessageTemplate": "Cannot find {0} with name {1}.",
+            "Parameters": [
+              "serverFarm",
+              "plan-d119c92a3c"
+            ],
+            "Code": "NotFound",
+            "Message": "Cannot find serverFarm with name plan-d119c92a3c."
+          }
+        }
+      ],
+      "Innererror": null
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d119c92a3c",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

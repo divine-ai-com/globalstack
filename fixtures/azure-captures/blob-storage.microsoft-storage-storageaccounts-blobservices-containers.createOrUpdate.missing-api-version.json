@@ -1,0 +1,49 @@
+{
+  "id": "blob-storage.microsoft-storage-storageaccounts-blobservices-containers.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:08:38.138Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "blob-storage",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts/blobServices/containers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-cfbea325b9/providers/Microsoft.Storage/storageAccounts/gscfbea325b9/blobServices/default/containers/ccfbea325b9",
+    "body": {
+      "properties": {
+        "publicAccess": "None"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b53f2305-c70f-4895-bcd7-c9b4a00e0a30",
+      "x-ms-request-id": "b53f2305-c70f-4895-bcd7-c9b4a00e0a30",
+      "x-ms-routing-request-id": "EASTUS:20260516T150836Z:b53f2305-c70f-4895-bcd7-c9b4a00e0a30"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-cfbea325b9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

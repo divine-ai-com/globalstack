@@ -1,0 +1,474 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "context": {
+    "project_id": "globalstack-conformance-runner",
+    "location": "europe-north2",
+    "bucket_location": "US",
+    "service": "pubsub-schema",
+    "run_id": "pubsub-schema-20260528185046-acfa7d",
+    "labels": {
+      "purpose": "globalstack-conformance",
+      "owner": "globalstack",
+      "run_id": "pubsub-schema-20260528185046-acfa7d"
+    },
+    "started_at": "2026-05-28T18:50:46.370Z",
+    "scenario": "schema",
+    "resources": {
+      "schema_id": "gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+      "topic_name": "gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d",
+      "schema_definition": "{\"type\":\"record\",\"name\":\"GlobalStackEvent\",\"fields\":[{\"name\":\"run_id\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}"
+    }
+  },
+  "cleanup": [
+    {
+      "name": "delete topic gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d",
+      "status": "deleted"
+    },
+    {
+      "name": "delete schema gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+      "status": "deleted"
+    }
+  ],
+  "events": [
+    {
+      "name": "validate-schema-definition",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas:validate",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "schema": {
+              "type": "AVRO",
+              "definition": "{\"type\":\"record\",\"name\":\"GlobalStackEvent\",\"fields\":[{\"name\":\"run_id\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}"
+            }
+          },
+          "started_at": "2026-05-28T18:50:47.674Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:50:47.921Z"
+        }
+      }
+    },
+    {
+      "name": "create-schema",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas?schemaId=gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "type": "AVRO",
+            "definition": "{\"type\":\"record\",\"name\":\"GlobalStackEvent\",\"fields\":[{\"name\":\"run_id\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}"
+          },
+          "started_at": "2026-05-28T18:50:49.384Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+            "type": "AVRO",
+            "definition": "{\"type\":\"record\",\"name\":\"GlobalStackEvent\",\"fields\":[{\"name\":\"run_id\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}",
+            "revisionId": "<redacted>",
+            "revisionCreateTime": "<redacted>"
+          },
+          "ended_at": "2026-05-28T18:50:51.695Z"
+        }
+      }
+    },
+    {
+      "name": "get-schema",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:50:53.034Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+            "type": "AVRO",
+            "definition": "{\"type\":\"record\",\"name\":\"GlobalStackEvent\",\"fields\":[{\"name\":\"run_id\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}",
+            "revisionId": "<redacted>",
+            "revisionCreateTime": "<redacted>"
+          },
+          "ended_at": "2026-05-28T18:50:53.480Z"
+        }
+      }
+    },
+    {
+      "name": "validate-valid-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas:validateMessage",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+            "message": "eyJydW5faWQiOiJwdWJzdWItc2NoZW1hLTIwMjYwNTI4MTg1MDQ2LWFjZmE3ZCIsImNvdW50IjoxfQ==",
+            "encoding": "JSON"
+          },
+          "started_at": "2026-05-28T18:50:54.789Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {},
+          "ended_at": "2026-05-28T18:50:55.154Z"
+        }
+      }
+    },
+    {
+      "name": "validate-invalid-message",
+      "metadata": {
+        "expected_status": 400
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas:validateMessage",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+            "message": "eyJydW5faWQiOiJwdWJzdWItc2NoZW1hLTIwMjYwNTI4MTg1MDQ2LWFjZmE3ZCIsImNvdW50Ijoibm90LWFuLWludCJ9",
+            "encoding": "JSON"
+          },
+          "started_at": "2026-05-28T18:50:56.474Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 400,
+          "status_text": "Bad Request",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 400,
+              "message": "Invalid data in message: JSON object with type string does not match schema which expected number_integer.",
+              "status": "INVALID_ARGUMENT",
+              "details": [
+                {
+                  "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                  "reason": "INVALID_JSON_AVRO_MESSAGE",
+                  "domain": "pubsub.googleapis.com"
+                }
+              ]
+            }
+          },
+          "ended_at": "2026-05-28T18:50:56.817Z"
+        }
+      }
+    },
+    {
+      "name": "create-topic-with-schema-settings",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-schema-20260528185046-acfa7d"
+            },
+            "schemaSettings": {
+              "schema": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+              "encoding": "JSON"
+            }
+          },
+          "started_at": "2026-05-28T18:50:58.065Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/topics/gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "run_id": "pubsub-schema-20260528185046-acfa7d",
+              "owner": "globalstack"
+            },
+            "schemaSettings": {
+              "schema": "projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+              "encoding": "JSON"
+            }
+          },
+          "ended_at": "2026-05-28T18:51:10.786Z"
+        }
+      }
+    },
+    {
+      "name": "publish-valid-schema-message",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d:publish",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "messages": [
+              {
+                "data": "eyJydW5faWQiOiJwdWJzdWItc2NoZW1hLTIwMjYwNTI4MTg1MDQ2LWFjZmE3ZCIsImNvdW50IjoxfQ==",
+                "attributes": {
+                  "run_id": "pubsub-schema-20260528185046-acfa7d"
+                }
+              }
+            ]
+          },
+          "started_at": "2026-05-28T18:51:12.103Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "messageIds": "<redacted>"
+          },
+          "ended_at": "2026-05-28T18:51:12.477Z"
+        }
+      }
+    },
+    {
+      "name": "publish-invalid-schema-message",
+      "metadata": {
+        "expected_status": 400
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d:publish",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "messages": [
+              {
+                "data": "eyJydW5faWQiOiJwdWJzdWItc2NoZW1hLTIwMjYwNTI4MTg1MDQ2LWFjZmE3ZCIsImNvdW50Ijoibm90LWFuLWludCJ9",
+                "attributes": {
+                  "run_id": "pubsub-schema-20260528185046-acfa7d"
+                }
+              }
+            ]
+          },
+          "started_at": "2026-05-28T18:51:13.579Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 400,
+          "status_text": "Bad Request",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 400,
+              "message": "Invalid data in message: Message failed schema validation.",
+              "status": "INVALID_ARGUMENT",
+              "details": [
+                {
+                  "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                  "reason": "INVALID_JSON_AVRO_MESSAGE",
+                  "domain": "pubsub.googleapis.com",
+                  "metadata": {
+                    "message": "Message failed schema validation",
+                    "revisionInfo": "Could not validate message with any schema revision for schema: projects/528563194216/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d, last checked revision: revision_id=879adf8b failed with status: Invalid data in message: JSON object with type string does not match schema which expected number_integer."
+                  }
+                }
+              ]
+            }
+          },
+          "ended_at": "2026-05-28T18:51:13.649Z"
+        }
+      }
+    },
+    {
+      "name": "get-topic-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:51:33.029Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-schema-topic-pubsub-schema-20260528185046-acfa7d).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:51:33.374Z"
+        }
+      }
+    },
+    {
+      "name": "get-schema-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:51:34.642Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=projects/globalstack-conformance-runner/schemas/gst-capture-schema-pubsub-schema-20260528185046-acfa7d).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:51:36.012Z"
+        }
+      }
+    }
+  ],
+  "written_at": "2026-05-28T18:51:36.013Z"
+}

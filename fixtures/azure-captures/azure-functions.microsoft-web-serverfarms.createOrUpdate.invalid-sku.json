@@ -1,0 +1,69 @@
+{
+  "id": "azure-functions.microsoft-web-serverfarms.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T15:59:21.684Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/serverfarms",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-146c7db7b3/providers/Microsoft.Web/serverfarms/plan-146c7db7b3?api-version=2023-12-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c2c4c1ad-27bc-4899-9b12-1f415a66dee8",
+      "x-ms-request-id": "c2c4c1ad-27bc-4899-9b12-1f415a66dee8",
+      "x-ms-routing-request-id": "EASTUS:20260516T155914Z:c2c4c1ad-27bc-4899-9b12-1f415a66dee8"
+    },
+    "body": {
+      "Code": "BadRequest",
+      "Message": "The parameter SKU.Name has an invalid value.",
+      "Target": null,
+      "Details": [
+        {
+          "Message": "The parameter SKU.Name has an invalid value."
+        },
+        {
+          "Code": "BadRequest"
+        },
+        {
+          "ErrorEntity": {
+            "MessageTemplate": "The parameter {0} has an invalid value.",
+            "Parameters": [
+              "SKU.Name"
+            ],
+            "Code": "BadRequest",
+            "Message": "The parameter SKU.Name has an invalid value."
+          }
+        }
+      ],
+      "Innererror": null
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-146c7db7b3",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

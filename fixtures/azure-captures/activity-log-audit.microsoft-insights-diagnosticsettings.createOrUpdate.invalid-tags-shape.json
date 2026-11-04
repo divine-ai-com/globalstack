@@ -1,0 +1,48 @@
+{
+  "id": "activity-log-audit.microsoft-insights-diagnosticsettings.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:30:46.052Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.Insights/diagnosticSettings",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-28feb72c75/providers/Microsoft.Insights/diagnosticSettings/diag-28feb72c75?api-version=2021-05-01-preview",
+    "body": {
+      "location": "{location}",
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c60c4657-472f-40ef-81cf-44e60e147149",
+      "x-ms-request-id": "00000000-0000-0000-0000-000000000000",
+      "x-ms-routing-request-id": "EASTUS:20260525T133045Z:c60c4657-472f-40ef-81cf-44e60e147149"
+    },
+    "body": {
+      "code": "UnsupportedRequestContent",
+      "message": "Request content is not well formed or supported."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-28feb72c75",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

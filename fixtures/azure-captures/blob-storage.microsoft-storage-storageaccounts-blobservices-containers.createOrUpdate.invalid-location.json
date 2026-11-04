@@ -1,0 +1,50 @@
+{
+  "id": "blob-storage.microsoft-storage-storageaccounts-blobservices-containers.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:08:48.972Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "blob-storage",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts/blobServices/containers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4bcf9015bd/providers/Microsoft.Storage/storageAccounts/gs4bcf9015bd/blobServices/default/containers/c4bcf9015bd?api-version=2023-01-01",
+    "body": {
+      "properties": {
+        "publicAccess": "None"
+      },
+      "location": "globalstack-invalid-location"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "91a25cea-d0af-42f2-a090-6af56f6cad8c",
+      "x-ms-request-id": "91a25cea-d0af-42f2-a090-6af56f6cad8c",
+      "x-ms-routing-request-id": "EASTUS:20260516T150842Z:91a25cea-d0af-42f2-a090-6af56f6cad8c"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/blobServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4bcf9015bd/providers/Microsoft.Storage/storageAccounts/gs4bcf9015bd' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4bcf9015bd",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

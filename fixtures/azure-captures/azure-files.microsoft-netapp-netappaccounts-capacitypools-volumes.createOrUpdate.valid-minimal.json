@@ -1,0 +1,48 @@
+{
+  "id": "azure-files.microsoft-netapp-netappaccounts-capacitypools-volumes.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T14:54:29.382Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-files",
+  "tier": 2,
+  "resourceType": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-dc03176fa4/providers/Microsoft.NetApp/netAppAccounts/netapp-dc03176fa4/capacityPools/pool-dc03176fa4/volumes/volume-dc03176fa4?api-version=2023-11-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9f5877e6-df85-41f0-aedd-eb4e36c2ed52",
+      "x-ms-request-id": "9f5877e6-df85-41f0-aedd-eb4e36c2ed52",
+      "x-ms-routing-request-id": "EASTUS:20260516T145427Z:9f5877e6-df85-41f0-aedd-eb4e36c2ed52"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'netAppAccounts/capacityPools/volumes', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-dc03176fa4/providers/Microsoft.NetApp/netAppAccounts/netapp-dc03176fa4/capacityPools/pool-dc03176fa4' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-dc03176fa4",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

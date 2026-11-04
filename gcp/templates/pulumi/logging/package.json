@@ -1,0 +1,14 @@
+{
+  "name": "globalstack-gcp-logging-pulumi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pulumi GCP Cloud Logging lifecycle template for GlobalStack.",
+  "main": "index.js",
+  "dependencies": {
+    "@pulumi/gcp": "9.24.0",
+    "@pulumi/pulumi": "3.243.0"
+  },
+  "engines": {
+    "node": ">=20.20.0"
+  }
+}

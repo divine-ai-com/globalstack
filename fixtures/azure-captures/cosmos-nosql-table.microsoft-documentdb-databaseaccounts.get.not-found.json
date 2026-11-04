@@ -1,0 +1,45 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.get.not-found",
+  "capturedAt": "2026-05-16T04:31:29.238Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-91068e52b8/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-91068e52b8?api-version=2024-05-15",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "31837c95-5d77-4850-9b06-25b442d37727",
+      "x-ms-request-id": "31837c95-5d77-4850-9b06-25b442d37727",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T043128Z:31837c95-5d77-4850-9b06-25b442d37727"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DocumentDB/databaseAccounts/cosmos-91068e52b8' under resource group 'rg-gs-conf-91068e52b8' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-91068e52b8",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

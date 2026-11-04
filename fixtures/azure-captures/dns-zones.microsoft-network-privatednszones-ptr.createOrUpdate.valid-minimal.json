@@ -1,0 +1,55 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-ptr.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-20T13:31:39.338Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/PTR",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1efb3b9704/providers/Microsoft.Network/privateDnsZones/1efb3b9704.internal/PTR/ptr-1efb3b9704?api-version=2020-06-01",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "PTRRecords": [
+          {
+            "ptrdname": "host.example.test."
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "eb2ed5dc-ec32-44a3-9976-81664078ff01",
+      "x-ms-request-id": "eb2ed5dc-ec32-44a3-9976-81664078ff01",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133138Z:eb2ed5dc-ec32-44a3-9976-81664078ff01"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1efb3b9704",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

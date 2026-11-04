@@ -1,0 +1,52 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services-projects.createOrUpdate.invalid-source-platform",
+  "capturedAt": "2026-05-25T13:50:43.259Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services/projects",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-source-platform",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d3389116ef/providers/Microsoft.DataMigration/services/{servicesName}/projects/project-d3389116ef?api-version=2022-03-30-preview",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "sourcePlatform": "Oracle",
+        "targetPlatform": "PostgreSQL"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6b0123dd-a42d-44b6-b57e-2ae6b4c5be41",
+      "x-ms-request-id": "6b0123dd-a42d-44b6-b57e-2ae6b4c5be41",
+      "x-ms-routing-request-id": "EASTUS:20260525T135036Z:6b0123dd-a42d-44b6-b57e-2ae6b4c5be41"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'services/projects', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d3389116ef/providers/Microsoft.DataMigration/services/{servicesName}' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d3389116ef",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones.get.not-found",
+  "capturedAt": "2026-05-16T04:36:15.539Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4de9510403/providers/Microsoft.Network/privateDnsZones/4de9510403.internal?api-version=2020-06-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "85f7b3eb-fe92-485c-83fd-b541c5a58adf",
+      "x-ms-request-id": "85f7b3eb-fe92-485c-83fd-b541c5a58adf",
+      "x-ms-routing-request-id": "EASTUS:20260516T043614Z:85f7b3eb-fe92-485c-83fd-b541c5a58adf"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Network/privateDnsZones/4de9510403.internal' under resource group 'rg-gs-conf-4de9510403' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4de9510403",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

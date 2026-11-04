@@ -1,0 +1,6 @@
+name: globalstack-gcp-kms
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Cloud KMS Pulumi lifecycle template.

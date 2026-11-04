@@ -1,0 +1,52 @@
+{
+  "id": "azure-functions.microsoft-web-sites.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:57:20.757Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/sites",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bbb3892e41/providers/Microsoft.Web/sites/site-bbb3892e41?api-version=2023-12-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "{serverFarmId}",
+        "httpsOnly": true
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a7f8e082-dca4-4baa-8f5b-cd507b657f0b",
+      "x-ms-request-id": "a7f8e082-dca4-4baa-8f5b-cd507b657f0b",
+      "x-ms-routing-request-id": "EASTUS:20260516T155714Z:a7f8e082-dca4-4baa-8f5b-cd507b657f0b"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-bbb3892e41",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "virtual-network.microsoft-network-privateendpoints.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:46:11.182Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/privateEndpoints",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0c7bc0940b/providers/Microsoft.Network/privateEndpoints?api-version=2023-09-01",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "20d0851a-1c13-4abd-8fe0-f1e8761ff665",
+      "x-ms-request-id": "20d0851a-1c13-4abd-8fe0-f1e8761ff665",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T044609Z:20d0851a-1c13-4abd-8fe0-f1e8761ff665"
+    },
+    "body": {
+      "value": []
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0c7bc0940b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

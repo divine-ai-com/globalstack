@@ -1,0 +1,45 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services.get.not-found",
+  "capturedAt": "2026-05-16T04:40:48.336Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-506444053c/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "955bfe2f-79b1-4a34-a57d-5ca35292b10e",
+      "x-ms-request-id": "955bfe2f-79b1-4a34-a57d-5ca35292b10e",
+      "x-ms-routing-request-id": "EASTUS:20260516T044047Z:955bfe2f-79b1-4a34-a57d-5ca35292b10e"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DataMigration/services/{servicesName}' under resource group 'rg-gs-conf-506444053c' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-506444053c",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

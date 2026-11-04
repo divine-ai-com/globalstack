@@ -1,0 +1,52 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-20T15:34:57.867Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5cdde35cc8/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-5cdde35cc8/databases/db5cdde35cc8?api-version=2023-06-01-preview",
+    "body": {
+      "properties": {
+        "charset": "UTF8",
+        "collation": "en_US.utf8"
+      },
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "76794396-2001-49db-a3e1-c9f1f39accc2",
+      "x-ms-request-id": "76794396-2001-49db-a3e1-c9f1f39accc2",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T153457Z:76794396-2001-49db-a3e1-c9f1f39accc2"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5cdde35cc8",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

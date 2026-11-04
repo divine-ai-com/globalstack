@@ -1,0 +1,68 @@
+{
+  "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:29:44.010Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-73f8035b0f/providers/Microsoft.Cdn/profiles/cdn-73f8035b0f/securityPolicies/security-73f8035b0f?api-version=2024-02-01",
+    "body": {
+      "properties": {
+        "parameters": {
+          "type": "WebApplicationFirewall",
+          "wafPolicy": {
+            "id": "{wafPolicyId}"
+          },
+          "associations": [
+            {
+              "domains": [
+                {
+                  "id": "{endpointId}"
+                }
+              ],
+              "patternsToMatch": [
+                "/*"
+              ]
+            }
+          ]
+        }
+      },
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9b768c6a-4aa1-44a3-8848-8fb1b4ba1e7e",
+      "x-ms-request-id": "9b768c6a-4aa1-44a3-8848-8fb1b4ba1e7e",
+      "x-ms-routing-request-id": "EASTUS:20260525T132942Z:9b768c6a-4aa1-44a3-8848-8fb1b4ba1e7e"
+    },
+    "body": {
+      "error": {
+        "code": "LinkedInvalidPropertyId",
+        "message": "Property id '{wafPolicyId}' at path 'properties.parameters.wafPolicy.id' is invalid. Expect fully qualified resource Id that start with '/subscriptions/{subscriptionId}' or '/providers/{resourceProviderNamespace}/'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-73f8035b0f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

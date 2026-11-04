@@ -1,0 +1,46 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-25T13:45:18.566Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e34ad8c695/providers/Microsoft.Synapse/workspaces/ws-e34ad8c695/sqlPools/sqlpoole34ad8c695?api-version=2021-06-01",
+    "body": {},
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2ce5865c-f4e7-4afa-95f8-1fc7b2c60139",
+      "x-ms-request-id": "2ce5865c-f4e7-4afa-95f8-1fc7b2c60139",
+      "x-ms-routing-request-id": "EASTUS:20260525T134517Z:2ce5865c-f4e7-4afa-95f8-1fc7b2c60139"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e34ad8c695",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

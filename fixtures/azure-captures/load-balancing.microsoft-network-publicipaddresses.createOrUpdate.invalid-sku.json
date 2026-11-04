@@ -1,0 +1,64 @@
+{
+  "id": "load-balancing.microsoft-network-publicipaddresses.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-25T13:43:00.791Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/publicIPAddresses",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-df80447e39/providers/Microsoft.Network/publicIPAddresses/{publicIPAddressesName}?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4",
+        "dnsSettings": {
+          "domainNameLabel": "pip-local"
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "d9141a55-f1d2-4aa4-b7f3-fbd9069e9ffe",
+      "x-ms-request-id": "db84553a-571a-4cb3-b7f2-a51206a8f5a5",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T134254Z:d9141a55-f1d2-4aa4-b7f3-fbd9069e9ffe"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestFormat",
+        "message": "Cannot parse the request.",
+        "details": [
+          {
+            "code": "InvalidJson",
+            "message": "Error converting value \"GlobalStack_InvalidSku_For_Conformance\" to type 'Microsoft.WindowsAzure.Networking.Nrp.Frontend.Contract.Csm.Public.SlbResourceSkuName'. Path 'sku.name', line 1, position 75."
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-df80447e39",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

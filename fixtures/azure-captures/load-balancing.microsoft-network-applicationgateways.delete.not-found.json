@@ -1,0 +1,39 @@
+{
+  "id": "load-balancing.microsoft-network-applicationgateways.delete.not-found",
+  "capturedAt": "2026-05-16T05:00:38.444Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/applicationGateways",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3796470ba2/providers/Microsoft.Network/applicationGateways/agw-3796470ba2?api-version=2023-09-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "5c1b3ff3-adc5-4b15-b111-d65aecbafb8b",
+      "x-ms-request-id": "5c1b3ff3-adc5-4b15-b111-d65aecbafb8b",
+      "x-ms-routing-request-id": "EASTUS:20260516T050032Z:5c1b3ff3-adc5-4b15-b111-d65aecbafb8b"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3796470ba2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

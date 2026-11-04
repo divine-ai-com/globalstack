@@ -1,0 +1,45 @@
+{
+  "id": "azure-functions.microsoft-web-sites.get.not-found",
+  "capturedAt": "2026-05-16T04:29:38.035Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/sites",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9c1b3b03dc/providers/Microsoft.Web/sites/site-9c1b3b03dc?api-version=2023-12-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b84f13fa-f838-4bab-a160-4dd43354e591",
+      "x-ms-request-id": "b84f13fa-f838-4bab-a160-4dd43354e591",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T042929Z:b84f13fa-f838-4bab-a160-4dd43354e591"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Web/sites/site-9c1b3b03dc' under resource group 'rg-gs-conf-9c1b3b03dc' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9c1b3b03dc",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

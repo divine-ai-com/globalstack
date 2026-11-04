@@ -1,0 +1,51 @@
+{
+  "id": "event-hubs-streams.microsoft-eventhub-namespaces-eventhubs.createOrUpdate.invalid-message-retention-type",
+  "capturedAt": "2026-05-20T15:17:57.513Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-hubs-streams",
+  "tier": 2,
+  "resourceType": "Microsoft.EventHub/namespaces/eventhubs",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-message-retention-type",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e9ae79f1ed/providers/Microsoft.EventHub/namespaces/ns-e9ae79f1ed/eventhubs/hub-e9ae79f1ed?api-version=2024-01-01",
+    "body": {
+      "properties": {
+        "partitionCount": 2,
+        "messageRetentionInDays": "two"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6041ff08-dfe2-4e81-8181-56991b37ab66",
+      "x-ms-request-id": "6041ff08-dfe2-4e81-8181-56991b37ab66",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T151757Z:6041ff08-dfe2-4e81-8181-56991b37ab66"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e9ae79f1ed",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

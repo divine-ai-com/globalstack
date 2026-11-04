@@ -1,0 +1,39 @@
+{
+  "id": "monitor-logs.microsoft-operationalinsights-workspaces.delete.not-found",
+  "capturedAt": "2026-05-16T04:57:04.200Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-logs",
+  "tier": 1,
+  "resourceType": "Microsoft.OperationalInsights/workspaces",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-dddfe9236f/providers/Microsoft.OperationalInsights/workspaces/ws-dddfe9236f?api-version=2022-10-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "0af2d637-6c9d-4e39-b52d-1f88734486e6",
+      "x-ms-request-id": "0af2d637-6c9d-4e39-b52d-1f88734486e6",
+      "x-ms-routing-request-id": "EASTUS:20260516T045658Z:0af2d637-6c9d-4e39-b52d-1f88734486e6"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-dddfe9236f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

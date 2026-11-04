@@ -1,0 +1,55 @@
+{
+  "id": "redis-cache.microsoft-cache-redisenterprise.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T20:00:39.090Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "redis-cache",
+  "tier": 2,
+  "resourceType": "Microsoft.Cache/redisEnterprise",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-79ab71fbc8/providers/Microsoft.Cache/redisEnterprise/redisent-79ab71fbc8",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Basic",
+        "family": "C",
+        "capacity": 0
+      },
+      "properties": {
+        "enableNonSslPort": true
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0204e749-b9e7-428b-b2b4-571450275a77",
+      "x-ms-request-id": "0204e749-b9e7-428b-b2b4-571450275a77",
+      "x-ms-routing-request-id": "EASTUS:20260516T200032Z:0204e749-b9e7-428b-b2b4-571450275a77"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-79ab71fbc8",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

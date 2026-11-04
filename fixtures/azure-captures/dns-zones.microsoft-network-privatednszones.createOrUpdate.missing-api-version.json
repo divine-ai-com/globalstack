@@ -1,0 +1,48 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T20:21:24.223Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ce2d395d79/providers/Microsoft.Network/privateDnsZones/ce2d395d79.internal",
+    "body": {
+      "location": "global",
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "61a8ead5-67e7-4d80-bc01-1b6673a1ad6e",
+      "x-ms-request-id": "61a8ead5-67e7-4d80-bc01-1b6673a1ad6e",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T202122Z:61a8ead5-67e7-4d80-bc01-1b6673a1ad6e"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ce2d395d79",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces.createOrUpdate.invalid-workspace-name",
+  "capturedAt": "2026-05-25T13:44:43.190Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-workspace-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7b1fa389f1/providers/Microsoft.Synapse/workspaces/Bad_Workspace?api-version=2021-06-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5b483527-2b83-4ece-80ad-4de3f75dd315",
+      "x-ms-request-id": "6aa7f667-e8e1-4660-a5b3-14091eed198d",
+      "x-ms-routing-request-id": "EASTUS:20260525T134436Z:5b483527-2b83-4ece-80ad-4de3f75dd315"
+    },
+    "body": {
+      "error": {
+        "code": "ValidationFailed",
+        "message": "Workspace request validation failed, check error details for more information",
+        "details": [
+          {
+            "code": "InvalidName",
+            "message": "Workspace name must be at most 50 characters long, must contain only lower-case letters, digits and hyphens but can not start or end with '-', and must not contain the string '-ondemand' anywhere in the name."
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7b1fa389f1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

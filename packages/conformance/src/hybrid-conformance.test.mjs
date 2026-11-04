@@ -1,0 +1,1265 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { request } from 'node:http';
+import { allCapabilities, capabilityForResourceType, tier1Capabilities, tier2Capabilities, officialEmulatorOptions } from '../../core/src/azure-tier1-capabilities.mjs';
+import { buildAzureLiveApiCatalog } from '../../core/src/azure-live-api-catalog.mjs';
+import { createArmServer } from '../../azure-control-plane/src/server.mjs';
+
+function decodeJwtPayload(token) {
+  const [, payload = ''] = String(token).split('.');
+  const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+  return JSON.parse(Buffer.from(padded, 'base64').toString('utf8'));
+}
+
+function httpJson(port, method, path, body, options = {}) {
+  return new Promise((resolve, reject) => {
+    const payload = body === undefined ? undefined : JSON.stringify(body);
+    const headers = {
+      'content-type': 'application/json',
+      ...(options.auth === false ? {} : { authorization: options.authorization ?? 'Bearer globalstack-local-token' }),
+      ...(payload ? { 'content-length': Buffer.byteLength(payload) } : {}),
+    };
+    const req = request({
+      hostname: '127.0.0.1',
+      port,
+      path,
+      method,
+      headers,
+    }, (res) => {
+      let text = '';
+      res.setEncoding('utf8');
+      res.on('data', chunk => {
+        text += chunk;
+      });
+      res.on('end', () => {
+        let parsed = text;
+        try {
+          parsed = text ? JSON.parse(text) : null;
+        } catch {
+          // keep text
+        }
+        resolve({ status: res.statusCode, headers: res.headers, body: parsed });
+      });
+    });
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
+}
+
+function httpForm(port, method, path, body) {
+  return new Promise((resolve, reject) => {
+    const payload = new URLSearchParams(body).toString();
+    const req = request({
+      hostname: '127.0.0.1',
+      port,
+      path,
+      method,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'content-length': Buffer.byteLength(payload),
+      },
+    }, (res) => {
+      let text = '';
+      res.setEncoding('utf8');
+      res.on('data', chunk => {
+        text += chunk;
+      });
+      res.on('end', () => {
+        let parsed = text;
+        try {
+          parsed = text ? JSON.parse(text) : null;
+        } catch {
+          // keep text
+        }
+        resolve({ status: res.statusCode, headers: res.headers, body: parsed });
+      });
+    });
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+async function withServer(fn) {
+  const server = createArmServer({ persist: false });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  try {
+    return await fn(port);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+
+test('Tier 1 registry does not make unsupported full-parity claims', () => {
+  assert.equal(tier1Capabilities.length, 15);
+  assert.ok(officialEmulatorOptions.length >= 6);
+
+  for (const capability of tier1Capabilities) {
+    assert.equal(capability.tier, 1);
+    assert.ok(capability.awsAnalogue);
+    assert.ok(capability.azureEquivalent);
+    assert.ok(capability.resourceTypes.length > 0);
+    assert.ok(capability.primaryModes.length > 0);
+    assert.ok(capability.implementedOperations.length > 0);
+    assert.equal(capability.cloudValidated, false);
+    assert.ok(capability.knownGaps.length > 0, `${capability.id} must expose known gaps`);
+  }
+});
+
+test('Tier 2 registry maps AWS analogues to Azure equivalents with explicit gaps', () => {
+  assert.equal(tier2Capabilities.length, 15);
+  assert.equal(allCapabilities.length, 30);
+
+  const expectedAwsAnalogues = [
+    'RDS MySQL',
+    'SQS',
+    'ElastiCache Redis',
+    'Step Functions',
+    'Route 53',
+    'ALB/NLB',
+    'CloudFront',
+    'WAF',
+    'CloudTrail',
+    'EFS',
+    'Kinesis Data Streams',
+    'Redshift',
+    'SSM Parameter Store',
+    'DMS',
+    'Service Discovery / Cloud Map',
+  ];
+
+  for (const awsAnalogue of expectedAwsAnalogues) {
+    assert.ok(tier2Capabilities.some(capability => capability.awsAnalogue === awsAnalogue), `${awsAnalogue} is missing`);
+  }
+
+  for (const capability of tier2Capabilities) {
+    assert.equal(capability.tier, 2);
+    assert.ok(capability.azureEquivalent);
+    assert.ok(capability.resourceTypes.length > 0);
+    assert.ok(capability.primaryModes.length > 0);
+    assert.ok(capability.implementedOperations.length > 0);
+    assert.equal(capability.cloudValidated, false);
+    assert.ok(capability.knownGaps.length > 0, `${capability.id} must expose known gaps`);
+  }
+});
+
+test('resource type matching prefers the most specific Tier 2 mapping', () => {
+  assert.equal(
+    capabilityForResourceType('Microsoft.Storage/storageAccounts/queueServices/queues').id,
+    'queue-storage',
+  );
+  assert.equal(
+    capabilityForResourceType('Microsoft.EventHub/namespaces/eventhubs').id,
+    'event-hubs-streams',
+  );
+});
+
+test('Azure live API catalog filters calls for every Tier 1 and Tier 2 capability', () => {
+  const catalog = buildAzureLiveApiCatalog();
+  assert.equal(catalog._meta.capabilityCount, 30);
+  assert.equal(catalog._meta.tier1CapabilityCount, 15);
+  assert.equal(catalog._meta.tier2CapabilityCount, 15);
+  assert.ok(catalog._meta.callCount >= allCapabilities.length * 4);
+
+  for (const capability of allCapabilities) {
+    const calls = catalog.calls.filter(call => call.capabilityId === capability.id);
+    assert.ok(calls.length >= capability.resourceTypes.length * 4, `${capability.id} has missing catalog calls`);
+    assert.ok(calls.some(call => call.operation === 'CreateOrUpdate' && call.varianceCases.some(variance => variance.id === 'missing-api-version')));
+    assert.ok(calls.every(call => call.validationState === 'candidate-until-live-azure-captured'));
+  }
+});
+
+test('Azure live API catalog keeps parameter variance cases explicit', () => {
+  const catalog = buildAzureLiveApiCatalog();
+  const createCalls = catalog.calls.filter(call => call.operation === 'CreateOrUpdate');
+  assert.ok(createCalls.length > 0);
+  for (const call of createCalls) {
+    const varianceIds = call.varianceCases.map(variance => variance.id);
+    assert.ok(varianceIds.includes('valid-minimal'), `${call.id} missing valid-minimal`);
+    assert.ok(varianceIds.includes('missing-api-version'), `${call.id} missing missing-api-version`);
+    assert.ok(varianceIds.includes('invalid-location'), `${call.id} missing invalid-location`);
+    assert.ok(varianceIds.includes('empty-body'), `${call.id} missing empty-body`);
+  }
+});
+
+test('ARM facade exposes health, capabilities, and generated support state', async () => {
+  await withServer(async (port) => {
+    const health = await httpJson(port, 'GET', '/_globalstack/health');
+    assert.equal(health.status, 200);
+    assert.equal(health.body.status, 'ok');
+
+    const capabilities = await httpJson(port, 'GET', '/_globalstack/capabilities');
+    assert.equal(capabilities.status, 200);
+    assert.equal(capabilities.body.tier1.length, tier1Capabilities.length);
+    assert.equal(capabilities.body.tier2.length, tier2Capabilities.length);
+    assert.equal(capabilities.body.all.length, allCapabilities.length);
+    assert.ok(capabilities.body.officialEmulators.some(item => item.id === 'azurite'));
+  });
+});
+
+test('ARM facade requires deterministic local Azure auth for protected ARM calls', async () => {
+  await withServer(async (port) => {
+    const publicHealth = await httpJson(port, 'GET', '/_globalstack/health', undefined, { auth: false });
+    assert.equal(publicHealth.status, 200);
+
+    const missingAuth = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-auth?api-version=2021-04-01',
+      { location: 'eastus' },
+      { auth: false },
+    );
+    assert.equal(missingAuth.status, 401);
+    assert.equal(missingAuth.body.error.code, 'InvalidAuthenticationToken');
+
+    const wrongToken = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-auth?api-version=2021-04-01',
+      { location: 'eastus' },
+      { authorization: 'Bearer wrong-token' },
+    );
+    assert.equal(wrongToken.status, 401);
+    assert.equal(wrongToken.body.error.code, 'InvalidAuthenticationToken');
+
+    const wrongSubscription = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/99999999-9999-9999-9999-999999999999/resourcegroups/rg-auth?api-version=2021-04-01',
+      { location: 'eastus' },
+    );
+    assert.equal(wrongSubscription.status, 403);
+    assert.equal(wrongSubscription.body.error.code, 'AuthorizationFailed');
+
+    const discovery = await httpJson(
+      port,
+      'GET',
+      '/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration',
+      undefined,
+      { auth: false },
+    );
+    assert.equal(discovery.status, 200);
+    assert.match(discovery.body.token_endpoint, /\/00000000-0000-0000-0000-000000000000\/oauth2\/v2\.0\/token$/);
+
+    const token = await httpForm(port, 'POST', '/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token', {
+      grant_type: 'client_credentials',
+      client_id: '11111111-1111-1111-1111-111111111111',
+      client_secret: 'globalstack',
+      scope: 'https://management.azure.com/.default',
+    });
+    assert.equal(token.status, 200);
+    assert.equal(token.body.token_type, 'Bearer');
+    assert.equal(typeof token.body.access_token, 'string');
+    assert.match(token.body.access_token, /^[^.]+\.[^.]+\.$/);
+    const claims = decodeJwtPayload(token.body.access_token);
+    assert.equal(claims.tid, '00000000-0000-0000-0000-000000000000');
+    assert.equal(claims.appid, '11111111-1111-1111-1111-111111111111');
+    assert.equal(claims.oid, '22222222-2222-2222-2222-222222222222');
+    assert.equal(claims.aud, 'https://management.azure.com/');
+
+    const put = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-auth?api-version=2021-04-01',
+      { location: 'eastus' },
+      { authorization: `Bearer ${token.body.access_token}` },
+    );
+    assert.equal(put.status, 201);
+
+    const legacyPut = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-auth-legacy?api-version=2021-04-01',
+      { location: 'eastus' },
+      { authorization: 'Bearer globalstack-local-token' },
+    );
+    assert.equal(legacyPut.status, 201);
+  });
+});
+
+test('ARM facade accepts Azure Native DMS project platform spellings', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-dms-platforms';
+
+    const rg = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+    assert.equal(rg.status, 201);
+
+    const dmsService = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.DataMigration/services/dms-platforms?api-version=2022-03-30-preview`,
+      {
+        location: 'eastus',
+        sku: { name: 'Standard_1vCore' },
+      },
+    );
+    assert.equal(dmsService.status, 201);
+
+    const azureNativeEnums = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.DataMigration/services/dms-platforms/projects/postgres-cutover?api-version=2022-03-30-preview`,
+      {
+        location: 'eastus',
+        properties: {
+          sourcePlatform: 'PostgreSql',
+          targetPlatform: 'AzureDbForPostgreSql',
+        },
+      },
+    );
+    assert.equal(azureNativeEnums.status, 201);
+
+    const azureNativeMySql = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.DataMigration/services/dms-platforms/projects/mysql-cutover?api-version=2022-03-30-preview`,
+      {
+        location: 'eastus',
+        properties: {
+          sourcePlatform: 'MySql',
+          targetPlatform: 'AzureDbForMySql',
+        },
+      },
+    );
+    assert.equal(azureNativeMySql.status, 201);
+
+    const invalidTarget = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.DataMigration/services/dms-platforms/projects/bad-target?api-version=2022-03-30-preview`,
+      {
+        location: 'eastus',
+        properties: {
+          sourcePlatform: 'PostgreSql',
+          targetPlatform: 'PostgreSql',
+        },
+      },
+    );
+    assert.equal(invalidTarget.status, 400);
+    assert.equal(invalidTarget.body.error.code, 'InvalidProjectProperties');
+    assert.match(
+      invalidTarget.body.error.message,
+      /targetPlatform must be one of SQLDB, SQLMI, AzureDbForMySql, AzureDbForPostgreSql, or MongoDb\./,
+    );
+  });
+});
+
+test('ARM facade supports resource-group CRUD with Azure-shaped IDs', async () => {
+  await withServer(async (port) => {
+    const put = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-ai?api-version=2021-04-01',
+      { location: 'eastus', tags: { ttl: 'test' } },
+    );
+    assert.equal(put.status, 201);
+    assert.equal(put.body.id, '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai');
+    assert.equal(put.body.name, 'rg-ai');
+    assert.equal(put.body.location, 'eastus');
+
+    const get = await httpJson(port, 'GET', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-ai?api-version=2021-04-01');
+    assert.equal(get.status, 200);
+    assert.equal(get.body.tags.ttl, 'test');
+
+    const list = await httpJson(port, 'GET', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2021-04-01');
+    assert.equal(list.status, 200);
+    assert.equal(list.body.value.length, 1);
+
+    const del = await httpJson(port, 'DELETE', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-ai?api-version=2021-04-01');
+    assert.equal(del.status, 200);
+  });
+});
+
+test('ARM facade stores generic Tier 2 resources with capability metadata', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-tier2?api-version=2021-04-01', { location: 'eastus' });
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-tier2/providers/Microsoft.EventHub/namespaces/gsehns?api-version=2024-01-01',
+      {
+        location: 'eastus',
+        sku: { name: 'Standard', tier: 'Standard', capacity: 1 },
+        properties: {},
+      },
+    );
+    const put = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-tier2/providers/Microsoft.EventHub/namespaces/gsehns/eventhubs/transactions?api-version=2024-01-01',
+      {
+        location: 'eastus',
+        properties: { partitionCount: 2, messageRetentionInDays: 1 },
+      },
+    );
+    assert.equal(put.status, 201);
+    assert.equal(put.body.type, 'Microsoft.EventHub/namespaces/eventhubs');
+    assert.equal(put.body.globalstack.capabilityId, 'event-hubs-streams');
+    assert.equal(put.body.globalstack.supportLevel, 'official-emulator+globalstack-facade');
+    assert.equal(put.body.globalstack.emulationDepth, 'official-emulator-backed-local');
+    assert.equal(put.body.globalstack.realAzureApiComplete, false);
+    assert.deepEqual(put.body.globalstack.backingEngines, ['event-hubs-emulator']);
+  });
+});
+
+test('ARM facade fails closed for unsupported provider resources and incomplete ARM calls', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-strict?api-version=2021-04-01', { location: 'eastus' });
+
+    const unsupported = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-strict/providers/Microsoft.MachineLearningServices/workspaces/ws1?api-version=2024-04-01',
+      { location: 'eastus', properties: {} },
+    );
+    assert.equal(unsupported.status, 501);
+    assert.equal(unsupported.body.error.code, 'GlobalStackResourceTypeNotEmulated');
+
+    const missingApiVersion = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-strict/providers/Microsoft.Storage/storageAccounts/gsstrict',
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(missingApiVersion.status, 400);
+    assert.equal(missingApiVersion.body.error.code, 'MissingApiVersionParameter');
+    assert.equal(missingApiVersion.body.error.message, 'The api-version query parameter (?api-version=) is required for all requests.');
+  });
+});
+
+test('ARM facade enforces storage account resource group and name validation', async () => {
+  await withServer(async (port) => {
+    const missingResourceGroup = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-missing/providers/Microsoft.Storage/storageAccounts/gsmissingrg?api-version=2023-01-01',
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(missingResourceGroup.status, 404);
+    assert.equal(missingResourceGroup.body.error.code, 'ResourceGroupNotFound');
+
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-storage-validation?api-version=2021-04-01', { location: 'eastus' });
+    const invalidName = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-storage-validation/providers/Microsoft.Storage/storageAccounts/Bad_Name?api-version=2023-01-01',
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.equal(invalidName.status, 400);
+    assert.equal(invalidName.body.error.code, 'AccountNameInvalid');
+  });
+});
+
+test('ARM facade returns storage account primary endpoints in Azure-shaped contract', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-storage-contract';
+    const accountName = 'gscontract91009';
+
+    await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+
+    const put = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Storage/storageAccounts/${accountName}?api-version=2023-01-01`,
+      { location: 'eastus', sku: { name: 'Standard_LRS' }, kind: 'StorageV2' },
+    );
+    assert.ok([201, 202].includes(put.status));
+    if (put.status === 202) {
+      await httpJson(port, 'GET', put.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+    }
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Storage/storageAccounts/${accountName}?api-version=2023-01-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.type, 'Microsoft.Storage/storageAccounts');
+    assert.equal(get.body.properties.primaryEndpoints.blob, `https://${accountName}.blob.core.windows.net/`);
+    assert.equal(get.body.properties.primaryEndpoints.queue, `https://${accountName}.queue.core.windows.net/`);
+    assert.equal(get.body.properties.primaryEndpoints.table, `https://${accountName}.table.core.windows.net/`);
+    assert.equal(get.body.properties.primaryEndpoints.file, `https://${accountName}.file.core.windows.net/`);
+    assert.equal(get.body.properties.primaryEndpoints.web, `https://${accountName}.web.core.windows.net/`);
+    assert.equal(get.body.properties.publicNetworkAccess, 'Enabled');
+  });
+});
+
+test('ARM facade models Service Bus namespace async shape and entity naming rules', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-sb-validation?api-version=2021-04-01', { location: 'eastus' });
+
+    const invalidNamespace = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/1bad?api-version=2021-11-01',
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    assert.equal(invalidNamespace.status, 400);
+    assert.equal(invalidNamespace.body.error.code, 'BadRequest');
+
+    const namespace = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    assert.equal(namespace.status, 201);
+    assert.ok(namespace.headers['azure-asyncoperation']);
+    assert.equal(namespace.body.properties.provisioningState, 'Creating');
+    assert.equal(namespace.body.properties.status, 'Creating');
+
+    await httpJson(port, 'GET', namespace.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+    const ready = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+    );
+    assert.equal(ready.status, 200);
+    assert.equal(ready.body.properties.provisioningState, 'Succeeded');
+
+    const topic = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(topic.status, 201);
+    assert.equal(topic.body.globalstack.capabilityId, 'service-bus-topics');
+
+    const invalidSubscription = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events/subscriptions/bad_?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(invalidSubscription.status, 400);
+    assert.equal(invalidSubscription.body.error.code, 'BadRequest');
+
+    const subscription = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01/topics/model-events/subscriptions/processor?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(subscription.status, 201);
+    assert.equal(subscription.body.globalstack.capabilityId, 'service-bus-topics');
+
+    const deleteNamespace = await httpJson(
+      port,
+      'DELETE',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-validation/providers/Microsoft.ServiceBus/namespaces/sbvalid01?api-version=2021-11-01',
+    );
+    assert.equal(deleteNamespace.status, 202);
+    assert.ok(deleteNamespace.headers['azure-asyncoperation']);
+    await httpJson(port, 'GET', deleteNamespace.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+  });
+});
+
+test('ARM facade normalizes Service Bus parent-qualified child names from provider clients', async () => {
+  await withServer(async (port) => {
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-sb-normalize?api-version=2021-04-01',
+      { location: 'eastus' },
+    );
+
+    const namespace = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-normalize/providers/Microsoft.ServiceBus/namespaces/sbnormalize01?api-version=2021-11-01',
+      { location: 'eastus', sku: { name: 'Standard', tier: 'Standard' }, properties: {} },
+    );
+    if (namespace.headers['azure-asyncoperation']) {
+      await httpJson(port, 'GET', namespace.headers['azure-asyncoperation'].replace(/^http:\/\/127\.0\.0\.1:\d+/, ''));
+    }
+
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-normalize/providers/Microsoft.ServiceBus/namespaces/sbnormalize01/topics/returns?api-version=2021-11-01',
+      { properties: {} },
+    );
+
+    const normalizedCreate = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-normalize/providers/Microsoft.ServiceBus/namespaces/sbnormalize01/topics/sbnormalize01%2Freturns/subscriptions/warehouse?api-version=2021-11-01',
+      { properties: {} },
+    );
+    assert.equal(normalizedCreate.status, 201);
+    assert.equal(normalizedCreate.body.name, 'sbnormalize01/returns/warehouse');
+
+    const canonicalGet = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sb-normalize/providers/Microsoft.ServiceBus/namespaces/sbnormalize01/topics/returns/subscriptions/warehouse?api-version=2021-11-01',
+    );
+    assert.equal(canonicalGet.status, 200);
+    assert.equal(canonicalGet.body.name, 'sbnormalize01/returns/warehouse');
+    assert.equal(canonicalGet.body.type, 'Microsoft.ServiceBus/namespaces/topics/subscriptions');
+  });
+});
+
+test('ARM facade normalizes Cosmos SQL parent-qualified child names from provider clients', async () => {
+  await withServer(async (port) => {
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-cosmos-normalize?api-version=2021-04-01',
+      { location: 'eastus' },
+    );
+
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-cosmos-normalize/providers/Microsoft.DocumentDB/databaseAccounts/cosmosnormalize01?api-version=2024-05-15',
+      {
+        location: 'eastus',
+        kind: 'GlobalDocumentDB',
+        properties: {
+          databaseAccountOfferType: 'Standard',
+          locations: [{ locationName: 'eastus', failoverPriority: 0 }],
+        },
+      },
+    );
+
+    const normalizedDatabaseCreate = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-cosmos-normalize/providers/Microsoft.DocumentDB/databaseAccounts/cosmosnormalize01/sqlDatabases/cosmosnormalize01%2FTelemetryDb?api-version=2024-05-15',
+      {
+        properties: {
+          resource: { id: 'TelemetryDb' },
+          options: { throughput: 400 },
+        },
+      },
+    );
+    assert.equal(normalizedDatabaseCreate.status, 201);
+    assert.equal(normalizedDatabaseCreate.body.name, 'cosmosnormalize01/TelemetryDb');
+
+    const canonicalDatabaseGet = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-cosmos-normalize/providers/Microsoft.DocumentDB/databaseAccounts/cosmosnormalize01/sqlDatabases/TelemetryDb?api-version=2024-05-15',
+    );
+    assert.equal(canonicalDatabaseGet.status, 200);
+    assert.equal(canonicalDatabaseGet.body.name, 'cosmosnormalize01/TelemetryDb');
+    assert.equal(canonicalDatabaseGet.body.type, 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases');
+
+    const normalizedContainerCreate = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-cosmos-normalize/providers/Microsoft.DocumentDB/databaseAccounts/cosmosnormalize01/sqlDatabases/cosmosnormalize01%2FTelemetryDb/containers/TelemetryReadings?api-version=2024-05-15',
+      {
+        properties: {
+          resource: {
+            id: 'TelemetryReadings',
+            partitionKey: {
+              kind: 'Hash',
+              paths: ['/fleetId'],
+            },
+          },
+          options: { throughput: 400 },
+        },
+      },
+    );
+    assert.equal(normalizedContainerCreate.status, 201);
+    assert.equal(normalizedContainerCreate.body.name, 'cosmosnormalize01/TelemetryDb/TelemetryReadings');
+
+    const canonicalContainerGet = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-cosmos-normalize/providers/Microsoft.DocumentDB/databaseAccounts/cosmosnormalize01/sqlDatabases/TelemetryDb/containers/TelemetryReadings?api-version=2024-05-15',
+    );
+    assert.equal(canonicalContainerGet.status, 200);
+    assert.equal(canonicalContainerGet.body.name, 'cosmosnormalize01/TelemetryDb/TelemetryReadings');
+    assert.equal(canonicalContainerGet.body.type, 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers');
+  });
+});
+
+test('ARM facade supports Front Door origin group, origin, and route child resources', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-cdn-frontdoor';
+
+    await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+
+    const profile = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample?api-version=2024-02-01`,
+      {
+        location: 'global',
+        sku: { name: 'Premium_AzureFrontDoor' },
+      },
+    );
+    assert.equal(profile.status, 201);
+
+    const endpoint = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/afdEndpoints/public-edge?api-version=2024-02-01`,
+      {
+        location: 'global',
+        properties: {
+          enabledState: 'Enabled',
+        },
+      },
+    );
+    assert.equal(endpoint.status, 201);
+
+    const originGroup = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/originGroups/core-origins?api-version=2024-02-01`,
+      {
+        properties: {
+          loadBalancingSettings: {
+            sampleSize: 4,
+            successfulSamplesRequired: 3,
+          },
+          healthProbeSettings: {
+            probePath: '/',
+            probeRequestType: 'HEAD',
+            probeProtocol: 'Https',
+            probeIntervalInSeconds: 100,
+          },
+        },
+      },
+    );
+    assert.equal(originGroup.status, 201);
+    assert.equal(originGroup.body.type, 'Microsoft.Cdn/profiles/originGroups');
+    assert.equal(originGroup.body.name, 'afd-sample/core-origins');
+
+    const origin = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/originGroups/core-origins/origins/app-origin?api-version=2024-02-01`,
+      {
+        properties: {
+          hostName: 'assets.example.internal',
+          originHostHeader: 'assets.example.internal',
+          httpPort: 80,
+          httpsPort: 443,
+          priority: 1,
+          weight: 1000,
+          enabledState: 'Enabled',
+          enforceCertificateNameCheck: true,
+        },
+      },
+    );
+    assert.equal(origin.status, 201);
+    assert.equal(origin.body.type, 'Microsoft.Cdn/profiles/originGroups/origins');
+    assert.equal(origin.body.name, 'afd-sample/core-origins/app-origin');
+
+    const encodedOriginGroup = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/originGroups/afd-sample%2Fcore-origins?api-version=2024-02-01`,
+    );
+    assert.equal(encodedOriginGroup.status, 200);
+    assert.equal(encodedOriginGroup.body.name, 'afd-sample/core-origins');
+
+    const encodedOriginHead = await httpJson(
+      port,
+      'HEAD',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/originGroups/afd-sample%2Fcore-origins/origins/app-origin?api-version=2024-02-01`,
+    );
+    assert.equal(encodedOriginHead.status, 204);
+
+    const route = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/afdEndpoints/public-edge/routes/default-route?api-version=2024-02-01`,
+      {
+        properties: {
+          enabledState: 'Enabled',
+          supportedProtocols: ['Http', 'Https'],
+          patternsToMatch: ['/*'],
+          forwardingProtocol: 'HttpsOnly',
+          httpsRedirect: 'Enabled',
+          linkToDefaultDomain: 'Enabled',
+          originGroup: {
+            id: originGroup.body.id,
+          },
+        },
+      },
+    );
+    assert.equal(route.status, 201);
+    assert.equal(route.body.type, 'Microsoft.Cdn/profiles/afdEndpoints/routes');
+    assert.equal(route.body.name, 'afd-sample/public-edge/default-route');
+
+    const getRoute = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/afdEndpoints/public-edge/routes/default-route?api-version=2024-02-01`,
+    );
+    assert.equal(getRoute.status, 200);
+    assert.equal(getRoute.body.properties.endpointName, 'public-edge');
+    assert.equal(getRoute.body.properties.originGroup.id, originGroup.body.id);
+
+    const listRoutes = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cdn/profiles/afd-sample/afdEndpoints/public-edge/routes?api-version=2024-02-01`,
+    );
+    assert.equal(listRoutes.status, 200);
+    assert.equal(listRoutes.body.value.length, 1);
+    assert.equal(listRoutes.body.value[0].name, 'afd-sample/public-edge/default-route');
+  });
+});
+
+test('ARM facade supports Front Door WAF policy lifecycle', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-frontdoor-waf';
+
+    await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+
+    const create = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+      {
+        location: 'global',
+        sku: {
+          name: 'Standard_AzureFrontDoor',
+        },
+        properties: {
+          policySettings: {
+            enabledState: 'Enabled',
+            mode: 'Prevention',
+            requestBodyCheck: 'Enabled',
+          },
+          customRules: {
+            rules: [],
+          },
+          managedRules: {
+            managedRuleSets: [{
+              ruleSetType: 'Microsoft_DefaultRuleSet',
+              ruleSetVersion: '2.1',
+            }],
+          },
+        },
+      },
+    );
+    assert.equal(create.status, 201);
+    assert.equal(create.body.type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+    assert.equal(create.body.name, 'waf-frontdoor-sample');
+
+    const get = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+    assert.equal(get.body.properties.policySettings.mode, 'Prevention');
+    assert.equal(get.body.properties.resourceState, 'Enabled');
+
+    const head = await httpJson(
+      port,
+      'HEAD',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-sample?api-version=2023-09-01`,
+    );
+    assert.equal(head.status, 204);
+
+    const list = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies?api-version=2023-09-01`,
+    );
+    assert.equal(list.status, 200);
+    assert.equal(list.body.value.length, 1);
+    assert.equal(list.body.value[0].type, 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies');
+
+    const invalid = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/waf-frontdoor-invalid?api-version=2023-09-01`,
+      {
+        location: 'global',
+        properties: {
+          policySettings: {
+            enabledState: 'Maybe',
+            mode: 'Prevention',
+            requestBodyCheck: 'Enabled',
+          },
+          managedRules: {
+            managedRuleSets: [{
+              ruleSetType: 'Microsoft_DefaultRuleSet',
+              ruleSetVersion: '2.1',
+            }],
+          },
+        },
+      },
+    );
+    assert.equal(invalid.status, 400);
+    assert.equal(invalid.body.error.code, 'InvalidRequestFormat');
+    assert.match(invalid.body.error.message, /policySettings\.enabledState/);
+  });
+});
+
+test('ARM facade accepts AKS managed identity clusters without forcing servicePrincipalProfile', async () => {
+  await withServer(async (port) => {
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-aks-validation?api-version=2021-04-01',
+      { location: 'eastus' },
+    );
+
+    const cluster = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-aks-validation/providers/Microsoft.ContainerService/managedClusters/aksvalid01?api-version=2024-02-01',
+      {
+        location: 'eastus',
+        identity: {
+          type: 'SystemAssigned',
+        },
+        properties: {
+          dnsPrefix: 'aksvalid01',
+          agentPoolProfiles: [{
+            name: 'systempool',
+            mode: 'System',
+            count: 2,
+            vmSize: 'Standard_DS2_v2',
+            osType: 'Linux',
+          }],
+        },
+      },
+    );
+    assert.ok([201, 202].includes(cluster.status));
+    if (cluster.status === 202) {
+      assert.ok(cluster.headers['azure-asyncoperation']);
+    } else {
+      assert.equal(cluster.body.type, 'Microsoft.ContainerService/managedClusters');
+      assert.equal(cluster.body.properties.provisioningState, 'Creating');
+    }
+  });
+});
+
+test('ARM facade accepts IoT Hub and Digital Twins base resources as supported extensions', async () => {
+  await withServer(async (port) => {
+    await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-iot-twins?api-version=2021-04-01',
+      { location: 'eastus' },
+    );
+
+    const iotHub = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-iot-twins/providers/Microsoft.Devices/IotHubs/iot-hub-local-01?api-version=2023-06-30',
+      {
+        location: 'eastus',
+        sku: { name: 'S1', tier: 'Standard', capacity: 1 },
+        properties: {},
+      },
+    );
+    assert.equal(iotHub.status, 201);
+    assert.equal(iotHub.body.type, 'Microsoft.Devices/IotHubs');
+    assert.equal(iotHub.body.properties.hostName, 'iot-hub-local-01.azure-devices.net');
+
+    const twins = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-iot-twins/providers/Microsoft.DigitalTwins/digitalTwinsInstances/adt-local-01?api-version=2023-01-31',
+      {
+        location: 'eastus',
+        properties: {
+          publicNetworkAccess: 'Enabled',
+        },
+      },
+    );
+    assert.equal(twins.status, 201);
+    assert.equal(twins.body.type, 'Microsoft.DigitalTwins/digitalTwinsInstances');
+    assert.equal(twins.body.properties.hostName, 'adt-local-01.api.eastus.digitaltwins.azure.net');
+  });
+});
+
+test('ARM facade exposes Function App web config child for Pulumi refresh', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-web-config-refresh';
+    const planId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-refresh-test`;
+
+    const rg = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+    assert.equal(rg.status, 201);
+
+    const plan = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-refresh-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        kind: 'functionapp',
+        sku: { name: 'Y1', tier: 'Dynamic' },
+        properties: { reserved: false },
+      },
+    );
+    assert.equal(plan.status, 201);
+
+    const site = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/func-refresh-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        kind: 'functionapp',
+        properties: {
+          serverFarmId: planId,
+          httpsOnly: true,
+          siteConfig: {
+            appSettings: [
+              { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
+              { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+            ],
+            alwaysOn: false,
+          },
+        },
+      },
+    );
+    assert.equal(site.status, 201);
+
+    const config = await httpJson(
+      port,
+      'GET',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/func-refresh-test/config/web?api-version=2023-12-01`,
+    );
+    assert.equal(config.status, 200);
+    assert.equal(config.body.type, 'Microsoft.Web/sites/config');
+    assert.equal(config.body.name, 'func-refresh-test/web');
+    assert.equal(config.body.properties.alwaysOn, false);
+    assert.deepEqual(config.body.properties.appSettings, [
+      { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
+      { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' },
+    ]);
+  });
+});
+
+test('ARM facade accepts a minimal consumption App Service plan payload for function workloads', async () => {
+  await withServer(async (port) => {
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const resourceGroupName = 'rg-web-plan-minimal';
+
+    const rg = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}?api-version=2021-04-01`,
+      { location: 'eastus' },
+    );
+    assert.equal(rg.status, 201);
+
+    const plan = await httpJson(
+      port,
+      'PUT',
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/serverfarms/asp-minimal-test?api-version=2023-12-01`,
+      {
+        location: 'eastus',
+        sku: { name: 'Y1', tier: 'Dynamic' },
+      },
+    );
+    assert.equal(plan.status, 201);
+    assert.equal(plan.body.type, 'Microsoft.Web/serverfarms');
+  });
+});
+
+test('ARM facade uses Azure-shaped not-found responses for captured lifecycle gaps', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-notfound?api-version=2021-04-01', { location: 'eastus' });
+
+    const rootGet = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-notfound/providers/Microsoft.Storage/storageAccounts/missingstore?api-version=2023-01-01',
+    );
+    assert.equal(rootGet.status, 404);
+    assert.equal(rootGet.body.error.code, 'ResourceNotFound');
+
+    const childGetMissingParent = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-notfound/providers/Microsoft.Storage/storageAccounts/missingstore/blobServices/default/containers/missingcontainer?api-version=2023-01-01',
+    );
+    assert.equal(childGetMissingParent.status, 404);
+    assert.equal(childGetMissingParent.body.error.code, 'ParentResourceNotFound');
+
+    const rootDelete = await httpJson(
+      port,
+      'DELETE',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-notfound/providers/Microsoft.Storage/storageAccounts/missingstore?api-version=2023-01-01',
+    );
+    assert.equal(rootDelete.status, 204);
+  });
+});
+
+test('ARM facade stores generic Tier 1 resources with capability metadata', async () => {
+  await withServer(async (port) => {
+    await httpJson(port, 'PUT', '/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-ai?api-version=2021-04-01', { location: 'eastus' });
+    const put = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai/providers/Microsoft.Storage/storageAccounts/gsaitest?api-version=2023-01-01',
+      {
+        location: 'eastus',
+        sku: { name: 'Standard_LRS' },
+        kind: 'StorageV2',
+        properties: { allowBlobPublicAccess: false },
+      },
+    );
+    assert.equal(put.status, 202);
+    assert.equal(put.body, null);
+
+    await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai/providers/Microsoft.Storage/storageAccounts/gsaitest?api-version=2023-01-01',
+    );
+    await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai/providers/Microsoft.Storage/storageAccounts/gsaitest?api-version=2023-01-01',
+    );
+    const get = await httpJson(
+      port,
+      'GET',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai/providers/Microsoft.Storage/storageAccounts/gsaitest?api-version=2023-01-01',
+    );
+    assert.equal(get.status, 200);
+    assert.equal(get.body.type, 'Microsoft.Storage/storageAccounts');
+    assert.equal(get.body.globalstack.capabilityId, 'blob-storage');
+    assert.equal(get.body.globalstack.emulationDepth, 'official-emulator-backed-local');
+    assert.equal(get.body.globalstack.realAzureApiComplete, false);
+    assert.equal(get.body.properties.provisioningState, 'Succeeded');
+    assert.equal(get.body.globalstack.supportLevel, 'official-emulator+globalstack-facade');
+  });
+});
+
+test('ARM facade evaluates compiled Bicep variables and nested deployment outputs', async () => {
+  await withServer(async (port) => {
+    const put = await httpJson(
+      port,
+      'PUT',
+      '/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/deployments/native-bicep-fixture?api-version=2022-09-01',
+      {
+        location: 'eastus',
+        properties: {
+          mode: 'Incremental',
+          parameters: {
+            resourceGroupName: { value: 'rg-bicep-fixture' },
+            storageAccountName: { value: 'gsbicepfixture' },
+          },
+          template: {
+            parameters: {
+              resourceGroupName: { type: 'string' },
+              storageAccountName: { type: 'string' },
+            },
+            resources: [
+              {
+                type: 'Microsoft.Resources/resourceGroups',
+                apiVersion: '2022-09-01',
+                name: "[parameters('resourceGroupName')]",
+                location: 'eastus',
+              },
+              {
+                type: 'Microsoft.Resources/deployments',
+                apiVersion: '2025-04-01',
+                name: 'inner-workload',
+                resourceGroup: "[parameters('resourceGroupName')]",
+                properties: {
+                  mode: 'Incremental',
+                  parameters: {
+                    storageAccountName: { value: "[parameters('storageAccountName')]" },
+                  },
+                  template: {
+                    parameters: {
+                      storageAccountName: { type: 'string' },
+                    },
+                    variables: {
+                      queueName: 'model-jobs',
+                    },
+                    resources: [
+                      {
+                        type: 'Microsoft.Storage/storageAccounts',
+                        apiVersion: '2023-05-01',
+                        name: "[parameters('storageAccountName')]",
+                        location: 'eastus',
+                        kind: 'StorageV2',
+                        sku: { name: 'Standard_LRS' },
+                        properties: { allowBlobPublicAccess: false },
+                      },
+                      {
+                        type: 'Microsoft.Storage/storageAccounts/queueServices',
+                        apiVersion: '2023-05-01',
+                        name: "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+                        properties: {},
+                      },
+                      {
+                        type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+                        apiVersion: '2023-05-01',
+                        name: "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', variables('queueName'))]",
+                        properties: {},
+                      },
+                    ],
+                    outputs: {
+                      queueName: {
+                        type: 'string',
+                        value: "[variables('queueName')]",
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+            outputs: {
+              queueName: {
+                type: 'string',
+                value: "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'inner-workload'), '2025-04-01').outputs.queueName.value]",
+              },
+            },
+          },
+        },
+      },
+    );
+
+    assert.equal(put.status, 201);
+    assert.equal(put.body.properties.outputs.queueName.value, 'model-jobs');
+    assert.ok(put.body.properties.globalstackDeploymentSteps.some(step =>
+      step.id.endsWith('/Microsoft.Storage/storageAccounts/gsbicepfixture/queueServices/default/queues/model-jobs')));
+    assert.ok(put.body.properties.globalstackDeploymentSteps.every(step => !step.id.includes("variables(") && !step.id.includes("'default'")));
+  });
+});

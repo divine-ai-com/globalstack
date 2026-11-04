@@ -1,0 +1,49 @@
+{
+  "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-25T13:09:18.800Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "container-registry",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerRegistry/registries",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-83f7aee721/providers/Microsoft.ContainerRegistry/registries/acr83f7aee721?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "74d95000-c4b9-4886-a0e1-91afaba71374",
+      "x-ms-request-id": "74d95000-c4b9-4886-a0e1-91afaba71374",
+      "x-ms-routing-request-id": "EASTUS:20260525T130911Z:74d95000-c4b9-4886-a0e1-91afaba71374"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'registries'. The supported api-versions are '2017-03-01, 2017-10-01, 2019-05-01, 2019-12-01-preview, 2020-11-01-preview, 2021-06-01-preview, 2021-08-01-preview, 2021-09-01, 2021-12-01-preview, 2022-02-01-preview, 2022-12-01, 2023-01-01-preview, 2023-06-01-preview, 2023-07-01, 2023-08-01-preview, 2023-11-01-preview, 2024-11-01-preview, 2025-03-01-preview, 2025-04-01, 2025-05-01-preview, 2025-06-01-preview, 2025-11-01, 2026-01-01-preview'. The supported locations are 'westus, eastus, southcentralus, westeurope, northeurope, uksouth, ukwest, australiaeast, australiasoutheast, centralindia, koreacentral, francecentral, southafricanorth, uaenorth, eastasia, japaneast, japanwest, southeastasia, southindia, brazilsouth, canadaeast, canadacentral, centralus, eastus2, northcentralus, westcentralus, westus2, switzerlandnorth, uaecentral, switzerlandwest, germanywestcentral, brazilsoutheast, norwayeast, koreasouth, westus3, norwaywest, swedencentral, jioindiawest, jioindiacentral, australiacentral2, australiacentral, qatarcentral, germanynorth, polandcentral, francesouth, italynorth, israelcentral, spaincentral, mexicocentral, indonesiacentral, newzealandnorth, chilecentral, malaysiawest, belgiumcentral, denmarkeast, austriaeast'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-83f7aee721",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@globalstack/emulator-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "server.mjs",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./server.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node ../../packages/workspace-utils/src/package-check.mjs build",
+    "start": "node server.mjs",
+    "test": "node ../../packages/workspace-utils/src/package-check.mjs test",
+    "validate": "node ../../packages/workspace-utils/src/package-check.mjs validate"
+  }
+}

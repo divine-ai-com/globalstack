@@ -1,0 +1,56 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts-sqldatabases-containers.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:30:23.315Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ac94c157b2/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-ac94c157b2/sqlDatabases/sqldbac94c157b2/containers/cac94c157b2",
+    "body": {
+      "properties": {
+        "resource": {
+          "id": "{containersName}",
+          "partitionKey": "<redacted>"
+        },
+        "options": {
+          "throughput": 400
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "fa0f2944-b83e-4385-8ee8-a1209a804273",
+      "x-ms-request-id": "fa0f2944-b83e-4385-8ee8-a1209a804273",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133023Z:fa0f2944-b83e-4385-8ee8-a1209a804273"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ac94c157b2",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

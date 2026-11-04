@@ -1,0 +1,52 @@
+{
+  "id": "azure-functions.microsoft-web-serverfarms.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:58:52.572Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/serverfarms",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a32cc4606b/providers/Microsoft.Web/serverfarms/plan-a32cc4606b",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "a86559df-239f-4ad8-84a7-6c5c38bf152b",
+      "x-ms-request-id": "a86559df-239f-4ad8-84a7-6c5c38bf152b",
+      "x-ms-routing-request-id": "EASTUS:20260516T155746Z:a86559df-239f-4ad8-84a7-6c5c38bf152b"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-a32cc4606b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

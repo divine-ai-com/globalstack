@@ -1,0 +1,49 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-activitylogalerts.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:19:27.606Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/activityLogAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-99386c41cb/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertsName}?api-version=2020-10-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "f07e78d3-7c4d-49f0-93c9-3d6d12ec3a68",
+      "x-ms-request-id": "f07e78d3-7c4d-49f0-93c9-3d6d12ec3a68",
+      "x-ms-routing-request-id": "EASTUS:20260525T131920Z:f07e78d3-7c4d-49f0-93c9-3d6d12ec3a68"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-99386c41cb",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

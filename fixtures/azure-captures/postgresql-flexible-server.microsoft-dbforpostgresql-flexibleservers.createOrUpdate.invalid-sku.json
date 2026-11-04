@@ -1,0 +1,56 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-20T15:50:43.644Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d31ddcf17d/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-d31ddcf17d?api-version=2023-06-01-preview",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "administratorLoginPassword": "<redacted>",
+        "version": "16"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0ede1384-99b6-4a99-a2c2-050c75230b7d",
+      "x-ms-request-id": "ce73dd3c-2a2c-4e60-b4f2-e90bfec6c23d",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260520T155041Z:0ede1384-99b6-4a99-a2c2-050c75230b7d"
+    },
+    "body": {
+      "error": {
+        "code": "MissingRequiredParameter",
+        "message": "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d31ddcf17d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

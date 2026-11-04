@@ -1,0 +1,45 @@
+{
+  "id": "azure-files.microsoft-storage-storageaccounts-fileservices-shares.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T14:54:26.898Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-files",
+  "tier": 2,
+  "resourceType": "Microsoft.Storage/storageAccounts/fileServices/shares",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa683e29de/providers/Microsoft.Storage/storageAccounts/gsfa683e29de/fileServices/default/shares/sharefa683e29de?api-version=2023-01-01",
+    "body": {}
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "925e9553-0c46-4f83-884a-8d87f40692a1",
+      "x-ms-request-id": "925e9553-0c46-4f83-884a-8d87f40692a1",
+      "x-ms-routing-request-id": "EASTUS:20260516T145325Z:925e9553-0c46-4f83-884a-8d87f40692a1"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'storageAccounts/fileServices', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa683e29de/providers/Microsoft.Storage/storageAccounts/gsfa683e29de' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fa683e29de",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

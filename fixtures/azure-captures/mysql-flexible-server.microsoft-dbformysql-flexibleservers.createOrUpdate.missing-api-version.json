@@ -1,0 +1,55 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T19:57:05.166Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3665f811bc/providers/Microsoft.DBforMySQL/flexibleServers/db-3665f811bc",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "8.0.21"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b21930e5-e0f7-4241-ba8b-5a4b77fbfa73",
+      "x-ms-request-id": "b21930e5-e0f7-4241-ba8b-5a4b77fbfa73",
+      "x-ms-routing-request-id": "EASTUS:20260516T195658Z:b21930e5-e0f7-4241-ba8b-5a4b77fbfa73"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3665f811bc",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

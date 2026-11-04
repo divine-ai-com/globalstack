@@ -1,0 +1,55 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T19:57:16.127Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7ff5085e15/providers/Microsoft.DBforMySQL/flexibleServers/db-7ff5085e15?api-version=2023-12-30",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "8.0.21"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0970eb5c-5be4-47b9-aed7-e035a7543365",
+      "x-ms-request-id": "0970eb5c-5be4-47b9-aed7-e035a7543365",
+      "x-ms-routing-request-id": "EASTUS:20260516T195709Z:0970eb5c-5be4-47b9-aed7-e035a7543365"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7ff5085e15",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

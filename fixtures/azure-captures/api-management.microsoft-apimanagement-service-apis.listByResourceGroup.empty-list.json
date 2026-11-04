@@ -1,0 +1,45 @@
+{
+  "id": "api-management.microsoft-apimanagement-service-apis.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:42:30.357Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service/apis",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1afc9a8a43/providers/Microsoft.ApiManagement/service/apim-1afc9a8a43/apis?api-version=2023-05-01-preview",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "002a35ce-abe4-46b9-a08a-339c7497e09a",
+      "x-ms-request-id": "002a35ce-abe4-46b9-a08a-339c7497e09a",
+      "x-ms-routing-request-id": "EASTUS:20260516T044223Z:002a35ce-abe4-46b9-a08a-339c7497e09a"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.ApiManagement/service/apim-1afc9a8a43' under resource group 'rg-gs-conf-1afc9a8a43' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1afc9a8a43",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

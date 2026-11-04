@@ -1,0 +1,56 @@
+{
+  "id": "api-management.microsoft-apimanagement-service.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T15:07:04.915Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5bd1933a8d/providers/Microsoft.ApiManagement/service/apim-5bd1933a8d",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "properties": {
+        "publisherEmail": "platform@example.com",
+        "publisherName": "GlobalStack Platform"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b9f9cad3-2ce0-4545-ad00-87cc827ed48b",
+      "x-ms-request-id": "b9f9cad3-2ce0-4545-ad00-87cc827ed48b",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T150704Z:b9f9cad3-2ce0-4545-ad00-87cc827ed48b"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5bd1933a8d",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

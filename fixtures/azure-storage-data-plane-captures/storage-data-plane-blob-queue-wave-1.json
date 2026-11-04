@@ -1,0 +1,1068 @@
+{
+  "id": "storage-data-plane-blob-queue-wave-1",
+  "capturedAt": "2026-05-26T10:46:31.045Z",
+  "target": "azure",
+  "location": "eastus",
+  "subscriptionId": "<subscription-id>",
+  "resourceGroupName": "<resource-group>",
+  "storageAccountName": "<storage-account>",
+  "cleanup": {
+    "attempted": true,
+    "status": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "setup": [
+    {
+      "id": "resource-group.create",
+      "response": {
+        "status": "201",
+        "ok": "true",
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Tue, 26 May 2026 10:44:31 GMT",
+          "x-ms-correlation-request-id": "8075229a-4ca5-4ec0-87d5-bcbede12ab8a",
+          "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+          "x-ms-ratelimit-remaining-subscription-writes": "199",
+          "x-ms-request-id": "8075229a-4ca5-4ec0-87d5-bcbede12ab8a",
+          "x-ms-routing-request-id": "CENTRALINDIA:20260526T104432Z:8075229a-4ca5-4ec0-87d5-bcbede12ab8a"
+        },
+        "body": {
+          "id": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>",
+          "name": "<resource-group>",
+          "type": "Microsoft.Resources/resourceGroups",
+          "location": "eastus",
+          "tags": {
+            "purpose": "globalstack-storage-data-plane-capture",
+            "ttl": "ephemeral"
+          },
+          "properties": {
+            "provisioningState": "Succeeded"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.create",
+      "response": {
+        "status": "202",
+        "ok": "true",
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "date": "Tue, 26 May 2026 10:44:37 GMT",
+          "location": "https://management.azure.com/subscriptions/<subscription-id>/providers/Microsoft.Storage/locations/eastus/asyncoperations/af317527-0081-4717-93f7-35ecd3df548a?monitor=true&api-version=2023-01-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>",
+          "retry-after": "17",
+          "x-ms-correlation-request-id": "6b4140ca-d7d3-42ee-ae9d-58a5ed504cf3",
+          "x-ms-operation-identifier": "tenantId=044ddeed-952a-4899-a0b1-50568e1a3c41,objectId=d11eb919-f4e5-4cfb-99fa-0033461f5440/centralindia/24a6c136-82d2-4d42-94b0-2348edb3175b",
+          "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+          "x-ms-ratelimit-remaining-subscription-writes": "199",
+          "x-ms-request-id": "af317527-0081-4717-93f7-35ecd3df548a",
+          "x-ms-routing-request-id": "CENTRALINDIA:20260526T104438Z:6b4140ca-d7d3-42ee-ae9d-58a5ed504cf3"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "storage-account.ready",
+      "response": {
+        "status": "200",
+        "ok": "true",
+        "headers": {
+          "content-type": "application/json",
+          "date": "Tue, 26 May 2026 10:45:00 GMT",
+          "x-ms-correlation-request-id": "727451d2-91ae-4660-a35a-1cb4031fc4c0",
+          "x-ms-ratelimit-remaining-subscription-global-reads": "3749",
+          "x-ms-ratelimit-remaining-subscription-reads": "249",
+          "x-ms-request-id": "22c17095-fad8-4afd-8d5a-08d05750b49c",
+          "x-ms-routing-request-id": "EASTUS:20260526T104500Z:727451d2-91ae-4660-a35a-1cb4031fc4c0"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+          "name": "<storage-account>",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": "false",
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": "false",
+            "allowSharedKeyAccess": "<redacted>",
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": "true",
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": "true",
+                  "lastEnabledTime": "2026-05-26T10:44:36.1241375Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": "true",
+                  "lastEnabledTime": "2026-05-26T10:44:36.1241375Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "Succeeded",
+            "creationTime": "2026-05-26T10:44:35.7216212Z",
+            "primaryEndpoints": {
+              "dfs": "https://<storage-account>.dfs.core.windows.net/",
+              "web": "https://<storage-account>.z13.web.core.windows.net/",
+              "blob": "https://<storage-account>.blob.core.windows.net/",
+              "queue": "https://<storage-account>.queue.core.windows.net/",
+              "table": "https://<storage-account>.table.core.windows.net/",
+              "file": "https://<storage-account>.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.list-keys",
+      "response": {
+        "status": "200",
+        "ok": "true",
+        "headers": {
+          "content-type": "application/json",
+          "date": "Tue, 26 May 2026 10:45:00 GMT",
+          "x-ms-correlation-request-id": "f33cb5a6-36d7-42a5-a57f-ad69fec8743a",
+          "x-ms-operation-identifier": "tenantId=044ddeed-952a-4899-a0b1-50568e1a3c41,objectId=d11eb919-f4e5-4cfb-99fa-0033461f5440/eastus/66d4ef1c-fdf9-44fb-a807-648992e61140",
+          "x-ms-ratelimit-remaining-subscription-resource-requests": "799",
+          "x-ms-request-id": "440b5fc6-8610-4b56-b35a-dd0731b8357b",
+          "x-ms-routing-request-id": "EASTUS:20260526T104500Z:f33cb5a6-36d7-42a5-a57f-ad69fec8743a"
+        },
+        "body": "<redacted>"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "blob-invalid-container-uppercase",
+      "description": "Create container with uppercase name.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:01 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "891e66d8-001e-0021-78fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:891e66d8-001e-0021-78fc-ec0db1000000\nTime:2026-05-26T10:45:01.8042076Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-invalid-container-too-short",
+      "description": "Create container with two-character name.",
+      "response": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "OutOfRangeInput",
+          "x-ms-request-id": "33146b7b-401e-00a6-7bfc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>OutOfRangeInput</Code><Message>The specified resource name length is not within the permissible limits.\nRequestId:33146b7b-401e-00a6-7bfc-ec9ed4000000\nTime:2026-05-26T10:45:02.6119297Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-invalid-container-leading-dash",
+      "description": "Create container with leading dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "891e6763-001e-0021-77fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:891e6763-001e-0021-77fc-ec0db1000000\nTime:2026-05-26T10:45:02.8261576Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-invalid-container-trailing-dash",
+      "description": "Create container with trailing dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "33146baf-401e-00a6-2bfc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:33146baf-401e-00a6-2bfc-ec9ed4000000\nTime:2026-05-26T10:45:03.0266342Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-invalid-container-consecutive-dash",
+      "description": "Create container with consecutive dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "891e679e-001e-0021-2efc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:891e679e-001e-0021-2efc-ec0db1000000\nTime:2026-05-26T10:45:03.2409947Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-create-container",
+      "description": "Create valid container.",
+      "response": {
+        "status": 201,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "etag": "\"0x8DEBB13D7EA9AF4\"",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "33146bd0-401e-00a6-4afc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "blob-duplicate-container-create",
+      "description": "Create duplicate container.",
+      "response": {
+        "status": 409,
+        "errorCode": "ContainerAlreadyExists",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:02 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "ContainerAlreadyExists",
+          "x-ms-request-id": "891e67d7-001e-0021-62fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:891e67d7-001e-0021-62fc-ec0db1000000\nTime:2026-05-26T10:45:03.6625864Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-missing-blob",
+      "description": "Read missing blob.",
+      "response": {
+        "status": 404,
+        "errorCode": "BlobNotFound",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:03 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "BlobNotFound",
+          "x-ms-request-id": "33146bed-401e-00a6-65fc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:33146bed-401e-00a6-65fc-ec9ed4000000\nTime:2026-05-26T10:45:03.8656454Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-missing-container",
+      "description": "Put blob into missing container.",
+      "response": {
+        "status": 404,
+        "errorCode": "ContainerNotFound",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:03 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "ContainerNotFound",
+          "x-ms-request-id": "891e6828-001e-0021-29fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The specified container does not exist.\nRequestId:891e6828-001e-0021-29fc-ec0db1000000\nTime:2026-05-26T10:45:04.0820483Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-missing-blob-type-header",
+      "description": "Put blob without x-ms-blob-type.",
+      "response": {
+        "status": 400,
+        "errorCode": "MissingRequiredHeader",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:03 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "MissingRequiredHeader",
+          "x-ms-request-id": "33146c0f-401e-00a6-02fc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>MissingRequiredHeader</Code><Message>An HTTP header that&apos;s mandatory for this request is not specified.\nRequestId:33146c0f-401e-00a6-02fc-ec9ed4000000\nTime:2026-05-26T10:45:04.2811648Z</Message><HeaderName>x-ms-blob-type</HeaderName></Error>"
+      }
+    },
+    {
+      "id": "blob-put-block-blob",
+      "description": "Put valid block blob.",
+      "response": {
+        "status": 201,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:03 GMT",
+          "etag": "\"0x8DEBB13D88B79B4\"",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-content-crc64": "ZTaC3nSlqCc=",
+          "x-ms-request-id": "891e685b-001e-0021-56fc-ec0db1000000",
+          "x-ms-request-server-encrypted": "true",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "blob-get-without-authorization",
+      "description": "Read blob without Authorization header.",
+      "response": {
+        "status": 401,
+        "errorCode": "NoAuthenticationInformation",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:04 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "NoAuthenticationInformation",
+          "x-ms-request-id": "33146c37-401e-00a6-26fc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>NoAuthenticationInformation</Code><Message>Server failed to authenticate the request. Please refer to the information in the www-authenticate header.\nRequestId:33146c37-401e-00a6-26fc-ec9ed4000000\nTime:2026-05-26T10:45:04.7919023Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-get-payload",
+      "description": "Read valid blob.",
+      "response": {
+        "status": 200,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Tue, 26 May 2026 10:45:04 GMT",
+          "etag": "\"0x8DEBB13D88B79B4\"",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-access-tier": "Hot",
+          "x-ms-access-tier-inferred": "true",
+          "x-ms-blob-type": "BlockBlob",
+          "x-ms-creation-time": "Tue, 26 May 2026 10:45:04 GMT",
+          "x-ms-lease-state": "available",
+          "x-ms-lease-status": "unlocked",
+          "x-ms-request-id": "891e6895-001e-0021-0ffc-ec0db1000000",
+          "x-ms-server-encrypted": "true",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "{\"scenario\":\"storage-data-plane-capture\",\"suffix\":\"eda0b37d0c\"}"
+      }
+    },
+    {
+      "id": "blob-list-containers",
+      "description": "List containers.",
+      "response": {
+        "status": 200,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:04 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "33146c74-401e-00a6-5cfc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\"><Containers><Container><Name>hardening-eda0b37d0c</Name><Properties><Last-Modified>Tue, 26 May 2026 10:45:03 GMT</Last-Modified><Etag>\"0x8DEBB13D7EA9AF4\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker /></EnumerationResults>"
+      }
+    },
+    {
+      "id": "blob-delete-blob",
+      "description": "Delete blob.",
+      "response": {
+        "status": 202,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:04 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-delete-type-permanent": "true",
+          "x-ms-request-id": "891e68bf-001e-0021-33fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "blob-get-after-delete",
+      "description": "Read blob after delete.",
+      "response": {
+        "status": 404,
+        "errorCode": "BlobNotFound",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:05 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "BlobNotFound",
+          "x-ms-request-id": "33146cb4-401e-00a6-18fc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:33146cb4-401e-00a6-18fc-ec9ed4000000\nTime:2026-05-26T10:45:05.6335200Z</Message></Error>"
+      }
+    },
+    {
+      "id": "blob-delete-container",
+      "description": "Delete container.",
+      "response": {
+        "status": 202,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:05 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "891e68f9-001e-0021-65fc-ec0db1000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "blob-get-container-after-delete",
+      "description": "Read container after delete.",
+      "response": {
+        "status": 404,
+        "errorCode": "ContainerNotFound",
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:05 GMT",
+          "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "ContainerNotFound",
+          "x-ms-request-id": "33146cf6-401e-00a6-49fc-ec9ed4000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "queue-invalid-uppercase",
+      "description": "Create queue with uppercase name.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:06 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "aebe21b7-0003-0043-37fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:aebe21b7-0003-0043-37fc-eccf96000000\nTime:2026-05-26T10:45:06.8769969Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-invalid-too-short",
+      "description": "Create queue with two-character name.",
+      "response": {
+        "status": 400,
+        "errorCode": "OutOfRangeInput",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:06 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "OutOfRangeInput",
+          "x-ms-request-id": "99849421-2003-0026-5ffc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>OutOfRangeInput</Code><Message>The specified resource name length is not within the permissible limits.\nRequestId:99849421-2003-0026-5ffc-ec61d2000000\nTime:2026-05-26T10:45:07.6825977Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-invalid-leading-dash",
+      "description": "Create queue with leading dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:07 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "aebe21e1-0003-0043-59fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:aebe21e1-0003-0043-59fc-eccf96000000\nTime:2026-05-26T10:45:07.8815711Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-invalid-trailing-dash",
+      "description": "Create queue with trailing dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:07 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "99849434-2003-0026-70fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:99849434-2003-0026-70fc-ec61d2000000\nTime:2026-05-26T10:45:08.0788584Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-invalid-consecutive-dash",
+      "description": "Create queue with consecutive dash.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidResourceName",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:08 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidResourceName",
+          "x-ms-request-id": "aebe21fe-0003-0043-74fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The specifed resource name contains invalid characters.\nRequestId:aebe21fe-0003-0043-74fc-eccf96000000\nTime:2026-05-26T10:45:08.2785396Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-create",
+      "description": "Create valid queue.",
+      "response": {
+        "status": 201,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:07 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "99849455-2003-0026-11fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "queue-duplicate-create",
+      "description": "Create duplicate queue.",
+      "response": {
+        "status": 204,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:08 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "aebe2219-0003-0043-0cfc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "queue-missing-metadata",
+      "description": "Read metadata for missing queue.",
+      "response": {
+        "status": 404,
+        "errorCode": "QueueNotFound",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:07 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "QueueNotFound",
+          "x-ms-request-id": "9984946c-2003-0026-25fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The specified queue does not exist.\nRequestId:9984946c-2003-0026-25fc-ec61d2000000\nTime:2026-05-26T10:45:08.8832264Z</Message></Error>"
+      }
+    },
+    {
+      "id": "queue-malformed-message",
+      "description": "Put malformed queue message XML.",
+      "response": {
+        "status": 400,
+        "errorCode": "InvalidXmlDocument",
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:09 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-error-code": "InvalidXmlDocument",
+          "x-ms-request-id": "aebe2230-0003-0043-22fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML specified is not syntactically valid.\nRequestId:aebe2230-0003-0043-22fc-eccf96000000\nTime:2026-05-26T10:45:09.0844347Z</Message><LineNumber>1</LineNumber><LinePosition>40</LinePosition><Reason>Error parsing Xml content</Reason></Error>"
+      }
+    },
+    {
+      "id": "queue-put-message",
+      "description": "Put valid queue message.",
+      "response": {
+        "status": 201,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:08 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "9984947c-2003-0026-32fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAC5fuuPzs3AE=</PopReceipt><TimeNextVisible>Tue, 26 May 2026 10:45:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      }
+    },
+    {
+      "id": "queue-peek-message",
+      "description": "Peek queue message.",
+      "response": {
+        "status": 200,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:09 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "aebe2247-0003-0043-38fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+      }
+    },
+    {
+      "id": "queue-list",
+      "description": "List queues.",
+      "response": {
+        "status": 200,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:08 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "99849492-2003-0026-47fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.queue.core.windows.net/\"><Queues><Queue><Name>hardening-eda0b37d0c</Name></Queue></Queues><NextMarker /></EnumerationResults>"
+      }
+    },
+    {
+      "id": "queue-delete",
+      "description": "Delete queue.",
+      "response": {
+        "status": 204,
+        "errorCode": null,
+        "headers": {
+          "date": "Tue, 26 May 2026 10:45:09 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "aebe2255-0003-0043-45fc-eccf96000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": ""
+      }
+    },
+    {
+      "id": "queue-peek-after-delete",
+      "description": "Peek queue after delete.",
+      "response": {
+        "status": 200,
+        "errorCode": null,
+        "headers": {
+          "content-type": "application/xml",
+          "date": "Tue, 26 May 2026 10:45:09 GMT",
+          "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+          "x-ms-request-id": "998494a2-2003-0026-54fc-ec61d2000000",
+          "x-ms-version": "2023-11-03"
+        },
+        "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+      },
+      "repeatedObservations": [
+        {
+          "delayMs": 0,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:09 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "998494a2-2003-0026-54fc-ec61d2000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 2000,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:12 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe22c3-0003-0043-30fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 2500,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:12 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe22e1-0003-0043-4bfc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 3000,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:13 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2309-0003-0043-70fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 3500,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:14 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2325-0003-0043-0afc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 4000,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:15 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2340-0003-0043-25fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 4500,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:15 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2356-0003-0043-3afc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 5000,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:16 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2383-0003-0043-65fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 7500,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:19 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe23fb-0003-0043-51fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 10000,
+          "response": {
+            "status": 200,
+            "errorCode": null,
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:21 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-request-id": "aebe2496-0003-0043-62fc-eccf96000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f37bd1b-c889-4280-bfb8-955e2c425adf</MessageId><InsertionTime>Tue, 26 May 2026 10:45:09 GMT</InsertionTime><ExpirationTime>Tue, 02 Jun 2026 10:45:09 GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>cmVhZHk6ZWRhMGIzN2QwYw==</MessageText></QueueMessage></QueueMessagesList>"
+          }
+        },
+        {
+          "delayMs": 15000,
+          "response": {
+            "status": 404,
+            "errorCode": "QueueNotFound",
+            "headers": {
+              "content-type": "application/xml",
+              "date": "Tue, 26 May 2026 10:45:26 GMT",
+              "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+              "x-ms-error-code": "QueueNotFound",
+              "x-ms-request-id": "9d7ff425-e003-0029-49fc-ec17be000000",
+              "x-ms-version": "2023-11-03"
+            },
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The specified queue does not exist.\nRequestId:9d7ff425-e003-0029-49fc-ec17be000000\nTime:2026-05-26T10:45:27.7374436Z</Message></Error>"
+          }
+        }
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "id": "blob-invalid-container-uppercase",
+      "azuriteStep": "blob invalid container name ABc",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-invalid-container-too-short",
+      "azuriteStep": "blob invalid container name ab",
+      "azureStatus": 400,
+      "azureErrorCode": "OutOfRangeInput",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "OutOfRangeInput",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-invalid-container-leading-dash",
+      "azuriteStep": "blob invalid container name -bad",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-invalid-container-trailing-dash",
+      "azuriteStep": "blob invalid container name bad-",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-invalid-container-consecutive-dash",
+      "azuriteStep": "blob invalid container name bad--name",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-duplicate-container-create",
+      "azuriteStep": "blob duplicate container create rejected",
+      "azureStatus": 409,
+      "azureErrorCode": "ContainerAlreadyExists",
+      "azuriteStatus": 409,
+      "azuriteErrorCode": "ContainerAlreadyExists",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-missing-blob",
+      "azuriteStep": "blob missing blob rejected",
+      "azureStatus": 404,
+      "azureErrorCode": "BlobNotFound",
+      "azuriteStatus": 404,
+      "azuriteErrorCode": "BlobNotFound",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-missing-container",
+      "azuriteStep": "blob missing container rejected",
+      "azureStatus": 404,
+      "azureErrorCode": "ContainerNotFound",
+      "azuriteStatus": 404,
+      "azuriteErrorCode": "ContainerNotFound",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "blob-missing-blob-type-header",
+      "azuriteStep": "blob missing blob type header rejected",
+      "azureStatus": 400,
+      "azureErrorCode": "MissingRequiredHeader",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": null,
+      "matchesStatus": true,
+      "matchesErrorCode": false
+    },
+    {
+      "id": "blob-get-without-authorization",
+      "azuriteStep": "blob get without authorization rejected",
+      "azureStatus": 401,
+      "azureErrorCode": "NoAuthenticationInformation",
+      "azuriteStatus": 403,
+      "azuriteErrorCode": "AuthorizationFailure",
+      "matchesStatus": false,
+      "matchesErrorCode": false
+    },
+    {
+      "id": "blob-get-after-delete",
+      "azuriteStep": "blob get after delete rejected",
+      "azureStatus": 404,
+      "azureErrorCode": "BlobNotFound",
+      "azuriteStatus": 404,
+      "azuriteErrorCode": "BlobNotFound",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-invalid-uppercase",
+      "azuriteStep": "queue invalid queue name ABc",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-invalid-too-short",
+      "azuriteStep": "queue invalid queue name ab",
+      "azureStatus": 400,
+      "azureErrorCode": "OutOfRangeInput",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "OutOfRangeInput",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-invalid-leading-dash",
+      "azuriteStep": "queue invalid queue name -bad",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-invalid-trailing-dash",
+      "azuriteStep": "queue invalid queue name bad-",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-invalid-consecutive-dash",
+      "azuriteStep": "queue invalid queue name bad--name",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidResourceName",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": "InvalidResourceName",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-duplicate-create",
+      "azuriteStep": "queue duplicate create is idempotent",
+      "azureStatus": 204,
+      "azureErrorCode": null,
+      "azuriteStatus": 204,
+      "azuriteErrorCode": null,
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-missing-metadata",
+      "azuriteStep": "queue missing queue metadata rejected",
+      "azureStatus": 404,
+      "azureErrorCode": "QueueNotFound",
+      "azuriteStatus": 404,
+      "azuriteErrorCode": "QueueNotFound",
+      "matchesStatus": true,
+      "matchesErrorCode": true
+    },
+    {
+      "id": "queue-malformed-message",
+      "azuriteStep": "queue malformed message rejected",
+      "azureStatus": 400,
+      "azureErrorCode": "InvalidXmlDocument",
+      "azuriteStatus": 400,
+      "azuriteErrorCode": null,
+      "matchesStatus": true,
+      "matchesErrorCode": false
+    },
+    {
+      "id": "queue-peek-after-delete",
+      "azuriteStep": "queue peek after delete rejected",
+      "azureStatus": 200,
+      "azureErrorCode": null,
+      "azuriteStatus": 404,
+      "azuriteErrorCode": "QueueNotFound",
+      "matchesStatus": false,
+      "matchesErrorCode": false
+    }
+  ],
+  "globalstack": {
+    "validationDepth": "live-data-plane",
+    "cloudValidated": false,
+    "caveat": "Real Azure data-plane capture wave. Normalize into local expectations and document Azurite mismatches before changing support claims."
+  }
+}

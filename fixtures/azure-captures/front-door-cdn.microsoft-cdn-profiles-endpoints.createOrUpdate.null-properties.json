@@ -1,0 +1,49 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T13:36:53.606Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/endpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6405d05f66/providers/Microsoft.Cdn/profiles/cdn-6405d05f66/endpoints/endpoint-6405d05f66?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7fb72ae3-0a0a-454f-aa6d-ed7c6438da20",
+      "x-ms-request-id": "7fb72ae3-0a0a-454f-aa6d-ed7c6438da20",
+      "x-ms-routing-request-id": "EASTUS:20260525T133652Z:7fb72ae3-0a0a-454f-aa6d-ed7c6438da20"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'profiles/endpoints', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6405d05f66/providers/Microsoft.Cdn/profiles/cdn-6405d05f66' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6405d05f66",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

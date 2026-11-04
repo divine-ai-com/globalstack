@@ -1,0 +1,955 @@
+{
+  "id": "storage-arm-lifecycle-ready",
+  "capturedAt": "2026-05-16T09:49:07.556Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "location": "eastus",
+  "resourceGroupName": "rg-gs-life-6b694b935a",
+  "storageAccountName": "gslife6b694b935a",
+  "cleanup": {
+    "attempted": true,
+    "status": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "steps": [
+    {
+      "id": "resource-group.create",
+      "description": "Create ephemeral lifecycle resource group.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-life-6b694b935a?api-version=2021-04-01",
+      "body": {
+        "location": "eastus",
+        "tags": {
+          "purpose": "globalstack-lifecycle",
+          "ttl": "ephemeral"
+        }
+      },
+      "response": {
+        "status": 201,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "x-ms-correlation-request-id": "3ae5af40-39a6-4a37-a982-a4e6291da4b7",
+          "x-ms-request-id": "3ae5af40-39a6-4a37-a982-a4e6291da4b7",
+          "x-ms-routing-request-id": "WESTINDIA:20260516T094825Z:3ae5af40-39a6-4a37-a982-a4e6291da4b7"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a",
+          "name": "rg-gs-life-6b694b935a",
+          "type": "Microsoft.Resources/resourceGroups",
+          "location": "eastus",
+          "tags": {
+            "purpose": "globalstack-lifecycle",
+            "ttl": "ephemeral"
+          },
+          "properties": {
+            "provisioningState": "Succeeded"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.create",
+      "description": "Create storage account parent.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": {
+        "location": "eastus",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "allowBlobPublicAccess": false
+        }
+      },
+      "response": {
+        "status": 202,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "location": "https://management.azure.com/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/providers/Microsoft.Storage/locations/eastus/asyncoperations/3b116c63-1b59-4464-99c0-744327f08431?monitor=true&api-version=2023-01-01&t=639145217078471002&c=MIIHlDCCBnygAwIBAgIQZiYkoV_LM7Hwt06_u_DzJDANBgkqhkiG9w0BAQsFADA2MTQwMgYDVQQDEytDQ01FIEcxIFRMUyBSU0EgMjA0OCBTSEEyNTYgMjA0OSBFVVMyIENBIDAxMB4XDTI2MDQxMDA4MTUzOVoXDTI2MTAwNTE0MTUzOVowQDE-MDwGA1UEAxM1YXN5bmNvcGVyYXRpb25zaWduaW5nY2VydGlmaWNhdGUubWFuYWdlbWVudC5henVyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDealc9e2xWlYn0dX5zgxycoyRECfCn-ACb8WxKGmsKAA5yFa8bggPwuauZjSPSntq3xw99b6CFXZ6EM34WjxaWokZKYj8bbRT14WzrQHemPN5KUaI3SFtZidaSdEAzhm7Ha1a74SG8rDZU8qVqbaoCPQk9Iblv0LucrVV5BAMOwvi-5j-7X9vehxsheuxPwrVmGy_WrXI_3Qflmizp5BND_I3p4BIRjEcaQw_EBd3dhAC52EO5bT3FKSdM6N5xgpZvtjHjxRG2WG_8Gh07OrI0Ib0mnTB1_HNhiEw3_VzdnINXV0_Fsm7HMV-qCCkY5pyJIZjVX7L7FFY0PGqcqUKdAgMBAAGjggSSMIIEjjCBnQYDVR0gBIGVMIGSMAwGCisGAQQBgjd7AQEwZgYKKwYBBAGCN3sCAjBYMFYGCCsGAQUFBwICMEoeSAAzADMAZQAwADEAOQAyADEALQA0AGQANgA0AC0ANABmADgAYwAtAGEAMAA1ADUALQA1AGIAZABhAGYAZgBkADUAZQAzADMAZDAMBgorBgEEAYI3ewMCMAwGCisGAQQBgjd7BAIwDAYDVR0TAQH_BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDgYDVR0PAQH_BAQDAgWgMB0GA1UdDgQWBBSZIRQPs2If06iDFyiGbMnvIxenBzAfBgNVHSMEGDAWgBT87D7bqnwfgh4FuKEG-UPnArMKuTCCAbIGA1UdHwSCAakwggGlMGmgZ6BlhmNodHRwOi8vcHJpbWFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwa6BpoGeGZWh0dHA6Ly9zZWNvbmRhcnktY2RuLnBraS5jb3JlLndpbmRvd3MubmV0L2Vhc3R1czIvY3Jscy9jY21lZWFzdHVzMnBraS9jY21lZWFzdHVzMmljYTAxLzQ2L2N1cnJlbnQuY3JsMFqgWKBWhlRodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwb6BtoGuGaWh0dHA6Ly9jY21lZWFzdHVzMnBraS5lYXN0dXMyLnBraS5jb3JlLndpbmRvd3MubmV0L2NlcnRpZmljYXRlQXV0aG9yaXRpZXMvY2NtZWVhc3R1czJpY2EwMS80Ni9jdXJyZW50LmNybDCCAbcGCCsGAQUFBwEBBIIBqTCCAaUwbAYIKwYBBQUHMAKGYGh0dHA6Ly9wcmltYXJ5LWNkbi5wa2kuY29yZS53aW5kb3dzLm5ldC9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBuBggrBgEFBQcwAoZiaHR0cDovL3NlY29uZGFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jYWNlcnRzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvY2VydC5jZXIwXQYIKwYBBQUHMAKGUWh0dHA6Ly9jcmwubWljcm9zb2Z0LmNvbS9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBmBggrBgEFBQcwAoZaaHR0cDovL2NjbWVlYXN0dXMycGtpLmVhc3R1czIucGtpLmNvcmUud2luZG93cy5uZXQvY2VydGlmaWNhdGVBdXRob3JpdGllcy9jY21lZWFzdHVzMmljYTAxMA0GCSqGSIb3DQEBCwUAA4IBAQAxSvsyw-aQGPuLg3sIv-zDLSqhHgP__v9DGyP7D16rJpNG1JcjpiXpbloqD9RW5Gc_hHWn5Kyr1pRABJrFa-jEt89-FiQdkToF-vvwJOXbryAgZYdS03uFzUGqARs3JMMqCHrVkx6hb9oOxh_3JdEemO_dbhApyOVTfloO4kIRsgJnHI_ImFt8xm3xa9ftB0ARfJAdN_1EHgB2NdOgTvaSljVOnQY6R40lh_Wl8-s3GIhHbNwQOECXegBxeVAUVN5nGxlD8TEqKc_mX-22kBMao71zBz3JWtCING4-QzwrWj9pxmanpqYqiVGf40ZbZZihRkte0KI9zvW53Y2Smcy7&s=SJbUpVXvkSqwzx4XvwOOZq6OfBC95xz3Mjz0seaONGAgx8X4SAFmXaQtDwkJJ978tV-2K7aH_QLY1852L8mylSlP4rT46jD0tqt_KVnwxWeb9OW_8wu1xDx--m2NfiMjKc1aQz8CTDooI-pL6PCr_4hC-2K1kgEXBpMkJdduDBWrk91YqKQklVbXGc9QAt4qMesoxATsofAsasy0YQEdFGhSzLJy1gvk_1Xbt8icu_nRpFbfpmRg3JhjdqhW__7n-S-cUHZqyUFZ6wM7H9aPf9pfalBZWROV2dVYU-nrPI0TCnTRj1Vbq9Yai64PClhpEh8DKEGjw7HYP5gb3QQO1Q&h=0Vdqw4Wk19lrnHyj9_ETXqmXNpPPEFQdbP-aTaRCLQo",
+          "retry-after": "17",
+          "x-ms-correlation-request-id": "e558682a-0483-414f-b776-a928dcf48d25",
+          "x-ms-request-id": "3b116c63-1b59-4464-99c0-744327f08431",
+          "x-ms-routing-request-id": "EASTUS:20260516T094827Z:e558682a-0483-414f-b776-a928dcf48d25"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "storage-account.get-after-create",
+      "description": "Read storage account after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "4945504f-01c2-4a23-80df-f7f33e7f0c1e",
+          "x-ms-request-id": "51fcf46e-97d3-4db9-88c8-5ee19f8a1e5c",
+          "x-ms-routing-request-id": "EASTUS:20260516T094828Z:4945504f-01c2-4a23-80df-f7f33e7f0c1e"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "name": "gslife6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": false,
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": false,
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": true,
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "Creating",
+            "creationTime": "2026-05-16T09:48:25.8469778Z",
+            "primaryEndpoints": {
+              "dfs": "https://gslife6b694b935a.dfs.core.windows.net/",
+              "web": "https://gslife6b694b935a.z13.web.core.windows.net/",
+              "blob": "https://gslife6b694b935a.blob.core.windows.net/",
+              "queue": "https://gslife6b694b935a.queue.core.windows.net/",
+              "table": "https://gslife6b694b935a.table.core.windows.net/",
+              "file": "https://gslife6b694b935a.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.wait-ready.1",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "e4a4c516-db88-4890-b1b5-2a8fd70d1cc9",
+          "x-ms-request-id": "ba743581-30c5-4a53-95fa-32690fad2fc6",
+          "x-ms-routing-request-id": "EASTUS:20260516T094828Z:e4a4c516-db88-4890-b1b5-2a8fd70d1cc9"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "name": "gslife6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": false,
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": false,
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": true,
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "Creating",
+            "creationTime": "2026-05-16T09:48:25.8469778Z",
+            "primaryEndpoints": {
+              "dfs": "https://gslife6b694b935a.dfs.core.windows.net/",
+              "web": "https://gslife6b694b935a.z13.web.core.windows.net/",
+              "blob": "https://gslife6b694b935a.blob.core.windows.net/",
+              "queue": "https://gslife6b694b935a.queue.core.windows.net/",
+              "table": "https://gslife6b694b935a.table.core.windows.net/",
+              "file": "https://gslife6b694b935a.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.wait-ready.2",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "7d2d9e2c-e455-47bc-bfcc-538f9b970d4e",
+          "x-ms-request-id": "e1b41e20-4e24-448c-ad45-ed98a7986b18",
+          "x-ms-routing-request-id": "CENTRALINDIA:20260516T094839Z:7d2d9e2c-e455-47bc-bfcc-538f9b970d4e"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "name": "gslife6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": false,
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": false,
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": true,
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "ResolvingDns",
+            "creationTime": "2026-05-16T09:48:25.8469778Z",
+            "primaryEndpoints": {
+              "dfs": "https://gslife6b694b935a.dfs.core.windows.net/",
+              "web": "https://gslife6b694b935a.z13.web.core.windows.net/",
+              "blob": "https://gslife6b694b935a.blob.core.windows.net/",
+              "queue": "https://gslife6b694b935a.queue.core.windows.net/",
+              "table": "https://gslife6b694b935a.table.core.windows.net/",
+              "file": "https://gslife6b694b935a.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.wait-ready.3",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "f386a141-cef6-4ea5-bd3d-6789b801b7e2",
+          "x-ms-request-id": "57a19fcb-162c-4793-9249-02d998117972",
+          "x-ms-routing-request-id": "EASTUS:20260516T094850Z:f386a141-cef6-4ea5-bd3d-6789b801b7e2"
+        },
+        "body": {
+          "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+          },
+          "kind": "StorageV2",
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "name": "gslife6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "eastus",
+          "tags": {},
+          "properties": {
+            "keyCreationTime": "<redacted>",
+            "allowCrossTenantReplication": false,
+            "privateEndpointConnections": [],
+            "minimumTlsVersion": "TLS1_0",
+            "allowBlobPublicAccess": false,
+            "networkAcls": {
+              "ipv6Rules": [],
+              "bypass": "AzureServices",
+              "virtualNetworkRules": [],
+              "ipRules": [],
+              "defaultAction": "Allow"
+            },
+            "supportsHttpsTrafficOnly": true,
+            "encryption": {
+              "services": {
+                "file": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                },
+                "blob": {
+                  "keyType": "<redacted>",
+                  "enabled": true,
+                  "lastEnabledTime": "2026-05-16T09:48:26.2513990Z"
+                }
+              },
+              "keySource": "<redacted>"
+            },
+            "accessTier": "Hot",
+            "provisioningState": "Succeeded",
+            "creationTime": "2026-05-16T09:48:25.8469778Z",
+            "primaryEndpoints": {
+              "dfs": "https://gslife6b694b935a.dfs.core.windows.net/",
+              "web": "https://gslife6b694b935a.z13.web.core.windows.net/",
+              "blob": "https://gslife6b694b935a.blob.core.windows.net/",
+              "queue": "https://gslife6b694b935a.queue.core.windows.net/",
+              "table": "https://gslife6b694b935a.table.core.windows.net/",
+              "file": "https://gslife6b694b935a.file.core.windows.net/"
+            },
+            "primaryLocation": "eastus",
+            "statusOfPrimary": "available"
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.create",
+      "description": "Create Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+      "body": {
+        "properties": {
+          "publicAccess": "None"
+        }
+      },
+      "response": {
+        "status": 201,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "d217e124-2a1a-4605-ae61-56c4cd5cf836",
+          "x-ms-request-id": "7313ba21-feeb-4e41-aebe-860ea0796047",
+          "x-ms-routing-request-id": "EASTUS:20260516T094850Z:d217e124-2a1a-4605-ae61-56c4cd5cf836"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+          "name": "c6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "properties": {
+            "deleted": false,
+            "remainingRetentionDays": 0,
+            "publicAccess": "None",
+            "hasImmutabilityPolicy": false,
+            "hasLegalHold": false
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "f5e5fe00-089b-42c6-b767-7beb178316a5",
+          "x-ms-request-id": "291d80d6-0f65-4294-b083-4f48f7fe0d1c",
+          "x-ms-routing-request-id": "EASTUS:20260516T094851Z:f5e5fe00-089b-42c6-b767-7beb178316a5"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+          "name": "c6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "etag": "\"0x8DEB330555A08F9\"",
+          "properties": {
+            "deleted": false,
+            "remainingRetentionDays": 0,
+            "defaultEncryptionScope": "$account-encryption-key",
+            "denyEncryptionScopeOverride": false,
+            "publicAccess": "None",
+            "leaseStatus": "Unlocked",
+            "leaseState": "Available",
+            "lastModifiedTime": "2026-05-16T09:48:50.0000000Z",
+            "legalHold": {
+              "hasLegalHold": false,
+              "tags": []
+            },
+            "hasImmutabilityPolicy": false,
+            "hasLegalHold": false
+          }
+        }
+      }
+    },
+    {
+      "id": "blob-container.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "22377693-1055-479f-9269-e0b7b3a810dc",
+          "x-ms-request-id": "9cb55965-cf70-49d6-9f73-bdbdb2748921",
+          "x-ms-routing-request-id": "EASTUS:20260516T094851Z:22377693-1055-479f-9269-e0b7b3a810dc"
+        },
+        "body": {
+          "value": [
+            {
+              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+              "name": "c6b694b935a",
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "etag": "\"0x8DEB330555A08F9\"",
+              "properties": {
+                "immutableStorageWithVersioning": {
+                  "enabled": false
+                },
+                "deleted": false,
+                "remainingRetentionDays": 0,
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None",
+                "leaseStatus": "Unlocked",
+                "leaseState": "Available",
+                "lastModifiedTime": "2026-05-16T09:48:50.0000000Z",
+                "hasImmutabilityPolicy": false,
+                "hasLegalHold": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "queue.create",
+      "description": "Create Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+      "body": {
+        "properties": {}
+      },
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "612b1c7b-9f17-4d5c-95d0-7d6b2fd8b8c4",
+          "x-ms-request-id": "d6081ecf-5580-4da8-b4ed-e1953d39ef4f",
+          "x-ms-routing-request-id": "EASTUS:20260516T094851Z:612b1c7b-9f17-4d5c-95d0-7d6b2fd8b8c4"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+          "name": "q6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+          "properties": {
+            "metadata": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "ec79b3ab-d79b-4a4e-827a-37c0cacd47b3",
+          "x-ms-request-id": "aefc7d9b-a6f2-47dc-96a0-d31e3b9e621e",
+          "x-ms-routing-request-id": "EASTUS:20260516T094852Z:ec79b3ab-d79b-4a4e-827a-37c0cacd47b3"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+          "name": "q6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+          "properties": {
+            "metadata": {},
+            "approximateMessageCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "bfc6d684-51e9-4e8e-bedf-9c6c56cba1b2",
+          "x-ms-request-id": "4eb0f225-78e4-49d4-89cc-a5e4384fda6d",
+          "x-ms-routing-request-id": "EASTUS:20260516T094852Z:bfc6d684-51e9-4e8e-bedf-9c6c56cba1b2"
+        },
+        "body": {
+          "value": [
+            {
+              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+              "name": "q6b694b935a",
+              "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+              "properties": {
+                "metadata": {}
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "file-share.create",
+      "description": "Create Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+      "body": {
+        "properties": {
+          "shareQuota": 1
+        }
+      },
+      "response": {
+        "status": 201,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "e053e194-59fa-451d-a05a-c798a22c2e2a",
+          "x-ms-request-id": "e842f0ea-144d-4b4e-841d-49a323ef38d8",
+          "x-ms-routing-request-id": "EASTUS:20260516T094853Z:e053e194-59fa-451d-a05a-c798a22c2e2a"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+          "name": "share6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+          "properties": {
+            "shareQuota": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "02af4453-21e7-4728-8b06-aec878608691",
+          "x-ms-request-id": "eea14b3c-3d2c-4d60-9066-d73de5e81d1b",
+          "x-ms-routing-request-id": "EASTUS:20260516T094853Z:02af4453-21e7-4728-8b06-aec878608691"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+          "name": "share6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+          "etag": "\"0x8DEB33057025AB8\"",
+          "properties": {
+            "leaseStatus": "unlocked",
+            "leaseState": "available",
+            "signedIdentifiers": [],
+            "accessTier": "TransactionOptimized",
+            "accessTierChangeTime": "2026-05-16T09:48:53.0000000Z",
+            "lastModifiedTime": "2026-05-16T09:48:53.0000000Z",
+            "shareQuota": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "d5f5aa0d-5090-4225-b49e-fd4defa7efbe",
+          "x-ms-request-id": "7aeca1e5-db37-4fc8-bbdd-6cbfba5048d6",
+          "x-ms-routing-request-id": "EASTUS:20260516T094853Z:d5f5aa0d-5090-4225-b49e-fd4defa7efbe"
+        },
+        "body": {
+          "value": [
+            {
+              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+              "name": "share6b694b935a",
+              "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+              "etag": "\"0x8DEB33057025AB8\"",
+              "properties": {
+                "leaseStatus": "unlocked",
+                "leaseState": "available",
+                "accessTier": "TransactionOptimized",
+                "accessTierChangeTime": "2026-05-16T09:48:53.0000000Z",
+                "lastModifiedTime": "2026-05-16T09:48:53.0000000Z",
+                "shareQuota": 1,
+                "enabledProtocols": "SMB"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "table.create",
+      "description": "Create Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+      "body": {
+        "properties": {}
+      },
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "00b34017-82f9-42e1-a742-d0711bbac7dc",
+          "x-ms-request-id": "ecb60062-7430-4eb8-9017-1722fa3a24b2",
+          "x-ms-routing-request-id": "EASTUS:20260516T094854Z:00b34017-82f9-42e1-a742-d0711bbac7dc"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+          "name": "table6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+          "properties": {
+            "tableName": "table6b694b935a"
+          }
+        }
+      }
+    },
+    {
+      "id": "table.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "ed483d52-a674-4239-b0d5-24c162de7bca",
+          "x-ms-request-id": "798590c9-4ba2-4cb5-bc7e-cd19a8e0e17b",
+          "x-ms-routing-request-id": "EASTUS:20260516T094854Z:ed483d52-a674-4239-b0d5-24c162de7bca"
+        },
+        "body": {
+          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+          "name": "table6b694b935a",
+          "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+          "properties": {
+            "signedIdentifiers": [],
+            "tableName": "table6b694b935a"
+          }
+        }
+      }
+    },
+    {
+      "id": "table.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "5a25d14f-f3be-4e36-a809-8ca6dc71a8f1",
+          "x-ms-request-id": "085c29b1-9fb5-4ac9-a970-8b9cf7975bd7",
+          "x-ms-routing-request-id": "EASTUS:20260516T094854Z:5a25d14f-f3be-4e36-a809-8ca6dc71a8f1"
+        },
+        "body": {
+          "value": [
+            {
+              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+              "name": "table6b694b935a",
+              "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+              "properties": {
+                "tableName": "table6b694b935a"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "blob-container.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "9ca9d6f5-38f8-4e4f-ae28-8a5f9c181474",
+          "x-ms-request-id": "b9e53331-12c0-4249-92f6-834554c37878",
+          "x-ms-routing-request-id": "EASTUS:20260516T094855Z:9ca9d6f5-38f8-4e4f-ae28-8a5f9c181474"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "blob-container.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "13d7affc-988d-4e82-ae5c-7b114779e47d",
+          "x-ms-request-id": "cc465a2a-df43-4d49-a226-8bd648d962af",
+          "x-ms-routing-request-id": "EASTUS:20260516T094856Z:13d7affc-988d-4e82-ae5c-7b114779e47d"
+        },
+        "body": {
+          "error": {
+            "code": "ContainerNotFound",
+            "message": "The specified container does not exist.\nRequestId:1658d68f-901e-0031-7e19-e51db2000000\nTime:2026-05-16T09:48:56.2048588Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "queue.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 204,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "da2df6fb-8210-4c4d-a677-8fbcdf9293d6",
+          "x-ms-request-id": "4677046a-97e4-4bf1-bf65-3d7f80f7ac3d",
+          "x-ms-routing-request-id": "EASTUS:20260516T094856Z:da2df6fb-8210-4c4d-a677-8fbcdf9293d6"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "queue.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "4ca3d2c0-fe27-4bd9-9b78-d12d93a92033",
+          "x-ms-request-id": "3aa2ead7-a9e1-4fd8-adf4-a42bed7b3a7c",
+          "x-ms-routing-request-id": "EASTUS:20260516T094856Z:4ca3d2c0-fe27-4bd9-9b78-d12d93a92033"
+        },
+        "body": {
+          "error": {
+            "code": "QueueNotFound",
+            "message": "The specified queue does not exist.\nRequestId:a9442346-f003-0027-4c19-e5eb65000000\nTime:2026-05-16T09:48:56.7797934Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "file-share.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "ab9f1803-b7d2-4a65-becb-c0dc2df41b88",
+          "x-ms-request-id": "d268cb30-a8c2-4a43-81f9-5bba537d8c67",
+          "x-ms-routing-request-id": "EASTUS:20260516T094857Z:ab9f1803-b7d2-4a65-becb-c0dc2df41b88"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "file-share.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "7d5bad38-d12b-4a4c-88ef-479f44a64e1a",
+          "x-ms-request-id": "09effb28-0f19-4a2d-89e1-fce10cb3735b",
+          "x-ms-routing-request-id": "EASTUS:20260516T094857Z:7d5bad38-d12b-4a4c-88ef-479f44a64e1a"
+        },
+        "body": {
+          "error": {
+            "code": "ShareNotFound",
+            "message": "The specified share does not exist.\nRequestId:7474c61e-f01a-0008-3d19-e5e6ae000000\nTime:2026-05-16T09:48:57.5912484Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "table.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 204,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "92eb340e-9497-478d-b7ae-8b7097901457",
+          "x-ms-request-id": "f35be128-f61f-45ee-b9d7-272e667ed4c3",
+          "x-ms-routing-request-id": "EASTUS:20260516T094857Z:92eb340e-9497-478d-b7ae-8b7097901457"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "table.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json",
+          "x-ms-correlation-request-id": "c4c8ae3b-5e6d-4545-b75f-b5a775517f41",
+          "x-ms-request-id": "02ac940c-4b48-4ece-b1be-c7fd282b6d40",
+          "x-ms-routing-request-id": "EASTUS:20260516T094858Z:c4c8ae3b-5e6d-4545-b75f-b5a775517f41"
+        },
+        "body": {
+          "error": {
+            "code": "ResourceNotFound",
+            "message": "The specified resource does not exist.\nRequestId:3d452116-2002-0046-5119-e5c826000000\nTime:2026-05-16T09:48:58.1388189Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "storage-account.delete",
+      "description": "Delete storage account parent.",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 200,
+        "ok": true,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "x-ms-correlation-request-id": "18cfc655-ad8a-49c7-9711-ebf19726a8c8",
+          "x-ms-request-id": "e4c40b53-711e-4c07-a804-0797a7303303",
+          "x-ms-routing-request-id": "EASTUS:20260516T094900Z:18cfc655-ad8a-49c7-9711-ebf19726a8c8"
+        },
+        "body": null
+      }
+    },
+    {
+      "id": "storage-account.get-after-delete",
+      "description": "Read storage account after delete.",
+      "method": "GET",
+      "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+      "body": null,
+      "response": {
+        "status": 404,
+        "ok": false,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "x-ms-correlation-request-id": "5769deb1-8f63-4039-8fa8-3b13ff43c46f",
+          "x-ms-request-id": "5769deb1-8f63-4039-8fa8-3b13ff43c46f",
+          "x-ms-routing-request-id": "EASTUS:20260516T094901Z:5769deb1-8f63-4039-8fa8-3b13ff43c46f"
+        },
+        "body": {
+          "error": {
+            "code": "ResourceNotFound",
+            "message": "The Resource 'Microsoft.Storage/storageAccounts/gslife6b694b935a' under resource group 'rg-gs-life-6b694b935a' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+          }
+        }
+      }
+    }
+  ],
+  "globalstack": {
+    "validationDepth": "live-lifecycle",
+    "cloudValidated": false,
+    "caveat": "Sequence fixture validates observed Azure lifecycle responses for this run; local parity still requires normalized replay tests."
+  }
+}

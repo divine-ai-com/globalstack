@@ -1,0 +1,48 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-aaaa.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-20T13:31:22.935Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/AAAA",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-cf2cc4e84f/providers/Microsoft.Network/privateDnsZones/cf2cc4e84f.internal/AAAA/aaaa-cf2cc4e84f?api-version=2020-06-01",
+    "body": {
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b2d4fad2-9eee-43d5-8a33-42bcd19d8614",
+      "x-ms-request-id": "b2d4fad2-9eee-43d5-8a33-42bcd19d8614",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133122Z:b2d4fad2-9eee-43d5-8a33-42bcd19d8614"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-cf2cc4e84f",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

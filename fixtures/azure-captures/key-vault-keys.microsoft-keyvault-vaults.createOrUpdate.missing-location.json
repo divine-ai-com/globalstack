@@ -1,0 +1,55 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T12:10:02.568Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4ebc9b7143/providers/Microsoft.KeyVault/vaults/kv-4ebc9b7143?api-version=2023-07-01",
+    "body": {
+      "properties": {
+        "tenantId": "{tenantId}",
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "accessPolicies": []
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "34cfde58-f8e1-4e17-828c-dc6c5b7efdaf",
+      "x-ms-request-id": "34cfde58-f8e1-4e17-828c-dc6c5b7efdaf",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T120955Z:34cfde58-f8e1-4e17-828c-dc6c5b7efdaf"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4ebc9b7143",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

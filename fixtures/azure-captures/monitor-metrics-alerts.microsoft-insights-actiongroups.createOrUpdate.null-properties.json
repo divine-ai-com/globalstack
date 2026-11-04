@@ -1,0 +1,47 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T13:18:30.831Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/actionGroups",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d02a8a23df/providers/Microsoft.Insights/actionGroups/ag-d02a8a23df?api-version=2023-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "80c4b8f5-70d5-441c-9e1b-a9fd1ea8218b",
+      "x-ms-request-id": "80c4b8f5-70d5-441c-9e1b-a9fd1ea8218b",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T131823Z:80c4b8f5-70d5-441c-9e1b-a9fd1ea8218b"
+    },
+    "body": {
+      "code": "PropertiesIsNull",
+      "message": "PropertiesIsNull"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d02a8a23df",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "key-vault-keys.microsoft-keyvault-vaults.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T12:10:07.160Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "key-vault-keys",
+  "tier": 1,
+  "resourceType": "Microsoft.KeyVault/vaults",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5ec04a52a9/providers/Microsoft.KeyVault/vaults/kv-5ec04a52a9?api-version=2023-07-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "820c9a63-d856-42a5-a759-0a7a7479ee7f",
+      "x-ms-request-id": "3a7d4087-98a1-4fbf-bb52-eb04a517f822",
+      "x-ms-routing-request-id": "EASTUS:20260525T121005Z:820c9a63-d856-42a5-a759-0a7a7479ee7f"
+    },
+    "body": {
+      "error": {
+        "code": "BadRequest",
+        "message": "The vault properties are missing."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5ec04a52a9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

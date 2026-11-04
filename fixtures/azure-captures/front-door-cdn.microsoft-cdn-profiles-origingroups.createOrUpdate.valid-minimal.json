@@ -1,0 +1,49 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-origingroups.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:37:16.765Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/originGroups",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c92e72a7a7/providers/Microsoft.Cdn/profiles/cdn-c92e72a7a7/originGroups/{originGroupsName}?api-version=provider-default-required",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0684b152-9d45-4469-8ed7-cc6c4a674472",
+      "x-ms-request-id": "0684b152-9d45-4469-8ed7-cc6c4a674472",
+      "x-ms-routing-request-id": "JIOINDIAWEST:20260525T133709Z:0684b152-9d45-4469-8ed7-cc6c4a674472"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'profiles/origingroups', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c92e72a7a7/providers/Microsoft.Cdn/profiles/cdn-c92e72a7a7' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c92e72a7a7",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

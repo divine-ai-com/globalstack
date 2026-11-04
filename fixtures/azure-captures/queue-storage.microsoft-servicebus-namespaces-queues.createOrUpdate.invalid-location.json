@@ -1,0 +1,48 @@
+{
+  "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-16T15:13:53.802Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7d1db322b9/providers/Microsoft.ServiceBus/namespaces/ns-7d1db322b9/queues/q7d1db322b9?api-version=2021-11-01",
+    "body": {
+      "properties": {},
+      "location": "globalstack-invalid-location"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "51f99bff-a962-440f-a31e-1e17b520700c",
+      "x-ms-request-id": "51f99bff-a962-440f-a31e-1e17b520700c",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T151347Z:51f99bff-a962-440f-a31e-1e17b520700c"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/queues', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7d1db322b9/providers/Microsoft.ServiceBus/namespaces/ns-7d1db322b9' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7d1db322b9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

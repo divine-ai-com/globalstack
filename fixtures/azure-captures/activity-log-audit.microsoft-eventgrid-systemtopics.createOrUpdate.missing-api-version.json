@@ -1,0 +1,49 @@
+{
+  "id": "activity-log-audit.microsoft-eventgrid-systemtopics.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-25T13:31:06.302Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.EventGrid/systemTopics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d2c0f6a37e/providers/Microsoft.EventGrid/systemTopics/system-d2c0f6a37e",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "cc5e53eb-6063-4cc5-b222-c38c6b424639",
+      "x-ms-request-id": "cc5e53eb-6063-4cc5-b222-c38c6b424639",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133104Z:cc5e53eb-6063-4cc5-b222-c38c6b424639"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d2c0f6a37e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

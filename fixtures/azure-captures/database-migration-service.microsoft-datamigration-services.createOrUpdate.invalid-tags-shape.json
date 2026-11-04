@@ -1,0 +1,50 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:48:56.914Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7dce65d665/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
+    "body": {
+      "location": "{location}",
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2655f462-24f1-421e-a3f0-639b74beefdf",
+      "x-ms-request-id": "2655f462-24f1-421e-a3f0-639b74beefdf",
+      "x-ms-routing-request-id": "EASTUS:20260525T134854Z:2655f462-24f1-421e-a3f0-639b74beefdf"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7dce65d665",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

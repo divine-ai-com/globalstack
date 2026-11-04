@@ -1,0 +1,46 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-20T15:34:57.436Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fbdabf70f5/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-fbdabf70f5/databases/dbfbdabf70f5?api-version=2023-06-01-preview",
+    "body": {},
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5823f8a6-8791-4a50-9e83-e3912df03d7c",
+      "x-ms-request-id": "5823f8a6-8791-4a50-9e83-e3912df03d7c",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T153457Z:5823f8a6-8791-4a50-9e83-e3912df03d7c"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fbdabf70f5",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

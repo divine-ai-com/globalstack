@@ -1,0 +1,45 @@
+{
+  "id": "monitor-logs.microsoft-operationalinsights-workspaces.get.not-found",
+  "capturedAt": "2026-05-16T04:33:43.597Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-logs",
+  "tier": 1,
+  "resourceType": "Microsoft.OperationalInsights/workspaces",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-dddfe9236f/providers/Microsoft.OperationalInsights/workspaces/ws-dddfe9236f?api-version=2022-10-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b5c02d3d-2f26-499c-80fe-249acfd1c49f",
+      "x-ms-request-id": "b5c02d3d-2f26-499c-80fe-249acfd1c49f",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T043336Z:b5c02d3d-2f26-499c-80fe-249acfd1c49f"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.OperationalInsights/workspaces/ws-dddfe9236f' under resource group 'rg-gs-conf-dddfe9236f' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-dddfe9236f",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

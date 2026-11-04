@@ -1,0 +1,71 @@
+{
+  "id": "aks-metadata.differential.invalid-network-policy",
+  "capturedAt": "2026-05-28T17:23:42.020Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "capabilityId": "aks-metadata",
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-network-policy",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-aks-metadata-diff-aksvdiff5/providers/Microsoft.ContainerService/managedClusters/aksdiffinvalidnetworkpolicyiff5?api-version=2024-02-01",
+    "body": {
+      "location": "eastus",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "dnsPrefix": "aksdiffinvalidnetworkpolicyiff5",
+        "kubernetesVersion": "1.34",
+        "servicePrincipalProfile": {
+          "clientId": "msi"
+        },
+        "agentPoolProfiles": [
+          {
+            "name": "systempool",
+            "count": 1,
+            "vmSize": "Standard_DC2s_v3",
+            "mode": "System",
+            "osType": "Linux",
+            "type": "VirtualMachineScaleSets"
+          }
+        ],
+        "networkProfile": {
+          "networkPolicy": "invalid-policy"
+        }
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "acaa5e1e-445a-4854-888e-07898fec1462",
+      "x-ms-request-id": "cecc2439-760f-4349-b2a0-c68392b6d560",
+      "x-ms-routing-request-id": "EASTUS:20260528T172334Z:acaa5e1e-445a-4854-888e-07898fec1462"
+    },
+    "body": {
+      "code": "NetworkPolicyNotSupported",
+      "details": null,
+      "message": "NetworkPolicy is not supported (only azure, calico, and cilium are supported)",
+      "subcode": "",
+      "target": "networkProfile.networkPolicy"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-aks-metadata-diff-aksvdiff5",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "expectedLocalCase": "cluster invalid network policy is rejected",
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "captureMode": "validation-only",
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior.",
+    "providerRegistered": true
+  }
+}

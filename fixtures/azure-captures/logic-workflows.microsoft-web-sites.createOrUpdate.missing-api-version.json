@@ -1,0 +1,53 @@
+{
+  "id": "logic-workflows.microsoft-web-sites.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-25T13:24:29.494Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "logic-workflows",
+  "tier": 2,
+  "resourceType": "Microsoft.Web/sites",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e62f4c2339/providers/Microsoft.Web/sites/site-e62f4c2339",
+    "body": {
+      "location": "{location}",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "{serverFarmId}",
+        "httpsOnly": true
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4bb8e675-40be-4fae-bec6-a2d7564fc0bd",
+      "x-ms-request-id": "4bb8e675-40be-4fae-bec6-a2d7564fc0bd",
+      "x-ms-routing-request-id": "EASTUS:20260525T132427Z:4bb8e675-40be-4fae-bec6-a2d7564fc0bd"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e62f4c2339",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

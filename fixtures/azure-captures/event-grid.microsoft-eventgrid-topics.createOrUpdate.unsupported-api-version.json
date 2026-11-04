@@ -1,0 +1,52 @@
+{
+  "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.unsupported-api-version",
+  "capturedAt": "2026-05-26T14:17:02.885Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "unsupported-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-55d901cfef/providers/Microsoft.EventGrid/topics/topic-55d901cfef?api-version=1900-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "inputSchema": "EventGridSchema",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    "apiVersionOverride": "1900-01-01"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "2789ad00-1c92-4236-8356-db41816b77e6",
+      "x-ms-request-id": "2789ad00-1c92-4236-8356-db41816b77e6",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260526T141655Z:2789ad00-1c92-4236-8356-db41816b77e6"
+    },
+    "body": {
+      "error": {
+        "code": "NoRegisteredProviderFound",
+        "message": "No registered resource provider found for location 'eastus' and API version '1900-01-01' for type 'topics'. The supported api-versions are '2017-06-15-preview, 2017-09-15-preview, 2018-01-01, 2018-05-01-preview, 2018-09-15-preview, 2019-01-01, 2019-02-01-preview, 2019-06-01, 2020-01-01-preview, 2020-04-01-preview, 2020-06-01, 2020-10-15-preview, 2021-06-01-preview, 2021-12-01, 2021-10-15-preview, 2022-06-15, 2023-06-01-preview, 2023-12-15-preview, 2024-06-01-preview, 2024-12-15-preview, 2025-02-15, 2025-04-01-preview, 2025-07-15-preview'. The supported locations are 'westus2, eastus, westus, centralus, eastus2, westcentralus, australiaeast, australiasoutheast, australiacentral, japaneast, japanwest, westeurope, northeurope, southeastasia, eastasia, northcentralus, southcentralus, brazilsouth, canadacentral, canadaeast, centralindia, southindia, westindia, francecentral, ukwest, uksouth, koreacentral, koreasouth, southafricanorth, uaenorth, switzerlandnorth, germanywestcentral, westus3, jioindiawest, jioindiacentral, swedencentral, norwayeast, qatarcentral, polandcentral, italynorth, israelcentral, spaincentral, mexicocentral, indonesiacentral, malaysiawest, chilecentral, newzealandnorth, austriaeast, belgiumcentral, denmarkeast'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-55d901cfef",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "subscription-or-provider-readiness",
+    "cloudValidated": false,
+    "providerRegistered": false,
+    "caveat": "The request did not reach deep provider validation because subscription/provider readiness blocked it."
+  }
+}

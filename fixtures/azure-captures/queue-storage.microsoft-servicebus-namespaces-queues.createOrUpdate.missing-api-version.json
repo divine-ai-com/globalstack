@@ -1,0 +1,47 @@
+{
+  "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-16T15:13:42.020Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b4b8545b18/providers/Microsoft.ServiceBus/namespaces/ns-b4b8545b18/queues/qb4b8545b18",
+    "body": {
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "cf58931a-352e-448c-ad82-6d3e50499607",
+      "x-ms-request-id": "cf58931a-352e-448c-ad82-6d3e50499607",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T151339Z:cf58931a-352e-448c-ad82-6d3e50499607"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b4b8545b18",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

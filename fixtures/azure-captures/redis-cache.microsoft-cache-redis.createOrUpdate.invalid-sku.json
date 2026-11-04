@@ -1,0 +1,56 @@
+{
+  "id": "redis-cache.microsoft-cache-redis.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-20T17:22:11.881Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "redis-cache",
+  "tier": 2,
+  "resourceType": "Microsoft.Cache/redis",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-11684de414/providers/Microsoft.Cache/redis/redis-11684de414?api-version=2023-08-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "sku": {
+          "name": "GlobalStack_InvalidSku_For_Conformance"
+        },
+        "enableNonSslPort": true,
+        "minimumTlsVersion": "1.2"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "90d12fc5-1154-4ebf-8c38-d3853b50fd78",
+      "x-ms-request-id": "4875e85a-a381-497a-bd1a-19de9bae0da9",
+      "x-ms-routing-request-id": "EASTUS:20260520T172107Z:90d12fc5-1154-4ebf-8c38-d3853b50fd78"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestBody",
+        "message": "The value of the parameter 'properties.sku.name' is invalid.\r\nRequestID=4875e85a-a381-497a-bd1a-19de9bae0da9",
+        "target": null
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-11684de414",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

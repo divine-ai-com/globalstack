@@ -1,0 +1,62 @@
+{
+  "id": "virtual-network.microsoft-network-privateendpoints.createOrUpdate.missing-subnet-id",
+  "capturedAt": "2026-05-20T14:11:26.384Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/privateEndpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-subnet-id",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a3956642ef/providers/Microsoft.Network/privateEndpoints/pe-a3956642ef?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "subnet": {},
+        "privateLinkServiceConnections": [
+          {
+            "name": "blob",
+            "properties": {
+              "privateLinkServiceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountsName}",
+              "groupIds": [
+                "blob"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6848de18-b67c-477d-8ed3-687b71b0fb09",
+      "x-ms-request-id": "6848de18-b67c-477d-8ed3-687b71b0fb09",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T141126Z:6848de18-b67c-477d-8ed3-687b71b0fb09"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-a3956642ef",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "service-discovery.microsoft-app-containerapps.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-20T14:24:51.344Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "service-discovery",
+  "tier": 2,
+  "resourceType": "Microsoft.App/containerApps",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c1e30a6aa7/providers/Microsoft.App/containerApps/app-c1e30a6aa7?api-version=2023-05-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "344922bb-6b1c-4e04-a5ce-ea75f83a25da",
+      "x-ms-request-id": "344922bb-6b1c-4e04-a5ce-ea75f83a25da",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T142451Z:344922bb-6b1c-4e04-a5ce-ea75f83a25da"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c1e30a6aa7",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

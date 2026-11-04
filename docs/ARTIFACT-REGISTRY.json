@@ -1,0 +1,800 @@
+{
+  "_meta": {
+    "generatedAt": "deterministic",
+    "generatedBy": "npm run docs:artifacts",
+    "policy": "Use this registry to locate existing ownership before adding new files or product surfaces."
+  },
+  "groups": [
+    {
+      "id": "governance",
+      "label": "Governance And Navigation"
+    },
+    {
+      "id": "source",
+      "label": "Source Packages And Registries"
+    },
+    {
+      "id": "generators",
+      "label": "Generators And Capture Tools"
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence Fixtures"
+    },
+    {
+      "id": "generated-docs",
+      "label": "Generated Documentation And Reports"
+    },
+    {
+      "id": "runtime",
+      "label": "Runtime And Build Outputs"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "CONTRIBUTING.md",
+      "kind": "handwritten-doc",
+      "owner": "governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Contributor rules, required validation, and change-shape guidance.",
+      "group": "governance"
+    },
+    {
+      "path": "DEVELOPMENT.md",
+      "kind": "handwritten-doc",
+      "owner": "governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Workspace model, verified-workspace boundary, and development conventions.",
+      "group": "governance"
+    },
+    {
+      "path": "SECURITY.md",
+      "kind": "handwritten-doc",
+      "owner": "security",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Secrets handling, evidence safety, and security-sensitive review boundaries.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/README.md",
+      "kind": "handwritten-doc",
+      "owner": "documentation",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Primary routing table for future agents and product contributors.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/START-HERE.md",
+      "kind": "handwritten-doc",
+      "owner": "documentation",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Vision, scope, non-negotiables, and first commands.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/CONFORMANCE-MODEL.md",
+      "kind": "handwritten-doc",
+      "owner": "conformance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Rules for claims, evidence, local passes, and gaps.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "kind": "handwritten-doc",
+      "owner": "architecture",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "GlobalStack Azure system architecture.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/AGENT-RUNBOOK.md",
+      "kind": "handwritten-doc",
+      "owner": "operations",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Safe runbook for captures, validation, cleanup, and smoke tests.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md",
+      "kind": "handwritten-doc",
+      "owner": "platform-templates",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Platform runner lifecycle contract, checklist, smoke command, and support boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/azure-iac-principals.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Dataset-visible Azure IaC principles for prompts, IaC, unit tests, and integration tests.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/azure-bundle-structure.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Bundle layout and runtime artifact structure for Azure verified tasks.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/PRODUCT-REPO-BOUNDARIES.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "What belongs in git versus generated runtime output.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/BEDROCK-GENERATION.md",
+      "kind": "handwritten-doc",
+      "owner": "bundle-generator",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Amazon Bedrock request path, streaming model invocation, and single-file generation constraints.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/product/EXTENSIONS.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Core-versus-extension boundary for optional integrations and add-ons.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/storage-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "storage",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Storage ARM parity pack scope, command, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/service-bus-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "service-bus",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Service Bus ARM, official emulator, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/event-grid-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "event-grid",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Event Grid ARM, local event router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/api-management-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "api-management",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "API Management ARM, local gateway router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/azure-functions-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "azure-functions",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Azure Functions ARM, local HTTP-trigger router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/key-vault-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "key-vault",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Key Vault ARM, local secret/key data-plane router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/container-registry-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "container-registry",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Container Registry ARM, local ACR/Docker Registry data-plane router, platform parity pack scope, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/aks-metadata-parity-pack.md",
+      "kind": "handwritten-doc",
+      "owner": "aks-metadata",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "AKS managed-cluster and agent-pool runtime parity pack scope, kubeconfig and runCommand coverage, outputs, and claim boundary.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/coverage/aks-real-azure-differential.md",
+      "kind": "handwritten-doc",
+      "owner": "aks-metadata",
+      "command": "npm run aks:capture:differential",
+      "editPolicy": "edit directly when AKS capture cases or safety gates change",
+      "purpose": "Guarded real Azure AKS differential capture cases, provisioning guard, outputs, and cleanup contract.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/ARTIFACT-REGISTRY.md",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-artifact-registry.mjs",
+      "command": "npm run docs:artifacts",
+      "editPolicy": "regenerate",
+      "purpose": "Product-grade inventory of key files and ownership boundaries.",
+      "group": "governance"
+    },
+    {
+      "path": "docs/decisions/",
+      "kind": "adr-directory",
+      "owner": "architecture",
+      "command": null,
+      "editPolicy": "append ADRs",
+      "purpose": "Decision records for conformance-led emulation and scope policy.",
+      "group": "governance"
+    },
+    {
+      "path": "packages/core/src/azure-tier1-capabilities.mjs",
+      "kind": "source-registry",
+      "owner": "core",
+      "command": null,
+      "editPolicy": "edit directly with tests",
+      "purpose": "Tier 1/Tier 2 service registry, backing engines, known gaps, and AWS analogues.",
+      "group": "source"
+    },
+    {
+      "path": "packages/core/src/azure-live-api-catalog.mjs",
+      "kind": "source-registry",
+      "owner": "core",
+      "command": null,
+      "editPolicy": "edit directly with tests",
+      "purpose": "Candidate ARM calls and variance cases used by local and live conformance.",
+      "group": "source"
+    },
+    {
+      "path": "packages/azure-control-plane/src/",
+      "kind": "source-package",
+      "owner": "control-plane",
+      "command": null,
+      "editPolicy": "edit directly with conformance tests",
+      "purpose": "Local Azure ARM facade and Azure-captured provider validation behavior.",
+      "group": "source"
+    },
+    {
+      "path": "packages/azure-data-plane/src/",
+      "kind": "source-package",
+      "owner": "data-plane",
+      "command": null,
+      "editPolicy": "edit directly with emulator E2Es",
+      "purpose": "Official emulator compose, Azurite client, storage normalization proxy, local Event Grid router, and local API Management gateway router.",
+      "group": "source"
+    },
+    {
+      "path": "packages/conformance/src/",
+      "kind": "source-tests",
+      "owner": "conformance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Node test suites for registry, captures, local expectations, lifecycle, storage, and docs navigation.",
+      "group": "source"
+    },
+    {
+      "path": "packages/bundle-runtime/src/",
+      "kind": "source-package",
+      "owner": "platform-templates",
+      "command": null,
+      "editPolicy": "edit directly with runtime smoke validation",
+      "purpose": "Package-owned runtime helpers for platform builds, janitor flows, cleanup, smoke orchestration, and runtime validation.",
+      "group": "source"
+    },
+    {
+      "path": "packages/bundle-generator/src/",
+      "kind": "source-package",
+      "owner": "bundle-generator",
+      "command": null,
+      "editPolicy": "edit directly with bundle-generation validation",
+      "purpose": "Package-owned helpers for smoke prompt generation, verified bundle generation, model-response smoke, and trial runs.",
+      "group": "source"
+    },
+    {
+      "path": "packages/platform-registry/src/index.mjs",
+      "kind": "source-registry",
+      "owner": "platform-templates",
+      "command": null,
+      "editPolicy": "edit directly with render validation",
+      "purpose": "Azure platform template definitions for Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON.",
+      "group": "source"
+    },
+    {
+      "path": "packages/workspace-utils/src/index.mjs",
+      "kind": "source-library",
+      "owner": "workspace-utils",
+      "command": null,
+      "editPolicy": "edit directly with command compatibility validation",
+      "purpose": "Shared workspace-root, verified-workspace, and dist-path helpers used across scripts and package-owned modules.",
+      "group": "source"
+    },
+    {
+      "path": "extensions/README.md",
+      "kind": "handwritten-doc",
+      "owner": "product-governance",
+      "command": null,
+      "editPolicy": "edit directly",
+      "purpose": "Reserved boundary for optional product extensions and customer-specific integrations.",
+      "group": "governance"
+    },
+    {
+      "path": "templates/runner/stages/bicep/",
+      "kind": "source-template",
+      "owner": "platform-templates",
+      "command": "npm run render",
+      "editPolicy": "edit directly, regenerate platform images, run Bicep lifecycle smoke",
+      "purpose": "Reference Bicep platform lifecycle stages: build, lint, unit-tests, deploy, integration-tests, and destroy.",
+      "group": "runtime"
+    },
+    {
+      "path": "templates/runner/common/",
+      "kind": "source-template",
+      "owner": "platform-templates",
+      "command": "npm run render",
+      "editPolicy": "edit directly, regenerate platform images, run platform lifecycle smoke",
+      "purpose": "Runner bootstrap and provider selection logic. Task metadata chooses GlobalStack or real Azure before stages run.",
+      "group": "runtime"
+    },
+    {
+      "path": "templates/runner/stages/arm-contract/",
+      "kind": "source-template",
+      "owner": "platform-templates",
+      "command": "npm run render",
+      "editPolicy": "edit directly, regenerate platform images, run platform lifecycle smoke",
+      "purpose": "Shared lifecycle stages for Terraform/OpenTofu native AzAPI, Pulumi Azure Native, Ansible azure.azcollection, and ARM-contract deployment.",
+      "group": "runtime"
+    },
+    {
+      "path": "templates/sample-tasks/azure-bicep/",
+      "kind": "source-template",
+      "owner": "platform-templates",
+      "command": "npm run render",
+      "editPolicy": "edit directly, regenerate platform images, run Bicep lifecycle smoke",
+      "purpose": "Deployable Bicep sample task used by the reference runner lifecycle.",
+      "group": "runtime"
+    },
+    {
+      "path": "scripts/render/render-azure-99-parity-checklist.mjs",
+      "kind": "generator",
+      "owner": "conformance",
+      "command": "npm run conformance:parity",
+      "editPolicy": "edit generator, regenerate outputs",
+      "purpose": "Generates the 10-dimension 99%-parity checklist for all 30 services.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/render/render-azure-99-roadmap.mjs",
+      "kind": "generator",
+      "owner": "conformance",
+      "command": "npm run conformance:roadmap",
+      "editPolicy": "edit generator, regenerate outputs",
+      "purpose": "Generates the prioritized 99%-coverage implementation roadmap and work items.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/capture/capture-azure-provider-surface.mjs",
+      "kind": "capture-tool",
+      "owner": "conformance",
+      "command": "npm run providers:surface",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Captures live Azure provider operation metadata without provisioning resources.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/conformance/run-azure-api-conformance.mjs",
+      "kind": "capture-and-test-tool",
+      "owner": "conformance",
+      "command": "npm run conformance:local / npm run conformance:azure",
+      "editPolicy": "edit directly with cleanup guarantees",
+      "purpose": "Runs local conformance and guarded real Azure ARM captures.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/runtime/smoke-bicep-runner-lifecycle.mjs",
+      "kind": "e2e-tool",
+      "owner": "platform-templates",
+      "command": "npm run smoke:bicep-runner",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Runs the Bicep platform lifecycle through the GlobalStack Azure sidecar.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/runtime/smoke-platform-runner-lifecycles.mjs",
+      "kind": "e2e-tool",
+      "owner": "platform-templates",
+      "command": "npm run smoke:platform-runners",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Runs all platform runner lifecycles through metadata-selected provider routing; local smoke uses the GlobalStack Azure sidecar.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/capture/capture-azure-storage-data-plane.mjs",
+      "kind": "capture-tool",
+      "owner": "storage",
+      "command": "npm run storage:capture:data-plane",
+      "editPolicy": "edit directly with cleanup guarantees",
+      "purpose": "Captures live Azure Blob/Queue data-plane behavior and verifies cleanup.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/capture/capture-azure-aks-differential.mjs",
+      "kind": "capture-tool",
+      "owner": "aks-metadata",
+      "command": "npm run aks:capture:differential",
+      "editPolicy": "edit directly with cleanup guarantees",
+      "purpose": "Captures guarded real Azure AKS validation and opt-in provisioning differentials for local parity hardening.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/capture/run-azure-differential.mjs",
+      "kind": "differential-tool",
+      "owner": "azure-conformance",
+      "command": "npm run differential:azure",
+      "editPolicy": "edit directly when adding provider-level differential scenarios or cleanup gates",
+      "purpose": "Runs reusable GlobalStack, real Azure, or side-by-side differential scenarios with mandatory real Azure cleanup verification.",
+      "group": "generators"
+    },
+    {
+      "path": "packages/differential/src/azure-runner.mjs",
+      "kind": "package-runtime",
+      "owner": "azure-conformance",
+      "command": "npm run differential:azure:aks",
+      "editPolicy": "package-owned runner; keep target selection, sanitization, fixture output, and cleanup semantics here",
+      "purpose": "Reusable Azure differential runner for GlobalStack-only, real Azure, and side-by-side comparison modes.",
+      "group": "source"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-storage*.mjs",
+      "kind": "e2e-tools",
+      "owner": "storage",
+      "command": "npm run e2e:storage / npm run e2e:storage-hardening / npm run e2e:storage-normalizer / npm run e2e:storage-parity",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Azurite and GlobalStack storage proxy end-to-end coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-service-bus-emulator.mjs",
+      "kind": "e2e-tool",
+      "owner": "service-bus",
+      "command": "npm run e2e:service-bus",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Official Azure Service Bus emulator health plus queue/topic data-plane coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-service-bus-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "service-bus",
+      "command": "npm run e2e:service-bus-parity",
+      "editPolicy": "edit directly with Docker cleanup",
+      "purpose": "Service Bus ARM parity matrix, official emulator E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-event-grid-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "event-grid",
+      "command": "npm run e2e:event-grid-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Event Grid ARM parity matrix, local publish router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-api-management-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "api-management",
+      "command": "npm run e2e:api-management-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "API Management ARM parity matrix, local gateway router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-functions-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "azure-functions",
+      "command": "npm run e2e:azure-functions-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Azure Functions ARM parity matrix, local HTTP-trigger router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-key-vault-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "key-vault",
+      "command": "npm run e2e:key-vault-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Key Vault ARM parity matrix, local secret/key data-plane router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-container-registry-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "container-registry",
+      "command": "npm run e2e:container-registry-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "Container Registry ARM parity matrix, local ACR/Docker Registry router E2E, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "scripts/e2e/e2e-azure-aks-metadata-parity.mjs",
+      "kind": "e2e-tool",
+      "owner": "aks-metadata",
+      "command": "npm run e2e:aks-metadata-parity",
+      "editPolicy": "edit directly with validation",
+      "purpose": "AKS managed-cluster and agent-pool parity matrix, k3s-backed kube runtime coverage, bounded runCommand coverage, and all-platform lifecycle coverage.",
+      "group": "generators"
+    },
+    {
+      "path": "fixtures/azure-captures/",
+      "kind": "real-azure-evidence",
+      "owner": "conformance",
+      "command": "npm run conformance:azure",
+      "editPolicy": "append via capture tools; do not hand-author behavior",
+      "purpose": "Sanitized real Azure ARM capture fixtures with cleanup metadata.",
+      "group": "evidence"
+    },
+    {
+      "path": "fixtures/azure-lifecycle-captures/",
+      "kind": "real-azure-evidence",
+      "owner": "lifecycle",
+      "command": "npm run lifecycle:capture:storage",
+      "editPolicy": "append via capture tools; do not hand-author behavior",
+      "purpose": "Real Azure lifecycle captures for async/resource-state behavior.",
+      "group": "evidence"
+    },
+    {
+      "path": "fixtures/azure-storage-data-plane-captures/",
+      "kind": "real-azure-evidence",
+      "owner": "storage",
+      "command": "npm run storage:capture:data-plane",
+      "editPolicy": "append via capture tools; do not hand-author behavior",
+      "purpose": "Real Azure Blob/Queue data-plane captures.",
+      "group": "evidence"
+    },
+    {
+      "path": "fixtures/local-expectations/",
+      "kind": "generated-expectations",
+      "owner": "conformance",
+      "command": "npm run conformance:expectations && npm run lifecycle:expectations && npm run storage:expectations",
+      "editPolicy": "regenerate",
+      "purpose": "Local replay expectations derived from real captures.",
+      "group": "evidence"
+    },
+    {
+      "path": "docs/conformance/azure-99-parity-checklist.md",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-azure-99-parity-checklist.mjs",
+      "command": "npm run conformance:parity",
+      "editPolicy": "regenerate",
+      "purpose": "Service-by-service 99%-parity state across 10 dimensions.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/conformance/azure-99-roadmap.md",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-azure-99-roadmap.mjs",
+      "command": "npm run conformance:roadmap",
+      "editPolicy": "regenerate",
+      "purpose": "Prioritized implementation waves and work items for 30 services.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/conformance/azure-provider-surface-inventory.md",
+      "kind": "generated-doc",
+      "owner": "scripts/capture/capture-azure-provider-surface.mjs",
+      "command": "npm run providers:surface",
+      "editPolicy": "regenerate",
+      "purpose": "Live Azure provider-operation inventory input.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/conformance/azure-live-api-catalog.json",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-azure-live-api-catalog.mjs",
+      "command": "npm run conformance:catalog",
+      "editPolicy": "regenerate",
+      "purpose": "Candidate ARM calls and variance cases.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/hybrid/azure-hybrid-coverage.json",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-hybrid-artifacts.mjs",
+      "command": "npm run hybrid:render",
+      "editPolicy": "regenerate",
+      "purpose": "Generated local support-state matrix.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/SERVICE-SCOPE.md",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-service-scope.mjs",
+      "command": "npm run docs:scope",
+      "editPolicy": "regenerate",
+      "purpose": "Service matrix generated from the capability registry and evidence.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "docs/REPO-MAP.md",
+      "kind": "generated-doc",
+      "owner": "scripts/render/render-repo-map.mjs",
+      "command": "npm run docs:map",
+      "editPolicy": "regenerate",
+      "purpose": "Repository navigation map.",
+      "group": "generated-docs"
+    },
+    {
+      "path": "dist/platform-images/",
+      "kind": "generated-runtime-output",
+      "owner": "scripts/render/render-platform-templates.mjs",
+      "command": "npm run render",
+      "editPolicy": "regenerate",
+      "purpose": "Rendered platform Dockerfiles, compose files, and sample tasks.",
+      "group": "runtime"
+    },
+    {
+      "path": "dist/platform-lifecycle-smoke-results.json",
+      "kind": "generated-test-output",
+      "owner": "scripts/runtime/smoke-platform-runner-lifecycles.mjs",
+      "command": "npm run smoke:platform-runners",
+      "editPolicy": "regenerate",
+      "purpose": "Latest all-platform lifecycle smoke summary.",
+      "group": "runtime"
+    },
+    {
+      "path": "dist/hybrid/",
+      "kind": "generated-runtime-output",
+      "owner": "scripts/render/render-hybrid-artifacts.mjs",
+      "command": "npm run hybrid:render",
+      "editPolicy": "regenerate",
+      "purpose": "Official emulator compose and environment outputs.",
+      "group": "runtime"
+    },
+    {
+      "path": "dist/e2e/",
+      "kind": "generated-test-output",
+      "owner": "e2e scripts",
+      "command": "npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:azure-functions-parity && npm run e2e:key-vault-parity && npm run e2e:container-registry-parity && npm run e2e:aks-metadata-parity",
+      "editPolicy": "regenerate",
+      "purpose": "Storage, Service Bus, Event Grid, API Management, Azure Functions, Key Vault, Container Registry, and AKS metadata E2E result reports.",
+      "group": "runtime"
+    },
+    {
+      "path": "dist/deploy-smoke/",
+      "kind": "generated-test-output",
+      "owner": "scripts/runtime/smoke-deploy-azure-usecases.mjs",
+      "command": "npm run smoke:deploy",
+      "editPolicy": "regenerate",
+      "purpose": "Use-case smoke deployment outputs.",
+      "group": "runtime"
+    }
+  ],
+  "commands": [
+    "aks:capture:differential",
+    "build:images",
+    "capture:azure",
+    "check:local",
+    "conformance:azure",
+    "conformance:catalog",
+    "conformance:checklist",
+    "conformance:classify",
+    "conformance:expectations",
+    "conformance:local",
+    "conformance:parity",
+    "conformance:roadmap",
+    "demo",
+    "differential:azure",
+    "differential:azure:aks",
+    "docker:janitor",
+    "docker:janitor:dry-run",
+    "docker:prewarm",
+    "docs:artifacts",
+    "docs:map",
+    "docs:nav",
+    "docs:scope",
+    "docs:test",
+    "e2e:activity-log-audit-parity",
+    "e2e:aks-metadata-parity",
+    "e2e:api-management-parity",
+    "e2e:app-configuration-parity",
+    "e2e:azure-files-parity",
+    "e2e:azure-functions-parity",
+    "e2e:container-registry-parity",
+    "e2e:cosmos-parity",
+    "e2e:database-migration-service-parity",
+    "e2e:dns-zones-parity",
+    "e2e:event-grid-parity",
+    "e2e:event-hubs-parity",
+    "e2e:front-door-cdn-parity",
+    "e2e:identity-rbac-parity",
+    "e2e:key-vault-parity",
+    "e2e:load-balancing-parity",
+    "e2e:logic-workflows-parity",
+    "e2e:monitor-logs-parity",
+    "e2e:monitor-metrics-alerts-parity",
+    "e2e:mysql-parity",
+    "e2e:postgresql-parity",
+    "e2e:redis-parity",
+    "e2e:service-bus",
+    "e2e:service-bus-parity",
+    "e2e:service-discovery-parity",
+    "e2e:storage",
+    "e2e:storage-hardening",
+    "e2e:storage-normalizer",
+    "e2e:storage-parity",
+    "e2e:synapse-warehouse-parity",
+    "e2e:virtual-network-parity",
+    "e2e:waf-policy-parity",
+    "hybrid:emulator",
+    "hybrid:render",
+    "hybrid:test",
+    "lifecycle:capture:storage",
+    "lifecycle:expectations",
+    "native:bicep",
+    "native:opentofu",
+    "native:terraform",
+    "providers:approval-wave",
+    "providers:gaps",
+    "providers:rerun-shallow",
+    "providers:surface",
+    "render",
+    "repo:clean-runtime",
+    "repo:clean-runtime:dry-run",
+    "shipment:export",
+    "smoke",
+    "smoke:bicep-runner",
+    "smoke:deploy",
+    "smoke:iac-model-responses",
+    "smoke:platform-runners",
+    "smoke:prompts",
+    "start",
+    "storage:capture:data-plane",
+    "storage:expectations",
+    "test:docker",
+    "test:gcp:unit",
+    "test:local",
+    "test:repository",
+    "trial:openai-arm-json",
+    "trial:openai-complex-pulumi-bundles",
+    "trial:openai-platforms",
+    "trial:openai-verified-bundles",
+    "validate",
+    "workspace:build",
+    "workspace:test",
+    "workspace:validate"
+  ],
+  "counts": {
+    "azureCaptures": 890,
+    "azureLifecycleCaptures": 2,
+    "azureStorageDataPlaneCaptures": 1
+  }
+}

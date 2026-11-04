@@ -1,0 +1,39 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.delete.not-found",
+  "capturedAt": "2026-05-16T05:03:59.546Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ac699c63ba/providers/Microsoft.Synapse/workspaces/ws-ac699c63ba/sqlPools/sqlpoolac699c63ba?api-version=2021-06-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "4d6c71ec-5795-484d-b0c9-585fe1c836d8",
+      "x-ms-request-id": "4d6c71ec-5795-484d-b0c9-585fe1c836d8",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T050352Z:4d6c71ec-5795-484d-b0c9-585fe1c836d8"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ac699c63ba",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

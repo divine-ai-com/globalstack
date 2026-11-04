@@ -1,0 +1,46 @@
+{
+  "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-25T13:01:53.396Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/eventSubscriptions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fdfd08502e/providers/Microsoft.EventGrid/eventSubscriptions/sub-fdfd08502e?api-version=2022-06-15",
+    "body": {},
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "b2fe67f3-32fc-4c2f-91a8-7dc2b70220ed",
+      "x-ms-request-id": "40004df8-000e-ec00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260525T130152Z:b2fe67f3-32fc-4c2f-91a8-7dc2b70220ed"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequest",
+        "message": "Invalid event subscription request: The properties filed is invalid as it should be specified and cannot be null or one of its sub-fields is missing."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fdfd08502e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

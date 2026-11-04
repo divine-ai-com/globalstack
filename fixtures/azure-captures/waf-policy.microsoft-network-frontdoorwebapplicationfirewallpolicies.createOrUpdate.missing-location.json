@@ -1,0 +1,68 @@
+{
+  "id": "waf-policy.microsoft-network-frontdoorwebapplicationfirewallpolicies.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T13:28:33.126Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-85b26a8d65/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{FrontDoorWebApplicationFirewallPoliciesName}?api-version=2023-09-01",
+    "body": {
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {
+        "policySettings": {
+          "enabledState": "Enabled",
+          "mode": "Prevention",
+          "requestBodyCheck": "Enabled"
+        },
+        "customRules": {
+          "rules": []
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "Microsoft_DefaultRuleSet",
+              "ruleSetVersion": "2.1"
+            }
+          ]
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "89c856bb-433f-462d-b347-a614b4fbcd65",
+      "x-ms-request-id": "89c856bb-433f-462d-b347-a614b4fbcd65",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T132826Z:89c856bb-433f-462d-b347-a614b4fbcd65"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-85b26a8d65",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

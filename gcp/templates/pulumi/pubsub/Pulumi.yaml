@@ -1,0 +1,6 @@
+name: globalstack-gcp-pubsub
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Pub/Sub Pulumi lifecycle template.

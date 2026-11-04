@@ -1,0 +1,52 @@
+{
+  "id": "api-management.microsoft-apimanagement-service-apis.createOrUpdate.invalid-protocols-shape",
+  "capturedAt": "2026-05-20T15:07:10.106Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "api-management",
+  "tier": 1,
+  "resourceType": "Microsoft.ApiManagement/service/apis",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-protocols-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e74484d9b5/providers/Microsoft.ApiManagement/service/apim-e74484d9b5/apis/api-e74484d9b5?api-version=2023-05-01-preview",
+    "body": {
+      "properties": {
+        "displayName": "globalstack-api",
+        "path": "ingest",
+        "protocols": "https"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "29c87f43-49d5-4e7a-acb3-3dd40188458a",
+      "x-ms-request-id": "29c87f43-49d5-4e7a-acb3-3dd40188458a",
+      "x-ms-routing-request-id": "WESTINDIA:20260520T150710Z:29c87f43-49d5-4e7a-acb3-3dd40188458a"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e74484d9b5",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

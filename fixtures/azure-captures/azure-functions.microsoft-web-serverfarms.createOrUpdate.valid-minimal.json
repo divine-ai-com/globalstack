@@ -1,0 +1,76 @@
+{
+  "id": "azure-functions.microsoft-web-serverfarms.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:57:42.437Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/serverfarms",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f28a355c83/providers/Microsoft.Web/serverfarms/plan-f28a355c83?api-version=2023-12-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic"
+      },
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c380e53d-72a2-40b2-b637-448d87211463",
+      "x-ms-request-id": "c380e53d-72a2-40b2-b637-448d87211463",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260516T155740Z:c380e53d-72a2-40b2-b637-448d87211463"
+    },
+    "body": {
+      "Code": "Unauthorized",
+      "Message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.",
+      "Target": null,
+      "Details": [
+        {
+          "Message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+        },
+        {
+          "Code": "Unauthorized"
+        },
+        {
+          "ErrorEntity": {
+            "ExtendedCode": "70007",
+            "MessageTemplate": "Operation cannot be completed without additional quota. \r\nAdditional details - Location: {0} \r\nCurrent Limit ({1}): {2} \r\nCurrent Usage: {3}\r\nAmount required for this deployment ({1}): {4} \r\n(Minimum) New Limit that you should request to enable this deployment: {5}. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.",
+            "Parameters": [
+              "",
+              "Total VMs",
+              "0",
+              "0",
+              "1",
+              "1"
+            ],
+            "Code": "Unauthorized",
+            "Message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+          }
+        }
+      ],
+      "Innererror": null
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f28a355c83",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

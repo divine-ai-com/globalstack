@@ -1,0 +1,67 @@
+{
+  "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.invalid-state",
+  "capturedAt": "2026-05-26T12:24:07.542Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "logic-workflows",
+  "tier": 2,
+  "resourceType": "Microsoft.Logic/workflows",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-state",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fa0063b417/providers/Microsoft.Logic/workflows/workflow-fa0063b417?api-version=2019-05-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "state": "Broken",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {}
+              }
+            }
+          },
+          "actions": {},
+          "outputs": {}
+        },
+        "parameters": {}
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "bc085350-516f-46d1-9e42-77ebb5bd8567",
+      "x-ms-request-id": "eastus:7add4694-19b9-48b9-a40d-ece18c27a716",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260526T122358Z:bc085350-516f-46d1-9e42-77ebb5bd8567"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content is not valid and could not be deserialized: 'Error converting value \"Broken\" to type 'System.Nullable`1[Microsoft.Azure.Workflows.Data.Entities.FlowState]'. Path 'properties.state', line 1, position 51.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fa0063b417",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

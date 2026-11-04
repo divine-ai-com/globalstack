@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Generated artifacts
+/dist/
+/coverage/
+/reports/
+/work/
+/volume/
+templates/volume/
+verified/**/execution.log
+verified/**/execution-report.json
+verified/**/execution_report.json
+verified/**/flat-outputs.json
+
+# Local tool downloads and generated certificates
+/.tools/
+
+# IaC/tool state
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate*
+.pulumi/
+.pulumi-home/
+
+# Environment and credentials
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.crt
+*.tfvars
+.azure/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Optional private verification workspace
+/verified

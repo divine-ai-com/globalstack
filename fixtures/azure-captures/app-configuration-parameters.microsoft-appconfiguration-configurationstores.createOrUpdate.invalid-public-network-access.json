@@ -1,0 +1,63 @@
+{
+  "id": "app-configuration-parameters.microsoft-appconfiguration-configurationstores.createOrUpdate.invalid-public-network-access",
+  "capturedAt": "2026-05-20T12:49:36.814Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "app-configuration-parameters",
+  "tier": 2,
+  "resourceType": "Microsoft.AppConfiguration/configurationStores",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-public-network-access",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-cc84d23e13/providers/Microsoft.AppConfiguration/configurationStores/cfgcc84d23e13?api-version=2023-03-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "free"
+      },
+      "properties": {
+        "disableLocalAuth": false,
+        "publicNetworkAccess": "PartiallyEnabled"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "50222092-0832-4246-b3d0-a1afc8b081ba",
+      "x-ms-request-id": "3e48be85-d17a-4ab7-9282-cdbbb35802b2",
+      "x-ms-routing-request-id": "EASTUS:20260520T124935Z:50222092-0832-4246-b3d0-a1afc8b081ba"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidProperty",
+        "message": "The property 'Properties.PublicNetworkAccess' is not valid.",
+        "additionalInfo": [
+          {
+            "type": "ActivityId",
+            "info": {
+              "activityId": "3e48be85-d17a-4ab7-9282-cdbbb35802b2"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-cc84d23e13",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

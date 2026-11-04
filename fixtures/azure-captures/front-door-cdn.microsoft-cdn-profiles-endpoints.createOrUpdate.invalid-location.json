@@ -1,0 +1,62 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-endpoints.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:36:37.499Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/endpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bafd0f3c1b/providers/Microsoft.Cdn/profiles/cdn-bafd0f3c1b/endpoints/endpoint-bafd0f3c1b?api-version=2024-02-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {
+        "origins": [
+          {
+            "name": "origin1",
+            "properties": {
+              "hostName": "example.org",
+              "httpPort": 80,
+              "httpsPort": 443
+            }
+          }
+        ],
+        "isHttpAllowed": true,
+        "isHttpsAllowed": true
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "5414680d-f0df-48f3-991f-09795417c8c7",
+      "x-ms-request-id": "5414680d-f0df-48f3-991f-09795417c8c7",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133636Z:5414680d-f0df-48f3-991f-09795417c8c7"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-bafd0f3c1b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

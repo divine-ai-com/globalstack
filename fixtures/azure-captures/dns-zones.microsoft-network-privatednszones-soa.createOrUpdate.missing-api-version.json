@@ -1,0 +1,59 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-soa.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-20T13:31:46.465Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4c0515b53f/providers/Microsoft.Network/privateDnsZones/4c0515b53f.internal/SOA/@",
+    "body": {
+      "properties": {
+        "TTL": 3600,
+        "SOARecord": {
+          "host": "ns1.example.test.",
+          "email": "azuredns-hostmaster.microsoft.com",
+          "serialNumber": 1,
+          "refreshTime": 3600,
+          "retryTime": 300,
+          "expireTime": 2419200,
+          "minimumTTL": 300
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "96a1f8c5-c66b-4cc4-9a73-0835c4c10cc9",
+      "x-ms-request-id": "96a1f8c5-c66b-4cc4-9a73-0835c4c10cc9",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133146Z:96a1f8c5-c66b-4cc4-9a73-0835c4c10cc9"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4c0515b53f",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

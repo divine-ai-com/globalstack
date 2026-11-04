@@ -1,0 +1,58 @@
+# Firestore
+
+## Current State
+
+Support class: `official-emulator-backed`
+
+GlobalStack GCP starts Firestore with the official Google Firestore emulator.
+This is a real local runtime for the documented document lifecycle subset, not a
+metadata facade. The same service module also starts the official emulator in
+Datastore mode for a documented entity lifecycle subset. Real-GCP differential
+capture, Terraform, Pulumi, OpenTofu, Config Connector, Crossplane, `gcloud`,
+and SDK gates are still pending.
+
+## Runtime Evidence
+
+Implemented local module files:
+
+- `gcp/src/services/firestore/service.mjs`
+- `gcp/src/services/firestore/emulator-engine.mjs`
+- `gcp/src/services/firestore/google-api.mjs`
+- `gcp/src/services/firestore/datastore-api.mjs`
+
+Current validation:
+
+- Google Cloud SDK `570.0.0` Firestore emulator package is installed locally
+- local REST document lifecycle passes against the official emulator:
+  - create document
+  - get document
+  - list collection documents
+  - replace/update document
+  - delete document
+  - verify deleted document returns Google-shaped `NOT_FOUND`
+- local Datastore-mode entity lifecycle passes against the official emulator:
+  - upsert entity
+  - lookup entity
+  - query entities by kind
+  - update entity
+  - delete entity
+  - verify deleted entity returns in Datastore `missing`
+- the runner starts the official emulator on an isolated port and stops the
+  process group after the test
+
+Remaining promotion gates:
+
+- real-GCP document lifecycle capture and local replay
+- real-GCP Datastore-mode entity lifecycle capture and local replay after the
+  project has a default Datastore/Firestore database; the current conformance
+  project has `datastore.googleapis.com` enabled but no default database, and
+  GlobalStack does not create persistent database project configuration as a
+  disposable capture side effect
+- Terraform, Pulumi, and OpenTofu lifecycle templates
+- `gcloud firestore` and SDK lifecycle
+- query, transaction, batch write, composite index, watch/listen, Datastore
+  allocation/transactions, and error shape differentials
+- Config Connector and Crossplane lifecycle if Kubernetes-native Firestore
+  support is claimed
+
+The cross-tool matrix is tracked in `gcp/docs/IAC-CONFORMANCE.md`.

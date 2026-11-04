@@ -1,0 +1,53 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:34:32.726Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c0c94b31b5/providers/Microsoft.Cdn/profiles/cdn-c0c94b31b5?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "af43b480-a23b-4200-a388-075685d251f9",
+      "x-ms-request-id": "af43b480-a23b-4200-a388-075685d251f9",
+      "x-ms-routing-request-id": "EASTUS:20260525T133425Z:af43b480-a23b-4200-a388-075685d251f9"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 111.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c0c94b31b5",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

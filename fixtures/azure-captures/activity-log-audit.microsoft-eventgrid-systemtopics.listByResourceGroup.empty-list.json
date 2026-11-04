@@ -1,0 +1,42 @@
+{
+  "id": "activity-log-audit.microsoft-eventgrid-systemtopics.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:51:29.952Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "activity-log-audit",
+  "tier": 2,
+  "resourceType": "Microsoft.EventGrid/systemTopics",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9fd391c362/providers/Microsoft.EventGrid/systemTopics?api-version=2022-06-15",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e2459172-52a8-490b-89db-22bd97f48b8e",
+      "x-ms-request-id": "e2459172-52a8-490b-89db-22bd97f48b8e",
+      "x-ms-routing-request-id": "EASTUS:20260516T045123Z:e2459172-52a8-490b-89db-22bd97f48b8e"
+    },
+    "body": {
+      "value": []
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9fd391c362",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

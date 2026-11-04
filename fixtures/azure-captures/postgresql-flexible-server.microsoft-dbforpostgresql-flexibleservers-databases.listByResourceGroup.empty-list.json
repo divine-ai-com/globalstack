@@ -1,0 +1,45 @@
+{
+  "id": "postgresql-flexible-server.microsoft-dbforpostgresql-flexibleservers-databases.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:44:03.130Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "postgresql-flexible-server",
+  "tier": 1,
+  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3a698b156b/providers/Microsoft.DBforPostgreSQL/flexibleServers/db-3a698b156b/databases?api-version=2023-06-01-preview",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "fc933932-da1e-4db0-9a65-65c808da1a9c",
+      "x-ms-request-id": "fc933932-da1e-4db0-9a65-65c808da1a9c",
+      "x-ms-routing-request-id": "EASTUS:20260516T044401Z:fc933932-da1e-4db0-9a65-65c808da1a9c"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforPostgreSQL/flexibleServers/db-3a698b156b' under resource group 'rg-gs-conf-3a698b156b' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3a698b156b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

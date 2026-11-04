@@ -1,0 +1,45 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.get.not-found",
+  "capturedAt": "2026-05-16T04:34:14.875Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/actionGroups",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-c838a6d89a/providers/Microsoft.Insights/actionGroups/ag-c838a6d89a?api-version=2023-01-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "ff5559c1-8330-48af-a84b-4c4dcc3de273",
+      "x-ms-request-id": "ff5559c1-8330-48af-a84b-4c4dcc3de273",
+      "x-ms-routing-request-id": "EASTUS:20260516T043408Z:ff5559c1-8330-48af-a84b-4c4dcc3de273"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Insights/actiongroups/ag-c838a6d89a' under resource group 'rg-gs-conf-c838a6d89a' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-c838a6d89a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

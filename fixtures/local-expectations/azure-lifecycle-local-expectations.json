@@ -1,0 +1,1142 @@
+{
+  "generatedAt": "2026-05-19T19:00:37.353Z",
+  "source": "fixtures/azure-lifecycle-captures",
+  "expectationCount": 53,
+  "expectations": [
+    {
+      "id": "storage-arm-lifecycle-immediate.resource-group.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "resource-group.create",
+      "description": "Create ephemeral lifecycle resource group.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-life-647b06dcfd?api-version=2021-04-01",
+        "body": {
+          "location": "eastus",
+          "tags": {
+            "purpose": "globalstack-lifecycle",
+            "ttl": "ephemeral"
+          }
+        }
+      },
+      "expected": {
+        "status": 201,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Resources/resourceGroups",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.storage-account.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "storage-account.create",
+      "description": "Create storage account parent.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+        "body": {
+          "location": "eastus",
+          "sku": {
+            "name": "Standard_LRS"
+          },
+          "kind": "StorageV2",
+          "properties": {
+            "allowBlobPublicAccess": false
+          }
+        }
+      },
+      "expected": {
+        "status": 202,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.storage-account.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "storage-account.get-after-create",
+      "description": "Read storage account after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts",
+          "provisioningState": "ResolvingDns"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.blob-container.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "blob-container.create",
+      "description": "Create Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+        "body": {
+          "properties": {
+            "publicAccess": "None"
+          }
+        }
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.blob-container.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "blob-container.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.blob-container.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "blob-container.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.queue.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "queue.create",
+      "description": "Create Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.queue.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "queue.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.queue.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "queue.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.file-share.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "file-share.create",
+      "description": "Create Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+        "body": {
+          "properties": {
+            "shareQuota": 1
+          }
+        }
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.file-share.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "file-share.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.file-share.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "file-share.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.table.create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "table.create",
+      "description": "Create Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.table.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "table.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.table.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "table.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.blob-container.delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "blob-container.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.blob-container.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "blob-container.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/blobServices/default/containers/c647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.queue.delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "queue.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.queue.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "queue.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/queueServices/default/queues/q647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.file-share.delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "file-share.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.file-share.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "file-share.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/fileServices/default/shares/share647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.table.delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "table.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.table.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "table.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd/tableServices/default/tables/table647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 409,
+        "errorCode": "StorageAccountIsNotProvisioned",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.storage-account.delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "storage-account.delete",
+      "description": "Delete storage account parent.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-immediate.storage-account.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-immediate",
+      "stepId": "storage-account.get-after-delete",
+      "description": "Read storage account after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-647b06dcfd/providers/Microsoft.Storage/storageAccounts/gslife647b06dcfd?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "ResourceNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.resource-group.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "resource-group.create",
+      "description": "Create ephemeral lifecycle resource group.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourcegroups/rg-gs-life-6b694b935a?api-version=2021-04-01",
+        "body": {
+          "location": "eastus",
+          "tags": {
+            "purpose": "globalstack-lifecycle",
+            "ttl": "ephemeral"
+          }
+        }
+      },
+      "expected": {
+        "status": 201,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Resources/resourceGroups",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.create",
+      "description": "Create storage account parent.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": {
+          "location": "eastus",
+          "sku": {
+            "name": "Standard_LRS"
+          },
+          "kind": "StorageV2",
+          "properties": {
+            "allowBlobPublicAccess": false
+          }
+        }
+      },
+      "expected": {
+        "status": 202,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.get-after-create",
+      "description": "Read storage account after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts",
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.wait-ready.1",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.wait-ready.1",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts",
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.wait-ready.2",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.wait-ready.2",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts",
+          "provisioningState": "ResolvingDns"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.wait-ready.3",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.wait-ready.3",
+      "description": "Poll storage account until Azure reports Succeeded.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.blob-container.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "blob-container.create",
+      "description": "Create Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+        "body": {
+          "properties": {
+            "publicAccess": "None"
+          }
+        }
+      },
+      "expected": {
+        "status": 201,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.blob-container.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "blob-container.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.blob-container.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "blob-container.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/blobServices/containers after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "list",
+          "length": 1
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.queue.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "queue.create",
+      "description": "Create Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.queue.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "queue.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.queue.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "queue.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/queueServices/queues after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "list",
+          "length": 1
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.file-share.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "file-share.create",
+      "description": "Create Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+        "body": {
+          "properties": {
+            "shareQuota": 1
+          }
+        }
+      },
+      "expected": {
+        "status": 201,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.file-share.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "file-share.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.file-share.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "file-share.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/fileServices/shares after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "list",
+          "length": 1
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.table.create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "table.create",
+      "description": "Create Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "request": {
+        "method": "PUT",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+        "body": {
+          "properties": {}
+        }
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.table.get-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "table.get-after-create",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": true,
+          "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.table.list-after-create",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "table.list-after-create",
+      "description": "List Microsoft.Storage/storageAccounts/tableServices/tables after create.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "list",
+          "length": 1
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.blob-container.delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "blob-container.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/blobServices/containers.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.blob-container.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "blob-container.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/blobServices/containers after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "ContainerNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.queue.delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "queue.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/queueServices/queues.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 204,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.queue.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "queue.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/queueServices/queues after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "QueueNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.file-share.delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "file-share.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/fileServices/shares.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.file-share.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "file-share.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/fileServices/shares after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "ShareNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.table.delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "table.delete",
+      "description": "Delete Microsoft.Storage/storageAccounts/tableServices/tables.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 204,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.table.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "table.get-after-delete",
+      "description": "Read Microsoft.Storage/storageAccounts/tableServices/tables after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "ResourceNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.delete",
+      "description": "Delete storage account parent.",
+      "request": {
+        "method": "DELETE",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 200,
+        "errorCode": null,
+        "bodyShape": {
+          "kind": "empty"
+        }
+      }
+    },
+    {
+      "id": "storage-arm-lifecycle-ready.storage-account.get-after-delete",
+      "fixtureId": "storage-arm-lifecycle-ready",
+      "stepId": "storage-account.get-after-delete",
+      "description": "Read storage account after delete.",
+      "request": {
+        "method": "GET",
+        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a?api-version=2023-01-01",
+        "body": null
+      },
+      "expected": {
+        "status": 404,
+        "errorCode": "ResourceNotFound",
+        "bodyShape": {
+          "kind": "resource",
+          "hasId": false,
+          "type": null,
+          "provisioningState": null
+        }
+      }
+    }
+  ]
+}

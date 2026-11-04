@@ -1,0 +1,45 @@
+{
+  "id": "synapse-warehouse.microsoft-synapse-workspaces-sqlpools.get.not-found",
+  "capturedAt": "2026-05-16T04:40:21.841Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "synapse-warehouse",
+  "tier": 2,
+  "resourceType": "Microsoft.Synapse/workspaces/sqlPools",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ac699c63ba/providers/Microsoft.Synapse/workspaces/ws-ac699c63ba/sqlPools/sqlpoolac699c63ba?api-version=2021-06-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4f453246-d486-46d9-982e-50dbbf1528cf",
+      "x-ms-request-id": "4f453246-d486-46d9-982e-50dbbf1528cf",
+      "x-ms-routing-request-id": "EASTUS:20260516T044020Z:4f453246-d486-46d9-982e-50dbbf1528cf"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Synapse/workspaces/ws-ac699c63ba/sqlPools/sqlpoolac699c63ba' under resource group 'rg-gs-conf-ac699c63ba' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ac699c63ba",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

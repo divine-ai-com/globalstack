@@ -1,0 +1,49 @@
+{
+  "id": "virtual-network.microsoft-network-virtualnetworks.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-20T14:11:22.902Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "virtual-network",
+  "tier": 1,
+  "resourceType": "Microsoft.Network/virtualNetworks",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8340833c57/providers/Microsoft.Network/virtualNetworks/vnet-8340833c57?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "05cf14c7-6f4a-4720-b0d2-ad881b5dbe41",
+      "x-ms-request-id": "05cf14c7-6f4a-4720-b0d2-ad881b5dbe41",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T141122Z:05cf14c7-6f4a-4720-b0d2-ad881b5dbe41"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8340833c57",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "mysql-flexible-server.microsoft-dbformysql-flexibleservers-databases.createOrUpdate.invalid-sku",
+  "capturedAt": "2026-05-16T19:58:27.445Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "mysql-flexible-server",
+  "tier": 2,
+  "resourceType": "Microsoft.DBforMySQL/flexibleServers/databases",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-sku",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-fbb1b080ef/providers/Microsoft.DBforMySQL/flexibleServers/db-fbb1b080ef/databases/dbfbb1b080ef?api-version=2023-12-30",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "GlobalStack_InvalidSku_For_Conformance"
+      },
+      "properties": {
+        "administratorLogin": "globalstack",
+        "version": "8.0.21"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e0aebb5c-e3a0-406d-a698-42f0a3f9563d",
+      "x-ms-request-id": "e0aebb5c-e3a0-406d-a698-42f0a3f9563d",
+      "x-ms-routing-request-id": "EASTUS:20260516T195826Z:e0aebb5c-e3a0-406d-a698-42f0a3f9563d"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.DBforMySQL/flexibleServers/db-fbb1b080ef' under resource group 'rg-gs-conf-fbb1b080ef' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-fbb1b080ef",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

@@ -1,0 +1,563 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "context": {
+    "project_id": "globalstack-conformance-runner",
+    "location": "europe-north2",
+    "bucket_location": "US",
+    "service": "pubsub-errors",
+    "run_id": "pubsub-errors-20260528183941-57ee3e",
+    "labels": {
+      "purpose": "globalstack-conformance",
+      "owner": "globalstack",
+      "run_id": "pubsub-errors-20260528183941-57ee3e"
+    },
+    "started_at": "2026-05-28T18:39:41.249Z",
+    "scenario": "errors",
+    "resources": {
+      "topic_name": "gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+      "subscription_name": "gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+      "missing_topic_name": "gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e",
+      "missing_subscription_name": "gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e",
+      "missing_snapshot_name": "gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e"
+    }
+  },
+  "cleanup": [
+    {
+      "name": "delete subscription gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+      "status": "deleted"
+    },
+    {
+      "name": "delete topic gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+      "status": "deleted"
+    }
+  ],
+  "events": [
+    {
+      "name": "get-missing-topic",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:39:42.451Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:39:43.154Z"
+        }
+      }
+    },
+    {
+      "name": "create-subscription-missing-topic",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e"
+            },
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s"
+          },
+          "started_at": "2026-05-28T18:39:44.405Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:39:45.273Z"
+        }
+      }
+    },
+    {
+      "name": "publish-missing-topic",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e:publish",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "messages": [
+              {
+                "data": "eyJydW5faWQiOiJwdWJzdWItZXJyb3JzLTIwMjYwNTI4MTgzOTQxLTU3ZWUzZSIsImNhc2UiOiJtaXNzaW5nLXRvcGljIn0=",
+                "attributes": {}
+              }
+            ]
+          },
+          "started_at": "2026-05-28T18:39:46.711Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-topic-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:39:47.303Z"
+        }
+      }
+    },
+    {
+      "name": "pull-missing-subscription",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e:pull",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "maxMessages": 1
+          },
+          "started_at": "2026-05-28T18:39:48.375Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:39:48.722Z"
+        }
+      }
+    },
+    {
+      "name": "create-topic-for-error-cases",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e"
+            }
+          },
+          "started_at": "2026-05-28T18:39:49.775Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+            "labels": {
+              "run_id": "pubsub-errors-20260528183941-57ee3e",
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack"
+            }
+          },
+          "ended_at": "2026-05-28T18:39:55.469Z"
+        }
+      }
+    },
+    {
+      "name": "create-subscription-for-error-cases",
+      "metadata": {
+        "expected_status": 200
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e"
+            },
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s"
+          },
+          "started_at": "2026-05-28T18:39:56.649Z"
+        },
+        "response": {
+          "ok": true,
+          "status": 200,
+          "status_text": "OK",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "name": "projects/globalstack-conformance-runner/subscriptions/gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+            "pushConfig": {},
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s",
+            "labels": {
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e",
+              "purpose": "globalstack-conformance"
+            },
+            "expirationPolicy": {
+              "ttl": "2678400s"
+            },
+            "state": "ACTIVE"
+          },
+          "ended_at": "2026-05-28T18:40:04.253Z"
+        }
+      }
+    },
+    {
+      "name": "create-duplicate-subscription",
+      "metadata": {
+        "expected_status": 409
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "topic": "projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e"
+            },
+            "ackDeadlineSeconds": 20,
+            "messageRetentionDuration": "604800s"
+          },
+          "started_at": "2026-05-28T18:40:05.837Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 409,
+          "status_text": "Conflict",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 409,
+              "message": "Resource already exists in the project (resource=gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e).",
+              "status": "ALREADY_EXISTS"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:06.425Z"
+        }
+      }
+    },
+    {
+      "name": "create-snapshot-missing-subscription",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "PUT",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/snapshots/gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "subscription": "projects/globalstack-conformance-runner/subscriptions/gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e",
+            "labels": {
+              "purpose": "globalstack-conformance",
+              "owner": "globalstack",
+              "run_id": "pubsub-errors-20260528183941-57ee3e"
+            }
+          },
+          "started_at": "2026-05-28T18:40:08.042Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-sub-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:09.685Z"
+        }
+      }
+    },
+    {
+      "name": "seek-missing-snapshot",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "POST",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e:seek",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>",
+            "content-type": "application/json"
+          },
+          "body": {
+            "snapshot": "projects/globalstack-conformance-runner/snapshots/gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e"
+          },
+          "started_at": "2026-05-28T18:40:11.604Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:14.022Z"
+        }
+      }
+    },
+    {
+      "name": "delete-missing-snapshot",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "DELETE",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/snapshots/gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:40:15.738Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-missing-snap-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:16.085Z"
+        }
+      }
+    },
+    {
+      "name": "get-subscription-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/subscriptions/gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:40:35.647Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-error-sub-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:36.242Z"
+        }
+      }
+    },
+    {
+      "name": "get-topic-after-cleanup",
+      "metadata": {
+        "expected_status": 404
+      },
+      "exchange": {
+        "request": {
+          "method": "GET",
+          "url": "https://pubsub.googleapis.com/v1/projects/globalstack-conformance-runner/topics/gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "globalstack-gcp-conformance/0.0.0",
+            "authorization": "<redacted>"
+          },
+          "body": null,
+          "started_at": "2026-05-28T18:40:38.000Z"
+        },
+        "response": {
+          "ok": false,
+          "status": 404,
+          "status_text": "Not Found",
+          "headers": {
+            "content-type": "application/json; charset=UTF-8",
+            "date": "<redacted>",
+            "server": "ESF",
+            "vary": "Origin, X-Origin, Referer"
+          },
+          "body": {
+            "error": {
+              "code": 404,
+              "message": "Resource not found (resource=gst-capture-error-topic-pubsub-errors-20260528183941-57ee3e).",
+              "status": "NOT_FOUND"
+            }
+          },
+          "ended_at": "2026-05-28T18:40:38.590Z"
+        }
+      }
+    }
+  ],
+  "written_at": "2026-05-28T18:40:38.590Z"
+}

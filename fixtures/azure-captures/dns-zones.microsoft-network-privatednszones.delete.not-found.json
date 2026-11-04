@@ -1,0 +1,39 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones.delete.not-found",
+  "capturedAt": "2026-05-16T05:00:27.214Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-4de9510403/providers/Microsoft.Network/privateDnsZones/4de9510403.internal?api-version=2020-06-01",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "x-ms-correlation-request-id": "10964d8c-8ca5-4fda-bdaf-afe546fec71c",
+      "x-ms-request-id": "10964d8c-8ca5-4fda-bdaf-afe546fec71c",
+      "x-ms-routing-request-id": "WESTINDIA:20260516T050021Z:10964d8c-8ca5-4fda-bdaf-afe546fec71c"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-4de9510403",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

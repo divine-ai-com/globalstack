@@ -1,0 +1,12 @@
+{
+  "name": "@globalstack/differential",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./azure": "./src/azure-runner.mjs"
+  },
+  "scripts": {
+    "test": "node --test ../../packages/conformance/src/azure-differential-harness.test.mjs"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "event-grid.microsoft-eventgrid-eventsubscriptions.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:01:50.369Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/eventSubscriptions",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-baefe83397/providers/Microsoft.EventGrid/eventSubscriptions/sub-baefe83397?api-version=2022-06-15",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7d41ecde-2e2b-4213-a263-be9295e3594a",
+      "x-ms-request-id": "4000045c-000b-fe00-b63f-84710c7967bb",
+      "x-ms-routing-request-id": "EASTUS:20260525T130143Z:7d41ecde-2e2b-4213-a263-be9295e3594a"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequest",
+        "message": "Event Subscription must specify either destination or deliveryWithResourceIdentity's destination during create/update."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-baefe83397",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

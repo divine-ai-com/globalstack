@@ -1,0 +1,47 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-metricalerts.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:15:34.402Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/metricAlerts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-8844bc2121/providers/Microsoft.Insights/metricAlerts/alert-8844bc2121?api-version=2018-03-01",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "df3d1356-678e-4835-8afb-123381638e99",
+      "x-ms-request-id": "df3d1356-678e-4835-8afb-123381638e99",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T131530Z:df3d1356-678e-4835-8afb-123381638e99"
+    },
+    "body": {
+      "code": "BadRequest",
+      "message": "Required property 'severity' not found in JSON. Path 'properties', line 1, position 36. Activity ID: df3d1356-678e-4835-8afb-123381638e99."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-8844bc2121",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

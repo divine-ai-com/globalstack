@@ -1,0 +1,52 @@
+{
+  "id": "event-grid.microsoft-eventgrid-topics.createOrUpdate.invalid-input-schema",
+  "capturedAt": "2026-05-26T12:24:28.690Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "event-grid",
+  "tier": 1,
+  "resourceType": "Microsoft.EventGrid/topics",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-input-schema",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-d32d07425d/providers/Microsoft.EventGrid/topics/topic-d32d07425d?api-version=2022-06-15",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "inputSchema": "BadSchema",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "fc84e2f0-bb1e-44c3-9a1e-423a8e4f2368",
+      "x-ms-request-id": "fc84e2f0-bb1e-44c3-9a1e-423a8e4f2368",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260526T122426Z:fc84e2f0-bb1e-44c3-9a1e-423a8e4f2368"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequest",
+        "message": "Error converting value \"BadSchema\" to type 'System.Nullable`1[Microsoft.Azure.Events.ResourceProvider.Common.Contracts.InputSchema]'. Path 'properties.inputSchema', line 1, position 60."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-d32d07425d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

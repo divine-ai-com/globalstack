@@ -1,0 +1,80 @@
+{
+  "id": "monitor-logs.microsoft-operationalinsights-workspaces.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T20:07:47.885Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-logs",
+  "tier": 1,
+  "resourceType": "Microsoft.OperationalInsights/workspaces",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e39e4b9259/providers/Microsoft.OperationalInsights/workspaces/ws-e39e4b9259?api-version=2022-10-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "retentionInDays": 30
+      },
+      "sku": {
+        "name": "PerGB2018"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "azure-asyncoperation": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.OperationalInsights/locations/eastus/operationstatuses/105b2caf-5406-4821-abba-1a333a0a3139?api-version=2015-11-01-preview&redacted=true",
+      "content-type": "application/json; charset=utf-8",
+      "location": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/resourceGroups/rg-gs-conf-e39e4b9259/providers/Microsoft.OperationalInsights/workspaces/ws-e39e4b9259?api-version=2022-10-01&redacted=true",
+      "retry-after": "20",
+      "x-ms-correlation-request-id": "26b0ff78-dc4f-484c-8dd0-43070c554a3d",
+      "x-ms-request-id": "26b0ff78-dc4f-484c-8dd0-43070c554a3d",
+      "x-ms-routing-request-id": "EASTUS:20260516T200542Z:26b0ff78-dc4f-484c-8dd0-43070c554a3d"
+    },
+    "body": {
+      "properties": {
+        "customerId": "f7141bcd-3794-4680-978c-12cec9c0a821",
+        "provisioningState": "Creating",
+        "sku": {
+          "name": "PerGB2018",
+          "lastSkuUpdate": "2026-05-16T20:05:42.8550057Z"
+        },
+        "retentionInDays": 30,
+        "features": {
+          "legacy": 0,
+          "searchVersion": 1,
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        },
+        "workspaceCapping": {
+          "dailyQuotaGb": -1,
+          "quotaNextResetTime": "2026-05-17T12:00:00Z",
+          "dataIngestionStatus": "RespectQuota"
+        },
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled",
+        "createdDate": "2026-05-16T20:05:42.8550057Z",
+        "modifiedDate": "2026-05-16T20:05:42.8550057Z"
+      },
+      "location": "eastus",
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e39e4b9259/providers/Microsoft.OperationalInsights/workspaces/ws-e39e4b9259",
+      "name": "ws-e39e4b9259",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "etag": "\"2a00f416-0000-0100-0000-6a08ce160000\""
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e39e4b9259",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

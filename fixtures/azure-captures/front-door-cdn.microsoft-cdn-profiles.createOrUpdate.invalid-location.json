@@ -1,0 +1,52 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:33:43.640Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b1bcd94c4b/providers/Microsoft.Cdn/profiles/cdn-b1bcd94c4b?api-version=2024-02-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4643a0ca-8739-485c-9a7e-f5d49c436202",
+      "x-ms-request-id": "4643a0ca-8739-485c-9a7e-f5d49c436202",
+      "x-ms-routing-request-id": "EASTUS:20260525T133342Z:4643a0ca-8739-485c-9a7e-f5d49c436202"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b1bcd94c4b",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

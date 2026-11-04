@@ -1,0 +1,20 @@
+{
+  "name": "@globalstack/workspace-utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./src/index.mjs",
+    "./*": "./src/*.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node ./src/package-check.mjs build",
+    "test": "node ./src/package-check.mjs test",
+    "validate": "node ./src/package-check.mjs validate"
+  }
+}

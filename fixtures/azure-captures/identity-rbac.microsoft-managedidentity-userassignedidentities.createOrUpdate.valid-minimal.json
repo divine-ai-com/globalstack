@@ -1,0 +1,49 @@
+{
+  "id": "identity-rbac.microsoft-managedidentity-userassignedidentities.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-20T14:34:32.264Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-595d1f484d/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-595d1f484d?api-version=2023-01-31",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7a836a85-7107-45d6-9581-4ce9132e80ca",
+      "x-ms-request-id": "7a836a85-7107-45d6-9581-4ce9132e80ca",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T143432Z:7a836a85-7107-45d6-9581-4ce9132e80ca"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-595d1f484d",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

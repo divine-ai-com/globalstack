@@ -1,0 +1,97 @@
+[
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "A reproducible defect"
+  },
+  {
+    "name": "enhancement",
+    "color": "a2eeef",
+    "description": "A proposed capability or workflow"
+  },
+  {
+    "name": "documentation",
+    "color": "0075ca",
+    "description": "Documentation changes"
+  },
+  {
+    "name": "question",
+    "color": "d876e3",
+    "description": "A question that needs clarification"
+  },
+  {
+    "name": "good first issue",
+    "color": "7057ff",
+    "description": "A bounded task suitable for a new contributor"
+  },
+  {
+    "name": "help wanted",
+    "color": "008672",
+    "description": "Contributions welcome"
+  },
+  {
+    "name": "dependencies",
+    "color": "0366d6",
+    "description": "Dependency updates"
+  },
+  {
+    "name": "ci",
+    "color": "5319e7",
+    "description": "Repository automation"
+  },
+  {
+    "name": "security",
+    "color": "b60205",
+    "description": "Security-sensitive work"
+  },
+  {
+    "name": "type: feature",
+    "color": "0e8a16",
+    "description": "New behavior"
+  },
+  {
+    "name": "type: fix",
+    "color": "d73a4a",
+    "description": "A correction to existing behavior"
+  },
+  {
+    "name": "type: maintenance",
+    "color": "ededed",
+    "description": "Documentation, tests, build, CI or maintenance"
+  },
+  {
+    "name": "type: performance",
+    "color": "fbca04",
+    "description": "Performance improvements"
+  },
+  {
+    "name": "breaking change",
+    "color": "b60205",
+    "description": "Requires a migration or changes an interface"
+  },
+  {
+    "name": "skip changelog",
+    "color": "ffffff",
+    "description": "Exclude from generated release notes"
+  },
+  {
+    "name": "area: arm",
+    "color": "bfd4f2",
+    "description": "Azure management API"
+  },
+  {
+    "name": "area: runtime",
+    "color": "bfd4f2",
+    "description": "Local service runtimes"
+  },
+  {
+    "name": "area: conformance",
+    "color": "bfd4f2",
+    "description": "Captured behavior and compatibility tests"
+  },
+  {
+    "name": "area: runners",
+    "color": "bfd4f2",
+    "description": "IaC platform execution"
+  }
+]

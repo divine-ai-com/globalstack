@@ -1,0 +1,51 @@
+{
+  "id": "blob-storage.microsoft-storage-storageaccounts.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:07:38.371Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "blob-storage",
+  "tier": 1,
+  "resourceType": "Microsoft.Storage/storageAccounts",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-cdc5b7f2cb/providers/Microsoft.Storage/storageAccounts/gscdc5b7f2cb?api-version=2023-01-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "allowBlobPublicAccess": false
+      }
+    }
+  },
+  "response": {
+    "status": 202,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8",
+      "location": "https://management.azure.com/subscriptions/%3Csubscription-id%3E/providers/Microsoft.Storage/locations/eastus/asyncoperations/9c17fa58-91e8-42f4-a582-bc9dd74ef780?api-version=2023-01-01&redacted=true",
+      "retry-after": "17",
+      "x-ms-correlation-request-id": "fabee88c-39fb-4b95-96c1-f8396b8df672",
+      "x-ms-request-id": "9c17fa58-91e8-42f4-a582-bc9dd74ef780",
+      "x-ms-routing-request-id": "EASTUS:20260516T150637Z:fabee88c-39fb-4b95-96c1-f8396b8df672"
+    },
+    "body": null
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-cdc5b7f2cb",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

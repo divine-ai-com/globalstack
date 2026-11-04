@@ -1,0 +1,59 @@
+{
+  "id": "load-balancing.microsoft-network-publicipaddresses.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:41:55.379Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "load-balancing",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/publicIPAddresses",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-f8413cee31/providers/Microsoft.Network/publicIPAddresses/{publicIPAddressesName}?api-version=2023-09-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4",
+        "dnsSettings": {
+          "domainNameLabel": "pip-local"
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9093820f-ecfb-4841-ad54-612ae49bd29f",
+      "x-ms-request-id": "904cd2d3-3f7a-42c8-ab24-e125d53c16d9",
+      "x-ms-routing-request-id": "EASTUS:20260525T134154Z:9093820f-ecfb-4841-ad54-612ae49bd29f"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceName",
+        "message": "Resource name {publicIPAddressesName} is invalid. The name can be up to 80 characters long. It must begin with a word character, and it must end with a word character or with '_'. The name may contain word characters or '.', '-', '_'.",
+        "details": []
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-f8413cee31",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

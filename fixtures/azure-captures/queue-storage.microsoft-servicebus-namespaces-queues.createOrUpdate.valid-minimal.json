@@ -1,0 +1,47 @@
+{
+  "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-16T15:13:36.771Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e8dc14ee2e/providers/Microsoft.ServiceBus/namespaces/ns-e8dc14ee2e/queues/qe8dc14ee2e?api-version=2021-11-01",
+    "body": {
+      "properties": {}
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4f72e647-5b9d-4301-876e-889b28d102cb",
+      "x-ms-request-id": "4f72e647-5b9d-4301-876e-889b28d102cb",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260516T151335Z:4f72e647-5b9d-4301-876e-889b28d102cb"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'write' on resource(s) of type 'namespaces/queues', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e8dc14ee2e/providers/Microsoft.ServiceBus/namespaces/ns-e8dc14ee2e' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e8dc14ee2e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

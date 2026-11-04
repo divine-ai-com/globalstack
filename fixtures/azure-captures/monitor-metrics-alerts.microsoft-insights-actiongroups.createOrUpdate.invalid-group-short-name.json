@@ -1,0 +1,50 @@
+{
+  "id": "monitor-metrics-alerts.microsoft-insights-actiongroups.createOrUpdate.invalid-group-short-name",
+  "capturedAt": "2026-05-25T13:18:48.201Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "monitor-metrics-alerts",
+  "tier": 1,
+  "resourceType": "Microsoft.Insights/actionGroups",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-group-short-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-b8e2538ca2/providers/Microsoft.Insights/actionGroups/ag-b8e2538ca2?api-version=2023-01-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "enabled": true,
+        "groupShortName": "globalstack-action-group-too-long"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0524be73-3429-4989-b166-8f8fa9a282e6",
+      "x-ms-request-id": "0524be73-3429-4989-b166-8f8fa9a282e6",
+      "x-ms-routing-request-id": "EASTUS:20260525T131840Z:0524be73-3429-4989-b166-8f8fa9a282e6"
+    },
+    "body": {
+      "code": "GroupShortNameIsTooLong",
+      "message": "The action group short name 'globalstack-action-group-too-long' is too long. Please specify a short name with '12' or less characters."
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-b8e2538ca2",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

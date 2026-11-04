@@ -1,0 +1,241 @@
+{
+  "id": "logic-workflows.microsoft-logic-workflows.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-26T12:22:44.234Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "logic-workflows",
+  "tier": 2,
+  "resourceType": "Microsoft.Logic/workflows",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-149fad5085/providers/Microsoft.Logic/workflows/workflow-149fad5085?api-version=2019-05-01",
+    "body": {
+      "location": "{location}",
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {}
+              }
+            }
+          },
+          "actions": {},
+          "outputs": {}
+        },
+        "parameters": {}
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "4b26b272-1d49-4e1d-9291-cd65377b5db1",
+      "x-ms-request-id": "eastus:ef137b28-6e87-4ab2-99fa-54521b58b1c1",
+      "x-ms-routing-request-id": "EASTUS:20260526T122139Z:4b26b272-1d49-4e1d-9291-cd65377b5db1"
+    },
+    "body": {
+      "properties": {
+        "provisioningState": "Succeeded",
+        "createdTime": "2026-05-26T12:21:39.8202964Z",
+        "changedTime": "2026-05-26T12:21:39.815716Z",
+        "state": "Enabled",
+        "version": "08584218087856927981",
+        "accessEndpoint": "https://prod-12.eastus.logic.azure.com:443/workflows/45d7290b8f134955bcb5ee62feab5aa7",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {}
+              }
+            }
+          },
+          "actions": {},
+          "outputs": {}
+        },
+        "parameters": {},
+        "endpointsConfiguration": {
+          "workflow": {
+            "outgoingIpAddresses": [
+              {
+                "address": "52.226.216.187"
+              },
+              {
+                "address": "40.76.148.50"
+              },
+              {
+                "address": "20.84.29.18"
+              },
+              {
+                "address": "40.76.174.39"
+              },
+              {
+                "address": "4.156.27.7"
+              },
+              {
+                "address": "4.156.28.117"
+              },
+              {
+                "address": "4.156.25.188"
+              },
+              {
+                "address": "20.242.168.24"
+              },
+              {
+                "address": "4.156.241.165"
+              },
+              {
+                "address": "4.156.243.170"
+              },
+              {
+                "address": "4.156.242.49"
+              },
+              {
+                "address": "4.156.243.164"
+              },
+              {
+                "address": "52.224.145.30"
+              },
+              {
+                "address": "4.156.242.92"
+              },
+              {
+                "address": "4.156.243.172"
+              },
+              {
+                "address": "4.156.241.191"
+              },
+              {
+                "address": "4.156.241.47"
+              },
+              {
+                "address": "4.156.241.229"
+              },
+              {
+                "address": "4.156.242.12"
+              },
+              {
+                "address": "172.212.32.196"
+              }
+            ],
+            "accessEndpointIpAddresses": [
+              {
+                "address": "4.156.26.80"
+              },
+              {
+                "address": "4.156.25.14"
+              },
+              {
+                "address": "4.156.25.189"
+              },
+              {
+                "address": "20.242.168.44"
+              },
+              {
+                "address": "4.156.241.183"
+              },
+              {
+                "address": "4.156.243.174"
+              },
+              {
+                "address": "4.156.242.86"
+              },
+              {
+                "address": "4.156.243.165"
+              },
+              {
+                "address": "52.224.145.162"
+              },
+              {
+                "address": "4.156.242.96"
+              },
+              {
+                "address": "4.156.243.173"
+              },
+              {
+                "address": "4.156.241.195"
+              },
+              {
+                "address": "4.156.242.97"
+              },
+              {
+                "address": "4.156.242.26"
+              },
+              {
+                "address": "4.156.242.13"
+              },
+              {
+                "address": "172.212.37.35"
+              }
+            ]
+          },
+          "connector": {
+            "outgoingIpAddresses": [
+              {
+                "address": "40.71.249.139"
+              },
+              {
+                "address": "40.71.249.205"
+              },
+              {
+                "address": "40.114.40.132"
+              },
+              {
+                "address": "40.71.11.80/28"
+              },
+              {
+                "address": "40.71.15.160/27"
+              },
+              {
+                "address": "52.188.157.160"
+              },
+              {
+                "address": "20.88.153.176/28"
+              },
+              {
+                "address": "20.88.153.192/27"
+              },
+              {
+                "address": "52.151.221.184"
+              },
+              {
+                "address": "52.151.221.119"
+              }
+            ]
+          }
+        }
+      },
+      "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-149fad5085/providers/Microsoft.Logic/workflows/workflow-149fad5085",
+      "name": "workflow-149fad5085",
+      "type": "Microsoft.Logic/workflows",
+      "location": "eastus"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-149fad5085",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}

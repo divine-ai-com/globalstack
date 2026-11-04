@@ -1,0 +1,50 @@
+{
+  "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-25T13:03:28.330Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "aks-metadata",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e5fa3a1099/providers/Microsoft.ContainerService/managedClusters/aks-e5fa3a1099?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "properties": {},
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "cb93ddef-45a3-4a88-9f34-dd6b226522a9",
+      "x-ms-request-id": "cb93ddef-45a3-4a88-9f34-dd6b226522a9",
+      "x-ms-routing-request-id": "EASTUS:20260525T130321Z:cb93ddef-45a3-4a88-9f34-dd6b226522a9"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidRequestContent",
+        "message": "The request content was invalid and could not be deserialized: 'Error converting value \"globalstack-invalid-tags\" to type 'Microsoft.WindowsAzure.ResourceStack.Common.Core.Definitions.Resources.TagsDictionary'. Path 'tags', line 1, position 70.'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e5fa3a1099",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

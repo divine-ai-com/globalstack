@@ -1,0 +1,45 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones.get.not-found",
+  "capturedAt": "2026-05-16T04:36:10.592Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones",
+  "operation": "Get",
+  "varianceId": "not-found",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-7fb66d91df/providers/Microsoft.Network/dnsZones/7fb66d91df.example.test?api-version=2018-05-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "043ec84a-8deb-4187-aa6b-dc2f63cde25f",
+      "x-ms-request-id": "043ec84a-8deb-4187-aa6b-dc2f63cde25f",
+      "x-ms-routing-request-id": "EASTUS:20260516T043603Z:043ec84a-8deb-4187-aa6b-dc2f63cde25f"
+    },
+    "body": {
+      "error": {
+        "code": "ResourceNotFound",
+        "message": "The Resource 'Microsoft.Network/dnszones/7fb66d91df.example.test' under resource group 'rg-gs-conf-7fb66d91df' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-7fb66d91df",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

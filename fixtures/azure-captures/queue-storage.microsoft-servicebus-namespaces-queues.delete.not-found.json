@@ -1,0 +1,45 @@
+{
+  "id": "queue-storage.microsoft-servicebus-namespaces-queues.delete.not-found",
+  "capturedAt": "2026-05-16T04:59:32.463Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.ServiceBus/namespaces/queues",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ce77a18355/providers/Microsoft.ServiceBus/namespaces/ns-ce77a18355/queues/qce77a18355?api-version=2021-11-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "f53d76f4-a5d3-4b71-ab3c-f38607567ad1",
+      "x-ms-request-id": "f53d76f4-a5d3-4b71-ab3c-f38607567ad1",
+      "x-ms-routing-request-id": "EASTUS:20260516T045925Z:f53d76f4-a5d3-4b71-ab3c-f38607567ad1"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'delete' on resource(s) of type 'namespaces/queues', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-ce77a18355/providers/Microsoft.ServiceBus/namespaces/ns-ce77a18355' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-ce77a18355",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

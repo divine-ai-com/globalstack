@@ -1,0 +1,59 @@
+{
+  "id": "dns-zones.microsoft-network-privatednszones-soa.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-20T13:31:45.799Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/privateDnsZones/SOA",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a9c2f84729/providers/Microsoft.Network/privateDnsZones/a9c2f84729.internal/SOA/@?api-version=2020-06-01",
+    "body": {
+      "properties": {
+        "TTL": 3600,
+        "SOARecord": {
+          "host": "ns1.example.test.",
+          "email": "azuredns-hostmaster.microsoft.com",
+          "serialNumber": 1,
+          "refreshTime": 3600,
+          "retryTime": 300,
+          "expireTime": 2419200,
+          "minimumTTL": 300
+        }
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8de62b6f-2484-445f-bfb2-dcda879bde8d",
+      "x-ms-request-id": "8de62b6f-2484-445f-bfb2-dcda879bde8d",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260520T133145Z:8de62b6f-2484-445f-bfb2-dcda879bde8d"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-a9c2f84729",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

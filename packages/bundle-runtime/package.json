@@ -1,0 +1,19 @@
+{
+  "name": "@globalstack/bundle-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    "./*": "./src/*.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node ../workspace-utils/src/package-check.mjs build",
+    "test": "node ../workspace-utils/src/package-check.mjs test",
+    "validate": "node ../workspace-utils/src/package-check.mjs validate"
+  }
+}

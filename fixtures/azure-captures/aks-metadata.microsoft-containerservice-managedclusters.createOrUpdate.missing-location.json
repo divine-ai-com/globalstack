@@ -1,0 +1,48 @@
+{
+  "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T13:02:57.180Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "aks-metadata",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-1dbb50c8b9/providers/Microsoft.ContainerService/managedClusters/aks-1dbb50c8b9?api-version=2024-02-01",
+    "body": {
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "0bc73545-eb6c-424e-969d-24a2a5532355",
+      "x-ms-request-id": "0bc73545-eb6c-424e-969d-24a2a5532355",
+      "x-ms-routing-request-id": "WESTINDIA:20260525T130256Z:0bc73545-eb6c-424e-969d-24a2a5532355"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-1dbb50c8b9",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "queue-storage.microsoft-storage-storageaccounts-queueservices-queues.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:14:55.670Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "queue-storage",
+  "tier": 2,
+  "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-11eefe8f8d/providers/Microsoft.Storage/storageAccounts/gs11eefe8f8d/queueServices/default/queues/q11eefe8f8d?api-version=2023-01-01",
+    "body": {
+      "properties": {},
+      "location": "globalstack-invalid-location"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "6d223acb-c32d-4588-b390-403dcbe91f59",
+      "x-ms-request-id": "6924916f-d260-4ddc-9fbe-d464a6437fac",
+      "x-ms-routing-request-id": "EASTUS:20260525T131352Z:6d223acb-c32d-4588-b390-403dcbe91f59"
+    },
+    "body": {
+      "error": {
+        "code": "StorageAccountIsNotProvisioned",
+        "message": "The storage account provisioning state must be 'Succeeded' before executing the operation."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-11eefe8f8d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "container-registry.microsoft-containerregistry-registries.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-25T13:09:05.366Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "container-registry",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerRegistry/registries",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0f93f7dff1/providers/Microsoft.ContainerRegistry/registries/acr0f93f7dff1",
+    "body": {
+      "location": "{location}",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "f036c470-454a-4b2a-ad21-da7546f4188e",
+      "x-ms-request-id": "f036c470-454a-4b2a-ad21-da7546f4188e",
+      "x-ms-routing-request-id": "JIOINDIACENTRAL:20260525T130903Z:f036c470-454a-4b2a-ad21-da7546f4188e"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0f93f7dff1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

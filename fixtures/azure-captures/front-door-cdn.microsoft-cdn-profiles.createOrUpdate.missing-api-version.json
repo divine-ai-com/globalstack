@@ -1,0 +1,52 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.missing-api-version",
+  "capturedAt": "2026-05-25T13:33:32.653Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-api-version",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-a20fcaadcb/providers/Microsoft.Cdn/profiles/cdn-a20fcaadcb",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "7907e74e-121e-45a3-bcfb-44cfce86610e",
+      "x-ms-request-id": "7907e74e-121e-45a3-bcfb-44cfce86610e",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T133325Z:7907e74e-121e-45a3-bcfb-44cfce86610e"
+    },
+    "body": {
+      "error": {
+        "code": "MissingApiVersionParameter",
+        "message": "The api-version query parameter (?api-version=) is required for all requests."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-a20fcaadcb",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "arm-surface",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates Azure Resource Manager surface behavior, not service-specific provider semantics."
+  }
+}

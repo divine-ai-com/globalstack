@@ -1,0 +1,52 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.valid-minimal",
+  "capturedAt": "2026-05-25T13:33:21.951Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "valid-minimal",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3fd0bdc7a1/providers/Microsoft.Cdn/profiles/cdn-3fd0bdc7a1?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "123ffab1-cff3-4fac-844b-2df94c1a4edc",
+      "x-ms-request-id": "5823f80f-fb9e-4f8c-9c97-906911ff56b0",
+      "x-ms-routing-request-id": "EASTUS:20260525T133314Z:123ffab1-cff3-4fac-844b-2df94c1a4edc"
+    },
+    "body": {
+      "error": {
+        "code": "BadRequest",
+        "message": "Free Trial and Student account is forbidden for Azure Frontdoor resources."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3fd0bdc7a1",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

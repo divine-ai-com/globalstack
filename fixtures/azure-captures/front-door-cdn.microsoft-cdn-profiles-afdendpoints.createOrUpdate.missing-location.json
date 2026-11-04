@@ -1,0 +1,50 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles-afdendpoints.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T13:35:50.951Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/afdEndpoints",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-0ff71fe558/providers/Microsoft.Cdn/profiles/cdn-0ff71fe558/afdEndpoints/afd-0ff71fe558?api-version=2024-02-01",
+    "body": {
+      "properties": {
+        "enabledState": "Enabled"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "814fe37e-41a1-4654-809a-70e97a96fe6d",
+      "x-ms-request-id": "814fe37e-41a1-4654-809a-70e97a96fe6d",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260525T133543Z:814fe37e-41a1-4654-809a-70e97a96fe6d"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-0ff71fe558",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

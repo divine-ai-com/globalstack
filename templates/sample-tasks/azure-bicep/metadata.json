@@ -1,0 +1,4 @@
+{
+  "provider": "GlobalStack",
+  "description": "Runner smoke target. Set provider to Azure to run the same task against real Azure credentials."
+}

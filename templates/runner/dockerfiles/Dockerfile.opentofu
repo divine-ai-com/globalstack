@@ -1,0 +1,25 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PLATFORM_ID=azure-opentofu-hcl
+ENV AZURE_LOCATION=eastus
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl git jq unzip gnupg lsb-release python3 python3-pip python3-venv build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
+RUN install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://get.opentofu.org/opentofu.gpg | gpg --dearmor -o /etc/apt/keyrings/opentofu.gpg \
+    && curl -fsSL https://packages.opentofu.org/opentofu/tofu/gpgkey | gpg --dearmor -o /etc/apt/keyrings/opentofu-repo.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main" > /etc/apt/sources.list.d/opentofu.list \
+    && apt-get update && apt-get install -y --no-install-recommends tofu \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY common/globalstack-azure.sh /opt/globalstack/globalstack-azure.sh
+COPY common/entrypoint.sh /entrypoint.sh
+COPY stages /opt/globalstack/stages
+RUN chmod +x /entrypoint.sh /opt/globalstack/globalstack-azure.sh /opt/globalstack/stages/*/*.sh
+
+WORKDIR /workspace
+ENTRYPOINT ["/entrypoint.sh"]

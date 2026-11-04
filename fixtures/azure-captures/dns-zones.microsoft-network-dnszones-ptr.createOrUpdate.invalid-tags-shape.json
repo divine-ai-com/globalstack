@@ -1,0 +1,56 @@
+{
+  "id": "dns-zones.microsoft-network-dnszones-ptr.createOrUpdate.invalid-tags-shape",
+  "capturedAt": "2026-05-20T13:31:08.310Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "dns-zones",
+  "tier": 2,
+  "resourceType": "Microsoft.Network/dnsZones/PTR",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-tags-shape",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-369a35ead3/providers/Microsoft.Network/dnsZones/369a35ead3.example.test/PTR/ptr-369a35ead3?api-version=2018-05-01",
+    "body": {
+      "properties": {
+        "TTL": 60,
+        "PTRRecords": [
+          {
+            "ptrdname": "host.example.test."
+          }
+        ]
+      },
+      "tags": "globalstack-invalid-tags"
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "84a824b4-a66f-4d02-865a-fa83bdd208a0",
+      "x-ms-request-id": "84a824b4-a66f-4d02-865a-fa83bdd208a0",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T133108Z:84a824b4-a66f-4d02-865a-fa83bdd208a0"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-369a35ead3",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

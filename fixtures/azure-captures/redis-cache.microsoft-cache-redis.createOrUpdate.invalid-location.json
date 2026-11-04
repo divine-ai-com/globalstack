@@ -1,0 +1,57 @@
+{
+  "id": "redis-cache.microsoft-cache-redis.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-20T17:18:18.107Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "redis-cache",
+  "tier": 2,
+  "resourceType": "Microsoft.Cache/redis",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3b389de69d/providers/Microsoft.Cache/redis/redis-3b389de69d?api-version=2023-08-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {
+        "sku": {
+          "name": "Basic",
+          "family": "C",
+          "capacity": 0
+        },
+        "enableNonSslPort": true,
+        "minimumTlsVersion": "1.2"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "964225be-a76d-4fcc-9855-e1c3ee1783ce",
+      "x-ms-request-id": "964225be-a76d-4fcc-9855-e1c3ee1783ce",
+      "x-ms-routing-request-id": "EASTUS:20260520T171811Z:964225be-a76d-4fcc-9855-e1c3ee1783ce"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3b389de69d",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

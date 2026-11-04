@@ -1,0 +1,45 @@
+{
+  "id": "azure-functions.microsoft-web-sites.createOrUpdate.empty-body",
+  "capturedAt": "2026-05-16T15:57:25.922Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "azure-functions",
+  "tier": 1,
+  "resourceType": "Microsoft.Web/sites",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-body",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-bd8fd180fd/providers/Microsoft.Web/sites/site-bd8fd180fd?api-version=2023-12-01",
+    "body": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "e7c9f0cc-197e-46c2-b7f2-d5cdc9f058a3",
+      "x-ms-request-id": "e7c9f0cc-197e-46c2-b7f2-d5cdc9f058a3",
+      "x-ms-routing-request-id": "CENTRALINDIA:20260516T155725Z:e7c9f0cc-197e-46c2-b7f2-d5cdc9f058a3"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-bd8fd180fd",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

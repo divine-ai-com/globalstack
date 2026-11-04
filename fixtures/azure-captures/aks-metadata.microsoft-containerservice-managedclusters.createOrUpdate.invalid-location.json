@@ -1,0 +1,49 @@
+{
+  "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.invalid-location",
+  "capturedAt": "2026-05-25T13:02:47.168Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "aks-metadata",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-aa2f747d4e/providers/Microsoft.ContainerService/managedClusters/aks-aa2f747d4e?api-version=2024-02-01",
+    "body": {
+      "location": "globalstack-invalid-location",
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "9da25659-1303-49ef-aca6-bb18e5f56108",
+      "x-ms-request-id": "9da25659-1303-49ef-aca6-bb18e5f56108",
+      "x-ms-routing-request-id": "EASTUS:20260525T130239Z:9da25659-1303-49ef-aca6-bb18e5f56108"
+    },
+    "body": {
+      "error": {
+        "code": "InvalidResourceLocation",
+        "message": "The specified location 'globalstack-invalid-location' is invalid. A location must consist of characters, whitespace, digit, or following symbols '(,)'."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-aa2f747d4e",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

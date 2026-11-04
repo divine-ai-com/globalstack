@@ -1,0 +1,2416 @@
+{
+  "_meta": {
+    "generatedAt": "2026-05-29T03:29:48.962Z",
+    "generatedBy": "npm run conformance:roadmap",
+    "source": "docs/conformance/azure-99-parity-checklist.json",
+    "serviceCount": 30,
+    "waveCount": 5,
+    "workItemCount": 0,
+    "policy": "Roadmap is execution order only; parity claims still require checklist dimensions to be complete."
+  },
+  "estimateSnapshot": {
+    "overall": {
+      "percent": 100,
+      "displayRange": "95-100%",
+      "methodology": "status-derived average across all services and dimensions"
+    },
+    "azureFunctionsDurable": {
+      "percent": 99,
+      "displayRange": "95-100%",
+      "methodology": "status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack",
+      "evidence": {
+        "total": 100,
+        "platformOk": true
+      }
+    },
+    "logicWorkflows": {
+      "percent": 99,
+      "displayRange": "95-100%",
+      "methodology": "status-derived base plus bounded evidence bonuses from local facade, provider behavior, data-plane status, and green parity pack",
+      "evidence": {
+        "total": 62,
+        "platformOk": true
+      }
+    }
+  },
+  "stressVerificationSnapshot": {
+    "source": "dist/complex-pulumi-bundles/latest-results.json",
+    "generatedAt": "2026-05-26T15:45:26.976Z",
+    "total": 15,
+    "passCount": 15,
+    "results": [
+      {
+        "prId": "Pr91239",
+        "scenarioId": "multiregion-claims-event-mesh",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91240",
+        "scenarioId": "cache-coordinated-casework-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91236",
+        "scenarioId": "internal-partner-runtime-mesh",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91237",
+        "scenarioId": "industrial-telemetry-lakehouse-thread",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91238",
+        "scenarioId": "regulated-cutover-governance-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91241",
+        "scenarioId": "multiregion-replenishment-balancing-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91242",
+        "scenarioId": "regulated-migration-command-center",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91243",
+        "scenarioId": "industrial-command-digital-thread",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91244",
+        "scenarioId": "active-active-release-control-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91245",
+        "scenarioId": "investigation-lakehouse-response-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91246",
+        "scenarioId": "policy-appeals-decision-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91247",
+        "scenarioId": "regional-catalog-sync-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91248",
+        "scenarioId": "case-orchestration-evidence-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91249",
+        "scenarioId": "global-release-governance-ring",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "prId": "Pr91250",
+        "scenarioId": "cutover-telemetry-command-fabric",
+        "overallStatus": "PASS",
+        "finalStage": "destroy"
+      }
+    ]
+  },
+  "verifiedPlatformSnapshot": {
+    "source": "docs/conformance/azure-verified-platform-waves.json plus dist/verified-bundles/latest-results.json when present",
+    "generatedAt": "2026-05-27T23:14:17.399Z",
+    "model": "gpt-5.5",
+    "location": "eastus",
+    "scope": "Platform lifecycle evidence: build, lint, unit tests, deployment, provider-lifecycle, ARM readback, integration tests, and cleanup. Runtime/data-plane depth still belongs to service-specific parity packs and future complex platform waves.",
+    "waveCount": 9,
+    "total": 45,
+    "passCount": 45,
+    "waves": [
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91371",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91372",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91373",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91374",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91375",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91341",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91342",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91343",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91344",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91345",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91311",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91312",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91313",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91314",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91315",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91381",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91382",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91383",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91384",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91385",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91321",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91322",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91323",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91324",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91325",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91331",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91332",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91333",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91334",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91335",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91351",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91352",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91353",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91354",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91355",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91361",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91362",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91363",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91364",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91365",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "source": "dist/verified-bundles/latest-results.json",
+        "total": 5,
+        "passCount": 5,
+        "results": [
+          {
+            "prId": "Pr91301",
+            "scenarioId": "claims-evidence-command-ring",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91302",
+            "scenarioId": "partner-order-ingest-buffer",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91303",
+            "scenarioId": "warehouse-dispatch-event-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91304",
+            "scenarioId": "billing-audit-notification-mesh",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          },
+          {
+            "prId": "Pr91305",
+            "scenarioId": "regional-catalog-command-plane",
+            "ok": true,
+            "finalStatus": "PASS",
+            "finalStage": "destroy",
+            "error": null
+          }
+        ]
+      }
+    ],
+    "results": [
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91371",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91372",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91373",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91374",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-ansible-yaml",
+        "generatedAt": "2026-05-27T22:53:55.432Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91375",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91341",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91342",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91343",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91344",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-arm-json",
+        "generatedAt": "2026-05-27T20:17:23.723Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91345",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91311",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91312",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91313",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91314",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-bicep",
+        "generatedAt": "2026-05-27T18:12:38.219Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91315",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91381",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91382",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91383",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91384",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-cli-rest",
+        "generatedAt": "2026-05-27T23:14:17.399Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91385",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91321",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91322",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91323",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91324",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-opentofu-hcl",
+        "generatedAt": "2026-05-27T18:52:14.961Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91325",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91331",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91332",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91333",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91334",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-py",
+        "generatedAt": "2026-05-27T19:11:16.649Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91335",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91351",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91352",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91353",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91354",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-ts",
+        "generatedAt": "2026-05-27T21:19:46.126Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91355",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91361",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91362",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91363",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91364",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-pulumi-yaml",
+        "generatedAt": "2026-05-27T22:01:01.147Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91365",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91301",
+        "scenarioId": "claims-evidence-command-ring",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91302",
+        "scenarioId": "partner-order-ingest-buffer",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91303",
+        "scenarioId": "warehouse-dispatch-event-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91304",
+        "scenarioId": "billing-audit-notification-mesh",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      },
+      {
+        "platformId": "azure-terraform-hcl",
+        "generatedAt": "2026-05-27T20:59:00.516Z",
+        "model": "gpt-5.5",
+        "location": "eastus",
+        "prId": "Pr91305",
+        "scenarioId": "regional-catalog-command-plane",
+        "ok": true,
+        "finalStatus": "PASS",
+        "finalStage": "destroy"
+      }
+    ]
+  },
+  "crossCuttingBacklog": [
+    {
+      "id": "live-azure-capture-expansion",
+      "label": "More live Azure capture expansion per service",
+      "detail": "Turn candidate control-plane and data-plane calls into cleanup-verified real Azure fixtures for every high-value service surface.",
+      "commands": [
+        "npm run providers:surface",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "service-specific-parameter-variance",
+      "label": "More parameter variance beyond generic invalid/missing cases",
+      "detail": "Add service-specific invalid names, parent references, enum values, mutually-exclusive fields, range checks, and schema-shape captures before normalizing local behavior.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --limit=0",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "provider-lifecycle-depth",
+      "label": "Provider refresh, diff/preview, update, import, drift, and destroy semantics",
+      "detail": "Extend each platform runner beyond create/destroy smoke so generated IaC behaves the same way against GlobalStack as it does against Azure provider tooling.",
+      "commands": [
+        "npm run smoke:prompts",
+        "npm run smoke:deploy",
+        "GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners"
+      ]
+    },
+    {
+      "id": "error-shape-header-fidelity",
+      "label": "Exact error-shape and header fidelity",
+      "detail": "Match Azure status codes, error codes, body structure, async-operation headers, retry headers, and request-id shaped responses for captured cases.",
+      "commands": [
+        "npm run conformance:local -- --capability=<service>",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "retry-and-eventual-consistency",
+      "label": "Retry and eventual-consistency behavior",
+      "detail": "Capture poll cadence, transitional states, delayed reads, delete lag, and retryable failures before claiming timing fidelity.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "rbac-and-authorization",
+      "label": "RBAC and authorization behavior",
+      "detail": "Expand allow/deny matrices for ARM and service data planes, including propagation lag and inherited-scope behavior where Azure actually enforces it.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=identity-rbac --all=true",
+        "npm run conformance:local -- --capability=identity-rbac"
+      ]
+    },
+    {
+      "id": "timing-sensitive-repeat-captures",
+      "label": "Repeat captures for timing-sensitive behavior",
+      "detail": "Re-capture ambiguous or unstable Azure behavior before encoding it into local expectations, especially delete/read races and async completion windows.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "deeper-service-data-planes",
+      "label": "Deeper service-specific data planes where applicable",
+      "detail": "Broaden bounded local facades and official-emulator integrations for services such as Cosmos, Files, Event Hubs, App Configuration, Key Vault, PostgreSQL, MySQL, and Redis.",
+      "commands": [
+        "npm run hybrid:render",
+        "npm run smoke",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true"
+      ]
+    },
+    {
+      "id": "adversarial-new-task-waves",
+      "label": "Adversarial new task waves",
+      "detail": "Keep generating new ultra-expert Azure IaC bundles that were not explicitly optimized for the current parity set, then run them through the shipment lifecycle and treat the first surviving mismatch as the next engineering target.",
+      "commands": [
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs",
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>",
+        "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>"
+      ]
+    },
+    {
+      "id": "real-azure-differential-reruns",
+      "label": "Real-Azure differential reruns",
+      "detail": "Re-run the same deployment and inspection flows against real Azure and GlobalStack so the parity claim is continuously challenged instead of frozen at one historical capture set.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations"
+      ]
+    },
+    {
+      "id": "conformance-runner-completion-determinism",
+      "label": "Conformance runner completion determinism",
+      "detail": "Harden the real-Azure conformance runner so it exits deterministically after capture and cleanup. Some scoped reruns still write fresh fixtures and then go quiet instead of finishing cleanly.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations",
+        "npm run validate"
+      ]
+    },
+    {
+      "id": "timing-and-drift-checks",
+      "label": "Repeated timing and drift checks",
+      "detail": "Keep rerunning timing-sensitive delete/read, async polling, and propagation windows so eventual-consistency assumptions stay tied to current Azure behavior instead of stale fixtures.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:parity && npm run conformance:roadmap"
+      ]
+    },
+    {
+      "id": "mismatch-to-product-gap",
+      "label": "Treat every surviving mismatch as a product gap",
+      "detail": "Classify each new failure as bundle-generation defect, provider defect, or emulator/runtime parity defect, then convert every true Azure mismatch into an explicit product work item instead of a one-off workaround.",
+      "commands": [
+        "npm run validate",
+        "git diff --check"
+      ]
+    },
+    {
+      "id": "aks-deferred-validation-differential",
+      "label": "AKS deferred validation and async failure semantics",
+      "detail": "The 2026-05-28 real-Azure differential run showed that AKS can accept an invalid networkPlugin request into async creation when Kubernetes version and VM size are valid. GlobalStack now mirrors that acceptance and local async failure/readback path; keep extending this with cleanup-verified real Azure operation polling captures before treating the whole surface as cloudValidated.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 AZURE_SUBSCRIPTION_ID=... npm run differential:azure:aks -- --target=both --case=invalid-network-plugin --include-provisioning",
+        "npm run e2e:aks-metadata-parity",
+        "npm run conformance:roadmap"
+      ]
+    }
+  ],
+  "existingThirtyDeepeningRoadmap": [
+    {
+      "area": "Live Azure differential capture",
+      "focus": "Capture cleanup-verified real Azure success, error, async, delete, and retry behavior per service, then replay those fixtures locally."
+    },
+    {
+      "area": "Runtime depth",
+      "focus": "Deepen concrete local runtimes for AKS, Functions, Logic Apps, APIM, messaging, storage, databases, networking, DNS, WAF, and observability instead of expanding metadata-only success paths."
+    },
+    {
+      "area": "Provider lifecycle parity",
+      "focus": "Exercise refresh, update, import/adopt, drift, replacement, rollback, delete/recreate races, and destroy behavior across every supported IaC platform."
+    },
+    {
+      "area": "Error and timing fidelity",
+      "focus": "Match captured Azure status codes, error bodies, async-operation headers, retry headers, eventual-consistency windows, and post-delete read behavior."
+    },
+    {
+      "area": "Auth and RBAC fidelity",
+      "focus": "Move from permissive local token behavior toward captured ARM and data-plane allow/deny matrices, inherited scopes, and propagation-delay behavior."
+    }
+  ],
+  "nextThirtyExpansionRoadmap": {
+    "operatingRule": "A next-wave Azure service must be Azure-shaped facade plus concrete local backend/runtime plus live Azure differential evidence. Metadata-only acceptance is allowed only when it is explicitly marked as a gap and fails closed outside captured behavior.",
+    "started": [
+      {
+        "service": "Azure IoT Hub",
+        "resourceTypes": [
+          "Microsoft.Devices/IotHubs"
+        ],
+        "runtime": "globalstack-iot-hub-device-runtime",
+        "currentDepth": "bounded service REST identity registry, device twin, query, and HTTP telemetry ingestion behavior"
+      },
+      {
+        "service": "Azure Digital Twins",
+        "resourceTypes": [
+          "Microsoft.DigitalTwins/digitalTwinsInstances"
+        ],
+        "runtime": "globalstack-digital-twins-graph-runtime",
+        "currentDepth": "bounded model upload, twin CRUD, relationship CRUD, and SELECT * graph query behavior"
+      },
+      {
+        "service": "Azure AI Search",
+        "resourceTypes": [
+          "Microsoft.Search/searchServices"
+        ],
+        "runtime": "globalstack-search-index-runtime",
+        "currentDepth": "bounded index definition storage, document batch indexing, substring search, and document count behavior"
+      }
+    ],
+    "candidateWaves": [
+      {
+        "label": "Next best service wave",
+        "services": [
+          "Azure SQL Database with a local SQL backend contract",
+          "Azure Data Factory with a local pipeline runner",
+          "Azure Data Lake Storage Gen2 with hierarchical namespace behavior",
+          "Azure SignalR with official/local emulator path",
+          "Azure Web PubSub with a local WebSocket hub",
+          "Azure Batch with a local job scheduler/container runner",
+          "Azure Container Instances with a Docker-backed runtime",
+          "Azure Policy with local policy evaluation",
+          "Azure Data Explorer/Kusto with a bounded KQL store",
+          "Azure Stream Analytics with a local stream processor"
+        ]
+      },
+      {
+        "label": "Enterprise service wave",
+        "services": [
+          "Microsoft Fabric / Power BI workspace surfaces with query/runtime where possible",
+          "Microsoft Purview catalog with a local metadata graph",
+          "Recovery Services / Backup with a local snapshot catalog",
+          "Automation Accounts with a local runbook runner",
+          "API Center with a local API catalog",
+          "Notification Hubs with a local push-message sink",
+          "Communication Services with local email, SMS, and chat sinks",
+          "Azure Machine Learning workspace with a local job and model registry runtime",
+          "Azure OpenAI only with a real model-runtime contract, never a fake response facade"
+        ]
+      }
+    ]
+  },
+  "extendedContinuationRoadmap": [
+    {
+      "id": "phase-6-platform-breadth-pressure",
+      "label": "Phase 6: Platform breadth pressure",
+      "objective": "Take the same adversarial Azure workloads beyond Pulumi TypeScript so the parity claim is exercised across the full supported IaC platform set instead of one dominant toolchain.",
+      "tracks": [
+        "Run 5-bundle adversarial waves across Terraform HCL and OpenTofu HCL with the same shipment lifecycle bar.",
+        "Run 5-bundle adversarial waves across Bicep and ARM JSON with the same service graphs, outputs, and destroy guarantees.",
+        "Run 5-bundle adversarial waves across Pulumi Python, Pulumi YAML, and Ansible YAML.",
+        "Treat every platform-specific mismatch as either generator defect, runner defect, or emulator parity defect; do not blur them together.",
+        "Keep the deep Pulumi-only adversarial runner separate from the platform-aware verified runner until the complex runner is explicitly made platform-aware."
+      ],
+      "defaultCommands": [
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-verified-bundles.mjs --platform=<platform>",
+        "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>",
+        "git diff --check"
+      ],
+      "acceptanceBar": "Every supported Azure IaC platform has at least one recent adversarial wave with all bundles green through build, lint, unit-tests, deploy, provider-lifecycle, integration-tests, and destroy."
+    },
+    {
+      "id": "phase-7-mutation-and-lifecycle-depth",
+      "label": "Phase 7: Mutation and lifecycle depth",
+      "objective": "Push beyond create/read/destroy into the update, replacement, import, and rollback paths that usually expose the hardest parity mismatches.",
+      "tracks": [
+        "Add mutation-heavy bundles with phased rollouts, partial replacements, and schema-preserving updates.",
+        "Add import/adopt flows where the toolchain binds existing Azure-shaped resources into state.",
+        "Add out-of-band drift mutations per service family and verify reconcile behavior, not just drift detection.",
+        "Add delete/recreate races and replacement-boundary assertions for child resources and scoped extension resources."
+      ],
+      "defaultCommands": [
+        "npm run smoke:prompts",
+        "npm run smoke:deploy",
+        "GLOBALSTACK_AUTH_TOKEN=globalstack-local-token PIPELINE_STAGE_SCOPE=full npm run smoke:platform-runners"
+      ],
+      "acceptanceBar": "Replacement, refresh, drift-reconcile, import/adopt, and rollback semantics are covered by dedicated adversarial tasks and produce the same qualitative behavior against GlobalStack that the provider expects from Azure."
+    },
+    {
+      "id": "phase-8-runtime-and-orchestration-fidelity",
+      "label": "Phase 8: Runtime and orchestration fidelity",
+      "objective": "Deepen the hosted-runtime side of the emulator so Function, Logic, APIM, messaging, and storage/event chains hold up under behavior-first integration tests rather than only ARM reads.",
+      "tracks": [
+        "Stress Functions, Logic Apps, APIM, Event Grid, Service Bus, Event Hubs, Key Vault, and Storage in chained operational flows.",
+        "Expand negative-path and no-side-effect assertions for invalid auth, invalid payloads, missing dependencies, and retry exhaustion.",
+        "Add fan-out/fan-in, long-running orchestration, and multi-hop event delivery verification where the prompt claims them.",
+        "Keep integration tests behavior-first: service existence first, then end-to-end operational flow, then negative-path guarantees."
+      ],
+      "defaultCommands": [
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs",
+        "npm run e2e:azure-functions-parity",
+        "npm run e2e:logic-workflows-parity",
+        "npm run e2e:api-management-parity"
+      ],
+      "acceptanceBar": "Runtime-heavy adversarial bundles continue to pass without test relaxations, and any surviving mismatch is traceable to a real Azure behavioral difference or an explicit product gap."
+    },
+    {
+      "id": "phase-9-multi-region-network-and-policy",
+      "label": "Phase 9: Multi-region, network, and policy stress",
+      "objective": "Widen the parity claim across active-active topologies, DNS layering, edge routing, private/public resolution, and identity or policy propagation under nested scopes.",
+      "tracks": [
+        "Generate more active-active and east/west or hub/spoke bundles with Front Door, Application Gateway, Load Balancer, public DNS, and private DNS together.",
+        "Stress split-horizon DNS, private link style registration, and repeated resolution after link/delete or failover mutations.",
+        "Exercise user-assigned identities, RBAC inheritance, and activity-log or metrics-based governance in the same bundles.",
+        "Add policy and security surfaces where denial or attachment timing can diverge from naive CRUD assumptions."
+      ],
+      "defaultCommands": [
+        "npm run e2e:front-door-cdn-parity",
+        "npm run e2e:load-balancing-parity",
+        "npm run e2e:virtual-network-parity",
+        "npm run e2e:dns-zones-parity"
+      ],
+      "acceptanceBar": "Multi-region and policy-heavy adversarial tasks can mutate, refresh, and destroy cleanly while preserving Azure-shaped routing, resolution, and governance behavior."
+    },
+    {
+      "id": "phase-10-real-azure-canary-lane",
+      "label": "Phase 10: Real-Azure canary and drift lane",
+      "objective": "Keep the `100%` claim honest by repeatedly challenging it against live Azure instead of freezing it at one historical capture set.",
+      "tracks": [
+        "Run narrow, high-signal real-Azure reruns for timing-sensitive, retry-sensitive, and propagation-sensitive service surfaces.",
+        "Keep differential checks focused enough to complete cleanly and emit deterministic fixtures.",
+        "Record semantic drift only; discard timestamp, request-id, and dynamic endpoint churn unless it reflects real product behavior.",
+        "Convert every surviving semantic mismatch into a product work item immediately, with no temporary relaxations."
+      ],
+      "defaultCommands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=<service> --all=true",
+        "npm run conformance:classify && npm run conformance:expectations",
+        "npm run conformance:parity && npm run conformance:roadmap"
+      ],
+      "acceptanceBar": "Scoped real-Azure reruns remain part of the default engineering loop, and the roadmap stays synchronized with any live drift or newly surfaced product gap."
+    }
+  ],
+  "immediateNextWork": [
+    {
+      "rank": 1,
+      "label": "Make the complex adversarial runner platform-aware",
+      "why": "The current complex runner is Pulumi TypeScript-only. Platform breadth should not depend on a misleading `--platform` flag unless the runner actually generates and validates those platforms.",
+      "commands": [
+        "node --test packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.test.mjs",
+        "OPENAI_MODEL=gpt-5.5 node scripts/verified/run-openai-azure-complex-pulumi-bundles.mjs --platform=azure-bicep"
+      ]
+    },
+    {
+      "rank": 2,
+      "label": "Add a mutation-heavy wave with explicit updates, replacements, and rollback expectations",
+      "why": "The current adversarial set is strongest on greenfield deployment. The next coverage gap is change behavior under live state.",
+      "commands": [
+        "npm run smoke:platform-runners",
+        "npm run shipment:export -- --po-id=<po-id> --pr-id=<Pr...>"
+      ]
+    },
+    {
+      "rank": 3,
+      "label": "Keep narrow real-Azure differential reruns running on timing-sensitive services",
+      "why": "The current 100% claim should be challenged continuously by live Azure drift, especially around delete/read windows, propagation, and async completion.",
+      "commands": [
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=queue-storage --all=true",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=event-grid --all=true",
+        "GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 npm run conformance:azure -- --capability=logic-workflows --all=true"
+      ]
+    }
+  ],
+  "waves": [
+    {
+      "id": "wave-1-official-emulator-and-storage-family",
+      "label": "Wave 1: official emulator and storage-family depth",
+      "objective": "Finish the services with official emulator leverage or storage-like data-plane behavior first, because they give the fastest path to high-fidelity integration tests.",
+      "services": [
+        {
+          "serviceId": "cosmos-nosql-table",
+          "tier": 1,
+          "awsAnalogue": "DynamoDB",
+          "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 44,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "blob-storage",
+          "tier": 1,
+          "awsAnalogue": "S3",
+          "azureEquivalent": "Azure Blob Storage / Storage Account",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 43,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "service-bus-topics",
+          "tier": 1,
+          "awsAnalogue": "SNS",
+          "azureEquivalent": "Service Bus topics / Event Grid topics",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 42,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "event-grid",
+          "tier": 1,
+          "awsAnalogue": "EventBridge",
+          "azureEquivalent": "Event Grid",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 41,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "queue-storage",
+          "tier": 2,
+          "awsAnalogue": "SQS",
+          "azureEquivalent": "Azure Queue Storage / Service Bus queues",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "azure-files",
+          "tier": 2,
+          "awsAnalogue": "EFS",
+          "azureEquivalent": "Azure Files / Azure NetApp Files",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "event-hubs-streams",
+          "tier": 2,
+          "awsAnalogue": "Kinesis Data Streams",
+          "azureEquivalent": "Azure Event Hubs",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "app-configuration-parameters",
+          "tier": 2,
+          "awsAnalogue": "SSM Parameter Store",
+          "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        }
+      ],
+      "workItemCount": 0
+    },
+    {
+      "id": "wave-2-identity-security-and-secrets",
+      "label": "Wave 2: identity, security, secrets, and encryption",
+      "objective": "Make authorization, denial, audit, and secure configuration behavior credible across the emulator.",
+      "services": [
+        {
+          "serviceId": "key-vault-keys",
+          "tier": 1,
+          "awsAnalogue": "KMS",
+          "azureEquivalent": "Key Vault keys / Managed HSM",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "identity-rbac",
+          "tier": 1,
+          "awsAnalogue": "IAM/STS",
+          "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "key-vault-secrets",
+          "tier": 1,
+          "awsAnalogue": "Secrets Manager",
+          "azureEquivalent": "Key Vault secrets",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 38,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "waf-policy",
+          "tier": 2,
+          "awsAnalogue": "WAF",
+          "azureEquivalent": "Azure Web Application Firewall policy",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "activity-log-audit",
+          "tier": 2,
+          "awsAnalogue": "CloudTrail",
+          "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 26,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        }
+      ],
+      "workItemCount": 0
+    },
+    {
+      "id": "wave-3-compute-api-and-edge",
+      "label": "Wave 3: compute, API, containers, and edge routing",
+      "objective": "Cover deployable app platforms and request routing surfaces used by generated IaC and integration tests.",
+      "services": [
+        {
+          "serviceId": "api-management",
+          "tier": 1,
+          "awsAnalogue": "API Gateway",
+          "azureEquivalent": "Azure API Management",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 40,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "azure-functions",
+          "tier": 1,
+          "awsAnalogue": "Lambda",
+          "azureEquivalent": "Azure Functions / Function Apps",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "aks-metadata",
+          "tier": 1,
+          "awsAnalogue": "EKS",
+          "azureEquivalent": "Azure Kubernetes Service",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "container-registry",
+          "tier": 1,
+          "awsAnalogue": "ECR",
+          "azureEquivalent": "Azure Container Registry",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 36,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "logic-workflows",
+          "tier": 2,
+          "awsAnalogue": "Step Functions",
+          "azureEquivalent": "Azure Logic Apps / Durable Functions",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 27,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "front-door-cdn",
+          "tier": 2,
+          "awsAnalogue": "CloudFront",
+          "azureEquivalent": "Azure Front Door / Azure CDN",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "service-discovery",
+          "tier": 2,
+          "awsAnalogue": "Service Discovery / Cloud Map",
+          "azureEquivalent": "Azure Private DNS / Container Apps service discovery",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 24,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "load-balancing",
+          "tier": 2,
+          "awsAnalogue": "ALB/NLB",
+          "azureEquivalent": "Azure Application Gateway / Load Balancer",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 23,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        }
+      ],
+      "workItemCount": 0
+    },
+    {
+      "id": "wave-4-data-platforms",
+      "label": "Wave 4: relational, cache, migration, and analytics platforms",
+      "objective": "Validate managed-data-service control planes and wire local protocol engines without claiming Azure-managed-service internals.",
+      "services": [
+        {
+          "serviceId": "postgresql-flexible-server",
+          "tier": 1,
+          "awsAnalogue": "RDS PostgreSQL",
+          "azureEquivalent": "Azure Database for PostgreSQL Flexible Server",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 32,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "synapse-warehouse",
+          "tier": 2,
+          "awsAnalogue": "Redshift",
+          "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 22,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "mysql-flexible-server",
+          "tier": 2,
+          "awsAnalogue": "RDS MySQL",
+          "azureEquivalent": "Azure Database for MySQL Flexible Server",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "redis-cache",
+          "tier": 2,
+          "awsAnalogue": "ElastiCache Redis",
+          "azureEquivalent": "Azure Cache for Redis",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "database-migration-service",
+          "tier": 2,
+          "awsAnalogue": "DMS",
+          "azureEquivalent": "Azure Database Migration Service",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 20,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        }
+      ],
+      "workItemCount": 0
+    },
+    {
+      "id": "wave-5-networking-observability-and-dns",
+      "label": "Wave 5: networking, DNS, and observability",
+      "objective": "Harden cross-cutting dependencies that most other services reference during deployment.",
+      "services": [
+        {
+          "serviceId": "monitor-logs",
+          "tier": 1,
+          "awsAnalogue": "CloudWatch Logs",
+          "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 39,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "virtual-network",
+          "tier": 1,
+          "awsAnalogue": "VPC",
+          "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 30,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "monitor-metrics-alerts",
+          "tier": 1,
+          "awsAnalogue": "CloudWatch Metrics/Alarms",
+          "azureEquivalent": "Azure Monitor metrics and alerts",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 29,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        },
+        {
+          "serviceId": "dns-zones",
+          "tier": 2,
+          "awsAnalogue": "Route 53",
+          "azureEquivalent": "Azure DNS / Private DNS Zones",
+          "currentStatus": "checklist-complete",
+          "dimensionCounts": {
+            "complete": 10,
+            "partial": 0,
+            "notStarted": 0
+          },
+          "score": 1,
+          "priority": 18,
+          "workItemCount": 0,
+          "nextDimensions": [],
+          "workItems": []
+        }
+      ],
+      "workItemCount": 0
+    }
+  ],
+  "prioritizedServices": [
+    {
+      "rank": 1,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "cosmos-nosql-table",
+      "tier": 1,
+      "score": 1,
+      "priority": 44,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 2,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "blob-storage",
+      "tier": 1,
+      "score": 1,
+      "priority": 43,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 3,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "service-bus-topics",
+      "tier": 1,
+      "score": 1,
+      "priority": 42,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 4,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-grid",
+      "tier": 1,
+      "score": 1,
+      "priority": 41,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 5,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "api-management",
+      "tier": 1,
+      "score": 1,
+      "priority": 40,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 6,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-keys",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 7,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "azure-functions",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 8,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "aks-metadata",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 9,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-logs",
+      "tier": 1,
+      "score": 1,
+      "priority": 39,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 10,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "identity-rbac",
+      "tier": 1,
+      "score": 1,
+      "priority": 38,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 11,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "key-vault-secrets",
+      "tier": 1,
+      "score": 1,
+      "priority": 38,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 12,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "container-registry",
+      "tier": 1,
+      "score": 1,
+      "priority": 36,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 13,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "postgresql-flexible-server",
+      "tier": 1,
+      "score": 1,
+      "priority": 32,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 14,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "virtual-network",
+      "tier": 1,
+      "score": 1,
+      "priority": 30,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 15,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "queue-storage",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 16,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "azure-files",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 17,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "event-hubs-streams",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 18,
+      "waveId": "wave-1-official-emulator-and-storage-family",
+      "serviceId": "app-configuration-parameters",
+      "tier": 2,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 19,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "monitor-metrics-alerts",
+      "tier": 1,
+      "score": 1,
+      "priority": 29,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 20,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "logic-workflows",
+      "tier": 2,
+      "score": 1,
+      "priority": 27,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 21,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "waf-policy",
+      "tier": 2,
+      "score": 1,
+      "priority": 26,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 22,
+      "waveId": "wave-2-identity-security-and-secrets",
+      "serviceId": "activity-log-audit",
+      "tier": 2,
+      "score": 1,
+      "priority": 26,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 23,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "front-door-cdn",
+      "tier": 2,
+      "score": 1,
+      "priority": 24,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 24,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "service-discovery",
+      "tier": 2,
+      "score": 1,
+      "priority": 24,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 25,
+      "waveId": "wave-3-compute-api-and-edge",
+      "serviceId": "load-balancing",
+      "tier": 2,
+      "score": 1,
+      "priority": 23,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 26,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "synapse-warehouse",
+      "tier": 2,
+      "score": 1,
+      "priority": 22,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 27,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "mysql-flexible-server",
+      "tier": 2,
+      "score": 1,
+      "priority": 20,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 28,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "redis-cache",
+      "tier": 2,
+      "score": 1,
+      "priority": 20,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 29,
+      "waveId": "wave-4-data-platforms",
+      "serviceId": "database-migration-service",
+      "tier": 2,
+      "score": 1,
+      "priority": 20,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    },
+    {
+      "rank": 30,
+      "waveId": "wave-5-networking-observability-and-dns",
+      "serviceId": "dns-zones",
+      "tier": 2,
+      "score": 1,
+      "priority": 18,
+      "dimensionCounts": {
+        "complete": 10,
+        "partial": 0,
+        "notStarted": 0
+      },
+      "nextDimensions": []
+    }
+  ],
+  "workItemSummary": {
+    "byAction": {},
+    "byDimension": {}
+  }
+}

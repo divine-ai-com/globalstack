@@ -1,0 +1,50 @@
+{
+  "id": "aks-metadata.microsoft-containerservice-managedclusters.createOrUpdate.null-properties",
+  "capturedAt": "2026-05-25T13:03:16.957Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "aks-metadata",
+  "tier": 1,
+  "resourceType": "Microsoft.ContainerService/managedClusters",
+  "operation": "CreateOrUpdate",
+  "varianceId": "null-properties",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-e742fcffcb/providers/Microsoft.ContainerService/managedClusters/aks-e742fcffcb?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "properties": null
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "fd1fef1b-480a-49ce-b910-04a14daf7c8b",
+      "x-ms-request-id": "1c65b7c5-454f-4ffd-b85e-b0584fbd6811",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260525T130315Z:fd1fef1b-480a-49ce-b910-04a14daf7c8b"
+    },
+    "body": {
+      "code": "InvalidParameter",
+      "details": null,
+      "message": "Required parameter servicePrincipalProfile is missing (null).",
+      "subcode": "",
+      "target": "servicePrincipalProfile"
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-e742fcffcb",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

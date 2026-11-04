@@ -1,0 +1,45 @@
+{
+  "id": "waf-policy.microsoft-cdn-profiles-securitypolicies.delete.not-found",
+  "capturedAt": "2026-05-16T05:01:40.647Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "waf-policy",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles/securityPolicies",
+  "operation": "Delete",
+  "varianceId": "not-found",
+  "request": {
+    "method": "DELETE",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-385ed16275/providers/Microsoft.Cdn/profiles/cdn-385ed16275/securityPolicies/security-385ed16275?api-version=2024-02-01",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "6f82c567-f673-4a95-8c4f-40384c0c509f",
+      "x-ms-request-id": "6f82c567-f673-4a95-8c4f-40384c0c509f",
+      "x-ms-routing-request-id": "EASTUS:20260516T050133Z:6f82c567-f673-4a95-8c4f-40384c0c509f"
+    },
+    "body": {
+      "error": {
+        "code": "ParentResourceNotFound",
+        "message": "Failed to perform 'delete' on resource(s) of type 'profiles/securitypolicies', because the parent resource '/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-385ed16275/providers/Microsoft.Cdn/profiles/cdn-385ed16275' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-385ed16275",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-routing-or-parent-validation",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
+  }
+}

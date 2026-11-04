@@ -1,0 +1,5785 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-27T18:41:15.900Z",
+    "products_catalog_url": "https://cloud.google.com/products",
+    "localgcp_url": "https://localgcp.com/",
+    "catalog_service_count": 190,
+    "official_google_emulator_supported_count": 5,
+    "official_google_emulator_supported_percent": 2.6,
+    "localgcp_supported_count": 14,
+    "localgcp_supported_percent": 7.4,
+    "either_supported_count": 15,
+    "either_supported_percent": 7.9,
+    "overlap_supported_count": 4,
+    "overlap_supported_percent": 2.1,
+    "curated_iac_runtime_service_count": 77,
+    "curated_official_google_emulator_supported_count": 5,
+    "curated_official_google_emulator_supported_percent": 6.5,
+    "curated_localgcp_supported_count": 14,
+    "curated_localgcp_supported_percent": 18.2,
+    "curated_either_supported_count": 15,
+    "curated_either_supported_percent": 19.5,
+    "curated_overlap_supported_count": 4,
+    "curated_overlap_supported_percent": 5.2,
+    "notes": [
+      "This snapshot uses the public Google Cloud products catalog as the service list baseline.",
+      "curated_iac_runtime_inventory is the product-planning denominator for services that are plausible GlobalStack IaC/runtime emulation targets.",
+      "Official emulator support is limited to the Google Cloud emulator docs explicitly tracked in this file.",
+      "localgcp support is recorded from the public localgcp site only and is landscape input, not a GlobalStack claim.",
+      "Datastore mode is included as a manual supplement because Google documents local Datastore-mode testing via the Firestore emulator."
+    ]
+  },
+  "sources": {
+    "products_catalog": "https://cloud.google.com/products",
+    "official_google_emulators": {
+      "overview": "https://docs.cloud.google.com/sdk/gcloud/reference/emulators",
+      "firestore_datastore": "https://cloud.google.com/datastore/docs/emulator",
+      "pubsub": "https://cloud.google.com/pubsub/docs/emulator",
+      "bigtable": "https://cloud.google.com/bigtable/docs/emulator",
+      "spanner": "https://cloud.google.com/spanner/docs/emulator"
+    },
+    "localgcp": "https://localgcp.com/"
+  },
+  "curated_iac_runtime_inventory": {
+    "summary": {
+      "service_count": 77,
+      "official_google_emulator_supported_count": 5,
+      "official_google_emulator_supported_percent": 6.5,
+      "localgcp_supported_count": 14,
+      "localgcp_supported_percent": 18.2,
+      "either_supported_count": 15,
+      "either_supported_percent": 19.5,
+      "overlap_supported_count": 4,
+      "overlap_supported_percent": 5.2
+    },
+    "selection_policy": [
+      "Include GCP services that commonly appear in enterprise IaC graphs.",
+      "Include services with meaningful runtime, data-plane, networking, identity, observability, or orchestration behavior.",
+      "Exclude broad marketing pages, solution pages, pricing pages, learning pages, and aggregate product-family pages."
+    ],
+    "services": {
+      "compute-engine": {
+        "category": "compute",
+        "priority": "tier1",
+        "name": "Compute Engine",
+        "product_url": "https://cloud.google.com/products/compute",
+        "description": "Virtual machines running in Google's data center.",
+        "aliases": [],
+        "category_hints": [
+          "Virtual machines (VMs)"
+        ],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "google-kubernetes-engine": {
+        "category": "compute",
+        "priority": "tier1",
+        "name": "Google Kubernetes Engine",
+        "product_url": "https://cloud.google.com/kubernetes-engine",
+        "description": "Managed environment for running containerized apps.",
+        "aliases": [],
+        "category_hints": [
+          "Containers"
+        ],
+        "sources": [
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-run": {
+        "category": "compute",
+        "priority": "tier1",
+        "name": "Cloud Run",
+        "product_url": "https://cloud.google.com/run",
+        "description": "Fully managed environment for running containerized apps.",
+        "aliases": [],
+        "category_hints": [
+          "Serverless compute"
+        ],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "Docker-backed runtime surfaced on :8093."
+          ]
+        }
+      },
+      "cloud-functions": {
+        "category": "compute",
+        "priority": "tier1",
+        "name": "Cloud Functions",
+        "product_url": "https://cloud.google.com/functions",
+        "description": "Platform for creating functions that respond to cloud events.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "app-engine": {
+        "category": "compute",
+        "priority": "tier2",
+        "name": "App Engine",
+        "product_url": "https://cloud.google.com/appengine",
+        "description": "Serverless application platform for apps and back ends.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "batch": {
+        "category": "compute",
+        "priority": "tier2",
+        "name": "Batch",
+        "product_url": "https://cloud.google.com/batch",
+        "description": "Fully managed service for scheduling batch jobs.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-storage": {
+        "category": "storage",
+        "priority": "tier1",
+        "name": "Cloud Storage",
+        "product_url": "https://cloud.google.com/storage",
+        "description": "Object storage that's secure, durable and scaleable.",
+        "aliases": [],
+        "category_hints": [
+          "Object storage"
+        ],
+        "sources": [
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "REST surface on :4443.",
+            "Bucket and object CRUD, simple or multipart or resumable uploads, signed URLs, and JSON/XML API paths."
+          ]
+        }
+      },
+      "filestore": {
+        "category": "storage",
+        "priority": "tier2",
+        "name": "Filestore",
+        "product_url": "https://cloud.google.com/filestore",
+        "description": "File storage that is highly scalable and secure.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "persistent-disk": {
+        "category": "storage",
+        "priority": "tier2",
+        "name": "Persistent Disk",
+        "product_url": "https://cloud.google.com/persistent-disk",
+        "description": "Block storage for virtual machine instances running on Google Cloud.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "block-storage": {
+        "category": "storage",
+        "priority": "tier2",
+        "name": "Block Storage",
+        "product_url": "https://cloud.google.com/products/block-storage",
+        "description": "High-performance storage for AI, analytics, databases, and enterprise applications.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "google-cloud-netapp-volumes": {
+        "category": "storage",
+        "priority": "tier3",
+        "name": "Google Cloud NetApp Volumes",
+        "product_url": "https://cloud.google.com/netapp-volumes",
+        "description": "File storage service for NFS, SMB, and multi-protocol environments.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "google-cloud-managed-lustre": {
+        "category": "storage",
+        "priority": "tier3",
+        "name": "Google Cloud Managed Lustre",
+        "product_url": "https://cloud.google.com/products/managed-lustre",
+        "description": "High performance managed parallel file service.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "storage-transfer-service": {
+        "category": "storage",
+        "priority": "tier2",
+        "name": "Storage Transfer Service",
+        "product_url": "https://cloud.google.com/storage-transfer-service",
+        "description": "Data transfers from online and on-premises sources to Cloud Storage.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-sql": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Cloud SQL",
+        "product_url": "https://cloud.google.com/sql",
+        "description": "Relational database services for MySQL, PostgreSQL and SQL Server.",
+        "aliases": [],
+        "category_hints": [
+          "SQL database"
+        ],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "PostgreSQL 16 is orchestrated through Docker on :5432."
+          ]
+        }
+      },
+      "alloydb-for-postgresql": {
+        "category": "database",
+        "priority": "tier2",
+        "name": "AlloyDB for PostgreSQL",
+        "product_url": "https://cloud.google.com/alloydb",
+        "description": "Fully managed, PostgreSQL-compatible database for enterprise workloads.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "firestore": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Firestore",
+        "product_url": "https://cloud.google.com/firestore",
+        "description": "Highly scalable and serverless NoSQL document database, with MongoDB compatibility.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": true,
+          "doc_url": "https://cloud.google.com/datastore/docs/emulator",
+          "notes": [
+            "Official Google Cloud local emulator is provided through the Firestore emulator in Datastore mode and the Firestore emulator tooling."
+          ]
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8088.",
+            "Document CRUD, listeners, queries, and transactions."
+          ]
+        }
+      },
+      "datastore-mode": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Datastore mode",
+        "product_url": "https://cloud.google.com/datastore",
+        "description": "Firestore in Datastore mode compatibility surface.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "manual-supplement"
+        ],
+        "official_google_emulator": {
+          "supported": true,
+          "doc_url": "https://cloud.google.com/datastore/docs/emulator",
+          "notes": [
+            "Official Google Cloud local emulator path is Datastore mode via the Firestore emulator or the legacy Datastore emulator."
+          ]
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "spanner": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Spanner",
+        "product_url": "https://cloud.google.com/spanner",
+        "description": "Cloud-native relational database with unlimited scale and 99.999% availability.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": true,
+          "doc_url": "https://cloud.google.com/spanner/docs/emulator",
+          "notes": [
+            "Official Google Cloud local emulator is provided through the Spanner emulator."
+          ]
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "Official Google emulator is orchestrated through Docker on demand."
+          ]
+        }
+      },
+      "bigtable": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Bigtable",
+        "product_url": "https://cloud.google.com/bigtable",
+        "description": "Cloud-native wide-column database for large-scale, low-latency workloads.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": true,
+          "doc_url": "https://cloud.google.com/bigtable/docs/emulator",
+          "notes": [
+            "Official Google Cloud local emulator is provided through the Bigtable emulator."
+          ]
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "Official Google emulator is orchestrated through Docker on demand."
+          ]
+        }
+      },
+      "memorystore": {
+        "category": "database",
+        "priority": "tier1",
+        "name": "Memorystore",
+        "product_url": "https://cloud.google.com/memorystore",
+        "description": "Fully managed Redis and Memcached for sub-millisecond data access.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "Redis 7 is orchestrated through Docker on :6379."
+          ]
+        }
+      },
+      "bigquery": {
+        "category": "analytics",
+        "priority": "tier1",
+        "name": "BigQuery",
+        "product_url": "https://cloud.google.com/bigquery",
+        "description": "Autonomous data to AI platform for analytics and data science.",
+        "aliases": [],
+        "category_hints": [
+          "Data warehouse"
+        ],
+        "sources": [
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "REST surface on :9060.",
+            "DuckDB-backed BigQuery emulation."
+          ]
+        }
+      },
+      "dataflow": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Dataflow",
+        "product_url": "https://cloud.google.com/products/dataflow",
+        "description": "Streaming analytics for stream and batch processing.",
+        "aliases": [],
+        "category_hints": [
+          "Streaming data analytics"
+        ],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "dataproc": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Dataproc",
+        "product_url": "https://cloud.google.com/dataproc",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "managed-service-for-apache-spark": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Managed Service for Apache Spark",
+        "product_url": "https://cloud.google.com/products/managed-service-for-apache-spark",
+        "description": "Zero-ops serverless or managed clusters, accelerated by Lightning Engine.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "managed-service-for-apache-kafka": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Managed Service for Apache Kafka",
+        "product_url": "https://cloud.google.com/products/managed-service-for-apache-kafka",
+        "description": "Managed Kafka service to operate highly available Apache Kafka clusters.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "managed-service-for-apache-airflow": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Managed Service for Apache Airflow",
+        "product_url": "https://cloud.google.com/products/managed-service-for-apache-airflow",
+        "description": "Workflow orchestration service built on Apache Airflow.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-data-fusion": {
+        "category": "analytics",
+        "priority": "tier3",
+        "name": "Cloud Data Fusion",
+        "product_url": "https://cloud.google.com/data-fusion",
+        "description": "Data integration for building and managing data pipelines.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "datastream": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Datastream",
+        "product_url": "https://cloud.google.com/datastream",
+        "description": "Serverless change data capture and replication service.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "database-migration-service": {
+        "category": "analytics",
+        "priority": "tier2",
+        "name": "Database Migration Service",
+        "product_url": "https://cloud.google.com/database-migration",
+        "description": "Serverless, minimal downtime migrations to Cloud SQL.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "pub-sub": {
+        "category": "messaging",
+        "priority": "tier1",
+        "name": "Pub/Sub",
+        "product_url": "https://cloud.google.com/pubsub",
+        "description": "Messaging service for event ingestion and delivery.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": true,
+          "doc_url": "https://cloud.google.com/pubsub/docs/emulator",
+          "notes": [
+            "Official Google Cloud local emulator is provided through the Pub/Sub emulator."
+          ]
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8085.",
+            "Topics, subscriptions, publish, pull, StreamingPull, push subscriptions, and dead-letter topics."
+          ]
+        }
+      },
+      "cloud-tasks": {
+        "category": "messaging",
+        "priority": "tier1",
+        "name": "Cloud Tasks",
+        "product_url": "https://cloud.google.com/tasks/docs",
+        "description": "Task management service for asynchronous task execution.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8089.",
+            "Queue and task CRUD, HTTP target dispatch, scheduling, and retry with exponential backoff."
+          ]
+        }
+      },
+      "eventarc": {
+        "category": "messaging",
+        "priority": "tier1",
+        "name": "Eventarc",
+        "product_url": "https://cloud.google.com/eventarc/docs",
+        "description": "Build an event-driven architecture that can connect any service.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "workflows": {
+        "category": "integration",
+        "priority": "tier1",
+        "name": "Workflows",
+        "product_url": "https://cloud.google.com/workflows",
+        "description": "Workflow orchestration for serverless products and API services.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "application-integration": {
+        "category": "integration",
+        "priority": "tier2",
+        "name": "Application Integration",
+        "product_url": "https://cloud.google.com/application-integration",
+        "description": "Connect to 3rd party apps and enable data consistency without code.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-scheduler": {
+        "category": "integration",
+        "priority": "tier1",
+        "name": "Cloud Scheduler",
+        "product_url": "https://cloud.google.com/scheduler/docs",
+        "description": "Cron job scheduler for task automation and management.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "api-gateway": {
+        "category": "api",
+        "priority": "tier1",
+        "name": "API Gateway",
+        "product_url": "https://cloud.google.com/api-gateway/docs",
+        "description": "Develop, deploy, secure, and manage APIs with a fully managed gateway.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "apigee": {
+        "category": "api",
+        "priority": "tier2",
+        "name": "Apigee",
+        "product_url": "https://cloud.google.com/apigee",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-endpoints": {
+        "category": "api",
+        "priority": "tier2",
+        "name": "Cloud Endpoints",
+        "product_url": "https://cloud.google.com/endpoints/docs",
+        "description": "Deployment and development management for APIs on Google Cloud.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "virtual-private-cloud": {
+        "category": "networking",
+        "priority": "tier1",
+        "name": "Virtual Private Cloud",
+        "product_url": "https://cloud.google.com/vpc",
+        "description": "Single VPC for an entire organization, isolated within projects.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-dns": {
+        "category": "networking",
+        "priority": "tier1",
+        "name": "Cloud DNS",
+        "product_url": "https://cloud.google.com/dns",
+        "description": "Domain name system for reliable and low-latency name lookups.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-load-balancing": {
+        "category": "networking",
+        "priority": "tier1",
+        "name": "Cloud Load Balancing",
+        "product_url": "https://cloud.google.com/load-balancing",
+        "description": "Service for distributing traffic across applications and regions.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-nat": {
+        "category": "networking",
+        "priority": "tier2",
+        "name": "Cloud NAT",
+        "product_url": "https://cloud.google.com/nat",
+        "description": "NAT service for giving private instances internet access.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "private-service-connect": {
+        "category": "networking",
+        "priority": "tier2",
+        "name": "Private Service Connect",
+        "product_url": "https://cloud.google.com/private-service-connect",
+        "description": "Secure connection between your VPC and services.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "network-connectivity-center": {
+        "category": "networking",
+        "priority": "tier2",
+        "name": "Network Connectivity Center",
+        "product_url": "https://cloud.google.com/network-connectivity-center",
+        "description": "Connectivity management to help simplify and scale networks.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-cdn": {
+        "category": "networking",
+        "priority": "tier2",
+        "name": "Cloud CDN",
+        "product_url": "https://cloud.google.com/cdn",
+        "description": "Content delivery network for serving web and video content.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-service-mesh": {
+        "category": "networking",
+        "priority": "tier2",
+        "name": "Cloud Service Mesh",
+        "product_url": "https://cloud.google.com/products/service-mesh",
+        "description": "Fully managed service mesh based on Envoy and Istio.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-ids": {
+        "category": "networking",
+        "priority": "tier3",
+        "name": "Cloud IDS",
+        "product_url": "https://cloud.google.com/intrusion-detection-system",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "secure-web-proxy": {
+        "category": "networking",
+        "priority": "tier3",
+        "name": "Secure Web Proxy",
+        "product_url": "https://cloud.google.com/secure-web-proxy",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-iam": {
+        "category": "security",
+        "priority": "tier1",
+        "name": "Cloud IAM",
+        "product_url": "https://cloud.google.com/security/products/iam",
+        "description": "Permissions management system for Google Cloud resources.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "secret-manager": {
+        "category": "security",
+        "priority": "tier1",
+        "name": "Secret Manager",
+        "product_url": "https://cloud.google.com/secret-manager",
+        "description": "Securely store, manage, and access secrets and secret versions.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "manual-supplement"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8086.",
+            "Secrets with versioning and latest alias access."
+          ]
+        }
+      },
+      "cloud-key-management": {
+        "category": "security",
+        "priority": "tier1",
+        "name": "Cloud Key Management",
+        "product_url": "https://cloud.google.com/security/products/security-key-management",
+        "description": "Manage encryption keys on Google Cloud.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "manual-supplement",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8091.",
+            "Encrypt/decrypt, asymmetric sign, HMAC, and key management."
+          ]
+        }
+      },
+      "identity-platform": {
+        "category": "security",
+        "priority": "tier2",
+        "name": "Identity Platform",
+        "product_url": "https://cloud.google.com/identity-platform",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "identity-aware-proxy": {
+        "category": "security",
+        "priority": "tier2",
+        "name": "Identity-Aware Proxy",
+        "product_url": "https://cloud.google.com/iap",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-armor": {
+        "category": "security",
+        "priority": "tier2",
+        "name": "Cloud Armor",
+        "product_url": "https://cloud.google.com/security/products/armor",
+        "description": "Security policies and defense against web and DDoS attacks.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "vpc-service-controls": {
+        "category": "security",
+        "priority": "tier2",
+        "name": "VPC Service Controls",
+        "product_url": "https://cloud.google.com/vpc-service-controls",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "security-command-center": {
+        "category": "security",
+        "priority": "tier3",
+        "name": "Security Command Center",
+        "product_url": "https://cloud.google.com/security/products/security-command-center",
+        "description": "Platform for defending against threats to your Google Cloud assets.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "artifact-registry": {
+        "category": "devops",
+        "priority": "tier1",
+        "name": "Artifact Registry",
+        "product_url": "https://cloud.google.com/artifact-registry",
+        "description": "Store, manage, and secure container images and language packages.",
+        "aliases": [],
+        "category_hints": [
+          "Container registry"
+        ],
+        "sources": [
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-build": {
+        "category": "devops",
+        "priority": "tier1",
+        "name": "Cloud Build",
+        "product_url": "https://cloud.google.com/build",
+        "description": "Service for executing builds on Google Cloud infrastructure.",
+        "aliases": [],
+        "category_hints": [
+          "CI/CD platform"
+        ],
+        "sources": [
+          "products-page-embedded-map",
+          "products-page-embedded-tuple",
+          "products-page-product-card"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-deploy": {
+        "category": "devops",
+        "priority": "tier2",
+        "name": "Cloud Deploy",
+        "product_url": "https://cloud.google.com/deploy",
+        "description": "Fully managed continuous delivery to GKE and Cloud Run.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-deployment-manager": {
+        "category": "devops",
+        "priority": "tier2",
+        "name": "Cloud Deployment Manager",
+        "product_url": "https://cloud.google.com/deployment-manager/docs",
+        "description": "Service for creating and managing Google Cloud resources.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "infrastructure-manager": {
+        "category": "devops",
+        "priority": "tier2",
+        "name": "Infrastructure Manager",
+        "product_url": "https://cloud.google.com/infrastructure-manager/docs",
+        "description": "Automate infrastructure management with Terraform.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "config-connector": {
+        "category": "devops",
+        "priority": "tier2",
+        "name": "Config Connector",
+        "product_url": "https://cloud.google.com/config-connector/docs/overview",
+        "description": "Kubernetes add-on for managing Google Cloud resources.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-logging": {
+        "category": "observability",
+        "priority": "tier1",
+        "name": "Cloud Logging",
+        "product_url": "https://cloud.google.com/logging",
+        "description": "Google Cloud audit, platform, and application logs management.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "manual-supplement",
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "gRPC surface on :8092.",
+            "Write and query log entries."
+          ]
+        }
+      },
+      "cloud-monitoring": {
+        "category": "observability",
+        "priority": "tier1",
+        "name": "Cloud Monitoring",
+        "product_url": "https://cloud.google.com/monitoring",
+        "description": "Infrastructure and application health with rich metrics.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-trace": {
+        "category": "observability",
+        "priority": "tier2",
+        "name": "Cloud Trace",
+        "product_url": "https://cloud.google.com/trace/docs",
+        "description": "Tracing system collecting latency data from applications.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-profiler": {
+        "category": "observability",
+        "priority": "tier2",
+        "name": "Cloud Profiler",
+        "product_url": "https://cloud.google.com/profiler/docs",
+        "description": "CPU and heap profiler for analyzing application performance.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "error-reporting": {
+        "category": "observability",
+        "priority": "tier2",
+        "name": "Error Reporting",
+        "product_url": "https://cloud.google.com/error-reporting/docs/grouping-errors",
+        "description": "Application error identification and analysis.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "managed-service-for-prometheus": {
+        "category": "observability",
+        "priority": "tier2",
+        "name": "Managed Service for Prometheus",
+        "product_url": "https://cloud.google.com/managed-prometheus",
+        "description": "Fully-managed Prometheus on Google Cloud.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "personalized-service-health": {
+        "category": "observability",
+        "priority": "tier3",
+        "name": "Personalized Service Health",
+        "product_url": "https://cloud.google.com/service-health",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "vertex-ai": {
+        "category": "ai",
+        "priority": "tier1",
+        "name": "Vertex AI",
+        "product_url": "https://cloud.google.com/vertex-ai",
+        "description": "Unified platform for ML models and generative AI.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "manual-supplement"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": true,
+          "source_url": "https://localgcp.com/",
+          "notes": [
+            "REST surface on :8090.",
+            "generateContent and embeddings are proxied through Ollama or run in stub mode."
+          ]
+        }
+      },
+      "document-ai": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Document AI",
+        "product_url": "https://cloud.google.com/document-ai",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-vision-api": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Cloud Vision API",
+        "product_url": "https://cloud.google.com/vision",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-speech-to-text": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Cloud Speech-to-Text",
+        "product_url": "https://cloud.google.com/speech-to-text",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-text-to-speech": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Cloud Text-to-Speech",
+        "product_url": "https://cloud.google.com/text-to-speech",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "translation-ai": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Translation AI",
+        "product_url": "https://cloud.google.com/translate",
+        "description": "Language detection, translation, and glossary support.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-natural-language": {
+        "category": "ai",
+        "priority": "tier2",
+        "name": "Cloud Natural Language",
+        "product_url": "https://cloud.google.com/natural-language",
+        "description": null,
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-map"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      },
+      "cloud-healthcare-api": {
+        "category": "industry",
+        "priority": "tier3",
+        "name": "Cloud Healthcare API",
+        "product_url": "https://cloud.google.com/healthcare-api",
+        "description": "Solution for bridging existing care systems and apps on Google Cloud.",
+        "aliases": [],
+        "category_hints": [],
+        "sources": [
+          "products-page-embedded-tuple"
+        ],
+        "official_google_emulator": {
+          "supported": false,
+          "doc_url": null,
+          "notes": []
+        },
+        "localgcp": {
+          "supported": false,
+          "source_url": "https://localgcp.com/",
+          "notes": []
+        }
+      }
+    }
+  },
+  "services": {
+    "access-transparency-cloud-provider-admin-logs": {
+      "name": "Access Transparency - Cloud Provider Admin Logs",
+      "product_url": "https://cloud.google.com/access-transparency",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "agent-assist": {
+      "name": "Agent Assist",
+      "product_url": "https://cloud.google.com/agent-assist",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "agent-search": {
+      "name": "Agent Search",
+      "product_url": "https://cloud.google.com/products/gemini-enterprise-agent-platform/agent-search",
+      "description": "Build Google-quality search for your enterprise apps and experiences.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "ai-commerce-search": {
+      "name": "AI Commerce Search",
+      "product_url": "https://cloud.google.com/gemini-enterprise-cx/commerce",
+      "description": "Google-quality search and product recommendations for retailers.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "ai-infrastructure": {
+      "name": "AI Infrastructure",
+      "product_url": "https://cloud.google.com/ai-infrastructure",
+      "description": "Train, serve and operate your AI applications on the agent-native infrastructure powering Google.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "alloydb-for-postgresql": {
+      "name": "AlloyDB for PostgreSQL",
+      "product_url": "https://cloud.google.com/alloydb",
+      "description": "Fully managed, PostgreSQL-compatible database for enterprise workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "anthos": {
+      "name": "Anthos",
+      "product_url": "https://cloud.google.com/anthos",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "anti-money-laundering-ai": {
+      "name": "Anti Money Laundering AI",
+      "product_url": "https://cloud.google.com/anti-money-laundering-ai",
+      "description": "Detect suspicious, potential money laundering activity with AI.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "api-gateway": {
+      "name": "API Gateway",
+      "product_url": "https://cloud.google.com/api-gateway/docs",
+      "description": "Develop, deploy, secure, and manage APIs with a fully managed gateway.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "apigee": {
+      "name": "Apigee",
+      "product_url": "https://cloud.google.com/apigee",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "apigee-api-management": {
+      "name": "Apigee API Management",
+      "product_url": "https://cloud.google.com/apigee",
+      "description": "Manage the full life cycle of APIs anywhere with visibility and control.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "app-engine": {
+      "name": "App Engine",
+      "product_url": "https://cloud.google.com/appengine",
+      "description": "Serverless application platform for apps and back ends.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "application-integration": {
+      "name": "Application Integration",
+      "product_url": "https://cloud.google.com/application-integration",
+      "description": "Connect to 3rd party apps and enable data consistency without code.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "appsheet": {
+      "name": "AppSheet",
+      "product_url": "https://cloud.google.com/appsheet",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "appsheet-automation": {
+      "name": "AppSheet Automation",
+      "product_url": "https://cloud.google.com/appsheet/automation",
+      "description": "Build automations and applications on a unified platform.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "artifact-registry": {
+      "name": "Artifact Registry",
+      "product_url": "https://cloud.google.com/artifact-registry",
+      "description": "Store, manage, and secure container images and language packages.",
+      "aliases": [],
+      "category_hints": [
+        "Container registry"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "assured-open-source-software": {
+      "name": "Assured Open Source Software",
+      "product_url": "https://cloud.google.com/assured-open-source-software",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "assured-workloads": {
+      "name": "Assured Workloads",
+      "product_url": "https://cloud.google.com/security/products/assured-workloads",
+      "description": "Compliance and security controls for sensitive workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "backup-and-dr": {
+      "name": "Backup and DR",
+      "product_url": "https://cloud.google.com/backup-disaster-recovery",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "backup-and-dr-service": {
+      "name": "Backup and DR Service",
+      "product_url": "https://cloud.google.com/backup-disaster-recovery",
+      "description": "Service for centralized, application-consistent data protection.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "bare-metal": {
+      "name": "Bare Metal",
+      "product_url": "https://cloud.google.com/bare-metal",
+      "description": "Infrastructure to run specialized workloads on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "bare-metal-solution": {
+      "name": "Bare Metal Solution",
+      "product_url": "https://cloud.google.com/bare-metal",
+      "description": "Fully managed infrastructure for your Oracle workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "batch": {
+      "name": "Batch",
+      "product_url": "https://cloud.google.com/batch",
+      "description": "Fully managed service for scheduling batch jobs.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "beyondcorp-enterprise": {
+      "name": "BeyondCorp Enterprise",
+      "product_url": "https://cloud.google.com/beyondcorp-enterprise",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "bigquery": {
+      "name": "BigQuery",
+      "product_url": "https://cloud.google.com/bigquery",
+      "description": "Autonomous data to AI platform for analytics and data science.",
+      "aliases": [],
+      "category_hints": [
+        "Data warehouse"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "REST surface on :9060.",
+          "DuckDB-backed BigQuery emulation."
+        ]
+      }
+    },
+    "bigtable": {
+      "name": "Bigtable",
+      "product_url": "https://cloud.google.com/bigtable",
+      "description": "Cloud-native wide-column database for large-scale, low-latency workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": true,
+        "doc_url": "https://cloud.google.com/bigtable/docs/emulator",
+        "notes": [
+          "Official Google Cloud local emulator is provided through the Bigtable emulator."
+        ]
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "Official Google emulator is orchestrated through Docker on demand."
+        ]
+      }
+    },
+    "block-storage": {
+      "name": "Block Storage",
+      "product_url": "https://cloud.google.com/products/block-storage",
+      "description": "High-performance storage for AI, analytics, databases, and enterprise applications.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "blockchain-node-engine": {
+      "name": "Blockchain Node Engine",
+      "product_url": "https://cloud.google.com/blockchain-node-engine",
+      "description": "Fully managed node hosting for developing on the blockchain.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "blockchain-rpc": {
+      "name": "Blockchain RPC",
+      "product_url": "https://cloud.google.com/products/blockchain-rpc",
+      "description": "Enterprise-grade RPC for building on the blockchain.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "carbon-footprint": {
+      "name": "Carbon Footprint",
+      "product_url": "https://cloud.google.com/carbon-footprint",
+      "description": "Dashboard to view and export Google Cloud carbon emissions reports.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "chrome-enterprise": {
+      "name": "Chrome Enterprise",
+      "product_url": "https://chromeenterprise.google",
+      "description": "ChromeOS, Chrome browser, and Chrome devices built for business.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "chrome-enterprise-premium": {
+      "name": "Chrome Enterprise Premium",
+      "product_url": "https://docs.cloud.google.com/chrome-enterprise-premium",
+      "description": "Get secure enterprise browsing with extensive endpoint visibility.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-apis": {
+      "name": "Cloud APIs",
+      "product_url": "https://cloud.google.com/apis",
+      "description": "Programmatic interfaces for  Google Cloud services.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-armor": {
+      "name": "Cloud Armor",
+      "product_url": "https://cloud.google.com/security/products/armor",
+      "description": "Security policies and defense against web and DDoS attacks.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-build": {
+      "name": "Cloud Build",
+      "product_url": "https://cloud.google.com/build",
+      "description": "Service for executing builds on Google Cloud infrastructure.",
+      "aliases": [],
+      "category_hints": [
+        "CI/CD platform"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-cdn": {
+      "name": "Cloud CDN",
+      "product_url": "https://cloud.google.com/cdn",
+      "description": "Content delivery network for serving web and video content.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-cdn-and-media-cdn": {
+      "name": "Cloud CDN and Media CDN",
+      "product_url": "https://cloud.google.com/cdn",
+      "description": "Content delivery network for serving web and video content.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-code": {
+      "name": "Cloud Code",
+      "product_url": "https://cloud.google.com/code",
+      "description": "IDE support to write, run, and debug Kubernetes applications.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-composer": {
+      "name": "Cloud Composer",
+      "product_url": "https://cloud.google.com/composer",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-connectivity": {
+      "name": "Cloud Connectivity",
+      "product_url": "https://cloud.google.com/hybrid-connectivity",
+      "description": "Connectivity options for VPN, peering, and enterprise needs.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-data-fusion": {
+      "name": "Cloud Data Fusion",
+      "product_url": "https://cloud.google.com/data-fusion",
+      "description": "Data integration for building and managing data pipelines.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-data-loss-prevention": {
+      "name": "Cloud Data Loss Prevention",
+      "product_url": "https://cloud.google.com/dlp",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-deploy": {
+      "name": "Cloud Deploy",
+      "product_url": "https://cloud.google.com/deploy",
+      "description": "Fully managed continuous delivery to GKE and Cloud Run.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-deployment-manager": {
+      "name": "Cloud Deployment Manager",
+      "product_url": "https://cloud.google.com/deployment-manager/docs",
+      "description": "Service for creating and managing Google Cloud resources.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-dns": {
+      "name": "Cloud DNS",
+      "product_url": "https://cloud.google.com/dns",
+      "description": "Domain name system for reliable and low-latency name lookups.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-endpoints": {
+      "name": "Cloud Endpoints",
+      "product_url": "https://cloud.google.com/endpoints/docs",
+      "description": "Deployment and development management for APIs on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-foundation-toolkit": {
+      "name": "Cloud Foundation Toolkit",
+      "product_url": "https://cloud.google.com/docs/terraform/blueprints/terraform-blueprints",
+      "description": "Reference templates for Deployment Manager and Terraform.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-functions": {
+      "name": "Cloud Functions",
+      "product_url": "https://cloud.google.com/functions",
+      "description": "Platform for creating functions that respond to cloud events.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-gpus": {
+      "name": "Cloud GPUs",
+      "product_url": "https://cloud.google.com/gpu",
+      "description": "GPUs for ML, scientific computing, and 3D visualization.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-healthcare-api": {
+      "name": "Cloud Healthcare API",
+      "product_url": "https://cloud.google.com/healthcare-api",
+      "description": "Solution for bridging existing care systems and apps on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-iam": {
+      "name": "Cloud IAM",
+      "product_url": "https://cloud.google.com/security/products/iam",
+      "description": "Permissions management system for Google Cloud resources.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-identity": {
+      "name": "Cloud Identity",
+      "product_url": "https://cloud.google.com/identity",
+      "description": "Unified platform for IT admins to manage user devices and apps.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-ids": {
+      "name": "Cloud IDS",
+      "product_url": "https://cloud.google.com/intrusion-detection-system",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-key-management": {
+      "name": "Cloud Key Management",
+      "product_url": "https://cloud.google.com/security/products/security-key-management",
+      "description": "Manage encryption keys on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "manual-supplement",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8091.",
+          "Encrypt/decrypt, asymmetric sign, HMAC, and key management."
+        ]
+      }
+    },
+    "cloud-load-balancing": {
+      "name": "Cloud Load Balancing",
+      "product_url": "https://cloud.google.com/load-balancing",
+      "description": "Service for distributing traffic across applications and regions.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-logging": {
+      "name": "Cloud Logging",
+      "product_url": "https://cloud.google.com/logging",
+      "description": "Google Cloud audit, platform, and application logs management.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "manual-supplement",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8092.",
+          "Write and query log entries."
+        ]
+      }
+    },
+    "cloud-monitoring": {
+      "name": "Cloud Monitoring",
+      "product_url": "https://cloud.google.com/monitoring",
+      "description": "Infrastructure and application health with rich metrics.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-nat": {
+      "name": "Cloud NAT",
+      "product_url": "https://cloud.google.com/nat",
+      "description": "NAT service for giving private instances internet access.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-natural-language": {
+      "name": "Cloud Natural Language",
+      "product_url": "https://cloud.google.com/natural-language",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-profiler": {
+      "name": "Cloud Profiler",
+      "product_url": "https://cloud.google.com/profiler/docs",
+      "description": "CPU and heap profiler for analyzing application performance.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-quotas": {
+      "name": "Cloud Quotas",
+      "product_url": "https://cloud.google.com/docs/quotas",
+      "description": "Manage quotas for all Google Cloud services.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-run": {
+      "name": "Cloud Run",
+      "product_url": "https://cloud.google.com/run",
+      "description": "Fully managed environment for running containerized apps.",
+      "aliases": [],
+      "category_hints": [
+        "Serverless compute"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "Docker-backed runtime surfaced on :8093."
+        ]
+      }
+    },
+    "cloud-run-functions": {
+      "name": "Cloud Run functions",
+      "product_url": "https://cloud.google.com/functions",
+      "description": "Event-driven compute platform for cloud services and apps.",
+      "aliases": [],
+      "category_hints": [
+        "Event-driven functions"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-scheduler": {
+      "name": "Cloud Scheduler",
+      "product_url": "https://cloud.google.com/scheduler/docs",
+      "description": "Cron job scheduler for task automation and management.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-sdk": {
+      "name": "Cloud SDK",
+      "product_url": "https://cloud.google.com/sdk",
+      "description": "Command-line tools and libraries for Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-service-mesh": {
+      "name": "Cloud Service Mesh",
+      "product_url": "https://cloud.google.com/products/service-mesh",
+      "description": "Fully managed service mesh based on Envoy and Istio.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-shell": {
+      "name": "Cloud Shell",
+      "product_url": "https://cloud.google.com/shell",
+      "description": "Interactive shell environment with a built-in command line.",
+      "aliases": [],
+      "category_hints": [
+        "Online development terminal"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-source-repositories": {
+      "name": "Cloud Source Repositories",
+      "product_url": "https://cloud.google.com/source-repositories/docs",
+      "description": "Private Git repository to store, manage, and track code.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-speech-to-text": {
+      "name": "Cloud Speech-to-Text",
+      "product_url": "https://cloud.google.com/speech-to-text",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-sql": {
+      "name": "Cloud SQL",
+      "product_url": "https://cloud.google.com/sql",
+      "description": "Relational database services for MySQL, PostgreSQL and SQL Server.",
+      "aliases": [],
+      "category_hints": [
+        "SQL database"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "PostgreSQL 16 is orchestrated through Docker on :5432."
+        ]
+      }
+    },
+    "cloud-storage": {
+      "name": "Cloud Storage",
+      "product_url": "https://cloud.google.com/storage",
+      "description": "Object storage that's secure, durable and scaleable.",
+      "aliases": [],
+      "category_hints": [
+        "Object storage"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "REST surface on :4443.",
+          "Bucket and object CRUD, simple or multipart or resumable uploads, signed URLs, and JSON/XML API paths."
+        ]
+      }
+    },
+    "cloud-tasks": {
+      "name": "Cloud Tasks",
+      "product_url": "https://cloud.google.com/tasks/docs",
+      "description": "Task management service for asynchronous task execution.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8089.",
+          "Queue and task CRUD, HTTP target dispatch, scheduling, and retry with exponential backoff."
+        ]
+      }
+    },
+    "cloud-text-to-speech": {
+      "name": "Cloud Text-to-Speech",
+      "product_url": "https://cloud.google.com/text-to-speech",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-tpus": {
+      "name": "Cloud TPUs",
+      "product_url": "https://cloud.google.com/tpu",
+      "description": "Tensor processing units for machine learning applications.",
+      "aliases": [],
+      "category_hints": [
+        "Tensor Processing Units"
+      ],
+      "sources": [
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-trace": {
+      "name": "Cloud Trace",
+      "product_url": "https://cloud.google.com/trace/docs",
+      "description": "Tracing system collecting latency data from applications.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-video-intelligence-api": {
+      "name": "Cloud Video Intelligence API",
+      "product_url": "https://cloud.google.com/video-intelligence",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-vision-api": {
+      "name": "Cloud Vision API",
+      "product_url": "https://cloud.google.com/vision",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cloud-workstations": {
+      "name": "Cloud Workstations",
+      "product_url": "https://cloud.google.com/workstations",
+      "description": "Managed and secure development environments in the cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "compute-engine": {
+      "name": "Compute Engine",
+      "product_url": "https://cloud.google.com/products/compute",
+      "description": "Virtual machines running in Google's data center.",
+      "aliases": [],
+      "category_hints": [
+        "Virtual machines (VMs)"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "config-connector": {
+      "name": "Config Connector",
+      "product_url": "https://cloud.google.com/config-connector/docs/overview",
+      "description": "Kubernetes add-on for managing Google Cloud resources.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "conversational-agents": {
+      "name": "Conversational Agents",
+      "product_url": "https://cloud.google.com/products/conversational-agents",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "cost-management": {
+      "name": "Cost Management",
+      "product_url": "https://cloud.google.com/cost-management",
+      "description": "Tools for monitoring, controlling, and optimizing your costs.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "customer-experience-agent-studio": {
+      "name": "Customer Experience Agent Studio",
+      "product_url": "https://cloud.google.com/gemini-enterprise-cx/cx-agent-studio",
+      "description": "Build conversational AI with both deterministic and gen AI functionality.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "data-studio": {
+      "name": "Data Studio",
+      "product_url": "https://cloud.google.com/data-studio",
+      "description": "Interactive data suite for dashboarding, reporting, and analytics.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "database-migration-service": {
+      "name": "Database Migration Service",
+      "product_url": "https://cloud.google.com/database-migration",
+      "description": "Serverless, minimal downtime migrations to Cloud SQL.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "dataflow": {
+      "name": "Dataflow",
+      "product_url": "https://cloud.google.com/products/dataflow",
+      "description": "Streaming analytics for stream and batch processing.",
+      "aliases": [],
+      "category_hints": [
+        "Streaming data analytics"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "dataform": {
+      "name": "Dataform",
+      "product_url": "https://cloud.google.com/dataform",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "dataplex": {
+      "name": "Dataplex",
+      "product_url": "https://cloud.google.com/dataplex",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "dataproc": {
+      "name": "Dataproc",
+      "product_url": "https://cloud.google.com/dataproc",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "datasets": {
+      "name": "Datasets",
+      "product_url": "https://cloud.google.com/datasets",
+      "description": "Data from Google, public, and commercial providers to enrich your analytics and AI initiatives.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "datastore-mode": {
+      "name": "Datastore mode",
+      "product_url": "https://cloud.google.com/datastore",
+      "description": "Firestore in Datastore mode compatibility surface.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "manual-supplement"
+      ],
+      "official_google_emulator": {
+        "supported": true,
+        "doc_url": "https://cloud.google.com/datastore/docs/emulator",
+        "notes": [
+          "Official Google Cloud local emulator path is Datastore mode via the Firestore emulator or the legacy Datastore emulator."
+        ]
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "datastream": {
+      "name": "Datastream",
+      "product_url": "https://cloud.google.com/datastream",
+      "description": "Serverless change data capture and replication service.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "deep-learning-containers": {
+      "name": "Deep Learning Containers",
+      "product_url": "https://cloud.google.com/deep-learning-containers/docs",
+      "description": "Containers with data science frameworks, libraries, and tools.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "device-connect-for-fitbit": {
+      "name": "Device Connect for Fitbit",
+      "product_url": "https://cloud.google.com/device-connect",
+      "description": "Gain a 360-degree patient view with connected Fitbit data on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "devops-best-practices": {
+      "name": "DevOps Best Practices",
+      "product_url": "https://cloud.google.com/devops",
+      "description": "Processes and resources for implementing DevOps in your org.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "document-ai": {
+      "name": "Document AI",
+      "product_url": "https://cloud.google.com/document-ai",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "earth-engine": {
+      "name": "Earth Engine",
+      "product_url": "https://cloud.google.com/earth-engine",
+      "description": "Geospatial platform for Earth observation data and analysis.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "error-reporting": {
+      "name": "Error Reporting",
+      "product_url": "https://cloud.google.com/error-reporting/docs/grouping-errors",
+      "description": "Application error identification and analysis.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "eventarc": {
+      "name": "Eventarc",
+      "product_url": "https://cloud.google.com/eventarc/docs",
+      "description": "Build an event-driven architecture that can connect any service.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "filestore": {
+      "name": "Filestore",
+      "product_url": "https://cloud.google.com/filestore",
+      "description": "File storage that is highly scalable and secure.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "firestore": {
+      "name": "Firestore",
+      "product_url": "https://cloud.google.com/firestore",
+      "description": "Highly scalable and serverless NoSQL document database, with MongoDB compatibility.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": true,
+        "doc_url": "https://cloud.google.com/datastore/docs/emulator",
+        "notes": [
+          "Official Google Cloud local emulator is provided through the Firestore emulator in Datastore mode and the Firestore emulator tooling."
+        ]
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8088.",
+          "Document CRUD, listeners, queries, and transactions."
+        ]
+      }
+    },
+    "gemini-code-assist": {
+      "name": "Gemini Code Assist",
+      "product_url": "https://cloud.google.com/products/gemini/code-assist",
+      "description": "AI-powered assistant available across Google Cloud and your IDE.",
+      "aliases": [],
+      "category_hints": [
+        "AI-assisted coding"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "gemini-enterprise": {
+      "name": "Gemini Enterprise",
+      "product_url": "https://cloud.google.com/gemini-enterprise",
+      "description": "Unified agentic portfolio for your entire organization.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "gemini-enterprise-agent-platform": {
+      "name": "Gemini Enterprise Agent Platform",
+      "product_url": "https://cloud.google.com/products/gemini-enterprise-agent-platform",
+      "description": "Unified platform for ML models, generative AI, and agent building.",
+      "aliases": [],
+      "category_hints": [
+        "AI and ML platform"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "gemini-enterprise-app": {
+      "name": "Gemini Enterprise app",
+      "product_url": "https://cloud.google.com/gemini-enterprise",
+      "description": "Discover, create, share, and run AI agents across your organization—all in one secure environment.",
+      "aliases": [],
+      "category_hints": [
+        "Agentic platform"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "gemini-enterprise-for-customer-experience": {
+      "name": "Gemini Enterprise for Customer Experience",
+      "product_url": "https://cloud.google.com/gemini-enterprise-cx",
+      "description": "Build and manage agents that live across the entire customer lifecycle.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "gemini-for-databases": {
+      "name": "Gemini for Databases",
+      "product_url": "https://cloud.google.com/products/gemini/databases",
+      "description": "Supercharge database development and management with AI.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "generative-ai-app-builder": {
+      "name": "Generative AI App Builder",
+      "product_url": "https://cloud.google.com/generative-ai-app-builder",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-cloud-cybershield": {
+      "name": "Google Cloud Cybershield™",
+      "product_url": "https://cloud.google.com/security/solutions/secops-cybershield",
+      "description": "Strengthen nationwide cyber defense.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-cloud-deploy": {
+      "name": "Google Cloud Deploy",
+      "product_url": "https://cloud.google.com/deploy",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-cloud-managed-lustre": {
+      "name": "Google Cloud Managed Lustre",
+      "product_url": "https://cloud.google.com/products/managed-lustre",
+      "description": "High performance managed parallel file service.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-cloud-netapp-volumes": {
+      "name": "Google Cloud NetApp Volumes",
+      "product_url": "https://cloud.google.com/netapp-volumes",
+      "description": "File storage service for NFS, SMB, and multi-protocol environments.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-cloud-with-gemini": {
+      "name": "Google Cloud with Gemini",
+      "product_url": "https://cloud.google.com/ai/gemini",
+      "description": "AI assistants for application development, coding, and more.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-distributed-cloud": {
+      "name": "Google Distributed Cloud",
+      "product_url": "https://cloud.google.com/distributed-cloud",
+      "description": "Fully managed solutions for the edge and data centers.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-distributed-cloud-air-gapped": {
+      "name": "Google Distributed Cloud Air-gapped",
+      "product_url": "https://cloud.google.com/distributed-cloud-air-gapped",
+      "description": "Distributed cloud for air-gapped workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-distributed-cloud-connected": {
+      "name": "Google Distributed Cloud Connected",
+      "product_url": "https://cloud.google.com/distributed-cloud-connected",
+      "description": "Distributed cloud services for edge workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-kubernetes-engine": {
+      "name": "Google Kubernetes Engine",
+      "product_url": "https://cloud.google.com/kubernetes-engine",
+      "description": "Managed environment for running containerized apps.",
+      "aliases": [],
+      "category_hints": [
+        "Containers"
+      ],
+      "sources": [
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-maps-platform": {
+      "name": "Google Maps Platform",
+      "product_url": "https://mapsplatform.google.com",
+      "description": "Create immersive location experiences and improve business operations.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-security-operations": {
+      "name": "Google Security Operations",
+      "product_url": "https://cloud.google.com/security/products/security-operations",
+      "description": "Detect, investigate, and respond to cyber threats.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "google-threat-intelligence": {
+      "name": "Google Threat Intelligence",
+      "product_url": "https://cloud.google.com/security/products/threat-intelligence",
+      "description": "Know who’s targeting you.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "identity-platform": {
+      "name": "Identity Platform",
+      "product_url": "https://cloud.google.com/identity-platform",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "identity-aware-proxy": {
+      "name": "Identity-Aware Proxy",
+      "product_url": "https://cloud.google.com/iap",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "infrastructure-manager": {
+      "name": "Infrastructure Manager",
+      "product_url": "https://cloud.google.com/infrastructure-manager/docs",
+      "description": "Automate infrastructure management with Terraform.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "knative": {
+      "name": "Knative",
+      "product_url": "https://knative.dev/docs",
+      "description": "Components to create Kubernetes-native cloud-based software.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "knowledge-catalog": {
+      "name": "Knowledge Catalog",
+      "product_url": "https://cloud.google.com/products/knowledge-catalog",
+      "description": "Always-on catalog for AI that provides universal context for agents.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "lakehouse": {
+      "name": "Lakehouse",
+      "product_url": "https://cloud.google.com/products/lakehouse",
+      "description": "Open lakehouse platform with enterprise storage and performance capabilities.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "live-stream-api": {
+      "name": "Live Stream API",
+      "product_url": "https://cloud.google.com/livestream/docs",
+      "description": "Service to convert live video and package for streaming.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "local-ssd": {
+      "name": "Local SSD",
+      "product_url": "https://cloud.google.com/products/local-ssd",
+      "description": "Block storage that is locally attached for high-performance needs.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "looker": {
+      "name": "Looker",
+      "product_url": "https://cloud.google.com/looker",
+      "description": "Platform for BI, data applications, and embedded analytics.",
+      "aliases": [],
+      "category_hints": [
+        "Business intelligence platform"
+      ],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple",
+        "products-page-product-card"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "managed-service-for-apache-airflow": {
+      "name": "Managed Service for Apache Airflow",
+      "product_url": "https://cloud.google.com/products/managed-service-for-apache-airflow",
+      "description": "Workflow orchestration service built on Apache Airflow.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "managed-service-for-apache-kafka": {
+      "name": "Managed Service for Apache Kafka",
+      "product_url": "https://cloud.google.com/products/managed-service-for-apache-kafka",
+      "description": "Managed Kafka service to operate highly available Apache Kafka clusters.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "managed-service-for-apache-spark": {
+      "name": "Managed Service for Apache Spark",
+      "product_url": "https://cloud.google.com/products/managed-service-for-apache-spark",
+      "description": "Zero-ops serverless or managed clusters, accelerated by Lightning Engine.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "managed-service-for-prometheus": {
+      "name": "Managed Service for Prometheus",
+      "product_url": "https://cloud.google.com/managed-prometheus",
+      "description": "Fully-managed Prometheus on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "mandiant-consulting": {
+      "name": "Mandiant Consulting",
+      "product_url": "https://cloud.google.com/security/consulting/mandiant-services",
+      "description": "Get expert guidance before, during, and after an incident.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "mandiant-incident-response": {
+      "name": "Mandiant Incident Response",
+      "product_url": "https://cloud.google.com/security/consulting/mandiant-incident-response-services",
+      "description": "Minimize the impact of a breach.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "mandiant-managed-defense": {
+      "name": "Mandiant Managed Defense",
+      "product_url": "https://cloud.google.com/security/products/managed-defense",
+      "description": "Find and eliminate threats with confidence 24x7.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "memorystore": {
+      "name": "Memorystore",
+      "product_url": "https://cloud.google.com/memorystore",
+      "description": "Fully managed Redis and Memcached for sub-millisecond data access.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "Redis 7 is orchestrated through Docker on :6379."
+        ]
+      }
+    },
+    "migrate-to-containers": {
+      "name": "Migrate to Containers",
+      "product_url": "https://cloud.google.com/products/cloud-migration/containers",
+      "description": "Components for migrating VMs into system containers on GKE.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "migrate-to-virtual-machines": {
+      "name": "Migrate to Virtual Machines",
+      "product_url": "https://cloud.google.com/products/cloud-migration/virtual-machines",
+      "description": "Components for migrating VMs and physical servers to Compute Engine.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "migration-center": {
+      "name": "Migration Center",
+      "product_url": "https://cloud.google.com/migration-center/docs",
+      "description": "Unified platform for migrating and modernizing with Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "model-garden": {
+      "name": "Model Garden",
+      "product_url": "https://console.cloud.google.com/agent-platform/model-garden",
+      "description": "Single place to discover over 200 models from Google and Google partners.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "network-connectivity-center": {
+      "name": "Network Connectivity Center",
+      "product_url": "https://cloud.google.com/network-connectivity-center",
+      "description": "Connectivity management to help simplify and scale networks.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "network-intelligence-center": {
+      "name": "Network Intelligence Center",
+      "product_url": "https://cloud.google.com/network-intelligence-center",
+      "description": "Network monitoring, verification, and optimization platform.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "network-service-tiers": {
+      "name": "Network Service Tiers",
+      "product_url": "https://cloud.google.com/network-tiers",
+      "description": "Cloud network options  based on performance, availability, and cost.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "opencue": {
+      "name": "OpenCue",
+      "product_url": "https://www.opencue.io/docs/getting-started",
+      "description": "Open source render manager for visual effects and animation.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "optimization-ai": {
+      "name": "Optimization AI",
+      "product_url": "https://cloud.google.com/optimization",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "payment-gateway": {
+      "name": "Payment Gateway",
+      "product_url": "https://cloud.google.com/payment-gateway",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "persistent-disk": {
+      "name": "Persistent Disk",
+      "product_url": "https://cloud.google.com/persistent-disk",
+      "description": "Block storage for virtual machine instances running on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "personalized-service-health": {
+      "name": "Personalized Service Health",
+      "product_url": "https://cloud.google.com/service-health",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "private-service-connect": {
+      "name": "Private Service Connect",
+      "product_url": "https://cloud.google.com/private-service-connect",
+      "description": "Secure connection between your VPC and services.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "pub-sub": {
+      "name": "Pub/Sub",
+      "product_url": "https://cloud.google.com/pubsub",
+      "description": "Messaging service for event ingestion and delivery.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": true,
+        "doc_url": "https://cloud.google.com/pubsub/docs/emulator",
+        "notes": [
+          "Official Google Cloud local emulator is provided through the Pub/Sub emulator."
+        ]
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8085.",
+          "Topics, subscriptions, publish, pull, StreamingPull, push subscriptions, and dead-letter topics."
+        ]
+      }
+    },
+    "recommender": {
+      "name": "Recommender",
+      "product_url": "https://cloud.google.com/recommender/docs/whatis-activeassist",
+      "description": "Usage recommendations for Google Cloud products and services.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "secret-manager": {
+      "name": "Secret Manager",
+      "product_url": "https://cloud.google.com/secret-manager",
+      "description": "Securely store, manage, and access secrets and secret versions.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "manual-supplement"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "gRPC surface on :8086.",
+          "Secrets with versioning and latest alias access."
+        ]
+      }
+    },
+    "secure-web-proxy": {
+      "name": "Secure Web Proxy",
+      "product_url": "https://cloud.google.com/secure-web-proxy",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "security-and-resilience-framework": {
+      "name": "Security and Resilience Framework",
+      "product_url": "https://cloud.google.com/security/solutions/security-and-resilience",
+      "description": "Solutions for each phase of the security and resilience life cycle.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "security-command-center": {
+      "name": "Security Command Center",
+      "product_url": "https://cloud.google.com/security/products/security-command-center",
+      "description": "Platform for defending against threats to your Google Cloud assets.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "security-foundation": {
+      "name": "Security Foundation",
+      "product_url": "https://cloud.google.com/security/solutions/security-foundation",
+      "description": "Recommended products to help achieve a strong security posture.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "sensitive-data-protection": {
+      "name": "Sensitive Data Protection",
+      "product_url": "https://cloud.google.com/security/products/sensitive-data-protection",
+      "description": "Discover, classify, and protect your valuable data assets.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "service-catalog": {
+      "name": "Service Catalog",
+      "product_url": "https://cloud.google.com/service-catalog/docs",
+      "description": "Service catalog for admins managing internal enterprise solutions.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "software-as-a-service": {
+      "name": "Software as a Service",
+      "product_url": "https://cloud.google.com/saas",
+      "description": "Build better SaaS products, scale efficiently, and grow your business.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "software-supply-chain-security": {
+      "name": "Software Supply Chain Security",
+      "product_url": "https://cloud.google.com/security/solutions/software-supply-chain-security",
+      "description": "Solution for improving end-to-end software supply chain security.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "sole-tenant-nodes": {
+      "name": "Sole-Tenant Nodes",
+      "product_url": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes",
+      "description": "Dedicated hardware for compliance, licensing, and management.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "sovereign-controls-by-partners": {
+      "name": "Sovereign Controls by Partners",
+      "product_url": "https://cloud.google.com/sovereign-controls-by-partners",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "spanner": {
+      "name": "Spanner",
+      "product_url": "https://cloud.google.com/spanner",
+      "description": "Cloud-native relational database with unlimited scale and 99.999% availability.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": true,
+        "doc_url": "https://cloud.google.com/spanner/docs/emulator",
+        "notes": [
+          "Official Google Cloud local emulator is provided through the Spanner emulator."
+        ]
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "Official Google emulator is orchestrated through Docker on demand."
+        ]
+      }
+    },
+    "speaker-id": {
+      "name": "Speaker ID",
+      "product_url": "https://cloud.google.com/speaker-id",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "spectrum-access-system-sas": {
+      "name": "Spectrum Access System (SAS)",
+      "product_url": "https://cloud.google.com/products/spectrum-access-system",
+      "description": "Controls fundamental access to the Citizens Broadband Radio Service (CBRS).",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "speech-to-text": {
+      "name": "Speech-to-Text",
+      "product_url": "https://cloud.google.com/speech-to-text",
+      "description": "Speech recognition and transcription across 125 languages.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "spot-vms": {
+      "name": "Spot VMs",
+      "product_url": "https://cloud.google.com/spot-vms",
+      "description": "Compute instances for batch jobs and fault-tolerant workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "sql-server-on-google-cloud": {
+      "name": "SQL Server on Google Cloud",
+      "product_url": "https://cloud.google.com/sql-server",
+      "description": "Options for running SQL Server virtual machines on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "sre-principles": {
+      "name": "SRE Principles",
+      "product_url": "https://cloud.google.com/sre",
+      "description": "Tools and resources for adopting SRE in your org.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "storage-transfer-service": {
+      "name": "Storage Transfer Service",
+      "product_url": "https://cloud.google.com/storage-transfer-service",
+      "description": "Data transfers from online and on-premises sources to Cloud Storage.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "t-systems-sovereign-cloud": {
+      "name": "T-Systems Sovereign Cloud",
+      "product_url": "https://cloud.google.com/t-systems-sovereign-cloud",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "telecom-data-fabric": {
+      "name": "Telecom Data Fabric",
+      "product_url": "https://cloud.google.com/telecom-data-fabric",
+      "description": "Telecom data management and analytics with an automated approach.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "telecom-network-automation": {
+      "name": "Telecom Network Automation",
+      "product_url": "https://cloud.google.com/telecom-network-automation",
+      "description": "Ready to use cloud-native automation for telecom networks.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "telecom-subscriber-insights": {
+      "name": "Telecom Subscriber Insights",
+      "product_url": "https://cloud.google.com/telecom-subscriber-insights",
+      "description": "Ingests data to improve subscriber acquisition and retention.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "text-to-speech": {
+      "name": "Text-to-Speech",
+      "product_url": "https://cloud.google.com/text-to-speech",
+      "description": "Speech synthesis in 220+ voices and 40+ languages.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "transcoder-api": {
+      "name": "Transcoder API",
+      "product_url": "https://cloud.google.com/transcoder/docs",
+      "description": "Convert video files and package them for optimized delivery.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "transfer-appliance": {
+      "name": "Transfer Appliance",
+      "product_url": "https://cloud.google.com/transfer-appliance/docs/4.0/overview",
+      "description": "Storage server for moving large volumes of data to Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "translation-ai": {
+      "name": "Translation AI",
+      "product_url": "https://cloud.google.com/translate",
+      "description": "Language detection, translation, and glossary support.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "translation-hub": {
+      "name": "Translation Hub",
+      "product_url": "https://cloud.google.com/translation-hub/docs",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "vertex-ai": {
+      "name": "Vertex AI",
+      "product_url": "https://cloud.google.com/vertex-ai",
+      "description": "Unified platform for ML models and generative AI.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "manual-supplement"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": true,
+        "source_url": "https://localgcp.com/",
+        "notes": [
+          "REST surface on :8090.",
+          "generateContent and embeddings are proxied through Ollama or run in stub mode."
+        ]
+      }
+    },
+    "vertex-ai-search-and-conversation": {
+      "name": "Vertex AI Search and Conversation",
+      "product_url": "https://cloud.google.com/vertex-ai-search-and-conversation",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "video-stitcher-api": {
+      "name": "Video Stitcher API",
+      "product_url": "https://cloud.google.com/video-stitcher/docs",
+      "description": "Service for dynamic or server side ad insertion.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "virtual-private-cloud": {
+      "name": "Virtual Private Cloud",
+      "product_url": "https://cloud.google.com/vpc",
+      "description": "Single VPC for an entire organization, isolated within projects.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "vision-ai": {
+      "name": "Vision AI",
+      "product_url": "https://cloud.google.com/vision",
+      "description": "Custom and pre-trained models to detect emotion, text, and more.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "vmware-engine": {
+      "name": "VMware Engine",
+      "product_url": "https://cloud.google.com/vmware-engine",
+      "description": "Migrate and run your VMware workloads natively on Google Cloud.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "vpc-service-controls": {
+      "name": "VPC Service Controls",
+      "product_url": "https://cloud.google.com/vpc-service-controls",
+      "description": null,
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "web-app-and-api-protection": {
+      "name": "Web App and API Protection",
+      "product_url": "https://cloud.google.com/security/solutions/web-app-and-api-protection",
+      "description": "Threat and fraud protection for your web applications and APIs.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "windows-on-google-cloud": {
+      "name": "Windows on Google Cloud",
+      "product_url": "https://cloud.google.com/windows",
+      "description": "Tools and partners for running Windows workloads.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    },
+    "workflows": {
+      "name": "Workflows",
+      "product_url": "https://cloud.google.com/workflows",
+      "description": "Workflow orchestration for serverless products and API services.",
+      "aliases": [],
+      "category_hints": [],
+      "sources": [
+        "products-page-embedded-map",
+        "products-page-embedded-tuple"
+      ],
+      "official_google_emulator": {
+        "supported": false,
+        "doc_url": null,
+        "notes": []
+      },
+      "localgcp": {
+        "supported": false,
+        "source_url": "https://localgcp.com/",
+        "notes": []
+      }
+    }
+  }
+}

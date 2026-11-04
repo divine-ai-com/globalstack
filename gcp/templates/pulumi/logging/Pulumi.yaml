@@ -1,0 +1,6 @@
+name: globalstack-gcp-logging
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: GlobalStack GCP Cloud Logging Pulumi lifecycle template.

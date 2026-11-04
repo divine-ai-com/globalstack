@@ -1,0 +1,48 @@
+{
+  "id": "database-migration-service.microsoft-datamigration-services.createOrUpdate.missing-location",
+  "capturedAt": "2026-05-25T13:47:39.262Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "database-migration-service",
+  "tier": 2,
+  "resourceType": "Microsoft.DataMigration/services",
+  "operation": "CreateOrUpdate",
+  "varianceId": "missing-location",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-5b8246767a/providers/Microsoft.DataMigration/services/{servicesName}?api-version=2022-03-30-preview",
+    "body": {
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "bb256175-b5ac-443f-badc-7fd6eb84a0ac",
+      "x-ms-request-id": "bb256175-b5ac-443f-badc-7fd6eb84a0ac",
+      "x-ms-routing-request-id": "EASTUS:20260525T134737Z:bb256175-b5ac-443f-badc-7fd6eb84a0ac"
+    },
+    "body": {
+      "error": {
+        "code": "LocationRequired",
+        "message": "The location property is required for this definition."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-5b8246767a",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

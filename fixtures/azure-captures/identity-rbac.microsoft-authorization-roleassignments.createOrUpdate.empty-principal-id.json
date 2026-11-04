@@ -1,0 +1,52 @@
+{
+  "id": "identity-rbac.microsoft-authorization-roleassignments.createOrUpdate.empty-principal-id",
+  "capturedAt": "2026-05-20T14:34:34.627Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "identity-rbac",
+  "tier": 1,
+  "resourceType": "Microsoft.Authorization/roleAssignments",
+  "operation": "CreateOrUpdate",
+  "varianceId": "empty-principal-id",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-6953ad3416/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111?api-version=2022-04-01",
+    "body": {
+      "properties": {
+        "principalId": "",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionsName}"
+      }
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "c4476a42-2949-449d-9aba-0e22c8cfee11",
+      "x-ms-request-id": "c4476a42-2949-449d-9aba-0e22c8cfee11",
+      "x-ms-routing-request-id": "SOUTHINDIA:20260520T143434Z:c4476a42-2949-449d-9aba-0e22c8cfee11"
+    },
+    "body": {
+      "error": {
+        "code": "SubscriptionNotFound",
+        "message": "The subscription '<subscription-id>' could not be found."
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-6953ad3416",
+    "deleteStatus": 404,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "capture-infrastructure-gap",
+    "cloudValidated": false,
+    "providerRegistered": null,
+    "caveat": "The capture did not validate service behavior because the request targeted a subscription scope Azure rejected before provider semantics."
+  }
+}

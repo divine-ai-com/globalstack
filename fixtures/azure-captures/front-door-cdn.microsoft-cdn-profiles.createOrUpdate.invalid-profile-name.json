@@ -1,0 +1,52 @@
+{
+  "id": "front-door-cdn.microsoft-cdn-profiles.createOrUpdate.invalid-profile-name",
+  "capturedAt": "2026-05-25T13:34:53.954Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "front-door-cdn",
+  "tier": 2,
+  "resourceType": "Microsoft.Cdn/profiles",
+  "operation": "CreateOrUpdate",
+  "varianceId": "invalid-profile-name",
+  "request": {
+    "method": "PUT",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-9ff33a5796/providers/Microsoft.Cdn/profiles/Bad_Profile?api-version=2024-02-01",
+    "body": {
+      "location": "{location}",
+      "sku": {
+        "name": "Standard_AzureFrontDoor"
+      },
+      "properties": {}
+    },
+    "apiVersionOverride": null
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "x-ms-correlation-request-id": "c0910de0-033c-4ded-a9c4-b5f45c3a2466",
+      "x-ms-request-id": "560bd45f-ad58-4c09-bf1f-14a36f496914",
+      "x-ms-routing-request-id": "EASTUS:20260525T133452Z:c0910de0-033c-4ded-a9c4-b5f45c3a2466"
+    },
+    "body": {
+      "error": {
+        "code": "BadRequest",
+        "message": "Property 'ProfileEntityKey.ProfileName' cannot be set to 'Bad_Profile'. "
+      }
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-9ff33a5796",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-validation",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+  }
+}

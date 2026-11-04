@@ -1,0 +1,42 @@
+{
+  "id": "cosmos-nosql-table.microsoft-documentdb-databaseaccounts.listByResourceGroup.empty-list",
+  "capturedAt": "2026-05-16T04:44:13.067Z",
+  "target": "azure",
+  "subscriptionId": "<subscription-id>",
+  "tenantId": "<tenant-id>",
+  "capabilityId": "cosmos-nosql-table",
+  "tier": 1,
+  "resourceType": "Microsoft.DocumentDB/databaseAccounts",
+  "operation": "ListByResourceGroup",
+  "varianceId": "empty-list",
+  "request": {
+    "method": "GET",
+    "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3dcc99d286/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2024-05-15",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-ms-correlation-request-id": "8581c5e8-fd7d-4155-a8a7-b2d025eb9309",
+      "x-ms-request-id": "8581c5e8-fd7d-4155-a8a7-b2d025eb9309",
+      "x-ms-routing-request-id": "EASTUS:20260516T044406Z:8581c5e8-fd7d-4155-a8a7-b2d025eb9309"
+    },
+    "body": {
+      "value": []
+    }
+  },
+  "cleanup": {
+    "resourceGroupName": "rg-gs-conf-3dcc99d286",
+    "deleteStatus": 202,
+    "verificationStatus": 404,
+    "verifiedDeleted": true
+  },
+  "globalstack": {
+    "normalizedIntoLocalConformance": false,
+    "validationDepth": "provider-accepted",
+    "cloudValidated": false,
+    "providerRegistered": true,
+    "caveat": "Provider accepted the request shape in this subscription; local parity still requires normalized expectation tests."
+  }
+}
