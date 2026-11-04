@@ -108,11 +108,11 @@
     "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs"
   },
   "dependencies": {
-    "@azure/service-bus": "^7.9.5",
-    "dockerode": "^5.0.0",
+    "@azure/service-bus": "^7.10.0",
+    "dockerode": "^5.0.1",
     "mysql2": "^3.22.4",
-    "pg": "^8.21.0",
-    "yaml": "^2.9.0"
+    "pg": "^8.23.1",
+    "yaml": "^2.9.1"
   },
   "license": "Apache-2.0"
 }
