@@ -1,9 +1,14 @@
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 
-async function readBody(req) {
+async function readBody(req, limit) {
   const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
+  let bytes = 0;
+  for await (const chunk of req.iterator({ destroyOnReturn: false })) {
+    bytes += chunk.length;
+    if (bytes > limit) { req.resume(); return null; }
+    chunks.push(chunk);
+  }
   return Buffer.concat(chunks);
 }
 
@@ -73,7 +78,10 @@ function filePath(pathSegments) {
 }
 
 export class AzureFilesRouter {
-  constructor() {
+  constructor({ maxFileBytes = 16 * 1024 * 1024, maxStoredBytes = 64 * 1024 * 1024 } = {}) {
+    if (!Number.isSafeInteger(maxFileBytes) || maxFileBytes < 0 || !Number.isSafeInteger(maxStoredBytes) || maxStoredBytes < 0) throw new Error('File limits must be non-negative safe integers.');
+    this.maxFileBytes = maxFileBytes;
+    this.maxStoredBytes = maxStoredBytes;
     this.accounts = new Map();
   }
 
@@ -153,7 +161,8 @@ export class AzureFilesRouter {
         if (req.headers['x-ms-write'] !== 'update') return sendError(res, 400, 'InvalidHeaderValue', 'x-ms-write must be update for range upload.');
         const range = parseRange(req.headers['x-ms-range']);
         if (!range) return sendError(res, 400, 'InvalidRange', 'The range specified is invalid.');
-        const body = await readBody(req);
+        const body = await readBody(req, this.maxFileBytes);
+        if (body === null) return sendError(res, 413, 'GlobalStackFileSizeLimitExceeded', 'The request exceeds the local file size limit.');
         if (body.length !== range.end - range.start + 1 || range.end >= file.content.length) {
           return sendError(res, 416, 'InvalidRange', 'The range specified is invalid for the current file size.');
         }
@@ -165,11 +174,18 @@ export class AzureFilesRouter {
       if (method === 'PUT') {
         if (req.headers['x-ms-type'] !== 'file') return sendError(res, 400, 'InvalidHeaderValue', 'x-ms-type must be file for file creation.');
         const size = Number(req.headers['x-ms-content-length']);
-        if (!Number.isInteger(size) || size < 0) return sendError(res, 400, 'InvalidHeaderValue', 'x-ms-content-length must be a non-negative integer.');
+        if (!Number.isSafeInteger(size) || size < 0) return sendError(res, 400, 'InvalidHeaderValue', 'x-ms-content-length must be a non-negative integer.');
+        if (size > this.maxFileBytes) return sendError(res, 413, 'GlobalStackFileSizeLimitExceeded', 'The requested file exceeds the local file size limit.');
         const path = filePath(pathSegments);
         if (!path) return sendError(res, 400, 'InvalidResourceName', 'File path is required.');
         const parent = parentDirectory(pathSegments);
         if (!share.directories.has(parent)) return sendError(res, 404, 'ParentNotFound', 'The parent directory was not found.');
+        let storedBytes = 0;
+        for (const account of this.accounts.values()) for (const candidate of account.shares.values()) {
+          for (const file of candidate.files.values()) storedBytes += file.content.length;
+        }
+        const previousBytes = share.files.get(path)?.content.length ?? 0;
+        if (storedBytes - previousBytes + size > this.maxStoredBytes) return sendError(res, 413, 'GlobalStackStorageLimitExceeded', 'The local file storage budget is exhausted.');
         share.files.set(path, {
           content: Buffer.alloc(size),
           createdAt: new Date().toISOString(),

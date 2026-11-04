@@ -10,6 +10,7 @@ import {
 } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { localIdentity } from '../../azure-control-plane/src/server-support.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -41,7 +42,7 @@ function sendError(res, status, code, message, headers = {}) {
   }, headers);
 }
 
-function authChallenge(vault) {
+function bearerChallengeHeaders(vault) {
   const tenantId = process.env.GLOBALSTACK_ARM_TENANT_ID ?? process.env.ARM_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
   const authorization = `https://login.windows.net/${tenantId}`;
   const resource = 'https://vault.azure.net';
@@ -69,12 +70,13 @@ function requireApiVersion(url) {
 
 function requireAuth(req, vault = null) {
   const auth = String(req.headers.authorization ?? '');
-  if (!auth.match(/^Bearer\s+.+/i)) {
+  const token = auth.match(/^Bearer[ \t]+(\S+)$/i)?.[1];
+  if (token !== localIdentity.accessToken && token !== 'globalstack-local-token') {
     return {
       status: 401,
       code: 'Unauthorized',
       message: 'AKV10000: Request is missing a Bearer authorization token.',
-      headers: authChallenge(vault),
+      headers: bearerChallengeHeaders(vault),
     };
   }
   return null;

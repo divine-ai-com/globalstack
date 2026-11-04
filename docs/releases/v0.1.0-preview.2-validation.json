@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 1,
+  "release": "v0.1.0-preview.2",
+  "recordedAt": "2026-11-04T14:00:58.125782+00:00",
+  "runtimeRevision": "f55331d3c72ddf83b60029e4fa04d9f66d20dbb0",
+  "scope": {
+    "nativeSamplesPerPlatform": 1,
+    "liveAzureRunsInThisValidation": 0,
+    "paidModelCalls": 0,
+    "nativeRunConcurrency": 3,
+    "host": "Linux x86_64",
+    "hostLogicalCpus": 4,
+    "hostMemoryGiBApproximate": 31,
+    "minimumHostResourcesEstablished": false,
+    "fullAzureParityEstablished": false
+  },
+  "localChecks": {
+    "passed": 556,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Docker-dependent Kubernetes test requires explicit opt-in"
+  },
+  "repositoryChecks": {
+    "passed": 19,
+    "failed": 0
+  },
+  "serviceSuites": [
+    {
+      "service": "key-vault",
+      "cases": 99,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    },
+    {
+      "service": "event-grid",
+      "cases": 45,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    },
+    {
+      "service": "logic-workflows",
+      "cases": 62,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    },
+    {
+      "service": "files",
+      "cases": 51,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    },
+    {
+      "service": "waf-policy",
+      "cases": 63,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    },
+    {
+      "service": "storage",
+      "cases": 43,
+      "failed": 0,
+      "nestedPlatformMatrix": "not run; native samples tested separately"
+    }
+  ],
+  "upstreamTemplates": {
+    "cases": 3,
+    "passed": 3,
+    "provenance": "fixtures/upstream/azure-quickstarts/provenance.json",
+    "eventFlow": "HTTP publication to local webhook with exact event IDs and payloads; deleted subscription and wrong destination controls; restored delivery",
+    "azureEquivalenceEstablished": false
+  },
+  "nativePlatforms": [
+    {
+      "platformId": "azure-ansible-yaml",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 40364,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 3
+    },
+    {
+      "platformId": "azure-arm-json",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 12552,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 2
+    },
+    {
+      "platformId": "azure-bicep",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 15987,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 3
+    },
+    {
+      "platformId": "azure-cli-rest",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 14678,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 3
+    },
+    {
+      "platformId": "azure-opentofu-hcl",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 88282,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 9
+    },
+    {
+      "platformId": "azure-pulumi-py",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 143732,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 7
+    },
+    {
+      "platformId": "azure-pulumi-ts",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 234676,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 7
+    },
+    {
+      "platformId": "azure-pulumi-yaml",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 77484,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 7
+    },
+    {
+      "platformId": "azure-terraform-hcl",
+      "ok": true,
+      "exitCode": 0,
+      "cleanupExitCode": 0,
+      "stages": [
+        {
+          "stage": "build",
+          "ok": true
+        },
+        {
+          "stage": "lint",
+          "ok": true
+        },
+        {
+          "stage": "unit-tests",
+          "ok": true
+        },
+        {
+          "stage": "deploy",
+          "ok": true
+        },
+        {
+          "stage": "provider-lifecycle",
+          "ok": true
+        },
+        {
+          "stage": "integration-tests",
+          "ok": true
+        },
+        {
+          "stage": "destroy",
+          "ok": true
+        }
+      ],
+      "durationMs": 103819,
+      "finalStage": "destroy",
+      "finalStatus": "PASS",
+      "provisioningState": "Succeeded",
+      "providerLifecycleOk": true,
+      "providerLifecycleOperationCount": 9
+    }
+  ],
+  "images": [
+    {
+      "localTag": "globalstack/azure-emulator:local",
+      "localImageId": "sha256:c1d034fe88bd66186adfe58cdba552257ec23f9f53f7cfaa24b1aa5ca06d85e3",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "localTag": "globalstack/validation-runner:terraform",
+      "localImageId": "sha256:b0cc5ecc22072a77940871a67b90de5129b898b4bd2f166542a20190575ec718",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "localTag": "globalstack/validation-runner:opentofu",
+      "localImageId": "sha256:d422bf1077678db13a30a5a0437ccbcaab46fe5d78720c5eed6f8cc7d2e6d8cd",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "localTag": "globalstack/validation-runner:cli",
+      "localImageId": "sha256:0f62d5ebf1e342bc1f2023f9df899e6814fb1288eba66811e74593747137757f",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "localTag": "globalstack/validation-runner:pulumi",
+      "localImageId": "sha256:f8ec511e0b3e16bd567966438a0235424597e3bb86a9e74ecd88f2de084d586e",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "localTag": "globalstack/validation-runner:ansible",
+      "localImageId": "sha256:730a985f53b81eec27e05cb2da95278b8fbaf0cb4968eaeacd812a156991e89a",
+      "architecture": "amd64",
+      "os": "linux"
+    }
+  ],
+  "distributionChecks": {
+    "sourceRevision": "f55331d3c72ddf83b60029e4fa04d9f66d20dbb0",
+    "sourceArchiveDemo": "PASS",
+    "containerDemo": "PASS",
+    "hostPlatform": "Linux x86_64",
+    "node": "v22.23.3",
+    "npm": "10.9.9"
+  },
+  "tools": {
+    "terraform": "1.17.1",
+    "opentofu": "1.13.2",
+    "azapi": "2.13.0",
+    "azureCli": "2.92.0",
+    "bicep": "0.48.1 (cec7951cf6)",
+    "pulumiCli": "3.273.0",
+    "pulumiTypeScriptPackages": {
+      "node_modules/@pulumi/azure-native": "2.92.3",
+      "node_modules/@pulumi/pulumi": "3.274.0"
+    },
+    "pulumiPythonPackages": {
+      "pulumi": "3.273.0",
+      "pulumi-azure-native": "3.30.0"
+    },
+    "pulumiYamlAzureNativeProvider": "3.18.0",
+    "ansibleCore": "2.21.6",
+    "azureAzcollection": "3.21.0"
+  },
+  "diskGuard": {
+    "startThresholdGiB": 43,
+    "stopThresholdGiB": 42,
+    "minimumFreeGiBInFinalNativeRuns": 117.47
+  },
+  "selectedFailedAttempts": [
+    {
+      "attempt": "concurrent Logic Apps service suite",
+      "kind": "test timing assumption",
+      "result": "the first GET observed Succeeded after a 10 ms delay; an injected clock now controls running, completed and cancelled states; the corrected suite passed"
+    }
+  ],
+  "security": {
+    "workflowRun": "https://github.com/divine-ai-com/globalstack/actions/runs/41842863773",
+    "highOrCriticalFindings": 0,
+    "rawMediumFindings": 19,
+    "openMediumFindings": 18,
+    "previouslyDismissedFindings": 1,
+    "reviewRecord": "docs/product/SECURITY-FINDINGS-2026-11-04.md",
+    "postMergeScan": "Recorded separately in the release assets before publication"
+  },
+  "gcpUnitChecks": {
+    "passed": 17,
+    "failed": 0
+  },
+  "review": {
+    "codeqlFinding42": "previously dismissed public fixture replay to a test-owned loopback server; remains in raw SARIF",
+    "manualReview": "Full diff, inline bot threads and complete SARIF reviewed. Security findings are documented individually.",
+    "botReview": "The two PR 15 CodeQL threads are resolved; both reported paths were inspected. No paid review requested."
+  },
+  "limits": [
+    "Native tests use shared validation toolchains, not a successful build of every standalone runner Dockerfile.",
+    "Mutable tool installers and package ranges prevent a byte-for-byte reproducibility claim.",
+    "Timings include setup and concurrent execution; they are not performance benchmarks.",
+    "The full historical 30-service validator has missing artifacts and did not pass.",
+    "Storage data-plane behavior, broad multi-service flows and live Azure equivalence are not established by these examples.",
+    "Optional runtime licensing and historical capture privacy review remain incomplete."
+  ]
+}

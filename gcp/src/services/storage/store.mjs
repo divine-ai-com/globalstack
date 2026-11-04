@@ -1,15 +1,20 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { crc32cBase64 } from './checksums.mjs';
 
-const defaultDataRoot = process.env.GLOBALSTACK_GCP_STORAGE_DIR ?? '/tmp/globalstack-gcp/storage';
-
 export class StorageStore {
-  constructor({ root = defaultDataRoot, clock = () => new Date() } = {}) {
-    this.root = root;
+  constructor({ root, clock = () => new Date() } = {}) {
+    this.ownsRoot = root === undefined && process.env.GLOBALSTACK_GCP_STORAGE_DIR === undefined;
+    this.root = root ?? process.env.GLOBALSTACK_GCP_STORAGE_DIR ?? mkdtempSync(join(tmpdir(), 'globalstack-gcp-'));
     this.clock = clock;
     this.buckets = new Map();
+  }
+
+  async dispose() {
+    if (this.ownsRoot) await rm(this.root, { recursive: true, force: true });
   }
 
   async createBucket({ projectId, name, location, labels = {}, versioning = {}, iamConfiguration = {} }) {

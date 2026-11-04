@@ -809,7 +809,9 @@ async function runControlPlaneMatrix() {
   }
 
   await withLocalHttpEndpoint(async ({ baseUrl, requests, attempts }) => {
+    let workflowTime = 0;
     const workflowRunner = createWorkflowRunner({
+      clock: () => workflowTime,
       httpInvoker: async request => {
         const response = await fetch(request.uri, {
           method: request.method,
@@ -1361,7 +1363,7 @@ async function runControlPlaneMatrix() {
         assert.equal(result.status, 202);
         assert.equal(result.body.status, 'Running');
         assert.equal(result.body.response, null);
-        await new Promise(resolve => setTimeout(resolve, 25));
+        workflowTime += 25;
         const run = await workflowRunner.getRun({
           workflowName: longWorkflowName,
           runId: result.body.id,
@@ -1392,7 +1394,7 @@ async function runControlPlaneMatrix() {
         );
         assert.equal(initial.status, 200);
         assert.equal(initial.body.status, 'Running');
-        await new Promise(resolve => setTimeout(resolve, 25));
+        workflowTime += 25;
         const completed = await httpJson(
           armPort,
           'GET',

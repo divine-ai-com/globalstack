@@ -223,7 +223,7 @@ function requestKey(req, url) {
 
 function basicAuthCredentials(req) {
   const raw = String(req.headers.authorization ?? '');
-  const match = raw.match(/^Basic\s+(.+)$/i);
+  const match = raw.match(/^Basic[ \t]+(\S+)$/i);
   if (!match) return null;
   try {
     const decoded = Buffer.from(match[1], 'base64').toString('utf8');

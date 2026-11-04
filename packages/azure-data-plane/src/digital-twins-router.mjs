@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { invalidRequest } from './service-errors.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -68,40 +69,51 @@ function modelId(model) {
 
 function ensureObject(value, code, message) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || value.__invalidJson) {
-    throw Object.assign(new Error(message), { status: 400, code });
+    throw invalidRequest(code, message);
   }
   return value;
 }
 
+function patchParts(path) {
+  if (typeof path !== 'string' || !path.startsWith('/')) {
+    throw invalidRequest('JsonPatchInvalid', 'JSON Patch path is required.');
+  }
+  const parts = path.split('/').slice(1).map(part => part.replaceAll('~1', '/').replaceAll('~0', '~'));
+  if (parts.some(part => ['__proto__', 'constructor', 'prototype'].includes(part))) {
+    throw invalidRequest('JsonPatchInvalid', 'Prototype keys are not supported in twin patches.');
+  }
+  return parts;
+}
+
 function setPath(target, path, value) {
-  const parts = String(path ?? '').split('/').slice(1).map(part => part.replaceAll('~1', '/').replaceAll('~0', '~'));
-  if (!parts.length) throw Object.assign(new Error('JSON Patch path is required.'), { status: 400, code: 'JsonPatchInvalid' });
+  const parts = patchParts(path);
   let cursor = target;
   for (const part of parts.slice(0, -1)) {
-    if (!cursor[part] || typeof cursor[part] !== 'object') cursor[part] = {};
+    if (!Object.hasOwn(cursor, part) || !cursor[part] || typeof cursor[part] !== 'object') cursor[part] = {};
     cursor = cursor[part];
   }
   cursor[parts.at(-1)] = value;
 }
 
 function removePath(target, path) {
-  const parts = String(path ?? '').split('/').slice(1).map(part => part.replaceAll('~1', '/').replaceAll('~0', '~'));
-  if (!parts.length) throw Object.assign(new Error('JSON Patch path is required.'), { status: 400, code: 'JsonPatchInvalid' });
+  const parts = patchParts(path);
   let cursor = target;
-  for (const part of parts.slice(0, -1)) cursor = cursor?.[part];
+  for (const part of parts.slice(0, -1)) {
+    cursor = cursor && Object.hasOwn(cursor, part) ? cursor[part] : undefined;
+  }
   if (!cursor || !Object.hasOwn(cursor, parts.at(-1))) {
-    throw Object.assign(new Error(`JSON Patch path '${path}' does not exist.`), { status: 400, code: 'JsonPatchInvalid' });
+    throw invalidRequest('JsonPatchInvalid', `JSON Patch path '${path}' does not exist.`);
   }
   delete cursor[parts.at(-1)];
 }
 
 function applyPatch(twin, patch) {
   if (!Array.isArray(patch)) {
-    throw Object.assign(new Error('JSON Patch body must be an array.'), { status: 400, code: 'JsonPatchInvalid' });
+    throw invalidRequest('JsonPatchInvalid', 'JSON Patch body must be an array.');
   }
   for (const operation of patch) {
     if (!['add', 'replace', 'remove'].includes(operation?.op)) {
-      throw Object.assign(new Error(`JSON Patch operation '${operation?.op}' is not supported.`), { status: 400, code: 'JsonPatchInvalid' });
+      throw invalidRequest('JsonPatchInvalid', `JSON Patch operation '${operation?.op}' is not supported.`);
     }
     if (operation.op === 'remove') removePath(twin, operation.path);
     else setPath(twin, operation.path, operation.value);
@@ -251,7 +263,8 @@ export class DigitalTwinsRouter {
           return sendJson(res, 200, { value: [...instance.twins.values()] });
         }
       } catch (cause) {
-        return sendError(res, cause.status ?? 500, cause.code ?? 'InternalServerError', cause.message ?? String(cause));
+        const status = cause.status >= 400 && cause.status < 500 ? cause.status : 500;
+        return sendError(res, status, status === 500 ? 'InternalServerError' : cause.code ?? 'InvalidArgument', status === 500 ? 'The local service could not complete the request.' : cause.publicMessage ?? 'The request is invalid.');
       }
 
       return sendError(res, 404, 'RouteNotFound', `No Digital Twins data-plane route handled ${url.pathname}.`);

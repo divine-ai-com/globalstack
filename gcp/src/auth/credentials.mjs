@@ -127,6 +127,8 @@ export async function requestServiceAccountAccessToken(credentials) {
   });
   const response = await fetch(credentials.token_uri, {
     method: 'POST',
+    redirect: 'error',
+    signal: AbortSignal.timeout(30000),
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
     },
@@ -134,7 +136,7 @@ export async function requestServiceAccountAccessToken(credentials) {
   });
   const json = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(`Token request failed: ${response.status} ${JSON.stringify(json)}`);
+    throw new Error(`Token request failed with status ${response.status}.`);
   }
   return json;
 }

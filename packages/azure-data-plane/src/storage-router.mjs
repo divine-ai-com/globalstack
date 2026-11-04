@@ -131,7 +131,7 @@ function accountFromHost(req, suffix) {
 
 function parseAuthorization(req) {
   const auth = String(req.headers.authorization ?? '');
-  const match = auth.match(/^(SharedKeyLite|SharedKey)\s+([^:]+):(.+)$/);
+  const match = auth.match(/^(SharedKeyLite|SharedKey)[ \t]+([^:\s]+):(\S+)$/);
   if (!match) return null;
   return {
     scheme: match[1],
@@ -140,7 +140,7 @@ function parseAuthorization(req) {
   };
 }
 
-function validateAuth(req, url, account, bodyLength = 0, preferredScheme = 'SharedKey') {
+function validateSharedKey(req, url, account, bodyLength = 0, preferredScheme = 'SharedKey') {
   const auth = parseAuthorization(req);
   if (!auth) return { ok: false, status: 401, code: 'NoAuthenticationInformation', message: 'Server failed to authenticate the request. Please refer to the information in the Authorization header.' };
   if (auth.accountName !== account.accountName) return { ok: false, status: 403, code: 'AuthenticationFailed', message: 'The Authorization header is malformed.' };
@@ -153,19 +153,8 @@ function validateAuth(req, url, account, bodyLength = 0, preferredScheme = 'Shar
       console.error('[globalstack-storage-auth]', JSON.stringify({
         ok: false,
         method: req.method,
-        host: req.headers.host ?? '',
-        path: url.pathname,
-        query: url.search,
-        accountName: account.accountName,
         authScheme: auth.scheme,
         acceptedSchemes,
-        contentLength: req.headers['content-length'] ?? '',
-        receivedSignature: auth.signature,
-        expectedSignature: expected.signature,
-        stringToSign: expected.stringToSign,
-        xMsHeaders: Object.fromEntries(
-          Object.entries(req.headers).filter(([key]) => key.toLowerCase().startsWith('x-ms-')),
-        ),
       }));
     }
     return { ok: false, status: 403, code: 'AuthenticationFailed', message: 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.' };
@@ -346,7 +335,7 @@ export class StorageDataPlaneRouter {
       if (segments.length < 2) return sendXmlError(res, 404, 'ResourceNotFound', 'The blob path is incomplete.', requestId);
       const [containerName, ...blobParts] = segments;
       const auth = String(req.headers.authorization ?? '').trim() !== ''
-        ? validateAuth(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
+        ? validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
         : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
       const container = account.containers.get(lower(containerName));
@@ -425,7 +414,7 @@ export class StorageDataPlaneRouter {
       if (!accountName) return sendXmlError(res, 404, 'ResourceNotFound', 'The storage account host was not found.', requestId);
       const account = this.account(accountName);
       if (!account) return sendXmlError(res, 404, 'ResourceNotFound', `The storage account '${accountName}' was not found.`, requestId);
-      const auth = validateAuth(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKey');
+      const auth = validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKey');
       if (!auth.ok) return sendXmlError(res, auth.status, auth.code, auth.message, requestId);
 
       const segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
@@ -506,7 +495,7 @@ export class StorageDataPlaneRouter {
       if (!accountName) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: 'The storage account host was not found.' } }), { 'content-type': 'application/json' });
       const account = this.account(accountName);
       if (!account) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: `The storage account '${accountName}' was not found.` } }), { 'content-type': 'application/json' });
-      const auth = validateAuth(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKeyLite');
+      const auth = validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKeyLite');
       if (!auth.ok) {
         return send(res, auth.status, JSON.stringify({ error: { code: auth.code, message: auth.message } }), { 'content-type': 'application/json' });
       }

@@ -64,12 +64,9 @@ function applyTransforms(value, transforms = []) {
         current = current.replace(/\0/g, '');
         break;
       case 'HtmlEntityDecode':
-        current = current
-          .replace(/&quot;/gi, '"')
-          .replace(/&#39;/gi, "'")
-          .replace(/&amp;/gi, '&')
-          .replace(/&lt;/gi, '<')
-          .replace(/&gt;/gi, '>');
+        current = current.replace(/&(?:quot|#39|amp|lt|gt);/gi, entity => ({
+          '&quot;': '"', '&#39;': "'", '&amp;': '&', '&lt;': '<', '&gt;': '>',
+        })[entity.toLowerCase()]);
         break;
       default:
         break;

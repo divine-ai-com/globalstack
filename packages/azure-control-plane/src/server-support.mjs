@@ -147,7 +147,7 @@ export function isPublicRoute(method, pathname) {
   return false;
 }
 
-export function authenticationFailure(message = 'Authentication failed. The Authorization header is missing or invalid.') {
+export function invalidTokenResponse(message = 'Authentication failed. The Authorization header is missing or invalid.') {
   return {
     status: 401,
     body: {
@@ -191,12 +191,11 @@ export function requestSubscriptionId(pathname) {
 export function authorizeRequest(req, method, pathname) {
   if (isPublicRoute(method, pathname)) return null;
   const auth = String(req.headers.authorization ?? '');
-  const match = auth.match(/^Bearer\s+(.+)$/i);
-  if (!match) return authenticationFailure();
+  const match = auth.match(/^Bearer[ \t]+(\S+)$/i);
+  if (!match) return invalidTokenResponse();
   const presentedToken = match[1];
-  const acceptedTokens = new Set([localIdentity.accessToken, 'globalstack-local-token']);
-  if (!acceptedTokens.has(presentedToken)) {
-    return authenticationFailure('The access token is not valid for the GlobalStack Azure local identity.');
+  if (presentedToken !== localIdentity.accessToken && presentedToken !== 'globalstack-local-token') {
+    return invalidTokenResponse('The access token is not valid for the GlobalStack Azure local identity.');
   }
   const subscriptionId = requestSubscriptionId(pathname);
   if (subscriptionId && subscriptionId !== activeSubscriptionId()) return authorizationFailure(subscriptionId);

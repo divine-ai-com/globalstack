@@ -20,6 +20,8 @@ For each finding, reproduce and fix a valid issue, or record a specific evidence
 
 Verify required checks on the exact head revision, update the PR description to match the final change and its limitations, and merge only after the review is complete. Preserve review conclusions and unresolved release gaps in the repository's security or readiness documents.
 
+Reconcile the complete SARIF report with the repository's main-branch alert inventory. PR annotations can omit existing findings. Before publishing a release, inspect the post-merge main scan as well. Retain the complete report and the review record with release evidence; a green summary alone is insufficient.
+
 ## Dataset-Visible Bundle Hygiene
 
 When working on prompts, model responses, IaC, unit tests, or integration tests that may become training artifacts, keep them Azure-only. GlobalStack routing, tokens, sidecar details, and local endpoints belong only in the hidden runner/runtime layer.

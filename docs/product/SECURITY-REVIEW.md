@@ -2,6 +2,14 @@
 
 This document records the scope of the November 4, 2026 review. It is a release checklist, not a compliance certification or penetration-test report.
 
+## Correction: November 4 security gate
+
+The post-merge alert inventory exposed a defect in the original SARIF checker. CodeQL puts rule metadata in query-pack extensions, while the checker read only the driver's rules. The reported zero high or critical findings was incorrect. The actual report for `44807cbad6be7acdf50fe400788e8eab34d28b80` contained 41 open findings: 18 high, one critical and 22 medium. These findings require individual review; their presence is not itself proof that every reported path is exploitable.
+
+The `v0.1.0-preview.1` release was moved back to draft. Its local functional results remain evidence for the recorded revision, but the release must not be presented as having cleared security review. The existing Git tag is retained for provenance.
+
+PR 15 corrects metadata lookup, fails closed when rule metadata is missing or malformed, and verifies the parser against the actual CodeQL report. The corrected checker identifies all 19 high or critical findings. The full branch scan at runtime revision `42a6072e9ebb7e6669fa17fd2e1cc3a7c4f07bf1` reports zero high or critical findings and 19 medium findings, including the previously dismissed fixture-replay finding. The [individual review record](SECURITY-FINDINGS-2026-11-04.md) documents fixes and the remaining intentional data flows. No severity threshold was lowered and no scanner rule or directory was excluded. PR analysis now disables diff-informed query filtering so the gate receives existing findings as well as changed-code findings. This setting is supported by the pinned CodeQL action; its complete report is retained. Publication requires a separate post-merge main scan, recorded in the release assets.
+
 ## Completed review and changes
 
 - Scanned the restored Git history with Gitleaks 8.30.1. Reviewed 137 initial matches as synthetic resource names, code expressions, or the public Azurite development key. Recorded exact historical fingerprints rather than broad exclusions.
@@ -15,7 +23,7 @@ This document records the scope of the November 4, 2026 review. It is a release 
 
 ## Validation evidence
 
-The initial hosted security run passed secret scanning, dependency review/audit, and CodeQL security-extended analysis. CodeQL reported zero high or critical findings; GitHub returned no code-scanning alerts for that analyzed PR revision. This is a scanner result, not proof that no vulnerabilities exist.
+The initial hosted security run passed secret scanning, dependency review/audit, and CodeQL security-extended analysis. The original severity summary was invalid because of the metadata-reading defect described above. PR-only alert views did not include the existing main-branch inventory. Future reviews must reconcile both views.
 
 Local validation also exercised all ten full-emulator listener bindings, built the container, and deployed/read/deleted the ARM demo through the container. The test-owned container was removed. The dependency inventory is retained as a CI artifact for 14 days; retain a release-specific inventory alongside a future published release.
 

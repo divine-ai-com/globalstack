@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { invalidRequest } from './service-errors.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -66,7 +67,7 @@ function requireAuth(req) {
 
 function ensureObject(value, code, message) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || value.__invalidJson) {
-    throw Object.assign(new Error(message), { status: 400, code });
+    throw invalidRequest(code, message);
   }
   return value;
 }
@@ -81,6 +82,9 @@ function now() {
 
 function deleteNullsMerge(target, patch) {
   for (const [key, value] of Object.entries(patch ?? {})) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      throw invalidRequest('InvalidArgument', 'Prototype keys are not supported in twin patches.');
+    }
     if (value === null) {
       delete target[key];
     } else if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -154,10 +158,7 @@ function queryDevices(hub, query) {
   const normalized = String(query ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
   if (normalized === 'select * from devices') return [...hub.twins.values()];
   if (normalized === 'select * from devices.modules') return [];
-  throw Object.assign(new Error('Only SELECT * FROM devices queries are supported locally.'), {
-    status: 400,
-    code: 'IotHubQueryNotSupported',
-  });
+  throw invalidRequest('IotHubQueryNotSupported', 'Only SELECT * FROM devices queries are supported locally.');
 }
 
 export class IotHubRouter {
@@ -282,7 +283,8 @@ export class IotHubRouter {
           }
         }
       } catch (cause) {
-        return sendError(res, cause.status ?? 500, cause.code ?? 'InternalServerError', cause.message ?? String(cause));
+        const status = cause.status >= 400 && cause.status < 500 ? cause.status : 500;
+        return sendError(res, status, status === 500 ? 'InternalServerError' : cause.code ?? 'InvalidArgument', status === 500 ? 'The local service could not complete the request.' : cause.publicMessage ?? 'The request is invalid.');
       }
 
       return sendError(res, 404, 'RouteNotFound', `No IoT Hub data-plane route handled ${url.pathname}.`);
