@@ -97,7 +97,9 @@ export async function runCrossServiceFlow(kind) {
     assert.ok(hop, 'The correlated request must reach the downstream service over HTTP');
     if (outcome) assertOutcome(input);
     else assert.throws(() => assertOutcome(input), assert.AssertionError);
-    episodes.push({ label, requestId: input.requestId, workflowStatus: result.body.status, observedBoundary: hop,
+    episodes.push({ label, input, requestId: input.requestId, workflowStatus: result.body.status,
+      observedBoundaries: boundaries.filter(item => item.requestId === input.requestId),
+      deliveries: deliveries.filter(item => (kind === 'vault-enrichment' ? item.body.requestId : item.body[0]?.id) === input.requestId),
       expectedOutcomeObserved: outcome, outcomeAssertionRejected: !outcome });
     return input;
   }
