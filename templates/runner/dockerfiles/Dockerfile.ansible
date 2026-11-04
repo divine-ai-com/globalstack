@@ -9,11 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
-RUN python3 -m pip install --break-system-packages ansible \
+RUN python3 -m pip install --no-cache-dir --break-system-packages ansible \
     && ansible-galaxy collection install azure.azcollection \
     && AZURE_COLLECTION_REQUIREMENTS="$(find /usr/local/lib /root/.ansible/collections -path '*/ansible_collections/azure/azcollection/requirements.txt' -print -quit)" \
     && test -n "${AZURE_COLLECTION_REQUIREMENTS}" \
-    && python3 -m pip install --break-system-packages -r "${AZURE_COLLECTION_REQUIREMENTS}"
+    && python3 -m pip install --no-cache-dir --break-system-packages -r "${AZURE_COLLECTION_REQUIREMENTS}"
 
 COPY common/globalstack-azure.sh /opt/globalstack/globalstack-azure.sh
 COPY common/entrypoint.sh /entrypoint.sh
