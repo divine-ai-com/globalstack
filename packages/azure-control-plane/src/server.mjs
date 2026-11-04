@@ -688,7 +688,15 @@ export function createArmRequestHandler({
         }
 
         if (rgRoute.resourceGroupName && method === 'DELETE') {
+          const removed = store.listResources(rgRoute.subscriptionId, rgRoute.resourceGroupName)
+            .sort((left, right) => right.id.split('/').length - left.id.split('/').length);
           store.deleteResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName);
+          if (typeof onResourceDelete === 'function') {
+            // Remove runtime children before parents, as with individual resource deletion.
+            for (const resource of removed) {
+              await onResourceDelete({ providerRoute: providerRouteFromResourceId(resource.id), resourceType: resource.type, resource });
+            }
+          }
           return sendJson(res, 200, {
             status: 'Deleted',
             id: `/subscriptions/${rgRoute.subscriptionId}/resourceGroups/${rgRoute.resourceGroupName}`,
