@@ -110,6 +110,7 @@ flowchart TD
 - `packages/azure-data-plane/src/relational-backend-manager.mjs`
 - `packages/azure-data-plane/src/search-router.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
+- `packages/azure-data-plane/src/service-errors.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
 - `packages/azure-data-plane/src/storage-router.mjs`

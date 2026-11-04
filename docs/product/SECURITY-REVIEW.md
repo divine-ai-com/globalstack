@@ -8,7 +8,7 @@ The post-merge alert inventory exposed a defect in the original SARIF checker. C
 
 The `v0.1.0-preview.1` release was moved back to draft. Its local functional results remain evidence for the recorded revision, but the release must not be presented as having cleared security review. The existing Git tag is retained for provenance.
 
-PR 15 corrects metadata lookup, fails closed when rule metadata is missing or malformed, and verifies the parser against the actual CodeQL report. The corrected checker identifies all 19 high or critical findings. Runtime fixes and the remaining triage are in progress. No severity threshold is lowered to obtain a passing check.
+PR 15 corrects metadata lookup, fails closed when rule metadata is missing or malformed, and verifies the parser against the actual CodeQL report. The corrected checker identifies all 19 high or critical findings. The full branch scan at runtime revision `42a6072e9ebb7e6669fa17fd2e1cc3a7c4f07bf1` reports zero high or critical findings and 19 medium findings, including the previously dismissed fixture-replay finding. The [individual review record](SECURITY-FINDINGS-2026-11-04.md) documents fixes and the remaining intentional data flows. No severity threshold was lowered and no scanner rule or directory was excluded. Post-merge validation is still required before publishing the replacement preview.
 
 ## Completed review and changes
 

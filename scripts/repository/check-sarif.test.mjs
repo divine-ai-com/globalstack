@@ -24,7 +24,7 @@ test('reads CodeQL query-pack extension metadata instead of treating findings as
 test('unresolved rule metadata and invalid security scores fail closed', () => {
   const result = { ruleId: 'unknown' };
   assert.throws(() => securityFindings({ runs: [{ tool: { driver: { rules: [] } }, results: [result] }] }), /metadata/);
-  for (const properties of [{ tags: ['security'] }, { 'security-severity': 'not-a-score' }]) {
+  for (const properties of [{ tags: ['security'] }, ...['not-a-score', '', ' ', null, false, -1, 11].map(score => ({ 'security-severity': score }))]) {
     assert.throws(() => securityFindings({ runs: [{ tool: { driver: { rules: [{ id: 'unknown', properties }] } }, results: [result] }] }), /severity/);
   }
 });

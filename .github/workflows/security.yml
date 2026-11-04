@@ -81,6 +81,14 @@ jobs:
           upload-database: false
       - name: Block high and critical security findings
         run: node scripts/repository/check-sarif.mjs codeql-results
+      - name: Retain the complete static analysis report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: codeql-results
+          path: codeql-results/*.sarif
+          retention-days: 14
+          if-no-files-found: error
   gate:
     name: Security gate
     needs: [secrets, dependencies, codeql]

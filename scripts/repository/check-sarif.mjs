@@ -21,6 +21,7 @@ export function securityFindings(report) {
       if (!rule || (ruleId && rule.id !== ruleId)) throw new Error(`Missing or ambiguous SARIF rule metadata: ${ruleId ?? 'unknown'}`);
       const score = rule.properties?.['security-severity'];
       if (score === undefined && rule.properties?.tags?.includes('security')) throw new Error(`Missing security severity for ${rule.id}`);
+      if (score !== undefined && (typeof score !== 'number' && typeof score !== 'string' || String(score).trim() === '')) throw new Error(`Invalid security severity for ${rule.id}`);
       const severity = Number(score ?? 0);
       if (!Number.isFinite(severity) || severity < 0 || severity > 10) throw new Error(`Invalid security severity for ${rule.id}`);
       if (severity >= 7) findings.push({ rule: rule.id, severity, locations: result.locations });
