@@ -83,4 +83,4 @@ The policy requires passing `CI gate` and `PR policy` checks, an up-to-date bran
 
 The prepared policy does not require an approval while the repository has a single maintainer, since authors cannot approve their own pull requests. Require a code-owner approval once another qualified reviewer is available. Keep the owner and required-check configuration synchronized with the actual team and workflow names.
 
-Dependency automation is limited to one open version-update PR per ecosystem and groups compatible updates. Major updates remain separate review work. Maintainers must complete the same required PR sections for automated PRs before merging; automation does not bypass the contribution checks.
+Dependency automation allows up to seven open version-update PRs: five for npm and two for GitHub Actions. Compatible updates are grouped. Security updates use a separate GitHub-managed limit. Major updates remain separate review work. Maintainers must complete the same required PR sections for automated PRs before merging; automation does not bypass the contribution checks.
