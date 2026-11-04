@@ -37,3 +37,13 @@ The authorship and publication decisions above are deliberately deferred. They d
 The retained matrix contains nine passing samples, all seven stages per sample, 50 provider operation checks across the matrix, and successful cleanup. Local conformance reports 559 passes and one explicit Docker-dependent skip; repository checks report 19 passes. All six selected service packs passed. Both new HTTP scenarios completed their eight episodes and cleanup. The patched TypeScript dependency tree and root workspace each report zero known vulnerabilities in the recorded npm audit. The minimum free disk recorded in the final native runs was 103.25 GiB. No live Azure deployments or paid model calls were made.
 
 The paper compiled with Tectonic 0.17.0. All six pages were checked through extracted text and rendered page inspection. Tables and numeric macros are regenerated from the retained JSON records. Authors remain unset.
+
+## Pre-merge review record
+
+At source revision `8f905e417f7b3d2b7a96bb9b9a3fd93b6046f003`, all required checks passed. The [complete security report](evidence/codeql.sarif.gz) and [finding inventory](evidence/security-review.json) retain the full pre-merge scan: zero high or critical findings and 19 raw medium findings. These match the existing reviewed finding set; main has 18 open medium alerts and one previously dismissed fixture-replay finding. No new code-scanning finding was introduced.
+
+The full change was reviewed, including runtime hooks, expression handling, HTTP controls, generated inputs, dependency pins, license notices, manuscript formulas, and evidence provenance. Every one of the 240 locked TypeScript packages has an npm registry origin and SHA-512 integrity metadata. The ambiguous `@logdna/tail-file` license metadata was checked against the downloaded package LICENSE and is MIT.
+
+Dependency review also reports low OpenSSF scores for ten transitives: `@jridgewell/resolve-uri`, `@jridgewell/trace-mapping`, `@logdna/tail-file`, `buffer-from`, `color-name`, `cssesc`, `debug`, `escalade`, `get-caller-file`, and `http-cache-semantics`. These warnings remain visible. The pinned tree passes the vulnerability audit and the native sample, but those checks do not resolve upstream maintenance risks. No scorecard threshold was lowered.
+
+Copilot reported that it could not review because its quota was exhausted. That is not counted as a completed automated review. No extra credits were requested. There were no inline PR review findings at this review. Manual review and the existing required gates remain the basis for merging; comments and checks are checked once more on the final revision.

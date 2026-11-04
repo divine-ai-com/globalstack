@@ -9,6 +9,7 @@ The draft describes a scoped local preview. Its new evidence consists of two fir
 - [Validation record](evidence/validation.json): native stages, observed versions, image identifiers, local suite results, execution scope, and limits.
 - [Flow record](evidence/flows.json): synthetic inputs, correlated service requests, exact receiver payloads, negative controls, and cleanup.
 - [Provider lifecycle operations](evidence/provider-lifecycles.json): individual operation checks, including repeated operations across platforms.
+- [Complete pre-merge static-analysis report](evidence/codeql.sarif.gz) and [finding inventory](evidence/security-review.json).
 - [Review record](REVIEW.md): manual review, CI and security evidence, remaining submission work.
 - [Upstream provenance](../../../fixtures/upstream/azure-quickstarts/provenance.json): unmodified template source revisions and digests.
 

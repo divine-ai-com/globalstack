@@ -1,0 +1,128 @@
+{
+  "sourceRevision": "8f905e417f7b3d2b7a96bb9b9a3fd93b6046f003",
+  "workflowRun": "https://github.com/divine-ai-com/globalstack/actions/runs/41899518674",
+  "completeSarifSha256": "a0c738f5e5a6e0c5a29472997007fda77360bbb7fecab073ea94753d368581ca",
+  "highOrCritical": 0,
+  "rawMedium": 19,
+  "openMainMediumAtReview": 18,
+  "previouslyDismissedMedium": 1,
+  "findings": [
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "gcp/src/auth/credentials.mjs",
+      "line": 128
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "gcp/src/google/rest-client.mjs",
+      "line": 48
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "gcp/src/google/rest-client.mjs",
+      "line": 52
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "gcp/tests/e2e/storage-capture-replay.test.mjs",
+      "line": 64
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "gcp/tests/e2e/storage-capture-replay.test.mjs",
+      "line": 90
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
+      "line": 1136
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/conformance/src/azure-derived-local-expectations.test.mjs",
+      "line": 15
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/conformance/src/azure-derived-local-expectations.test.mjs",
+      "line": 42
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/conformance/src/azure-lifecycle-local-expectations.test.mjs",
+      "line": 14
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/conformance/src/azure-lifecycle-local-expectations.test.mjs",
+      "line": 41
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/conformance/src/upstream-templates.test.mjs",
+      "line": 56
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 5917
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "severity": 6.5,
+      "path": "scripts/runtime/local-demo.mjs",
+      "line": 27
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 6652
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 6689
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "scripts/capture/capture-azure-storage-lifecycle.mjs",
+      "line": 293
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "scripts/capture/capture-azure-storage-data-plane.mjs",
+      "line": 425
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "scripts/capture/capture-azure-storage-data-plane.mjs",
+      "line": 426
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "severity": 6.3,
+      "path": "scripts/conformance/run-azure-api-conformance.mjs",
+      "line": 761
+    }
+  ],
+  "dispositions": "docs/product/SECURITY-FINDINGS-2026-11-04.md",
+  "botReview": "Copilot could not review because quota was exhausted. No additional credits or repeat paid review requested. Manual review completed.",
+  "scope": "Complete pre-merge report. Subsequent review-record changes contain documentation and evidence only."
+}
