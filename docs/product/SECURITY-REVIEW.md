@@ -8,6 +8,7 @@ This document records the scope of the November 4, 2026 review. It is a release 
 - Enabled GitHub secret scanning, push protection, vulnerability alerts, automated security updates, and private vulnerability reporting.
 - Changed the full host emulator and generated optional backend port mappings to loopback defaults. Container-internal listeners remain configurable for Docker networking.
 - Added an 8 MiB ARM body limit, request/header timeouts, malformed-URL responses, and generic internal-error responses. Regression tests cover limits, recovery after malformed URLs, and generated port bindings.
+- Redacted subscription identifiers from two current lifecycle captures and corrected lifecycle sanitization. Historical commits retain the original identifiers; these are account identifiers, not authentication credentials. No additional history rewrite was performed.
 - Improved the generic Azure capture command to redact structured secrets, account identifiers, cookies, email addresses, and common URL credentials. Unstructured CLI diagnostics and non-JSON bodies are omitted. Other capture paths are not covered by this change.
 - Added Gitleaks, CodeQL security-extended analysis, dependency review, full dependency audit, and CycloneDX inventory generation to CI. The stable Security gate requires all component checks to pass.
 - Added Apache-2.0 metadata to first-party package manifests. The source license does not replace third-party dependency or runtime-image terms.

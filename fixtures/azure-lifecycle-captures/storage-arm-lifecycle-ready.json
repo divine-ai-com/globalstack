@@ -35,7 +35,7 @@
           "x-ms-routing-request-id": "WESTINDIA:20260516T094825Z:3ae5af40-39a6-4a37-a982-a4e6291da4b7"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a",
           "name": "rg-gs-life-6b694b935a",
           "type": "Microsoft.Resources/resourceGroups",
           "location": "eastus",
@@ -69,7 +69,7 @@
         "ok": true,
         "headers": {
           "content-type": "text/plain; charset=utf-8",
-          "location": "https://management.azure.com/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/providers/Microsoft.Storage/locations/eastus/asyncoperations/3b116c63-1b59-4464-99c0-744327f08431?monitor=true&api-version=2023-01-01&t=639145217078471002&c=MIIHlDCCBnygAwIBAgIQZiYkoV_LM7Hwt06_u_DzJDANBgkqhkiG9w0BAQsFADA2MTQwMgYDVQQDEytDQ01FIEcxIFRMUyBSU0EgMjA0OCBTSEEyNTYgMjA0OSBFVVMyIENBIDAxMB4XDTI2MDQxMDA4MTUzOVoXDTI2MTAwNTE0MTUzOVowQDE-MDwGA1UEAxM1YXN5bmNvcGVyYXRpb25zaWduaW5nY2VydGlmaWNhdGUubWFuYWdlbWVudC5henVyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDealc9e2xWlYn0dX5zgxycoyRECfCn-ACb8WxKGmsKAA5yFa8bggPwuauZjSPSntq3xw99b6CFXZ6EM34WjxaWokZKYj8bbRT14WzrQHemPN5KUaI3SFtZidaSdEAzhm7Ha1a74SG8rDZU8qVqbaoCPQk9Iblv0LucrVV5BAMOwvi-5j-7X9vehxsheuxPwrVmGy_WrXI_3Qflmizp5BND_I3p4BIRjEcaQw_EBd3dhAC52EO5bT3FKSdM6N5xgpZvtjHjxRG2WG_8Gh07OrI0Ib0mnTB1_HNhiEw3_VzdnINXV0_Fsm7HMV-qCCkY5pyJIZjVX7L7FFY0PGqcqUKdAgMBAAGjggSSMIIEjjCBnQYDVR0gBIGVMIGSMAwGCisGAQQBgjd7AQEwZgYKKwYBBAGCN3sCAjBYMFYGCCsGAQUFBwICMEoeSAAzADMAZQAwADEAOQAyADEALQA0AGQANgA0AC0ANABmADgAYwAtAGEAMAA1ADUALQA1AGIAZABhAGYAZgBkADUAZQAzADMAZDAMBgorBgEEAYI3ewMCMAwGCisGAQQBgjd7BAIwDAYDVR0TAQH_BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDgYDVR0PAQH_BAQDAgWgMB0GA1UdDgQWBBSZIRQPs2If06iDFyiGbMnvIxenBzAfBgNVHSMEGDAWgBT87D7bqnwfgh4FuKEG-UPnArMKuTCCAbIGA1UdHwSCAakwggGlMGmgZ6BlhmNodHRwOi8vcHJpbWFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwa6BpoGeGZWh0dHA6Ly9zZWNvbmRhcnktY2RuLnBraS5jb3JlLndpbmRvd3MubmV0L2Vhc3R1czIvY3Jscy9jY21lZWFzdHVzMnBraS9jY21lZWFzdHVzMmljYTAxLzQ2L2N1cnJlbnQuY3JsMFqgWKBWhlRodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwb6BtoGuGaWh0dHA6Ly9jY21lZWFzdHVzMnBraS5lYXN0dXMyLnBraS5jb3JlLndpbmRvd3MubmV0L2NlcnRpZmljYXRlQXV0aG9yaXRpZXMvY2NtZWVhc3R1czJpY2EwMS80Ni9jdXJyZW50LmNybDCCAbcGCCsGAQUFBwEBBIIBqTCCAaUwbAYIKwYBBQUHMAKGYGh0dHA6Ly9wcmltYXJ5LWNkbi5wa2kuY29yZS53aW5kb3dzLm5ldC9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBuBggrBgEFBQcwAoZiaHR0cDovL3NlY29uZGFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jYWNlcnRzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvY2VydC5jZXIwXQYIKwYBBQUHMAKGUWh0dHA6Ly9jcmwubWljcm9zb2Z0LmNvbS9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBmBggrBgEFBQcwAoZaaHR0cDovL2NjbWVlYXN0dXMycGtpLmVhc3R1czIucGtpLmNvcmUud2luZG93cy5uZXQvY2VydGlmaWNhdGVBdXRob3JpdGllcy9jY21lZWFzdHVzMmljYTAxMA0GCSqGSIb3DQEBCwUAA4IBAQAxSvsyw-aQGPuLg3sIv-zDLSqhHgP__v9DGyP7D16rJpNG1JcjpiXpbloqD9RW5Gc_hHWn5Kyr1pRABJrFa-jEt89-FiQdkToF-vvwJOXbryAgZYdS03uFzUGqARs3JMMqCHrVkx6hb9oOxh_3JdEemO_dbhApyOVTfloO4kIRsgJnHI_ImFt8xm3xa9ftB0ARfJAdN_1EHgB2NdOgTvaSljVOnQY6R40lh_Wl8-s3GIhHbNwQOECXegBxeVAUVN5nGxlD8TEqKc_mX-22kBMao71zBz3JWtCING4-QzwrWj9pxmanpqYqiVGf40ZbZZihRkte0KI9zvW53Y2Smcy7&s=SJbUpVXvkSqwzx4XvwOOZq6OfBC95xz3Mjz0seaONGAgx8X4SAFmXaQtDwkJJ978tV-2K7aH_QLY1852L8mylSlP4rT46jD0tqt_KVnwxWeb9OW_8wu1xDx--m2NfiMjKc1aQz8CTDooI-pL6PCr_4hC-2K1kgEXBpMkJdduDBWrk91YqKQklVbXGc9QAt4qMesoxATsofAsasy0YQEdFGhSzLJy1gvk_1Xbt8icu_nRpFbfpmRg3JhjdqhW__7n-S-cUHZqyUFZ6wM7H9aPf9pfalBZWROV2dVYU-nrPI0TCnTRj1Vbq9Yai64PClhpEh8DKEGjw7HYP5gb3QQO1Q&h=0Vdqw4Wk19lrnHyj9_ETXqmXNpPPEFQdbP-aTaRCLQo",
+          "location": "https://management.azure.com/subscriptions/<subscription-id>/providers/Microsoft.Storage/locations/eastus/asyncoperations/3b116c63-1b59-4464-99c0-744327f08431?monitor=true&api-version=2023-01-01&t=639145217078471002&c=MIIHlDCCBnygAwIBAgIQZiYkoV_LM7Hwt06_u_DzJDANBgkqhkiG9w0BAQsFADA2MTQwMgYDVQQDEytDQ01FIEcxIFRMUyBSU0EgMjA0OCBTSEEyNTYgMjA0OSBFVVMyIENBIDAxMB4XDTI2MDQxMDA4MTUzOVoXDTI2MTAwNTE0MTUzOVowQDE-MDwGA1UEAxM1YXN5bmNvcGVyYXRpb25zaWduaW5nY2VydGlmaWNhdGUubWFuYWdlbWVudC5henVyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDealc9e2xWlYn0dX5zgxycoyRECfCn-ACb8WxKGmsKAA5yFa8bggPwuauZjSPSntq3xw99b6CFXZ6EM34WjxaWokZKYj8bbRT14WzrQHemPN5KUaI3SFtZidaSdEAzhm7Ha1a74SG8rDZU8qVqbaoCPQk9Iblv0LucrVV5BAMOwvi-5j-7X9vehxsheuxPwrVmGy_WrXI_3Qflmizp5BND_I3p4BIRjEcaQw_EBd3dhAC52EO5bT3FKSdM6N5xgpZvtjHjxRG2WG_8Gh07OrI0Ib0mnTB1_HNhiEw3_VzdnINXV0_Fsm7HMV-qCCkY5pyJIZjVX7L7FFY0PGqcqUKdAgMBAAGjggSSMIIEjjCBnQYDVR0gBIGVMIGSMAwGCisGAQQBgjd7AQEwZgYKKwYBBAGCN3sCAjBYMFYGCCsGAQUFBwICMEoeSAAzADMAZQAwADEAOQAyADEALQA0AGQANgA0AC0ANABmADgAYwAtAGEAMAA1ADUALQA1AGIAZABhAGYAZgBkADUAZQAzADMAZDAMBgorBgEEAYI3ewMCMAwGCisGAQQBgjd7BAIwDAYDVR0TAQH_BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDgYDVR0PAQH_BAQDAgWgMB0GA1UdDgQWBBSZIRQPs2If06iDFyiGbMnvIxenBzAfBgNVHSMEGDAWgBT87D7bqnwfgh4FuKEG-UPnArMKuTCCAbIGA1UdHwSCAakwggGlMGmgZ6BlhmNodHRwOi8vcHJpbWFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwa6BpoGeGZWh0dHA6Ly9zZWNvbmRhcnktY2RuLnBraS5jb3JlLndpbmRvd3MubmV0L2Vhc3R1czIvY3Jscy9jY21lZWFzdHVzMnBraS9jY21lZWFzdHVzMmljYTAxLzQ2L2N1cnJlbnQuY3JsMFqgWKBWhlRodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vZWFzdHVzMi9jcmxzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvNDYvY3VycmVudC5jcmwwb6BtoGuGaWh0dHA6Ly9jY21lZWFzdHVzMnBraS5lYXN0dXMyLnBraS5jb3JlLndpbmRvd3MubmV0L2NlcnRpZmljYXRlQXV0aG9yaXRpZXMvY2NtZWVhc3R1czJpY2EwMS80Ni9jdXJyZW50LmNybDCCAbcGCCsGAQUFBwEBBIIBqTCCAaUwbAYIKwYBBQUHMAKGYGh0dHA6Ly9wcmltYXJ5LWNkbi5wa2kuY29yZS53aW5kb3dzLm5ldC9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBuBggrBgEFBQcwAoZiaHR0cDovL3NlY29uZGFyeS1jZG4ucGtpLmNvcmUud2luZG93cy5uZXQvZWFzdHVzMi9jYWNlcnRzL2NjbWVlYXN0dXMycGtpL2NjbWVlYXN0dXMyaWNhMDEvY2VydC5jZXIwXQYIKwYBBQUHMAKGUWh0dHA6Ly9jcmwubWljcm9zb2Z0LmNvbS9lYXN0dXMyL2NhY2VydHMvY2NtZWVhc3R1czJwa2kvY2NtZWVhc3R1czJpY2EwMS9jZXJ0LmNlcjBmBggrBgEFBQcwAoZaaHR0cDovL2NjbWVlYXN0dXMycGtpLmVhc3R1czIucGtpLmNvcmUud2luZG93cy5uZXQvY2VydGlmaWNhdGVBdXRob3JpdGllcy9jY21lZWFzdHVzMmljYTAxMA0GCSqGSIb3DQEBCwUAA4IBAQAxSvsyw-aQGPuLg3sIv-zDLSqhHgP__v9DGyP7D16rJpNG1JcjpiXpbloqD9RW5Gc_hHWn5Kyr1pRABJrFa-jEt89-FiQdkToF-vvwJOXbryAgZYdS03uFzUGqARs3JMMqCHrVkx6hb9oOxh_3JdEemO_dbhApyOVTfloO4kIRsgJnHI_ImFt8xm3xa9ftB0ARfJAdN_1EHgB2NdOgTvaSljVOnQY6R40lh_Wl8-s3GIhHbNwQOECXegBxeVAUVN5nGxlD8TEqKc_mX-22kBMao71zBz3JWtCING4-QzwrWj9pxmanpqYqiVGf40ZbZZihRkte0KI9zvW53Y2Smcy7&s=SJbUpVXvkSqwzx4XvwOOZq6OfBC95xz3Mjz0seaONGAgx8X4SAFmXaQtDwkJJ978tV-2K7aH_QLY1852L8mylSlP4rT46jD0tqt_KVnwxWeb9OW_8wu1xDx--m2NfiMjKc1aQz8CTDooI-pL6PCr_4hC-2K1kgEXBpMkJdduDBWrk91YqKQklVbXGc9QAt4qMesoxATsofAsasy0YQEdFGhSzLJy1gvk_1Xbt8icu_nRpFbfpmRg3JhjdqhW__7n-S-cUHZqyUFZ6wM7H9aPf9pfalBZWROV2dVYU-nrPI0TCnTRj1Vbq9Yai64PClhpEh8DKEGjw7HYP5gb3QQO1Q&h=0Vdqw4Wk19lrnHyj9_ETXqmXNpPPEFQdbP-aTaRCLQo",
           "retry-after": "17",
           "x-ms-correlation-request-id": "e558682a-0483-414f-b776-a928dcf48d25",
           "x-ms-request-id": "3b116c63-1b59-4464-99c0-744327f08431",
@@ -99,7 +99,7 @@
             "tier": "Standard"
           },
           "kind": "StorageV2",
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
           "name": "gslife6b694b935a",
           "type": "Microsoft.Storage/storageAccounts",
           "location": "eastus",
@@ -171,7 +171,7 @@
             "tier": "Standard"
           },
           "kind": "StorageV2",
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
           "name": "gslife6b694b935a",
           "type": "Microsoft.Storage/storageAccounts",
           "location": "eastus",
@@ -243,7 +243,7 @@
             "tier": "Standard"
           },
           "kind": "StorageV2",
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
           "name": "gslife6b694b935a",
           "type": "Microsoft.Storage/storageAccounts",
           "location": "eastus",
@@ -315,7 +315,7 @@
             "tier": "Standard"
           },
           "kind": "StorageV2",
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a",
           "name": "gslife6b694b935a",
           "type": "Microsoft.Storage/storageAccounts",
           "location": "eastus",
@@ -386,7 +386,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094850Z:d217e124-2a1a-4605-ae61-56c4cd5cf836"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
           "name": "c6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
           "properties": {
@@ -415,7 +415,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094851Z:f5e5fe00-089b-42c6-b767-7beb178316a5"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
           "name": "c6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
           "etag": "\"0x8DEB330555A08F9\"",
@@ -456,7 +456,7 @@
         "body": {
           "value": [
             {
-              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
+              "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/blobServices/default/containers/c6b694b935a",
               "name": "c6b694b935a",
               "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
               "etag": "\"0x8DEB330555A08F9\"",
@@ -498,7 +498,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094851Z:612b1c7b-9f17-4d5c-95d0-7d6b2fd8b8c4"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
           "name": "q6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
           "properties": {
@@ -523,7 +523,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094852Z:ec79b3ab-d79b-4a4e-827a-37c0cacd47b3"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
           "name": "q6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
           "properties": {
@@ -551,7 +551,7 @@
         "body": {
           "value": [
             {
-              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
+              "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/queueServices/default/queues/q6b694b935a",
               "name": "q6b694b935a",
               "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
               "properties": {
@@ -582,7 +582,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094853Z:e053e194-59fa-451d-a05a-c798a22c2e2a"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
           "name": "share6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
           "properties": {
@@ -607,7 +607,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094853Z:02af4453-21e7-4728-8b06-aec878608691"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
           "name": "share6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
           "etag": "\"0x8DEB33057025AB8\"",
@@ -641,7 +641,7 @@
         "body": {
           "value": [
             {
-              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
+              "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/fileServices/default/shares/share6b694b935a",
               "name": "share6b694b935a",
               "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
               "etag": "\"0x8DEB33057025AB8\"",
@@ -677,7 +677,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094854Z:00b34017-82f9-42e1-a742-d0711bbac7dc"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
           "name": "table6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
           "properties": {
@@ -702,7 +702,7 @@
           "x-ms-routing-request-id": "EASTUS:20260516T094854Z:ed483d52-a674-4239-b0d5-24c162de7bca"
         },
         "body": {
-          "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
           "name": "table6b694b935a",
           "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
           "properties": {
@@ -730,7 +730,7 @@
         "body": {
           "value": [
             {
-              "id": "/subscriptions/205c408d-a206-4b17-a8ce-5105442922b0/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
+              "id": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-life-6b694b935a/providers/Microsoft.Storage/storageAccounts/gslife6b694b935a/tableServices/default/tables/table6b694b935a",
               "name": "table6b694b935a",
               "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
               "properties": {

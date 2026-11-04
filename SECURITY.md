@@ -19,7 +19,7 @@ The project is in development. Security fixes target `main`; no supported stable
 
 ## Secrets and evidence
 
-Never commit cloud credentials, personal data, private keys, `.env` files, or unsanitized logs. Use synthetic identifiers and data in reproductions. The generic Azure capture command redacts sensitive fields, common credential-bearing URLs, email addresses, and account identifiers; it omits unstructured CLI diagnostics and non-JSON response bodies. Sanitization is not anonymization: review captures manually before committing them. Other capture utilities require their own review.
+Never commit cloud credentials, personal data, private keys, `.env` files, or unsanitized logs. Use synthetic identifiers and data in reproductions. The generic Azure capture command and storage lifecycle sanitizer redact sensitive fields, common credential-bearing URLs, email addresses, and account identifiers; it omits unstructured CLI diagnostics and non-JSON response bodies. Sanitization is not anonymization: review captures manually before committing them. Other capture utilities require their own review.
 
 GitHub secret scanning and push protection are enabled. The Gitleaks workflow scans reachable Git history. `.gitleaksignore` contains only reviewed historical false-positive fingerprints: synthetic resource names, code expressions, and the published Azurite development key. It does not exempt whole directories or arbitrary future secrets. Any change to these exceptions requires maintainer review.
 
