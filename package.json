@@ -106,7 +106,8 @@
     "test:docker": "node scripts/runtime/test-local.mjs --docker",
     "test:repository": "node --test scripts/repository/*.test.mjs",
     "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs",
-    "test:services:local": "node scripts/runtime/test-local-services.mjs"
+    "test:services:local": "node scripts/runtime/test-local-services.mjs",
+    "test:flows": "node scripts/e2e/cross-service-flows.mjs"
   },
   "dependencies": {
     "@azure/service-bus": "^7.10.0",

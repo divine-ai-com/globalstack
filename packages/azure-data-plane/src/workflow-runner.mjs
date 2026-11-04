@@ -163,6 +163,12 @@ export class WorkflowRunner {
     target.properties.endTime = run.endTime;
   }
 
+  evaluateArgument(value, context) {
+    if (typeof value === 'string' && ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"')))) return value.slice(1, -1);
+    if (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+    return this.evaluateExpression(value, context);
+  }
+
   evaluateExpression(value, context) {
     if (Array.isArray(value)) {
       return value.map(item => this.evaluateExpression(item, context));
@@ -171,13 +177,7 @@ export class WorkflowRunner {
       return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, this.evaluateExpression(item, context)]));
     }
     if (typeof value !== 'string') return value;
-    if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
-      return value.slice(1, -1);
-    }
-    if (!value.startsWith('@')) {
-      if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
-      return value;
-    }
+    if (!value.startsWith('@')) return value;
     if (value === '@triggerBody()') return context.triggerBody;
     if (value === '@item()') return context.itemStack.at(-1) ?? null;
 
@@ -201,22 +201,22 @@ export class WorkflowRunner {
 
     if (value.startsWith('@equals(') && value.endsWith(')')) {
       const args = splitExpressionArgs(value.slice('@equals('.length, -1));
-      const left = this.evaluateExpression(args[0]?.trim(), context);
-      const right = this.evaluateExpression(args[1]?.trim(), context);
+      const left = this.evaluateArgument(args[0]?.trim(), context);
+      const right = this.evaluateArgument(args[1]?.trim(), context);
       return left === right;
     }
 
     if (value.startsWith('@less(') && value.endsWith(')')) {
       const args = splitExpressionArgs(value.slice('@less('.length, -1));
-      const left = this.evaluateExpression(args[0]?.trim(), context);
-      const right = this.evaluateExpression(args[1]?.trim(), context);
+      const left = this.evaluateArgument(args[0]?.trim(), context);
+      const right = this.evaluateArgument(args[1]?.trim(), context);
       return Number(left) < Number(right);
     }
 
     if (value.startsWith('@add(') && value.endsWith(')')) {
       const args = splitExpressionArgs(value.slice('@add('.length, -1));
-      const left = this.evaluateExpression(args[0]?.trim(), context);
-      const right = this.evaluateExpression(args[1]?.trim(), context);
+      const left = this.evaluateArgument(args[0]?.trim(), context);
+      const right = this.evaluateArgument(args[1]?.trim(), context);
       return Number(left) + Number(right);
     }
 

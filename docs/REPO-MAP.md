@@ -128,6 +128,7 @@ flowchart TD
 - `packages/conformance/src/azure-storage-data-plane-expectations.test.mjs`
 - `packages/conformance/src/azure-storage-hoststyle.test.mjs`
 - `packages/conformance/src/azure-storage-normalizer.test.mjs`
+- `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
@@ -140,6 +141,7 @@ flowchart TD
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`
+- `packages/conformance/src/workflow-expression-values.test.mjs`
 - `packages/platform-registry/src/index.mjs`
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
@@ -216,6 +218,7 @@ flowchart TD
 - `scripts/conformance/rerun-registered-shallow-azure-captures.mjs`
 - `scripts/conformance/run-approval-provider-wave.mjs`
 - `scripts/conformance/run-azure-api-conformance.mjs`
+- `scripts/e2e/cross-service-flows.mjs`
 - `scripts/e2e/e2e-azure-activity-log-audit-parity.mjs`
 - `scripts/e2e/e2e-azure-aks-metadata-parity.mjs`
 - `scripts/e2e/e2e-azure-api-management-parity.mjs`
@@ -374,6 +377,7 @@ flowchart TD
 - `npm run storage:capture:data-plane`
 - `npm run storage:expectations`
 - `npm run test:docker`
+- `npm run test:flows`
 - `npm run test:gcp:unit`
 - `npm run test:local`
 - `npm run test:repository`
