@@ -9,7 +9,7 @@ services:
       io.globalstack.cloud: azure
       io.globalstack.platform: ${PLATFORM_ID:-unknown}
     environment:
-      GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:?GLOBALSTACK_AUTH_TOKEN must already be exported in the host shell}
+      GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:-globalstack-local-development}
       GLOBALSTACK_ARM_HOST: 0.0.0.0
       GLOBALSTACK_ARM_PORT: 4566
       GLOBALSTACK_AZURE_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID:-00000000-0000-0000-0000-000000000000}

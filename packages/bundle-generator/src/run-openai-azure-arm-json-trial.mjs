@@ -19,7 +19,7 @@ const requiredSolutionFiles = [
   'lib/azuredeploy.parameters.json',
 ];
 
-const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
+const forbiddenModelFacingTerms = /\b(GlobalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 
 function promptText() {
   return `Our platform team needs an Azure storage and messaging foundation for model artifact intake workflows.

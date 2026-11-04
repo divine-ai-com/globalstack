@@ -605,7 +605,7 @@ test('metric store follows alert lifecycle and evaluates bounded alert transitio
   });
 });
 
-test('kubernetes router follows managed cluster lifecycle and serves a real AKS-backed kube api slice', async () => {
+test('kubernetes router follows managed cluster lifecycle and serves a real AKS-backed kube api slice', { skip: process.env.GLOBALSTACK_TEST_DOCKER !== '1' }, async () => {
   const store = new ResourceStore();
   const runtime = createEmulatorRuntime({ store });
   const armServer = createArmServer({

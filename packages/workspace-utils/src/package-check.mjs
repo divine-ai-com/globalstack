@@ -1,5 +1,5 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { extname, join, resolve } from 'node:path';
+import { dirname, extname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
@@ -117,6 +117,17 @@ export async function collectTestFiles(packageDir) {
   });
 }
 
+export async function checkSelfImports(filePath) {
+  const source = await readFile(filePath, 'utf8');
+  const errors = [];
+  for (const match of source.matchAll(/^\s*import\s+(?:[^'"\n]+?from\s+)?['"](\.[^'"]+)['"]/gm)) {
+    if (resolve(dirname(filePath), match[1]) === resolve(filePath)) {
+      errors.push(`${filePath} imports itself`);
+    }
+  }
+  return errors;
+}
+
 async function runCommand(command, args, cwd) {
   await new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(command, args, {
@@ -149,8 +160,11 @@ export async function runPackageCheck(packageDir, mode = 'validate') {
 
   if (mode === 'build' || mode === 'validate') {
     const syntaxFiles = await collectSyntaxFiles(packageDir);
-    if (syntaxFiles.length > 0) {
-      await runCommand(process.execPath, ['--check', ...syntaxFiles.map(filePath => resolve(filePath))], packageDir);
+    for (const filePath of syntaxFiles) {
+      const importErrors = await checkSelfImports(filePath);
+      if (importErrors.length) throw new Error(importErrors.join('\n'));
+      // Node checks one entry file per --check invocation.
+      await runCommand(process.execPath, ['--check', resolve(filePath)], packageDir);
     }
     console.log(`${label}: build ok`);
   }

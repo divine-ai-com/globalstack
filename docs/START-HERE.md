@@ -21,7 +21,6 @@ The goal is not to make Azure calls "work" by returning friendly local success. 
 - Keep unknown Azure resource types and incomplete ARM calls fail-closed.
 - Keep real Azure captures gated behind explicit environment variables.
 - Deprovision every real Azure resource created for capture or smoke testing.
-- Do not use LocalStack for Azure as a runtime dependency. GlobalStack must own the emulator surface it claims.
 - Treat official Microsoft emulators as useful local data planes, not proof of full Azure management-plane parity.
 - For any Azure surface we claim to support, the target is the same externally observable behavior as real Azure. If Azure and GlobalStack differ, that is a product gap.
 - Keep dataset-visible Azure IaC artifacts Azure-only. Prompts, IaC, unit tests, and integration tests must not mention GlobalStack, local endpoints, or emulator-only runtime details. See `docs/product/azure-iac-principals.md`.
@@ -58,20 +57,9 @@ See `docs/CURRENT-MISSION.md` for the current implementation classes and the sta
 - The local ARM facade lives in `packages/azure-control-plane/src/server.mjs`.
 - Storage data-plane E2E uses Azurite through `scripts/e2e/e2e-azure-storage.mjs`.
 
-As of the latest validated run:
+Current capture counts are recorded in `docs/conformance/azure-capture-classification.json`. Local replay expectations live in `fixtures/local-expectations/azure-derived-local-expectations.json`.
 
-- 448 Azure captures were classified.
-- 448 Azure captures had cleanup verified.
-- 382 Azure-derived local expectations were generated from captures.
-- 53 Azure lifecycle expectations were generated from storage lifecycle captures.
-- 262 local conformance cases passed.
-
-These numbers are evidence for the current test set only. They are not a statement of full Azure API parity.
-
-The correct reading of the current state is:
-
-- `100%` of the tracked 30-service parity program is closed.
-- The broader Azure IaC ecosystem is still treated as open-ended and is now advanced through adversarial new task waves and real-Azure drift checks.
+Checklist completion records implementation work. It does not establish a measured percentage of Azure compatibility. New workloads, provider changes and live Azure drift remain open validation work.
 
 ## First Files To Read
 

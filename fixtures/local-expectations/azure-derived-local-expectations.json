@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-28T17:24:18.229Z",
+  "generatedAt": "2026-11-04T08:05:23.882Z",
   "source": "fixtures/azure-captures",
-  "expectationCount": 441,
+  "expectationCount": 440,
   "allowedDepths": [
     "arm-surface",
     "provider-routing-or-parent-validation",
@@ -8573,29 +8573,6 @@
         }
       },
       "caveat": "This validates provider routing or parent-resource behavior only; it does not prove successful resource provisioning."
-    },
-    {
-      "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.invalid-max-delivery-count",
-      "capabilityId": "queue-storage",
-      "resourceType": "Microsoft.ServiceBus/namespaces/queues",
-      "operation": "CreateOrUpdate",
-      "varianceId": "invalid-max-delivery-count",
-      "validationDepth": "provider-validation",
-      "expected": {
-        "status": 429,
-        "errorCode": "NamespaceInTransition",
-        "message": "The namespace ns-3aff289695 in subscription <subscription-id> is in transitioning state, its current state is Creating."
-      },
-      "request": {
-        "method": "PUT",
-        "path": "/subscriptions/<subscription-id>/resourceGroups/rg-gs-conf-3aff289695/providers/Microsoft.ServiceBus/namespaces/ns-3aff289695/queues/q3aff289695?api-version=2021-11-01",
-        "body": {
-          "properties": {
-            "maxDeliveryCount": 0
-          }
-        }
-      },
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
     },
     {
       "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.missing-api-version",

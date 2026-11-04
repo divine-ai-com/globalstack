@@ -55,7 +55,7 @@ const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-p
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
 const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
-const modelFacingRuntimeTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
+const modelFacingRuntimeTerms = /\b(GlobalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 const errors = [];
 const runtimeWalkSkips = [
   /\/dist\/platform-images\/[^/]+\/(?:work|reports|volume)(?:\/|$)/,
@@ -192,9 +192,6 @@ for (const platform of azurePlatforms) {
   }
   if (!compose.includes(requiredTokenText)) {
     errors.push(`${platform.id} compose file does not pass through GLOBALSTACK_AUTH_TOKEN`);
-  }
-  if (compose.includes('localstack/localstack-azure-alpha') || compose.includes('LOCALSTACK_AUTH_TOKEN')) {
-    errors.push(`${platform.id} compose file still contains active LocalStack for Azure runtime wiring`);
   }
   if (!compose.includes('/_globalstack/health')) {
     errors.push(`${platform.id} compose file does not health-check the GlobalStack Azure sidecar`);

@@ -2,7 +2,7 @@
   "_meta": {
     "generatedAt": "2026-05-28T19:33:56.464Z",
     "generatedBy": "npm run conformance:parity",
-    "policy": "No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.",
+    "policy": "Checklist completion is not a measured compatibility percentage. Partial evidence and support boundaries must remain visible.",
     "serviceCount": 30,
     "dimensionCount": 10
   },
@@ -68,7 +68,7 @@
         "Microsoft.Storage/storageAccounts",
         "Microsoft.Storage/storageAccounts/blobServices/containers"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 232,
@@ -201,7 +201,7 @@
         "Microsoft.Web/serverfarms",
         "Microsoft.Web/sites/functions"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 418,
@@ -324,7 +324,7 @@
         "Microsoft.ApiManagement/service",
         "Microsoft.ApiManagement/service/apis"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 511,
@@ -449,7 +449,7 @@
         "Microsoft.Authorization/roleAssignments",
         "Microsoft.Authorization/roleDefinitions"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 15,
@@ -572,7 +572,7 @@
         "Microsoft.KeyVault/vaults",
         "Microsoft.KeyVault/vaults/secrets"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 96,
@@ -695,7 +695,7 @@
         "Microsoft.KeyVault/vaults",
         "Microsoft.KeyVault/vaults/keys"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 105,
@@ -818,7 +818,7 @@
         "Microsoft.DBforPostgreSQL/flexibleServers",
         "Microsoft.DBforPostgreSQL/flexibleServers/databases"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 89,
@@ -942,7 +942,7 @@
         "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
         "Microsoft.Storage/storageAccounts/tableServices/tables"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 16,
         "providerOperationCount": 366,
@@ -1066,7 +1066,7 @@
         "Microsoft.ServiceBus/namespaces/topics",
         "Microsoft.ServiceBus/namespaces/topics/subscriptions"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 116,
@@ -1190,7 +1190,7 @@
         "Microsoft.EventGrid/topics",
         "Microsoft.EventGrid/eventSubscriptions"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 35,
@@ -1312,7 +1312,7 @@
       "resourceTypes": [
         "Microsoft.ContainerRegistry/registries"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 4,
         "providerOperationCount": 118,
@@ -1435,7 +1435,7 @@
         "Microsoft.ContainerService/managedClusters",
         "Microsoft.ContainerService/managedClusters/agentPools"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 4,
         "providerOperationCount": 453,
@@ -1558,7 +1558,7 @@
         "Microsoft.Insights/components",
         "Microsoft.Insights/diagnosticSettings"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 1013,
@@ -1679,7 +1679,7 @@
         "Microsoft.Insights/actionGroups",
         "Microsoft.Insights/activityLogAlerts"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 12,
@@ -1803,7 +1803,7 @@
         "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
         "Microsoft.Network/privateDnsZones"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 110,
@@ -1924,7 +1924,7 @@
         "Microsoft.DBforMySQL/flexibleServers",
         "Microsoft.DBforMySQL/flexibleServers/databases"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 67,
@@ -2044,7 +2044,7 @@
         "Microsoft.Storage/storageAccounts/queueServices/queues",
         "Microsoft.ServiceBus/namespaces/queues"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 22,
@@ -2173,7 +2173,7 @@
         "Microsoft.Cache/redis",
         "Microsoft.Cache/redisEnterprise"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 73,
@@ -2296,7 +2296,7 @@
         "Microsoft.Logic/workflows",
         "Microsoft.Web/sites"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 425,
@@ -2436,7 +2436,7 @@
         "Microsoft.Network/privateDnsZones/TXT",
         "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 84,
         "providerOperationCount": 136,
@@ -2559,7 +2559,7 @@
         "Microsoft.Network/loadBalancers",
         "Microsoft.Network/publicIPAddresses"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 67,
@@ -2684,7 +2684,7 @@
         "Microsoft.Cdn/profiles/originGroups/origins",
         "Microsoft.Cdn/profiles/afdEndpoints/routes"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 133,
@@ -2806,7 +2806,7 @@
         "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
         "Microsoft.Cdn/profiles/securityPolicies"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 9,
@@ -2927,7 +2927,7 @@
         "Microsoft.Insights/diagnosticSettings",
         "Microsoft.EventGrid/systemTopics"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 15,
@@ -3048,7 +3048,7 @@
         "Microsoft.Storage/storageAccounts/fileServices/shares",
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 70,
@@ -3171,7 +3171,7 @@
         "Microsoft.EventHub/namespaces",
         "Microsoft.EventHub/namespaces/eventhubs"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 93,
@@ -3291,7 +3291,7 @@
         "Microsoft.Synapse/workspaces",
         "Microsoft.Synapse/workspaces/sqlPools"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 244,
@@ -3412,7 +3412,7 @@
         "Microsoft.AppConfiguration/configurationStores",
         "Microsoft.KeyVault/vaults/secrets"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 57,
@@ -3534,7 +3534,7 @@
         "Microsoft.DataMigration/services/projects",
         "Microsoft.DataMigration/services/projects/tasks"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 8,
         "providerOperationCount": 34,
@@ -3656,7 +3656,7 @@
         "Microsoft.App/managedEnvironments",
         "Microsoft.App/containerApps"
       ],
-      "currentStatus": "99-ready",
+      "currentStatus": "checklist-complete",
       "evidence": {
         "candidateCallCount": 12,
         "providerOperationCount": 131,

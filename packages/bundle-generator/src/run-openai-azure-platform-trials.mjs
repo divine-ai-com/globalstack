@@ -10,7 +10,7 @@ const subscriptionId = process.env.ARM_SUBSCRIPTION_ID ?? '00000000-0000-0000-00
 const outRoot = join(root, 'dist', 'live-model-trial');
 let baseUrl = 'http://127.0.0.1:0';
 
-const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
+const forbiddenModelFacingTerms = /\b(GlobalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 
 const platforms = [
   {

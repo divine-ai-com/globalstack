@@ -168,11 +168,7 @@ function validateSynapseName(resourceType, providerRoute) {
   if (resourceType === 'Microsoft.Synapse/workspaces') {
     const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'workspaces');
     if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,48}[a-zA-Z0-9]$/.test(name)) {
-      return invalidSynapseName(
-        resourceType,
-        name,
-        'Workspace names must be 2 through 50 characters, use alphanumerics and hyphens, and not start or end with a hyphen.',
-      );
+      return synapseWorkspaceValidationFailed([]);
     }
   }
 
@@ -423,11 +419,7 @@ function validateCdnName(resourceType, providerRoute) {
   if (resourceType === 'Microsoft.Cdn/profiles') {
     const name = serviceBusNameFromTypePath(providerRoute?.typePath, 'profiles');
     if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,258}[A-Za-z0-9])?$/.test(name)) {
-      return invalidCdnName(
-        resourceType,
-        name,
-        'Profile names must be 1 through 260 characters, use alphanumerics and hyphens, and start and end with an alphanumeric character.',
-      );
+      return envelopedError(400, 'BadRequest', `Invalid profile name '${name}'.`);
     }
   }
 
@@ -1016,14 +1008,14 @@ function validateKeyVaultPayload(resourceType, body) {
     if (!body.properties?.tenantId) {
       return envelopedError(
         400,
-        'BadParameter',
+        'BadRequest',
         'Key Vault properties.tenantId is required.',
       );
     }
     if (body.properties?.sku?.family !== 'A' || !['standard', 'premium'].includes(String(body.properties?.sku?.name ?? '').toLowerCase())) {
       return envelopedError(
         400,
-        'BadParameter',
+        'BadRequest',
         'Key Vault properties.sku must specify family A and name standard or premium.',
       );
     }
@@ -1093,12 +1085,13 @@ function validateKeyVaultPayload(resourceType, body) {
 
 function validateMonitorMetricsPayload(resourceType, body) {
   if (resourceType === 'Microsoft.Insights/actionGroups') {
+    if (body.properties === null) return envelopedError(400, 'PropertiesIsNull', 'The properties field must not be null.');
     const properties = body.properties ?? {};
     if (typeof properties.groupShortName !== 'string' || properties.groupShortName.trim() === '') {
       return topLevelError(400, 'BadRequest', "'Group Short Name' must not be empty.");
     }
     if (properties.groupShortName.length > 12) {
-      return topLevelError(400, 'BadRequest', "'Group Short Name' must not be longer than 12 characters.");
+      return topLevelError(400, 'GroupShortNameIsTooLong', "'Group Short Name' must not be longer than 12 characters.");
     }
     if (Object.hasOwn(properties, 'enabled') && typeof properties.enabled !== 'boolean') {
       return topLevelError(400, 'BadRequest', "Property 'enabled' must be a boolean.");
@@ -1678,7 +1671,7 @@ function validateApplicationGatewayPayload(resourceType, body) {
   const sku = body.sku ?? body.properties?.sku;
   const skuName = sku?.name;
   if (!['Standard_v2', 'WAF_v2'].includes(skuName)) {
-    return envelopedError(400, 'ApplicationGatewaySkuNotSupported', 'Application Gateway sku.name must be Standard_v2 or WAF_v2 for this local parity surface.');
+    return envelopedError(400, 'InvalidRequestFormat', 'Application Gateway sku.name must be Standard_v2 or WAF_v2 for this local parity surface.');
   }
   if (!['Standard_v2', 'WAF_v2'].includes(sku?.tier)) {
     return envelopedError(400, 'ApplicationGatewaySkuTierNotSupported', 'Application Gateway sku.tier must be Standard_v2 or WAF_v2 for this local parity surface.');
@@ -1763,7 +1756,7 @@ function validateLoadBalancerPayload(resourceType, body) {
 
   const skuName = body.sku?.name;
   if (skuName !== undefined && !['Basic', 'Standard'].includes(skuName)) {
-    return envelopedError(400, 'LoadBalancerSkuNotSupported', 'Load Balancer sku.name must be Basic or Standard for this local parity surface.');
+    return envelopedError(400, 'InvalidRequestFormat', 'Load Balancer sku.name must be Basic or Standard for this local parity surface.');
   }
 
   const frontendIpConfigurations = arrayProp(body, 'frontendIPConfigurations');
@@ -1979,13 +1972,14 @@ function validateLogicWorkflowPayload(resourceType, body) {
   }
   const state = body.properties?.state;
   if (state && !['Enabled', 'Disabled'].includes(state)) {
-    return envelopedError(400, 'InvalidWorkflowState', `Workflow state '${state}' is invalid.`);
+    return envelopedError(400, 'InvalidRequestContent', `Workflow state '${state}' is invalid.`);
   }
   return null;
 }
 
 function validateCdnPayload(resourceType, body) {
   if (resourceType === 'Microsoft.Cdn/profiles') {
+    if (body.properties === null) return envelopedError(400, 'BadRequest', 'The properties field must not be null.');
     const skuName = body.sku?.name;
     const validSkus = [
       'Standard_AzureFrontDoor',
@@ -2362,14 +2356,10 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
     const localSupportedConsumptionPlan =
       body.sku?.name === 'Y1'
       && body.sku?.tier === 'Dynamic'
-      && isFunctionAppKind(body.kind)
+      && (body.kind == null || isFunctionAppKind(body.kind))
       && (reserved == null || typeof reserved === 'boolean');
     if (!localSupportedConsumptionPlan) {
-      return appServiceError(
-        401,
-        'Unauthorized',
-        'Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (Total VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (Total VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.',
-      );
+      return envelopedError(501, 'GlobalStackUnsupportedAppServicePlan', 'Only the bounded Y1 Dynamic consumption plan is supported locally.');
     }
   }
 
@@ -2504,6 +2494,44 @@ function validateFunctionAppPayload(resourceType, body, options = {}) {
 }
 
 export function capturedProviderValidation({ method, resourceType, body = {}, providerRoute = null, referencesExistingServerFarm = false }) {
+  if (method === 'PUT' && resourceType === 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies' && body.properties === null) {
+    return envelopedError(400, 'ApplicationGatewayFirewallManagedRuleSetsNoValidPrimaryRuleSetsAttached', 'The firewall policy has no valid primary rule set.');
+  }
+  if (method === 'PUT' && resourceType === 'Microsoft.EventGrid/topics' && body.properties?.inputSchema !== undefined
+    && !['EventGridSchema', 'CustomEventSchema', 'CloudEventSchemaV1_0'].includes(body.properties.inputSchema)) {
+    return envelopedError(400, 'InvalidRequest', 'The inputSchema value is invalid.');
+  }
+  if (method === 'PUT' && resourceType === 'Microsoft.Network/applicationGateways' && body.properties === null) {
+    return envelopedError(400, 'InvalidRequestFormat', 'The properties field must not be null.');
+  }
+  // Deserialize the request envelope before checking service-specific properties.
+  const capturedTagValidationTypes = new Set([
+    "Microsoft.Cdn/profiles",
+    "Microsoft.Cdn/profiles/afdEndpoints",
+    "Microsoft.Cdn/profiles/endpoints",
+    "Microsoft.ContainerRegistry/registries",
+    "Microsoft.ContainerService/managedClusters",
+    "Microsoft.DBforPostgreSQL/flexibleServers",
+    "Microsoft.EventGrid/systemTopics",
+    "Microsoft.EventGrid/topics",
+    "Microsoft.Insights/actionGroups",
+    "Microsoft.Insights/metricAlerts",
+    "Microsoft.KeyVault/vaults",
+    "Microsoft.Logic/workflows",
+    "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+    "Microsoft.Network/applicationGateways",
+    "Microsoft.Network/loadBalancers",
+    "Microsoft.Synapse/workspaces",
+    "Microsoft.Synapse/workspaces/sqlPools"
+]);
+  if (method === 'PUT' && body.tags != null && (typeof body.tags !== 'object' || Array.isArray(body.tags))) {
+    if (capturedTagValidationTypes.has(resourceType)) {
+      return envelopedError(400, 'InvalidRequestContent', 'The tags property must be an object.');
+    }
+    if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
+      return envelopedError(400, 'UnsupportedRequestContent', 'Diagnostic settings do not support tags.');
+    }
+  }
   if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
     if (method === 'PUT' && (!body.properties || emptyObject(body))) {
       return topLevelError(400, 'BadRequest', "Missing 'properties'");

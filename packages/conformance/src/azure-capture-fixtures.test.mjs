@@ -35,3 +35,15 @@ test('Provider registration failures are marked shallow when present', async () 
   }
   assert.equal(Number.isInteger(shallowCount), true);
 });
+
+test('transient namespace state and subscription quota do not prove parameter validation', () => {
+  for (const [code, message, status] of [
+    ['NamespaceInTransition', 'The namespace is Creating.', 429],
+    ['Unauthorized', 'Operation cannot be completed without additional quota.', 401],
+  ]) {
+    const result = classifyAzureCapture({ response: { status, body: { error: { code, message } } } });
+    assert.equal(result.depth, 'capture-infrastructure-gap');
+    assert.equal(result.cloudValidated, false);
+  }
+  assert.equal(classifyAzureCapture({ response: { status: 400, body: { error: { code: 'InvalidParameterValue', message: 'Invalid value.' } } } }).depth, 'provider-validation');
+});

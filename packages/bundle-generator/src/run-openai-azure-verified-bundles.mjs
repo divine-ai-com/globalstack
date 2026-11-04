@@ -12,7 +12,7 @@ const latestResultsPath = join(distPath(root, 'verified-bundles'), 'latest-resul
 const platformWaveHistoryPath = join(root, 'docs', 'conformance', 'azure-verified-platform-waves.json');
 const model = process.env.OPENAI_MODEL ?? 'gpt-5.5';
 const location = process.env.AZURE_LOCATION ?? 'eastus';
-const forbiddenModelFacingTerms = /\b(GlobalStack|LocalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot/i;
+const forbiddenModelFacingTerms = /\b(GlobalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot/i;
 const requestedItems = process.argv
   .filter(arg => arg.startsWith('--bundle='))
   .flatMap(arg => arg.split('=')[1].split(',').map(item => item.trim()).filter(Boolean));

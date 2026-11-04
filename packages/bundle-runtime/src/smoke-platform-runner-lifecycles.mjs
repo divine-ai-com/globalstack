@@ -6,11 +6,8 @@ import { azurePlatforms } from '../../platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
 const outPath = distPath(root, 'platform-lifecycle-smoke-results.json');
-const token = process.env.GLOBALSTACK_AUTH_TOKEN;
+const token = process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-local-development';
 
-if (!token || token.trim() === '') {
-  throw new Error('GLOBALSTACK_AUTH_TOKEN is required to run platform runner lifecycle smoke.');
-}
 
 function run(command, args, options = {}) {
   return new Promise((resolve) => {

@@ -1,0 +1,37 @@
+name: Label pull requests
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # This workflow never checks out or executes contributor code.
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const match = pr.title.match(/^([a-z]+)(?:\(([a-z-]+)\))?(!)?: /);
+            const groups = {
+              feat: 'type: feature', fix: 'type: fix', perf: 'type: performance',
+              docs: 'type: maintenance', test: 'type: maintenance', build: 'type: maintenance',
+              ci: 'type: maintenance', chore: 'type: maintenance', refactor: 'type: maintenance',
+              style: 'type: maintenance', revert: 'type: maintenance'
+            };
+            const desired = [];
+            if (groups[match?.[1]]) desired.push(groups[match[1]]);
+            if (match?.[3]) desired.push('breaking change');
+            const current = await github.paginate(github.rest.issues.listLabelsOnIssue, {
+              ...context.repo, issue_number: pr.number
+            });
+            for (const label of current) {
+              if ((label.name.startsWith('type: ') || label.name === 'breaking change') && !desired.includes(label.name)) {
+                await github.rest.issues.removeLabel({ ...context.repo, issue_number: pr.number, name: label.name });
+              }
+            }
+            if (desired.length) await github.rest.issues.addLabels({ ...context.repo, issue_number: pr.number, labels: desired });

@@ -26,6 +26,14 @@ export function classifyAzureCapture(fixture) {
   const code = error?.code ?? null;
   const message = error?.message ?? '';
   const status = fixture?.response?.status;
+  if (code === 'NamespaceInTransition' || /cannot be completed without additional quota/i.test(message)) {
+    return {
+      depth: 'capture-infrastructure-gap',
+      cloudValidated: false,
+      providerRegistered: null,
+      caveat: 'Parent provisioning or capture-subscription quota blocked the request before its parameters could be validated.',
+    };
+  }
   if (captureInfrastructureErrorCodes.has(code) || /specified subscription .* does not exist/i.test(message)) {
     return {
       depth: 'capture-infrastructure-gap',

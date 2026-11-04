@@ -52,7 +52,6 @@ Forbidden in dataset-visible artifacts:
 
 - `GlobalStack`
 - emulator or emulation wording
-- `LocalStack`
 - `localhost`
 - local endpoint URLs
 - custom local auth tokens
@@ -269,7 +268,6 @@ Before treating a bundle as training-grade, confirm that dataset-visible files d
 At minimum, scan for:
 
 - `GlobalStack`
-- `LocalStack`
 - `localhost`
 - `127.0.0.1`
 - `4566`

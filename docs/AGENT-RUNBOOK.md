@@ -19,7 +19,7 @@ When working on prompts, model responses, IaC, unit tests, or integration tests 
 Before accepting a bundle, scan the dataset-visible files for leaked runtime-only terms. `provider: GlobalStack` is allowed in metadata only.
 
 ```bash
-rg -n 'GlobalStack|LocalStack|localhost|127\\.0\\.0\\.1|4566|4570|GLOBALSTACK_' verified/ dist/deploy-smoke/ templates/sample-tasks/ || true
+rg -n 'GlobalStack|localhost|127\\.0\\.0\\.1|4566|4570|GLOBALSTACK_' verified/ dist/deploy-smoke/ templates/sample-tasks/ || true
 rg -n 'provider\\s*[:=]\\s*"?GlobalStack"?' verified/ dist/deploy-smoke/ templates/sample-tasks/ || true
 ```
 

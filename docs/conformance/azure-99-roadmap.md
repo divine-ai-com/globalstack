@@ -1,6 +1,6 @@
 # Azure 99% Coverage Roadmap
 
-This roadmap captures both the closed 30-service parity checklist and the continuation work needed to keep the `100%` claim honest under new platforms, new workloads, and live Azure drift.
+This roadmap tracks implementation work. Its percentages measure checklist completion, not measured Azure compatibility or API coverage.
 
 Generated: 2026-05-29T03:29:48.962Z
 
@@ -11,11 +11,11 @@ Generated: 2026-05-29T03:29:48.962Z
 - Unknown resource types, parameters, API versions, and data-plane calls must fail closed.
 - IaC provider deploy, refresh, update, import, and destroy behavior must be tested before a service can approach 99%-ready.
 
-## Dynamic Estimate Snapshot
+## Checklist Completion Snapshot
 
-- Overall 30-service Azure program: 100% (95-100%)
-- Azure Functions / Durable cluster: 99% (95-100%)
-- Azure Logic Apps cluster: 99% (95-100%)
+- Overall 30-service checklist completion: 100% (95-100%)
+- Azure Functions / Durable checklist estimate: 99% (95-100%)
+- Azure Logic Apps checklist estimate: 99% (95-100%)
 
 Method:
 - Overall program estimate is derived from roadmap status only: `complete = 100%`, `partial = 55%`, `not-started = 5%`, averaged across all services and dimensions.

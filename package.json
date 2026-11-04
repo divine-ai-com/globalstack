@@ -6,15 +6,14 @@
   "type": "module",
   "packageManager": "npm@11.14.1",
   "engines": {
-    "node": ">=20.20.0",
-    "npm": ">=11.14.0"
+    "node": ">=22.23.0",
+    "npm": ">=10.9.9"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "fetch:azure-coverage": "node scripts/capture/fetch-localstack-azure-coverage.mjs",
     "render": "node scripts/render/render-platform-templates.mjs",
     "build:images": "node scripts/runtime/build-platform-images.mjs",
     "docker:prewarm": "npm run render && npm run build:images",
@@ -99,7 +98,14 @@
     "validate": "node scripts/runtime/validate.mjs",
     "smoke": "npm run render && npm run hybrid:render && npm run conformance:catalog && npm run conformance:classify && npm run conformance:expectations && npm run lifecycle:expectations && npm run storage:expectations && npm run conformance:parity && npm run conformance:roadmap && npm run conformance:checklist && npm run docs:nav && npm run docs:test && npm run smoke:prompts && npm run smoke:deploy && npm run smoke:iac-model-responses && npm run hybrid:test && node --test packages/conformance/src/globalstack-auth.test.mjs && node --test packages/conformance/src/azure-capture-fixtures.test.mjs && node --test packages/conformance/src/azure-derived-local-expectations.test.mjs && node --test packages/conformance/src/azure-local-lifecycle.test.mjs && node --test packages/conformance/src/azure-lifecycle-local-expectations.test.mjs && node --test packages/conformance/src/azure-storage-data-plane-expectations.test.mjs && node --test packages/conformance/src/azure-storage-normalizer.test.mjs && npm run conformance:local && npm run e2e:storage && npm run e2e:storage-hardening && npm run e2e:storage-normalizer && npm run e2e:storage-parity && npm run e2e:service-bus-parity && npm run e2e:event-hubs-parity && npm run e2e:synapse-warehouse-parity && npm run e2e:database-migration-service-parity && npm run e2e:service-discovery-parity && npm run e2e:event-grid-parity && npm run e2e:api-management-parity && npm run e2e:postgresql-parity && npm run e2e:cosmos-parity && npm run e2e:mysql-parity && npm run e2e:redis-parity && npm run e2e:logic-workflows-parity && npm run e2e:azure-functions-parity && npm run e2e:identity-rbac-parity && npm run e2e:monitor-logs-parity && npm run e2e:monitor-metrics-alerts-parity && npm run e2e:virtual-network-parity && npm run e2e:dns-zones-parity && npm run e2e:load-balancing-parity && npm run e2e:front-door-cdn-parity && npm run e2e:waf-policy-parity && npm run e2e:activity-log-audit-parity && npm run e2e:azure-files-parity && npm run e2e:app-configuration-parity && npm run e2e:key-vault-parity && npm run e2e:container-registry-parity && npm run e2e:aks-metadata-parity && npm run validate",
     "differential:azure": "node scripts/capture/run-azure-differential.mjs",
-    "differential:azure:aks": "node scripts/capture/run-azure-differential.mjs --scenario=aks-metadata"
+    "differential:azure:aks": "node scripts/capture/run-azure-differential.mjs --scenario=aks-metadata",
+    "start": "node scripts/runtime/start-local.mjs",
+    "demo": "node scripts/runtime/local-demo.mjs",
+    "test:local": "node scripts/runtime/test-local.mjs",
+    "check:local": "npm run workspace:build && npm run docs:nav && npm run test:local",
+    "test:docker": "node scripts/runtime/test-local.mjs --docker",
+    "test:repository": "node --test scripts/repository/*.test.mjs",
+    "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs"
   },
   "dependencies": {
     "@azure/service-bus": "^7.9.5",

@@ -58,7 +58,6 @@ flowchart TD
 |---|---|---|
 | `dist/platform-images/` | `npm run render` | Docker runner templates for Azure Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON. |
 | `templates/emulator/Dockerfile` | hand maintained | First-party GlobalStack Azure sidecar image. |
-| `docs/localstack-azure/coverage.json` | `npm run fetch:azure-coverage` | Archived third-party coverage snapshot. Historical reference only. |
 | `docs/hybrid/azure-hybrid-coverage.json` | `npm run hybrid:render` | Generated local support matrix. |
 | `docs/conformance/azure-live-api-catalog.json` | `npm run conformance:catalog` | Candidate live Azure API calls and variance cases. |
 | `docs/ARTIFACT-REGISTRY.md` | `npm run docs:artifacts` | File ownership, edit policy, source-of-truth boundaries, and generator commands. |
@@ -134,6 +133,7 @@ flowchart TD
 - `packages/conformance/src/hybrid-conformance.test.mjs`
 - `packages/conformance/src/iot-hub-router.test.mjs`
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
+- `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/platform-registry/src/index.mjs`
@@ -203,7 +203,6 @@ flowchart TD
 - `scripts/capture/capture-azure-storage-data-plane.mjs`
 - `scripts/capture/capture-azure-storage-lifecycle.mjs`
 - `scripts/capture/capture-real-azure-operation.mjs`
-- `scripts/capture/fetch-localstack-azure-coverage.mjs`
 - `scripts/capture/run-azure-differential.mjs`
 - `scripts/conformance/classify-azure-captures.mjs`
 - `scripts/conformance/report-provider-registration-gaps.mjs`
@@ -254,14 +253,21 @@ flowchart TD
 - `scripts/render/render-repo-map.mjs`
 - `scripts/render/render-service-scope.mjs`
 - `scripts/render/render-storage-data-plane-expectations.mjs`
+- `scripts/repository/package-check.test.mjs`
+- `scripts/repository/pr-policy.mjs`
+- `scripts/repository/pr-policy.test.mjs`
+- `scripts/repository/sync-labels.mjs`
 - `scripts/runtime/build-platform-images.mjs`
 - `scripts/runtime/clean-runtime-artifacts.mjs`
 - `scripts/runtime/docker-globalstack-janitor.mjs`
+- `scripts/runtime/local-demo.mjs`
 - `scripts/runtime/native-deploy-bicep-cli.mjs`
 - `scripts/runtime/native-deploy-hcl-cli.mjs`
 - `scripts/runtime/smoke-bicep-runner-lifecycle.mjs`
 - `scripts/runtime/smoke-deploy-azure-usecases.mjs`
 - `scripts/runtime/smoke-platform-runner-lifecycles.mjs`
+- `scripts/runtime/start-local.mjs`
+- `scripts/runtime/test-local.mjs`
 - `scripts/runtime/validate.mjs`
 - `scripts/verified/generate-azure-smoke-prompts.mjs`
 - `scripts/verified/run-openai-azure-arm-json-trial.mjs`
@@ -275,6 +281,7 @@ flowchart TD
 - `npm run aks:capture:differential`
 - `npm run build:images`
 - `npm run capture:azure`
+- `npm run check:local`
 - `npm run conformance:azure`
 - `npm run conformance:catalog`
 - `npm run conformance:checklist`
@@ -283,6 +290,7 @@ flowchart TD
 - `npm run conformance:local`
 - `npm run conformance:parity`
 - `npm run conformance:roadmap`
+- `npm run demo`
 - `npm run differential:azure`
 - `npm run differential:azure:aks`
 - `npm run docker:janitor`
@@ -325,7 +333,6 @@ flowchart TD
 - `npm run e2e:synapse-warehouse-parity`
 - `npm run e2e:virtual-network-parity`
 - `npm run e2e:waf-policy-parity`
-- `npm run fetch:azure-coverage`
 - `npm run hybrid:emulator`
 - `npm run hybrid:render`
 - `npm run hybrid:test`
@@ -348,8 +355,13 @@ flowchart TD
 - `npm run smoke:iac-model-responses`
 - `npm run smoke:platform-runners`
 - `npm run smoke:prompts`
+- `npm run start`
 - `npm run storage:capture:data-plane`
 - `npm run storage:expectations`
+- `npm run test:docker`
+- `npm run test:gcp:unit`
+- `npm run test:local`
+- `npm run test:repository`
 - `npm run trial:openai-arm-json`
 - `npm run trial:openai-complex-pulumi-bundles`
 - `npm run trial:openai-platforms`

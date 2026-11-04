@@ -79,7 +79,7 @@ test('expected ADRs exist and are discoverable from the docs routing index', asy
 
   const expectedAdrs = [
     'docs/decisions/0001-conformance-led-emulation.md',
-    'docs/decisions/0002-localstack-azure-as-landscape-input.md',
+    'docs/decisions/0002-first-party-support-evidence.md',
     'docs/decisions/0003-captured-failures-can-be-local-passes.md',
     'docs/decisions/0004-parent-state-is-part-of-the-api-contract.md',
   ];

@@ -2,7 +2,7 @@
 
 This checklist is the service-by-service work queue for making GlobalStack Azure behave like real Azure for IaC deployments and integration tests.
 
-A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.
+Completion refers to the tracked checklist only. It is not a measured Azure compatibility percentage. Every claimed behavior still needs scoped evidence.
 
 Generated: 2026-05-28T19:33:56.464Z
 
@@ -23,43 +23,43 @@ Generated: 2026-05-28T19:33:56.464Z
 
 | Service | Tier | Current Status | Complete | Partial | Not Started | Candidate Calls | Live Captures | Provider Ops |
 |---|---:|---|---:|---:|---:|---:|---:|---:|
-| blob-storage | 1 | 99-ready | 10 | 0 | 0 | 8 | 16 | 232 |
-| azure-functions | 1 | 99-ready | 10 | 0 | 0 | 8 | 15 | 418 |
-| api-management | 1 | 99-ready | 10 | 0 | 0 | 8 | 28 | 511 |
-| identity-rbac | 1 | 99-ready | 10 | 0 | 0 | 12 | 39 | 15 |
-| key-vault-secrets | 1 | 99-ready | 10 | 0 | 0 | 8 | 20 | 96 |
-| key-vault-keys | 1 | 99-ready | 10 | 0 | 0 | 8 | 19 | 105 |
-| postgresql-flexible-server | 1 | 99-ready | 10 | 0 | 0 | 8 | 31 | 89 |
-| cosmos-nosql-table | 1 | 99-ready | 10 | 0 | 0 | 16 | 41 | 366 |
-| service-bus-topics | 1 | 99-ready | 10 | 0 | 0 | 12 | 33 | 116 |
-| event-grid | 1 | 99-ready | 10 | 0 | 0 | 8 | 20 | 35 |
-| container-registry | 1 | 99-ready | 10 | 0 | 0 | 4 | 12 | 118 |
-| aks-metadata | 1 | 99-ready | 10 | 0 | 0 | 4 | 13 | 453 |
-| monitor-logs | 1 | 99-ready | 10 | 0 | 0 | 8 | 15 | 1013 |
-| monitor-metrics-alerts | 1 | 99-ready | 10 | 0 | 0 | 8 | 31 | 12 |
-| virtual-network | 1 | 99-ready | 10 | 0 | 0 | 12 | 41 | 110 |
-| mysql-flexible-server | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 67 |
-| queue-storage | 2 | 99-ready | 10 | 0 | 0 | 8 | 16 | 22 |
-| redis-cache | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 73 |
-| logic-workflows | 2 | 99-ready | 10 | 0 | 0 | 8 | 20 | 425 |
-| dns-zones | 2 | 99-ready | 10 | 0 | 0 | 84 | 168 | 136 |
-| load-balancing | 2 | 99-ready | 10 | 0 | 0 | 8 | 34 | 67 |
-| front-door-cdn | 2 | 99-ready | 10 | 0 | 0 | 12 | 41 | 133 |
-| waf-policy | 2 | 99-ready | 10 | 0 | 0 | 8 | 31 | 9 |
-| activity-log-audit | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 15 |
-| azure-files | 2 | 99-ready | 10 | 0 | 0 | 8 | 17 | 70 |
-| event-hubs-streams | 2 | 99-ready | 10 | 0 | 0 | 8 | 31 | 93 |
-| synapse-warehouse | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 244 |
-| app-configuration-parameters | 2 | 99-ready | 10 | 0 | 0 | 8 | 18 | 57 |
-| database-migration-service | 2 | 99-ready | 10 | 0 | 0 | 8 | 23 | 34 |
-| service-discovery | 2 | 99-ready | 10 | 0 | 0 | 12 | 37 | 131 |
+| blob-storage | 1 | checklist-complete | 10 | 0 | 0 | 8 | 16 | 232 |
+| azure-functions | 1 | checklist-complete | 10 | 0 | 0 | 8 | 15 | 418 |
+| api-management | 1 | checklist-complete | 10 | 0 | 0 | 8 | 28 | 511 |
+| identity-rbac | 1 | checklist-complete | 10 | 0 | 0 | 12 | 39 | 15 |
+| key-vault-secrets | 1 | checklist-complete | 10 | 0 | 0 | 8 | 20 | 96 |
+| key-vault-keys | 1 | checklist-complete | 10 | 0 | 0 | 8 | 19 | 105 |
+| postgresql-flexible-server | 1 | checklist-complete | 10 | 0 | 0 | 8 | 31 | 89 |
+| cosmos-nosql-table | 1 | checklist-complete | 10 | 0 | 0 | 16 | 41 | 366 |
+| service-bus-topics | 1 | checklist-complete | 10 | 0 | 0 | 12 | 33 | 116 |
+| event-grid | 1 | checklist-complete | 10 | 0 | 0 | 8 | 20 | 35 |
+| container-registry | 1 | checklist-complete | 10 | 0 | 0 | 4 | 12 | 118 |
+| aks-metadata | 1 | checklist-complete | 10 | 0 | 0 | 4 | 13 | 453 |
+| monitor-logs | 1 | checklist-complete | 10 | 0 | 0 | 8 | 15 | 1013 |
+| monitor-metrics-alerts | 1 | checklist-complete | 10 | 0 | 0 | 8 | 31 | 12 |
+| virtual-network | 1 | checklist-complete | 10 | 0 | 0 | 12 | 41 | 110 |
+| mysql-flexible-server | 2 | checklist-complete | 10 | 0 | 0 | 8 | 17 | 67 |
+| queue-storage | 2 | checklist-complete | 10 | 0 | 0 | 8 | 16 | 22 |
+| redis-cache | 2 | checklist-complete | 10 | 0 | 0 | 8 | 17 | 73 |
+| logic-workflows | 2 | checklist-complete | 10 | 0 | 0 | 8 | 20 | 425 |
+| dns-zones | 2 | checklist-complete | 10 | 0 | 0 | 84 | 168 | 136 |
+| load-balancing | 2 | checklist-complete | 10 | 0 | 0 | 8 | 34 | 67 |
+| front-door-cdn | 2 | checklist-complete | 10 | 0 | 0 | 12 | 41 | 133 |
+| waf-policy | 2 | checklist-complete | 10 | 0 | 0 | 8 | 31 | 9 |
+| activity-log-audit | 2 | checklist-complete | 10 | 0 | 0 | 8 | 23 | 15 |
+| azure-files | 2 | checklist-complete | 10 | 0 | 0 | 8 | 17 | 70 |
+| event-hubs-streams | 2 | checklist-complete | 10 | 0 | 0 | 8 | 31 | 93 |
+| synapse-warehouse | 2 | checklist-complete | 10 | 0 | 0 | 8 | 23 | 244 |
+| app-configuration-parameters | 2 | checklist-complete | 10 | 0 | 0 | 8 | 18 | 57 |
+| database-migration-service | 2 | checklist-complete | 10 | 0 | 0 | 8 | 23 | 34 |
+| service-discovery | 2 | checklist-complete | 10 | 0 | 0 | 12 | 37 | 131 |
 
 ## blob-storage
 
 - Tier: 1
 - AWS analogue: S3
 - Azure equivalent: Azure Blob Storage / Storage Account
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Storage/storageAccounts, Microsoft.Storage/storageAccounts/blobServices/containers
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -80,7 +80,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: Lambda
 - Azure equivalent: Azure Functions / Function Apps
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Web/sites, Microsoft.Web/serverfarms, Microsoft.Web/sites/functions
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -101,7 +101,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: API Gateway
 - Azure equivalent: Azure API Management
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.ApiManagement/service, Microsoft.ApiManagement/service/apis
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -122,7 +122,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: IAM/STS
 - Azure equivalent: Microsoft Entra ID, Azure RBAC, Managed Identity
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.ManagedIdentity/userAssignedIdentities, Microsoft.Authorization/roleAssignments, Microsoft.Authorization/roleDefinitions
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -143,7 +143,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: Secrets Manager
 - Azure equivalent: Key Vault secrets
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.KeyVault/vaults, Microsoft.KeyVault/vaults/secrets
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -164,7 +164,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: KMS
 - Azure equivalent: Key Vault keys / Managed HSM
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.KeyVault/vaults, Microsoft.KeyVault/vaults/keys
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -185,7 +185,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: RDS PostgreSQL
 - Azure equivalent: Azure Database for PostgreSQL Flexible Server
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.DBforPostgreSQL/flexibleServers, Microsoft.DBforPostgreSQL/flexibleServers/databases
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -206,7 +206,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: DynamoDB
 - Azure equivalent: Cosmos DB for NoSQL / Table Storage
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.DocumentDB/databaseAccounts, Microsoft.DocumentDB/databaseAccounts/sqlDatabases, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers, Microsoft.Storage/storageAccounts/tableServices/tables
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -227,7 +227,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: SNS
 - Azure equivalent: Service Bus topics / Event Grid topics
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.ServiceBus/namespaces, Microsoft.ServiceBus/namespaces/topics, Microsoft.ServiceBus/namespaces/topics/subscriptions
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -248,7 +248,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: EventBridge
 - Azure equivalent: Event Grid
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.EventGrid/topics, Microsoft.EventGrid/eventSubscriptions
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -269,7 +269,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: ECR
 - Azure equivalent: Azure Container Registry
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.ContainerRegistry/registries
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -290,7 +290,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: EKS
 - Azure equivalent: Azure Kubernetes Service
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.ContainerService/managedClusters, Microsoft.ContainerService/managedClusters/agentPools
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -311,7 +311,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: CloudWatch Logs
 - Azure equivalent: Log Analytics / Application Insights / Azure Monitor Logs
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.OperationalInsights/workspaces, Microsoft.Insights/components, Microsoft.Insights/diagnosticSettings
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -332,7 +332,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: CloudWatch Metrics/Alarms
 - Azure equivalent: Azure Monitor metrics and alerts
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Insights/metricAlerts, Microsoft.Insights/actionGroups, Microsoft.Insights/activityLogAlerts
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -353,7 +353,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 1
 - AWS analogue: VPC
 - Azure equivalent: Virtual Network / Private Endpoint / Private DNS
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Network/virtualNetworks, Microsoft.Network/virtualNetworks/virtualNetworkPeerings, Microsoft.Network/privateEndpoints, Microsoft.Network/privateEndpoints/privateDnsZoneGroups, Microsoft.Network/privateDnsZones
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -374,7 +374,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: RDS MySQL
 - Azure equivalent: Azure Database for MySQL Flexible Server
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.DBforMySQL/flexibleServers, Microsoft.DBforMySQL/flexibleServers/databases
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -395,7 +395,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: SQS
 - Azure equivalent: Azure Queue Storage / Service Bus queues
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Storage/storageAccounts/queueServices/queues, Microsoft.ServiceBus/namespaces/queues
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -416,7 +416,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: ElastiCache Redis
 - Azure equivalent: Azure Cache for Redis
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Cache/redis, Microsoft.Cache/redisEnterprise
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -437,7 +437,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: Step Functions
 - Azure equivalent: Azure Logic Apps / Durable Functions
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Logic/workflows, Microsoft.Web/sites
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -458,7 +458,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: Route 53
 - Azure equivalent: Azure DNS / Private DNS Zones
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Network/dnsZones, Microsoft.Network/dnsZones/A, Microsoft.Network/dnsZones/AAAA, Microsoft.Network/dnsZones/CAA, Microsoft.Network/dnsZones/CNAME, Microsoft.Network/dnsZones/MX, Microsoft.Network/dnsZones/NS, Microsoft.Network/dnsZones/PTR, Microsoft.Network/dnsZones/SOA, Microsoft.Network/dnsZones/SRV, Microsoft.Network/dnsZones/TXT, Microsoft.Network/privateDnsZones, Microsoft.Network/privateDnsZones/A, Microsoft.Network/privateDnsZones/AAAA, Microsoft.Network/privateDnsZones/CNAME, Microsoft.Network/privateDnsZones/MX, Microsoft.Network/privateDnsZones/PTR, Microsoft.Network/privateDnsZones/SOA, Microsoft.Network/privateDnsZones/SRV, Microsoft.Network/privateDnsZones/TXT, Microsoft.Network/privateDnsZones/virtualNetworkLinks
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -479,7 +479,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: ALB/NLB
 - Azure equivalent: Azure Application Gateway / Load Balancer
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Network/applicationGateways, Microsoft.Network/loadBalancers, Microsoft.Network/publicIPAddresses
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -500,7 +500,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: CloudFront
 - Azure equivalent: Azure Front Door / Azure CDN
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Cdn/profiles, Microsoft.Cdn/profiles/afdEndpoints, Microsoft.Cdn/profiles/endpoints, Microsoft.Cdn/profiles/originGroups, Microsoft.Cdn/profiles/originGroups/origins, Microsoft.Cdn/profiles/afdEndpoints/routes
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -521,7 +521,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: WAF
 - Azure equivalent: Azure Web Application Firewall policy
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies, Microsoft.Network/FrontDoorWebApplicationFirewallPolicies, Microsoft.Cdn/profiles/securityPolicies
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -542,7 +542,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: CloudTrail
 - Azure equivalent: Azure Activity Log / Diagnostic Settings
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Insights/diagnosticSettings, Microsoft.EventGrid/systemTopics
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -563,7 +563,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: EFS
 - Azure equivalent: Azure Files / Azure NetApp Files
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Storage/storageAccounts/fileServices/shares, Microsoft.NetApp/netAppAccounts/capacityPools/volumes
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -584,7 +584,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: Kinesis Data Streams
 - Azure equivalent: Azure Event Hubs
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.EventHub/namespaces, Microsoft.EventHub/namespaces/eventhubs
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -605,7 +605,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: Redshift
 - Azure equivalent: Azure Synapse Analytics dedicated SQL pool
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Synapse/workspaces, Microsoft.Synapse/workspaces/sqlPools
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -626,7 +626,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: SSM Parameter Store
 - Azure equivalent: Azure App Configuration / Key Vault configuration values
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.AppConfiguration/configurationStores, Microsoft.KeyVault/vaults/secrets
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -647,7 +647,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: DMS
 - Azure equivalent: Azure Database Migration Service
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.DataMigration/services, Microsoft.DataMigration/services/projects, Microsoft.DataMigration/services/projects/tasks
 
 | Dimension | Status | Evidence | Remaining Gaps |
@@ -668,7 +668,7 @@ Generated: 2026-05-28T19:33:56.464Z
 - Tier: 2
 - AWS analogue: Service Discovery / Cloud Map
 - Azure equivalent: Azure Private DNS / Container Apps service discovery
-- Current status: 99-ready
+- Current status: checklist-complete
 - Resource types: Microsoft.Network/privateDnsZones, Microsoft.App/managedEnvironments, Microsoft.App/containerApps
 
 | Dimension | Status | Evidence | Remaining Gaps |

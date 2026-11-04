@@ -1,7 +1,14 @@
 import { URL } from 'node:url';
 import { allCapabilities, supportedCapabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
-export async function readBody(req) {
+const requestBodies = new WeakMap();
+
+export function readBody(req) {
+  if (!requestBodies.has(req)) requestBodies.set(req, parseRequestBody(req));
+  return requestBodies.get(req);
+}
+
+async function parseRequestBody(req) {
   let text = '';
   for await (const chunk of req) text += chunk;
   if (!text) return {};
@@ -1354,6 +1361,14 @@ export function addTemplateVariables(template, context) {
   return context;
 }
 
+function armResourcePath(resourceType, names) {
+  const [namespace, ...types] = String(resourceType).split('/');
+  if (!namespace || !types.length || names.length !== types.length) {
+    throw new Error('ARM resource ID requires one name for each resource type segment.');
+  }
+  return `${namespace}/${types.map((type, index) => `${type}/${names[index]}`).join('/')}`;
+}
+
 export function evaluateArmExpression(expression, parameters) {
   const text = expression.trim();
   const parameterMatch = text.match(/^parameters\('([^']+)'\)$/);
@@ -1378,12 +1393,27 @@ export function evaluateArmExpression(expression, parameters) {
   if (concatMatch) return splitArmArgs(concatMatch[1]).map(arg => evaluateArmValue(arg, parameters)).join('');
 
   const resourceIdMatch = text.match(/^(subscriptionResourceId|resourceId)\((.*)\)$/s);
-  if (resourceIdMatch) return splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmValue(arg, parameters)).join('/');
+  if (resourceIdMatch) {
+    const args = splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmValue(arg, parameters));
+    const typeIndex = args.findIndex(arg => typeof arg === 'string' && /^[^/]+\.[^/]+\//.test(arg));
+    if (typeIndex < 0 || typeIndex > 2) throw new Error('Unsupported ARM resource ID arguments.');
+    const path = armResourcePath(args[typeIndex], args.slice(typeIndex + 1));
+    if (resourceIdMatch[1] === 'subscriptionResourceId') {
+      if (typeIndex > 1) throw new Error('subscriptionResourceId accepts at most one subscription argument.');
+      const subscriptionId = typeIndex === 1 ? args[0] : parameters.__subscriptionId;
+      if (!subscriptionId) throw new Error('ARM resource ID requires a subscription context.');
+      return `/subscriptions/${subscriptionId}/providers/${path}`;
+    }
+    const subscriptionId = typeIndex === 2 ? args[0] : parameters.__subscriptionId;
+    const resourceGroupName = typeIndex > 0 ? args[typeIndex - 1] : parameters.__resourceGroupName;
+    if (!subscriptionId) throw new Error('ARM resource ID requires a subscription context.');
+    return `/subscriptions/${subscriptionId}${resourceGroupName ? `/resourceGroups/${resourceGroupName}` : ''}/providers/${path}`;
+  }
 
   const extensionResourceIdMatch = text.match(/^extensionResourceId\((.*)\)$/s);
   if (extensionResourceIdMatch) {
     const [base, type, ...names] = splitArmArgs(extensionResourceIdMatch[1]).map(arg => evaluateArmValue(arg, parameters));
-    return `${base}/providers/${type}/${names.join('/')}`;
+    return `${String(base).replace(/\/$/, '')}/providers/${armResourcePath(type, names)}`;
   }
 
   const referenceOutputMatch = text.match(/^reference\((.*)\)\.outputs\.([^.\]]+)\.value$/s);

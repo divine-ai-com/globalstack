@@ -97,7 +97,6 @@ flowchart TD
 |---|---|---|
 | \`dist/platform-images/\` | \`npm run render\` | Docker runner templates for Azure Terraform, OpenTofu, Pulumi, Ansible, Azure CLI REST, Bicep, and ARM JSON. |
 | \`templates/emulator/Dockerfile\` | hand maintained | First-party GlobalStack Azure sidecar image. |
-| \`docs/localstack-azure/coverage.json\` | \`npm run fetch:azure-coverage\` | Archived third-party coverage snapshot. Historical reference only. |
 | \`docs/hybrid/azure-hybrid-coverage.json\` | \`npm run hybrid:render\` | Generated local support matrix. |
 | \`docs/conformance/azure-live-api-catalog.json\` | \`npm run conformance:catalog\` | Candidate live Azure API calls and variance cases. |
 | \`docs/ARTIFACT-REGISTRY.md\` | \`npm run docs:artifacts\` | File ownership, edit policy, source-of-truth boundaries, and generator commands. |

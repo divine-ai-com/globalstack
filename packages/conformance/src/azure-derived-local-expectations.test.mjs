@@ -82,28 +82,34 @@ async function withServer(fn) {
   }
 }
 
-test('local ARM facade matches Azure-derived local expectations', async () => {
-  const expectationDoc = JSON.parse(await readFile(expectationsPath, 'utf8'));
+const expectationDoc = JSON.parse(await readFile(expectationsPath, 'utf8'));
+test('Azure expectation manifest is consistent', () => {
   assert.equal(expectationDoc.expectationCount, expectationDoc.expectations.length);
   assert.ok(expectationDoc.allowedDepths.includes('provider-validation'));
+});
 
-  await withServer(async (port) => {
-    for (const expectation of expectationDoc.expectations) {
+for (const expectation of expectationDoc.expectations) {
+  test(`Azure replay: ${expectation.id}`, async () => {
+    await withServer(async port => {
       const path = localPath(expectation.request.path);
       const rg = resourceGroupFromPath(path);
       if (rg) {
         await httpJson(port, 'PUT', `/subscriptions/${localSubscriptionId}/resourceGroups/${rg}?api-version=2021-04-01`, { location: 'eastus' });
       }
-
-      const response = await httpJson(
-        port,
-        expectation.request.method,
-        path,
-        interpolate(expectation.request.body),
-      );
-
+      if (expectation.expected.errorCode === 'StorageAccountIsNotProvisioned') {
+        const parent = path.match(/^(.*\/providers\/Microsoft.Storage\/storageAccounts\/[^/]+)/i)?.[1];
+        assert.ok(parent, 'provisioning expectation requires a storage account parent');
+        const created = await httpJson(port, 'PUT', `${parent}?api-version=2023-01-01`, {
+          location: 'eastus', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {},
+        });
+        assert.equal(created.status, 202);
+      }
+      const response = await httpJson(port, expectation.request.method, path, interpolate(expectation.request.body));
       assert.equal(response.status, expectation.expected.status, `${expectation.id} status`);
-      assert.equal(errorCode(response.body), expectation.expected.errorCode, `${expectation.id} error code`);
-    }
+      // An empty captured error body establishes status only, not an error-code contract.
+      if (expectation.expected.errorCode !== null) {
+        assert.equal(errorCode(response.body), expectation.expected.errorCode, `${expectation.id} error code`);
+      }
+    });
   });
-});
+}

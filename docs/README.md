@@ -46,7 +46,6 @@ Use this file as the routing table for the repo. If you are not sure which docum
 | Understand repo layout or file ownership | `ARTIFACT-REGISTRY.md` | `REPO-MAP.md`, `ARCHITECTURE.md` | Artifact registry plus generated repo map |
 | Add new files or product surfaces | `ARTIFACT-REGISTRY.md` | `CONFORMANCE-MODEL.md`, `ARCHITECTURE.md` | Existing ownership model and source-of-truth order |
 | Review design decisions | `docs/decisions/` | `CONFORMANCE-MODEL.md` | ADRs |
-| Check archived third-party landscape input | `docs/localstack-azure/README.md` | `SERVICE-SCOPE.md` | Historical reference only, not active GlobalStack runtime support |
 | Check official/local emulator options | `docs/hybrid/README.md` | `SERVICE-SCOPE.md` | Capability registry and generated hybrid coverage |
 
 ## Source Of Truth Order

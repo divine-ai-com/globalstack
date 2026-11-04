@@ -11,10 +11,10 @@ This report prevents shallow real-Azure captures from being interpreted as servi
 | Depth | Count |
 |---|---:|
 | arm-surface | 88 |
-| capture-infrastructure-gap | 331 |
+| capture-infrastructure-gap | 332 |
 | provider-accepted | 97 |
 | provider-routing-or-parent-validation | 127 |
-| provider-validation | 214 |
+| provider-validation | 213 |
 | subscription-or-provider-readiness | 33 |
 
 ## Caveat

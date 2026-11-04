@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-05-28T17:24:18.285Z",
+  "generatedAt": "2026-11-04T08:05:23.042Z",
   "fixtureCount": 890,
   "cleanupVerifiedCount": 890,
   "cloudValidatedCount": 0,
   "byValidationDepth": {
-    "provider-validation": 214,
+    "provider-validation": 213,
     "arm-surface": 88,
     "subscription-or-provider-readiness": 33,
     "provider-accepted": 97,
     "provider-routing-or-parent-validation": 127,
-    "capture-infrastructure-gap": 331
+    "capture-infrastructure-gap": 332
   },
   "byErrorCode": {
     "LocationRequired": 58,
@@ -9085,9 +9085,9 @@
       "status": 429,
       "errorCode": "NamespaceInTransition",
       "cleanupVerified": true,
-      "validationDepth": "provider-validation",
+      "validationDepth": "capture-infrastructure-gap",
       "cloudValidated": false,
-      "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+      "caveat": "Parent provisioning or capture-subscription quota blocked the request before its parameters could be validated."
     },
     {
       "id": "queue-storage.microsoft-servicebus-namespaces-queues.createOrUpdate.missing-api-version",

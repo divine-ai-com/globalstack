@@ -4,7 +4,7 @@ This file is the durable handoff for future agents after chat compaction. Read i
 
 ## Goal
 
-Build GlobalStack as a first-party Azure emulator and platform-runner harness comparable in ambition to LocalStack for AWS, but without using LocalStack for Azure as a runtime dependency.
+Build GlobalStack as a first-party Azure emulator and platform-runner harness with explicit support boundaries and reproducible local tests.
 
 The product goal is not "make tests green with friendly stubs." The goal is to let real Azure IaC and SDK clients deploy and run integration tests against GlobalStack with behavior that is as close to Azure as the evidence allows. Unknown or unverified behavior must fail closed.
 
@@ -26,7 +26,7 @@ Verified bundles are part of the verification workspace, not the product core. K
 - Do not claim Azure parity for behavior that is not backed by real Azure capture, official emulator behavior, or an explicit documented contract.
 - Do not invent successful Azure responses just to make a platform deploy pass.
 - Unknown resource types, unsupported methods, unsupported child routes, and incomplete data-plane calls must fail closed.
-- `GLOBALSTACK_AUTH_TOKEN` is required for local GlobalStack API access, matching the LocalStack-style dedicated local auth pattern.
+- `GLOBALSTACK_AUTH_TOKEN` is required for local GlobalStack API access for the legacy runner startup path.
 - Real Azure capture work must be opt-in, tracked, quickly deprovisioned, and followed by cleanup verification.
 - Commit and push meaningful batches after implementation and validation. Do not add generated assistant signatures.
 

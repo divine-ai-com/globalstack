@@ -491,7 +491,7 @@ function markdown(doc) {
     '',
     'This checklist is the service-by-service work queue for making GlobalStack Azure behave like real Azure for IaC deployments and integration tests.',
     '',
-    'A service is not 99%-ready until every dimension below is complete from live Azure, official emulator, or explicitly scoped local conformance evidence. Partial evidence is useful, but it is not a parity claim.',
+    'Completion refers to the tracked checklist only. It is not a measured Azure compatibility percentage. Every claimed behavior still needs scoped evidence.',
     '',
     `Generated: ${doc._meta.generatedAt}`,
     '',
@@ -829,7 +829,7 @@ const services = allCapabilities.map(capability => {
     notStarted: Object.values(serviceDimensions).filter(item => item.status === 'not-started').length,
   };
   const currentStatus = dimensionCounts.complete === dimensions.length
-    ? '99-ready'
+    ? 'checklist-complete'
     : dimensionCounts.partial > 0
       ? 'in-progress'
       : 'not-started';
@@ -856,7 +856,7 @@ const doc = {
   _meta: {
     generatedAt: new Date().toISOString(),
     generatedBy: 'npm run conformance:parity',
-    policy: 'No capability is 99%-ready until every dimension is complete. Partial evidence must remain visible.',
+    policy: 'Checklist completion is not a measured compatibility percentage. Partial evidence and support boundaries must remain visible.',
     serviceCount: services.length,
     dimensionCount: dimensions.length,
   },

@@ -302,18 +302,24 @@ export function createArmRequestHandler({
       'Microsoft.Synapse/workspaces/sqlPools',
     ]);
     const referencesExistingServerFarm = siteReferencesExistingServerFarm(store, resourceType, body);
-    const validationBeforeParent = validationBeforeParentTypes.has(resourceType)
+    const validationBeforeParent = validationBeforeParentTypes.has(resourceType) && body.properties !== null
       ? capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm })
       : null;
     if (validationBeforeParent) return validationBeforeParent;
 
     if (resourceType === 'Microsoft.Cdn/profiles/afdEndpoints' || resourceType === 'Microsoft.Cdn/profiles/endpoints') {
       const parentIndependentValidation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
-      if (['LocationRequired', 'InvalidResourceLocation', 'InvalidResourceName'].includes(parentIndependentValidation?.body?.error?.code)) {
+      if (['LocationRequired', 'InvalidResourceLocation', 'InvalidResourceName', 'InvalidRequestContent'].includes(parentIndependentValidation?.body?.error?.code)) {
         return parentIndependentValidation;
       }
     }
 
+    if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
+      const name = providerRoute.typePath.split('/').at(-1);
+      if (!/^[A-Za-z_][A-Za-z0-9_$-]{0,62}$/.test(name)) {
+        return { status: 400, body: { error: { code: 'InvalidParameterValue', message: 'Invalid database name.' } } };
+      }
+    }
     const putMissingParent = capturedPutMissingParent(resourceType);
     const parent = nearestCapabilityParentRoute(providerRoute);
     if (putMissingParent && (!parent || !store.getResource(parent))) return putMissingParent;
@@ -695,10 +701,33 @@ export function createArmRequestHandler({
           ]);
         }
 
+        const envelope = method === 'PUT' && ['Microsoft.Cdn/profiles/securityPolicies', 'Microsoft.Insights/diagnosticSettings'].includes(resourceType) ? await readBody(req) : {};
+        // Invalid linked IDs and missing storage parents are rejected before version negotiation.
+        if (resourceType === 'Microsoft.Cdn/profiles/securityPolicies' && method === 'PUT') {
+          const linkedId = envelope.properties?.parameters?.wafPolicy?.id;
+          if (linkedId && !/^\/(subscriptions|providers)\//i.test(linkedId)) {
+            return sendError(res, 400, 'LinkedInvalidPropertyId', 'The WAF policy ID must be a fully qualified resource ID.');
+          }
+        }
+        if (apiVersion === '1900-01-01' && resourceType.startsWith('Microsoft.Storage/storageAccounts/')) {
+          const parent = storageAccountParentRoute(providerRoute);
+          if (parent && !store.getResource(parent)) return sendError(res, 404, 'ParentResourceNotFound', 'The storage account could not be found.');
+        }
         if (apiVersion === '1900-01-01') {
           return sendError(res, 400, 'NoRegisteredProviderFound', `No registered resource provider found for location 'eastus' and API version '${apiVersion}' for type '${resourceType}'.`);
         }
 
+        // Diagnostic settings are extension resources attached to a supported resource scope.
+        if (resourceType === 'Microsoft.Insights/diagnosticSettings') {
+          if (method === 'PUT') {
+            if (!envelope.properties) return sendError(res, 400, 'BadRequest', "Missing 'properties'");
+            if ((envelope.tags != null && (typeof envelope.tags !== 'object' || Array.isArray(envelope.tags)))
+              || (envelope.properties.logs != null && !Array.isArray(envelope.properties.logs))) {
+              return sendError(res, 400, 'UnsupportedRequestContent', 'Request content is not well formed or supported.');
+            }
+          }
+          return sendError(res, 400, 'ResourceTypeNotSupported', 'This scope does not support diagnostic settings.');
+        }
         const eventGridListKeysRoute = eventGridTopicListKeysRoute(providerRoute);
         if (eventGridListKeysRoute && method === 'POST') {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {

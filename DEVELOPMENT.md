@@ -14,7 +14,7 @@ Each workspace package or app should own its local `build`, `test`, and `validat
 
 ## Verified Workspace
 
-Verified task bundles are treated as a separate verification workspace. The product repo keeps a compatibility path at `verified/`, but the primary storage location now lives in the sibling repo `../globalstack-verification`.
+Verified task bundles are treated as a separate verification workspace. The optional corpus lives outside this source tree. Set `GLOBALSTACK_VERIFIED_ROOT` to use a verification workspace; it is not needed for the quickstart.
 
 Use the sibling repo by default, or set `GLOBALSTACK_VERIFIED_ROOT` / `GLOBALSTACK_VERIFICATION_REPO_ROOT` to override it. Product code should not depend on verified bundles being first-class product source.
 

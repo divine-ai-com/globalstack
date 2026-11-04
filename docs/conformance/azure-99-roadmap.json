@@ -1446,7 +1446,7 @@
           "tier": 1,
           "awsAnalogue": "DynamoDB",
           "azureEquivalent": "Cosmos DB for NoSQL / Table Storage",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1463,7 +1463,7 @@
           "tier": 1,
           "awsAnalogue": "S3",
           "azureEquivalent": "Azure Blob Storage / Storage Account",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1480,7 +1480,7 @@
           "tier": 1,
           "awsAnalogue": "SNS",
           "azureEquivalent": "Service Bus topics / Event Grid topics",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1497,7 +1497,7 @@
           "tier": 1,
           "awsAnalogue": "EventBridge",
           "azureEquivalent": "Event Grid",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1514,7 +1514,7 @@
           "tier": 2,
           "awsAnalogue": "SQS",
           "azureEquivalent": "Azure Queue Storage / Service Bus queues",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1531,7 +1531,7 @@
           "tier": 2,
           "awsAnalogue": "EFS",
           "azureEquivalent": "Azure Files / Azure NetApp Files",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1548,7 +1548,7 @@
           "tier": 2,
           "awsAnalogue": "Kinesis Data Streams",
           "azureEquivalent": "Azure Event Hubs",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1565,7 +1565,7 @@
           "tier": 2,
           "awsAnalogue": "SSM Parameter Store",
           "azureEquivalent": "Azure App Configuration / Key Vault configuration values",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1590,7 +1590,7 @@
           "tier": 1,
           "awsAnalogue": "KMS",
           "azureEquivalent": "Key Vault keys / Managed HSM",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1607,7 +1607,7 @@
           "tier": 1,
           "awsAnalogue": "IAM/STS",
           "azureEquivalent": "Microsoft Entra ID, Azure RBAC, Managed Identity",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1624,7 +1624,7 @@
           "tier": 1,
           "awsAnalogue": "Secrets Manager",
           "azureEquivalent": "Key Vault secrets",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1641,7 +1641,7 @@
           "tier": 2,
           "awsAnalogue": "WAF",
           "azureEquivalent": "Azure Web Application Firewall policy",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1658,7 +1658,7 @@
           "tier": 2,
           "awsAnalogue": "CloudTrail",
           "azureEquivalent": "Azure Activity Log / Diagnostic Settings",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1683,7 +1683,7 @@
           "tier": 1,
           "awsAnalogue": "API Gateway",
           "azureEquivalent": "Azure API Management",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1700,7 +1700,7 @@
           "tier": 1,
           "awsAnalogue": "Lambda",
           "azureEquivalent": "Azure Functions / Function Apps",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1717,7 +1717,7 @@
           "tier": 1,
           "awsAnalogue": "EKS",
           "azureEquivalent": "Azure Kubernetes Service",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1734,7 +1734,7 @@
           "tier": 1,
           "awsAnalogue": "ECR",
           "azureEquivalent": "Azure Container Registry",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1751,7 +1751,7 @@
           "tier": 2,
           "awsAnalogue": "Step Functions",
           "azureEquivalent": "Azure Logic Apps / Durable Functions",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1768,7 +1768,7 @@
           "tier": 2,
           "awsAnalogue": "CloudFront",
           "azureEquivalent": "Azure Front Door / Azure CDN",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1785,7 +1785,7 @@
           "tier": 2,
           "awsAnalogue": "Service Discovery / Cloud Map",
           "azureEquivalent": "Azure Private DNS / Container Apps service discovery",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1802,7 +1802,7 @@
           "tier": 2,
           "awsAnalogue": "ALB/NLB",
           "azureEquivalent": "Azure Application Gateway / Load Balancer",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1827,7 +1827,7 @@
           "tier": 1,
           "awsAnalogue": "RDS PostgreSQL",
           "azureEquivalent": "Azure Database for PostgreSQL Flexible Server",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1844,7 +1844,7 @@
           "tier": 2,
           "awsAnalogue": "Redshift",
           "azureEquivalent": "Azure Synapse Analytics dedicated SQL pool",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1861,7 +1861,7 @@
           "tier": 2,
           "awsAnalogue": "RDS MySQL",
           "azureEquivalent": "Azure Database for MySQL Flexible Server",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1878,7 +1878,7 @@
           "tier": 2,
           "awsAnalogue": "ElastiCache Redis",
           "azureEquivalent": "Azure Cache for Redis",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1895,7 +1895,7 @@
           "tier": 2,
           "awsAnalogue": "DMS",
           "azureEquivalent": "Azure Database Migration Service",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1920,7 +1920,7 @@
           "tier": 1,
           "awsAnalogue": "CloudWatch Logs",
           "azureEquivalent": "Log Analytics / Application Insights / Azure Monitor Logs",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1937,7 +1937,7 @@
           "tier": 1,
           "awsAnalogue": "VPC",
           "azureEquivalent": "Virtual Network / Private Endpoint / Private DNS",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1954,7 +1954,7 @@
           "tier": 1,
           "awsAnalogue": "CloudWatch Metrics/Alarms",
           "azureEquivalent": "Azure Monitor metrics and alerts",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,
@@ -1971,7 +1971,7 @@
           "tier": 2,
           "awsAnalogue": "Route 53",
           "azureEquivalent": "Azure DNS / Private DNS Zones",
-          "currentStatus": "99-ready",
+          "currentStatus": "checklist-complete",
           "dimensionCounts": {
             "complete": 10,
             "partial": 0,

@@ -43,9 +43,9 @@
   },
   "globalstack": {
     "normalizedIntoLocalConformance": false,
-    "validationDepth": "provider-validation",
+    "validationDepth": "capture-infrastructure-gap",
     "cloudValidated": false,
-    "providerRegistered": true,
-    "caveat": "Provider returned a validation response that can be normalized into local emulator behavior."
+    "providerRegistered": null,
+    "caveat": "Parent provisioning or capture-subscription quota blocked the request before its parameters could be validated."
   }
 }

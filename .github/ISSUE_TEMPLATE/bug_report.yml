@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible problem in supported behavior
+labels: [bug]
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: GlobalStack revision, Node.js, operating system and IaC provider versions
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Give a minimal example with credentials and account identifiers removed
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior and evidence
+      description: Describe the expected result and link relevant Azure documentation or sanitized captures
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include sanitized errors and logs
+    validations:
+      required: true

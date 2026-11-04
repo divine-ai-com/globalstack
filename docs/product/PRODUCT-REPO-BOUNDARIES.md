@@ -2,7 +2,7 @@
 
 This repo is the GlobalStack product source tree. It should contain product code, tests, templates, fixtures, and durable docs. It should not accumulate per-run runtime noise.
 
-Verified task bundles are treated as a separate verification workspace. The product repo keeps a compatibility path at `verified/`, but the actual corpus now lives in the sibling repo `../globalstack-verification`.
+Verified task bundles are treated as a separate verification workspace. The optional corpus lives outside this source tree. Set `GLOBALSTACK_VERIFIED_ROOT` to use a verification workspace; it is not needed for the quickstart.
 
 ## Keep In Git
 
@@ -21,7 +21,7 @@ Those artifacts are useful while executing or debugging a task, but they are not
 
 ## Verified Workspace Boundary
 
-- keep verified bundles addressable through `verified/`
+- use `GLOBALSTACK_VERIFIED_ROOT` for the optional external corpus
 - store the actual verified corpus outside the core product tree in `../globalstack-verification`, or point `GLOBALSTACK_VERIFIED_ROOT` / `GLOBALSTACK_VERIFICATION_REPO_ROOT` at another location
 - do not let runtime reports, logs, or flattened outputs become durable product assets
 

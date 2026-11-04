@@ -38,3 +38,6 @@ terraform.tfstate*
 Thumbs.db
 *.swp
 *.tmp
+
+# Optional private verification workspace
+/verified

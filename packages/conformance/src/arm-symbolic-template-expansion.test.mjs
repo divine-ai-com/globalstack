@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { expandDeploymentTemplate } from '../../azure-control-plane/src/server-support.mjs';
+import { evaluateArmValue, expandDeploymentTemplate } from '../../azure-control-plane/src/server-support.mjs';
 
 test('ARM template expansion accepts languageVersion 2 symbolic resource objects and parent links', () => {
   const expanded = expandDeploymentTemplate({
@@ -156,4 +156,19 @@ test('ARM template expansion accepts subscription nested deployments and child r
   ]);
   assert.equal(expanded.deploymentOutputs['nested-workload'].containerName.value, 'payloads');
   assert.equal(expanded.outputs.containerName.value, 'payloads');
+});
+
+// Expected shapes follow the Azure ARM resource ID function documentation.
+test('ARM resource ID functions include scope and interleave child resource names', () => {
+  const context = { __subscriptionId: 'sub-local', __resourceGroupName: 'rg-local' };
+  const cases = [
+    ["[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]", '/subscriptions/sub-local/resourceGroups/rg-local/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity'],
+    ["[resourceId('rg-other', 'Microsoft.Storage/storageAccounts', 'store')]", '/subscriptions/sub-local/resourceGroups/rg-other/providers/Microsoft.Storage/storageAccounts/store'],
+    ["[resourceId('sub-other', 'rg-other', 'Microsoft.Storage/storageAccounts/blobServices/containers', 'store', 'default', 'raw')]", '/subscriptions/sub-other/resourceGroups/rg-other/providers/Microsoft.Storage/storageAccounts/store/blobServices/default/containers/raw'],
+    ["[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'reader')]", '/subscriptions/sub-local/providers/Microsoft.Authorization/roleDefinitions/reader'],
+    ["[subscriptionResourceId('sub-other', 'Microsoft.Authorization/roleDefinitions', 'reader')]", '/subscriptions/sub-other/providers/Microsoft.Authorization/roleDefinitions/reader'],
+    ["[extensionResourceId('/subscriptions/sub-local/resourceGroups/rg-local', 'Microsoft.Authorization/locks', 'lock')]", '/subscriptions/sub-local/resourceGroups/rg-local/providers/Microsoft.Authorization/locks/lock'],
+  ];
+  for (const [expression, expected] of cases) assert.equal(evaluateArmValue(expression, context), expected);
+  assert.throws(() => evaluateArmValue("[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', 'store')]", context), /one name/);
 });

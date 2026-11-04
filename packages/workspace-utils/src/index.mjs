@@ -10,8 +10,7 @@ function moduleDirectory(metaUrlOrPath) {
 
 function isWorkspaceRoot(candidate) {
   const packageJsonPath = path.join(candidate, "package.json");
-  const gitPath = path.join(candidate, ".git");
-  if (!existsSync(packageJsonPath) || !existsSync(gitPath)) {
+  if (!existsSync(packageJsonPath)) {
     return false;
   }
   try {
