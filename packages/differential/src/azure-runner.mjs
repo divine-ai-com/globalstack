@@ -503,6 +503,9 @@ function renderReport(summary) {
 
 export async function runAzureDifferential(rawArgs = process.argv.slice(2)) {
   const args = parseArgs(rawArgs);
+  if ((args.target === 'azure' || args.target === 'both') && process.env.GLOBALSTACK_REAL_AZURE_CONFORMANCE !== '1') {
+    throw new Error('Real Azure differential capture is disabled. Set GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 to execute Azure calls.');
+  }
   const scenario = getAzureDifferentialScenario(args.scenarioId);
   const selectedCases = selectDifferentialCases(scenario, {
     caseId: args.caseId,
@@ -541,9 +544,6 @@ export async function runAzureDifferential(rawArgs = process.argv.slice(2)) {
   const outRoot = join(root, 'dist', 'differential', 'azure', scenario.id);
   await mkdir(outRoot, { recursive: true });
 
-  if ((args.target === 'azure' || args.target === 'both') && process.env.GLOBALSTACK_REAL_AZURE_CONFORMANCE !== '1') {
-    throw new Error('Real Azure differential capture is disabled. Set GLOBALSTACK_REAL_AZURE_CONFORMANCE=1 to execute Azure calls.');
-  }
   if ((args.target === 'azure' || args.target === 'both') && !subscriptionId) {
     throw new Error('Set AZURE_SUBSCRIPTION_ID or ARM_SUBSCRIPTION_ID before running Azure differential capture.');
   }

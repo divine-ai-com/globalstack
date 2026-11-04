@@ -1,0 +1,41 @@
+name: Azure specification watch
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: azure-spec-watch
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - name: Compare upstream specifications with reviewed baseline
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/conformance/check-azure-spec-drift.mjs
+      - name: Publish check summary
+        if: always()
+        run: |
+          if test -f dist/spec-drift/report.md; then
+            cat dist/spec-drift/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Check failed before producing evidence. No drift conclusion is available.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain change report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: azure-spec-drift
+          path: dist/spec-drift/
+          retention-days: 90
+          if-no-files-found: warn

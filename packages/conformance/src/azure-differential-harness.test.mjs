@@ -44,3 +44,17 @@ test('AKS differential case bodies are deterministic for the same context', () =
   assert.equal(selectedCase.body(context).properties.apiServerAccessProfile.enablePrivateCluster, true);
   assert.equal(selectedCase.body(context).properties.apiServerAccessProfile.privateDNSZone, 'None');
 });
+
+test('live differential runs fail before invoking cloud tools unless explicitly enabled', async () => {
+  const { execFile } = await import('node:child_process');
+  const { promisify } = await import('node:util');
+  for (const target of ['azure', 'both']) {
+    await assert.rejects(promisify(execFile)(process.execPath,
+      [new URL('../../../scripts/capture/run-azure-differential.mjs', import.meta.url).pathname, `--target=${target}`],
+      { env: { PATH: '' } }), error => {
+      assert.match(error.stderr, /Real Azure differential capture is disabled/);
+      assert.doesNotMatch(error.stderr, /ENOENT/);
+      return true;
+    });
+  }
+});

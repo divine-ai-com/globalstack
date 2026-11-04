@@ -208,6 +208,7 @@ flowchart TD
 - `scripts/capture/capture-real-azure-operation.mjs`
 - `scripts/capture/capture-redaction.mjs`
 - `scripts/capture/run-azure-differential.mjs`
+- `scripts/conformance/check-azure-spec-drift.mjs`
 - `scripts/conformance/classify-azure-captures.mjs`
 - `scripts/conformance/report-provider-registration-gaps.mjs`
 - `scripts/conformance/rerun-registered-shallow-azure-captures.mjs`
@@ -265,6 +266,7 @@ flowchart TD
 - `scripts/repository/package-check.test.mjs`
 - `scripts/repository/pr-policy.mjs`
 - `scripts/repository/pr-policy.test.mjs`
+- `scripts/repository/spec-drift.test.mjs`
 - `scripts/repository/stage-results.test.mjs`
 - `scripts/repository/sync-labels.mjs`
 - `scripts/runtime/build-platform-images.mjs`
