@@ -426,6 +426,7 @@ export function createArmRequestHandler({
       resourceGroupName,
       deploymentName: body.name ?? 'deployment',
       resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
+      resourceGroupLocations: Object.fromEntries(store.listResourceGroups(subscriptionId).map(group => [group.name.toLowerCase(), group.location])),
     });
     const operations = expanded.operations;
     const steps = [];

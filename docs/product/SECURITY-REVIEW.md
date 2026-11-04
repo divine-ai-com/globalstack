@@ -25,6 +25,8 @@ The CodeQL `js/file-access-to-http` finding [42](https://github.com/divine-ai-co
 
 Manual event-flow review also found that deleting a scoped Event Grid subscription removed its management resource without unregistering runtime delivery. The PR now synchronizes scoped subscription creation, updates and deletion with the runtime. Regression tests prove correct delivery, non-delivery after deletion, delivery to a deliberately wrong destination, and recovery after restoring the correct destination.
 
+A further manual regression check found that nested deployments could inherit the parent group's location when their target group differed. Location lookup now uses the target group, including groups declared later in the template, and a regression test covers both existing and newly declared groups.
+
 Copilot could not complete its requested review because of quota limits. It is not counted as a completed review. The pre-merge procedure requires manual diff review and inspection of bot comments and code-scanning alerts on the final revision.
 
 ## Research and release gates

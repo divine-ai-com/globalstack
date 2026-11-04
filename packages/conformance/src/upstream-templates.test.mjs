@@ -16,7 +16,7 @@ const cases = [
   { file: 'storage-account-create.json', parameters: { storageAccountName: 'gsupstreamstorage' }, resources: [
     { path: 'Microsoft.Storage/storageAccounts/gsupstreamstorage', api: '2023-01-01', check: body => assert.equal(body.sku.name, 'Standard_LRS') },
   ] },
-  { file: 'key-vault-create.json', parameters: { keyVaultName: 'gs-upstream-vault', secretName: 'example', secretValue: 'public-test-value', tenantId: localIdentity.tenantId }, resources: [
+  { file: 'key-vault-create.json', parameters: { keyVaultName: 'gs-upstream-vault', secretName: 'example', secretValue: 'public-test-value' }, resources: [
     { path: 'Microsoft.KeyVault/vaults/gs-upstream-vault', api: '2023-07-01', check: body => assert.equal(body.properties.tenantId, localIdentity.tenantId) },
     { path: 'Microsoft.KeyVault/vaults/gs-upstream-vault/secrets/example', api: '2023-07-01', check: body => assert.equal(body.name, 'gs-upstream-vault/example') },
   ] },

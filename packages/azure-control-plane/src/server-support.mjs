@@ -1489,16 +1489,30 @@ export function expandDeploymentTemplate({
   subscriptionId,
   resourceGroupName,
   resourceGroupLocation,
+  resourceGroupLocations = {},
   inheritedParameters = {},
   deploymentOutputs = {},
   deploymentName,
 }) {
+  const groupLocations = { ...resourceGroupLocations };
+  if (resourceGroupName && resourceGroupLocation !== undefined) groupLocations[resourceGroupName.toLowerCase()] = resourceGroupLocation;
   const context = addTemplateVariables(template, {
-    ...parameterContext(template, parameters, { ...inheritedParameters, __subscriptionId: subscriptionId, __resourceGroupName: resourceGroupName, __resourceGroupLocation: resourceGroupLocation ?? inheritedParameters.__resourceGroupLocation }),
+    ...parameterContext(template, parameters, {
+      ...inheritedParameters,
+      __subscriptionId: subscriptionId,
+      __resourceGroupName: resourceGroupName,
+      __resourceGroupLocation: groupLocations[resourceGroupName?.toLowerCase()],
+    }),
     __subscriptionId: subscriptionId,
     __resourceGroupName: resourceGroupName,
     __deploymentOutputs: deploymentOutputs,
   });
+  // Resolve group locations before nested templates, regardless of declaration order.
+  for (const { rawResource } of armTemplateResourceEntries(template)) {
+    if (rawResource.type !== 'Microsoft.Resources/resourceGroups') continue;
+    const group = evaluateArmValue(rawResource, context);
+    groupLocations[String(group.name).toLowerCase()] = group.location;
+  }
   const operations = [];
   const symbolicResourceNames = new Map();
   function emitResource(rawResource, symbolicName = null, parentResource = null) {
@@ -1530,6 +1544,7 @@ export function expandDeploymentTemplate({
         parameters: nestedParameters,
         subscriptionId,
         resourceGroupName: nestedResourceGroupName,
+        resourceGroupLocations: groupLocations,
         inheritedParameters: context,
         deploymentOutputs,
         deploymentName: resource.name,
