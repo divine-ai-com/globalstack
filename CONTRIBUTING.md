@@ -21,6 +21,10 @@ Keep the full title at 72 characters or fewer. Start the subject with a lowercas
 
 ## Pull requests
 
+Before contributing, open an issue and wait for a repository administrator to apply the `accepted` label. Include a standalone line `Accepted issue: #123` in your PR body, referencing exactly one issue in this repository. The issue must remain open and accepted until merge. Removing the label or closing the issue causes the acceptance check to fail when the workflow runs. Dependabot follows the same rule.
+
+The account `deavgprime` and current repository administrators are exempt from the issue requirement. This exemption does not bypass CI, PR formatting, or main branch protection. Public repositories allow forks and PR creation; this policy gates merging rather than preventing those actions. Push access remains limited to authorized collaborators.
+
 Fill in `Why`, `What changed` and `How it was tested` in the PR template. Include actual results and relevant limitations. An empty template does not satisfy the PR policy check.
 
 Use a draft PR while work is incomplete. Request review after the required checks pass. Prefer squash merging so the PR title becomes the commit message. Delete the topic branch after merge.
@@ -30,9 +34,10 @@ Required checks:
 | Check | Purpose |
 |---|---|
 | `CI gate` | Both supported Node.js matrix jobs passed build checks, conformance tests, repository tests and the local demo; workflow lint and dependency audit also passed |
+| `Accepted issue` | An administrator authored the PR, or an open issue was labeled accepted by an administrator |
 | `PR policy` | The PR title, branch name, required sections and breaking change details follow the conventions |
 
-The repository owner should require these checks in the `main` branch rules when that feature is available. The current private repository plan does not provide branch protection. Workflow files alone do not prevent a maintainer from bypassing checks. Configure enforcement before the public release.
+The public repository protects `main` with required checks, pull requests, linear history, and restrictions on force pushes and deletion. These checks also apply to administrators.
 
 ## Local validation
 
@@ -79,7 +84,7 @@ gh api --method PUT repos/divine-ai-com/globalstack/branches/main/protection \
   --input .github/branch-protection.json
 ```
 
-The policy requires passing `CI gate` and `PR policy` checks, an up-to-date branch, resolved review conversations and linear history. It also applies the checks to administrators and blocks force pushes and deletion of `main`.
+The policy requires passing `CI gate`, `PR policy`, and `Accepted issue` checks, an up-to-date branch, resolved review conversations and linear history. It also applies the checks to administrators and blocks force pushes and deletion of `main`.
 
 The prepared policy does not require an approval while the repository has a single maintainer, since authors cannot approve their own pull requests. Require a code-owner approval once another qualified reviewer is available. Keep the owner and required-check configuration synchronized with the actual team and workflow names.
 

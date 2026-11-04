@@ -1,0 +1,30 @@
+name: Accepted issue
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+  issues:
+    types: [labeled, unlabeled, closed, reopened, deleted, transferred]
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  statuses: write
+concurrency:
+  group: accepted-issue-policy
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Use trusted default-branch code even for fork pull requests.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            await require('./scripts/repository/accepted-issue.cjs').run({ github, context, core });
