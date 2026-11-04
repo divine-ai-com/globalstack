@@ -15,6 +15,7 @@ Validated locally on 4 November 2026 with Node.js 22.23.3 and npm 10.9.9. These 
 | Source archive | Extracted without Git metadata; ARM quickstart and deploy smoke passed without the optional verification corpus |
 | Workflow lint | All workflows passed actionlint 1.7.12 |
 | Dependency audit | Zero reported vulnerabilities after compatible lockfile updates |
+| Hosted CI | Node.js 22 and 24 passed on main and the first PR; PR policy and automatic labeling passed |
 | Labels | 19 maintained labels synchronized; three unused defaults removed |
 | History recovery | Complete 248-commit development history preserved in a verified private Git bundle |
 
