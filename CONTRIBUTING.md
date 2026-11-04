@@ -29,7 +29,7 @@ Required checks:
 
 | Check | Purpose |
 |---|---|
-| `CI gate` | Both supported Node.js matrix jobs passed build checks, conformance tests, repository tests and the local demo |
+| `CI gate` | Both supported Node.js matrix jobs passed build checks, conformance tests, repository tests and the local demo; workflow lint and dependency audit also passed |
 | `PR policy` | The PR title, branch name, required sections and breaking change details follow the conventions |
 
 The repository owner should require these checks in the `main` branch rules when that feature is available. The current private repository plan does not provide branch protection. Workflow files alone do not prevent a maintainer from bypassing checks. Configure enforcement before the public release.
