@@ -780,6 +780,7 @@
     "storage:capture:data-plane",
     "storage:expectations",
     "test:docker",
+    "test:flows",
     "test:gcp:unit",
     "test:local",
     "test:repository",

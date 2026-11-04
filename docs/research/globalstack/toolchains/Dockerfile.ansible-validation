@@ -1,0 +1,8 @@
+FROM globalstack/validation-runner:terraform-pinned
+ENV PLATFORM_ID=azure-ansible-yaml
+RUN python3 -m pip install --no-cache-dir --break-system-packages ansible-core==2.21.6 \
+    && ansible-galaxy collection install azure.azcollection:3.21.0 \
+    && AZURE_COLLECTION_REQUIREMENTS="$(find /usr/local/lib /root/.ansible/collections -path '*/ansible_collections/azure/azcollection/requirements.txt' -print -quit)" \
+    && test -n "${AZURE_COLLECTION_REQUIREMENTS}" \
+    && python3 -m pip install --no-cache-dir --break-system-packages -r "${AZURE_COLLECTION_REQUIREMENTS}"
+

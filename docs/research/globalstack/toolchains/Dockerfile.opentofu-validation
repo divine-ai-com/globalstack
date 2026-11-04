@@ -1,0 +1,9 @@
+FROM globalstack/validation-runner:terraform-pinned
+ENV PLATFORM_ID=azure-opentofu-hcl
+RUN install -d -m 0755 /etc/apt/keyrings \
+    && curl -fsSL https://get.opentofu.org/opentofu.gpg | gpg --dearmor -o /etc/apt/keyrings/opentofu.gpg \
+    && curl -fsSL https://packages.opentofu.org/opentofu/tofu/gpgkey | gpg --dearmor -o /etc/apt/keyrings/opentofu-repo.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main" > /etc/apt/sources.list.d/opentofu.list \
+    && apt-get update && apt-get install -y --no-install-recommends tofu=1.13.2 \
+    && rm -rf /var/lib/apt/lists/*
+

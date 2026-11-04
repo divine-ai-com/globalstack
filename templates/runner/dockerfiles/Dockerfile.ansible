@@ -8,9 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git jq unzip gnupg lsb-release python3 python3-pip python3-venv build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
-RUN python3 -m pip install --no-cache-dir --break-system-packages ansible \
-    && ansible-galaxy collection install azure.azcollection \
+COPY common/install-azure-cli.sh /tmp/install-azure-cli.sh
+RUN bash /tmp/install-azure-cli.sh && rm /tmp/install-azure-cli.sh
+RUN python3 -m pip install --no-cache-dir --break-system-packages ansible-core==2.21.6 \
+    && ansible-galaxy collection install azure.azcollection:3.21.0 \
     && AZURE_COLLECTION_REQUIREMENTS="$(find /usr/local/lib /root/.ansible/collections -path '*/ansible_collections/azure/azcollection/requirements.txt' -print -quit)" \
     && test -n "${AZURE_COLLECTION_REQUIREMENTS}" \
     && python3 -m pip install --no-cache-dir --break-system-packages -r "${AZURE_COLLECTION_REQUIREMENTS}"

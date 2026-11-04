@@ -290,7 +290,7 @@ function platformSampleFiles(platform) {
       return {
         ...common,
         'README.md': `# ${platform.label} Runner Sample\n\nThis sample validates native HCL and deploys through native provider apply against GlobalStack.\n`,
-        'lib/provider.tf': `terraform {\n  required_providers {\n    azapi = {\n      source  = "azure/azapi"\n      version = "~> 2.0"\n    }\n  }\n}\n\nprovider "azapi" {\n  subscription_id = var.subscription_id\n}\n`,
+        'lib/provider.tf': `terraform {\n  required_providers {\n    azapi = {\n      source  = "azure/azapi"\n      version = "= 2.13.0"\n    }\n  }\n}\n\nprovider "azapi" {\n  subscription_id = var.subscription_id\n}\n`,
         'lib/variables.tf': 'variable "location" {\n  type    = string\n  default = "eastus"\n}\n\nvariable "subscription_id" {\n  type    = string\n  default = "00000000-0000-0000-0000-000000000000"\n}\n\nvariable "resource_group_name" {\n  type    = string\n  default = "rg-gs-hcl-sample"\n}\n\nvariable "storage_account_name" {\n  type    = string\n  default = "gshclsample001"\n}\n',
         'lib/main.tf': 'resource "azapi_resource" "resource_group" {\n  type      = "Microsoft.Resources/resourceGroups@2022-09-01"\n  name      = var.resource_group_name\n  location  = var.location\n  parent_id = "/subscriptions/${var.subscription_id}"\n}\n\nresource "azapi_resource" "storage_account" {\n  type      = "Microsoft.Storage/storageAccounts@2023-05-01"\n  name      = var.storage_account_name\n  location  = var.location\n  parent_id = azapi_resource.resource_group.id\n  body = {\n    kind       = "StorageV2"\n    sku        = { name = "Standard_LRS" }\n    properties = { minimumTlsVersion = "TLS1_2" }\n  }\n}\n',
         'lib/outputs.tf': 'output "resource_group_name" { value = var.resource_group_name }\noutput "storage_account_name" { value = var.storage_account_name }\n',
@@ -299,7 +299,7 @@ function platformSampleFiles(platform) {
       return {
         ...common,
         'README.md': '# Pulumi Azure TypeScript Runner Sample\n\nThis sample deploys through native `pulumi up` when the platform runner executes a full lifecycle.\n',
-        'package.json': '{\n  "dependencies": {\n    "@pulumi/pulumi": "^3.122.0",\n    "@pulumi/azure-native": "^2.80.0",\n    "@types/node": "^20.0.0",\n    "typescript": "^5.0.0",\n    "ts-node": "^10.9.2"\n  }\n}\n',
+        'package.json': '{\n  "dependencies": {\n    "@pulumi/pulumi": "3.274.0",\n    "@pulumi/azure-native": "2.92.3",\n    "@types/node": "20.19.9",\n    "typescript": "5.9.3",\n    "ts-node": "10.9.2"\n  },\n  "overrides": {\n    "glob": "14.0.3",\n    "minimatch": "11.0.4"\n  }\n}\n',
         'Pulumi.yaml': 'name: globalstack-azure-pulumi-ts-sample\nruntime:\n  name: nodejs\n  options:\n    typescript: true\nmain: bin/tap.ts\n',
         'bin/tap.ts': 'import { createTapStack } from "../lib/tap-stack";\n\nconst stack = createTapStack();\n\nexport const resourceGroupNameOut = stack.resourceGroup.name;\nexport const storageAccountNameOut = stack.storageAccount.name;\n',
         'lib/tap-stack.ts': 'import * as resources from "@pulumi/azure-native/resources";\nimport * as storage from "@pulumi/azure-native/storage";\n\nexport function createTapStack() {\n  const location = process.env.AZURE_LOCATION ?? "eastus";\n  const resourceGroupName = process.env.GLOBALSTACK_RESOURCE_GROUP_NAME ?? "rg-gs-pulumi-ts";\n  const storageAccountName = process.env.GLOBALSTACK_STORAGE_ACCOUNT_NAME ?? "gspulumits001";\n\n  const resourceGroup = new resources.ResourceGroup("rg", {\n    resourceGroupName,\n    location,\n    tags: { purpose: "globalstack-platform-runner-smoke" },\n  });\n\n  const storageAccount = new storage.StorageAccount("acct", {\n    accountName: storageAccountName,\n    resourceGroupName: resourceGroup.name,\n    location,\n    sku: { name: storage.SkuName.Standard_LRS },\n    kind: storage.Kind.StorageV2,\n    minimumTlsVersion: storage.MinimumTlsVersion.TLS1_2,\n    allowBlobPublicAccess: false,\n  });\n\n  return {\n    resourceGroup,\n    storageAccount,\n  };\n}\n',
@@ -309,7 +309,7 @@ function platformSampleFiles(platform) {
         ...common,
         'README.md': '# Pulumi Azure Python Runner Sample\n\nThis sample deploys through native `pulumi up` when the platform runner executes a full lifecycle.\n',
         'Pulumi.yaml': 'name: globalstack-azure-pulumi-py-sample\nruntime: python\nmain: tap.py\n',
-        'requirements.txt': 'pulumi>=3.0.0\npulumi-azure-native>=2.0.0\n',
+        'requirements.txt': 'pulumi==3.273.0\npulumi-azure-native==3.30.0\n',
         'tap.py': 'from pathlib import Path\nimport sys\n\nsys.path.insert(0, str(Path(__file__).resolve().parent))\n\nfrom lib.tap_stack import create_stack\n\ncreate_stack()\n',
         'lib/__init__.py': '',
         'lib/tap_stack.py': 'import os\n\nimport pulumi\nimport pulumi_azure_native.resources as resources\nimport pulumi_azure_native.storage as storage\n\n\ndef create_stack():\n    location = os.getenv("AZURE_LOCATION", "eastus")\n    resource_group_name = os.getenv("GLOBALSTACK_RESOURCE_GROUP_NAME", "rg-gs-pulumi-py")\n    storage_account_name = os.getenv("GLOBALSTACK_STORAGE_ACCOUNT_NAME", "gspulumipy001")\n\n    rg = resources.ResourceGroup(\n        "rg",\n        resource_group_name=resource_group_name,\n        location=location,\n        tags={"purpose": "globalstack-platform-runner-smoke"},\n    )\n    account = storage.StorageAccount(\n        "acct",\n        account_name=storage_account_name,\n        resource_group_name=rg.name,\n        location=location,\n        sku=storage.SkuArgs(name=storage.SkuName.STANDARD_LRS),\n        kind=storage.Kind.STORAGE_V2,\n        minimum_tls_version=storage.MinimumTlsVersion.TLS1_2,\n        allow_blob_public_access=False,\n    )\n    pulumi.export("resourceGroupNameOut", rg.name)\n    pulumi.export("storageAccountNameOut", account.name)\n',
@@ -347,6 +347,10 @@ for (const platform of azurePlatforms) {
   await write(`${platformRoot}/Dockerfile`, dockerfile, 0o644);
   await write(`${platformRoot}/common/entrypoint.sh`, commonEntry, 0o755);
   await write(`${platformRoot}/common/globalstack-azure.sh`, commonAzure, 0o755);
+  await write(`${platformRoot}/common/install-azure-cli.sh`, await readTemplate('runner/common/install-azure-cli.sh'), 0o755);
+  if (platform.id === 'azure-pulumi-ts') {
+    await write(`${platformRoot}/sample-task/package-lock.json`, await readTemplate('sample-tasks/azure-pulumi-ts/package-lock.json'), 0o644);
+  }
   await copyTemplateTree('runner/stages', `${platformRoot}/stages`);
   await write(`${platformRoot}/docker-compose.yml`, composeFor(platform), 0o644);
   await write(`${platformRoot}/platform.json`, metadataFor(platform), 0o644);
