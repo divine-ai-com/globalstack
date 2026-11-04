@@ -49,7 +49,9 @@ for (const scenario of cases) {
     const endpoint = `http://127.0.0.1:${server.address().port}`;
     const group = `/subscriptions/${localIdentity.subscriptionId}/resourceGroups/upstream-test`;
     async function request(method, path, body) {
+      // Only digest-checked public fixtures are sent to this test-owned loopback server.
       const response = await fetch(`${endpoint}${path}`, {
+        redirect: 'error',
         method, headers: { authorization: `Bearer ${localIdentity.accessToken}`, 'content-type': 'application/json' },
         body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(10000),
       });
