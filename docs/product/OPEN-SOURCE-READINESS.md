@@ -4,7 +4,7 @@ This checklist tracks the first public development release. Passing local checks
 
 ## Repository and contribution workflow
 
-- [x] Prepare an Apache 2.0 license for owner review.
+- [x] Publish the source under Apache 2.0.
 - [x] Provide a self-contained local quickstart and cleanup-verifying demo.
 - [x] Add CI for Node.js 22 and 24 with a stable aggregate check.
 - [x] Validate PR titles, branch conventions and required PR sections.
@@ -25,20 +25,23 @@ This checklist tracks the first public development release. Passing local checks
 - [x] Prepare storage provisioning state explicitly for provisioning-dependent replays.
 - [x] Separate quota and namespace provisioning capture gaps from parameter validation.
 - [x] Label roadmap estimates as checklist progress rather than measured compatibility.
-- [ ] Rerun affected service E2E packs after validation changes, including valid and invalid alternatives.
-- [ ] Rerun the full IaC platform matrix from a clean checkout.
-- [ ] Validate the container image and document supported host architectures and resource requirements.
-- [ ] Add durable management state or explicitly ship an ephemeral-only preview.
+- [x] Rerun the affected local Key Vault, Event Grid and Logic Apps suites, including negative cases.
+- [x] Pass all nine native sample lifecycles from clean checkouts on the reviewed runtime revision.
+- [x] Validate the source and container quickstarts on Linux x86_64; document unmeasured resource minima and untested architectures.
+- [x] Scope the preview to ephemeral management state.
 
 ## Public distribution
 
-- [ ] Approve the proposed license and confirm distribution terms for optional external runtime images.
+- [x] Define a source-only preview under the repository license.
+- [ ] Confirm distribution terms before publishing optional external runtime images.
 - [ ] Review tracked files and history for private capture data and credentials.
 - [x] Select a runnable ARM example that does not depend on a private verification repository.
 - [x] Confirm a source archive works without Git metadata.
-- [ ] Publish a tagged preview with exact supported operations and known limitations.
+- [x] Prepare the native matrix evidence, preview release notes and source distribution assets.
 - [x] Publish the repository as a development preview after the initial credential review.
 
 The verification corpus remains separate from the core quickstart. Optional third-party runtimes retain their own licensing and acceptance requirements.
+
+Preview evidence and support boundaries are recorded in [the release notes](../releases/v0.1.0-preview.1.md). Published tags and assets are tracked in [GitHub Releases](https://github.com/divine-ai-com/globalstack/releases).
 
 Security and research release gaps are tracked in [SECURITY-REVIEW.md](SECURITY-REVIEW.md). Public source availability does not mark the remaining stable-release gates complete.
