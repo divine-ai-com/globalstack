@@ -425,6 +425,7 @@ export function createArmRequestHandler({
       subscriptionId,
       resourceGroupName,
       deploymentName: body.name ?? 'deployment',
+      resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
     });
     const operations = expanded.operations;
     const steps = [];
@@ -490,6 +491,7 @@ export function createArmRequestHandler({
       subscriptionId,
       resourceGroupName,
       deploymentName: body.name ?? 'deployment',
+      resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
       body: deploymentBody,
     });
     return {
@@ -918,6 +920,17 @@ export function createArmRequestHandler({
               apiVersion,
               capability,
             });
+            if (typeof onResourcePut === 'function') {
+              onResourcePut({
+                store,
+                providerRoute: scopedSubscriptionIdentity,
+                resourceType: 'Microsoft.EventGrid/eventSubscriptions',
+                body,
+                apiVersion,
+                capability,
+                resource,
+              });
+            }
             return sendJson(res, created ? 201 : 200, resource);
           }
           if (method === 'GET') {
@@ -928,9 +941,17 @@ export function createArmRequestHandler({
             return sendJson(res, 200, resource);
           }
           if (method === 'DELETE') {
+            const resource = store.getResource(scopedSubscriptionIdentity);
             const existed = store.deleteResource(scopedSubscriptionIdentity);
             if (!existed) {
               return sendError(res, 404, 'ResourceNotFound', `The Resource '${scopedEventSubscriptionRoute.subscriptionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
+            }
+            if (typeof onResourceDelete === 'function') {
+              onResourceDelete({
+                providerRoute: scopedSubscriptionIdentity,
+                resourceType: 'Microsoft.EventGrid/eventSubscriptions',
+                resource,
+              });
             }
             return sendJson(res, 200, {
               status: 'Deleted',

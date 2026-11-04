@@ -1341,6 +1341,11 @@ export function parameterContext(template, deploymentParameters = {}, inherited 
   for (const [name, definition] of Object.entries(deploymentParameters ?? {})) {
     if (definition?.value !== undefined) parameters[name] = definition.value;
   }
+  for (const [name, definition] of Object.entries(template?.parameters ?? {})) {
+    if (deploymentParameters[name]?.value === undefined && definition.defaultValue !== undefined) {
+      parameters[name] = evaluateArmValue(definition.defaultValue, parameters);
+    }
+  }
   return parameters;
 }
 
@@ -1388,6 +1393,9 @@ export function evaluateArmExpression(expression, parameters) {
 
   if (text === 'subscription().subscriptionId') return parameters.__subscriptionId;
   if (text === 'resourceGroup().name') return parameters.__resourceGroupName;
+  if (text === 'resourceGroup().location') return parameters.__resourceGroupLocation;
+  if (text === 'resourceGroup().id') return `/subscriptions/${parameters.__subscriptionId}/resourceGroups/${parameters.__resourceGroupName}`;
+  if (text === 'subscription().tenantId') return localIdentity.tenantId;
 
   const formatMatch = text.match(/^format\((.*)\)$/s);
   if (formatMatch) {
@@ -1480,12 +1488,13 @@ export function expandDeploymentTemplate({
   parameters = {},
   subscriptionId,
   resourceGroupName,
+  resourceGroupLocation,
   inheritedParameters = {},
   deploymentOutputs = {},
   deploymentName,
 }) {
   const context = addTemplateVariables(template, {
-    ...parameterContext(template, parameters, inheritedParameters),
+    ...parameterContext(template, parameters, { ...inheritedParameters, __subscriptionId: subscriptionId, __resourceGroupName: resourceGroupName, __resourceGroupLocation: resourceGroupLocation ?? inheritedParameters.__resourceGroupLocation }),
     __subscriptionId: subscriptionId,
     __resourceGroupName: resourceGroupName,
     __deploymentOutputs: deploymentOutputs,
