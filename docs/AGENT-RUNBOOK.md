@@ -12,6 +12,14 @@ Use this when changing the repo. It is written for future agents that need to mo
 6. Check the generated scope in `docs/SERVICE-SCOPE.md`.
 7. Confirm the work stays under `/home/ubuntu/globalstack`.
 
+## Before Merging a PR
+
+Read the complete diff, including generated files, test expectations, dependency changes and documentation claims. Review all PR comments, inline threads and code-scanning alerts, including bot findings that do not fail a required check. Repeat this review after the final push.
+
+For each finding, reproduce and fix a valid issue, or record a specific evidence-based explanation for a false positive. Do not disable a scanner or add a broad exclusion to obtain a passing check. A completed CI job is not evidence that every reported alert was resolved. A bot review that failed or exceeded its quota is not a completed review; continue with manual review without requesting paid usage.
+
+Verify required checks on the exact head revision, update the PR description to match the final change and its limitations, and merge only after the review is complete. Preserve review conclusions and unresolved release gaps in the repository's security or readiness documents.
+
 ## Dataset-Visible Bundle Hygiene
 
 When working on prompts, model responses, IaC, unit tests, or integration tests that may become training artifacts, keep them Azure-only. GlobalStack routing, tokens, sidecar details, and local endpoints belong only in the hidden runner/runtime layer.

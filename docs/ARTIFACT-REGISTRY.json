@@ -783,6 +783,7 @@
     "test:gcp:unit",
     "test:local",
     "test:repository",
+    "test:services:local",
     "trial:openai-arm-json",
     "trial:openai-complex-pulumi-bundles",
     "trial:openai-platforms",

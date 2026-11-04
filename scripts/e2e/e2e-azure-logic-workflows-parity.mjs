@@ -903,7 +903,7 @@ async function runControlPlaneMatrix() {
       ['workflow missing definition is rejected', workflowName, workflowBody({ properties: { definition: undefined } }), 'InvalidWorkflow'],
       ['workflow missing triggers is rejected', workflowName, workflowBody({ properties: { definition: workflowDefinition({ triggers: undefined }) } }), 'InvalidWorkflow'],
       ['workflow missing actions is rejected', workflowName, workflowBody({ properties: { definition: workflowDefinition({ actions: undefined }) } }), 'InvalidWorkflow'],
-      ['workflow invalid state is rejected', workflowName, workflowBody({ properties: { state: 'Paused' } }), 'InvalidWorkflowState'],
+      ['workflow invalid state is rejected', workflowName, workflowBody({ properties: { state: 'Broken' } }), 'InvalidRequestContent'],
     ]) {
       await record(name, async () => {
         const result = await httpJson(armPort, 'PUT', workflowPath(resourceGroup, pathName), body);

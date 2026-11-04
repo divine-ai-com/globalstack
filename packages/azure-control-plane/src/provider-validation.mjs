@@ -1019,7 +1019,9 @@ function validateKeyVaultPayload(resourceType, body) {
         'Key Vault properties.sku must specify family A and name standard or premium.',
       );
     }
-    if (!Array.isArray(body.properties?.accessPolicies)) {
+    // RBAC vault templates may omit legacy access policies. Explicit values still need array validation.
+    const policies = body.properties?.accessPolicies;
+    if (!Array.isArray(policies) && !(policies === undefined && body.properties?.enableRbacAuthorization === true)) {
       return envelopedError(
         400,
         'BadParameter',

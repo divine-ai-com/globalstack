@@ -1,0 +1,343 @@
+{
+  "repository": "Azure/azure-rest-api-specs",
+  "revision": "c6c1c80a1d6aba39b0285f69f52ad46d36e51dec",
+  "recordedOn": "2026-11-04",
+  "scope": "Directory changes are review signals, not behavioral compatibility measurements.",
+  "capabilities": [
+    {
+      "id": "blob-storage",
+      "paths": [
+        "specification/storage"
+      ]
+    },
+    {
+      "id": "azure-functions",
+      "paths": [
+        "specification/web"
+      ]
+    },
+    {
+      "id": "api-management",
+      "paths": [
+        "specification/apimanagement"
+      ]
+    },
+    {
+      "id": "identity-rbac",
+      "paths": [
+        "specification/msi",
+        "specification/authorization"
+      ]
+    },
+    {
+      "id": "key-vault-secrets",
+      "paths": [
+        "specification/keyvault"
+      ]
+    },
+    {
+      "id": "key-vault-keys",
+      "paths": [
+        "specification/keyvault"
+      ]
+    },
+    {
+      "id": "postgresql-flexible-server",
+      "paths": [
+        "specification/postgresql"
+      ]
+    },
+    {
+      "id": "cosmos-nosql-table",
+      "paths": [
+        "specification/cosmos-db",
+        "specification/storage"
+      ]
+    },
+    {
+      "id": "service-bus-topics",
+      "paths": [
+        "specification/servicebus"
+      ]
+    },
+    {
+      "id": "event-grid",
+      "paths": [
+        "specification/eventgrid"
+      ]
+    },
+    {
+      "id": "container-registry",
+      "paths": [
+        "specification/containerregistry"
+      ]
+    },
+    {
+      "id": "aks-metadata",
+      "paths": [
+        "specification/containerservice"
+      ]
+    },
+    {
+      "id": "monitor-logs",
+      "paths": [
+        "specification/operationalinsights",
+        "specification/monitor",
+        "specification/applicationinsights"
+      ]
+    },
+    {
+      "id": "monitor-metrics-alerts",
+      "paths": [
+        "specification/monitor",
+        "specification/applicationinsights"
+      ]
+    },
+    {
+      "id": "virtual-network",
+      "paths": [
+        "specification/network",
+        "specification/dns",
+        "specification/privatedns",
+        "specification/frontdoor"
+      ]
+    },
+    {
+      "id": "mysql-flexible-server",
+      "paths": [
+        "specification/mysql"
+      ]
+    },
+    {
+      "id": "queue-storage",
+      "paths": [
+        "specification/storage",
+        "specification/servicebus"
+      ]
+    },
+    {
+      "id": "redis-cache",
+      "paths": [
+        "specification/redis",
+        "specification/redisenterprise"
+      ]
+    },
+    {
+      "id": "logic-workflows",
+      "paths": [
+        "specification/logic",
+        "specification/web"
+      ]
+    },
+    {
+      "id": "dns-zones",
+      "paths": [
+        "specification/network",
+        "specification/dns",
+        "specification/privatedns",
+        "specification/frontdoor"
+      ]
+    },
+    {
+      "id": "load-balancing",
+      "paths": [
+        "specification/network",
+        "specification/dns",
+        "specification/privatedns",
+        "specification/frontdoor"
+      ]
+    },
+    {
+      "id": "front-door-cdn",
+      "paths": [
+        "specification/cdn"
+      ]
+    },
+    {
+      "id": "waf-policy",
+      "paths": [
+        "specification/network",
+        "specification/dns",
+        "specification/privatedns",
+        "specification/frontdoor",
+        "specification/cdn"
+      ]
+    },
+    {
+      "id": "activity-log-audit",
+      "paths": [
+        "specification/monitor",
+        "specification/applicationinsights",
+        "specification/eventgrid"
+      ]
+    },
+    {
+      "id": "azure-files",
+      "paths": [
+        "specification/storage",
+        "specification/netapp"
+      ]
+    },
+    {
+      "id": "event-hubs-streams",
+      "paths": [
+        "specification/eventhub"
+      ]
+    },
+    {
+      "id": "synapse-warehouse",
+      "paths": [
+        "specification/synapse"
+      ]
+    },
+    {
+      "id": "app-configuration-parameters",
+      "paths": [
+        "specification/appconfiguration",
+        "specification/keyvault"
+      ]
+    },
+    {
+      "id": "database-migration-service",
+      "paths": [
+        "specification/datamigration"
+      ]
+    },
+    {
+      "id": "service-discovery",
+      "paths": [
+        "specification/network",
+        "specification/dns",
+        "specification/privatedns",
+        "specification/frontdoor",
+        "specification/app"
+      ]
+    }
+  ],
+  "trackedPaths": [
+    {
+      "path": "specification/apimanagement",
+      "treeSha": "e5bdbad0d1055852a50d76bc4b5a652ad1159566"
+    },
+    {
+      "path": "specification/app",
+      "treeSha": "5d0f2fdbeacd49ef02ca47e290f717446778de47"
+    },
+    {
+      "path": "specification/appconfiguration",
+      "treeSha": "2f1c69a2c84c0be7e4b38513e37772d892fe00be"
+    },
+    {
+      "path": "specification/applicationinsights",
+      "treeSha": "84915480bc77d735fc85dcffffd4f0e88d21314e"
+    },
+    {
+      "path": "specification/authorization",
+      "treeSha": "0324131c53fcbffad2d32e274c4521849dbcd958"
+    },
+    {
+      "path": "specification/cdn",
+      "treeSha": "c5654430b34af3495d226a11c7e8c354acc3a945"
+    },
+    {
+      "path": "specification/containerregistry",
+      "treeSha": "da06893c312b51ae80b5cf80c9d3bb3f57ec00fe"
+    },
+    {
+      "path": "specification/containerservice",
+      "treeSha": "5566e58bd9a1a66d329d6d3df5f35a0a26382359"
+    },
+    {
+      "path": "specification/cosmos-db",
+      "treeSha": "e6b17f7ceaaeb6729080f613f356b5eb7ce7f4d4"
+    },
+    {
+      "path": "specification/datamigration",
+      "treeSha": "9159096097df7cda54b7aceddd78c608983ee283"
+    },
+    {
+      "path": "specification/dns",
+      "treeSha": "b0d7a1fdca4c9455db7d99857288fa30d2c36819"
+    },
+    {
+      "path": "specification/eventgrid",
+      "treeSha": "f223ecc0f2e7a83d709b5863e56413e9571f52c2"
+    },
+    {
+      "path": "specification/eventhub",
+      "treeSha": "126029a1f820a623dade4849c41cb1502772aad7"
+    },
+    {
+      "path": "specification/frontdoor",
+      "treeSha": "bb039a645d53e1a1fae4a238b180b9ab6798f6d9"
+    },
+    {
+      "path": "specification/keyvault",
+      "treeSha": "8edf36a681e80831b3e3facb8ee782390ec0368e"
+    },
+    {
+      "path": "specification/logic",
+      "treeSha": "a81e6acea8254e14dc0354ed46fa6a47eb966b06"
+    },
+    {
+      "path": "specification/monitor",
+      "treeSha": "fd66e57d88028e9d38339d8dedf4c3ba0f29276c"
+    },
+    {
+      "path": "specification/msi",
+      "treeSha": "8e94c971f6fef75590d4e290c648c0fe61c03913"
+    },
+    {
+      "path": "specification/mysql",
+      "treeSha": "dbc2c7f18edffaf0dd63a3b77fc6135e5fd6c684"
+    },
+    {
+      "path": "specification/netapp",
+      "treeSha": "d5b0411707224709e68af570de5a43a10f00733a"
+    },
+    {
+      "path": "specification/network",
+      "treeSha": "bbdd14df52e5a4ec88f549dd7c2382adc5f6dc73"
+    },
+    {
+      "path": "specification/operationalinsights",
+      "treeSha": "d38ee5695f8fde6e28d770ec77ef45f7a2458e9d"
+    },
+    {
+      "path": "specification/postgresql",
+      "treeSha": "14cf126eb7d65e0509ec4c7b49bad5e5449e1025"
+    },
+    {
+      "path": "specification/privatedns",
+      "treeSha": "0014f0135e50681781b601ac8ba3fc8336eab134"
+    },
+    {
+      "path": "specification/redis",
+      "treeSha": "e5faba599d8b1056e1af98fda6d8fe25a7cb0e72"
+    },
+    {
+      "path": "specification/redisenterprise",
+      "treeSha": "0123fa4c2a91dcd873ce8bc3b9b57c21660d57ec"
+    },
+    {
+      "path": "specification/resources",
+      "treeSha": "6af2a849721cf5f2bd091a9b1439637ba6193c91"
+    },
+    {
+      "path": "specification/servicebus",
+      "treeSha": "82ee5d1376f1daa22dcd62c40c4ea4d42df65283"
+    },
+    {
+      "path": "specification/storage",
+      "treeSha": "d850ff02f841190b2189bba2fb0bef76158ee047"
+    },
+    {
+      "path": "specification/synapse",
+      "treeSha": "d0b95bd088ebd235379e4e36b087302f997c2029"
+    },
+    {
+      "path": "specification/web",
+      "treeSha": "a11b7b58ce1cfa46cf7a17423f6a2c16df09531e"
+    }
+  ]
+}

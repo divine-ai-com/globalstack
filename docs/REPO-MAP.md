@@ -137,6 +137,7 @@ flowchart TD
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
+- `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/platform-registry/src/index.mjs`
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
@@ -207,6 +208,7 @@ flowchart TD
 - `scripts/capture/capture-real-azure-operation.mjs`
 - `scripts/capture/capture-redaction.mjs`
 - `scripts/capture/run-azure-differential.mjs`
+- `scripts/conformance/check-azure-spec-drift.mjs`
 - `scripts/conformance/classify-azure-captures.mjs`
 - `scripts/conformance/report-provider-registration-gaps.mjs`
 - `scripts/conformance/rerun-registered-shallow-azure-captures.mjs`
@@ -264,6 +266,7 @@ flowchart TD
 - `scripts/repository/package-check.test.mjs`
 - `scripts/repository/pr-policy.mjs`
 - `scripts/repository/pr-policy.test.mjs`
+- `scripts/repository/spec-drift.test.mjs`
 - `scripts/repository/stage-results.test.mjs`
 - `scripts/repository/sync-labels.mjs`
 - `scripts/runtime/build-platform-images.mjs`
@@ -276,6 +279,7 @@ flowchart TD
 - `scripts/runtime/smoke-deploy-azure-usecases.mjs`
 - `scripts/runtime/smoke-platform-runner-lifecycles.mjs`
 - `scripts/runtime/start-local.mjs`
+- `scripts/runtime/test-local-services.mjs`
 - `scripts/runtime/test-local.mjs`
 - `scripts/runtime/validate.mjs`
 - `scripts/verified/generate-azure-smoke-prompts.mjs`
@@ -371,6 +375,7 @@ flowchart TD
 - `npm run test:gcp:unit`
 - `npm run test:local`
 - `npm run test:repository`
+- `npm run test:services:local`
 - `npm run trial:openai-arm-json`
 - `npm run trial:openai-complex-pulumi-bundles`
 - `npm run trial:openai-platforms`

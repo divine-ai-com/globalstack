@@ -105,7 +105,8 @@
     "check:local": "npm run workspace:build && npm run docs:nav && npm run test:local",
     "test:docker": "node scripts/runtime/test-local.mjs --docker",
     "test:repository": "node --test scripts/repository/*.test.mjs",
-    "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs"
+    "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs",
+    "test:services:local": "node scripts/runtime/test-local-services.mjs"
   },
   "dependencies": {
     "@azure/service-bus": "^7.10.0",

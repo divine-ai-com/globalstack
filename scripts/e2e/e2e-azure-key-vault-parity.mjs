@@ -407,7 +407,7 @@ async function runControlAndDataPlaneMatrix() {
           vaultBody({ properties: { tenantId: undefined } }),
         );
         assert.equal(result.status, 400);
-        assert.equal(errorCode(result), 'BadParameter');
+        assert.equal(errorCode(result), 'BadRequest');
         return { status: result.status, errorCode: errorCode(result) };
       });
 
@@ -418,6 +418,14 @@ async function runControlAndDataPlaneMatrix() {
           providerPath(resourceGroup, 'Microsoft.KeyVault', vaultPath),
           vaultBody({ properties: { sku: { family: 'B', name: 'invalid' } } }),
         );
+        assert.equal(result.status, 400);
+        assert.equal(errorCode(result), 'BadRequest');
+        return { status: result.status, errorCode: errorCode(result) };
+      });
+
+      await record('RBAC vault still rejects malformed accessPolicies', async () => {
+        const result = await httpJson(armPort, 'PUT', providerPath(resourceGroup, 'Microsoft.KeyVault', vaultPath),
+          vaultBody({ properties: { enableRbacAuthorization: true, accessPolicies: 'invalid' } }));
         assert.equal(result.status, 400);
         assert.equal(errorCode(result), 'BadParameter');
         return { status: result.status, errorCode: errorCode(result) };

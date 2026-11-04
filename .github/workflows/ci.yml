@@ -36,6 +36,7 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
         if: matrix.node == 22
       - run: npm run check:local
+      - run: npm run test:services:local
       - run: npm run test:gcp:unit
       - run: npm run test:repository
       - run: npm run demo

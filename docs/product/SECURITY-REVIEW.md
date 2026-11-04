@@ -19,6 +19,16 @@ The initial hosted security run passed secret scanning, dependency review/audit,
 
 Local validation also exercised all ten full-emulator listener bindings, built the container, and deployed/read/deleted the ARM demo through the container. The test-owned container was removed. The dependency inventory is retained as a CI artifact for 14 days; retain a release-specific inventory alongside a future published release.
 
+## PR 14 review follow-up
+
+The CodeQL `js/file-access-to-http` finding [42](https://github.com/divine-ai-com/globalstack/security/code-scanning/42) was traced through the upstream-template test. The source is a pinned public Microsoft template whose SHA-256 digest is checked before use. The destination is the test-owned server bound to `127.0.0.1` on an ephemeral port. The test supplies synthetic values and a local development bearer token. Redirects are explicitly rejected. This is intentional local fixture replay, not disclosure of private files; the finding is classified as a false positive for this path only. No scanner rule or directory is excluded.
+
+Manual event-flow review also found that deleting a scoped Event Grid subscription removed its management resource without unregistering runtime delivery. The PR now synchronizes scoped subscription creation, updates and deletion with the runtime. Regression tests prove correct delivery, non-delivery after deletion, delivery to a deliberately wrong destination, and recovery after restoring the correct destination.
+
+A further manual regression check found that nested deployments could inherit the parent group's location when their target group differed. Location lookup now uses the target group, including groups declared later in the template, and a regression test covers both existing and newly declared groups.
+
+Copilot could not complete its requested review because of quota limits. It is not counted as a completed review. The pre-merge procedure requires manual diff review and inspection of bot comments and code-scanning alerts on the final revision.
+
 ## Research and release gates
 
 | Area | Evidence needed before a stable release or a corresponding paper claim |

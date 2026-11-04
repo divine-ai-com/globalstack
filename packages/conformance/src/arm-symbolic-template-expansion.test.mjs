@@ -172,3 +172,25 @@ test('ARM resource ID functions include scope and interleave child resource name
   for (const [expression, expected] of cases) assert.equal(evaluateArmValue(expression, context), expected);
   assert.throws(() => evaluateArmValue("[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', 'store')]", context), /one name/);
 });
+
+
+test('nested deployment defaults use the target resource group location', () => {
+  const expanded = expandDeploymentTemplate({
+    subscriptionId: 'sub-local', resourceGroupName: 'parent', resourceGroupLocation: 'eastus',
+    resourceGroupLocations: { existing: 'westus' },
+    template: {
+      resources: [
+        ...['existing', 'created'].map(name => ({
+          type: 'Microsoft.Resources/deployments', name, resourceGroup: name,
+          properties: { template: {
+            parameters: { location: { type: 'string', defaultValue: '[resourceGroup().location]' } },
+            resources: [{ type: 'Microsoft.ManagedIdentity/userAssignedIdentities', name: 'identity', apiVersion: '2023-01-31', location: "[parameters('location')]" }],
+          } },
+        })),
+        { type: 'Microsoft.Resources/resourceGroups', name: 'created', location: 'northeurope', apiVersion: '2022-09-01' },
+      ],
+    },
+  });
+  const locations = Object.fromEntries(expanded.operations.filter(op => op.kind === 'resource').map(op => [op.providerRoute.resourceGroupName, op.body.location]));
+  assert.deepEqual(locations, { existing: 'westus', created: 'northeurope' });
+});

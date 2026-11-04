@@ -1341,6 +1341,11 @@ export function parameterContext(template, deploymentParameters = {}, inherited 
   for (const [name, definition] of Object.entries(deploymentParameters ?? {})) {
     if (definition?.value !== undefined) parameters[name] = definition.value;
   }
+  for (const [name, definition] of Object.entries(template?.parameters ?? {})) {
+    if (deploymentParameters[name]?.value === undefined && definition.defaultValue !== undefined) {
+      parameters[name] = evaluateArmValue(definition.defaultValue, parameters);
+    }
+  }
   return parameters;
 }
 
@@ -1388,6 +1393,9 @@ export function evaluateArmExpression(expression, parameters) {
 
   if (text === 'subscription().subscriptionId') return parameters.__subscriptionId;
   if (text === 'resourceGroup().name') return parameters.__resourceGroupName;
+  if (text === 'resourceGroup().location') return parameters.__resourceGroupLocation;
+  if (text === 'resourceGroup().id') return `/subscriptions/${parameters.__subscriptionId}/resourceGroups/${parameters.__resourceGroupName}`;
+  if (text === 'subscription().tenantId') return localIdentity.tenantId;
 
   const formatMatch = text.match(/^format\((.*)\)$/s);
   if (formatMatch) {
@@ -1460,8 +1468,8 @@ export function sortDeploymentOperations(operations) {
     if (left.kind === 'resourceGroup' && right.kind !== 'resourceGroup') return -1;
     if (right.kind === 'resourceGroup' && left.kind !== 'resourceGroup') return 1;
     if (left.kind !== 'resource' || right.kind !== 'resource') return 0;
-    const leftSegments = left.providerRoute.typePath.split('/').length;
-    const rightSegments = right.providerRoute.typePath.split('/').length;
+    const leftSegments = left.providerRoute.typePath.split('/').length + (left.providerRoute.scopeId?.split('/').length ?? 0);
+    const rightSegments = right.providerRoute.typePath.split('/').length + (right.providerRoute.scopeId?.split('/').length ?? 0);
     return leftSegments - rightSegments;
   });
 }
@@ -1480,16 +1488,31 @@ export function expandDeploymentTemplate({
   parameters = {},
   subscriptionId,
   resourceGroupName,
+  resourceGroupLocation,
+  resourceGroupLocations = {},
   inheritedParameters = {},
   deploymentOutputs = {},
   deploymentName,
 }) {
+  const groupLocations = { ...resourceGroupLocations };
+  if (resourceGroupName && resourceGroupLocation !== undefined) groupLocations[resourceGroupName.toLowerCase()] = resourceGroupLocation;
   const context = addTemplateVariables(template, {
-    ...parameterContext(template, parameters, inheritedParameters),
+    ...parameterContext(template, parameters, {
+      ...inheritedParameters,
+      __subscriptionId: subscriptionId,
+      __resourceGroupName: resourceGroupName,
+      __resourceGroupLocation: groupLocations[resourceGroupName?.toLowerCase()],
+    }),
     __subscriptionId: subscriptionId,
     __resourceGroupName: resourceGroupName,
     __deploymentOutputs: deploymentOutputs,
   });
+  // Resolve group locations before nested templates, regardless of declaration order.
+  for (const { rawResource } of armTemplateResourceEntries(template)) {
+    if (rawResource.type !== 'Microsoft.Resources/resourceGroups') continue;
+    const group = evaluateArmValue(rawResource, context);
+    groupLocations[String(group.name).toLowerCase()] = group.location;
+  }
   const operations = [];
   const symbolicResourceNames = new Map();
   function emitResource(rawResource, symbolicName = null, parentResource = null) {
@@ -1521,6 +1544,7 @@ export function expandDeploymentTemplate({
         parameters: nestedParameters,
         subscriptionId,
         resourceGroupName: nestedResourceGroupName,
+        resourceGroupLocations: groupLocations,
         inheritedParameters: context,
         deploymentOutputs,
         deploymentName: resource.name,
@@ -1557,9 +1581,21 @@ export function expandDeploymentTemplate({
       });
       return;
     }
+    let scopeId;
+    if (resource.scope !== undefined) {
+      const groupId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}`;
+      scopeId = String(resource.scope).startsWith('/') ? String(resource.scope) : `${groupId}/providers/${resource.scope}`;
+      const scopeRoute = providerRouteFromResourceId(scopeId);
+      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings'].includes(resource.type);
+      if (!supported || !scopeRoute || scopeRoute.subscriptionId !== subscriptionId || scopeRoute.resourceGroupName !== resourceGroupName) {
+        operations.push({ kind: 'error', status: 501, code: 'GlobalStackUnsupportedResourceScope', message: 'Only supported resource extensions in the deployment resource group are emulated.' });
+        return;
+      }
+    }
     operations.push({
       kind: 'resource',
       providerRoute: {
+        ...(scopeId ? { scopeId } : {}),
         subscriptionId,
         resourceGroupName,
         providerNamespace,
