@@ -475,7 +475,8 @@
     "containerDemo": "PASS",
     "hostPlatform": "Linux x86_64",
     "node": "v22.23.3",
-    "npm": "10.9.9"
+    "npm": "10.9.9",
+    "dependencyInstallCommand": "npm ci --ignore-scripts"
   },
   "tools": {
     "terraform": "1.17.1",
