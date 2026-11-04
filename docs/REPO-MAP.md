@@ -136,6 +136,7 @@ flowchart TD
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
+- `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/platform-registry/src/index.mjs`
 - `packages/bundle-runtime/src/build-platform-images.mjs`
 - `packages/bundle-runtime/src/clean-runtime-artifacts.mjs`
@@ -203,6 +204,7 @@ flowchart TD
 - `scripts/capture/capture-azure-storage-data-plane.mjs`
 - `scripts/capture/capture-azure-storage-lifecycle.mjs`
 - `scripts/capture/capture-real-azure-operation.mjs`
+- `scripts/capture/capture-redaction.mjs`
 - `scripts/capture/run-azure-differential.mjs`
 - `scripts/conformance/classify-azure-captures.mjs`
 - `scripts/conformance/report-provider-registration-gaps.mjs`
@@ -253,6 +255,11 @@ flowchart TD
 - `scripts/render/render-repo-map.mjs`
 - `scripts/render/render-service-scope.mjs`
 - `scripts/render/render-storage-data-plane-expectations.mjs`
+- `scripts/repository/accepted-issue.cjs`
+- `scripts/repository/accepted-issue.test.mjs`
+- `scripts/repository/capture-redaction.test.mjs`
+- `scripts/repository/check-sarif.mjs`
+- `scripts/repository/check-sarif.test.mjs`
 - `scripts/repository/package-check.test.mjs`
 - `scripts/repository/pr-policy.mjs`
 - `scripts/repository/pr-policy.test.mjs`

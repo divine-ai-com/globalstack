@@ -76,4 +76,4 @@ Local checks require no Azure credentials or model API calls. Tests that start a
 
 ## License proposal
 
-Apache 2.0 is the proposed license for this release. The included LICENSE is prepared for owner review before public release. Dependencies and optional Microsoft emulator images retain their own licenses and terms.
+GlobalStack is licensed under Apache 2.0. See LICENSE. Dependencies and optional Microsoft emulator images retain their own licenses and terms.

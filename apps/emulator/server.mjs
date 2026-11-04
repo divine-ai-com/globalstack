@@ -12,7 +12,7 @@ import { createKeyVaultRouterServer } from '../../packages/azure-data-plane/src/
 const store = new ResourceStore();
 const runtime = createEmulatorRuntime({ store });
 
-async function listen(server, port, host = '0.0.0.0') {
+async function listen(server, port, host = process.env.GLOBALSTACK_HOST ?? '127.0.0.1') {
   await new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
@@ -42,7 +42,7 @@ const kubernetesServer = createKubernetesRouterServer(runtime.kubernetesRouter);
 const keyVaultServer = createKeyVaultRouterServer(runtime.keyVaultRouter);
 
 await Promise.all([
-  listen(armServer, Number(process.env.GLOBALSTACK_ARM_PORT ?? 4566), process.env.GLOBALSTACK_ARM_HOST ?? '0.0.0.0'),
+  listen(armServer, Number(process.env.GLOBALSTACK_ARM_PORT ?? 4566), process.env.GLOBALSTACK_ARM_HOST ?? process.env.GLOBALSTACK_HOST ?? '127.0.0.1'),
   listen(blobServer, Number(process.env.GLOBALSTACK_BLOB_PORT ?? 10000)),
   listen(queueServer, Number(process.env.GLOBALSTACK_QUEUE_PORT ?? 10001)),
   listen(tableServer, Number(process.env.GLOBALSTACK_TABLE_PORT ?? 10002)),

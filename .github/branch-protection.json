@@ -4,7 +4,8 @@
     "contexts": [
       "CI gate",
       "PR policy",
-      "Accepted issue"
+      "Accepted issue",
+      "Security gate"
     ]
   },
   "enforce_admins": true,

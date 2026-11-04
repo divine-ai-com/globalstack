@@ -19,15 +19,15 @@ export function renderOfficialEmulatorCompose() {
     lines.push('      - all');
     if (option.ports?.length && option.id !== 'service-bus-emulator') {
       lines.push('    ports:');
-      for (const port of option.ports) lines.push(`      - "${port}"`);
+      for (const port of option.ports) lines.push(`      - "127.0.0.1:${port}"`);
     }
     if (option.id === 'azurite') {
       lines.push('    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0');
     }
     if (option.id === 'service-bus-emulator') {
       lines.push('    ports:');
-      lines.push('      - "5672:5672"');
-      lines.push('      - "${GLOBALSTACK_SERVICEBUS_HTTP_PORT:-5300}:${GLOBALSTACK_SERVICEBUS_HTTP_PORT:-5300}"');
+      lines.push('      - "127.0.0.1:5672:5672"');
+      lines.push('      - "127.0.0.1:${GLOBALSTACK_SERVICEBUS_HTTP_PORT:-5300}:${GLOBALSTACK_SERVICEBUS_HTTP_PORT:-5300}"');
       lines.push('    volumes:');
       lines.push('      - ./service-bus-config.json:/ServiceBus_Emulator/ConfigFiles/Config.json:ro');
       lines.push('    depends_on:');

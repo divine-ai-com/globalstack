@@ -16,5 +16,6 @@
     "build": "node ../workspace-utils/src/package-check.mjs build",
     "test": "node ../workspace-utils/src/package-check.mjs test",
     "validate": "node ../workspace-utils/src/package-check.mjs validate"
-  }
+  },
+  "license": "Apache-2.0"
 }

@@ -8,9 +8,26 @@ export function readBody(req) {
   return requestBodies.get(req);
 }
 
+export const maxArmBodyBytes = 8 * 1024 * 1024;
+
+function bodyTooLarge(req) {
+  req.resume();
+  const error = new Error('ARM request body exceeds the 8 MiB limit.');
+  error.code = 'GLOBALSTACK_BODY_TOO_LARGE';
+  return error;
+}
+
 async function parseRequestBody(req) {
-  let text = '';
-  for await (const chunk of req) text += chunk;
+  if (Number(req.headers['content-length']) > maxArmBodyBytes) throw bodyTooLarge(req);
+  let bytes = 0;
+  const chunks = [];
+  // Preserve the socket long enough to return 413 when a chunked body exceeds the limit.
+  for await (const chunk of req.iterator({ destroyOnReturn: false })) {
+    bytes += Buffer.byteLength(chunk);
+    if (bytes > maxArmBodyBytes) throw bodyTooLarge(req);
+    chunks.push(Buffer.from(chunk));
+  }
+  const text = Buffer.concat(chunks).toString('utf8');
   if (!text) return {};
   const contentType = String(req.headers['content-type'] ?? '').toLowerCase();
   if (contentType.includes('application/x-www-form-urlencoded')) {
