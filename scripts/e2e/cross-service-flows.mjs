@@ -56,7 +56,8 @@ export async function runCrossServiceFlow(kind, { studyMutation, progress } = {}
       headers: { authorization: `Bearer ${localIdentity.accessToken}`, 'content-type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body) });
     const text = await response.text();
-    operations.push({ method, path, status: response.status });
+    // Invocation status belongs to the workflow observation, not the next setup interval.
+    if (!path.includes('/triggers/')) operations.push({ method, path, status: response.status });
     return { status: response.status, body: text ? JSON.parse(text) : null };
   }
   function workflow(actions) {

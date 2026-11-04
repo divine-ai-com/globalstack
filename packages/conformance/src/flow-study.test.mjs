@@ -9,7 +9,7 @@ test('outcome checks distinguish duplicate, misrouted and uncorrelated deliverie
   const episode = { scenario: 'vault-enrichment', input: { requestId: 'case-1' },
     management: { deploymentState: 'Succeeded', workflowReadStatus: 200, operations: [{ status: 201 }] },
     workflowStatus: 'Succeeded', triggerStatus: 202, expectedPayload: payload,
-    deliveries: [{ path: '/accepted', body: payload }] };
+    deliveries: [{ path: '/accepted', body: structuredClone(payload) }] };
   assert.ok(Object.values(assessFlowEpisode(episode)).every(Boolean));
   const extra = structuredClone(episode);
   extra.deliveries.push({ path: '/wrong', body: { ...payload, requestId: 'incorrect-id' } });
