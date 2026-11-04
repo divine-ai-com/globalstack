@@ -13,7 +13,8 @@ This checklist tracks the first public development release. Passing local checks
 - [x] Restore four command implementations that were replaced by self-import wrappers.
 - [x] Check syntax in every module and reject direct self-imports.
 - [x] Update compatible dependency versions to clear the observed audit advisories.
-- [ ] Verify the new workflows on GitHub, including title edits and external contributions.
+- [x] Verify hosted Node.js 22/24 checks, PR metadata validation and automatic labeling.
+- [ ] Verify title-edit label reconciliation and external contributions after public release.
 - [ ] Enable required checks and review rules before public release. The private repository plan currently blocks branch protection.
 
 ## Runtime and compatibility
