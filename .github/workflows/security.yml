@@ -51,7 +51,9 @@ jobs:
         with:
           fail-on-severity: moderate
           fail-on-scopes: runtime, development, unknown
-          allow-licenses: Apache-2.0, MIT, ISC, BSD-2-Clause, BSD-3-Clause, 0BSD, Unlicense, CC0-1.0
+          allow-licenses: Apache-2.0, MIT, ISC, BSD-2-Clause, BSD-3-Clause, 0BSD, Unlicense, CC0-1.0, BlueOak-1.0.0, Python-2.0
+          # Reviewed attribution-only data package; other CC-BY dependencies still require review.
+          allow-dependencies-licenses: pkg:npm/spdx-exceptions@2.5.0
           comment-summary-in-pr: never
       - name: Generate dependency inventory
         run: npm sbom --sbom-format cyclonedx > "$RUNNER_TEMP/globalstack-sbom.json"
