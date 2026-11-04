@@ -1,3 +1,4 @@
+import { sanitizeCapture, sanitizeText } from './capture-redaction.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { workspaceRoot } from '../../packages/workspace-utils/src/index.mjs';
@@ -26,34 +27,6 @@ function run(command, args, opts = {}) {
   });
 }
 
-function sanitizeHeaders(headers = {}) {
-  const sanitized = {};
-  for (const [key, value] of Object.entries(headers)) {
-    const lower = key.toLowerCase();
-    if (lower.includes('authorization') || lower.includes('token') || lower.includes('key')) continue;
-    sanitized[key] = value;
-  }
-  return sanitized;
-}
-
-function sanitizeBody(value) {
-  if (value === null || value === undefined) return value;
-  if (Array.isArray(value)) return value.map(sanitizeBody);
-  if (typeof value === 'object') {
-    const result = {};
-    for (const [key, nested] of Object.entries(value)) {
-      const lower = key.toLowerCase();
-      if (lower.includes('secret') || lower.includes('password') || lower.includes('key') || lower.includes('token')) {
-        result[key] = '<redacted>';
-      } else {
-        result[key] = sanitizeBody(nested);
-      }
-    }
-    return result;
-  }
-  return value;
-}
-
 function usage() {
   console.error([
     'Usage:',
@@ -70,6 +43,10 @@ const [, , fixtureId, requestPath] = process.argv;
 if (!fixtureId || !requestPath) {
   usage();
   process.exit(2);
+}
+
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(fixtureId)) {
+  throw new Error('fixture-id must be a filename without directory separators.');
 }
 
 if (!enabled) {
@@ -94,7 +71,7 @@ let responseBody = result.stdout;
 try {
   responseBody = result.stdout ? JSON.parse(result.stdout) : null;
 } catch {
-  responseBody = result.stdout;
+  responseBody = result.stdout ? '<omitted: non-JSON response>' : null;
 }
 
 const fixture = {
@@ -103,14 +80,14 @@ const fixture = {
   tool: 'az rest',
   request: {
     method: spec.method,
-    url: spec.url.replace(/subscriptions\/[^/]+/i, 'subscriptions/<subscription-id>'),
-    body: sanitizeBody(spec.body),
+    url: sanitizeText(spec.url),
+    body: sanitizeCapture(spec.body),
   },
   response: {
     exitCode: result.code,
-    body: sanitizeBody(responseBody),
-    stderr: result.stderr.replace(/Bearer [A-Za-z0-9._-]+/g, 'Bearer <redacted>'),
-    headers: sanitizeHeaders(spec.expectedHeaders ?? {}),
+    body: sanitizeCapture(responseBody),
+    stderr: result.stderr ? '<omitted: CLI diagnostic output>' : '',
+    headers: sanitizeCapture(spec.expectedHeaders ?? {}),
   },
   timing: {
     startedAt,

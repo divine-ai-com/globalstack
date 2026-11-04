@@ -492,11 +492,12 @@ export function createArmRequestHandler({
 
   return async (req, res) => {
     const startedAt = Date.now();
-    const url = new URL(req.url, 'http://localhost');
-    const pathname = url.pathname;
+    let pathname = '/';
     const method = req.method.toUpperCase();
 
     try {
+      const url = new URL(req.url, 'http://localhost');
+      pathname = url.pathname;
       const authError = authorizeRequest(req, method, pathname);
       if (authError) return sendJson(res, authError.status, authError.body, authError.headers);
 
@@ -1966,13 +1967,16 @@ export function createArmRequestHandler({
         },
       ]);
     } catch (error) {
-      console.error('[globalstack:azure-control-plane] unhandled request error', {
-        method,
-        pathname,
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-      return sendError(res, 500, 'GlobalStackInternalError', error instanceof Error ? error.message : String(error));
+      if (error.code === 'GLOBALSTACK_BODY_TOO_LARGE') {
+        res.setHeader('connection', 'close');
+        return sendError(res, 413, 'RequestBodyTooLarge', 'ARM request body exceeds the 8 MiB limit.');
+      }
+      if (error instanceof URIError || error.code === 'ERR_INVALID_URL') {
+        return sendError(res, 400, 'InvalidRequestUrl', 'The request URL is malformed.');
+      }
+      // Do not expose exception messages or stacks, which may contain credentials or host paths.
+      console.error('[globalstack:azure-control-plane] internal request failure');
+      return sendError(res, 500, 'GlobalStackInternalError', 'An internal error occurred while processing the request.');
     } finally {
       store.recordCall({
         method,
@@ -1985,7 +1989,7 @@ export function createArmRequestHandler({
 }
 
 export function createArmServer(options = {}) {
-  return createServer(createArmRequestHandler(options));
+  return createServer({ requestTimeout: 30_000, headersTimeout: 10_000 }, createArmRequestHandler(options));
 }
 
 export function startArmServer({

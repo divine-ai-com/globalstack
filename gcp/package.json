@@ -47,5 +47,6 @@
   },
   "engines": {
     "node": ">=20.20.0"
-  }
+  },
+  "license": "Apache-2.0"
 }

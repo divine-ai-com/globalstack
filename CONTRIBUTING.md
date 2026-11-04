@@ -34,6 +34,7 @@ Required checks:
 | Check | Purpose |
 |---|---|
 | `CI gate` | Both supported Node.js matrix jobs passed build checks, conformance tests, repository tests and the local demo; workflow lint and dependency audit also passed |
+| `Security gate` | Secret scan, dependency audit/review, and high-severity static-analysis checks pass |
 | `Accepted issue` | An administrator authored the PR, or an open issue was labeled accepted by an administrator |
 | `PR policy` | The PR title, branch name, required sections and breaking change details follow the conventions |
 
@@ -84,7 +85,7 @@ gh api --method PUT repos/divine-ai-com/globalstack/branches/main/protection \
   --input .github/branch-protection.json
 ```
 
-The policy requires passing `CI gate`, `PR policy`, and `Accepted issue` checks, an up-to-date branch, resolved review conversations and linear history. It also applies the checks to administrators and blocks force pushes and deletion of `main`.
+The policy requires passing `CI gate`, `PR policy`, `Accepted issue`, and `Security gate` checks, an up-to-date branch, resolved review conversations and linear history. It also applies the checks to administrators and blocks force pushes and deletion of `main`.
 
 The prepared policy does not require an approval while the repository has a single maintainer, since authors cannot approve their own pull requests. Require a code-owner approval once another qualified reviewer is available. Keep the owner and required-check configuration synchronized with the actual team and workflow names.
 

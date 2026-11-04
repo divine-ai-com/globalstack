@@ -15,7 +15,7 @@ This checklist tracks the first public development release. Passing local checks
 - [x] Update compatible dependency versions to clear the observed audit advisories.
 - [x] Verify hosted Node.js 22/24 checks, PR metadata validation and automatic labeling.
 - [ ] Verify title-edit label reconciliation and external contributions after public release.
-- [ ] Enable required checks and review rules before public release. The private repository plan currently blocks branch protection.
+- [x] Enable public main-branch protection and required contribution checks.
 
 ## Runtime and compatibility
 
@@ -37,6 +37,8 @@ This checklist tracks the first public development release. Passing local checks
 - [x] Select a runnable ARM example that does not depend on a private verification repository.
 - [x] Confirm a source archive works without Git metadata.
 - [ ] Publish a tagged preview with exact supported operations and known limitations.
-- [ ] Change repository visibility only after reviewing this checklist.
+- [x] Publish the repository as a development preview after the initial credential review.
 
 The verification corpus remains separate from the core quickstart. Optional third-party runtimes retain their own licensing and acceptance requirements.
+
+Security and research release gaps are tracked in [SECURITY-REVIEW.md](SECURITY-REVIEW.md). Public source availability does not mark the remaining stable-release gates complete.

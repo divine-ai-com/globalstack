@@ -16,5 +16,6 @@
     "start": "node server.mjs",
     "test": "node ../../packages/workspace-utils/src/package-check.mjs test",
     "validate": "node ../../packages/workspace-utils/src/package-check.mjs validate"
-  }
+  },
+  "license": "Apache-2.0"
 }

@@ -1,3 +1,4 @@
+import { sanitizeCapture, sanitizeText } from './capture-redaction.mjs';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -59,21 +60,7 @@ async function getAccessToken() {
   return accessToken;
 }
 
-function sanitize(value) {
-  if (value === null || value === undefined) return value;
-  if (Array.isArray(value)) return value.map(sanitize);
-  if (typeof value === 'object') {
-    const out = {};
-    for (const [key, nested] of Object.entries(value)) {
-      const lower = key.toLowerCase();
-      out[key] = lower.includes('secret') || lower.includes('password') || lower.includes('token') || lower.includes('key')
-        ? '<redacted>'
-        : sanitize(nested);
-    }
-    return out;
-  }
-  return value;
-}
+const sanitize = sanitizeCapture;
 
 function sanitizeHeaders(headers) {
   const out = {};
@@ -81,7 +68,7 @@ function sanitizeHeaders(headers) {
     const lower = key.toLowerCase();
     if (lower.includes('authorization') || lower.includes('token') || lower.includes('key')) continue;
     if (['x-ms-request-id', 'x-ms-correlation-request-id', 'x-ms-routing-request-id', 'location', 'azure-asyncoperation', 'retry-after', 'content-type'].includes(lower)) {
-      out[key] = value;
+      out[key] = sanitizeText(value);
     }
   }
   return out;

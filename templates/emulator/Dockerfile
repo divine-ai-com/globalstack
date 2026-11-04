@@ -6,6 +6,7 @@ LABEL io.globalstack.scope="platform-runtime"
 LABEL io.globalstack.cloud="azure"
 
 ENV NODE_ENV=production
+ENV GLOBALSTACK_HOST=0.0.0.0
 ENV GLOBALSTACK_ARM_HOST=0.0.0.0
 ENV GLOBALSTACK_ARM_PORT=4566
 

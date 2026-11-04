@@ -16,5 +16,6 @@
     "test": "npm --prefix ../.. run docs:nav && node --test src/api-management-resource-identity.test.mjs src/azure-capture-fixtures.test.mjs src/azure-local-lifecycle.test.mjs src/azure-storage-data-plane-expectations.test.mjs src/azure-storage-hoststyle.test.mjs src/azure-storage-normalizer.test.mjs src/docs-navigation.test.mjs src/key-vault-router-sync.test.mjs",
     "test:full": "node ../workspace-utils/src/package-check.mjs test",
     "validate": "npm run build && npm run test"
-  }
+  },
+  "license": "Apache-2.0"
 }
