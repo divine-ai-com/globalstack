@@ -101,11 +101,12 @@ function runActionResource(workflowName, runId, action) {
 }
 
 export class WorkflowRunner {
-  constructor({ httpInvoker = null } = {}) {
+  constructor({ httpInvoker = null, clock = Date.now } = {}) {
     this.workflows = new Map();
     this.runs = new Map();
     this.triggerHistories = new Map();
     this.httpInvoker = httpInvoker;
+    this.clock = clock;
   }
 
   registerWorkflow({ workflowName, properties }) {
@@ -709,7 +710,7 @@ export class WorkflowRunner {
 
   async reconcileRun(run) {
     if (!run?.pendingExecution) return run;
-    if (Date.now() < run.pendingExecution.resumeAt) return run;
+    if (this.clock() < run.pendingExecution.resumeAt) return run;
     const workflow = this.workflows.get(workflowKey(run.workflowName));
     if (!workflow) {
       run.status = 'Failed';
@@ -767,7 +768,7 @@ export class WorkflowRunner {
         error: null,
         outputs: {},
         pendingExecution: {
-          resumeAt: Date.now() + asyncDelayMs,
+          resumeAt: this.clock() + asyncDelayMs,
         },
       };
       this.runs.set(`${workflowKey(workflowName)}:${runId}`, run);
