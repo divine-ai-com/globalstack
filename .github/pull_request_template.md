@@ -1,6 +1,6 @@
 ## Why
 
-<!-- Describe the problem. Link an issue when applicable, for example Closes #123. -->
+<!-- Describe the problem. Non-admin contributors must add: Accepted issue: #123. The issue must be open and accepted by an administrator. -->
 
 ## What changed
 
