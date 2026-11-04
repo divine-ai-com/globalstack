@@ -6,6 +6,8 @@ GlobalStack runs a bounded Azure management API locally so you can develop and t
 
 Status: development. The [preview validation record](docs/releases/v0.1.0-preview.2.md) and [security review](docs/product/SECURITY-REVIEW.md) describe the tested scope and remaining gaps. Supported operations vary by service. Registration of a resource type does not mean complete Azure compatibility. See [service scope](docs/SERVICE-SCOPE.md) and the [conformance model](docs/CONFORMANCE-MODEL.md).
 
+The [technical paper draft](docs/research/globalstack/README.md) describes the measured native matrix, cross-service controls, and remaining validation limits.
+
 ## Run your first example
 
 Install Node.js 22.23 or newer and npm 10.9.9 or newer. Docker and an Azure account are not required for this example.

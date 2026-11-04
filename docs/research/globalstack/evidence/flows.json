@@ -1,0 +1,286 @@
+{
+  "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+  "recordedAt": "2026-11-04T19:24:01.144Z",
+  "scenarios": [
+    {
+      "scenario": "vault-enrichment",
+      "provenance": "first-party",
+      "transport": "real loopback HTTP; default workflow transport; test-owned ports route to fixed Azure hostnames",
+      "episodes": [
+        {
+          "label": "connected",
+          "input": {
+            "requestId": "80ba6b98-5c0e-4466-89b0-faf22971d770",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.632Z"
+          },
+          "requestId": "80ba6b98-5c0e-4466-89b0-faf22971d770",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "key-vault",
+              "method": "GET",
+              "path": "/secrets/office?api-version=7.4",
+              "requestId": "80ba6b98-5c0e-4466-89b0-faf22971d770",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/accepted",
+              "body": {
+                "requestId": "80ba6b98-5c0e-4466-89b0-faf22971d770",
+                "course": "CS-101",
+                "office": "curriculum-office"
+              }
+            }
+          ],
+          "expectedOutcomeObserved": true,
+          "outcomeAssertionRejected": false
+        },
+        {
+          "label": "wrong-config-reference",
+          "input": {
+            "requestId": "e3076d1f-85bb-4ad7-a5ee-35c7ec191326",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.718Z"
+          },
+          "requestId": "e3076d1f-85bb-4ad7-a5ee-35c7ec191326",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "key-vault",
+              "method": "GET",
+              "path": "/secrets/wrong-office?api-version=7.4",
+              "requestId": "e3076d1f-85bb-4ad7-a5ee-35c7ec191326",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/accepted",
+              "body": {
+                "requestId": "e3076d1f-85bb-4ad7-a5ee-35c7ec191326",
+                "course": "CS-101",
+                "office": "unrelated-office"
+              }
+            }
+          ],
+          "expectedOutcomeObserved": false,
+          "outcomeAssertionRejected": true
+        },
+        {
+          "label": "missing-config-reference",
+          "input": {
+            "requestId": "9cb6bcee-cbdf-49b9-b078-2899d53eddc4",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.765Z"
+          },
+          "requestId": "9cb6bcee-cbdf-49b9-b078-2899d53eddc4",
+          "workflowStatus": "Failed",
+          "observedBoundaries": [
+            {
+              "service": "key-vault",
+              "method": "GET",
+              "path": "/secrets/missing?api-version=7.4",
+              "requestId": "9cb6bcee-cbdf-49b9-b078-2899d53eddc4",
+              "status": 404
+            }
+          ],
+          "deliveries": [],
+          "expectedOutcomeObserved": false,
+          "outcomeAssertionRejected": true
+        },
+        {
+          "label": "restored",
+          "input": {
+            "requestId": "53eec87b-5e38-40a4-b885-9d622bc30b22",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.796Z"
+          },
+          "requestId": "53eec87b-5e38-40a4-b885-9d622bc30b22",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "key-vault",
+              "method": "GET",
+              "path": "/secrets/office?api-version=7.4",
+              "requestId": "53eec87b-5e38-40a4-b885-9d622bc30b22",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/accepted",
+              "body": {
+                "requestId": "53eec87b-5e38-40a4-b885-9d622bc30b22",
+                "course": "CS-101",
+                "office": "curriculum-office"
+              }
+            }
+          ],
+          "expectedOutcomeObserved": true,
+          "outcomeAssertionRejected": false
+        }
+      ],
+      "cleanupVerified": true,
+      "limits": [
+        "No live Azure comparison",
+        "Local synchronous completion; no retry, ordering or eventual-delivery claim",
+        "Receiver is a test-owned HTTP application"
+      ]
+    },
+    {
+      "scenario": "event-routing",
+      "provenance": "first-party",
+      "transport": "real loopback HTTP; default workflow transport; test-owned ports route to fixed Azure hostnames",
+      "episodes": [
+        {
+          "label": "connected",
+          "input": {
+            "requestId": "12b2aee8-9f00-4b59-91b0-aa003d81a11c",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.916Z"
+          },
+          "requestId": "12b2aee8-9f00-4b59-91b0-aa003d81a11c",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "event-grid",
+              "method": "POST",
+              "path": "/api/events?api-version=2018-01-01",
+              "requestId": "12b2aee8-9f00-4b59-91b0-aa003d81a11c",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/accepted",
+              "body": [
+                {
+                  "id": "12b2aee8-9f00-4b59-91b0-aa003d81a11c",
+                  "subject": "course-feed",
+                  "eventType": "Course.Ready",
+                  "eventTime": "2026-11-04T19:24:00.916Z",
+                  "dataVersion": "1.0",
+                  "data": {
+                    "requestId": "12b2aee8-9f00-4b59-91b0-aa003d81a11c",
+                    "course": "CS-101"
+                  }
+                }
+              ]
+            }
+          ],
+          "expectedOutcomeObserved": true,
+          "outcomeAssertionRejected": false
+        },
+        {
+          "label": "deleted-subscription",
+          "input": {
+            "requestId": "efe4ee22-23eb-4504-9860-82d37d4b419f",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:00.967Z"
+          },
+          "requestId": "efe4ee22-23eb-4504-9860-82d37d4b419f",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "event-grid",
+              "method": "POST",
+              "path": "/api/events?api-version=2018-01-01",
+              "requestId": "efe4ee22-23eb-4504-9860-82d37d4b419f",
+              "status": 200
+            }
+          ],
+          "deliveries": [],
+          "expectedOutcomeObserved": false,
+          "outcomeAssertionRejected": true
+        },
+        {
+          "label": "wrong-destination",
+          "input": {
+            "requestId": "6093a053-83e9-4b07-94df-1cc7bc031dfd",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:01.016Z"
+          },
+          "requestId": "6093a053-83e9-4b07-94df-1cc7bc031dfd",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "event-grid",
+              "method": "POST",
+              "path": "/api/events?api-version=2018-01-01",
+              "requestId": "6093a053-83e9-4b07-94df-1cc7bc031dfd",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/wrong",
+              "body": [
+                {
+                  "id": "6093a053-83e9-4b07-94df-1cc7bc031dfd",
+                  "subject": "course-feed",
+                  "eventType": "Course.Ready",
+                  "eventTime": "2026-11-04T19:24:01.016Z",
+                  "dataVersion": "1.0",
+                  "data": {
+                    "requestId": "6093a053-83e9-4b07-94df-1cc7bc031dfd",
+                    "course": "CS-101"
+                  }
+                }
+              ]
+            }
+          ],
+          "expectedOutcomeObserved": false,
+          "outcomeAssertionRejected": true
+        },
+        {
+          "label": "restored",
+          "input": {
+            "requestId": "7fc73994-a994-4168-ad4c-ca74c5169bea",
+            "course": "CS-101",
+            "eventTime": "2026-11-04T19:24:01.057Z"
+          },
+          "requestId": "7fc73994-a994-4168-ad4c-ca74c5169bea",
+          "workflowStatus": "Succeeded",
+          "observedBoundaries": [
+            {
+              "service": "event-grid",
+              "method": "POST",
+              "path": "/api/events?api-version=2018-01-01",
+              "requestId": "7fc73994-a994-4168-ad4c-ca74c5169bea",
+              "status": 200
+            }
+          ],
+          "deliveries": [
+            {
+              "path": "/accepted",
+              "body": [
+                {
+                  "id": "7fc73994-a994-4168-ad4c-ca74c5169bea",
+                  "subject": "course-feed",
+                  "eventType": "Course.Ready",
+                  "eventTime": "2026-11-04T19:24:01.057Z",
+                  "dataVersion": "1.0",
+                  "data": {
+                    "requestId": "7fc73994-a994-4168-ad4c-ca74c5169bea",
+                    "course": "CS-101"
+                  }
+                }
+              ]
+            }
+          ],
+          "expectedOutcomeObserved": true,
+          "outcomeAssertionRejected": false
+        }
+      ],
+      "cleanupVerified": true,
+      "limits": [
+        "No live Azure comparison",
+        "Local synchronous completion; no retry, ordering or eventual-delivery claim",
+        "Receiver is a test-owned HTTP application"
+      ]
+    }
+  ]
+}

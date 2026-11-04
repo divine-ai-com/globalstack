@@ -1,0 +1,317 @@
+{
+  "platforms": [
+    {
+      "platformId": "azure-ansible-yaml",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "ansible-azure-resource-idempotent",
+          "status": "PASS",
+          "detail": "storage account re-apply completed through azure_rm_resource"
+        },
+        {
+          "operation": "arm-read-resource-group",
+          "status": "PASS",
+          "detail": "resource group remains queryable"
+        },
+        {
+          "operation": "arm-read-storage-account",
+          "status": "PASS",
+          "detail": "storage account remains queryable"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-arm-json",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "arm-redeploy-idempotent",
+          "status": "PASS",
+          "detail": "same template redeploy succeeded"
+        },
+        {
+          "operation": "arm-deployment-get",
+          "status": "PASS",
+          "detail": "deployment read succeeded"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-bicep",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "bicep-redeploy-idempotent",
+          "status": "PASS",
+          "detail": "same compiled template redeploy succeeded"
+        },
+        {
+          "operation": "arm-deployment-get",
+          "status": "PASS",
+          "detail": "deployment read succeeded"
+        },
+        {
+          "operation": "arm-read-resource-group",
+          "status": "PASS",
+          "detail": "resource group remains queryable"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-cli-rest",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "azure-cli-rest-idempotent-deploy",
+          "status": "PASS",
+          "detail": "second az rest deployment completed"
+        },
+        {
+          "operation": "azure-cli-rest-read-resource-group",
+          "status": "PASS",
+          "detail": "resource group remains queryable through az rest"
+        },
+        {
+          "operation": "azure-cli-rest-read-storage-account",
+          "status": "PASS",
+          "detail": "storage account remains queryable through az rest"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-opentofu-hcl",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "tofu-plan-refresh",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "operation": "tofu-apply-idempotent",
+          "status": "PASS",
+          "detail": "apply with refresh=true completed"
+        },
+        {
+          "operation": "tofu-plan-refresh-only",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "operation": "tofu-state-list",
+          "status": "PASS",
+          "detail": "state file contains deployed resources"
+        },
+        {
+          "operation": "tofu-plan-drift-refresh-only",
+          "status": "PASS",
+          "exitCode": 2
+        },
+        {
+          "operation": "tofu-apply-drift-reconcile",
+          "status": "PASS",
+          "detail": "drifted storage account minimumTlsVersion was reconciled"
+        },
+        {
+          "operation": "tofu-import-resource-group",
+          "status": "PASS",
+          "detail": "resource group import completed in a clean workspace at azapi_resource.resource_group"
+        },
+        {
+          "operation": "tofu-import-storage-account",
+          "status": "PASS",
+          "detail": "storage account import completed in a clean workspace at azapi_resource.storage_account"
+        },
+        {
+          "operation": "tofu-import-state-list",
+          "status": "PASS",
+          "detail": "import workspace state contains both resources"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-pulumi-py",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "pulumi-preview-diff",
+          "status": "PASS",
+          "detail": "preview/diff completed"
+        },
+        {
+          "operation": "pulumi-refresh",
+          "status": "PASS",
+          "detail": "refresh completed"
+        },
+        {
+          "operation": "pulumi-up-idempotent",
+          "status": "PASS",
+          "detail": "second up completed"
+        },
+        {
+          "operation": "pulumi-stack-export",
+          "status": "PASS",
+          "detail": "stack export completed"
+        },
+        {
+          "operation": "pulumi-preview-drift-diff",
+          "status": "PASS",
+          "detail": "preview with refresh captured out-of-band drift on storage-account-minimum-tls"
+        },
+        {
+          "operation": "pulumi-up-drift-reconcile",
+          "status": "PASS",
+          "detail": "drifted storage account minimumTlsVersion was reconciled"
+        },
+        {
+          "operation": "pulumi-stack-export-post-drift",
+          "status": "PASS",
+          "detail": "post-drift stack export completed"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-pulumi-ts",
+      "sourceRevision": "0f523fd77add335b7fa724047c32155e5fbde350",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "pulumi-preview-diff",
+          "status": "PASS",
+          "detail": "preview/diff completed"
+        },
+        {
+          "operation": "pulumi-refresh",
+          "status": "PASS",
+          "detail": "refresh completed"
+        },
+        {
+          "operation": "pulumi-up-idempotent",
+          "status": "PASS",
+          "detail": "second up completed"
+        },
+        {
+          "operation": "pulumi-stack-export",
+          "status": "PASS",
+          "detail": "stack export completed"
+        },
+        {
+          "operation": "pulumi-preview-drift-diff",
+          "status": "PASS",
+          "detail": "preview with refresh captured out-of-band drift on storage-account-minimum-tls"
+        },
+        {
+          "operation": "pulumi-up-drift-reconcile",
+          "status": "PASS",
+          "detail": "drifted storage account minimumTlsVersion was reconciled"
+        },
+        {
+          "operation": "pulumi-stack-export-post-drift",
+          "status": "PASS",
+          "detail": "post-drift stack export completed"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-pulumi-yaml",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "pulumi-preview-diff",
+          "status": "PASS",
+          "detail": "preview/diff completed"
+        },
+        {
+          "operation": "pulumi-refresh",
+          "status": "PASS",
+          "detail": "refresh completed"
+        },
+        {
+          "operation": "pulumi-up-idempotent",
+          "status": "PASS",
+          "detail": "second up completed"
+        },
+        {
+          "operation": "pulumi-stack-export",
+          "status": "PASS",
+          "detail": "stack export completed"
+        },
+        {
+          "operation": "pulumi-preview-drift-diff",
+          "status": "PASS",
+          "detail": "preview with refresh captured out-of-band drift on storage-account-minimum-tls"
+        },
+        {
+          "operation": "pulumi-up-drift-reconcile",
+          "status": "PASS",
+          "detail": "drifted storage account minimumTlsVersion was reconciled"
+        },
+        {
+          "operation": "pulumi-stack-export-post-drift",
+          "status": "PASS",
+          "detail": "post-drift stack export completed"
+        }
+      ]
+    },
+    {
+      "platformId": "azure-terraform-hcl",
+      "sourceRevision": "0f9071b993d3ebd5cbc5b6d78d9afef46a8008f3",
+      "status": "PASS",
+      "operations": [
+        {
+          "operation": "terraform-plan-refresh",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "operation": "terraform-apply-idempotent",
+          "status": "PASS",
+          "detail": "apply with refresh=true completed"
+        },
+        {
+          "operation": "terraform-plan-refresh-only",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "operation": "terraform-state-list",
+          "status": "PASS",
+          "detail": "state file contains deployed resources"
+        },
+        {
+          "operation": "terraform-plan-drift-refresh-only",
+          "status": "PASS",
+          "exitCode": 2
+        },
+        {
+          "operation": "terraform-apply-drift-reconcile",
+          "status": "PASS",
+          "detail": "drifted storage account minimumTlsVersion was reconciled"
+        },
+        {
+          "operation": "terraform-import-resource-group",
+          "status": "PASS",
+          "detail": "resource group import completed in a clean workspace at azapi_resource.resource_group"
+        },
+        {
+          "operation": "terraform-import-storage-account",
+          "status": "PASS",
+          "detail": "storage account import completed in a clean workspace at azapi_resource.storage_account"
+        },
+        {
+          "operation": "terraform-import-state-list",
+          "status": "PASS",
+          "detail": "import workspace state contains both resources"
+        }
+      ]
+    }
+  ]
+}

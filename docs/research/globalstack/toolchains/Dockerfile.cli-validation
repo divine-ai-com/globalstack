@@ -1,0 +1,3 @@
+FROM globalstack/validation-runner:terraform-pinned
+RUN apt-get update && apt-get install -y --no-install-recommends libicu74 && rm -rf /var/lib/apt/lists/*
+RUN az bicep install --version v0.48.1

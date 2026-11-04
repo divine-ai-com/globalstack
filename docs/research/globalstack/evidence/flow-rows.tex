@@ -1,0 +1,11 @@
+\begin{tabular}{llll}\toprule
+Scenario & Configuration & Workflow & Exact outcome \\\midrule
+Enrichment & connected & Succeeded & Yes \\
+Enrichment & wrong-config-reference & Succeeded & No (expected) \\
+Enrichment & missing-config-reference & Failed & No (expected) \\
+Enrichment & restored & Succeeded & Yes \\
+Event routing & connected & Succeeded & Yes \\
+Event routing & deleted-subscription & Succeeded & No (expected) \\
+Event routing & wrong-destination & Succeeded & No (expected) \\
+Event routing & restored & Succeeded & Yes \\
+\bottomrule\end{tabular}

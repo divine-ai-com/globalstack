@@ -1,0 +1,8 @@
+FROM globalstack/validation-runner:terraform-pinned
+ENV PULUMI_AZURE_NATIVE_PROVIDER_VERSION=3.18.0
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs=22.23.4-1nodesource1 \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://get.pulumi.com | sh -s -- --version 3.273.0
+ENV PATH="/root/.pulumi/bin:${PATH}"
+

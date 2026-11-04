@@ -39,6 +39,11 @@ jobs:
       - run: npm run test:services:local
       - run: npm run test:gcp:unit
       - run: npm run test:repository
+      - name: Verify paper evidence and generated tables
+        run: |
+          node docs/research/globalstack/render-evidence.mjs
+          git diff --exit-code -- docs/research/globalstack/evidence
+          (cd docs/research/globalstack && sha256sum --check SHA256SUMS)
       - run: npm run demo
   gate:
     name: CI gate
