@@ -61,7 +61,7 @@ function composeFor(platform) {
     '      io.globalstack.cloud: azure',
     `      io.globalstack.platform: ${platform.id}`,
     '    ports:',
-    '      - "127.0.0.1:4566:4566"',
+    '      - "127.0.0.1:${GLOBALSTACK_ARM_HOST_PORT:-4566}:4566"',
     '    environment:',
     '      GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:-globalstack-local-development}',
     '      GLOBALSTACK_ARM_HOST: 0.0.0.0',

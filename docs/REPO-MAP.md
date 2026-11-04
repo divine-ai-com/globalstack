@@ -147,6 +147,7 @@ flowchart TD
 - `packages/bundle-runtime/src/smoke-bicep-runner-lifecycle.mjs`
 - `packages/bundle-runtime/src/smoke-deploy-azure-usecases.mjs`
 - `packages/bundle-runtime/src/smoke-platform-runner-lifecycles.mjs`
+- `packages/bundle-runtime/src/stage-results.mjs`
 - `packages/bundle-runtime/src/validate.mjs`
 - `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91046-91050.mjs`
 - `packages/bundle-generator/src/complex-pulumi-scenarios-wave-91051-91055.mjs`
@@ -263,6 +264,7 @@ flowchart TD
 - `scripts/repository/package-check.test.mjs`
 - `scripts/repository/pr-policy.mjs`
 - `scripts/repository/pr-policy.test.mjs`
+- `scripts/repository/stage-results.test.mjs`
 - `scripts/repository/sync-labels.mjs`
 - `scripts/runtime/build-platform-images.mjs`
 - `scripts/runtime/clean-runtime-artifacts.mjs`
