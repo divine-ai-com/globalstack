@@ -62,6 +62,9 @@ jobs:
     name: CodeQL JavaScript
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      # Include existing findings in the merge gate, not only changed-code findings.
+      CODEQL_ACTION_DIFF_INFORMED_QUERIES: 'false'
     permissions:
       contents: read
       security-events: write
