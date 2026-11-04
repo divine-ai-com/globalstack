@@ -1,55 +1,20 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createArmServer, startArmServer } from '../../azure-control-plane/src/server.mjs';
+import { startArmServer } from '../../azure-control-plane/src/server.mjs';
+import { localIdentity } from '../../azure-control-plane/src/server-support.mjs';
 
-async function close(server) {
-  await new Promise(resolve => server.close(resolve));
-}
-
-test('daemon startup requires GLOBALSTACK_AUTH_TOKEN', async () => {
-  const original = process.env.GLOBALSTACK_AUTH_TOKEN;
-  delete process.env.GLOBALSTACK_AUTH_TOKEN;
-
-  assert.throws(
-    () => startArmServer({ port: 0, requireProductAuth: true }),
-    /GLOBALSTACK_AUTH_TOKEN must be exported/,
-  );
-
-  if (original === undefined) {
-    delete process.env.GLOBALSTACK_AUTH_TOKEN;
-  } else {
-    process.env.GLOBALSTACK_AUTH_TOKEN = original;
-  }
-});
-
-test('daemon startup accepts a non-empty GLOBALSTACK_AUTH_TOKEN', async () => {
-  const original = process.env.GLOBALSTACK_AUTH_TOKEN;
-  process.env.GLOBALSTACK_AUTH_TOKEN = 'test-globalstack-token';
-
-  const server = startArmServer({ port: 0, requireProductAuth: true });
+test('default daemon startup retains Azure request authentication', async () => {
+  const server = startArmServer({ port: 0, host: '127.0.0.1' });
   await new Promise(resolve => server.once('listening', resolve));
-  assert.equal(server.listening, true);
-  await close(server);
-
-  if (original === undefined) {
-    delete process.env.GLOBALSTACK_AUTH_TOKEN;
-  } else {
-    process.env.GLOBALSTACK_AUTH_TOKEN = original;
-  }
-});
-
-test('in-process conformance server remains usable without product activation', async () => {
-  const original = process.env.GLOBALSTACK_AUTH_TOKEN;
-  delete process.env.GLOBALSTACK_AUTH_TOKEN;
-
-  const server = createArmServer({ persist: false });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  assert.equal(server.listening, true);
-  await close(server);
-
-  if (original === undefined) {
-    delete process.env.GLOBALSTACK_AUTH_TOKEN;
-  } else {
-    process.env.GLOBALSTACK_AUTH_TOKEN = original;
+  const endpoint = `http://127.0.0.1:${server.address().port}`;
+  const path = `/subscriptions/${localIdentity.subscriptionId}/resourceGroups?api-version=2021-04-01`;
+  try {
+    assert.equal((await fetch(`${endpoint}/_globalstack/health`)).status, 200);
+    assert.equal((await fetch(`${endpoint}${path}`)).status, 401);
+    assert.equal((await fetch(`${endpoint}${path}`, { headers: { Authorization: 'Bearer invalid' } })).status, 401);
+    assert.equal((await fetch(`${endpoint}${path}`, { headers: { Authorization: `Bearer ${localIdentity.accessToken}` } })).status, 200);
+  } finally {
+    server.closeAllConnections();
+    await new Promise(resolve => server.close(resolve));
   }
 });

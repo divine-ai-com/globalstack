@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Cache for Redis control-plane 
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:redis-parity
+npm run e2e:redis-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:redis-parity -- --skip-platforms
+npm run e2e:redis-parity -- --skip-platforms
 ```
 
 ## Scope

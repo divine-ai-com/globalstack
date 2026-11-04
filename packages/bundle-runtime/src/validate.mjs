@@ -54,7 +54,6 @@ const containerRegistryParityResultsPath = join(distRoot, 'e2e', 'azure-containe
 const aksMetadataParityResultsPath = join(distRoot, 'e2e', 'azure-aks-metadata-parity', 'results.json');
 const storageDataPlaneCapturePath = join(root, 'fixtures', 'azure-storage-data-plane-captures', 'storage-data-plane-blob-queue-wave-1.json');
 const forbiddenWriteTargets = ['/home/ubuntu/genex/haawk'];
-const requiredTokenText = 'GLOBALSTACK_AUTH_TOKEN';
 const modelFacingRuntimeTerms = /\b(GlobalStack|emulator|emulation)\b|local endpoint|local deployment|locally supported|deploy smoke|coverage snapshot|GlobalStack_InvalidSku_For_Conformance/i;
 const errors = [];
 const runtimeWalkSkips = [
@@ -189,9 +188,6 @@ for (const platform of azurePlatforms) {
   const compose = await readFile(join(platformDir, 'docker-compose.yml'), 'utf8').catch(() => '');
   if (!compose.includes('globalstack/azure-emulator:local')) {
     errors.push(`${platform.id} compose file does not use the GlobalStack Azure emulator image`);
-  }
-  if (!compose.includes(requiredTokenText)) {
-    errors.push(`${platform.id} compose file does not pass through GLOBALSTACK_AUTH_TOKEN`);
   }
   if (!compose.includes('/_globalstack/health')) {
     errors.push(`${platform.id} compose file does not health-check the GlobalStack Azure sidecar`);

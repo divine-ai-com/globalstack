@@ -72,7 +72,7 @@ npm run repo:clean-runtime:dry-run
 npm run conformance:classify
 npm run conformance:expectations
 npm run lifecycle:expectations
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```
 
 ## Validation Commands

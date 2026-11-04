@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure App Configuration store contro
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:app-configuration-parity
+npm run e2e:app-configuration-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:app-configuration-parity -- --skip-platforms
+npm run e2e:app-configuration-parity -- --skip-platforms
 ```
 
 ## Scope

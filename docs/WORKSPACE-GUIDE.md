@@ -159,7 +159,7 @@ npm run repo:clean-runtime
 Run the current Bicep reference lifecycle against the shared GlobalStack Azure sidecar:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:bicep-runner
+npm run smoke:bicep-runner
 ```
 
 The Bicep runner executes `build`, `lint`, `unit-tests`, `deploy`, `integration-tests`, and `destroy`. Reports are written under `dist/platform-images/azure-bicep/reports/`.
@@ -167,18 +167,12 @@ The Bicep runner executes `build`, `lint`, `unit-tests`, `deploy`, `integration-
 Run the complete platform runner lifecycle matrix against the shared GlobalStack Azure sidecar:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```
 
 This covers Terraform, OpenTofu, Pulumi TypeScript, Pulumi Python, Pulumi YAML, Ansible, Azure CLI REST, Bicep, and ARM JSON. Terraform and OpenTofu run native AzAPI provider apply/destroy through the selected provider endpoint; Pulumi TypeScript, Pulumi Python, and Pulumi YAML run native Pulumi Azure Native up/destroy through runner-transparent GlobalStack routing; Ansible runs native `azure.azcollection` modules through the same GlobalStack routing; Azure CLI REST runs task-owned `az rest` scripts; ARM JSON deploys the shared Azure ARM contract directly. Results are written to `dist/platform-lifecycle-smoke-results.json` and per-platform `reports/` folders.
 
-The legacy sidecar token can optionally be overridden:
-
-```bash
-export GLOBALSTACK_AUTH_TOKEN=...
-```
-
-The templates pass that variable into the sidecar. The default is a local development value. Do not use real cloud credentials as a product token. Azure-shaped requests still use deterministic local Azure identity values such as `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`, and bearer token `globalstack-local-token`; the product token is not a replacement for Azure request authentication.
+Azure-shaped requests use deterministic local Azure identity values such as `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`, and the local bearer token. No product activation is required.
 
 Platform runners resolve the target provider from task `metadata.json` first, then `PROVIDER` / `CLOUD_PROVIDER`, then default to `GlobalStack`. A task with `{"provider":"Azure"}` routes to real Azure and requires real Azure credentials plus a real `ARM_SUBSCRIPTION_ID`; a task with `{"provider":"GlobalStack"}` routes to the local sidecar and uses the deterministic local identity.
 

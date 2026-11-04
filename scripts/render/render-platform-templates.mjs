@@ -63,7 +63,6 @@ function composeFor(platform) {
     '    ports:',
     '      - "127.0.0.1:${GLOBALSTACK_ARM_HOST_PORT:-4566}:4566"',
     '    environment:',
-    '      GLOBALSTACK_AUTH_TOKEN: ${GLOBALSTACK_AUTH_TOKEN:-globalstack-local-development}',
     '      GLOBALSTACK_ARM_HOST: 0.0.0.0',
     '      GLOBALSTACK_ARM_PORT: 4566',
     '      GLOBALSTACK_AZURE_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID:-00000000-0000-0000-0000-000000000000}',
@@ -134,7 +133,6 @@ function metadataFor(platform) {
     solutionFiles: platform.solutionFiles,
     testFiles: platform.testFiles,
     environment: {
-      authToken: 'No product activation is required; the legacy runtime variable defaults to a local development value',
       endpoint: 'http://localhost:4566',
       location: 'AZURE_LOCATION defaults to eastus',
     },

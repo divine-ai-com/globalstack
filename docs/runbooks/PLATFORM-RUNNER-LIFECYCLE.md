@@ -14,7 +14,7 @@ All platform runners execute the same stage sequence:
 6. `integration-tests`
 7. `destroy`
 
-Local smoke runs use the built-in development token by default. No activation key is required. An explicit `GLOBALSTACK_AUTH_TOKEN` can override the development value. Runner containers resolve the target provider from task `metadata.json` first, then `PROVIDER` / `CLOUD_PROVIDER`, then default to `GlobalStack`.
+Local smoke runs need no activation key. Azure-shaped requests use the local Azure identity. Runner containers resolve the target provider from task `metadata.json` first, then `PROVIDER` / `CLOUD_PROVIDER`, then default to `GlobalStack`.
 
 For `provider=GlobalStack`, runners receive deterministic Azure-shaped local identity settings and send ARM requests to the sidecar endpoint. For `provider=Azure`, the same task is routed to `https://management.azure.com` and requires real Azure authentication plus a real `ARM_SUBSCRIPTION_ID`.
 
@@ -96,5 +96,5 @@ A previous local smoke recorded all `9/9` platforms across the combined matrix w
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=globalstack-platform-smoke npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```

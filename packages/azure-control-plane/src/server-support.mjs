@@ -119,14 +119,6 @@ function activeSubscriptionId() {
     ?? localIdentity.subscriptionId;
 }
 
-export function requireGlobalStackAuthToken() {
-  const token = process.env.GLOBALSTACK_AUTH_TOKEN;
-  if (!token || token.trim() === '') {
-    throw new Error('GLOBALSTACK_AUTH_TOKEN must be exported before starting the GlobalStack Azure emulator.');
-  }
-  return token;
-}
-
 export function tokenTenant(pathname) {
   const raw = segments(pathname);
   const oauthIndex = raw.findIndex(segment => segment.toLowerCase() === 'oauth2');

@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Event Hubs namespace, event hu
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:event-hubs-parity
+npm run e2e:event-hubs-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:event-hubs-parity -- --skip-platforms
+npm run e2e:event-hubs-parity -- --skip-platforms
 ```
 
 ## Scope

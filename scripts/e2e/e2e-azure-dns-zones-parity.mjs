@@ -853,7 +853,6 @@ async function runPlatformMatrix() {
 
   const env = {
     ...process.env,
-    GLOBALSTACK_AUTH_TOKEN: process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-dns-zones-parity-local-token',
     PROVIDER: 'GlobalStack',
     CLOUD_PROVIDER: 'GlobalStack',
   };

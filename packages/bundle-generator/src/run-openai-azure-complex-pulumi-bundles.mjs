@@ -6719,7 +6719,6 @@ async function runShipment(shipmentDir) {
     cwd: shipmentDir,
     env: {
       ...process.env,
-      GLOBALSTACK_AUTH_TOKEN: process.env.GLOBALSTACK_AUTH_TOKEN ?? "globalstack-local-token",
     },
   });
   const reportPath = path.join(shipmentDir, "execution-report.json");

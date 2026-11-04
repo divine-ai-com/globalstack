@@ -54,7 +54,7 @@ GlobalStack Azure is organized around one rule: generated infrastructure and loc
 Run the Bicep lifecycle with:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:bicep-runner
+npm run smoke:bicep-runner
 ```
 
 Lifecycle reports are written to `dist/platform-images/azure-bicep/reports/`.
@@ -62,7 +62,7 @@ Lifecycle reports are written to `dist/platform-images/azure-bicep/reports/`.
 Run the full platform lifecycle matrix with:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run smoke:platform-runners
+npm run smoke:platform-runners
 ```
 
 The matrix writes `dist/platform-lifecycle-smoke-results.json` plus per-platform reports under `dist/platform-images/<platform>/reports/`. See `docs/runbooks/PLATFORM-RUNNER-LIFECYCLE.md` for the platform checklist and current support boundary.

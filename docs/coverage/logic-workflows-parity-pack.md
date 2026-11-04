@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Logic Apps workflow control-pl
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:logic-workflows-parity
+npm run e2e:logic-workflows-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:logic-workflows-parity -- --skip-platforms
+npm run e2e:logic-workflows-parity -- --skip-platforms
 ```
 
 ## Scope

@@ -4,8 +4,7 @@ import { once } from 'node:events';
 import { test } from 'node:test';
 
 test('public startup works without activation and retains request authentication', { timeout: 15000 }, async () => {
-  const env = { ...process.env, GLOBALSTACK_ARM_PORT: '0', GLOBALSTACK_ARM_HOST: '127.0.0.1' };
-  delete env.GLOBALSTACK_AUTH_TOKEN;
+  const env = { PATH: process.env.PATH, GLOBALSTACK_ARM_PORT: '0', GLOBALSTACK_ARM_HOST: '127.0.0.1' };
   const child = spawn(process.execPath, [new URL('../../../scripts/runtime/start-local.mjs', import.meta.url).pathname], {
     env,
     stdio: ['ignore', 'pipe', 'pipe'],

@@ -3,7 +3,7 @@
 Command:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:synapse-warehouse-parity
+npm run e2e:synapse-warehouse-parity
 ```
 
 The pack covers the current GlobalStack Azure Synapse Warehouse boundary:

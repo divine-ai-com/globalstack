@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Database for MySQL Flexible Se
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:mysql-parity
+npm run e2e:mysql-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:mysql-parity -- --skip-platforms
+npm run e2e:mysql-parity -- --skip-platforms
 ```
 
 ## Scope

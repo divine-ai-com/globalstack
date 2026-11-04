@@ -7,7 +7,6 @@ import { azurePlatforms } from '../../platform-registry/src/index.mjs';
 
 const root = workspaceRoot(import.meta.url);
 const outPath = distPath(root, 'platform-lifecycle-smoke-results.json');
-const token = process.env.GLOBALSTACK_AUTH_TOKEN ?? 'globalstack-local-development';
 
 
 function run(command, args, options = {}) {
@@ -137,7 +136,6 @@ for (const platform of platforms) {
   await mkdir(join(platformDir, 'work'), { recursive: true });
   const env = {
     ...process.env,
-    GLOBALSTACK_AUTH_TOKEN: token,
     PIPELINE_STAGE_SCOPE: process.env.PIPELINE_STAGE_SCOPE ?? 'full',
   };
 

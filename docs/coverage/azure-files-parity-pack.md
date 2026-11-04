@@ -5,13 +5,13 @@ This pack is the local acceptance suite for Azure Files share control-plane beha
 Executable check:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-files-parity
+npm run e2e:azure-files-parity
 ```
 
 Use the fast loop while editing:
 
 ```bash
-GLOBALSTACK_AUTH_TOKEN=... npm run e2e:azure-files-parity -- --skip-platforms
+npm run e2e:azure-files-parity -- --skip-platforms
 ```
 
 ## Scope
