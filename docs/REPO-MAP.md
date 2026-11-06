@@ -141,6 +141,7 @@ flowchart TD
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
+- `packages/conformance/src/storage-client-observation.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/conformance/src/workflow-expression-values.test.mjs`
 - `packages/platform-registry/src/index.mjs`
