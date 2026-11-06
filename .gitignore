@@ -44,3 +44,4 @@ Thumbs.db
 
 # Reproducible experiment input, not generated provider state
 !experiments/claims-evidence/terraform/lib/.terraform.lock.hcl
+!experiments/paired-lifecycle/terraform/.terraform.lock.hcl
