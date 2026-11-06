@@ -29,3 +29,31 @@ test('queue observation includes multiple messages and validates the requested l
     server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
   }
 });
+
+test('table insert rejects an existing key without replacing its value or metadata', async () => {
+  const router = createStorageDataPlaneRouter();
+  const account = { name: 'tableprobe', key: Buffer.from('synthetic-test-key').toString('base64') };
+  router.registerStorageAccount({ accountName: account.name, accountKey: account.key });
+  router.registerTable({ accountName: account.name, tableName: 'claims' });
+  const handler = router.tableHandler();
+  const server = createServer((req, res) => { req.headers.host = `${account.name}.table.core.windows.net`; return handler(req, res); });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const client = new AzuriteClient({ account, pathStyle: false, tableEndpoint: `http://127.0.0.1:${server.address().port}` });
+  try {
+    const original = { PartitionKey: 'claims', RowKey: 'one', status: 'queued' };
+    const inserted = await client.insertTableEntity('claims', original);
+    assert.equal(inserted.status, 201);
+    for (const status of ['queued', 'overwritten']) {
+      const conflict = await client.insertTableEntity('claims', { ...original, status });
+      assert.equal(conflict.status, 409);
+      assert.equal(JSON.parse(conflict.body).error.code, 'EntityAlreadyExists');
+      const retained = await client.getTableEntity('claims', 'claims', 'one');
+      assert.equal(retained.status, 200);
+      assert.deepEqual(JSON.parse(retained.body), JSON.parse(inserted.body));
+    }
+    assert.equal((await client.insertTableEntity('claims', { ...original, RowKey: 'two' })).status, 201);
+    assert.equal((await client.insertTableEntity('claims', { ...original, PartitionKey: 'other' })).status, 201);
+  } finally {
+    server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
+  }
+});

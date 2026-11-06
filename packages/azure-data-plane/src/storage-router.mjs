@@ -513,12 +513,19 @@ export class StorageDataPlaneRouter {
         if (typeof body.PartitionKey !== 'string' || typeof body.RowKey !== 'string') {
           return send(res, 400, JSON.stringify({ error: { code: 'BadRequest', message: 'PartitionKey and RowKey are required.' } }), { 'content-type': 'application/json' });
         }
+        const key = entityKey(body.PartitionKey, body.RowKey);
+        // Insert must not silently replace an existing entity, including its metadata.
+        if (table.entities.has(key)) {
+          return send(res, 409, JSON.stringify({ error: { code: 'EntityAlreadyExists', message: 'The specified entity already exists.' } }), {
+            'content-type': 'application/json', 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc(),
+          });
+        }
         const entity = {
           ...body,
           Timestamp: isoNow(),
           'odata.etag': `W/"datetime'${isoNow()}'"`,
         };
-        table.entities.set(entityKey(body.PartitionKey, body.RowKey), entity);
+        table.entities.set(key, entity);
         return send(res, 201, JSON.stringify(entity), {
           'content-type': 'application/json;odata=nometadata',
           'x-ms-request-id': requestId,
