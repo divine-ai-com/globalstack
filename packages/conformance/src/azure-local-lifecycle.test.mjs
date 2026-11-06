@@ -1167,6 +1167,52 @@ test('scoped Event Grid event subscriptions can be created under a topic resourc
   });
 });
 
+test('resource-group fixes apply across names and configured subscriptions without cross-group changes', async t => {
+  const originalSubscription = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID;
+  t.after(() => {
+    if (originalSubscription === undefined) delete process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID;
+    else process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = originalSubscription;
+  });
+  await withServer(async port => {
+    const subscriptions = [subscriptionPath, '/subscriptions/11111111-1111-1111-1111-111111111111'];
+    const groups = [
+      { subscription: subscriptions[0], name: 'accounting-production', location: 'eastus', tags: { owner: 'finance', obsolete: 'remove' } },
+      { subscription: subscriptions[0], name: 'research-sandbox', location: 'westus2', tags: { owner: 'research' } },
+      { subscription: subscriptions[1], name: 'accounting-production', location: 'canadacentral', tags: { owner: 'other-project' } },
+    ];
+    const url = group => `${group.subscription}/resourceGroups/${group.name}?api-version=2021-04-01`;
+    const requestAs = (group, method, body) => {
+      // Select the supported local subscription context; retain normal authentication.
+      process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = group.subscription.split('/').at(-1);
+      return httpJson(port, method, url(group), body);
+    };
+    for (const group of groups) {
+      const created = await requestAs(group, 'PUT', { location: group.location, tags: group.tags });
+      assert.equal(created.status, 201);
+      assert.equal('globalstack' in created.body, false);
+    }
+    assert.equal((await httpJson(port, 'PATCH', url(groups[0]), { tags: { owner: 'unauthorized' } })).status, 403);
+    const patched = await requestAs(groups[0], 'PATCH', { tags: { owner: 'treasury' } });
+    assert.equal(patched.status, 200);
+    assert.deepEqual(patched.body.tags, { owner: 'treasury' });
+    assert.equal('globalstack' in patched.body, false);
+    assert.deepEqual((await requestAs(groups[0], 'PATCH', {})).body.tags, patched.body.tags);
+    for (const [index, group] of groups.entries()) {
+      const fetched = await requestAs(group, 'GET');
+      assert.equal(fetched.body.location, group.location);
+      assert.deepEqual(fetched.body.tags, index === 0 ? { owner: 'treasury' } : group.tags);
+      assert.equal('globalstack' in fetched.body, false);
+    }
+    for (const subscription of subscriptions) {
+      process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription.split('/').at(-1);
+      const listed = await httpJson(port, 'GET', `${subscription}/resourceGroups?api-version=2021-04-01`);
+      assert.equal(listed.status, 200);
+      assert.deepEqual(listed.body.value.map(group => group.name).sort(), groups.filter(group => group.subscription === subscription).map(group => group.name).sort());
+      assert.ok(listed.body.value.every(group => !('globalstack' in group)));
+    }
+  });
+});
+
 test('resource-group PATCH preserves omitted fields and exposes only Azure resource data', async () => {
   await withServer(async port => {
     const path = `${subscriptionPath}/resourceGroups/rg-patch-contract?api-version=2021-04-01`;
