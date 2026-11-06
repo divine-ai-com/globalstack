@@ -35,13 +35,16 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   assert.ok(process.env.CLAIMS_CONTEXT_PATH, 'CLAIMS_CONTEXT_PATH is required; management-only checks cannot satisfy this integration stage');
   const context = JSON.parse(await readFile(process.env.CLAIMS_CONTEXT_PATH, 'utf8'));
   for (const endpoint of Object.values(context.endpoints)) {
-    assert.equal(new URL(endpoint).hostname, '127.0.0.1', 'This test context supports local loopback endpoints only');
+    const url = new URL(endpoint);
+    assert.equal(url.protocol, 'http:', 'The local test context requires HTTP');
+    assert.equal(url.hostname, '127.0.0.1', 'This test context supports local loopback endpoints only');
+    assert.ok(url.port && !url.username && !url.password && !url.hash, 'Use an explicit local port without URL credentials or fragments');
   }
   const { AzuriteClient } = await import(pathToFileURL(context.storageClientModule));
   const storage = new AzuriteClient({ account: context.account, pathStyle: false,
     blobEndpoint: context.endpoints.blob, queueEndpoint: context.endpoints.queue, tableEndpoint: context.endpoints.table });
   const observations = async () => {
-    const r = await fetch(context.endpoints.observations, { signal: AbortSignal.timeout(10000) });
+    const r = await fetch(context.endpoints.observations, { redirect: 'error', signal: AbortSignal.timeout(10000) });
     assert.equal(r.status, 200); return r.json();
   };
   const publish = async events => {

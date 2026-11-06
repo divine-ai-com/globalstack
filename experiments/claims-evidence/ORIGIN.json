@@ -43,10 +43,6 @@
       "sha256": "e24419a381f45d71e45d2617335b8d48f66c91880e42efb5b65736b01fa97002"
     },
     {
-      "path": "terraform/test/claims-behavior.int.test.mjs",
-      "sha256": "ff1e14281404248f882c864e6598ca3bd4925a621708ce02cc3e77aabdfa2cd2"
-    },
-    {
       "path": "terraform/test/claims-outcome.mjs",
       "sha256": "48f35c613a1dac5daea758f8d0ee96b11392559b804523f433d30a935dd3a2a3"
     },
@@ -57,6 +53,14 @@
     {
       "path": "terraform/test/terraform.unit.test.py",
       "sha256": "730e29801738292773a2c7c0697d87185cbfbf37c4f434ed2eeea116a357345f"
+    }
+  ],
+  "modifiedBundleFiles": [
+    {
+      "path": "terraform/test/claims-behavior.int.test.mjs",
+      "sha256": "ff1e14281404248f882c864e6598ca3bd4925a621708ce02cc3e77aabdfa2cd2",
+      "publicSha256": "d3485adc19fa7796c20981ac150576b3c086b08e08c6ab4202befa773fc5a732",
+      "reason": "Require explicit local HTTP endpoints and reject observation redirects."
     }
   ]
 }

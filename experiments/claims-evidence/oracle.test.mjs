@@ -28,3 +28,37 @@ test('the integration entry point cannot fall back to management-only checks', a
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /CLAIMS_CONTEXT_PATH is required/);
 });
+
+test('observation redirects cannot send the local test to another endpoint', async () => {
+  const { createServer } = await import('node:http');
+  const { mkdtemp, writeFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { spawn } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  let redirected = 0;
+  const target = createServer((_req, res) => { redirected++; res.end('{}'); });
+  await new Promise(resolve => target.listen(0, '127.0.0.1', resolve));
+  const receiver = createServer((_req, res) => res.writeHead(302, { location: `http://127.0.0.1:${target.address().port}/outside` }).end());
+  await new Promise(resolve => receiver.listen(0, '127.0.0.1', resolve));
+  const directory = await mkdtemp(join(tmpdir(), 'claims-context-'));
+  try {
+    const endpoint = `http://127.0.0.1:${receiver.address().port}`;
+    const path = join(directory, 'context.json');
+    await writeFile(path, JSON.stringify({ account: { name: 'test', key: 'dGVzdA==' }, names: {},
+      storageClientModule: fileURLToPath(new URL('../../packages/azure-data-plane/src/azurite-client.mjs', import.meta.url)),
+      endpoints: { blob: endpoint, queue: endpoint, table: endpoint, event: endpoint, observations: endpoint + '/_observations' },
+    }));
+    const code = await new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [fileURLToPath(new URL('./terraform/test/claims-behavior.int.test.mjs', import.meta.url))], {
+        env: { PATH: process.env.PATH, CLAIMS_CONTEXT_PATH: path }, stdio: 'ignore',
+      });
+      child.once('error', reject); child.once('close', resolve);
+    });
+    assert.notEqual(code, 0);
+    assert.equal(redirected, 0);
+  } finally {
+    for (const server of [receiver, target]) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+    await rm(directory, { recursive: true, force: true });
+  }
+});
