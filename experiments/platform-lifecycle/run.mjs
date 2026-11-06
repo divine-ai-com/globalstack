@@ -194,7 +194,9 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
     entry.ok = true;
   } catch (error) { entry.error = redact(error.message); }
   finally {
-    if (mayHaveCreated && !entry.cleanup.nativeDestroy && command && prepared) {
+    // Azure template recovery must establish terminal deployment state before deleting its group.
+    const templateRecovery = name === 'azure' && !!template;
+    if (mayHaveCreated && !entry.cleanup.nativeDestroy && command && prepared && !templateRecovery) {
       try {
         const { destroy } = (await import('./stages.mjs')).stages({ platform, command, context, privateDir, template, setRevision: value => { revision = value; } });
         await destroy(); entry.cleanup.nativeDestroy = true;
@@ -231,7 +233,7 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
     if (!entry.sourceUnchanged || !entry.cleanup.nativeDestroy) entry.ok = false;
     await save();
   }
-  if (!entry.cleanup.absent || !entry.cleanup.privateFilesRemoved) break;
+  if (!entry.ok || !entry.cleanup.absent || !entry.cleanup.privateFilesRemoved) break;
 }
 report.completedAt = new Date().toISOString();
 report.ok = report.targets.length === (target === 'both' ? 2 : 1) && report.targets.every(entry => entry.ok);
