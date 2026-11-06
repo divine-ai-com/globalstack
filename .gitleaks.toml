@@ -1,0 +1,158 @@
+title = "GlobalStack reviewed research fixtures"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in ci-reproduction.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/ci\-reproduction\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:1419497e-d2cb-481b-9236-d1947fbfc469|668b288d-a207-4538-8ac6-6f8046d4816a|8c0d8368-a205-46b4-b118-05cffbdbfd72|b8c817ba-884d-40d4-99a8-14118dcc7efb|ca855cc5-9751-4439-a9b3-79536345c847)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in attempt-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/attempt\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:037c9f77-1b5f-44f0-955b-f8c09a1eadd5|23b16555-8064-4945-8202-fda69ab9557e|a9c1c1b9-4fd2-448a-9697-4061db75cd82|b770253a-56d2-48e9-8fb4-6033c7748d1d|df5e1c92-d058-450e-b0ed-6b1313d203d5)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-migration-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/public\-migration\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:5ee8de3a-cf5f-4aff-8221-41ec60d64145|8651041a-41ea-4787-b0c0-9f8bb7cff9b7|a7b640bc-06f8-4bc9-aeb6-b649eae93c0d|b5329fd7-9419-4934-8820-05fb9fc607df|b90a1a50-c5e9-482b-b6e0-bca7f0dcf169)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-migration-2.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/public\-migration\-2\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:af3c0931-036a-49bd-8ffc-7b9f5d339356|b0429384-82a4-4ce7-bc4b-37a375e3d923|b3d0ed2e-ea70-4677-8a45-ae55d02bc5d8|d287ae81-9b7e-4c24-a387-a1aa925a4034|fe3f6fae-0c66-49ad-be85-9c0354bf72e2)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-migration-3.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/public\-migration\-3\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:2e17f837-3eb5-4e4f-af1c-16b6d702df38|84115b13-c3fa-4091-85de-621286d321cc|deecea2d-2441-4f74-a567-f09de22c1b9f|e1c136b3-b11e-42ff-88fd-6ea36ef4dc6f|f259682e-e9fd-40d8-805a-59ca83ad444b)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-migration-4.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/public\-migration\-4\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:26a90233-f588-438c-b5c1-8146c7b84e76|39e0696a-82f7-462c-9577-0280ba543f60|b564ba76-4453-4f7c-ba58-129c8f70c849|dc6687b3-c33c-45be-a0fa-b2c46b2f71dc|de2ad605-9d44-4d9e-9195-94379f61d754)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in repeat-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:11765e11-6660-4f54-b795-08e146ca09a5|4b8f2b13-eb5d-4127-9182-694346bcc06e|5b990ba7-4a69-47c0-806b-6669af2a513b|7d20e051-8521-4276-a148-267f7c5c6148|be9bfaa9-9aea-4de1-a268-be9902820ec1)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in repeat-2.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-2\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:051c1300-3b7b-465c-b9d8-b17c984b6e3a|2151de96-6011-4bc4-928d-c8c0e3f0b11d|61f9fc8f-8cde-49ef-9f47-c6c179a717a3|a75ff8be-a3ca-453e-abbe-96457d1792c9|bd1464ab-3c63-497a-92b9-9e2753b604c3)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in repeat-3.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-3\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:c157cb52-d152-440e-84ba-0356bc6b0aba|eea95636-a0f2-4d90-863b-2881ea547284|ef448d82-4b85-4be0-8b87-166f78e7ae95|f76eb1f4-1c4d-470a-b1ee-a2fb11808a79|faa12b6f-3aff-4521-a70a-9dda058e9d09)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in final-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/final\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:09b051ab-1087-48fb-9de2-f138c537eaac|59e8fe34-7d16-44e3-be71-085b1fe0ae5d|a780ea52-fc6f-4080-b37a-653c3d7c0f3c|abdc1c5c-958d-49fa-b0dc-b749ec62f8e9|f38c2a7d-054a-4334-a0a4-52dca2fb2ff1)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in final-2.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/final\-2\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:0f47e5bb-6363-422b-b036-89317c0fb6d4|50d5c329-0a93-4725-83ca-40cad7875270|5631adb0-eba6-4bd2-a53a-76203a3008fe|bc76e400-62fe-4c68-83ac-7667d18627a1|c4060f8d-3229-4813-8f57-149329122d64)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in final-3.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/final\-3\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:33e946e8-8f85-41b2-a18e-1780c75b9dc4|4592e28a-07b1-44e8-9f68-fcdd62d3d4ca|62c6e4b3-ed08-445a-a99a-9b781a9c5e52|a60e2261-f188-4e38-8149-017cd4413362|e8743fea-e533-4c4b-9354-27e0b2c7fa8e)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in pre-fix-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/pre\-fix\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:279010a3-e4a8-4847-9773-e0124a64a307|33c5a2c8-ee5e-41c0-b336-62e4f0648de4|5631bc26-1dba-47bf-9b9a-4633058ff786|969ac9e3-9e1d-45b5-b45b-2bb81502ec7e|9ce5563f-ee5f-455d-bf1a-3235f9c3b9cb)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in pre-fix-2.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/pre\-fix\-2\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:3c98407f-5986-4060-baad-67106ee82607|4d9bd5f1-3b48-472e-9cbc-6c797384b6b0|5ced961e-8b3d-4198-bae2-dca6b752a05a|9759f484-b994-462a-9ea0-cec144d061c4|f6405ebd-375a-4963-b387-686f114a3c41)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in pre-fix-3.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/pre\-fix\-3\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:491d687d-8064-428c-a8f3-237fd8c97863|913e1333-c321-4f8d-a037-d71484c9d8bf|c3623bb7-8444-4acc-9979-b70a120af917|ca0a64c0-313b-4541-aea3-d59aabf8d2a1|f2b6d650-d6ba-4b0f-ab2c-c8116969f36f)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-1.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/public\-1\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:14b9f0f4-fec2-4748-8ed6-f7c0b687e597|299ed7e3-9a06-4c8f-a895-3888d4f649e3|4cb52801-c904-4968-8ffb-c47b6033c5dd|b38ceb35-e95a-4c6b-b3cf-46aa544b1f26|d3688f6f-58e3-43d8-a75a-740190324067)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-2.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/public\-2\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:7d3e18d0-4ecd-4bc0-b492-77bb494121d4|83412b4b-2264-42ff-bec5-430f9df9ab27|8c728167-efb7-4b6e-8afd-907002a739f9|a9d3fa4c-9d0c-4662-8386-85e054a028e2|ae507c37-c580-49a4-96df-8282190a0e87)["']$''']
+
+# Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
+[[rules.allowlists]]
+description = "Synthetic event row identifiers in public-3.json"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^docs/research/globalstack/claims/evidence/public\-3\.json$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:41598303-b32d-40a4-97ff-c6fa98e9fe3b|5a7dc6da-0f3d-47c1-96f1-1f514328b92a|96dee368-643e-4d79-891b-eac8135ba452|d50cacb8-0e03-4df4-bc98-3797a86d25dd|dd04919b-7eac-4352-80b4-4bebb4809fb3)["']$''']
+
+[[rules.allowlists]]
+description = "Runtime property access and its regression fixture, not a credential literal"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/claims-evidence/run\.mjs$''', '''^scripts/repository/check-research-secret-scan\.mjs$''']
+regexes = ['''^eventKey = topicKeys\.body\.key1;$''']

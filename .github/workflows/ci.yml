@@ -39,15 +39,55 @@ jobs:
       - run: npm run test:services:local
       - run: npm run test:gcp:unit
       - run: npm run test:repository
+      - run: npm run research:claims:test
       - name: Verify paper evidence and generated tables
         run: |
           node docs/research/globalstack/render-evidence.mjs
-          git diff --exit-code -- docs/research/globalstack/evidence
+          node docs/research/globalstack/render-study.mjs
+          node docs/research/globalstack/render-claims.mjs
+          git diff --exit-code -- docs/research/globalstack/evidence docs/research/globalstack/study/evidence docs/research/globalstack/claims/evidence
           (cd docs/research/globalstack && sha256sum --check SHA256SUMS)
       - run: npm run demo
+  native-claims:
+    name: Native claims reproduction
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Reserve space on this disposable hosted runner
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost /usr/share/swift
+          df -h .
+      - run: npm install --global npm@11.14.1
+      - run: npm ci
+      - run: npm run research:claims:build
+      - name: Run and verify native behavior
+        env:
+          CLAIMS_RUN_DIR: ${{ runner.temp }}/claims-reproduction
+        run: |
+          npm run research:claims
+          node experiments/claims-evidence/verify.mjs "$CLAIMS_RUN_DIR/result.json"
+      - name: Retain sanitized reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: claims-reproduction
+          path: |
+            ${{ runner.temp }}/claims-reproduction/attempt.json
+            ${{ runner.temp }}/claims-reproduction/result.json
+            ${{ runner.temp }}/claims-reproduction/provider.lock.hcl
+            ${{ runner.temp }}/claims-reproduction/logs/
+          if-no-files-found: warn
+          retention-days: 14
   gate:
     name: CI gate
-    needs: local
+    needs: [local, native-claims]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -55,4 +95,7 @@ jobs:
       - name: Require every local matrix job
         env:
           RESULT: ${{ needs.local.result }}
-        run: test "$RESULT" = success
+          NATIVE_RESULT: ${{ needs.native-claims.result }}
+        run: |
+          test "$RESULT" = success
+          test "$NATIVE_RESULT" = success

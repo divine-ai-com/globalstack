@@ -1,0 +1,15 @@
+\begin{tabular}{lllccccc}\toprule
+Flow & Mutation & Class & M & W & A & T & E \\\midrule
+Vault & wrong-config-reference & reference & . & . & . & X & X \\
+Vault & missing-config-reference & reference & . & X & X & X & X \\
+Vault & wrong-destination & routing & . & . & X & X & X \\
+Vault & wrong-course & payload & . & . & . & X & X \\
+Vault & duplicate-delivery & multiplicity & . & . & . & X & X \\
+Vault & extra-destination & multiplicity & . & . & . & . & X \\
+Events & deleted-subscription & routing & . & . & X & X & X \\
+Events & wrong-destination & routing & . & . & X & X & X \\
+Events & wrong-course & payload & . & . & . & X & X \\
+Events & duplicate-delivery & multiplicity & . & . & . & X & X \\
+Events & extra-destination & multiplicity & . & . & . & . & X \\
+Events & wrong-version-type & schema & . & X & X & X & X \\
+\bottomrule\end{tabular}

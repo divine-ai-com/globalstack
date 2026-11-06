@@ -8,13 +8,16 @@ import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { localIdentity } from '../../packages/azure-control-plane/src/server-support.mjs';
+import { flowStudyCases } from './flow-study-cases.mjs';
 
-export async function runCrossServiceFlow(kind) {
+export async function runCrossServiceFlow(kind, { studyMutation, progress } = {}) {
   assert.ok(['vault-enrichment', 'event-routing'].includes(kind));
+  if (studyMutation) assert.ok(flowStudyCases.some(item => item.scenario === kind && item.mutation === studyMutation));
   const servers = [];
   const boundaries = [];
   const deliveries = [];
   const episodes = [];
+  const operations = [];
   const store = new ResourceStore();
   const runtime = createEmulatorRuntime({ store });
   async function listen(handler) {
@@ -53,6 +56,8 @@ export async function runCrossServiceFlow(kind) {
       headers: { authorization: `Bearer ${localIdentity.accessToken}`, 'content-type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body) });
     const text = await response.text();
+    // Invocation status belongs to the workflow observation, not the next setup interval.
+    if (!path.includes('/triggers/')) operations.push({ method, path, status: response.status });
     return { status: response.status, body: text ? JSON.parse(text) : null };
   }
   function workflow(actions) {
@@ -103,6 +108,22 @@ export async function runCrossServiceFlow(kind) {
       expectedOutcomeObserved: outcome, outcomeAssertionRejected: !outcome });
     return input;
   }
+  async function studyInvoke(label, deployment) {
+    const input = { requestId: randomUUID(), course: 'CS-101', eventTime: new Date().toISOString() };
+    const deploymentState = (await request('GET', deployment)).body?.properties?.provisioningState;
+    const workflowReadStatus = (await request('GET', workflowPath)).status;
+    const managementOperations = operations.splice(0);
+    const deliveryStart = deliveries.length;
+    const boundaryStart = boundaries.length;
+    const result = await request('POST', `${workflowPath.split('?')[0]}/triggers/manual/run?api-version=2019-05-01`, input);
+    // Synchronous completion defines this local observation interval. Keep even uncorrelated traffic.
+    const episode = { scenario: kind, label, input, expectedPayload: expected(input),
+      management: { deploymentState, workflowReadStatus, operations: managementOperations },
+      triggerStatus: result.status, workflowStatus: result.body?.status ?? null,
+      observedBoundaries: boundaries.slice(boundaryStart), deliveries: deliveries.slice(deliveryStart) };
+    episodes.push(episode);
+    if (progress) progress({ episodes, cleanupVerified: false });
+  }
   let created = false;
   let cleanupVerified = false;
   try {
@@ -121,7 +142,58 @@ export async function runCrossServiceFlow(kind) {
       const path = `${types[0]}/${types.slice(1).map((type, index) => `${type}/${names[index]}`).join('/')}`;
       assert.equal((await request('GET', `${group}/providers/${path}?api-version=${resource.apiVersion}`)).status, 200);
     }
-    if (kind === 'vault-enrichment') {
+    if (studyMutation) {
+      const secondSubscription = subscriptionPath.replace('/deliver-feed?', '/additional-feed?');
+      let eventBody;
+      if (kind === 'event-routing') {
+        const keys = await request('POST', `${topicPath}/listKeys?api-version=2020-06-01`, {});
+        assert.equal(keys.status, 200);
+        eventBody = workflow({ publish: { type: 'Http', inputs: { method: 'POST', uri: `${events}/api/events?api-version=2018-01-01`,
+          headers: { 'aeg-sas-key': keys.body.key1, 'content-type': 'application/json', 'x-correlation-id': "@triggerBody()?['requestId']" },
+          body: [{ id: "@triggerBody()?['requestId']", subject: 'course-feed', eventType: 'Course.Ready', eventTime: "@triggerBody()?['eventTime']", dataVersion: '1.0', data: { requestId: "@triggerBody()?['requestId']", course: "@triggerBody()?['course']" } }],
+        } } });
+      }
+      const baseline = kind === 'vault-enrichment' ? vaultWorkflow() : eventBody;
+      if (kind === 'event-routing') await configure(subscriptionPath, destination('/accepted'));
+      await configure(workflowPath, baseline);
+      await studyInvoke('connected', deployment);
+      const modified = structuredClone(baseline);
+      const actions = modified.properties.definition.actions;
+      if (kind === 'vault-enrichment') {
+        if (studyMutation === 'wrong-config-reference') actions.readConfig.inputs.uri = `${vault}/secrets/wrong-office?api-version=7.4`;
+        if (studyMutation === 'missing-config-reference') actions.readConfig.inputs.uri = `${vault}/secrets/missing?api-version=7.4`;
+        if (studyMutation === 'wrong-destination') actions.deliver.inputs.uri = `${receiver}/wrong`;
+        if (studyMutation === 'wrong-course') actions.deliver.inputs.body.course = 'WRONG-COURSE';
+        if (['duplicate-delivery', 'extra-destination'].includes(studyMutation)) {
+          actions.additional = structuredClone(actions.deliver);
+          if (studyMutation === 'extra-destination') actions.additional.inputs.uri = `${receiver}/wrong`;
+        }
+        await configure(workflowPath, modified);
+      } else {
+        if (studyMutation === 'deleted-subscription') assert.ok([200, 202, 204].includes((await request('DELETE', subscriptionPath)).status));
+        if (studyMutation === 'wrong-destination') await configure(subscriptionPath, destination('/wrong'));
+        if (['duplicate-delivery', 'extra-destination'].includes(studyMutation)) {
+          await configure(secondSubscription, destination(studyMutation === 'duplicate-delivery' ? '/accepted' : '/wrong'));
+        }
+        if (studyMutation === 'wrong-course') {
+          actions.publish.inputs.body[0].data.course = 'WRONG-COURSE';
+          await configure(workflowPath, modified);
+        }
+        if (studyMutation === 'wrong-version-type') {
+          actions.publish.inputs.body[0].dataVersion = 1;
+          await configure(workflowPath, modified);
+        }
+      }
+      await studyInvoke('mutated', deployment);
+      if (kind === 'event-routing') {
+        if (['duplicate-delivery', 'extra-destination'].includes(studyMutation)) {
+          assert.ok([200, 202, 204].includes((await request('DELETE', secondSubscription)).status));
+        }
+        await configure(subscriptionPath, destination('/accepted'));
+      }
+      await configure(workflowPath, baseline);
+      await studyInvoke('restored', deployment);
+    } else if (kind === 'vault-enrichment') {
       await configure(workflowPath, vaultWorkflow());
       await invoke('connected', 'Succeeded', true);
       await configure(workflowPath, vaultWorkflow('wrong-office'));
@@ -163,6 +235,7 @@ export async function runCrossServiceFlow(kind) {
         await dataPlane.arrayBuffer();
         assert.equal(dataPlane.status, 404, 'Deleted resources must disappear from the data plane');
         cleanupVerified = true;
+        if (progress) progress({ episodes, cleanupVerified });
       }
     } finally {
       for (const server of servers.reverse()) {

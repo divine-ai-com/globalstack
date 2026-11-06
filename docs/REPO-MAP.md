@@ -131,6 +131,7 @@ flowchart TD
 - `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`
+- `packages/conformance/src/flow-study.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
 - `packages/conformance/src/iot-hub-router.test.mjs`
@@ -140,6 +141,7 @@ flowchart TD
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
+- `packages/conformance/src/storage-client-observation.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/conformance/src/workflow-expression-values.test.mjs`
 - `packages/platform-registry/src/index.mjs`
@@ -251,6 +253,9 @@ flowchart TD
 - `scripts/e2e/e2e-azure-synapse-warehouse-parity.mjs`
 - `scripts/e2e/e2e-azure-virtual-network-parity.mjs`
 - `scripts/e2e/e2e-azure-waf-policy-parity.mjs`
+- `scripts/e2e/flow-study-cases.mjs`
+- `scripts/e2e/flow-study-oracles.mjs`
+- `scripts/e2e/run-flow-study.mjs`
 - `scripts/render/render-artifact-registry.mjs`
 - `scripts/render/render-azure-99-parity-checklist.mjs`
 - `scripts/render/render-azure-99-roadmap.mjs`
@@ -266,6 +271,7 @@ flowchart TD
 - `scripts/repository/accepted-issue.cjs`
 - `scripts/repository/accepted-issue.test.mjs`
 - `scripts/repository/capture-redaction.test.mjs`
+- `scripts/repository/check-research-secret-scan.mjs`
 - `scripts/repository/check-sarif.mjs`
 - `scripts/repository/check-sarif.test.mjs`
 - `scripts/repository/package-check.test.mjs`
@@ -366,6 +372,9 @@ flowchart TD
 - `npm run render`
 - `npm run repo:clean-runtime`
 - `npm run repo:clean-runtime:dry-run`
+- `npm run research:claims`
+- `npm run research:claims:build`
+- `npm run research:claims:test`
 - `npm run shipment:export`
 - `npm run smoke`
 - `npm run smoke:bicep-runner`

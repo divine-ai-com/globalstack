@@ -2,6 +2,36 @@
 
 This is a scoped technical draft. Author names and affiliations will be supplied later. No arXiv submission has been made.
 
+## Self-contained artifact review
+
+The experiment is included under `experiments/claims-evidence/`, with pinned Terraform image digest, AzAPI lockfile, explicit source ancestry and root-license coverage for the contributed source. Tool binaries remain separately downloaded dependencies with upstream terms. The wider private corpus statistics were removed from the paper results rather than presented as publicly reproducible measurements.
+
+Three final clean-checkout runs of the public harness preserve the 12-positive / nine-fault outcome counts. The 108-episode checker study was also rerun in that checkout with identical summary and per-episode check vectors. These runs are not pooled with earlier samples. The implementer used the same host; external reproduction remains pending. Five experiment regressions cover the outcome predicate, missing context, redirect rejection, corrupted evidence and complete packaged inputs. An injected image failure verified temporary-file cleanup, and an existing output directory was rejected without modification.
+
+PR 17 added seven medium CodeQL findings to the 19 previously reviewed findings. Their complete data flows were reviewed and remain visible. The observation client was hardened to reject redirects, with a regression proving the redirect destination receives no request. See [the detailed review](../../product/SECURITY-FINDINGS-2026-11-06.md). Passing the severity gate is not a zero-finding or compliance claim. Secret-scanner exceptions additionally match exact reviewed fixture values, field shapes and file paths so they survive squash merges; six scanner boundary checks verify that new values and other fields or paths remain detected.
+
+## Native claims extension, 6 November 2026
+
+Three corrected clean-revision native Terraform runs each completed seven behavioral episodes and destruction. All 12 positive episodes passed, and all nine constructed faulty episodes were rejected with their expected witnesses. Source read-back, applies, no-change plans and cleanup passed. The final bundle metadata invokes its behavioral entry point, which rejects missing context; its old management-only test is separately named. Earlier development reports are retained separately and not pooled with the final sample. No model generation or Azure execution occurred.
+
+Review identified a substantive scope limit: repeated Table inserts returned success for the same key in the duplicate-subscription trace, whereas the documented Azure contract reports an existing-entity conflict. The router was corrected to return 409 without overwriting the entity. The worker now verifies the existing row on conflict. A regression and three new native runs verify the correction, while the three pre-fix runs remain unchanged. Webhook validation, idempotent processing and cloud observation semantics remain prerequisites for a paired run. The runnable case is now included in the public repository; private corpus ancestry is not a reproduction dependency. See [the case record](claims/README.md).
+
+The latest local suite reports 574 passes and one explicit skip; all 19 repository checks passed. The new storage regressions verify multi-message queue observation and duplicate-insert conflict behavior. All three evidence verifiers pass. The new verifier also rejected four intentionally altered records: wrong digest, missing stage, extra callback and failed cleanup. The 11-page PDF was compiled with Tectonic and checked through extracted text and rendered page inspection; no unresolved reference markers or prose em dashes were found. These are local results, not a fresh remote security scan or merge approval. The paper retains separate numbers for earlier snapshots.
+
+The pinned workflow linter passes. A full-history secret scan identified 32 new generic-key matches, all synthetic UUID values in the Table `RowKey` field. Each was reviewed and recorded as an exact commit/path/line fingerprint; no directory or generic-key rule was excluded. The refined private archive scan likewise found only these generated row identifiers. Temporary local keys, certificates and Terraform working state were removed after verifying the archived results and logs.
+
+## Research extension review
+
+The manuscript now adds a controlled comparison of five checking layers over 12 configuration mutations in the existing two HTTP scenarios. Three repetitions contain 108 episodes: 36 mutated and 72 connected/restored positives. Management acceptance detects 0/12 distinct mutations, workflow status 2/12, arrival 5/12, exact-at-target 10/12, and exclusive outcome 12/12. All positive controls pass. These denominators describe a purposive first-party study, not Azure compatibility or real-world fault prevalence. The new comparison does not expand the number of application architectures or replace the earlier validation snapshot.
+
+The most useful observation is that an exact intended delivery can coexist with an extra delivery elsewhere. The earlier predicate filters out that destination and therefore accepts the episode. The new predicate checks all observed receiver deliveries in the synchronous invocation interval. It does not observe arbitrary external side effects or delayed cloud events. Valid fan-out workloads require a different expected-outcome contract.
+
+The protocol and cases were committed before the initial run. That run is retained as `study/evidence/initial-results.json`. Manual review found an instrumentation bookkeeping issue: the previous trigger response was carried into the next setup record. The corrected clean-checkout run retains the trigger solely in the workflow observation. An intermediate corrected run reported a dirty tree because its dependency-directory symlink was untracked; it is retained as `study/evidence/setup-corrected-results.json`. The final checkout uses an ignored dependency directory and is clean. All three complete reports have identical per-episode check vectors and totals. The renderer checks this agreement and does not pool their observations. A focused oracle regression test initially failed because its synthetic expected and actual payload shared one object; isolating the fixture fixed the test. This did not affect the study runner, which builds expected payloads separately.
+
+The fault-study regression checks pass, including wrong values, missing routes, duplicates, extra destinations, and restoration. The full local suite reports 572 passes and one explicit Docker-dependent skip. Repository policy tests report 19 passes. The 559-pass record below belongs to the earlier native/flow snapshot and is retained unchanged. No native client or live Azure comparison was rerun for the research extension. The new study is local HTTP and uses no model calls or paid services.
+
+The contribution is an applied validation method, its implementation, and the measured distinction between checking layers. It does not claim invention of mutation testing, test oracles, or differential testing. Added references are primary papers on those topics. The [readiness checklist](study/READINESS.md) lists independent workloads, independent reproduction, and claim-dependent live Azure measurements as remaining evidence needs. Authors and publication remain deferred.
+
 ## Claims review
 
 - Native coverage means one reference configuration in each of nine platforms. Terraform and OpenTofu use AzAPI. No AzureRM claim is made.
@@ -32,13 +62,13 @@ The complete intermediate PR CodeQL report contained the same 19 raw medium find
 
 The authorship and publication decisions above are deliberately deferred. They do not prevent merging the tested implementation or circulating a clearly marked technical draft.
 
-## Recorded validation
+## Historical native/flow validation
 
 The retained matrix contains nine passing samples, all seven stages per sample, 50 provider operation checks across the matrix, and successful cleanup. Local conformance reports 559 passes and one explicit Docker-dependent skip; repository checks report 19 passes. All six selected service packs passed. Both new HTTP scenarios completed their eight episodes and cleanup. The patched TypeScript dependency tree and root workspace each report zero known vulnerabilities in the recorded npm audit. The minimum free disk recorded in the final native runs was 103.25 GiB. No live Azure deployments or paid model calls were made.
 
 The paper compiled with Tectonic 0.17.0. All six pages were checked through extracted text and rendered page inspection. Tables and numeric macros are regenerated from the retained JSON records. Authors remain unset.
 
-## Pre-merge review record
+## Historical pre-merge review record
 
 At source revision `8f905e417f7b3d2b7a96bb9b9a3fd93b6046f003`, all required checks passed. The [complete security report](evidence/codeql.sarif.gz) and [finding inventory](evidence/security-review.json) retain the full pre-merge scan: zero high or critical findings and 19 raw medium findings. These match the existing reviewed finding set; main has 18 open medium alerts and one previously dismissed fixture-replay finding. No new code-scanning finding was introduced.
 

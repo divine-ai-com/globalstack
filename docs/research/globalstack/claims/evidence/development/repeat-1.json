@@ -1,0 +1,1002 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-06T12:50:51.524Z",
+  "corpusRevision": "dda84e35fd3956c60e8756c530b3af5623d576e6",
+  "productRevision": "d5f523592b12a44779518e031f9286a617503ed3",
+  "corpusDirty": false,
+  "productDirty": false,
+  "stages": [
+    {
+      "label": "certificate",
+      "exitCode": 0,
+      "log": "01-certificate.log"
+    },
+    {
+      "label": "version",
+      "exitCode": 0,
+      "log": "02-version.log"
+    },
+    {
+      "label": "format-check",
+      "exitCode": 0,
+      "log": "03-format-check.log"
+    },
+    {
+      "label": "source-unit",
+      "exitCode": 0,
+      "log": "04-source-unit.log"
+    },
+    {
+      "label": "init",
+      "exitCode": 0,
+      "log": "05-init.log"
+    },
+    {
+      "label": "validate",
+      "exitCode": 0,
+      "log": "06-validate.log"
+    },
+    {
+      "label": "apply-connected",
+      "exitCode": 0,
+      "log": "07-apply-connected.log"
+    },
+    {
+      "label": "plan-connected",
+      "exitCode": 0,
+      "log": "08-plan-connected.log"
+    },
+    {
+      "label": "outputs",
+      "exitCode": 0,
+      "log": "09-outputs.log"
+    },
+    {
+      "label": "apply-wrong-destination",
+      "exitCode": 0,
+      "log": "10-apply-wrong-destination.log"
+    },
+    {
+      "label": "plan-wrong-destination",
+      "exitCode": 0,
+      "log": "11-plan-wrong-destination.log"
+    },
+    {
+      "label": "apply-restored-wrong-destination",
+      "exitCode": 0,
+      "log": "12-apply-restored-wrong-destination.log"
+    },
+    {
+      "label": "plan-restored-wrong-destination",
+      "exitCode": 0,
+      "log": "13-plan-restored-wrong-destination.log"
+    },
+    {
+      "label": "apply-missing-subscription",
+      "exitCode": 0,
+      "log": "14-apply-missing-subscription.log"
+    },
+    {
+      "label": "plan-missing-subscription",
+      "exitCode": 0,
+      "log": "15-plan-missing-subscription.log"
+    },
+    {
+      "label": "apply-restored-missing-subscription",
+      "exitCode": 0,
+      "log": "16-apply-restored-missing-subscription.log"
+    },
+    {
+      "label": "plan-restored-missing-subscription",
+      "exitCode": 0,
+      "log": "17-plan-restored-missing-subscription.log"
+    },
+    {
+      "label": "apply-duplicate-subscription",
+      "exitCode": 0,
+      "log": "18-apply-duplicate-subscription.log"
+    },
+    {
+      "label": "plan-duplicate-subscription",
+      "exitCode": 0,
+      "log": "19-plan-duplicate-subscription.log"
+    },
+    {
+      "label": "apply-restored-duplicate-subscription",
+      "exitCode": 0,
+      "log": "20-apply-restored-duplicate-subscription.log"
+    },
+    {
+      "label": "plan-restored-duplicate-subscription",
+      "exitCode": 0,
+      "log": "21-plan-restored-duplicate-subscription.log"
+    },
+    {
+      "label": "destroy",
+      "exitCode": 0,
+      "log": "22-destroy.log"
+    }
+  ],
+  "episodes": [
+    {
+      "label": "connected",
+      "input": {
+        "correlationId": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:06.899Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "5b990ba7-4a69-47c0-806b-6669af2a513b.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+        "claimId": "CLAIM-001",
+        "blobName": "5b990ba7-4a69-47c0-806b-6669af2a513b.json",
+        "sha256": "7f3bc5ac965700b877d80a1b65e2442344c655793af5da012d3adb7d2a7d2add"
+      },
+      "deliveries": [
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:06.899Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "5b990ba7-4a69-47c0-806b-6669af2a513b.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "correlationId": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+          "claimId": "CLAIM-001",
+          "blobName": "5b990ba7-4a69-47c0-806b-6669af2a513b.json",
+          "sha256": "7f3bc5ac965700b877d80a1b65e2442344c655793af5da012d3adb7d2a7d2add"
+        }
+      ],
+      "ledger": {
+        "status": 200,
+        "body": {
+          "PartitionKey": "claims",
+          "RowKey": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+          "correlationId": "5b990ba7-4a69-47c0-806b-6669af2a513b",
+          "claimId": "CLAIM-001",
+          "blobName": "5b990ba7-4a69-47c0-806b-6669af2a513b.json",
+          "sha256": "7f3bc5ac965700b877d80a1b65e2442344c655793af5da012d3adb7d2a7d2add",
+          "status": "queued",
+          "Timestamp": "2026-11-06T12:51:06.924Z",
+          "odata.etag": "W/\"datetime'2026-11-06T12:51:06.924Z'\""
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/5b990ba7-4a69-47c0-806b-6669af2a513b.json",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/5b990ba7-4a69-47c0-806b-6669af2a513b.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='5b990ba7-4a69-47c0-806b-6669af2a513b')",
+          "status": 200
+        }
+      ],
+      "workerErrors": [],
+      "outcome": true,
+      "expectedOutcome": true
+    },
+    {
+      "label": "wrong-destination",
+      "input": {
+        "correlationId": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:11.294Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed",
+        "claimId": "CLAIM-001",
+        "blobName": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed.json",
+        "sha256": "3bd670e7d74e4adaee5f45b41a7fa05a8d428283d52f56f90782b03560da5b8b"
+      },
+      "deliveries": [
+        {
+          "path": "/wrong",
+          "body": [
+            {
+              "id": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:11.294Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "b3beb236-070b-4fd9-8acd-1f9cdfec93ed.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [],
+      "ledger": {
+        "status": 404,
+        "body": {
+          "error": {
+            "code": "EntityNotFound",
+            "message": "The specified entity does not exist."
+          }
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/b3beb236-070b-4fd9-8acd-1f9cdfec93ed.json",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='b3beb236-070b-4fd9-8acd-1f9cdfec93ed')",
+          "status": 404
+        }
+      ],
+      "workerErrors": [],
+      "outcome": false,
+      "expectedOutcome": false
+    },
+    {
+      "label": "restored-wrong-destination",
+      "input": {
+        "correlationId": "7d20e051-8521-4276-a148-267f7c5c6148",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "7d20e051-8521-4276-a148-267f7c5c6148",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:15.715Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "7d20e051-8521-4276-a148-267f7c5c6148.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "7d20e051-8521-4276-a148-267f7c5c6148",
+        "claimId": "CLAIM-001",
+        "blobName": "7d20e051-8521-4276-a148-267f7c5c6148.json",
+        "sha256": "165da240b2ac15f59adb56ffdf2d6599abc400c6c8656f3d6ea33bca591bf9de"
+      },
+      "deliveries": [
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "7d20e051-8521-4276-a148-267f7c5c6148",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:15.715Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "7d20e051-8521-4276-a148-267f7c5c6148.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "correlationId": "7d20e051-8521-4276-a148-267f7c5c6148",
+          "claimId": "CLAIM-001",
+          "blobName": "7d20e051-8521-4276-a148-267f7c5c6148.json",
+          "sha256": "165da240b2ac15f59adb56ffdf2d6599abc400c6c8656f3d6ea33bca591bf9de"
+        }
+      ],
+      "ledger": {
+        "status": 200,
+        "body": {
+          "PartitionKey": "claims",
+          "RowKey": "7d20e051-8521-4276-a148-267f7c5c6148",
+          "correlationId": "7d20e051-8521-4276-a148-267f7c5c6148",
+          "claimId": "CLAIM-001",
+          "blobName": "7d20e051-8521-4276-a148-267f7c5c6148.json",
+          "sha256": "165da240b2ac15f59adb56ffdf2d6599abc400c6c8656f3d6ea33bca591bf9de",
+          "status": "queued",
+          "Timestamp": "2026-11-06T12:51:15.725Z",
+          "odata.etag": "W/\"datetime'2026-11-06T12:51:15.725Z'\""
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/7d20e051-8521-4276-a148-267f7c5c6148.json",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/7d20e051-8521-4276-a148-267f7c5c6148.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='7d20e051-8521-4276-a148-267f7c5c6148')",
+          "status": 200
+        }
+      ],
+      "workerErrors": [],
+      "outcome": true,
+      "expectedOutcome": true
+    },
+    {
+      "label": "missing-subscription",
+      "input": {
+        "correlationId": "73c8c2c0-5363-4d21-aacf-c027c65068f4",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "73c8c2c0-5363-4d21-aacf-c027c65068f4",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:20.929Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "73c8c2c0-5363-4d21-aacf-c027c65068f4.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "73c8c2c0-5363-4d21-aacf-c027c65068f4",
+        "claimId": "CLAIM-001",
+        "blobName": "73c8c2c0-5363-4d21-aacf-c027c65068f4.json",
+        "sha256": "c76d6bba05bae98127d4f2ea6f7c33d833814b6966cc1df6874fe6e8f6d9beef"
+      },
+      "deliveries": [],
+      "messages": [],
+      "ledger": {
+        "status": 404,
+        "body": {
+          "error": {
+            "code": "EntityNotFound",
+            "message": "The specified entity does not exist."
+          }
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/73c8c2c0-5363-4d21-aacf-c027c65068f4.json",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='73c8c2c0-5363-4d21-aacf-c027c65068f4')",
+          "status": 404
+        }
+      ],
+      "workerErrors": [],
+      "outcome": false,
+      "expectedOutcome": false
+    },
+    {
+      "label": "restored-missing-subscription",
+      "input": {
+        "correlationId": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:30.169Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "4b8f2b13-eb5d-4127-9182-694346bcc06e.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+        "claimId": "CLAIM-001",
+        "blobName": "4b8f2b13-eb5d-4127-9182-694346bcc06e.json",
+        "sha256": "fb271e2f0a9b664839ab74d70918aeb884c58569fae6a07fbbf07331318f9696"
+      },
+      "deliveries": [
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:30.169Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "4b8f2b13-eb5d-4127-9182-694346bcc06e.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "correlationId": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+          "claimId": "CLAIM-001",
+          "blobName": "4b8f2b13-eb5d-4127-9182-694346bcc06e.json",
+          "sha256": "fb271e2f0a9b664839ab74d70918aeb884c58569fae6a07fbbf07331318f9696"
+        }
+      ],
+      "ledger": {
+        "status": 200,
+        "body": {
+          "PartitionKey": "claims",
+          "RowKey": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+          "correlationId": "4b8f2b13-eb5d-4127-9182-694346bcc06e",
+          "claimId": "CLAIM-001",
+          "blobName": "4b8f2b13-eb5d-4127-9182-694346bcc06e.json",
+          "sha256": "fb271e2f0a9b664839ab74d70918aeb884c58569fae6a07fbbf07331318f9696",
+          "status": "queued",
+          "Timestamp": "2026-11-06T12:51:30.187Z",
+          "odata.etag": "W/\"datetime'2026-11-06T12:51:30.187Z'\""
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/4b8f2b13-eb5d-4127-9182-694346bcc06e.json",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/4b8f2b13-eb5d-4127-9182-694346bcc06e.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='4b8f2b13-eb5d-4127-9182-694346bcc06e')",
+          "status": 200
+        }
+      ],
+      "workerErrors": [],
+      "outcome": true,
+      "expectedOutcome": true
+    },
+    {
+      "label": "duplicate-subscription",
+      "input": {
+        "correlationId": "11765e11-6660-4f54-b795-08e146ca09a5",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "11765e11-6660-4f54-b795-08e146ca09a5",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:37.624Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "11765e11-6660-4f54-b795-08e146ca09a5",
+        "claimId": "CLAIM-001",
+        "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json",
+        "sha256": "08a0baee0d3b77eb994ebc3ed612e5b38ba8f8f1a1b58f91238211c9651cd74c"
+      },
+      "deliveries": [
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "11765e11-6660-4f54-b795-08e146ca09a5",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:37.624Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json"
+              }
+            }
+          ]
+        },
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "11765e11-6660-4f54-b795-08e146ca09a5",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:37.624Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "correlationId": "11765e11-6660-4f54-b795-08e146ca09a5",
+          "claimId": "CLAIM-001",
+          "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "sha256": "08a0baee0d3b77eb994ebc3ed612e5b38ba8f8f1a1b58f91238211c9651cd74c"
+        },
+        {
+          "correlationId": "11765e11-6660-4f54-b795-08e146ca09a5",
+          "claimId": "CLAIM-001",
+          "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "sha256": "08a0baee0d3b77eb994ebc3ed612e5b38ba8f8f1a1b58f91238211c9651cd74c"
+        }
+      ],
+      "ledger": {
+        "status": 200,
+        "body": {
+          "PartitionKey": "claims",
+          "RowKey": "11765e11-6660-4f54-b795-08e146ca09a5",
+          "correlationId": "11765e11-6660-4f54-b795-08e146ca09a5",
+          "claimId": "CLAIM-001",
+          "blobName": "11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "sha256": "08a0baee0d3b77eb994ebc3ed612e5b38ba8f8f1a1b58f91238211c9651cd74c",
+          "status": "queued",
+          "Timestamp": "2026-11-06T12:51:37.642Z",
+          "odata.etag": "W/\"datetime'2026-11-06T12:51:37.642Z'\""
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/11765e11-6660-4f54-b795-08e146ca09a5.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='11765e11-6660-4f54-b795-08e146ca09a5')",
+          "status": 200
+        }
+      ],
+      "workerErrors": [],
+      "outcome": false,
+      "expectedOutcome": false
+    },
+    {
+      "label": "restored-duplicate-subscription",
+      "input": {
+        "correlationId": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+        "claimId": "CLAIM-001",
+        "evidence": "synthetic claims evidence"
+      },
+      "event": {
+        "id": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+        "subject": "claims/evidence",
+        "eventType": "Claims.EvidenceSubmitted",
+        "eventTime": "2026-11-06T12:51:43.823Z",
+        "dataVersion": "1.0",
+        "data": {
+          "claimId": "CLAIM-001",
+          "blobName": "be9bfaa9-9aea-4de1-a268-be9902820ec1.json"
+        }
+      },
+      "expectedRecord": {
+        "correlationId": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+        "claimId": "CLAIM-001",
+        "blobName": "be9bfaa9-9aea-4de1-a268-be9902820ec1.json",
+        "sha256": "2e659d78038e984a1d39975c31686e03024104acf304ed039b9ad3e7dddb14d6"
+      },
+      "deliveries": [
+        {
+          "path": "/claims",
+          "body": [
+            {
+              "id": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+              "subject": "claims/evidence",
+              "eventType": "Claims.EvidenceSubmitted",
+              "eventTime": "2026-11-06T12:51:43.823Z",
+              "dataVersion": "1.0",
+              "data": {
+                "claimId": "CLAIM-001",
+                "blobName": "be9bfaa9-9aea-4de1-a268-be9902820ec1.json"
+              }
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "correlationId": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+          "claimId": "CLAIM-001",
+          "blobName": "be9bfaa9-9aea-4de1-a268-be9902820ec1.json",
+          "sha256": "2e659d78038e984a1d39975c31686e03024104acf304ed039b9ad3e7dddb14d6"
+        }
+      ],
+      "ledger": {
+        "status": 200,
+        "body": {
+          "PartitionKey": "claims",
+          "RowKey": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+          "correlationId": "be9bfaa9-9aea-4de1-a268-be9902820ec1",
+          "claimId": "CLAIM-001",
+          "blobName": "be9bfaa9-9aea-4de1-a268-be9902820ec1.json",
+          "sha256": "2e659d78038e984a1d39975c31686e03024104acf304ed039b9ad3e7dddb14d6",
+          "status": "queued",
+          "Timestamp": "2026-11-06T12:51:43.832Z",
+          "odata.etag": "W/\"datetime'2026-11-06T12:51:43.832Z'\""
+        }
+      },
+      "publishStatus": 200,
+      "boundaries": [
+        {
+          "service": "blob",
+          "method": "PUT",
+          "path": "/claims-evidence/be9bfaa9-9aea-4de1-a268-be9902820ec1.json",
+          "status": 201
+        },
+        {
+          "service": "blob",
+          "method": "GET",
+          "path": "/claims-evidence/be9bfaa9-9aea-4de1-a268-be9902820ec1.json",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "POST",
+          "path": "/claims-jobs/messages",
+          "status": 201
+        },
+        {
+          "service": "table",
+          "method": "POST",
+          "path": "/claimsledger",
+          "status": 201
+        },
+        {
+          "service": "event-grid",
+          "method": "POST",
+          "path": "/api/events?api-version=2018-01-01",
+          "status": 200
+        },
+        {
+          "service": "queue",
+          "method": "GET",
+          "path": "/claims-jobs/messages?peekonly=true&numofmessages=32",
+          "status": 200
+        },
+        {
+          "service": "table",
+          "method": "GET",
+          "path": "/claimsledger(PartitionKey='claims',RowKey='be9bfaa9-9aea-4de1-a268-be9902820ec1')",
+          "status": 200
+        }
+      ],
+      "workerErrors": [],
+      "outcome": true,
+      "expectedOutcome": true
+    }
+  ],
+  "cleanup": {
+    "groupStatus": 404,
+    "resourceStatuses": [
+      {
+        "label": "storage-account",
+        "status": 404
+      },
+      {
+        "label": "blob-container",
+        "status": 404
+      },
+      {
+        "label": "queue",
+        "status": 404
+      },
+      {
+        "label": "file-share",
+        "status": 404
+      },
+      {
+        "label": "table",
+        "status": 404
+      },
+      {
+        "label": "service-bus-namespace",
+        "status": 404
+      },
+      {
+        "label": "service-bus-topic",
+        "status": 404
+      },
+      {
+        "label": "event-grid-topic",
+        "status": 404
+      },
+      {
+        "label": "event-hub-namespace",
+        "status": 404
+      },
+      {
+        "label": "event-hub",
+        "status": 404
+      },
+      {
+        "label": "app-config-store",
+        "status": 404
+      }
+    ],
+    "blobStatus": 404,
+    "queueStatus": 404,
+    "tableStatus": 404,
+    "eventStatus": 404
+  },
+  "error": null,
+  "scope": "One refined Terraform configuration; local reference HTTP worker; no Azure deployment or model call",
+  "limits": [
+    "Synthetic local identity; no RBAC or live Azure fidelity claim",
+    "Synchronous delivery interval; no delayed duplicate or retry guarantee",
+    "Service Bus, Event Hubs, Files and App Configuration are provisioned but outside the event path",
+    "Not the historical seven-stage shipment runner"
+  ],
+  "minimumFreeGiB": 109.30581665039062,
+  "runnerImage": {
+    "name": "globalstack/validation-runner:terraform-pinned",
+    "id": "sha256:8c996b8f47b05f8a460f50ea8656ab5692d02dd263b7dc84f152d7c65ff0d83c"
+  },
+  "terraformVersion": "1.17.1",
+  "managementChecks": [
+    {
+      "label": "storage-account",
+      "status": 200,
+      "type": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "label": "blob-container",
+      "status": 200,
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers"
+    },
+    {
+      "label": "queue",
+      "status": 200,
+      "type": "Microsoft.Storage/storageAccounts/queueServices/queues"
+    },
+    {
+      "label": "file-share",
+      "status": 200,
+      "type": "Microsoft.Storage/storageAccounts/fileServices/shares"
+    },
+    {
+      "label": "table",
+      "status": 200,
+      "type": "Microsoft.Storage/storageAccounts/tableServices/tables"
+    },
+    {
+      "label": "service-bus-namespace",
+      "status": 200,
+      "type": "Microsoft.ServiceBus/namespaces"
+    },
+    {
+      "label": "service-bus-topic",
+      "status": 200,
+      "type": "Microsoft.ServiceBus/namespaces/topics"
+    },
+    {
+      "label": "event-grid-topic",
+      "status": 200,
+      "type": "Microsoft.EventGrid/topics"
+    },
+    {
+      "label": "event-hub-namespace",
+      "status": 200,
+      "type": "Microsoft.EventHub/namespaces"
+    },
+    {
+      "label": "event-hub",
+      "status": 200,
+      "type": "Microsoft.EventHub/namespaces/eventhubs"
+    },
+    {
+      "label": "app-config-store",
+      "status": 200,
+      "type": "Microsoft.AppConfiguration/configurationStores"
+    }
+  ],
+  "completedAt": "2026-11-06T12:51:48.120Z",
+  "ok": true
+}

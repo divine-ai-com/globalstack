@@ -30,3 +30,12 @@ The vulnerability threshold was not lowered and no advisory was exempted. Licens
 ## Microsoft Quickstart fixtures
 
 The three pinned fixtures in `fixtures/upstream/azure-quickstarts/` retain their original bytes and the accompanying MIT license. Their source revision and SHA-256 digests are in `provenance.json` in that directory.
+
+## Native research toolchain
+
+The claims experiment source is covered by the repository Apache-2.0 license. Its tool binaries are downloaded separately and retain upstream terms. No Terraform or provider binary is included in the research source archive.
+
+- Terraform 1.17.1: HashiCorp, [versioned license](https://github.com/hashicorp/terraform/blob/v1.17.1/LICENSE). The Docker recipe pins the upstream Linux x86_64 image digest.
+- Azure AzAPI provider 2.13.0: Microsoft and contributors, [versioned license](https://github.com/Azure/terraform-provider-azapi/blob/v2.13.0/LICENSE). The included lockfile records provider checksums; initialization downloads the provider.
+
+The private corpus ancestry and exact imported bundle digests are recorded in `experiments/claims-evidence/ORIGIN.json`. The imported source is an authored reference refinement of an internally maintained task; it does not include a third-party application repository or claim human-only authorship. Historical model labels are provenance, not new evaluation results.

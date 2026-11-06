@@ -4,7 +4,7 @@
 \usepackage{mathpazo,microtype,amsmath,amssymb,booktabs,tabularx,xcolor,tikz,sectsty}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black,citecolor=blue!55!black]{hyperref}
 \usepackage{xurl}
-\hypersetup{pdftitle={GlobalStack: Scoped Local Azure Emulation with Executable Cross-Service Checks},pdfsubject={Scoped technical draft; authorship pending}}
+\hypersetup{pdftitle={GlobalStack: Local Azure Emulation with Layered Outcome Checks},pdfsubject={Scoped technical draft; authorship pending}}
 \usetikzlibrary{positioning,arrows.meta}
 \definecolor{ink}{HTML}{17577B}
 \definecolor{good}{HTML}{20836B}
@@ -13,13 +13,15 @@
 \setlength{\parskip}{4pt}
 \setlength{\parindent}{0pt}
 \input{evidence/measurements.tex}
-\title{\color{ink}GlobalStack: Scoped Local Azure Emulation\protect\\with Executable Cross-Service Checks}
+\input{study/evidence/measurements.tex}
+\input{claims/evidence/measurements.tex}
+\title{\color{ink}GlobalStack: Local Azure Emulation\protect\\with Layered Outcome Checks}
 \author{}
-\date{Technical draft. Author information pending.\\Validation snapshot: \SnapshotDate}
+\date{Technical draft. Author information pending.\\Native snapshot: \SnapshotDate; local fault study: 2026-11-04 UTC; native claims case: 2026-11-06 UTC}
 \begin{document}
 \maketitle
 \begin{abstract}
-A successful infrastructure deployment does not establish that application events reach their intended destination. GlobalStack combines a local Azure management surface, selected service runtimes, and native infrastructure-as-code runners to make this distinction executable. We report a bounded preview evaluation: \NativeCount{} native platform configurations with one sample each, three pinned Microsoft Quickstart templates, and two first-party cross-service scenarios. Each new scenario tests a connected configuration, two broken configurations, recovery, and resource cleanup through real loopback HTTP. All \EpisodeCount{} episodes satisfy their specified test expectations. Of the four deliberately broken configurations, three still report workflow success while failing the intended application outcome. These are constructed controls, not an estimate of failures in Azure or user deployments. The work exposed and corrected literal-value coercion and incomplete runtime cleanup. We release the test inputs, results, toolchain recipes, and explicit support boundaries. No live Azure comparison was performed in this validation; the results establish execution of the selected local paths rather than general Azure equivalence.
+Infrastructure creation and workflow completion are incomplete checks of an application's intended behavior. GlobalStack provides selected local Azure management and service interfaces through which native clients and HTTP workflows can be exercised. We present an executable, scoped validation method and a controlled comparison of five outcome checks. In two first-party scenarios, we apply \StudyCases{} explicit configuration mutations and run connected, mutated, and restored episodes in \StudyRepetitions{} fresh-state repetitions, totaling \StudyEpisodes{} episodes. Management acceptance detects \StudyManagementCaught{}/\StudyCases{} distinct mutations; workflow status detects \StudyWorkflowCaught{}/\StudyCases{}; intended arrival detects \StudyArrivalCaught{}/\StudyCases{}; exact payload and cardinality at the intended destination detect \StudyExactCaught{}/\StudyCases{}; and excluding additional observed deliveries detects \StudyExclusiveCaught{}/\StudyCases{}. All \StudyPositives{} positive episodes pass every check. The difference between the last two checks exposes a limitation in our earlier outcome predicate: a correct result can coexist with delivery to an unintended destination. These are sensitivity results for deliberately constructed local faults, not estimates of real-world fault prevalence or Azure fidelity. A separate native matrix validates one sample in each of \NativeCount{} platform configurations. A separate native Terraform case adds a Blob, Event Grid, Queue and Table path, with \ClaimsEpisodes{} episodes across \ClaimsRepetitions{} fresh runtimes. It detects three selected wiring faults and exposes a duplicate-insert defect, subsequently corrected and rerun. We retain the protocol, traces, source identifiers, cleanup results, and explicit limitations. No live Azure comparison or independently authored workload evaluation supports the cross-service result.
 \end{abstract}
 
 \section{Problem and scope}
@@ -27,7 +29,16 @@ Infrastructure-as-code (IaC) tools describe resources and their relationships, b
 
 GlobalStack is a local development system for exercising selected Azure deployments and service interactions. Its public preview is intended for trusted workloads on isolated development hosts. The contribution described here is an executable validation method and its implementation: native provisioning, observable HTTP service interactions, deliberate wiring faults, restoration, and cleanup. This paper does not introduce a new model benchmark, report model-generated deployments, or claim complete Azure emulation.
 
-We ask three bounded questions. First, can the selected native clients provision, inspect, and remove their reference samples? Second, can local service interactions produce an exact expected application result? Third, can tests distinguish a successful operation from an incorrectly wired application and detect residual runtime state after deletion? These questions are answered over a declared set of fixtures. They do not define a denominator for all Azure behavior.
+\subsection{Research questions and contributions}
+\textbf{RQ1: Native execution.} Can the selected native clients provision, inspect, and remove their reference samples? The unit of evidence is one configuration per platform, rather than a platform-wide compatibility claim.
+
+\textbf{RQ2: Checker sensitivity.} On the same deliberately faulty configurations, which failures are detected by management acceptance, workflow status, arrival, exact-at-target, and exclusive-outcome checks? Comparing checks on identical traces holds the executed configuration constant.
+
+\textbf{RQ3: Observation boundaries.} Does correct delivery at the intended target exclude unwanted delivery elsewhere? The experiment includes duplicate and additional-destination mutations to test this distinction directly.
+
+\textbf{RQ4: Local repeatability and restoration.} Do all check vectors repeat across fresh-state runs, do restored configurations regain the intended outcome, and do the addressed resources disappear after cleanup?
+
+The contributions are a scoped implementation connecting management state to executable service interactions; an auditable configuration-fault experiment with explicit controls and denominators; and a documented strengthening of an outcome predicate that missed additional destinations. Fault injection, end-to-end assertions, and differential testing are established techniques. We claim an application and measured engineering result, not invention of those techniques or a general proof of Azure compatibility.
 
 \section{System design}
 \subsection{Management and service state}
@@ -64,9 +75,9 @@ The tested state is ephemeral. Unsupported paths and invalid inputs have selecte
 
 \section{Validation method}
 \subsection{Fixtures and provenance}
-We use three fixture groups. The native group contains one first-party sample per platform. These are smoke configurations, not nine independent application architectures. The upstream group contains three unmodified Microsoft Azure Quickstart templates: Storage account creation, Key Vault creation, and Event Grid \cite{quickstarts}. Their original bytes, source revision, SHA-256 digests, and MIT license are retained. The Storage example checks management behavior. Key Vault adds a secret read over HTTP. Event Grid adds publication and exact webhook checks with broken-routing and restoration controls.
+The earlier snapshot uses three fixture groups. The native group contains one first-party sample per platform. These are smoke configurations, not nine independent application architectures. The upstream group contains three unmodified Microsoft Azure Quickstart templates: Storage account creation, Key Vault creation, and Event Grid \cite{quickstarts}. Their original bytes, source revision, SHA-256 digests, and MIT license are retained. The Storage example checks management behavior. Key Vault adds a secret read over HTTP. Event Grid adds publication and exact webhook checks with broken-routing and restoration controls.
 
-The third group contains two new first-party scenarios. Their inputs and outcome checks are maintained in the same repository as the emulator. This enables regression testing but creates an oracle-bias risk. Neither first-party fixtures nor unmodified upstream templates establish live Azure equivalence on their own.
+The third group contains two new first-party scenarios. Their inputs and outcome checks are maintained in the same repository as the emulator. This enables regression testing but creates an oracle-bias risk. Neither first-party fixtures nor unmodified upstream templates establish live Azure equivalence on their own. The configuration-fault study reuses the two first-party architectures; its additional episodes must not be counted as additional architectures.
 
 \subsection{Two cross-service scenarios}
 \textbf{Configuration enrichment.} A Logic Apps workflow reads a configuration value from Key Vault and posts an enriched course record to an HTTP receiver. The intended result contains the request identifier, course identifier, and the expected office value. One control changes the workflow to read an existing secret containing the wrong office. A second control references a missing secret. Restoring the original reference must restore the exact result.
@@ -87,6 +98,42 @@ We separately record deployment acceptance $D_i$, observed service-boundary HTTP
 
 For each scenario, cleanup $C$ requires successful group deletion, management reads returning 404 for the group and workflow, and a request to the deleted service's data-plane endpoint returning 404. A complete scenario must satisfy the four episode expectations and $C$. This checks the addressed resources, not the absence of every possible process, cache, or background task.
 
+\subsection{Configuration-fault study}
+The new experiment extends the same two scenarios with six mutations each. Table~\ref{tab:mutations} lists every case. The fault classes follow the observable obligations of these flows: correct references, correct routing, preserved payloads, the required number of deliveries, and accepted service input types. This selection deliberately probes those obligations; it is not sampled from an incident corpus. Each mutation changes one field or relationship, or adds one delivery relationship. The expected business payload remains unchanged.
+
+For every case, a new resource store, runtime, and set of loopback listeners execute connected, mutated, and restored episodes, followed by cleanup. All 12 cases run sequentially in the declared order in three repetitions. This produces 36 case executions and 108 episodes, including 36 mutated and 72 positive episodes. Repetition tests local consistency; it does not increase the number of distinct mutations or independent applications. The protocol and executable cases were committed before the first study run, but were not externally preregistered. Review then separated prior trigger responses from the next setup observation; the corrected run preserves the same per-episode decisions. Both complete records are retained and reported separately, not pooled.
+
+Let $B_i$ contain \emph{all} deliveries to the instrumented receiver during invocation $i$, including wrong-path or wrong-identifier deliveries. The interval starts immediately before the trigger request and ends when its response body has been consumed. This is meaningful for the evaluated synchronous runtime, which awaits downstream requests. It is not a sufficient observation window for asynchronous cloud delivery. The earlier $R_i$ and $A_i$ are identifier- and destination-filtered subsequences of $B_i$.
+
+Let $M_i$ mean that recorded setup or mutation operations were accepted, the deployment reports success, and the workflow is readable. $W_i$ requires trigger acceptance and successful workflow completion. These are intentionally shallow baselines: $M_i$ does not inspect every semantic resource relationship. The five nested checks are
+\begin{align}
+K_i^{M} &= M_i, & K_i^{W} &= M_i\land W_i,\\
+K_i^{A} &= K_i^{W}\land(|A_i|\geq 1), & K_i^{T} &= K_i^{W}\land O_i,\\
+K_i^{E} &= K_i^{T}\land(|B_i|=1).
+\end{align}
+The last check adds absence of extra observed delivery to the exact-at-target predicate. It applies to the specified single-destination contract. Legitimate fan-out applications require a different expected destination set and cardinality.
+
+For the enumerated mutated episodes $F$ and positive episodes $P$, report the rejection fractions
+\begin{equation}
+\operatorname{detect}(k)=\frac{\sum_{i\in F}\mathbf{1}[\neg K_i^k]}{|F|},\qquad
+\operatorname{positiveReject}(k)=\frac{\sum_{i\in P}\mathbf{1}[\neg K_i^k]}{|P|}.
+\end{equation}
+These fractions describe the declared experiment. They are not estimates of population sensitivity or specificity. Mutants rejected by service validation remain in $F$. Harness errors are recorded as inconclusive, rather than checker detections; none occurred in the retained study. A checkpoint is written before each attempt and updated after completion. A missing or incomplete attempt prevents accepting a complete study result. No mutations were removed as equivalent or unexercised.
+
+The artifact retains management status observations, service-boundary traffic, expected payloads, all observed receiver deliveries, and cleanup outcomes. Checker decisions are recomputed from these traces. Generated tables also verify each mutation's concrete witness, such as a wrong course value, a second receiver request, or a service rejection. No measured performance or cost comparison is inferred from this experiment.
+
+\subsection{Refining a native corpus task}
+We selected the Terraform claims-evidence task for an explicitly versioned reference refinement. This is a purposive first case, not a random sample, unchanged model output or externally selected workload. The original prompt and reports remain intact. The revised contract adds an application producer that uploads synthetic evidence and explicitly publishes a correlated Event Grid event. Terraform creates the topic-scoped subscription. A reference HTTP worker reads the blob, computes its byte digest, writes a classification message to a Storage Queue and writes a ledger entity to a Storage Table. This path does not use the workflow engine. The worker is test application code, not an emulated Function App, and blob upload does not automatically generate the event.
+
+For episode $i$, let $D_i$ be all callbacks at the instrumented receiver in the synchronous publish interval, $Q_i$ the observed queue records with the episode identifier, $e_i$ the expected event and $q_i$ the expected record. Let $L_i$ mean that the addressed ledger row exists with the expected partition key, row key, identifier, claim, blob name, byte digest and status. The predicate is
+\begin{equation}
+C_i=(|D_i|=1)\land(\operatorname{path}(D_i[1])=\texttt{/claims})
+\land(\operatorname{body}(D_i[1])=[e_i])\land(Q_i=[q_i])\land L_i.
+\end{equation}
+As above, indexing requires a satisfied cardinality guard. Queue observation peeks at most 32 messages; each isolated run remains below this bound. Ledger comparison allows service metadata such as timestamps and ETags. It does not audit every row or uninstrumented side effect.
+
+Each fresh run executes connected, wrong-destination, restored, missing-subscription, restored, duplicate-subscription and restored episodes. Native Terraform applies every change and must produce a no-change plan after each apply. Fault-specific witnesses distinguish an absent route, a wrong callback path and two callbacks with two queue records from incidental harness failures. The bundle's integration entry point requires the behavioral context and cannot fall back to its former management-only check. Destruction and addressed-resource disappearance are checked separately.
+
 \subsection{Execution and reproducibility}
 The snapshot uses Linux x86\_64, four logical CPUs, and approximately 31 GiB of RAM. Native jobs run in three isolated checkout groups. A disk guard stops work before the required 40 GiB free-space reserve is crossed. These are observed host characteristics, not minimum hardware requirements. No live Azure deployment or paid model request is part of this validation.
 
@@ -102,10 +149,10 @@ Table~\ref{tab:matrix} reports the current native matrix. Each row is one sample
 \input{evidence/matrix-rows.tex}
 \end{table}
 
-The local conformance command reports \LocalPassed{} passing tests and \LocalSkipped{} explicitly opt-in Docker-dependent Kubernetes test skipped. Repository policy tests report \RepositoryPassed{} passes. Three upstream template tests are included in the local suite. Separately executed Key Vault, Event Grid, and Logic Apps packs report 99, 45, and 62 cases respectively. These suites overlap and must not be added to form an Azure-coverage score. The archived preview-2 result is an earlier snapshot with 556 local passes; this draft's record identifies the new runtime and evidence revisions explicitly.
+In the earlier native/flow snapshot, the local conformance command reports \LocalPassed{} passing tests and \LocalSkipped{} explicitly opt-in Docker-dependent Kubernetes test skipped. Repository policy tests report \RepositoryPassed{} passes. Three upstream template tests are included in the local suite. Separately executed Key Vault, Event Grid, and Logic Apps packs report 99, 45, and 62 cases respectively. These suites overlap and must not be added to form an Azure-coverage score. The archived preview-2 result is an earlier snapshot with 556 local passes; this draft's record identifies the new runtime and evidence revisions explicitly.
 
 \subsection{Cross-service observations}
-Table~\ref{tab:flows} contains all eight newly recorded episodes. Both connected and restored episodes in each scenario produce the exact expected payload. All four deliberately broken configurations fail the application outcome assertion as intended. Three of these four still report workflow success. This demonstrates a specific limitation of using operation success as the only local wiring check. It is not a measured prevalence of such failures in real deployments.
+Table~\ref{tab:flows} retains the original eight-episode experiment, separate from the later configuration-fault study. Both connected and restored episodes in each scenario produce the exact expected payload. All four deliberately broken configurations fail the application outcome assertion as intended. Three of these four still report workflow success. This demonstrates a specific limitation of using operation success as the only local wiring check. It is not a measured prevalence of such failures in real deployments.
 
 \begin{table}[ht]
 \centering\small
@@ -113,22 +160,52 @@ Table~\ref{tab:flows} contains all eight newly recorded episodes. Both connected
 \input{evidence/flow-rows.tex}
 \end{table}
 
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[x=16mm,y=7mm,font=\small]
-\draw[->,gray] (0,0)--(5,0);
-\foreach \x in {0,...,4} {\draw[gray] (\x,0)--(\x,-.12) node[below,text=black]{\x};}
-\node[anchor=east] at (0,1) {Missing reference: failed workflow};
-\node[anchor=east] at (0,2) {Broken wiring: successful workflow};
-\fill[control!65] (0,.65) rectangle (1,1.35);
-\fill[control] (0,1.65) rectangle (3,2.35);
-\node[anchor=west] at (1,1) {1};\node[anchor=west] at (3,2) {3};
-\node[anchor=north] at (2,-.6) {Number of deliberately broken episodes};
-\end{tikzpicture}
-\caption{Workflow status within four constructed negative controls. All four failed the intended outcome. The count is a property of the test design, not an accuracy or prevalence estimate.}
-\end{figure}
+
 
 Both scenario cleanup checks pass. The evidence records the unique input, service-boundary status, receiver path and payload, workflow status, assertion result, and cleanup result. The test report is generated only after all assertions succeed. Failed test processes must be retained separately; absence of a report is not a passing result.
+
+\subsection{Checker ablation and repeatability}
+Table~\ref{tab:ablation} answers RQ2. Management acceptance rejected none of the 12 distinct mutations. This result reflects the chosen semantic faults and the shallow baseline; it does not imply that management validation never detects infrastructure errors. Workflow status rejected the missing-secret and invalid-event-schema cases. Arrival additionally rejected missing and wrong routes. Exact-at-target additionally rejected wrong values and duplicate deliveries at the intended target. Exclusive outcome additionally rejected the two extra-destination cases.
+
+\begin{table}[ht]
+\centering\small
+\caption{Rejected faulty episodes and rejected positive controls. Distinct faults count the 12 configurations once; repetitions do not add independent faults.}\label{tab:ablation}
+\input{study/evidence/check-rows.tex}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=6mm,y=7mm,font=\small]
+\draw[->,gray] (0,0)--(13.8,0);
+\foreach \x in {0,2,...,12} {\draw[gray] (\x,0)--(\x,-.12) node[below,text=black]{\x};}
+\input{study/evidence/bars.tex}
+\node[anchor=north] at (6,-.6) {Distinct constructed faults detected};
+\end{tikzpicture}
+\caption{Adding observations exposes different faulty configurations. The final bar is coverage of the selected mutations, not an Azure compatibility score.}
+\end{figure}
+
+RQ3 has a concrete counterexample. In each extra-destination case, one exact expected delivery arrives at \texttt{/accepted} and another arrives at \texttt{/wrong}. The workflow succeeds and $O_i$ remains true because $A_i$ excludes the wrong path. The stricter predicate rejects the additional observed delivery. This finding concerns the test oracle, not a newly discovered emulator defect: the emulator executes the extra configured relationship. Tests concerned with unintended side effects must state and observe that obligation explicitly.
+
+For RQ4, all five check decisions were identical across the three repetitions of every case. All 72 connected or restored episodes passed all checks, and all 36 case executions passed their cleanup assertions. There were zero inconclusive attempts. These observations establish repeatability on one local host and successful restoration for these inputs. They do not establish stability across hosts, runtime versions, delayed delivery, or failures outside the instrumented boundary.
+
+\begin{table}[ht]
+\centering\scriptsize
+\caption{Per-mutation detections, identical in all three repetitions. X means the check rejected the faulty configuration; a dot means it accepted it. M: management; W: workflow; A: arrival; T: exact at target; E: exclusive outcome.}\label{tab:mutations}
+\input{study/evidence/case-rows.tex}
+\end{table}
+
+\subsection{Native claims case and repair}
+Table~\ref{tab:claims} reports the final public-source native case, run from a clean checkout using the included source and pinned tool image. All \ClaimsPositives{} positive episodes satisfy $C_i$, and all \ClaimsFaultEpisodes{} faulty episodes are rejected with their specified witnesses. Every native apply and no-change plan succeeds, including those for deliberately wrong wiring. The three repetitions run separate runtimes concurrently on one host; they are not independent replications. Each destruction succeeds, and the resource group, 11 listed management resources and four addressed data-plane surfaces return 404. The minimum observed free disk is \ClaimsMinimumFree{} GiB. Terraform is 1.17.1 and AzAPI is 2.13.0.
+
+\begin{table}[ht]
+\centering\small
+\caption{One refined native scenario. Callback and message counts are per episode. Rejection is the expected outcome for the three fault configurations.}\label{tab:claims}
+\input{claims/evidence/rows.tex}
+\end{table}
+
+Review of the earlier three clean-revision runs exposed a storage defect: the duplicate-subscription case inserted the same Table entity twice and received two successful responses. The documented Azure error contract specifies an existing-entity conflict \cite{tableerrors}. The router now rejects the duplicate with HTTP 409 and preserves the original entity, including its metadata. A regression covers identical and changed duplicate values, unchanged read-back, and distinct keys. The reference worker checks an existing row after that conflict; it still writes two queue messages in this deliberate duplicate-subscription fault, so the outcome predicate rejects it. The corrected runs retain the 201, then 409 insert responses. Pre-fix, private-harness and earlier packaging observations remain archived separately and are not pooled into a larger final sample. This is a documentation-grounded correction with local regression evidence, not a live-cloud measurement.
+
+The revised path broadens the evaluated implementation beyond the workflow engine, but remains first-party. Service Bus, Event Hubs, Files and App Configuration are also provisioned by the bundle but are outside the executed event path. Real Azure permits Event Grid redelivery and requires webhook endpoint validation \cite{eventdelivery,eventvalidation}; this receiver does not implement a production deduplication policy or that handshake. A paired live comparison must first implement those obligations and replace the synchronous window with a declared asynchronous observation policy. Passing this local case cannot establish those cloud properties.
 
 \subsection{Defects found through executable checks}
 \textbf{Literal-value coercion.} The workflow evaluator previously converted numeric-looking JSON strings into numbers outside expression argument parsing. An Event Grid event with the literal data version \texttt{"1.0"} reached the service as a number and failed its schema check. The correction preserves literal JSON types while parsing numeric constants inside supported expression arguments. A regression test also covers leading-zero strings, quoted literal text, numbers, booleans, arrays, and existing supported arithmetic. The Azure expression reference distinguishes expressions from literal values \cite{expressions}; this fix is not a claim to implement the full expression language.
@@ -136,6 +213,13 @@ Both scenario cleanup checks pass. The evidence records the unique input, servic
 \textbf{Management deletion without runtime deletion.} Resource-group deletion previously removed management records without invoking deletion hooks for the resources in that group. A Key Vault secret remained readable after its group disappeared. The correction enumerates the group's resources, invokes the runtime deletion hooks in child-first order, and is checked by the new post-delete data-plane assertions. The selected regression establishes cleanup for these flows; other runtime backends require their own checks.
 
 These findings illustrate why read-back, live requests, and cleanup are separate obligations. The repaired code is evaluated on the same authored scenarios, so these findings should be interpreted as engineering regressions rather than an independent comparative study.
+
+\section{Relation to software-testing research}
+A test oracle distinguishes expected from incorrect behavior. Barr et al. survey specification-based, derived, and other oracle approaches \cite{oracles}. Our expected business payload and delivery contract are manually specified oracles. This explains both their value and their limitation: the original predicate omitted an obligation that its successful checks could not establish. More successful executions of that predicate would not remove the omission.
+
+Mutation testing evaluates tests using deliberately introduced faults. Petrovi\'{c} et al. study how mutation testing affects testing practice and its relationship to real faults \cite{mutation}. Our experiment instead mutates selected infrastructure relationships and payload fields while keeping the emulator implementation fixed. It compares observation layers using the same traces. We do not establish that our mutations represent a real incident distribution or inherit empirical validity from a different mutation study.
+
+Differential testing compares behavior across implementations to expose disagreements \cite{differential}. Our local checker ablation is not differential validation against Azure: the checks observe one implementation at different levels of detail. A live comparison remains necessary for claims that depend on matching Azure behavior. These distinctions position the contribution as a scoped systems and testing artifact, rather than a new general testing theory.
 
 \section{Related systems and API drift}
 Microsoft's Azurite supports local Blob, Queue, and Table development and documents differences from Azure Storage \cite{azurite}. Microsoft's Service Bus emulator provides local messaging behavior with explicit protocol and persistence limitations \cite{servicebus}. These projects demonstrate the value of a declared support boundary for local development. We have not run a comparative evaluation against them and do not infer relative completeness, performance, or fidelity.
@@ -145,16 +229,16 @@ Microsoft's Azure REST API specifications provide a versioned source for reviewi
 A future live comparison should run the same versioned scenario against Azure and the local system, retaining request shape, normalized responses, observable side effects, event correlation, and cleanup outcomes. Normalization must be explicit and limited to genuinely variable fields. API version, region, test time, account constraints, and known deviations should accompany every record. Costs and credentials require a separately approved live run. This protocol remains future work for the cross-service scenarios described here.
 
 \section{Limitations and release interpretation}
-\textbf{Selection and oracle bias.} One sample per platform exercises a narrow configuration. The two new flows share the workflow engine and are first-party fixtures, so their success is not independent external validation. Upstream templates reduce authorship coupling but do not supply live-cloud outcome traces. There is no randomly sampled workload corpus, held-out evaluation, or baseline comparison.
+\textbf{Selection and oracle bias.} One sample per platform exercises a narrow configuration. The two checker-study flows share the workflow engine. The refined claims path avoids that engine but is also first-party, so neither result is independent external validation. Upstream templates reduce authorship coupling but do not supply live-cloud outcome traces. There is no randomly sampled workload corpus or held-out evaluation. The new baseline comparison is between checking layers on the same local traces; it is not a comparison against another emulator or live Azure.
 
-\textbf{Local execution model.} The tested event paths complete synchronously through loopback HTTP. No retry, timeout distribution, load, network partition, or eventual consistency experiment is reported. Hostname adaptation and development identity are harness facilities. The receiver is a test application rather than a deployed Azure compute service.
+\textbf{Local execution model.} The tested event paths complete synchronously through loopback HTTP. No retry, timeout distribution, load, network partition, or eventual consistency experiment is reported. The exclusive-outcome check observes only the instrumented receiver within the synchronous invocation interval. It does not exclude effects at uninstrumented services or later times. Hostname adaptation and development identity are harness facilities. The receiver is a test application rather than a deployed Azure compute service.
 
 \textbf{Security and privacy.} The preview is not a production security boundary. Security CI includes dependency auditing, secret scanning, and full-tree JavaScript CodeQL analysis. The previous preview's security correction and remaining reviewed findings are recorded separately in the repository. Passing these checks does not establish absence of vulnerabilities, compliance certification, complete capture sanitization, or suitability for untrusted tenants. Evidence in this draft uses synthetic local identifiers and test values.
 
-\textbf{Reproduction and provenance.} Version pins improve stability but do not freeze the complete software supply chain. Results apply to the tested source revision and retained inputs. Revisions are included in the artifact record for reproducibility, not as evidence of correctness. The current paper is a technical draft with author information pending and has not been submitted to arXiv.
+\textbf{Reproduction and provenance.} Version pins improve stability but do not freeze the complete software supply chain. Results apply to the tested source revision and retained inputs. Revisions are included in the artifact record for reproducibility, not as evidence of correctness. The refined native experiment source is included under \path{experiments/claims-evidence/}; its private corpus ancestry is recorded but is not a reproduction dependency. The current paper is a technical draft with author information pending and has not been submitted to arXiv.
 
 \section{Conclusion}
-The scoped preview executes nine native reference configurations and two explicit multi-service workflows, alongside pinned upstream template checks. Broken-wiring controls demonstrate that operation success can coexist with a failed application outcome. Live HTTP assertions and post-delete checks uncovered two concrete implementation defects. The resulting artifact is useful for reproducing these local paths and extending their tests. Broader Azure equivalence requires additional independently authored scenarios and measured live differential validation.
+GlobalStack supports a reproducible local study of selected Azure management and service interactions. Nine native reference configurations provide bounded client-execution evidence. A new comparison across 12 configuration mutations separates management acceptance, workflow status, arrival, exact-at-target, and exclusive-outcome checks. Exact-at-target misses two extra-destination mutations despite correct delivery at the intended target; observing the complete receiver interval exposes them. A separate refined Terraform task connects provisioning to observable service behavior and exposes a duplicate Table insert defect that is corrected and rerun. These results support explicitly checking intended outcomes, unwanted effects and service errors in local integration tests. It does not establish comprehensive fault detection or live Azure equivalence. Independently authored workloads and paired live-cloud measurements are the main next evidence requirements.
 
 \appendix
 \section{Artifact and reproduction record}
@@ -164,11 +248,22 @@ Source: \url{https://github.com/divine-ai-com/globalstack}. The draft, evidence,
 \input{evidence/provenance.tex}
 \normalsize
 
-\begin{thebibliography}{9}
+\section{Study artifact and claim boundaries}
+The new protocol is \path{study/PROTOCOL.md}. The retained \path{study/evidence/results.json} contains all 36 attempts and 108 episodes, with source revision, clean-tree status, source digests, Node version, and UTC timestamps. The runner is \path{scripts/e2e/run-flow-study.mjs}; \path{render-study.mjs} verifies retained traces and regenerates the comparison tables and figure. The native matrix and original eight-episode record retain their earlier provenance. The initial study is retained as \path{study/evidence/initial-results.json}; the renderer verifies that the corrected measurement record has the same check decisions. The checker study did not rerun native clients or use Azure credentials. The later claims case reruns Terraform separately; its traces, measured contract, known gaps and source digests are retained under \path{claims/}. The runnable source harness and Terraform inputs are included under \path{experiments/claims-evidence/}. The final three runs follow a Table insert correction; pre-fix and development runs are retained separately. \path{render-claims.mjs} recomputes the final decisions and boundary witnesses. The artifact includes the earlier development reports without pooling them into the final sample. A fresh-checkout rerun of the 108-episode checker study preserves all check vectors and is retained separately as \path{study/evidence/public-reproduction.json}. Native reproduction is also required in CI. These are implementer-led checks, not independent replication.
+
+Supported claims are execution of the listed native samples, sensitivity differences on the enumerated local faults, observed restoration and cleanup, and three repaired runtime defects. Unsupported claims include service-wide Azure parity, real-world fault prevalence, statistical generalization, superiority to other emulators, production security, and peer-reviewed acceptance. Before publication, the artifact also needs authorship, an independent reproduction or review, and a stable release matching the final manuscript.
+
+\begin{thebibliography}{99}
 \bibitem{quickstarts} Microsoft Azure. Azure Quickstart Templates. Pinned fixture revision and file digests are retained in the artifact. \url{https://github.com/Azure/azure-quickstart-templates}.
 \bibitem{expressions} Microsoft. Reference guide to functions in expressions for Azure Logic Apps and Power Automate. \url{https://learn.microsoft.com/en-us/azure/logic-apps/expression-functions-reference}. Accessed November 2026.
 \bibitem{azurite} Microsoft. Use the Azurite emulator for local Azure Storage development. \url{https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite}. Accessed November 2026.
 \bibitem{servicebus} Microsoft. Overview of the Azure Service Bus emulator. \url{https://learn.microsoft.com/en-us/azure/service-bus-messaging/overview-emulator}. Accessed November 2026.
 \bibitem{specs} Microsoft Azure. Azure REST API specifications. \url{https://github.com/Azure/azure-rest-api-specs}. Accessed November 2026.
+\bibitem{oracles} E. T. Barr, M. Harman, P. McMinn, M. Shahbaz, and S. Yoo. The Oracle Problem in Software Testing: A Survey. \emph{IEEE Transactions on Software Engineering}, 41(5):507--525, 2015. \url{https://doi.org/10.1109/TSE.2014.2372785}.
+\bibitem{mutation} G. Petrovi\'{c}, M. Ivankovi\'{c}, G. Fraser, and R. Just. Does mutation testing improve testing practices? 2021. \url{https://arxiv.org/abs/2103.07189}.
+\bibitem{differential} W. M. McKeeman. Differential Testing for Software. \emph{Digital Technical Journal}, 10(1):100--107, 1998. \url{https://www.cs.tufts.edu/comp/150FP/archive/bill-mckeeman/DifferentailTesting.pdf}.
+\bibitem{eventdelivery} Microsoft. Azure Event Grid message delivery and retry. \url{https://learn.microsoft.com/en-us/azure/event-grid/delivery-and-retry}. Accessed November 2026.
+\bibitem{eventvalidation} Microsoft. Endpoint validation with Event Grid event schema. \url{https://learn.microsoft.com/en-us/azure/event-grid/end-point-validation-event-grid-events-schema}. Accessed November 2026.
+\bibitem{tableerrors} Microsoft. Table Storage error codes. \url{https://learn.microsoft.com/en-us/rest/api/storageservices/table-service-error-codes}. Accessed November 2026.
 \end{thebibliography}
 \end{document}

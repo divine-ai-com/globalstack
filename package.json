@@ -107,7 +107,10 @@
     "test:repository": "node --test scripts/repository/*.test.mjs",
     "test:gcp:unit": "node --test gcp/tests/unit/*.test.mjs",
     "test:services:local": "node scripts/runtime/test-local-services.mjs",
-    "test:flows": "node scripts/e2e/cross-service-flows.mjs"
+    "test:flows": "node scripts/e2e/cross-service-flows.mjs",
+    "research:claims:build": "docker build --platform linux/amd64 -t globalstack/claims-terraform:1.17.1 experiments/claims-evidence",
+    "research:claims:test": "node --test experiments/claims-evidence/*.test.mjs",
+    "research:claims": "node experiments/claims-evidence/run.mjs"
   },
   "dependencies": {
     "@azure/service-bus": "^7.10.0",

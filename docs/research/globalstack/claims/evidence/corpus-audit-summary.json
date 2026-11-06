@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-04T20:59:25.778410+00:00",
+  "repository": "divine-ai-com/globalstack-verification",
+  "branch": "main",
+  "revision": "99d1b74cfbfd73a1ff9b0b248d892fd9a6d39e23",
+  "bundles": 50,
+  "distinctScenarioLabels": 35,
+  "platforms": {
+    "azure-pulumi-py": 5,
+    "azure-pulumi-ts": 30,
+    "azure-bicep": 5,
+    "azure-terraform-hcl": 5,
+    "azure-opentofu-hcl": 5
+  },
+  "freshUnitPassed": 50,
+  "freshFullLifecycleRuns": 0,
+  "sourceInventorySha256": "e427731daf15dbe407eead24afe72d01d6b1be6be03290a06703c1d281d859cf",
+  "sourceInventory": "refined/claims-evidence-v2/evidence/corpus-audit.json in the private corpus",
+  "scope": "Historical corpus audit; the zero lifecycle count is at audit time, before the later refined native case."
+}
