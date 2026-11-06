@@ -1,0 +1,165 @@
+{
+  "runUrl": "https://github.com/divine-ai-com/globalstack/actions/runs/42227509001",
+  "evaluatedHeadRevision": "15e1b0c",
+  "rawFindings": 26,
+  "newHarnessFindings": 7,
+  "findings": [
+    {
+      "rule": "js/file-access-to-http",
+      "file": "experiments/claims-evidence/terraform/test/claims-behavior.int.test.mjs",
+      "line": 47,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "experiments/claims-evidence/terraform/test/claims-behavior.int.test.mjs",
+      "line": 51,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "experiments/claims-evidence/terraform/test/claims-behavior.int.test.mjs",
+      "line": 53,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "experiments/claims-evidence/run.mjs",
+      "line": 87,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "gcp/src/auth/credentials.mjs",
+      "line": 128,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "gcp/src/google/rest-client.mjs",
+      "line": 48,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "gcp/src/google/rest-client.mjs",
+      "line": 52,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "gcp/tests/e2e/storage-capture-replay.test.mjs",
+      "line": 64,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "gcp/tests/e2e/storage-capture-replay.test.mjs",
+      "line": 90,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/bundle-generator/src/run-openai-azure-verified-bundles.mjs",
+      "line": 1136,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/conformance/src/azure-derived-local-expectations.test.mjs",
+      "line": 15,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/conformance/src/azure-derived-local-expectations.test.mjs",
+      "line": 42,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/conformance/src/azure-lifecycle-local-expectations.test.mjs",
+      "line": 14,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/conformance/src/azure-lifecycle-local-expectations.test.mjs",
+      "line": 41,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/conformance/src/upstream-templates.test.mjs",
+      "line": 56,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 5917,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/file-access-to-http",
+      "file": "scripts/runtime/local-demo.mjs",
+      "line": 27,
+      "securitySeverity": "6.5"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "experiments/claims-evidence/run.mjs",
+      "line": 39,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "experiments/claims-evidence/run.mjs",
+      "line": 40,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "experiments/claims-evidence/run.mjs",
+      "line": 195,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 6652,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "packages/bundle-generator/src/run-openai-azure-complex-pulumi-bundles.mjs",
+      "line": 6689,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "scripts/capture/capture-azure-storage-lifecycle.mjs",
+      "line": 293,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "scripts/capture/capture-azure-storage-data-plane.mjs",
+      "line": 425,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "scripts/capture/capture-azure-storage-data-plane.mjs",
+      "line": 426,
+      "securitySeverity": "6.3"
+    },
+    {
+      "rule": "js/http-to-file-access",
+      "file": "scripts/conformance/run-azure-api-conformance.mjs",
+      "line": 761,
+      "securitySeverity": "6.3"
+    }
+  ],
+  "disposition": "Reviewed intentional harness data flows remain visible. Observation redirects are rejected and tested. This is not an independent audit or compliance certification."
+}

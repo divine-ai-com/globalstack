@@ -15,11 +15,10 @@ The paper investigates what each observation layer establishes. It does not clai
 | Native client matrix | Nine reference configurations completed seven stages and cleanup | One sample per platform; historical snapshot |
 | Controlled checker comparison | 12 chosen faults across two flows, three repetitions, 108 episodes | First-party scenarios sharing one workflow engine |
 | Checker distinction | Management rejected 0/12 faults; workflow 2/12; arrival 5/12; exact intended outcome 10/12; exclusion of extra deliveries 12/12 | Sensitivity to selected faults, not population accuracy |
-| Corpus audit | 50 bundles, 35 scenario labels; all 50 source-unit checks reran successfully | Historical integration tests use two implementations that check management resources, not business events |
 | Refined native case | One Terraform claims scenario; three fresh runs, 12 passing positives and nine expected fault rejections; cleanup passed | One authored refinement, no external replication or live Azure pair |
 | Repaired discrepancy | Duplicate Table inserts now return 409 and preserve the original entity; final native reruns pass | Documentation-grounded correction with local regression evidence; not a live-Azure comparison |
 
-The [paper](paper.pdf), [fault-study protocol](study/PROTOCOL.md), [native case record](claims/README.md), and [readiness checklist](study/READINESS.md) provide the detailed scope. Each experiment retains its own denominator and revision. The private corpus audit and native harness require access; public artifact release remains pending. No new model-generation results are claimed.
+The [paper](paper.pdf), [fault-study protocol](study/PROTOCOL.md), [native case record](claims/README.md), and [readiness checklist](study/READINESS.md) provide the detailed scope. Each experiment retains its own denominator and revision. The native harness and refined scenario are included in this repository. Private corpus audit counts are excluded from the paper results because the broader corpus has not been released. No new model-generation results are claimed.
 
 ## Proposed questions for a supported study
 
@@ -33,7 +32,7 @@ Report agreements, disagreements, unsupported operations, infrastructure failure
 
 | Work package | Deliverable and completion criterion |
 |---|---|
-| Freeze the artifact | Review source licensing, publish the required refined source when authorized, pin revisions and dependencies, retain clean checks and machine-readable evidence. An external reader can obtain every required file. |
+| Freeze the artifact | Release the reviewed, self-contained source and evidence under a fixed version, with source digests, dependencies and reproduction instructions. An external reader can obtain every required file. |
 | Independent scenario selection | A collaborator selects three architecturally different scenarios before execution, using documented inclusion rules. Pin source, license, API versions and business contracts; retain exclusions and unsupported cases. Existing claims is a candidate, not a predetermined independent selection. |
 | Local fidelity preparation | Extend the corrected Table conflict tests into paired checks, implement worker deduplication and webhook validation, and define endpoint authentication and bounded observation. Preserve pre-fix evidence. |
 | Paired pilot | Proposed minimum: three scenarios × two targets × three repetitions = 18 lifecycle executions, forming nine local/Azure pairs. Each lifecycle contains connected, declared fault and restored episodes. Freeze the exact fault list and resulting episode budget before execution. This count is a proposal, not a completed result. |

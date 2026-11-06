@@ -1,0 +1,6 @@
+{
+  "injectedImageFailureRejected": true,
+  "temporaryFilesRemovedAfterFailure": true,
+  "existingDirectoryRejectedAndPreserved": true,
+  "scope": "Harness failure-path tests, not business-fault episodes"
+}

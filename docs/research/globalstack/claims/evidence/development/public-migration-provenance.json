@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "e81dfbb83cb1c94e999b0c93a25365135190e57d",
+  "scope": "Three fresh-clone repetitions of the self-contained public source. Same host and implementer, not independent reproduction.",
+  "sourceFiles": [
+    {
+      "path": "experiments/claims-evidence/CONTRACT.md",
+      "sha256": "b959e8fd9d3c2d8d18320d33dc30b74b12c6930fe6d231fd949fed7b5c3a2721"
+    },
+    {
+      "path": "experiments/claims-evidence/Dockerfile",
+      "sha256": "3b02d94b9f51afe0e7cda5b02e62db7d802e3e263b88cae7690cecd93fba8b4f"
+    },
+    {
+      "path": "experiments/claims-evidence/run.mjs",
+      "sha256": "851feedad082c35086b603d03b9870380b26a7fe65ce6d862b9137ef3fc42eb2"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/.terraform.lock.hcl",
+      "sha256": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/PROMPT.md",
+      "sha256": "4b61b84974d7cfcabcc6d96b9ac7908c1727a6499ed72f97c84e1d81c5e6b27b"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/main.tf",
+      "sha256": "ed07b69633c393114bd31f5063299d1a12a7a6ae883edc73a566ae77ccd90a09"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/outputs.tf",
+      "sha256": "143f0007680e07abacf53ac928c180f459c33eba79d0a6c1820212445068824e"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/provider.tf",
+      "sha256": "a5da155cd239acbb3b1ccfdd67bab3778462abc818e9b7e99e6bbafbd6dfad20"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/lib/variables.tf",
+      "sha256": "86b007502f1b1dad891d7be488991a80b00c614e4fd3e0c6ac0e08aca7b21326"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/metadata.json",
+      "sha256": "e24419a381f45d71e45d2617335b8d48f66c91880e42efb5b65736b01fa97002"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/test/claims-behavior.int.test.mjs",
+      "sha256": "ff1e14281404248f882c864e6598ca3bd4925a621708ce02cc3e77aabdfa2cd2"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/test/claims-outcome.mjs",
+      "sha256": "48f35c613a1dac5daea758f8d0ee96b11392559b804523f433d30a935dd3a2a3"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/test/terraform.int.test.py",
+      "sha256": "845043242cbf33914e1def6b1b3ac39f18dda36f9a50010b1c0a5089024662b6"
+    },
+    {
+      "path": "experiments/claims-evidence/terraform/test/terraform.unit.test.py",
+      "sha256": "730e29801738292773a2c7c0697d87185cbfbf37c4f434ed2eeea116a357345f"
+    },
+    {
+      "path": "experiments/claims-evidence/verify.mjs",
+      "sha256": "d945e5d6a7ca18ff8505286018262b857deab11ff2c25bfe532b44d7a9e74e91"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "42f9306b778feeb52c4bed13289970da1b22bcb587e0dfc1689d4027ec79d0e5"
+    }
+  ],
+  "reports": [
+    "public-1.json",
+    "public-2.json",
+    "public-3.json"
+  ],
+  "image": "hashicorp/terraform:1.17.1@sha256:8cffe811b97bb7db1b8aa14eff94b97f1095eb3394bdd03b3e916249c28091f5",
+  "privateRepositoryRequired": false,
+  "previousRuns": "final-1.json through final-3.json used the private harness and remain separately retained; no pooling."
+}

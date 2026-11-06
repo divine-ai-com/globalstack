@@ -25,3 +25,12 @@ test('the report verifier rejects broken evidence even when aggregate ok stays t
   assert.throws(() => verifyReports([]));
   assert.throws(() => verifyReports([report, report]), 'Repeated correlations cannot count as fresh repetitions');
 });
+
+test('the released bundle includes every provenance-listed input with its reviewed digest', async () => {
+  const { createHash } = await import('node:crypto');
+  const origin = JSON.parse(await readFile(new URL('./ORIGIN.json', import.meta.url)));
+  for (const entry of [...origin.unchangedBundleFiles, ...origin.modifiedBundleFiles]) {
+    const bytes = await readFile(new URL(entry.path, import.meta.url));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), entry.publicSha256 ?? entry.sha256);
+  }
+});

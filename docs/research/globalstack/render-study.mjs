@@ -57,7 +57,7 @@ for (let index = 0; index < record.attempts.length; index += 1) {
 const summary = summarizeFlowStudy(record.attempts);
 assert.deepEqual(record.summary, summary);
 assert.equal(summary.inconclusiveCases, 0);
-for (const filename of ['initial-results.json', 'setup-corrected-results.json']) {
+for (const filename of ['initial-results.json', 'setup-corrected-results.json', 'public-reproduction.json']) {
   const earlier = JSON.parse(await readFile(new URL(filename, root), 'utf8'));
   assert.deepEqual(earlier.summary, summarizeFlowStudy(earlier.attempts));
   assert.deepEqual(earlier.summary, summary, 'The measurement correction must not silently change results');

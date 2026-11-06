@@ -6,7 +6,11 @@ The draft describes a scoped local preview and a configuration-fault experiment.
 
 A separate [native claims case](claims/README.md) now connects Terraform provisioning to observed Event Grid, Blob, Queue and Table behavior. Three fresh runs contain 21 episodes, with all 12 positives passing and all nine deliberately faulty episodes rejected. The case also exposed a Table insert defect that was corrected and rerun; it remains local evidence. The [research collaboration brief](RESEARCH-SUPPORT.md) specifies the next experiments and support needs.
 
+The [self-contained native experiment](../../../experiments/claims-evidence/README.md) now runs from this repository without private corpus access. Its reproduction is required by CI. The final public-source sample and older runs remain separate.
+
 The current research gap is evidence breadth, not a larger compatibility claim. Read the [research readiness checklist](study/READINESS.md) before describing the draft as ready for submission.
+
+The [artifact guide](ARTIFACT.md) provides the fixed checkout, reproduction commands and a claim-to-evidence map.
 
 ## Evidence
 

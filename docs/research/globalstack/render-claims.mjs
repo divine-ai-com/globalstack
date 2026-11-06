@@ -4,6 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { verifyReports } from '../../../experiments/claims-evidence/verify.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), 'claims/evidence');
 const read = async name => JSON.parse(await readFile(resolve(root, name), 'utf8'));
@@ -89,6 +90,23 @@ for (const name of provenance.retainedRuns) {
   summary.repetitions++;
   summary.minimumFreeGiB = Math.min(summary.minimumFreeGiB, report.minimumFreeGiB);
 }
+// The public sample supersedes the private-harness sample without pooling observations.
+const publicProvenance = await read('public-provenance.json');
+for (const source of publicProvenance.sourceFiles) {
+  const bytes = await readFile(resolve(root, '../../../../..', source.path));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), source.sha256);
+}
+const publicReports = await Promise.all(publicProvenance.reports.map(read));
+for (const report of publicReports) assert.equal(report.sourceRevision, publicProvenance.sourceRevision);
+const publicSummary = verifyReports(publicReports);
+for (const key of ['repetitions', 'episodes', 'positiveEpisodes', 'rejectedFaultEpisodes', 'distinctFaults']) {
+  assert.equal(publicSummary[key], summary[key], `Public migration changed ${key}`);
+}
+Object.assign(summary, publicSummary);
+const ciSummary = verifyReports([await read('ci-reproduction.json')]);
+assert.equal(ciSummary.episodes, 7);
+assert.equal(ciSummary.positiveEpisodes, 4);
+assert.equal(ciSummary.rejectedFaultEpisodes, 3);
 const macros = Object.entries({ ClaimsRepetitions: summary.repetitions, ClaimsEpisodes: summary.episodes,
   ClaimsPositives: summary.positiveEpisodes, ClaimsFaultEpisodes: summary.rejectedFaultEpisodes,
   ClaimsDistinctFaults: summary.distinctFaults, ClaimsMinimumFree: summary.minimumFreeGiB.toFixed(2) })

@@ -44,8 +44,10 @@ Items 1 and 2 are the preferred low-cost next steps. Item 3 is necessary for emp
 - [ ] Obtain and retain an independent reproduction report.
 - [ ] Add author names, affiliations, contribution agreement, and the chosen paper license.
 - [ ] Review the final PDF, references, formulas, and generated results against one frozen artifact.
-- [ ] Make the refined private-corpus source available with reviewed licensing and reproduction instructions.
-- [ ] Tag that exact artifact and archive it with a persistent identifier when publication is authorized.
+- [x] Include the refined source, provenance and reproduction instructions in the public project.
+- [x] Rerun the native case and checker study from a clean Git checkout with no private repository dependency.
+- [x] Require native reproduction in CI and review new static-analysis comments.
+- [ ] Archive the reviewed research tag with a persistent scholarly identifier before the final paper release. The source-preview tag does not replace a scholarly deposit.
 - [ ] Select a venue/category based on the final evidence and check its requirements.
 
 There is no submission or acceptance claim. A larger test count is not a substitute for independent evidence, and a complete mutation score on a purposive suite is not a compatibility percentage.

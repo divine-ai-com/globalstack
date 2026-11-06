@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 2,
+  "nodeVersion": "v22.23.3",
+  "platform": "linux",
+  "architecture": "x64",
+  "recordedAt": "2026-11-06T13:38:28.940Z",
+  "sourceRevision": "e81dfbb83cb1c94e999b0c93a25365135190e57d",
+  "productRevision": "e81dfbb83cb1c94e999b0c93a25365135190e57d",
+  "sourceDirty": false,
+  "productDirty": false,
+  "stages": [
+    {
+      "label": "certificate",
+      "exitCode": 0,
+      "log": "01-certificate.log"
+    }
+  ],
+  "episodes": [],
+  "cleanup": {},
+  "error": {
+    "name": "Error",
+    "message": "Command failed: docker image inspect globalstack/claims-terraform:1.17.1\nintentional unavailable image for cleanup verification\n"
+  },
+  "scope": "One refined Terraform configuration; local reference HTTP worker; no Azure deployment or model call",
+  "limits": [
+    "Synthetic local identity; no RBAC or live Azure fidelity claim",
+    "Synchronous delivery interval; no delayed duplicate or retry guarantee",
+    "Service Bus, Event Hubs, Files and App Configuration are provisioned but outside the event path",
+    "Not the historical seven-stage shipment runner"
+  ],
+  "minimumFreeGiB": 110.34059143066406,
+  "localFilesRemoved": true,
+  "completedAt": "2026-11-06T13:38:29.149Z",
+  "ok": false
+}
