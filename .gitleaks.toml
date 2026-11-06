@@ -20,7 +20,7 @@ description = "Synthetic event row identifiers in attempt-1.json"
 condition = "AND"
 regexTarget = "match"
 paths = ['''^docs/research/globalstack/claims/evidence/development/attempt\-1\.json$''']
-regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:037c9f77-1b5f-44f0-955b-f8c09a1eadd5|23b16555-8064-4945-8202-fda69ab9557e|a9c1c1b9-4fd2-448a-9697-4061db75cd82|b770253a-56d2-48e9-8fb4-6033c7748d1d|df5e1c92-d058-450e-b0ed-6b1313d203d5)["']$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:037c9f77-1b5f-44f0-955b-f8c09a1eadd5|23b16555-8064-4945-8202-fda69ab9557e|a9c1c1b9-4fd2-448a-9697-4061db75cd82|b770253a-56d2-48e9-8fb4-6033c7748d1d|df5e1c92-d058-450e-b0ed-6b1313d203d5|997281b0-183b-42db-91db-8964cc8dcb26|cbaa637f-2a53-4906-8cfd-e95909a2b779)["']$''']
 
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]
@@ -60,7 +60,7 @@ description = "Synthetic event row identifiers in repeat-1.json"
 condition = "AND"
 regexTarget = "match"
 paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-1\.json$''']
-regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:11765e11-6660-4f54-b795-08e146ca09a5|4b8f2b13-eb5d-4127-9182-694346bcc06e|5b990ba7-4a69-47c0-806b-6669af2a513b|7d20e051-8521-4276-a148-267f7c5c6148|be9bfaa9-9aea-4de1-a268-be9902820ec1)["']$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:11765e11-6660-4f54-b795-08e146ca09a5|4b8f2b13-eb5d-4127-9182-694346bcc06e|5b990ba7-4a69-47c0-806b-6669af2a513b|7d20e051-8521-4276-a148-267f7c5c6148|be9bfaa9-9aea-4de1-a268-be9902820ec1|73c8c2c0-5363-4d21-aacf-c027c65068f4|b3beb236-070b-4fd9-8acd-1f9cdfec93ed)["']$''']
 
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]
@@ -68,7 +68,7 @@ description = "Synthetic event row identifiers in repeat-2.json"
 condition = "AND"
 regexTarget = "match"
 paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-2\.json$''']
-regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:051c1300-3b7b-465c-b9d8-b17c984b6e3a|2151de96-6011-4bc4-928d-c8c0e3f0b11d|61f9fc8f-8cde-49ef-9f47-c6c179a717a3|a75ff8be-a3ca-453e-abbe-96457d1792c9|bd1464ab-3c63-497a-92b9-9e2753b604c3)["']$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:051c1300-3b7b-465c-b9d8-b17c984b6e3a|2151de96-6011-4bc4-928d-c8c0e3f0b11d|61f9fc8f-8cde-49ef-9f47-c6c179a717a3|a75ff8be-a3ca-453e-abbe-96457d1792c9|bd1464ab-3c63-497a-92b9-9e2753b604c3|59cb8028-4e10-4228-b865-0da70e4665a4|5e3ffac0-c95e-4f1f-a09c-bcf4f9d97581)["']$''']
 
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]
@@ -76,7 +76,7 @@ description = "Synthetic event row identifiers in repeat-3.json"
 condition = "AND"
 regexTarget = "match"
 paths = ['''^docs/research/globalstack/claims/evidence/development/repeat\-3\.json$''']
-regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:c157cb52-d152-440e-84ba-0356bc6b0aba|eea95636-a0f2-4d90-863b-2881ea547284|ef448d82-4b85-4be0-8b87-166f78e7ae95|f76eb1f4-1c4d-470a-b1ee-a2fb11808a79|faa12b6f-3aff-4521-a70a-9dda058e9d09)["']$''']
+regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:c157cb52-d152-440e-84ba-0356bc6b0aba|eea95636-a0f2-4d90-863b-2881ea547284|ef448d82-4b85-4be0-8b87-166f78e7ae95|f76eb1f4-1c4d-470a-b1ee-a2fb11808a79|faa12b6f-3aff-4521-a70a-9dda058e9d09|fe05643d-994f-4511-ac26-a7f3a02cb24f)["']$''']
 
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]

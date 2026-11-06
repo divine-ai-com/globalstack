@@ -32,4 +32,19 @@ for (const [path, contents, expected] of cases) {
     assert.equal(result.status, expected, `Secret-scan boundary failed for ${path}: ${result.stderr}`);
   } finally { await rm(directory, { recursive: true, force: true }); }
 }
-console.log('Six secret-scan boundaries verified: known fixtures pass; new values, fields and paths remain detected.');
+const snapshot = await mkdtemp(join(tmpdir(), 'research-snapshot-'));
+try {
+  // Scan committed fixture contents without commit-specific fingerprint exceptions.
+  const listing = spawnSync('git', ['ls-files', 'docs/research/globalstack/claims/evidence'], { cwd: repo, encoding: 'utf8' });
+  assert.equal(listing.status, 0);
+  const files = listing.stdout.trim().split('\n').filter(path => path.endsWith('.json'));
+  assert.ok(files.length > 0);
+  for (const path of files) {
+    const target = resolve(snapshot, path);
+    await mkdir(dirname(target), { recursive: true });
+    await writeFile(target, await readFile(resolve(repo, path)));
+  }
+  const result = spawnSync(binary, ['dir', '.', '--config', config, '--redact=100', '--no-banner'], { cwd: snapshot, encoding: 'utf8', timeout: 30000 });
+  assert.equal(result.status, 0, `Committed research snapshot failed: ${result.stderr}`);
+} finally { await rm(snapshot, { recursive: true, force: true }); }
+console.log('Research snapshot and six secret-scan boundaries verified: known fixtures pass; new values, fields and paths remain detected.');
