@@ -10,6 +10,15 @@
     "azure": 21
   },
   "completePilot": false,
+  "missingCapture": {
+    "local": [
+      "plan-drift",
+      "apply-repair",
+      "import",
+      "plan-imported"
+    ],
+    "azure": []
+  },
   "pairedExchanges": 9,
   "unmatchedExchanges": 14,
   "exchangesWithDifferences": 9,
@@ -132,6 +141,147 @@
         {
           "phase": "destroy",
           "exitCode": 1
+        }
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "operation": "preflight GET",
+      "differences": [
+        {
+          "path": "/body/error/message",
+          "local": "Resource group <group> was not found.",
+          "azure": "Resource group '<group>' could not be found."
+        },
+        {
+          "path": "/body/error/details",
+          "local": [],
+          "azure": {
+            "missing": true
+          }
+        }
+      ]
+    },
+    {
+      "operation": "read-update GET",
+      "differences": [
+        {
+          "path": "/body/globalstack",
+          "local": {
+            "supportLevel": "globalstack-facade",
+            "capabilityId": "resource-groups",
+            "emulationDepth": "metadata-only-control-plane",
+            "realAzureApiComplete": false,
+            "cloudValidated": false
+          },
+          "azure": {
+            "missing": true
+          }
+        }
+      ]
+    },
+    {
+      "operation": "inject-drift PATCH",
+      "differences": [
+        {
+          "path": "/status",
+          "local": 404,
+          "azure": 200
+        },
+        {
+          "path": "/body/error",
+          "local": {
+            "code": "GlobalStackRouteNotImplemented",
+            "message": "No GlobalStack Azure route handles PATCH /subscriptions/<subscription>/resourcegroups/<group>.",
+            "details": [
+              {
+                "code": "ExplicitGap",
+                "message": "Add this route through the capability registry and conformance tests before claiming support."
+              }
+            ]
+          },
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/body/id",
+          "local": {
+            "missing": true
+          },
+          "azure": "/subscriptions/<subscription>/resourceGroups/<group>"
+        },
+        {
+          "path": "/body/name",
+          "local": {
+            "missing": true
+          },
+          "azure": "<group>"
+        },
+        {
+          "path": "/body/type",
+          "local": {
+            "missing": true
+          },
+          "azure": "Microsoft.Resources/resourceGroups"
+        },
+        {
+          "path": "/body/location",
+          "local": {
+            "missing": true
+          },
+          "azure": "eastus"
+        },
+        {
+          "path": "/body/tags",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "expires": "<expiry>",
+            "project": "globalstack-paired-lifecycle",
+            "revision": "external",
+            "run": "<run>"
+          }
+        },
+        {
+          "path": "/body/properties",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "provisioningState": "Succeeded"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "read-repair GET",
+      "differences": [
+        {
+          "path": "",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "status": 200,
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          }
         }
       ]
     }

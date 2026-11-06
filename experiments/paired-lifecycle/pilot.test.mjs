@@ -111,3 +111,16 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('aggregate success cannot hide missing capture, failed cleanup or an incorrect native exit code', async () => {
+  const original = JSON.parse(await readFile(new URL('./evidence/corrected.json', import.meta.url), 'utf8'));
+  assert.equal(compare(original).completePilot, true);
+  for (const alter of [
+    report => { report.targets[0].traces = []; },
+    report => { report.targets[1].cleanup.absent = false; },
+    report => { report.targets[1].phases.find(phase => phase.phase === 'plan-drift').exitCode = 0; },
+  ]) {
+    const changed = structuredClone(original); alter(changed);
+    assert.equal(compare(changed).completePilot, false);
+  }
+});

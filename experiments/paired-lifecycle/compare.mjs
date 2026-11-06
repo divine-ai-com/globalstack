@@ -21,6 +21,11 @@ export function compare(report) {
   const azure = report.targets.find(target => target.name === 'azure');
   assert.ok(local && azure, 'A comparison requires both targets, including failed attempts');
   assert.deepEqual(local.source, azure.source, 'Source hashes differ');
+  const expectedPhases = { version: 0, format: 0, init: 0, validate: 0, 'plan-create': 2, 'apply-create': 0, 'plan-stable': 0, refresh: 0, 'plan-update': 2, 'apply-update': 0, 'plan-drift': 2, 'apply-repair': 0, 'state-remove': 0, import: 0, 'plan-imported': 0, destroy: 0 };
+  const lifecycleComplete = target => target.ok && target.sourceUnchanged
+    && target.cleanup?.nativeDestroy === true && target.cleanup?.absent === true && target.cleanup?.privateFilesRemoved === true
+    && target.phases.length === Object.keys(expectedPhases).length
+    && Object.entries(expectedPhases).every(([name, code], index) => target.phases[index]?.phase === name && target.phases[index]?.exitCode === code && target.phases[index]?.timedOut === false);
   const expectedObserved = ['apply-create', 'plan-stable', 'refresh', 'plan-update', 'apply-update', 'plan-drift', 'apply-repair', 'import', 'plan-imported', 'destroy'];
   const coverage = target => expectedObserved.filter(phase => !target.traces.some(event => event.phase === phase && event.request && event.response && !event.blocked && !event.transportError));
   const missingCapture = { local: coverage(local), azure: coverage(azure) };
@@ -50,9 +55,9 @@ export function compare(report) {
     }
   }
   return {
-    schemaVersion: 1, source: report.source, lifecyclePassed: local.ok && azure.ok,
+    schemaVersion: 1, source: report.source, lifecyclePassed: !!(lifecycleComplete(local) && lifecycleComplete(azure)),
     traceCounts: { local: local.traces.length, azure: azure.traces.length },
-    completePilot: local.ok && azure.ok && local.sourceUnchanged && azure.sourceUnchanged && !missingCapture.local.length && !missingCapture.azure.length,
+    completePilot: !!(lifecycleComplete(local) && lifecycleComplete(azure) && !missingCapture.local.length && !missingCapture.azure.length),
     missingCapture,
     pairedExchanges: exchanges.filter(item => !item.unmatched).length,
     unmatchedExchanges: exchanges.filter(item => item.unmatched).length,

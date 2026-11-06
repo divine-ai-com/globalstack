@@ -30,9 +30,18 @@ The runner prints a unique ignored report directory. It refuses reuse. To compar
 node experiments/paired-lifecycle/compare.mjs /absolute/run/result.json /absolute/run/comparison.json
 ```
 
+The separate crash test intentionally terminates its controller after Azure creation. Keep the same authorized environment variables, run the following command, expect exit 137, and then verify recovery using the printed directory:
+
+```bash
+node experiments/paired-lifecycle/run.mjs --target=azure --fault=parent-exit-after-create
+node experiments/paired-lifecycle/verify-recovery.mjs /absolute/run/directory
+```
+
+This is a recovery experiment, not a successful native deployment lifecycle. Its verifier waits for the watchdog result, independently checks absence and removes the private working files. If watchdog cleanup failed, the verifier attempts the same scoped cleanup and records recovery failure even if that later fallback succeeds.
+
 ## Observation boundaries
 
-The unchanged native provider uses the normal Azure management hostname. An external HTTPS CONNECT observer routes its ARM calls to the chosen target and records sanitized requests and responses. A run-specific certificate is trusted only by the tool container. Response bytes are forwarded unchanged; differences are not rewritten into compatibility. Only `management.azure.com:443` may be tunneled. Provider initialization downloads occur outside capture.
+The unchanged native provider uses the normal Azure management hostname. An external HTTPS CONNECT observer routes its ARM calls to the chosen target and records sanitized method, path, status, JSON bodies and selected headers. Selected request headers cover content type, conditional writes and tool identity; selected response headers cover content type, operation polling, ETags, request/correlation IDs and remaining subscription writes. This initial observer does not archive every HTTP header. A run-specific certificate is trusted only by the tool container. Response bytes are forwarded unchanged; differences are not rewritten into compatibility. Only `management.azure.com:443` may be tunneled. Provider initialization downloads occur outside capture.
 
 An external credential adapter supplies the local synthetic identity or an already acquired Azure CLI token. Token acquisition and Entra behavior are not compared by this pilot. The source has no target switch, emulator resource or disabled schema validation. Ordinary deployment inputs differ outside the source. Native ARM traces and explicit drift/read-back probes are recorded separately.
 
@@ -45,3 +54,5 @@ Destruction runs after success and failure. A separate watchdog stops the owned 
 The runner verifies absence before removing tokens, certificates, working providers and state. If cleanup cannot be established, it preserves the private recovery manifest and stops further targets. A host outage can interrupt the watchdog too; recover from that manifest before another live run. Do not archive the `private` directory. Only reviewed `result.json`, `comparison.json` and sanitized logs are candidates for publication.
 
 Preserve failed observations and source revisions when correcting a discrepancy. New results do not replace the released paper sample or establish broad Azure compatibility.
+
+See [the first pilot findings](FINDINGS.md) and [the security review](../../docs/product/SECURITY-FINDINGS-2026-11-07.md). Recompute the retained comparisons with `node experiments/paired-lifecycle/verify-evidence.mjs`.
