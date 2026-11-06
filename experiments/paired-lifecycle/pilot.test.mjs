@@ -8,6 +8,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { removeOwnedGroup } from './cleanup.mjs';
 import { compare } from './compare.mjs';
+import { gzipSync, deflateSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 
 const subscription = '00000000-0000-0000-0000-000000000000';
 const group = 'gs-pair-123456789abc';
@@ -77,11 +79,15 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
   const raw = '{"properties":{"provisioningState":"Succeeded"},"tags":{"revision":"two"}}';
   const polling = `/subscriptions/${subscription}/operationresults/opaque-job?api-version=2021-04-01&s=synthetic-signature`;
   const incoming = [], traces = [];
+  const expanded = JSON.stringify({ value: 'x'.repeat(1048576) });
+  const compressed = { gzip: gzipSync(expanded), deflate: deflateSync(expanded) };
   const server = http.createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
     incoming.push({ method: req.method, path: req.url, body, host: req.headers.host, protocol: req.headers['x-forwarded-proto'] });
     if (req.method === 'DELETE') { res.writeHead(202, { location: `https://management.azure.com${polling}` }).end(); return; }
     if (req.url === polling) { res.writeHead(204).end(); return; }
+    const encoding = new URL(req.url, 'https://management.azure.com').searchParams.get('encoding');
+    if (compressed[encoding]) { res.writeHead(200, { 'content-type': 'application/json', 'content-encoding': encoding }).end(compressed[encoding]); return; }
     res.writeHead(201, { 'content-type': 'application/json', 'retry-after': '3' }).end(raw);
   });
   let observer;
@@ -106,6 +112,11 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
     await call(polling, 'GET');
     assert.equal(incoming.at(-1).path, polling); assert.equal(traces.at(-1).status, 204);
     assert.ok(!JSON.stringify(traces).includes('synthetic-signature'));
+    for (const encoding of ['gzip', 'deflate']) {
+      await call(`${path}?encoding=${encoding}`, 'GET');
+      assert.deepEqual(traces.at(-1).response.body, { unparsedBytes: compressed[encoding].length, sha256: createHash('sha256').update(compressed[encoding]).digest('hex') });
+      assert.equal(traces.at(-1).transportError, undefined);
+    }
   } finally {
     if (observer) await observer.close();
     server.closeAllConnections(); await new Promise(resolve => server.close(resolve));

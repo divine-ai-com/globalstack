@@ -5,8 +5,10 @@ import { pathToFileURL } from 'node:url';
 import { removeOwnedGroup } from '../paired-lifecycle/cleanup.mjs';
 
 export async function cleanup(manifest, observe = () => {}) {
-  const result = await removeOwnedGroup(manifest, observe);
-  if (!manifest.templateDeployment) return result;
+  assert.match(manifest.subscription, /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i);
+  assert.match(manifest.runId, /^[a-f0-9]{12}$/);
+  assert.equal(manifest.group, `gs-pair-${manifest.runId}`);
+  if (!manifest.templateDeployment) return removeOwnedGroup(manifest, observe);
   const url = `https://management.azure.com/subscriptions/${manifest.subscription}/providers/Microsoft.Resources/deployments/${manifest.group}?api-version=2022-09-01`;
   const request = async method => {
     const startedAt = new Date().toISOString();
@@ -15,12 +17,21 @@ export async function cleanup(manifest, observe = () => {}) {
     observe({ phase: 'cleanup-deployment', method, path: new URL(url).pathname + new URL(url).search, status: response.status, body, startedAt, completedAt: new Date().toISOString() });
     return response;
   };
-  const found = await request('GET');
-  if (found.status !== 404) {
-    assert.equal(found.status, 200);
-    const body = await found.json();
+  let found = await request('GET');
+  const terminalDeadline = Date.now() + 120000;
+  // An active ARM deployment can recreate a group after its deletion.
+  while (found.status !== 404) {
+    assert.equal(found.status, 200, 'Cleanup could not read the deployment');
+    const body = await found.clone().json();
     assert.equal(body.properties?.parameters?.runId?.value, manifest.runId, 'Deployment ownership mismatch');
     assert.equal(body.properties?.parameters?.groupName?.value, manifest.group, 'Deployment group mismatch');
+    if (['Succeeded', 'Failed', 'Canceled'].includes(body.properties?.provisioningState)) break;
+    assert.ok(Date.now() < terminalDeadline, 'Deployment is still active; retain recovery context before deleting resources');
+    await new Promise(done => setTimeout(done, 2000));
+    found = await request('GET');
+  }
+  const result = await removeOwnedGroup(manifest, observe);
+  if (found.status !== 404) {
     const removed = await request('DELETE');
     assert.ok([200, 202, 204, 404].includes(removed.status));
     const deadline = Date.now() + 120000;

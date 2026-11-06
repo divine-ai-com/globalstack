@@ -30,8 +30,8 @@ export function permitted(method, path, groupPath, pollPaths = new Set()) {
 
 function parseBody(bytes, headers) {
   try {
-    if (headers['content-encoding'] === 'gzip') bytes = gunzipSync(bytes);
-    if (headers['content-encoding'] === 'deflate') bytes = inflateSync(bytes);
+    if (headers['content-encoding'] === 'gzip') bytes = gunzipSync(bytes, { maxOutputLength: 1048576 });
+    if (headers['content-encoding'] === 'deflate') bytes = inflateSync(bytes, { maxOutputLength: 1048576 });
     const text = bytes.toString();
     return text ? JSON.parse(text) : null;
   } catch { return { unparsedBytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') }; }
