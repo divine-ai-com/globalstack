@@ -1,0 +1,1238 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-terraform-hcl",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:42:55.627Z",
+  "revision": "7192faabe735d8c4f4b99bc0cb4c52c27a69f748",
+  "sourceDirty": false,
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "source": {
+    ".terraform.lock.hcl": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6",
+    "main.tf": "8f0f11938ecac9b2d21831c815e2b9377379659adb3de41a20cf61a0cbf75e85"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "terraform",
+            "version",
+            "-json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:42:56.861Z",
+          "completedAt": "2026-11-06T21:42:58.811Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"format_version\": \"1.0\",\n  \"terraform_version\": \"1.17.1\",\n  \"platform\": \"linux_amd64\",\n  \"provider_selections\": {\n    \"registry.terraform.io/azure/azapi\": \"2.13.0\"\n  },\n  \"terraform_outdated\": false\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "format",
+          "command": [
+            "terraform",
+            "fmt",
+            "-check"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:42:58.813Z",
+          "completedAt": "2026-11-06T21:42:59.861Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "init",
+          "command": [
+            "terraform",
+            "init",
+            "-input=false",
+            "-lockfile=readonly",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:42:59.873Z",
+          "completedAt": "2026-11-06T21:43:20.610Z",
+          "exitCode": 0,
+          "stdout": "Initializing the backend...\n\nInitializing provider plugins...\n- Reusing version 2.13.0 of azure/azapi from the dependency lock file\n- Installing azure/azapi v2.13.0...\n- Installed azure/azapi v2.13.0 (signed by a HashiCorp partner, key ID 6F0B91BDE98478CF)\nPartner and community providers are signed by their developers.\nIf you'd like to know more about provider signing, you can read about it here:\nhttps://developer.hashicorp.com/terraform/cli/plugins/signing\n\nTerraform has been successfully initialized!\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "validate",
+          "command": [
+            "terraform",
+            "validate",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:43:20.614Z",
+          "completedAt": "2026-11-06T21:43:26.693Z",
+          "exitCode": 0,
+          "stdout": "Success! The configuration is valid.\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "plan-create",
+          "command": [
+            "terraform",
+            "plan",
+            "-input=false",
+            "-no-color",
+            "-detailed-exitcode"
+          ],
+          "expectedExitCodes": [
+            2
+          ],
+          "startedAt": "2026-11-06T21:43:26.696Z",
+          "completedAt": "2026-11-06T21:43:33.861Z",
+          "exitCode": 2,
+          "stdout": "\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  + create\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be created\n  + resource \"azapi_resource\" \"group\" {\n      + body                      = {}\n      + id                        = (known after apply)\n      + ignore_body_changes       = (write-only attribute)\n      + ignore_casing             = false\n      + ignore_missing_property   = true\n      + ignore_null_property      = false\n      + location                  = \"eastus\"\n      + name                      = \"<group>\"\n      + output                    = (known after apply)\n      + parent_id                 = \"/subscriptions/<subscription>\"\n      + schema_validation_enabled = true\n      + sensitive_body            = (write-only attribute)\n      + tags                      = {\n          + \"expires\"  = \"<expiry>\"\n          + \"project\"  = \"globalstack-paired-lifecycle\"\n          + \"revision\" = \"one\"\n          + \"run\"      = \"<run>\"\n        }\n      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n    }\n\nPlan: 1 to add, 0 to change, 0 to destroy.\n\nChanges to Outputs:\n  + group_id = (known after apply)\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-create",
+          "command": [
+            "terraform",
+            "apply",
+            "-auto-approve",
+            "-input=false",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:43:33.863Z",
+          "completedAt": "2026-11-06T21:43:42.433Z",
+          "exitCode": 0,
+          "stdout": "\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  + create\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be created\n  + resource \"azapi_resource\" \"group\" {\n      + body                      = {}\n      + id                        = (known after apply)\n      + ignore_body_changes       = (write-only attribute)\n      + ignore_casing             = false\n      + ignore_missing_property   = true\n      + ignore_null_property      = false\n      + location                  = \"eastus\"\n      + name                      = \"<group>\"\n      + output                    = (known after apply)\n      + parent_id                 = \"/subscriptions/<subscription>\"\n      + schema_validation_enabled = true\n      + sensitive_body            = (write-only attribute)\n      + tags                      = {\n          + \"expires\"  = \"<expiry>\"\n          + \"project\"  = \"globalstack-paired-lifecycle\"\n          + \"revision\" = \"one\"\n          + \"run\"      = \"<run>\"\n        }\n      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n    }\n\nPlan: 1 to add, 0 to change, 0 to destroy.\n\nChanges to Outputs:\n  + group_id = (known after apply)\nazapi_resource.group: Creating...\nazapi_resource.group: Creation complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nApply complete! Resources: 1 added, 0 changed, 0 destroyed.\n\nOutputs:\n\ngroup_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "plan-stable",
+          "command": [
+            "terraform",
+            "plan",
+            "-input=false",
+            "-no-color",
+            "-detailed-exitcode"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:43:42.452Z",
+          "completedAt": "2026-11-06T21:43:49.660Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nNo changes. Your infrastructure matches the configuration.\n\nTerraform has compared your real infrastructure against your configuration\nand found no differences, so no changes are needed.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "refresh",
+          "command": [
+            "terraform",
+            "apply",
+            "-refresh-only",
+            "-auto-approve",
+            "-input=false",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:43:49.662Z",
+          "completedAt": "2026-11-06T21:43:57.742Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nNo changes. Your infrastructure still matches the configuration.\n\nTerraform has checked that the real remote objects still match the result of\nyour most recent changes, and found no differences.\n\nApply complete! Resources: 0 added, 0 changed, 0 destroyed.\n\nOutputs:\n\ngroup_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "plan-update",
+          "command": [
+            "terraform",
+            "plan",
+            "-input=false",
+            "-no-color",
+            "-detailed-exitcode"
+          ],
+          "expectedExitCodes": [
+            2
+          ],
+          "startedAt": "2026-11-06T21:43:57.744Z",
+          "completedAt": "2026-11-06T21:44:05.849Z",
+          "exitCode": 2,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  ~ update in-place\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be updated in-place\n  ~ resource \"azapi_resource\" \"group\" {\n        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n        name                      = \"<group>\"\n      ~ output                    = {\n          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n          - properties = {\n              - provisioningState = \"Succeeded\"\n            }\n          - tags       = {\n              - expires  = \"<expiry>\"\n              - project  = \"globalstack-paired-lifecycle\"\n              - revision = \"one\"\n              - run      = \"<run>\"\n            }\n          - type       = \"Microsoft.Resources/resourceGroups\"\n        } -> (known after apply)\n      ~ tags                      = {\n            \"expires\"  = \"<expiry>\"\n            \"project\"  = \"globalstack-paired-lifecycle\"\n          ~ \"revision\" = \"one\" -> \"two\"\n            \"run\"      = \"<run>\"\n        }\n        # (10 unchanged attributes hidden)\n    }\n\nPlan: 0 to add, 1 to change, 0 to destroy.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-update",
+          "command": [
+            "terraform",
+            "apply",
+            "-auto-approve",
+            "-input=false",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:05.854Z",
+          "completedAt": "2026-11-06T21:44:15.194Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  ~ update in-place\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be updated in-place\n  ~ resource \"azapi_resource\" \"group\" {\n        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n        name                      = \"<group>\"\n      ~ output                    = {\n          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n          - properties = {\n              - provisioningState = \"Succeeded\"\n            }\n          - tags       = {\n              - expires  = \"<expiry>\"\n              - project  = \"globalstack-paired-lifecycle\"\n              - revision = \"one\"\n              - run      = \"<run>\"\n            }\n          - type       = \"Microsoft.Resources/resourceGroups\"\n        } -> (known after apply)\n      ~ tags                      = {\n            \"expires\"  = \"<expiry>\"\n            \"project\"  = \"globalstack-paired-lifecycle\"\n          ~ \"revision\" = \"one\" -> \"two\"\n            \"run\"      = \"<run>\"\n        }\n        # (10 unchanged attributes hidden)\n    }\n\nPlan: 0 to add, 1 to change, 0 to destroy.\nazapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\nazapi_resource.group: Modifications complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nApply complete! Resources: 0 added, 1 changed, 0 destroyed.\n\nOutputs:\n\ngroup_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "plan-drift",
+          "command": [
+            "terraform",
+            "plan",
+            "-input=false",
+            "-no-color",
+            "-detailed-exitcode"
+          ],
+          "expectedExitCodes": [
+            2
+          ],
+          "startedAt": "2026-11-06T21:44:15.211Z",
+          "completedAt": "2026-11-06T21:44:18.895Z",
+          "exitCode": 2,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  ~ update in-place\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be updated in-place\n  ~ resource \"azapi_resource\" \"group\" {\n        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n        name                      = \"<group>\"\n      ~ output                    = {\n          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n          - properties = {\n              - provisioningState = \"Succeeded\"\n            }\n          - tags       = {\n              - expires  = \"<expiry>\"\n              - project  = \"globalstack-paired-lifecycle\"\n              - revision = \"external\"\n              - run      = \"<run>\"\n            }\n          - type       = \"Microsoft.Resources/resourceGroups\"\n        } -> (known after apply)\n      ~ tags                      = {\n            \"expires\"  = \"<expiry>\"\n            \"project\"  = \"globalstack-paired-lifecycle\"\n          ~ \"revision\" = \"external\" -> \"two\"\n            \"run\"      = \"<run>\"\n        }\n        # (10 unchanged attributes hidden)\n    }\n\nPlan: 0 to add, 1 to change, 0 to destroy.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-repair",
+          "command": [
+            "terraform",
+            "apply",
+            "-auto-approve",
+            "-input=false",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:18.896Z",
+          "completedAt": "2026-11-06T21:44:22.983Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  ~ update in-place\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be updated in-place\n  ~ resource \"azapi_resource\" \"group\" {\n        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n        name                      = \"<group>\"\n      ~ output                    = {\n          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n          - properties = {\n              - provisioningState = \"Succeeded\"\n            }\n          - tags       = {\n              - expires  = \"<expiry>\"\n              - project  = \"globalstack-paired-lifecycle\"\n              - revision = \"external\"\n              - run      = \"<run>\"\n            }\n          - type       = \"Microsoft.Resources/resourceGroups\"\n        } -> (known after apply)\n      ~ tags                      = {\n            \"expires\"  = \"<expiry>\"\n            \"project\"  = \"globalstack-paired-lifecycle\"\n          ~ \"revision\" = \"external\" -> \"two\"\n            \"run\"      = \"<run>\"\n        }\n        # (10 unchanged attributes hidden)\n    }\n\nPlan: 0 to add, 1 to change, 0 to destroy.\nazapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\nazapi_resource.group: Modifications complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n\nApply complete! Resources: 0 added, 1 changed, 0 destroyed.\n\nOutputs:\n\ngroup_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "state-remove",
+          "command": [
+            "terraform",
+            "state",
+            "rm",
+            "azapi_resource.group"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:22.989Z",
+          "completedAt": "2026-11-06T21:44:28.973Z",
+          "exitCode": 0,
+          "stdout": "Removed azapi_resource.group\nSuccessfully removed 1 resource instance(s).\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "import",
+          "command": [
+            "terraform",
+            "import",
+            "-input=false",
+            "-no-color",
+            "azapi_resource.group",
+            "/subscriptions/<subscription>/resourcegroups/<group>"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:28.974Z",
+          "completedAt": "2026-11-06T21:44:31.936Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Importing from ID \"/subscriptions/<subscription>/resourcegroups/<group>\"...\nazapi_resource.group: Import prepared!\n  Prepared azapi_resource for import\nazapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n\nImport successful!\n\nThe resources that were imported are shown above. These resources are now in\nyour Terraform state and will henceforth be managed by Terraform.\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "plan-imported",
+          "command": [
+            "terraform",
+            "plan",
+            "-input=false",
+            "-no-color",
+            "-detailed-exitcode"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:31.937Z",
+          "completedAt": "2026-11-06T21:44:35.433Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n\nNo changes. Your infrastructure matches the configuration.\n\nTerraform has compared your real infrastructure against your configuration\nand found no differences, so no changes are needed.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy",
+          "command": [
+            "terraform",
+            "destroy",
+            "-auto-approve",
+            "-input=false",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:44:35.435Z",
+          "completedAt": "2026-11-06T21:44:39.997Z",
+          "exitCode": 0,
+          "stdout": "azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n\nTerraform used the selected providers to generate the following execution\nplan. Resource actions are indicated with the following symbols:\n  - destroy\n\nTerraform will perform the following actions:\n\n  # azapi_resource.group will be destroyed\n  - resource \"azapi_resource\" \"group\" {\n      - body                      = {\n          - properties = {}\n        } -> null\n      - id                        = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\n      - ignore_body_changes       = (write-only attribute) -> null\n      - ignore_casing             = false -> null\n      - ignore_missing_property   = true -> null\n      - ignore_null_property      = false -> null\n      - location                  = \"eastus\" -> null\n      - name                      = \"<group>\" -> null\n      - output                    = {\n          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n          - properties = {\n              - provisioningState = \"Succeeded\"\n            }\n          - tags       = {\n              - expires  = \"<expiry>\"\n              - project  = \"globalstack-paired-lifecycle\"\n              - revision = \"two\"\n              - run      = \"<run>\"\n            }\n          - type       = \"Microsoft.Resources/resourceGroups\"\n        } -> null\n      - parent_id                 = \"/subscriptions/<subscription>\" -> null\n      - schema_validation_enabled = true -> null\n      - sensitive_body            = (write-only attribute) -> null\n      - tags                      = {\n          - \"expires\"  = \"<expiry>\"\n          - \"project\"  = \"globalstack-paired-lifecycle\"\n          - \"revision\" = \"two\"\n          - \"run\"      = \"<run>\"\n        } -> null\n      - type                      = \"Microsoft.Resources/resourceGroups@2025-04-01\" -> null\n    }\n\nPlan: 0 to add, 0 to change, 1 to destroy.\n\nChanges to Outputs:\n  - group_id = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\nazapi_resource.group: Destroying... [id=/subscriptions/<subscription>/resourcegroups/<group>]\nazapi_resource.group: Destruction complete after 0s\n\nDestroy complete! Resources: 1 destroyed.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "apply-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:43:42.005Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "ResourceGroupNotFound",
+                "message": "Resource group <group> was not found.",
+                "details": []
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:43:42.025Z"
+        },
+        {
+          "phase": "apply-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:43:42.027Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:43:42.041Z"
+        },
+        {
+          "phase": "apply-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:43:42.045Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:43:42.054Z"
+        },
+        {
+          "phase": "plan-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:43:49.199Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:43:49.208Z"
+        },
+        {
+          "phase": "refresh",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:43:56.481Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:43:56.487Z"
+        },
+        {
+          "phase": "plan-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:05.199Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:05.214Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:14.292Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:14.297Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:14.993Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:14.996Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:14.997Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:15.000Z"
+        },
+        {
+          "phase": "plan-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:18.684Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "external",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:18.687Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:22.160Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "external",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:22.162Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:22.790Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:22.792Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:22.793Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:22.794Z"
+        },
+        {
+          "phase": "import",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01",
+          "startedAt": "2026-11-06T21:44:31.751Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:31.754Z"
+        },
+        {
+          "phase": "import",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01",
+          "startedAt": "2026-11-06T21:44:31.762Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:31.763Z"
+        },
+        {
+          "phase": "plan-imported",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01",
+          "startedAt": "2026-11-06T21:44:35.226Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:35.228Z"
+        },
+        {
+          "phase": "plan-imported",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:35.262Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:35.263Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01",
+          "startedAt": "2026-11-06T21:44:38.741Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:38.743Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:44:38.780Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:44:38.781Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01",
+          "startedAt": "2026-11-06T21:44:39.819Z",
+          "request": {
+            "headers": {
+              "user-agent": "HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-06T21:44:39.821Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:42:56.717Z",
+          "completedAt": "2026-11-06T21:42:56.818Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "one",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:43:42.435Z",
+          "completedAt": "2026-11-06T21:43:42.448Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "two",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:44:15.196Z",
+          "completedAt": "2026-11-06T21:44:15.201Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "external",
+              "run": "<run>"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "external",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:44:15.202Z",
+          "completedAt": "2026-11-06T21:44:15.210Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "two",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:44:22.984Z",
+          "completedAt": "2026-11-06T21:44:22.988Z"
+        },
+        {
+          "phase": "post-destroy-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:44:39.998Z",
+          "completedAt": "2026-11-06T21:44:40.003Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:44:40.005Z",
+          "completedAt": "2026-11-06T21:44:40.007Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:44:40.008Z",
+          "completedAt": "2026-11-06T21:44:40.010Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroyAccepted": true,
+        "nativeDestroy": true,
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        ".terraform.lock.hcl": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6",
+        "main.tf": "8f0f11938ecac9b2d21831c815e2b9377379659adb3de41a20cf61a0cbf75e85"
+      },
+      "ok": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": true,
+  "completedAt": "2026-11-06T21:44:40.392Z"
+}

@@ -1,0 +1,1177 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-pulumi-yaml",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:49:17.789Z",
+  "revision": "7192faabe735d8c4f4b99bc0cb4c52c27a69f748",
+  "sourceDirty": false,
+  "image": "sha256:1a9a6e74b9b47575c5da7d2e15d1da5fea5a5236381dc8c31eddb4a1eb03f024",
+  "source": {
+    "Pulumi.yaml": "56aa634e254fa64e2b0398ddedf8a48e0b4e74a3852609bc182d33d6d033d757"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "pulumi",
+            "version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:18.974Z",
+          "completedAt": "2026-11-06T21:49:19.561Z",
+          "exitCode": 0,
+          "stdout": "v3.273.0\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "provider-install",
+          "command": [
+            "pulumi",
+            "plugin",
+            "install",
+            "resource",
+            "azure-native",
+            "3.30.0"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:19.562Z",
+          "completedAt": "2026-11-06T21:49:20.135Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "stack-init",
+          "command": [
+            "pulumi",
+            "stack",
+            "init",
+            "pilot",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:20.136Z",
+          "completedAt": "2026-11-06T21:49:21.525Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "Created stack 'pilot'\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-azure-native:subscriptionId",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "azure-native:subscriptionId",
+            "<subscription>",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:21.526Z",
+          "completedAt": "2026-11-06T21:49:22.095Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-groupName",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "groupName",
+            "<group>",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:22.097Z",
+          "completedAt": "2026-11-06T21:49:22.669Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-location",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "location",
+            "eastus",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:22.670Z",
+          "completedAt": "2026-11-06T21:49:23.242Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-runId",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "runId",
+            "<run>",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:23.243Z",
+          "completedAt": "2026-11-06T21:49:23.826Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-expires",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "expires",
+            "<expiry>",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:23.827Z",
+          "completedAt": "2026-11-06T21:49:24.416Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-revision",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "revision",
+            "one",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:24.418Z",
+          "completedAt": "2026-11-06T21:49:24.983Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "preview-create",
+          "command": [
+            "pulumi",
+            "preview",
+            "--non-interactive",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:24.985Z",
+          "completedAt": "2026-11-06T21:49:45.354Z",
+          "exitCode": 0,
+          "stdout": "Previewing update (pilot):\n+ pulumi:pulumi:Stack: (create)\n    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n    + azure-native:resources:ResourceGroup: (create)\n        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::04da6b54-80e4-46f7-96ec-b56ff0331ba9]\n        azureApiVersion  : \"2024-03-01\"\n        location         : \"eastus\"\n        resourceGroupName: \"<group>\"\n        tags             : {\n            expires : \"<expiry>\"\n            project : \"globalstack-paired-lifecycle\"\n            revision: \"one\"\n            run     : \"<run>\"\n        }\n    --outputs:--\n    groupId: [unknown]\nResources:\n    + 2 to create\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "up-create",
+          "command": [
+            "pulumi",
+            "up",
+            "--yes",
+            "--skip-preview",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:45.355Z",
+          "completedAt": "2026-11-06T21:49:53.134Z",
+          "exitCode": 0,
+          "stdout": "Updating (pilot):\n\n +  pulumi:pulumi:Stack paired-lifecycle-pilot creating (0s) \n@ updating.......\n +  azure-native:resources:ResourceGroup group creating (0s) \n +  azure-native:resources:ResourceGroup group created (0.09s) \n +  pulumi:pulumi:Stack paired-lifecycle-pilot created (4s) \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    + 2 created\n\nDuration: 5s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "preview-stable",
+          "command": [
+            "pulumi",
+            "preview",
+            "--non-interactive",
+            "--diff",
+            "--expect-no-changes"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:53.144Z",
+          "completedAt": "2026-11-06T21:49:59.075Z",
+          "exitCode": 0,
+          "stdout": "Previewing update (pilot):\n  pulumi:pulumi:Stack: (same)\n    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\nResources:\n    2 unchanged\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "refresh",
+          "command": [
+            "pulumi",
+            "refresh",
+            "--yes",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:49:59.076Z",
+          "completedAt": "2026-11-06T21:50:03.990Z",
+          "exitCode": 0,
+          "stdout": "Previewing refresh (pilot):\n\n@ previewing refresh....\n ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n    pulumi:pulumi:Stack paired-lifecycle-pilot running \n ~  azure-native:resources:ResourceGroup group refreshing \n    azure-native:resources:ResourceGroup group  \n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nResources:\n    2 unchanged\n\nRefreshing (pilot):\n\n@ refreshing....\n ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n    pulumi:pulumi:Stack paired-lifecycle-pilot running \n ~  azure-native:resources:ResourceGroup group refreshing (0s) \n@ refreshing....\n    azure-native:resources:ResourceGroup group  \n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    2 unchanged\n\nDuration: 2s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "config-revision",
+          "command": [
+            "pulumi",
+            "config",
+            "set",
+            "revision",
+            "two",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:03.992Z",
+          "completedAt": "2026-11-06T21:50:04.625Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "preview-update",
+          "command": [
+            "pulumi",
+            "preview",
+            "--non-interactive",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:04.627Z",
+          "completedAt": "2026-11-06T21:50:10.604Z",
+          "exitCode": 0,
+          "stdout": "Previewing update (pilot):\n  pulumi:pulumi:Stack: (same)\n    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n    ~ azure-native:resources:ResourceGroup: (update)\n        [id=/subscriptions/<subscription>/resourceGroups/<group>]\n        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a094aab8-d0d6-47a6-8928-7a418847a46c]\n      ~ tags: {\n          ~ revision: \"one\" => \"two\"\n        }\nResources:\n    ~ 1 to update\n    1 unchanged\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "up-update",
+          "command": [
+            "pulumi",
+            "up",
+            "--yes",
+            "--skip-preview",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:10.605Z",
+          "completedAt": "2026-11-06T21:50:16.913Z",
+          "exitCode": 0,
+          "stdout": "Updating (pilot):\n\n@ updating.......\n ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n ~  azure-native:resources:ResourceGroup group updated (0.09s) [diff: ~tags]\n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    ~ 1 updated\n    1 unchanged\n\nDuration: 5s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "refresh-drift",
+          "command": [
+            "pulumi",
+            "refresh",
+            "--yes",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:16.932Z",
+          "completedAt": "2026-11-06T21:50:21.027Z",
+          "exitCode": 0,
+          "stdout": "Previewing refresh (pilot):\n\n@ previewing refresh....\n ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n    pulumi:pulumi:Stack paired-lifecycle-pilot running \n ~  azure-native:resources:ResourceGroup group refreshing \n ~  azure-native:resources:ResourceGroup group update [diff: ~tags]\n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nResources:\n    ~ 1 to update\n    1 unchanged\n\nRefreshing (pilot):\n\n@ refreshing....\n ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n    pulumi:pulumi:Stack paired-lifecycle-pilot running \n ~  azure-native:resources:ResourceGroup group refreshing (0s) \n ~  azure-native:resources:ResourceGroup group updated (0.08s) [diff: ~tags]\n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    ~ 1 updated\n    1 unchanged\n\nDuration: 2s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "up-repair",
+          "command": [
+            "pulumi",
+            "up",
+            "--yes",
+            "--skip-preview",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:21.029Z",
+          "completedAt": "2026-11-06T21:50:27.561Z",
+          "exitCode": 0,
+          "stdout": "Updating (pilot):\n\n@ updating.......\n ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n ~  azure-native:resources:ResourceGroup group updated (0.08s) [diff: ~tags]\n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    ~ 1 updated\n    1 unchanged\n\nDuration: 5s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "state-export",
+          "command": [
+            "pulumi",
+            "stack",
+            "export"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:27.569Z",
+          "completedAt": "2026-11-06T21:50:28.208Z",
+          "exitCode": 0,
+          "stdout": "{\n    \"version\": 3,\n    \"deployment\": {\n        \"manifest\": {\n            \"time\": \"2026-11-06T21:50:27.305233389Z\",\n            \"magic\": \"d540e88789f936dedbe50a295669c8332d4526ab86e83f1434c07707510d8880\",\n            \"version\": \"v3.273.0\"\n        },\n        \"secrets_providers\": {\n            \"type\": \"passphrase\",\n            \"state\": {\n                \"salt\": \"v1:zndhMRnG93A=:v1:5yGOy7k6a9jHATLs:3F7eBny3iwuvSdllUCQ1soBIAQQ3Gg==\"\n            }\n        },\n        \"resources\": [\n            {\n                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n                \"custom\": false,\n                \"type\": \"pulumi:pulumi:Stack\",\n                \"outputs\": {\n                    \"groupId\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n                },\n                \"created\": \"2026-11-06T21:49:47.709935249Z\",\n                \"modified\": \"2026-11-06T21:49:47.709935249Z\",\n                \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/server/server.go#321\",\n                \"stackTrace\": [\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/server/server.go#321\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/proto/go/language_grpc.pb.go#588\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/go/common/util/rpcutil/interceptor.go#320\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1238\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/grpc-ecosystem/grpc-opentracing@v0.0.0-20180507213350-8e809c8a8645/go/otgrpc/server.go#57\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1238\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/go/common/util/rpcutil/interceptor.go#235\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1229\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/proto/go/language_grpc.pb.go#590\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1284\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1450\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1595\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1096\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../opt/hostedtoolcache/go/1.27.3/x64/src/runtime/asm_amd64.s#1264\"\n                    }\n                ]\n            },\n            {\n                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0\",\n                \"custom\": true,\n                \"id\": \"a094aab8-d0d6-47a6-8928-7a418847a46c\",\n                \"type\": \"pulumi:providers:azure-native\",\n                \"inputs\": {\n                    \"__internal\": {},\n                    \"subscriptionId\": \"<subscription>\",\n                    \"version\": \"3.30.0\"\n                },\n                \"outputs\": {\n                    \"subscriptionId\": \"<subscription>\",\n                    \"version\": \"3.30.0\"\n                },\n                \"created\": \"2026-11-06T21:49:51.665423306Z\",\n                \"modified\": \"2026-11-06T21:49:51.665423306Z\"\n            },\n            {\n                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group\",\n                \"custom\": true,\n                \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n                \"type\": \"azure-native:resources:ResourceGroup\",\n                \"inputs\": {\n                    \"azureApiVersion\": \"2024-03-01\",\n                    \"location\": \"eastus\",\n                    \"resourceGroupName\": \"<group>\",\n                    \"tags\": {\n                        \"expires\": \"<expiry>\",\n                        \"project\": \"globalstack-paired-lifecycle\",\n                        \"revision\": \"two\",\n                        \"run\": \"<run>\"\n                    }\n                },\n                \"outputs\": {\n                    \"azureApiVersion\": \"2024-03-01\",\n                    \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n                    \"location\": \"eastus\",\n                    \"name\": \"<group>\",\n                    \"properties\": {\n                        \"provisioningState\": \"Succeeded\"\n                    },\n                    \"tags\": {\n                        \"expires\": \"<expiry>\",\n                        \"project\": \"globalstack-paired-lifecycle\",\n                        \"revision\": \"two\",\n                        \"run\": \"<run>\"\n                    },\n                    \"type\": \"Microsoft.Resources/resourceGroups\"\n                },\n                \"parent\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n                \"provider\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a094aab8-d0d6-47a6-8928-7a418847a46c\",\n                \"propertyDependencies\": {\n                    \"location\": [],\n                    \"resourceGroupName\": [],\n                    \"tags\": []\n                },\n                \"created\": \"2026-11-06T21:49:51.76172477Z\",\n                \"modified\": \"2026-11-06T21:50:27.152916805Z\",\n                \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/pulumiyaml/run.go#1028\",\n                \"stackTrace\": [\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/pulumiyaml/run.go#1028\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/pulumiyaml/run.go#1284\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/pulumiyaml/run.go#1137\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/pulumiyaml/run.go#528\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/server/server.go#323\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/go/pulumi/run.go#144\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/work/pulumi-yaml/pulumi-yaml/pkg/server/server.go#321\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/proto/go/language_grpc.pb.go#588\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/go/common/util/rpcutil/interceptor.go#320\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1238\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/grpc-ecosystem/grpc-opentracing@v0.0.0-20180507213350-8e809c8a8645/go/otgrpc/server.go#57\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1238\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/go/common/util/rpcutil/interceptor.go#235\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1229\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/github.com/pulumi/pulumi/sdk/v3@v3.272.0/proto/go/language_grpc.pb.go#590\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1284\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1450\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1595\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../home/runner/go/pkg/mod/google.golang.org/grpc@v1.84.0/server.go#1096\"\n                    },\n                    {\n                        \"sourcePosition\": \"project:///../../opt/hostedtoolcache/go/1.27.3/x64/src/runtime/asm_amd64.s#1264\"\n                    }\n                ]\n            }\n        ],\n        \"metadata\": {}\n    }\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "state-remove",
+          "command": [
+            "pulumi",
+            "state",
+            "delete",
+            "urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group",
+            "--yes",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:28.211Z",
+          "completedAt": "2026-11-06T21:50:29.869Z",
+          "exitCode": 0,
+          "stdout": "Resource deleted\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "import",
+          "command": [
+            "pulumi",
+            "import",
+            "azure-native:resources:ResourceGroup",
+            "group",
+            "/subscriptions/<subscription>/resourcegroups/<group>",
+            "--generate-code=false",
+            "--protect=false",
+            "--yes",
+            "--non-interactive",
+            "--provider",
+            "urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a094aab8-d0d6-47a6-8928-7a418847a46c"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:29.871Z",
+          "completedAt": "2026-11-06T21:50:36.126Z",
+          "exitCode": 0,
+          "stdout": "Previewing import (pilot):\n\n@ previewing import.....\n =  azure-native:resources:ResourceGroup group import \n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nResources:\n    = 1 to import\n    1 unchanged\n\nImporting (pilot):\n\n@ importing.....\n =  azure-native:resources:ResourceGroup group importing (0s) \n =  azure-native:resources:ResourceGroup group imported (0.08s) \nOutputs:\n    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n\nResources:\n    = 1 imported\n    1 unchanged\n\nDuration: 3s\n\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "preview-imported",
+          "command": [
+            "pulumi",
+            "preview",
+            "--non-interactive",
+            "--diff",
+            "--expect-no-changes"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:36.130Z",
+          "completedAt": "2026-11-06T21:50:42.767Z",
+          "exitCode": 0,
+          "stdout": "Previewing update (pilot):\n  pulumi:pulumi:Stack: (same)\n    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n    --outputs:--\n  ~ groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\" => \"/subscriptions/<subscription>/resourcegroups/<group>\"\nResources:\n    2 unchanged\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy",
+          "command": [
+            "pulumi",
+            "destroy",
+            "--yes",
+            "--skip-preview",
+            "--non-interactive"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:42.768Z",
+          "completedAt": "2026-11-06T21:50:45.545Z",
+          "exitCode": 0,
+          "stdout": "Destroying (pilot):\n\n@ destroying....\n -  azure-native:resources:ResourceGroup group deleting (0s) \n -  azure-native:resources:ResourceGroup group deleted (0.08s) \n -  pulumi:pulumi:Stack paired-lifecycle-pilot deleting (0s) \n -  pulumi:pulumi:Stack paired-lifecycle-pilot deleted (0.00s) \n    pulumi:pulumi:Stack paired-lifecycle-pilot  \nResources:\n    - 2 deleted\n\nDuration: 2s\n\nThe resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. \nIf you want to remove the stack completely, run `pulumi stack rm pilot`.\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "up-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:49:51.741Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "ResourceGroupNotFound",
+                "message": "Resource group <group> was not found.",
+                "details": []
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:49:51.750Z"
+        },
+        {
+          "phase": "up-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:49:51.751Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22",
+              "content-type": "application/json; charset=utf-8"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:49:51.756Z"
+        },
+        {
+          "phase": "up-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:49:51.757Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:49:51.760Z"
+        },
+        {
+          "phase": "refresh",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:01.655Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:01.659Z"
+        },
+        {
+          "phase": "refresh",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:03.761Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "one",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:03.764Z"
+        },
+        {
+          "phase": "up-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:16.554Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22",
+              "content-type": "application/json; charset=utf-8"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:16.558Z"
+        },
+        {
+          "phase": "up-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:16.559Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:16.563Z"
+        },
+        {
+          "phase": "refresh-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:19.661Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "external",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:19.663Z"
+        },
+        {
+          "phase": "refresh-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:20.818Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "external",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:20.821Z"
+        },
+        {
+          "phase": "up-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:27.143Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22",
+              "content-type": "application/json; charset=utf-8"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:27.148Z"
+        },
+        {
+          "phase": "up-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:27.150Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:27.151Z"
+        },
+        {
+          "phase": "import",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:33.625Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:33.627Z"
+        },
+        {
+          "phase": "import",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:35.859Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "expires": "<expiry>",
+                "project": "globalstack-paired-lifecycle",
+                "revision": "two",
+                "run": "<run>"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:35.861Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+          "startedAt": "2026-11-06T21:50:45.322Z",
+          "request": {
+            "headers": {
+              "user-agent": "pulumi-azure-native/3.30 azsdk-go-azcore/v1.17.0 (go1.26.10; linux) pid-a90539d8-a7a6-5826-95c4-1fbef22d4b22"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-06T21:50:45.325Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:49:18.929Z",
+          "completedAt": "2026-11-06T21:49:18.962Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "one",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:49:53.135Z",
+          "completedAt": "2026-11-06T21:49:53.142Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "two",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:50:16.914Z",
+          "completedAt": "2026-11-06T21:50:16.918Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "external",
+              "run": "<run>"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "external",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:50:16.919Z",
+          "completedAt": "2026-11-06T21:50:16.930Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "expires": "<expiry>",
+              "project": "globalstack-paired-lifecycle",
+              "revision": "two",
+              "run": "<run>"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:50:27.563Z",
+          "completedAt": "2026-11-06T21:50:27.568Z"
+        },
+        {
+          "phase": "post-destroy-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:50:45.547Z",
+          "completedAt": "2026-11-06T21:50:45.551Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:50:45.553Z",
+          "completedAt": "2026-11-06T21:50:45.555Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:50:45.556Z",
+          "completedAt": "2026-11-06T21:50:45.558Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroyAccepted": true,
+        "nativeDestroy": true,
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "Pulumi.yaml": "56aa634e254fa64e2b0398ddedf8a48e0b4e74a3852609bc182d33d6d033d757"
+      },
+      "ok": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": true,
+  "completedAt": "2026-11-06T21:50:45.982Z"
+}

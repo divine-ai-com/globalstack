@@ -14,7 +14,10 @@ export function validateCapture(report, platform) {
   assert.equal(report.platform, platform.id);
   assert.equal(report.sourceDirty, false, 'Final captures require a clean source revision');
   assert.equal(report.ok, true);
+  assert.ok(Array.isArray(report.targets) && report.targets.length > 0, 'Missing target captures');
+  assert.equal(new Set(report.targets.map(target => target.name)).size, report.targets.length, 'Duplicate targets');
   for (const target of report.targets) {
+    assert.ok(['local', 'azure'].includes(target.name), 'Unknown target');
     assert.equal(target.ok, true); assert.equal(target.sourceUnchanged, true);
     assert.equal(target.cleanup.nativeDestroy, true); assert.equal(target.cleanup.absent, true); assert.equal(target.cleanup.privateFilesRemoved, true);
     if (platform.family === 'template') assert.equal(target.cleanup.deploymentAbsent, true);

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-cli-rest",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:21:40.390Z",
+  "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+  "sourceDirty": true,
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "source": {
+    "deploy.sh": "913a94ef1e74fad85d1487e76cb9690f59e20944bf8f679d9f761c412dda0328"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "/usr/bin/az",
+            "version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:21:41.628Z",
+          "completedAt": "2026-11-06T21:21:43.392Z",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/opt/az/lib/python3.14/site-packages/azure/cli/__main__.py\", line 32, in <module>\n    az_cli = get_default_cli()\n  File \"/opt/az/lib/python3.14/site-packages/azure/cli/core/__init__.py\", line 1535, in get_default_cli\n    from azure.cli.core.azlogging import AzCliLogging\n  File \"/opt/az/lib/python3.14/site-packages/azure/cli/core/azlogging.py\", line 31, in <module>\n    from azure.cli.core.commands.events import EVENT_INVOKER_PRE_CMD_TBL_TRUNCATE\n  File \"/opt/az/lib/python3.14/site-packages/azure/cli/core/commands/__init__.py\", line 27, in <module>\n    from azure.cli.core.extension import get_extension\n  File \"/opt/az/lib/python3.14/site-packages/azure/cli/core/extension/__init__.py\", line 17, in <module>\n    az_config = CLIConfig(config_dir=GLOBAL_CONFIG_DIR, config_env_var_prefix=ENV_VAR_PREFIX)\n  File \"/opt/az/lib/python3.14/site-packages/knack/config.py\", line 40, in __init__\n    ensure_dir(config_dir)\n    ~~~~~~~~~~^^^^^^^^^^^^\n  File \"/opt/az/lib/python3.14/site-packages/knack/util.py\", line 114, in ensure_dir\n    raise e\n  File \"/opt/az/lib/python3.14/site-packages/knack/util.py\", line 111, in ensure_dir\n    os.makedirs(d)\n    ~~~~~~~~~~~^^^\n  File \"<frozen os>\", line 236, in makedirs\nPermissionError: [Errno 13] Permission denied: '/private/azure'\n",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:21:41.453Z",
+          "completedAt": "2026-11-06T21:21:41.580Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "deploy.sh": "913a94ef1e74fad85d1487e76cb9690f59e20944bf8f679d9f761c412dda0328"
+      },
+      "ok": false,
+      "error": "azure-cli-rest/local/version failed; inspect the sanitized record",
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": false,
+  "completedAt": "2026-11-06T21:21:44.196Z"
+}

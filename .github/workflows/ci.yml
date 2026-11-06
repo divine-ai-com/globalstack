@@ -44,6 +44,7 @@ jobs:
       - run: node --test experiments/platform-lifecycle/*.test.mjs
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
+      - run: node experiments/platform-lifecycle/render.mjs --check
       - name: Verify paper evidence and generated tables
         run: |
           node docs/research/globalstack/render-evidence.mjs

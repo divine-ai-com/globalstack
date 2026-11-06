@@ -1,0 +1,1377 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-bicep",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:30:46.759Z",
+  "revision": "9b20d7118f808da32da18edc79484feb6dcd8ec6",
+  "sourceDirty": false,
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "source": {
+    "main.bicep": "14ee2cb7cfa2f2e8d8aa194abb501bff7e334cc7372683136a6ee8056dc89297"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "/root/.azure/bin/bicep",
+            "--version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:30:48.367Z",
+          "completedAt": "2026-11-06T21:30:50.316Z",
+          "exitCode": 0,
+          "stdout": "Bicep CLI version 0.48.1 (cec7951cf6)\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "compile",
+          "command": [
+            "/root/.azure/bin/bicep",
+            "build",
+            "main.bicep",
+            "--outfile",
+            "/private/template.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:30:50.320Z",
+          "completedAt": "2026-11-06T21:30:53.830Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "cli-version",
+          "command": [
+            "/usr/bin/az",
+            "version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:30:53.845Z",
+          "completedAt": "2026-11-06T21:30:58.487Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"azure-cli\": \"2.92.0\",\n  \"azure-cli-core\": \"2.92.0\",\n  \"azure-cli-telemetry\": \"1.1.0\",\n  \"extensions\": {}\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-create",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "put",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json",
+            "--body",
+            "@/private/deployment.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:30:58.491Z",
+          "completedAt": "2026-11-06T21:30:59.876Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 201\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:30:59.475Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-create-read-0",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:30:59.879Z",
+          "completedAt": "2026-11-06T21:31:01.299Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 201\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:30:59.475Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-stable",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:01.309Z",
+          "completedAt": "2026-11-06T21:31:02.676Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 201\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:30:59.475Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-group",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:02.681Z",
+          "completedAt": "2026-11-06T21:31:04.028Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-update",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "put",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json",
+            "--body",
+            "@/private/deployment.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:04.031Z",
+          "completedAt": "2026-11-06T21:31:05.402Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 200\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:31:05.030Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-update-read-0",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:05.404Z",
+          "completedAt": "2026-11-06T21:31:09.054Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 200\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:31:05.030Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-drift",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:09.948Z",
+          "completedAt": "2026-11-06T21:31:16.825Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"external\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-repair",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "put",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json",
+            "--body",
+            "@/private/deployment.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:16.897Z",
+          "completedAt": "2026-11-06T21:31:20.553Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 200\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:31:19.372Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "deploy-repair-read-0",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:20.567Z",
+          "completedAt": "2026-11-06T21:31:24.088Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 200\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:31:19.372Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-final",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "get",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:24.136Z",
+          "completedAt": "2026-11-06T21:31:27.597Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"duration\": \"PT0S\",\n    \"globalstackDeploymentSteps\": [\n      {\n        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n        \"operation\": \"PUT\",\n        \"status\": 200\n      }\n    ],\n    \"mode\": \"Incremental\",\n    \"outputs\": {\n      \"groupId\": {\n        \"type\": \"string\",\n        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n      }\n    },\n    \"provisioningState\": \"Succeeded\",\n    \"timestamp\": \"2026-11-06T21:31:19.372Z\"\n  },\n  \"type\": \"Microsoft.Resources/deployments\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy-group",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "delete",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:27.609Z",
+          "completedAt": "2026-11-06T21:31:30.584Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"status\": \"Deleted\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy-deployment",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "delete",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:30.588Z",
+          "completedAt": "2026-11-06T21:31:34.551Z",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "ERROR: Not Found({\n  \"error\": {\n    \"code\": \"GlobalStackRouteNotImplemented\",\n    \"message\": \"No GlobalStack Azure route handles DELETE /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>.\",\n    \"details\": [\n      {\n        \"code\": \"ExplicitGap\",\n        \"message\": \"Add this route through the capability registry and conformance tests before claiming support.\"\n      }\n    ]\n  }\n})\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy-group",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "delete",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:34.560Z",
+          "completedAt": "2026-11-06T21:31:36.862Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"status\": \"Deleted\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy-deployment",
+          "command": [
+            "/usr/bin/az",
+            "rest",
+            "--method",
+            "delete",
+            "--url",
+            "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+            "--skip-authorization-header",
+            "--headers",
+            "@/private/headers.json",
+            "--output",
+            "json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:31:36.868Z",
+          "completedAt": "2026-11-06T21:31:39.511Z",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "ERROR: Not Found({\n  \"error\": {\n    \"code\": \"GlobalStackRouteNotImplemented\",\n    \"message\": \"No GlobalStack Azure route handles DELETE /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>.\",\n    \"details\": [\n      {\n        \"code\": \"ExplicitGap\",\n        \"message\": \"Add this route through the capability registry and conformance tests before claiming support.\"\n      }\n    ]\n  }\n})\n",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "deploy-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:30:59.458Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.48.1.52935",
+                      "templateHash": "9922873965759736815"
+                    }
+                  },
+                  "parameters": {
+                    "groupName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "expires": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/resourceGroups",
+                      "apiVersion": "2021-04-01",
+                      "name": "[parameters('groupName')]",
+                      "location": "[parameters('location')]",
+                      "tags": {
+                        "project": "globalstack-paired-lifecycle",
+                        "run": "[parameters('runId')]",
+                        "expires": "[parameters('expires')]",
+                        "revision": "[parameters('revision')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "groupId": {
+                      "type": "string",
+                      "value": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    }
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "value": "<group>"
+                  },
+                  "location": {
+                    "value": "eastus"
+                  },
+                  "runId": {
+                    "value": "<run>"
+                  },
+                  "expires": {
+                    "value": "<expiry>"
+                  },
+                  "revision": {
+                    "value": "one"
+                  }
+                }
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:30:59.475Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 201
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:30:59.480Z"
+        },
+        {
+          "phase": "deploy-create-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:00.871Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:30:59.475Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 201
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:00.878Z"
+        },
+        {
+          "phase": "read-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:02.274Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:30:59.475Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 201
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:02.280Z"
+        },
+        {
+          "phase": "read-group",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:31:03.627Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:03.631Z"
+        },
+        {
+          "phase": "deploy-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:05.026Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.48.1.52935",
+                      "templateHash": "9922873965759736815"
+                    }
+                  },
+                  "parameters": {
+                    "groupName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "expires": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/resourceGroups",
+                      "apiVersion": "2021-04-01",
+                      "name": "[parameters('groupName')]",
+                      "location": "[parameters('location')]",
+                      "tags": {
+                        "project": "globalstack-paired-lifecycle",
+                        "run": "[parameters('runId')]",
+                        "expires": "[parameters('expires')]",
+                        "revision": "[parameters('revision')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "groupId": {
+                      "type": "string",
+                      "value": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    }
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "value": "<group>"
+                  },
+                  "location": {
+                    "value": "eastus"
+                  },
+                  "runId": {
+                    "value": "<run>"
+                  },
+                  "expires": {
+                    "value": "<expiry>"
+                  },
+                  "revision": {
+                    "value": "two"
+                  }
+                }
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:31:05.030Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 200
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:05.032Z"
+        },
+        {
+          "phase": "deploy-update-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:06.794Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:31:05.030Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 200
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:06.804Z"
+        },
+        {
+          "phase": "read-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:31:14.928Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "external"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:14.979Z"
+        },
+        {
+          "phase": "deploy-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:19.361Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.48.1.52935",
+                      "templateHash": "9922873965759736815"
+                    }
+                  },
+                  "parameters": {
+                    "groupName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "expires": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/resourceGroups",
+                      "apiVersion": "2021-04-01",
+                      "name": "[parameters('groupName')]",
+                      "location": "[parameters('location')]",
+                      "tags": {
+                        "project": "globalstack-paired-lifecycle",
+                        "run": "[parameters('runId')]",
+                        "expires": "[parameters('expires')]",
+                        "revision": "[parameters('revision')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "groupId": {
+                      "type": "string",
+                      "value": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    }
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "value": "<group>"
+                  },
+                  "location": {
+                    "value": "eastus"
+                  },
+                  "runId": {
+                    "value": "<run>"
+                  },
+                  "expires": {
+                    "value": "<expiry>"
+                  },
+                  "revision": {
+                    "value": "two"
+                  }
+                }
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:31:19.372Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 200
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:19.377Z"
+        },
+        {
+          "phase": "deploy-repair-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:23.091Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:31:19.372Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 200
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:23.117Z"
+        },
+        {
+          "phase": "read-final",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:26.622Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/deployments",
+              "location": "eastus",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "mode": "Incremental",
+                "timestamp": "2026-11-06T21:31:19.372Z",
+                "duration": "PT0S",
+                "outputs": {
+                  "groupId": {
+                    "type": "string",
+                    "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+                  }
+                },
+                "globalstackDeploymentSteps": [
+                  {
+                    "operation": "PUT",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                    "status": 200
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:26.680Z"
+        },
+        {
+          "phase": "destroy-group",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:31:29.875Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-06T21:31:29.881Z"
+        },
+        {
+          "phase": "destroy-deployment",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:32.796Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "GlobalStackRouteNotImplemented",
+                "message": "No GlobalStack Azure route handles DELETE /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>.",
+                "details": [
+                  {
+                    "code": "ExplicitGap",
+                    "message": "Add this route through the capability registry and conformance tests before claiming support."
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:32.806Z"
+        },
+        {
+          "phase": "destroy-group",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-06T21:31:36.246Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-06T21:31:36.250Z"
+        },
+        {
+          "phase": "destroy-deployment",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:31:38.338Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "GlobalStackRouteNotImplemented",
+                "message": "No GlobalStack Azure route handles DELETE /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>.",
+                "details": [
+                  {
+                    "code": "ExplicitGap",
+                    "message": "Add this route through the capability registry and conformance tests before claiming support."
+                  }
+                ]
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:31:38.346Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:30:48.233Z",
+          "completedAt": "2026-11-06T21:30:48.362Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "one"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:31:01.300Z",
+          "completedAt": "2026-11-06T21:31:01.306Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:31:09.111Z",
+          "completedAt": "2026-11-06T21:31:09.388Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:31:09.472Z",
+          "completedAt": "2026-11-06T21:31:09.879Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:31:24.105Z",
+          "completedAt": "2026-11-06T21:31:24.122Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:31:39.515Z",
+          "completedAt": "2026-11-06T21:31:39.529Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:31:39.531Z",
+          "completedAt": "2026-11-06T21:31:39.536Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroy": false,
+        "error": "azure-bicep/local/destroy-deployment failed; inspect the sanitized record",
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "main.bicep": "14ee2cb7cfa2f2e8d8aa194abb501bff7e334cc7372683136a6ee8056dc89297"
+      },
+      "ok": false,
+      "compiledTemplateSha256": "2d71215edc235850d507efc7bb9393a56950eba21fcf1b8f1e2d9c6e6831ce37",
+      "error": "azure-bicep/local/destroy-deployment failed; inspect the sanitized record",
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": false,
+  "completedAt": "2026-11-06T21:31:40.616Z"
+}

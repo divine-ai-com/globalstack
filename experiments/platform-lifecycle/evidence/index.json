@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "scope": "Local empty-resource-group lifecycle, nine native implementations",
+  "revision": "7192faabe735d8c4f4b99bc0cb4c52c27a69f748",
+  "startedAt": "2026-11-06T21:42:55.129042+00:00",
+  "completedAt": "2026-11-06T21:52:41.920074+00:00",
+  "platforms": [
+    {
+      "id": "azure-terraform-hcl",
+      "local": "local/azure-terraform-hcl.json",
+      "sha256": "2bac1f489c20af5f97896e451be66da4c52c6e9957b503e6dd2bc3d4937bafe7"
+    },
+    {
+      "id": "azure-opentofu-hcl",
+      "local": "local/azure-opentofu-hcl.json",
+      "sha256": "160b6873e0503502bd559a28cd14da56c74dd670fcde909cd7ac53988ebfe651"
+    },
+    {
+      "id": "azure-pulumi-ts",
+      "local": "local/azure-pulumi-ts.json",
+      "sha256": "a4547a8685f5c3c4a6b439edc718e580fec07b296a0aa4e3e0e7dd65355a0584"
+    },
+    {
+      "id": "azure-pulumi-py",
+      "local": "local/azure-pulumi-py.json",
+      "sha256": "69472e52dfd859fa4a6add3c71a9cd5eecb040274c603079d31c4448b07322de"
+    },
+    {
+      "id": "azure-pulumi-yaml",
+      "local": "local/azure-pulumi-yaml.json",
+      "sha256": "2e4ab808d0785f6b9c3093e67df0c994b70c7154c0677fed2c2f817abd0d8d57"
+    },
+    {
+      "id": "azure-ansible-yaml",
+      "local": "local/azure-ansible-yaml.json",
+      "sha256": "9de247cbe0c8e94cd0aa028b1d2a3a8918da31679bd3d8bf0e543fb5f07fad9e"
+    },
+    {
+      "id": "azure-cli-rest",
+      "local": "local/azure-cli-rest.json",
+      "sha256": "f1116e73836f5a2b74749fb22306a932c2bb93b3fddabc797b3cc9c2930c3253"
+    },
+    {
+      "id": "azure-bicep",
+      "local": "local/azure-bicep.json",
+      "sha256": "d15b088689159579fbaf17d532eb71d06db1c7d33482f19ca9f06de73364a6a8"
+    },
+    {
+      "id": "azure-arm-json",
+      "local": "local/azure-arm-json.json",
+      "sha256": "412df4ba9bba8923dcc529c54a82efaa3ab674562d9eb52a352079200528ffc1"
+    }
+  ]
+}
