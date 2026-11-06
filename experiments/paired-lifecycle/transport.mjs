@@ -56,7 +56,9 @@ export async function startObserver({ targetOrigin, groupPath, cert, key, replac
         res.writeHead(403, { 'content-type': 'application/json' }).end(JSON.stringify({ error: { code: 'ObserverScopeDenied' } })); return;
       }
       event.request = { headers: Object.fromEntries(Object.entries(req.headers).filter(([name]) => ['content-type', 'if-match', 'if-none-match', 'user-agent'].includes(name))), body: sanitize(parseBody(body, req.headers), replacements), authenticated: !!req.headers.authorization };
-      const headers = { ...req.headers, host: origin.host };
+      const headers = { ...req.headers, host: 'management.azure.com' };
+      // TLS terminates at this proxy. Preserve the public authority for generated URLs.
+      if (!azure) headers['x-forwarded-proto'] = 'https';
       delete headers['proxy-authorization']; delete headers['proxy-connection'];
       const response = await new Promise((resolve, reject) => {
         // The request controls only a scoped path. Neither hostname comes from client input.

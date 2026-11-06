@@ -210,6 +210,14 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
         }
         const absent = await probe('cleanup-absence');
         entry.cleanup.absent = absent.status === 404;
+        if (template) {
+          const path = `/subscriptions/${context.subscription}/providers/Microsoft.Resources/deployments/${group}?api-version=2022-09-01`;
+          const startedAt = new Date().toISOString();
+          const checked = await fetch(origin + path, { headers: { authorization: `Bearer ${context.token}` }, signal: AbortSignal.timeout(30000) });
+          entry.probes.push(redact({ phase: 'cleanup-deployment', method: 'GET', path, status: checked.status, body: await checked.json().catch(() => null), startedAt, completedAt: new Date().toISOString() }));
+          entry.cleanup.deploymentAbsent = checked.status === 404;
+          if (!entry.cleanup.deploymentAbsent) entry.ok = false;
+        }
       } else entry.cleanup.absent = !mayHaveCreated;
       assert.equal(entry.cleanup.absent, true, 'Cleanup incomplete');
       entry.sourceUnchanged = JSON.stringify(await sourceHashes(resolve(privateDir, 'task'))) === JSON.stringify(source);

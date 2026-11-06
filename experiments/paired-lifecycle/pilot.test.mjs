@@ -79,7 +79,7 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
   const incoming = [], traces = [];
   const server = http.createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
-    incoming.push({ method: req.method, path: req.url, body });
+    incoming.push({ method: req.method, path: req.url, body, host: req.headers.host, protocol: req.headers['x-forwarded-proto'] });
     if (req.method === 'DELETE') { res.writeHead(202, { location: `https://management.azure.com${polling}` }).end(); return; }
     if (req.url === polling) { res.writeHead(204).end(); return; }
     res.writeHead(201, { 'content-type': 'application/json', 'retry-after': '3' }).end(raw);
@@ -96,6 +96,7 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
     });
     assert.equal(await call(path + '?api-version=2021-04-01'), raw);
     assert.equal(incoming.length, 1); assert.equal(incoming[0].method, 'PUT');
+    assert.equal(incoming[0].host, 'management.azure.com'); assert.equal(incoming[0].protocol, 'https');
     assert.equal(traces[0].status, 201); assert.equal(traces[0].response.headers['retry-after'], '3');
     assert.ok(!JSON.stringify(traces).includes('synthetic-private-marker'));
     const denied = JSON.parse(await call(path + '/providers/Microsoft.Compute/virtualMachines/one'));
