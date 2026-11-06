@@ -151,8 +151,8 @@ paths = ['''^docs/research/globalstack/claims/evidence/public\-3\.json$''']
 regexes = ['''^RowKey(?:"\s*:\s*"|=')(?:41598303-b32d-40a4-97ff-c6fa98e9fe3b|5a7dc6da-0f3d-47c1-96f1-1f514328b92a|96dee368-643e-4d79-891b-eac8135ba452|d50cacb8-0e03-4df4-bc98-3797a86d25dd|dd04919b-7eac-4352-80b4-4bebb4809fb3)["']$''']
 
 [[rules.allowlists]]
-description = "Runtime property access, not a credential literal"
+description = "Runtime property access and its regression fixture, not a credential literal"
 condition = "AND"
 regexTarget = "match"
-paths = ['''^experiments/claims-evidence/run\.mjs$''']
+paths = ['''^experiments/claims-evidence/run\.mjs$''', '''^scripts/repository/check-research-secret-scan\.mjs$''']
 regexes = ['''^eventKey = topicKeys\.body\.key1;$''']
