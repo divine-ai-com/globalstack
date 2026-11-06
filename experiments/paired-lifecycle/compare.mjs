@@ -21,6 +21,15 @@ export function compare(report) {
   const azure = report.targets.find(target => target.name === 'azure');
   assert.ok(local && azure, 'A comparison requires both targets, including failed attempts');
   assert.deepEqual(local.source, azure.source, 'Source hashes differ');
+  const expectedObserved = ['apply-create', 'plan-stable', 'refresh', 'plan-update', 'apply-update', 'plan-drift', 'apply-repair', 'import', 'plan-imported', 'destroy'];
+  const coverage = target => expectedObserved.filter(phase => !target.traces.some(event => event.phase === phase && event.request && event.response && !event.blocked && !event.transportError));
+  const missingCapture = { local: coverage(local), azure: coverage(azure) };
+  const probes = new Map();
+  for (const target of [local, azure]) for (const probe of target.probes ?? []) {
+    const id = `${probe.phase} ${probe.method}`;
+    if (!probes.has(id)) probes.set(id, { operation: id });
+    probes.get(id)[target.name] = { status: probe.status, body: probe.body };
+  }
   const key = event => `${event.phase} ${event.method} ${event.path}`;
   const buckets = target => {
     const result = new Map();
@@ -43,13 +52,15 @@ export function compare(report) {
   return {
     schemaVersion: 1, source: report.source, lifecyclePassed: local.ok && azure.ok,
     traceCounts: { local: local.traces.length, azure: azure.traces.length },
-    completePilot: local.ok && azure.ok && local.sourceUnchanged && azure.sourceUnchanged,
+    completePilot: local.ok && azure.ok && local.sourceUnchanged && azure.sourceUnchanged && !missingCapture.local.length && !missingCapture.azure.length,
+    missingCapture,
     pairedExchanges: exchanges.filter(item => !item.unmatched).length,
     unmatchedExchanges: exchanges.filter(item => item.unmatched).length,
     exchangesWithDifferences: exchanges.filter(item => item.differences?.length).length,
     interpretation: 'Observed differences require protocol review; successful native lifecycle does not imply identical API behavior. Repeated polls are retained, not counted as independent scenarios.',
     exclusions: ['Identity token acquisition and provider download are outside ARM capture', 'Request-ID and ETag values vary; presence and type remain compared, conditional ETag semantics require a later case', 'No data-plane observations in the empty-group pilot'],
     phases: differences(local.phases.map(({ phase, exitCode }) => ({ phase, exitCode })), azure.phases.map(({ phase, exitCode }) => ({ phase, exitCode }))),
+    probes: [...probes.values()].map(({ operation, local, azure }) => ({ operation, differences: differences(local, azure) })),
     exchanges,
   };
 }

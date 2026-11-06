@@ -14,9 +14,11 @@ import { removeOwnedGroup } from './cleanup.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
 const target = process.argv.find(arg => arg.startsWith('--target='))?.slice(9) ?? 'local';
-assert.ok(['local', 'both'].includes(target), 'Use --target=local or --target=both');
+assert.ok(['local', 'azure', 'both'].includes(target), 'Use --target=local, azure, or both');
+const crashTest = process.argv.includes('--fault=parent-exit-after-create');
+if (crashTest) assert.equal(target, 'azure', 'The explicit crash experiment requires --target=azure');
 const budget = Number(process.env.PAIRED_AUTHORIZED_USD ?? 0);
-if (target === 'both') assert.ok(budget > 0 && budget <= 100, 'Set the explicitly authorized USD limit, at most 100');
+if (target !== 'local') assert.ok(budget > 0 && budget <= 100, 'Set the explicitly authorized USD limit, at most 100');
 const runId = randomBytes(6).toString('hex');
 const group = `gs-pair-${runId}`;
 const out = resolve(process.env.PAIRED_RUN_DIR ?? resolve(repo, 'reports/paired-lifecycle', runId));
@@ -53,7 +55,7 @@ async function az(args) {
 }
 
 const expires = new Date(Date.now() + 20 * 60 * 1000).toISOString();
-for (const name of target === 'both' ? ['local', 'azure'] : ['local']) {
+for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
   const entry = { name, phases: [], traces: [], probes: [], cleanup: {}, source, ok: false };
   report.targets.push(entry);
   const dir = resolve(out, name); await mkdir(dir, { mode: 0o700 });
@@ -130,6 +132,11 @@ for (const name of target === 'both' ? ['local', 'azure'] : ['local']) {
     }
     mayHaveCreated = true;
     await tf('apply-create', ['apply', '-auto-approve', '-input=false', '-no-color']);
+    if (crashTest) {
+      entry.injectedFault = 'controller SIGKILL after native create; watchdog recovery is evaluated separately';
+      await save();
+      process.kill(process.pid, 'SIGKILL');
+    }
     await tf('plan-stable', ['plan', '-input=false', '-detailed-exitcode', '-no-color']);
     await tf('refresh', ['apply', '-refresh-only', '-auto-approve', '-input=false', '-no-color']);
     revision = 'two';
