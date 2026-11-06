@@ -271,6 +271,7 @@ flowchart TD
 - `scripts/repository/accepted-issue.cjs`
 - `scripts/repository/accepted-issue.test.mjs`
 - `scripts/repository/capture-redaction.test.mjs`
+- `scripts/repository/check-research-secret-scan.mjs`
 - `scripts/repository/check-sarif.mjs`
 - `scripts/repository/check-sarif.test.mjs`
 - `scripts/repository/package-check.test.mjs`
