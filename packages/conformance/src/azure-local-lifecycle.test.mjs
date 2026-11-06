@@ -1167,6 +1167,31 @@ test('scoped Event Grid event subscriptions can be created under a topic resourc
   });
 });
 
+test('resource-group existence and inventory reflect actual scoped resources', async () => {
+  await withServer(async port => {
+    const group = `${subscriptionPath}/resourceGroups/inventory-primary`;
+    const other = `${subscriptionPath}/resourceGroups/inventory-other`;
+    const query = '?api-version=2021-04-01';
+    assert.equal((await httpJson(port, 'HEAD', group + query)).status, 404);
+    assert.equal((await httpJson(port, 'GET', `${group}/resources${query}`)).status, 404);
+    for (const path of [group, other]) await httpJson(port, 'PUT', path + query, { location: 'eastus' });
+    const exists = await httpJson(port, 'HEAD', group + query);
+    assert.equal(exists.status, 204); assert.equal(exists.body, null);
+    assert.deepEqual((await httpJson(port, 'GET', `${group}/resources${query}`)).body, { value: [] });
+    const resource = `${group}/providers/Microsoft.Storage/storageAccounts/inventoryprimary`;
+    await httpJson(port, 'PUT', `${resource}?api-version=2023-01-01`, { location: 'eastus', kind: 'StorageV2', sku: { name: 'Standard_LRS' } });
+    await httpJson(port, 'PUT', `${other}/providers/Microsoft.Storage/storageAccounts/inventoryother?api-version=2023-01-01`, { location: 'eastus', kind: 'StorageV2', sku: { name: 'Standard_LRS' } });
+    const listed = await httpJson(port, 'GET', `${group}/resources${query}`);
+    assert.equal(listed.status, 200);
+    assert.deepEqual(listed.body.value.map(item => item.id.toLowerCase()), [resource.toLowerCase()]);
+    assert.equal('globalstack' in listed.body.value[0], false);
+    assert.equal((await httpJson(port, 'GET', `${group}/resources${query}&$top=1`)).status, 501);
+    await httpJson(port, 'DELETE', group + query);
+    assert.equal((await httpJson(port, 'HEAD', group + query)).status, 404);
+    assert.equal((await httpJson(port, 'HEAD', other + query)).status, 204);
+  });
+});
+
 test('resource-group fixes apply across names and configured subscriptions without cross-group changes', async t => {
   const originalSubscription = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID;
   t.after(() => {

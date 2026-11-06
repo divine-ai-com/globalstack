@@ -37,7 +37,7 @@ function parseBody(bytes, headers) {
   } catch { return { unparsedBytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') }; }
 }
 
-export async function startObserver({ targetOrigin, groupPath, cert, key, replacements, phase, record }) {
+export async function startObserver({ targetOrigin, groupPath, cert, key, replacements, phase, record, additionalPolicy = () => false }) {
   const origin = new URL(targetOrigin);
   const azure = targetOrigin === 'https://management.azure.com';
   assert.ok(azure || (origin.protocol === 'http:' && origin.hostname === '127.0.0.1' && origin.port && !origin.username && !origin.password && origin.pathname === '/' && !origin.search && !origin.hash), 'Observer target must be Azure ARM or the owned loopback listener');
@@ -46,15 +46,16 @@ export async function startObserver({ targetOrigin, groupPath, cert, key, replac
   const observer = http.createServer(async (req, res) => {
     const event = { phase: phase(), method: req.method, path: sanitize(req.url, replacements), startedAt: new Date().toISOString() };
     try {
-      if (!permitted(req.method, req.url, groupPath, pollPaths)) {
-        event.blocked = true; event.status = 403; record(event);
-        res.writeHead(403, { 'content-type': 'application/json' }).end(JSON.stringify({ error: { code: 'ObserverScopeDenied' } })); return;
-      }
       const chunks = []; let size = 0;
       for await (const chunk of req) { size += chunk.length; if (size > 65536) throw new Error('Pilot request size exceeded'); chunks.push(chunk); }
       const body = Buffer.concat(chunks);
-      event.request = { headers: Object.fromEntries(Object.entries(req.headers).filter(([name]) => ['content-type', 'if-match', 'if-none-match', 'user-agent'].includes(name))), body: sanitize(parseBody(body, req.headers), replacements), authenticated: !!req.headers.authorization };
       const requested = new URL(req.url, 'https://management.azure.com');
+      if (requested.origin !== 'https://management.azure.com' || (!permitted(req.method, req.url, groupPath, pollPaths)
+        && !additionalPolicy(req.method, requested, parseBody(body, req.headers)))) {
+        event.blocked = true; event.status = 403; record(event);
+        res.writeHead(403, { 'content-type': 'application/json' }).end(JSON.stringify({ error: { code: 'ObserverScopeDenied' } })); return;
+      }
+      event.request = { headers: Object.fromEntries(Object.entries(req.headers).filter(([name]) => ['content-type', 'if-match', 'if-none-match', 'user-agent'].includes(name))), body: sanitize(parseBody(body, req.headers), replacements), authenticated: !!req.headers.authorization };
       const headers = { ...req.headers, host: origin.host };
       delete headers['proxy-authorization']; delete headers['proxy-connection'];
       const response = await new Promise((resolve, reject) => {

@@ -668,9 +668,22 @@ export function createArmRequestHandler({
       }
 
       const rgRoute = parseResourceGroupRoute(pathname);
+      if (rgRoute?.resourceGroupName && rgRoute.rest.length === 1 && rgRoute.rest[0].toLowerCase() === 'resources' && method === 'GET') {
+        if (!store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName)) return sendError(res, 404, 'ResourceGroupNotFound', `Resource group ${rgRoute.resourceGroupName} was not found.`);
+        // Do not silently return an unfiltered list for unsupported OData requests.
+        if (['$filter', '$expand', '$top'].some(key => url.searchParams.has(key))) return sendError(res, 501, 'NotImplemented', 'Resource inventory query options are not implemented.');
+        return sendJson(res, 200, {
+          value: store.listResources(rgRoute.subscriptionId, rgRoute.resourceGroupName).map(({ globalstack: _diagnostics, ...resource }) => resource),
+        });
+      }
       if (rgRoute && rgRoute.rest.length === 0) {
         // Capability diagnostics stay in the store, outside Azure resource responses.
         const publicGroup = ({ globalstack: _diagnostics, ...resourceGroup }) => resourceGroup;
+        if (rgRoute.resourceGroupName && method === 'HEAD') {
+          res.writeHead(store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName) ? 204 : 404);
+          res.end();
+          return;
+        }
         if (!rgRoute.resourceGroupName && method === 'GET') {
           return sendJson(res, 200, {
             value: store.listResourceGroups(rgRoute.subscriptionId).map(publicGroup),

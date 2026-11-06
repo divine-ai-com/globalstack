@@ -41,6 +41,7 @@ jobs:
       - run: npm run test:repository
       - run: npm run research:claims:test
       - run: node --test experiments/paired-lifecycle/*.test.mjs
+      - run: node --test experiments/platform-lifecycle/*.test.mjs
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
       - name: Verify paper evidence and generated tables
