@@ -2,6 +2,14 @@
 
 This is a scoped technical draft. Author names and affiliations will be supplied later. No arXiv submission has been made.
 
+## Native claims extension, 6 November 2026
+
+Three corrected clean-revision native Terraform runs each completed seven behavioral episodes and destruction. All 12 positive episodes passed, and all nine constructed faulty episodes were rejected with their expected witnesses. Source read-back, applies, no-change plans and cleanup passed. The final bundle metadata invokes its behavioral entry point, which rejects missing context; its old management-only test is separately named. Four development runs are retained privately and not pooled with the final sample. No model generation or Azure execution occurred.
+
+Review identified a substantive scope limit: repeated Table inserts returned success for the same key in the duplicate-subscription trace, whereas the documented Azure contract reports an existing-entity conflict. The router was corrected to return 409 without overwriting the entity. The worker now verifies the existing row on conflict. A regression and three new native runs verify the correction, while the three pre-fix runs remain unchanged. Webhook validation, idempotent processing and cloud observation semantics remain prerequisites for a paired run. Full source reproduction of this case still needs private-corpus access. See [the case record](claims/README.md).
+
+The latest local suite reports 574 passes and one explicit skip; all 19 repository checks passed. The new storage regressions verify multi-message queue observation and duplicate-insert conflict behavior. All three evidence verifiers pass. The new verifier also rejected four intentionally altered records: wrong digest, missing stage, extra callback and failed cleanup. The 11-page PDF was compiled with Tectonic and checked through extracted text and rendered page inspection; no unresolved reference markers or prose em dashes were found. These are local results, not a fresh remote security scan or merge approval. The paper retains separate numbers for earlier snapshots.
+
 ## Research extension review
 
 The manuscript now adds a controlled comparison of five checking layers over 12 configuration mutations in the existing two HTTP scenarios. Three repetitions contain 108 episodes: 36 mutated and 72 connected/restored positives. Management acceptance detects 0/12 distinct mutations, workflow status 2/12, arrival 5/12, exact-at-target 10/12, and exclusive outcome 12/12. All positive controls pass. These denominators describe a purposive first-party study, not Azure compatibility or real-world fault prevalence. The new comparison does not expand the number of application architectures or replace the earlier validation snapshot.
@@ -44,13 +52,13 @@ The complete intermediate PR CodeQL report contained the same 19 raw medium find
 
 The authorship and publication decisions above are deliberately deferred. They do not prevent merging the tested implementation or circulating a clearly marked technical draft.
 
-## Recorded validation
+## Historical native/flow validation
 
 The retained matrix contains nine passing samples, all seven stages per sample, 50 provider operation checks across the matrix, and successful cleanup. Local conformance reports 559 passes and one explicit Docker-dependent skip; repository checks report 19 passes. All six selected service packs passed. Both new HTTP scenarios completed their eight episodes and cleanup. The patched TypeScript dependency tree and root workspace each report zero known vulnerabilities in the recorded npm audit. The minimum free disk recorded in the final native runs was 103.25 GiB. No live Azure deployments or paid model calls were made.
 
 The paper compiled with Tectonic 0.17.0. All six pages were checked through extracted text and rendered page inspection. Tables and numeric macros are regenerated from the retained JSON records. Authors remain unset.
 
-## Pre-merge review record
+## Historical pre-merge review record
 
 At source revision `8f905e417f7b3d2b7a96bb9b9a3fd93b6046f003`, all required checks passed. The [complete security report](evidence/codeql.sarif.gz) and [finding inventory](evidence/security-review.json) retain the full pre-merge scan: zero high or critical findings and 19 raw medium findings. These match the existing reviewed finding set; main has 18 open medium alerts and one previously dismissed fixture-replay finding. No new code-scanning finding was introduced.
 

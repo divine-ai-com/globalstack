@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "https://github.com/divine-ai-com/globalstack-verification",
+  "sourceAccess": "private; source release pending",
+  "corpusRevision": "59de89e26ccdd967b8057e402a2ee614a6c85a84",
+  "productRevision": "e9cac5e06446d96031d96453cd15b535549ae5a3",
+  "files": [
+    {
+      "path": "refined/claims-evidence-v2/CONTRACT.md",
+      "sha256": "b959e8fd9d3c2d8d18320d33dc30b74b12c6930fe6d231fd949fed7b5c3a2721"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/.terraform.lock.hcl",
+      "sha256": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/PROMPT.md",
+      "sha256": "3e411967e154a3638135e1fd962aebfadc998c58d2801fb48c6bd37399cf5568"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/main.tf",
+      "sha256": "ed07b69633c393114bd31f5063299d1a12a7a6ae883edc73a566ae77ccd90a09"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/outputs.tf",
+      "sha256": "143f0007680e07abacf53ac928c180f459c33eba79d0a6c1820212445068824e"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/provider.tf",
+      "sha256": "a5da155cd239acbb3b1ccfdd67bab3778462abc818e9b7e99e6bbafbd6dfad20"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/lib/variables.tf",
+      "sha256": "86b007502f1b1dad891d7be488991a80b00c614e4fd3e0c6ac0e08aca7b21326"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/metadata.json",
+      "sha256": "e24419a381f45d71e45d2617335b8d48f66c91880e42efb5b65736b01fa97002"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/test/claims-behavior.int.test.mjs",
+      "sha256": "ff1e14281404248f882c864e6598ca3bd4925a621708ce02cc3e77aabdfa2cd2"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/test/claims-outcome.mjs",
+      "sha256": "48f35c613a1dac5daea758f8d0ee96b11392559b804523f433d30a935dd3a2a3"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/test/terraform.int.test.py",
+      "sha256": "845043242cbf33914e1def6b1b3ac39f18dda36f9a50010b1c0a5089024662b6"
+    },
+    {
+      "path": "refined/claims-evidence-v2/terraform/test/terraform.unit.test.py",
+      "sha256": "730e29801738292773a2c7c0697d87185cbfbf37c4f434ed2eeea116a357345f"
+    },
+    {
+      "path": "scripts/research/claims-outcome.mjs",
+      "sha256": "aa334268286528e26532620baf60954fdc78c088d59a72b98bda90c3f71e6e6c"
+    },
+    {
+      "path": "scripts/research/claims-outcome.test.mjs",
+      "sha256": "f8444dda0541f38e8af8da025781ac7b58511919e94c3118cb4de641577450fc"
+    },
+    {
+      "path": "scripts/research/run-claims-v2.mjs",
+      "sha256": "f189ec63e0dce76ee3b7c15256273dc0d3066163ff1ab8407da826301c72cd08"
+    }
+  ],
+  "retainedRuns": [
+    "final-1",
+    "final-2",
+    "final-3"
+  ],
+  "developmentRuns": [
+    "attempt-1",
+    "repeat-1",
+    "repeat-2",
+    "repeat-3"
+  ],
+  "developmentRunLocation": "refined/claims-evidence-v2/evidence in the private corpus",
+  "exclusions": "Development runs preceded the final integration entry point and are retained separately, not pooled. No failed native experiment was omitted."
+}

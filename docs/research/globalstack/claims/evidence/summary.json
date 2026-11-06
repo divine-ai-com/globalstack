@@ -1,0 +1,9 @@
+{
+  "repetitions": 3,
+  "episodes": 21,
+  "positiveEpisodes": 12,
+  "rejectedFaultEpisodes": 9,
+  "distinctFaults": 3,
+  "minimumFreeGiB": 107.1512451171875,
+  "duplicateInsertCorrectionVerified": true
+}

@@ -4,6 +4,8 @@
 
 The draft describes a scoped local preview and a configuration-fault experiment. The new study applies 12 mutations to two first-party HTTP scenarios, with connected and restored controls in three fresh-state repetitions (108 episodes). It compares five checking layers on identical traces. The earlier eight-episode record, native matrix with one sample per platform, and three pinned upstream templates remain separate evidence. None establishes live Azure equivalence.
 
+A separate [native claims case](claims/README.md) now connects Terraform provisioning to observed Event Grid, Blob, Queue and Table behavior. Three fresh runs contain 21 episodes, with all 12 positives passing and all nine deliberately faulty episodes rejected. The case also exposed a Table insert defect that was corrected and rerun; it remains local evidence. The [research collaboration brief](RESEARCH-SUPPORT.md) specifies the next experiments and support needs.
+
 The current research gap is evidence breadth, not a larger compatibility claim. Read the [research readiness checklist](study/READINESS.md) before describing the draft as ready for submission.
 
 ## Evidence
@@ -80,6 +82,7 @@ The manuscript uses vector diagrams and color, with Palatino text and blue headi
 ```bash
 node docs/research/globalstack/render-evidence.mjs
 node docs/research/globalstack/render-study.mjs
+node docs/research/globalstack/render-claims.mjs
 cd docs/research/globalstack
 tectonic paper.tex
 ```

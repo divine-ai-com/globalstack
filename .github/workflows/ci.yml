@@ -43,7 +43,8 @@ jobs:
         run: |
           node docs/research/globalstack/render-evidence.mjs
           node docs/research/globalstack/render-study.mjs
-          git diff --exit-code -- docs/research/globalstack/evidence docs/research/globalstack/study/evidence
+          node docs/research/globalstack/render-claims.mjs
+          git diff --exit-code -- docs/research/globalstack/evidence docs/research/globalstack/study/evidence docs/research/globalstack/claims/evidence
           (cd docs/research/globalstack && sha256sum --check SHA256SUMS)
       - run: npm run demo
   gate:
