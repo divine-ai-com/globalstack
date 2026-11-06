@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { test } from 'node:test';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
+import { ResourceStore } from '../../core/src/resource-store.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
 
@@ -40,8 +41,8 @@ function httpJson(port, method, path, body) {
   });
 }
 
-async function withServer(fn) {
-  const server = createArmServer({ persist: false });
+async function withServer(fn, options = {}) {
+  const server = createArmServer({ persist: false, ...options });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
@@ -1165,6 +1166,32 @@ test('scoped Event Grid event subscriptions can be created under a topic resourc
     assert.equal(get.body.type, 'Microsoft.EventGrid/eventSubscriptions');
     assert.equal(get.body.name, 'sub-audit');
   });
+});
+
+test('deployment history deletion preserves resources and provides scoped completion polling', async () => {
+  const store = new ResourceStore();
+  const subscriptionId = subscriptionPath.split('/').at(-1);
+  store.putResourceGroup(subscriptionId, 'kept-group', { location: 'eastus' });
+  const root = `${subscriptionPath}/providers/Microsoft.Resources/deployments/history`;
+  const scoped = `${subscriptionPath}/resourceGroups/kept-group/providers/Microsoft.Resources/deployments/history`;
+  const query = '?api-version=2022-09-01';
+  for (const resourceGroupName of [null, 'kept-group']) store.putDeployment({ subscriptionId, resourceGroupName, deploymentName: 'history', body: { properties: { provisioningState: 'Succeeded' } } });
+  store.putDeployment({ subscriptionId, deploymentName: 'active', body: { properties: { provisioningState: 'Running' } } });
+  await withServer(async port => {
+    assert.equal((await httpJson(port, 'DELETE', `${root}/operations/unknown${query}`)).status, 404);
+    assert.equal((await httpJson(port, 'GET', root + query)).status, 200);
+    assert.equal((await httpJson(port, 'DELETE', root.replace('/history', '/active') + query)).status, 409);
+    for (const path of [root, scoped]) {
+      const deleted = await httpJson(port, 'DELETE', path + query);
+      assert.equal(deleted.status, 202); assert.equal(deleted.body, null);
+      const poll = new URL(deleted.headers.location);
+      assert.equal((await httpJson(port, 'GET', poll.pathname + poll.search)).status, 204);
+      assert.equal((await httpJson(port, 'GET', path + query)).status, 404);
+      assert.equal((await httpJson(port, 'DELETE', path + query)).status, 204);
+      assert.equal((await httpJson(port, 'GET', `${subscriptionPath}/resourceGroups/kept-group${query}`)).status, 200);
+    }
+    assert.equal((await httpJson(port, 'GET', `${subscriptionPath}/providers/Microsoft.Resources/operationResults/unknown${query}`)).status, 404);
+  }, { store });
 });
 
 test('resource-group existence and inventory reflect actual scoped resources', async () => {

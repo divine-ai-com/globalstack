@@ -2,7 +2,7 @@
   "name": "paired-lifecycle",
   "private": true,
   "dependencies": {
-    "@pulumi/pulumi": "3.273.0",
+    "@pulumi/pulumi": "3.274.1",
     "@pulumi/azure-native": "3.30.0",
     "typescript": "5.9.3",
     "ts-node": "10.9.2",

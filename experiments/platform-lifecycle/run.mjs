@@ -180,7 +180,17 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
     await refresh('drift'); await deploy('repair');
     assert.equal((await probe('read-repair')).body?.tags?.revision, 'two');
     await forgetImport(); await stable(['hcl', 'pulumi'].includes(platform.family) ? 'imported' : 'final');
-    await destroy(); entry.cleanup.nativeDestroy = true;
+    await destroy(); entry.cleanup.nativeDestroyAccepted = true;
+    const absenceDeadline = Date.now() + 120000;
+    let absent = false, poll = 0;
+    do {
+      const observed = await probe(`post-destroy-read-${poll++}`);
+      if (observed.status === 404) { absent = true; break; }
+      assert.ok([200, 409].includes(observed.status), 'Unexpected deletion verification response');
+      await new Promise(done => setTimeout(done, 2000));
+    } while (Date.now() < absenceDeadline);
+    assert.equal(absent, true, 'Native destruction did not establish absence within the observation window');
+    entry.cleanup.nativeDestroy = true;
     entry.ok = true;
   } catch (error) { entry.error = redact(error.message); }
   finally {

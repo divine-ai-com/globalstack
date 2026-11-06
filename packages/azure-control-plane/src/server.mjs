@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
@@ -246,6 +247,7 @@ export function createArmRequestHandler({
   kubernetesRouter = null,
 } = {}) {
   void persist;
+  const completedDeploymentDeletions = new Map();
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
     providerRoute = normalizeProviderRoute(providerRoute);
@@ -563,6 +565,13 @@ export function createArmRequestHandler({
         });
       }
 
+      const deletionResult = /^\/subscriptions\/[^/]+\/providers\/microsoft\.resources\/operationresults\/[^/]+$/i.test(pathname);
+      if (method === 'GET' && deletionResult) {
+        const expiry = completedDeploymentDeletions.get(pathname.toLowerCase());
+        if (!expiry || expiry < Date.now()) return sendError(res, 404, 'OperationNotFound', 'The deployment deletion operation was not found.');
+        res.writeHead(204); res.end(); return;
+      }
+
       if (method === 'GET' && lowerSegments(pathname).includes('operationstatuses')) {
         const rawOperationSegments = segments(pathname);
         const operationIndex = rawOperationSegments.findIndex(segment => segment.toLowerCase() === 'operationstatuses');
@@ -644,6 +653,21 @@ export function createArmRequestHandler({
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      const deleteRoute = subscriptionDeploymentRoute && segments(pathname).length === 6
+        ? subscriptionDeploymentRoute
+        : resourceGroupDeploymentRoute && segments(pathname).length === 8 ? resourceGroupDeploymentRoute : null;
+      if (deleteRoute && method === 'DELETE') {
+        const deployment = store.getDeployment(deleteRoute);
+        if (!deployment) { res.writeHead(204); res.end(); return; }
+        if (!['Succeeded', 'Failed', 'Canceled'].includes(deployment.properties?.provisioningState)) return sendError(res, 409, 'DeploymentActive', 'A nonterminal deployment cannot be removed from history.');
+        // Removing history does not delete the resources created by the deployment.
+        store.deleteDeployment(deleteRoute);
+        for (const [path, expiry] of completedDeploymentDeletions) if (expiry < Date.now()) completedDeploymentDeletions.delete(path);
+        const operationPath = `/subscriptions/${deleteRoute.subscriptionId}/providers/Microsoft.Resources/operationResults/${randomUUID()}`;
+        completedDeploymentDeletions.set(operationPath.toLowerCase(), Date.now() + 300000);
+        res.writeHead(202, { location: `${facadeOrigin(req)}${operationPath}?api-version=${url.searchParams.get('api-version') ?? '2022-09-01'}`, 'retry-after': '0' });
+        res.end(); return;
+      }
       if (resourceGroupDeploymentRoute && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
