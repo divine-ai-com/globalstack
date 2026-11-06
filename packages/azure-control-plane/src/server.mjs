@@ -669,22 +669,33 @@ export function createArmRequestHandler({
 
       const rgRoute = parseResourceGroupRoute(pathname);
       if (rgRoute && rgRoute.rest.length === 0) {
+        // Capability diagnostics stay in the store, outside Azure resource responses.
+        const publicGroup = ({ globalstack: _diagnostics, ...resourceGroup }) => resourceGroup;
         if (!rgRoute.resourceGroupName && method === 'GET') {
           return sendJson(res, 200, {
-            value: store.listResourceGroups(rgRoute.subscriptionId),
+            value: store.listResourceGroups(rgRoute.subscriptionId).map(publicGroup),
           });
         }
 
         if (rgRoute.resourceGroupName && method === 'PUT') {
           const body = await readBody(req);
           const result = store.putResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName, body);
-          return sendJson(res, result.created ? 201 : 200, result.resourceGroup);
+          return sendJson(res, result.created ? 201 : 200, publicGroup(result.resourceGroup));
+        }
+
+        if (rgRoute.resourceGroupName && method === 'PATCH') {
+          const existing = store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName);
+          if (!existing) return sendError(res, 404, 'ResourceGroupNotFound', `Resource group ${rgRoute.resourceGroupName} was not found.`);
+          const body = await readBody(req);
+          // PATCH retains omitted fields and cannot relocate the resource group.
+          const result = store.putResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName, { ...existing, ...body, location: existing.location });
+          return sendJson(res, 200, publicGroup(result.resourceGroup));
         }
 
         if (rgRoute.resourceGroupName && method === 'GET') {
           const resourceGroup = store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName);
           if (!resourceGroup) return sendError(res, 404, 'ResourceGroupNotFound', `Resource group ${rgRoute.resourceGroupName} was not found.`);
-          return sendJson(res, 200, resourceGroup);
+          return sendJson(res, 200, publicGroup(resourceGroup));
         }
 
         if (rgRoute.resourceGroupName && method === 'DELETE') {

@@ -19,7 +19,8 @@ test('observer permits only the declared group writes and read-only operation po
     assert.equal(permitted('PUT', route, path), false);
   }
   const poll = `/subscriptions/${subscription}/providers/Microsoft.Resources/locations/eastus/operations/one`;
-  assert.equal(permitted('GET', poll, path), true);
+  assert.equal(permitted('GET', poll, path), false);
+  assert.equal(permitted('GET', poll, path, new Set([poll])), true);
   assert.equal(permitted('DELETE', poll, path), false);
   assert.equal(permitted('POST', path, path), false);
 });
@@ -31,6 +32,8 @@ test('sanitization retains business key fields and removes explicit credentials 
   assert.equal(result.accessToken, '<redacted>');
   assert.ok(!JSON.stringify(result).includes('private-token'));
   assert.ok(!JSON.stringify(result).includes(subscription));
+  const signed = sanitize(`https://management.azure.com${path}/operationresults/opaque-id?api-version=2025-04-01&s=private-signature&c=certificate&t=123&h=private-hash`);
+  assert.ok(!signed.includes('private-signature')); assert.ok(!signed.includes('opaque-id')); assert.ok(signed.includes('api-version=2025-04-01'));
 });
 
 test('cleanup refuses ownership mismatch and unexpected child resources', async t => {
@@ -72,10 +75,13 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
   const directory = await mkdtemp(join(tmpdir(), 'paired-transport-'));
   const cert = join(directory, 'cert.pem'), key = join(directory, 'key.pem');
   const raw = '{"properties":{"provisioningState":"Succeeded"},"tags":{"revision":"two"}}';
+  const polling = `/subscriptions/${subscription}/operationresults/opaque-job?api-version=2021-04-01&s=synthetic-signature`;
   const incoming = [], traces = [];
   const server = http.createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
     incoming.push({ method: req.method, path: req.url, body });
+    if (req.method === 'DELETE') { res.writeHead(202, { location: `https://management.azure.com${polling}` }).end(); return; }
+    if (req.url === polling) { res.writeHead(204).end(); return; }
     res.writeHead(201, { 'content-type': 'application/json', 'retry-after': '3' }).end(raw);
   });
   let observer;
@@ -83,8 +89,8 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
     execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-keyout', key, '-out', cert, '-subj', '/CN=management.azure.com', '-addext', 'subjectAltName=DNS:management.azure.com'], { stdio: 'ignore' });
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
     observer = await startObserver({ targetOrigin: `http://127.0.0.1:${server.address().port}`, groupPath: path, cert: await readFile(cert), key: await readFile(key), replacements: [], phase: () => 'test', record: row => traces.push(row) });
-    const call = endpoint => new Promise((resolve, reject) => {
-      const child = spawn('curl', ['--silent', '--show-error', '--max-time', '10', '--noproxy', '', '--proxy', observer.url, '--cacert', cert, '-X', 'PUT', '-H', 'Authorization: Bearer synthetic-private-marker', '-H', 'Content-Type: application/json', '--data', '{"tags":{"revision":"two"}}', `https://management.azure.com${endpoint}`]);
+    const call = (endpoint, method = 'PUT') => new Promise((resolve, reject) => {
+      const child = spawn('curl', ['--silent', '--show-error', '--max-time', '10', '--noproxy', '', '--proxy', observer.url, '--cacert', cert, '-X', method, '-H', 'Authorization: Bearer synthetic-private-marker', '-H', 'Content-Type: application/json', ...(method === 'PUT' ? ['--data', '{"tags":{"revision":"two"}}'] : []), `https://management.azure.com${endpoint}`]);
       let stdout = '', stderr = ''; child.stdout.on('data', b => { stdout += b; }); child.stderr.on('data', b => { stderr += b; });
       child.on('error', reject); child.on('close', code => code === 0 ? resolve(stdout) : reject(new Error(stderr)));
     });
@@ -94,6 +100,11 @@ test('TLS observer forwards native response bytes unchanged and excludes bearer 
     assert.ok(!JSON.stringify(traces).includes('synthetic-private-marker'));
     const denied = JSON.parse(await call(path + '/providers/Microsoft.Compute/virtualMachines/one'));
     assert.equal(denied.error.code, 'ObserverScopeDenied'); assert.equal(incoming.length, 1);
+    assert.equal(JSON.parse(await call(polling, 'GET')).error.code, 'ObserverScopeDenied');
+    await call(path, 'DELETE');
+    await call(polling, 'GET');
+    assert.equal(incoming.at(-1).path, polling); assert.equal(traces.at(-1).status, 204);
+    assert.ok(!JSON.stringify(traces).includes('synthetic-signature'));
   } finally {
     if (observer) await observer.close();
     server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
