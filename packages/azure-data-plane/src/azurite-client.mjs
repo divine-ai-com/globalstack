@@ -293,10 +293,13 @@ export class AzuriteClient {
     });
   }
 
-  async peekQueueMessages(queue) {
+  async peekQueueMessages(queue, { maxMessages = 1 } = {}) {
+    if (!Number.isInteger(maxMessages) || maxMessages < 1 || maxMessages > 32) {
+      throw new RangeError('maxMessages must be an integer between 1 and 32');
+    }
     return azuriteFetch({
       method: 'GET',
-      url: this.queueUrl(queue, '/messages', '?peekonly=true&numofmessages=1'),
+      url: this.queueUrl(queue, '/messages', `?peekonly=true&numofmessages=${maxMessages}`),
       account: this.account,
     });
   }
