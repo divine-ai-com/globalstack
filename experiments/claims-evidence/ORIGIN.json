@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "originRepository": "divine-ai-com/globalstack-verification",
+  "originRevision": "d92eaf9ab4631830075785e7db714f0e3dc2c7b0",
+  "originTask": "verified/2c1d6f0e-3640-4fc2-a41a-5d2b8c0d2f01/Pr91301",
+  "originRefinement": "refined/claims-evidence-v2",
+  "originAccess": "private; included files remove the reproduction dependency",
+  "license": "Apache-2.0 for the contributed experiment source; tool dependencies retain their own licenses",
+  "authorship": "authored reference refinement; historical model label is not a new generation result",
+  "migrationChanges": [
+    "Runner resolves paths within this repository and uses a dedicated pinned image.",
+    "Run directories are unique by default and temporary state is removed automatically.",
+    "Results record this repository revision and host tool versions.",
+    "Oracle tests resolve their entry point relative to the test file."
+  ],
+  "unchangedBundleFiles": [
+    {
+      "path": "terraform/lib/.terraform.lock.hcl",
+      "sha256": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6"
+    },
+    {
+      "path": "terraform/lib/PROMPT.md",
+      "sha256": "4b61b84974d7cfcabcc6d96b9ac7908c1727a6499ed72f97c84e1d81c5e6b27b"
+    },
+    {
+      "path": "terraform/lib/main.tf",
+      "sha256": "ed07b69633c393114bd31f5063299d1a12a7a6ae883edc73a566ae77ccd90a09"
+    },
+    {
+      "path": "terraform/lib/outputs.tf",
+      "sha256": "143f0007680e07abacf53ac928c180f459c33eba79d0a6c1820212445068824e"
+    },
+    {
+      "path": "terraform/lib/provider.tf",
+      "sha256": "a5da155cd239acbb3b1ccfdd67bab3778462abc818e9b7e99e6bbafbd6dfad20"
+    },
+    {
+      "path": "terraform/lib/variables.tf",
+      "sha256": "86b007502f1b1dad891d7be488991a80b00c614e4fd3e0c6ac0e08aca7b21326"
+    },
+    {
+      "path": "terraform/metadata.json",
+      "sha256": "e24419a381f45d71e45d2617335b8d48f66c91880e42efb5b65736b01fa97002"
+    },
+    {
+      "path": "terraform/test/claims-behavior.int.test.mjs",
+      "sha256": "ff1e14281404248f882c864e6598ca3bd4925a621708ce02cc3e77aabdfa2cd2"
+    },
+    {
+      "path": "terraform/test/claims-outcome.mjs",
+      "sha256": "48f35c613a1dac5daea758f8d0ee96b11392559b804523f433d30a935dd3a2a3"
+    },
+    {
+      "path": "terraform/test/terraform.int.test.py",
+      "sha256": "845043242cbf33914e1def6b1b3ac39f18dda36f9a50010b1c0a5089024662b6"
+    },
+    {
+      "path": "terraform/test/terraform.unit.test.py",
+      "sha256": "730e29801738292773a2c7c0697d87185cbfbf37c4f434ed2eeea116a357345f"
+    }
+  ]
+}

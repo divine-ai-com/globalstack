@@ -371,6 +371,9 @@ flowchart TD
 - `npm run render`
 - `npm run repo:clean-runtime`
 - `npm run repo:clean-runtime:dry-run`
+- `npm run research:claims`
+- `npm run research:claims:build`
+- `npm run research:claims:test`
 - `npm run shipment:export`
 - `npm run smoke`
 - `npm run smoke:bicep-runner`

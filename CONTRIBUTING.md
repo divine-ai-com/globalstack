@@ -33,7 +33,7 @@ Required checks:
 
 | Check | Purpose |
 |---|---|
-| `CI gate` | Both supported Node.js matrix jobs passed build checks, conformance tests, repository tests and the local demo; workflow lint and dependency audit also passed |
+| `CI gate` | Both supported Node.js jobs and the native claims reproduction passed, including conformance, repository and experiment tests, evidence checks, workflow lint and dependency audit |
 | `Security gate` | Secret scan, dependency audit/review, and high-severity static-analysis checks pass |
 | `Accepted issue` | An administrator authored the PR, or an open issue was labeled accepted by an administrator |
 | `PR policy` | The PR title, branch name, required sections and breaking change details follow the conventions |

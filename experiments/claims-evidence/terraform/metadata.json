@@ -1,0 +1,188 @@
+{
+  "provider": "GlobalStack",
+  "cloud": "azure",
+  "model": "authored-reference-refinement",
+  "platformId": "azure-terraform-hcl",
+  "scenarioId": "claims-evidence-command-ring",
+  "promptPath": "lib/PROMPT.md",
+  "solutionFiles": [
+    "lib/provider.tf",
+    "lib/variables.tf",
+    "lib/main.tf",
+    "lib/outputs.tf",
+    "test/claims-behavior.int.test.mjs",
+    "test/claims-outcome.mjs"
+  ],
+  "expectedOutputKeys": [
+    "ClaimsEvidenceStorageAccountName",
+    "ClaimsEvidenceContainerName",
+    "ClaimsJobsQueueName",
+    "ClaimsFilesShareName",
+    "ClaimsLedgerTableName",
+    "ClaimsEventsTopicName",
+    "ClaimsStreamHubName",
+    "ClaimsConfigStoreName",
+    "ClaimsAuditSubscriptionIds"
+  ],
+  "expectedOutputs": {
+    "ClaimsEvidenceStorageAccountName": "azclaimsterrafazureter",
+    "ClaimsEvidenceContainerName": "claims-evidence",
+    "ClaimsJobsQueueName": "claims-jobs",
+    "ClaimsFilesShareName": "claimsfiles",
+    "ClaimsLedgerTableName": "claimsledger",
+    "ClaimsEventsTopicName": "claims-events",
+    "ClaimsStreamHubName": "claims-stream",
+    "ClaimsConfigStoreName": "cfgclaimsterrafazureter"
+  },
+  "resourceNames": {
+    "blobContainerName": "claims-evidence",
+    "queueName": "claims-jobs",
+    "fileShareName": "claimsfiles",
+    "tableName": "claimsledger",
+    "serviceBusTopicName": "claims-events",
+    "eventHubName": "claims-stream",
+    "environmentSuffix": "azureter0526",
+    "resourceGroup": "rg-az-claims-terraf-azureter0526",
+    "storageAccount": "azclaimsterrafazureter",
+    "serviceBusNamespace": "sb-claims-terraf-azureter0526",
+    "eventGridTopic": "eg-claims-terraf-azureter0526",
+    "eventHubNamespace": "eh-claims-terraf-azureter0526",
+    "appConfigStore": "cfgclaimsterrafazureter"
+  },
+  "unitAssertions": {
+    "fileContains": {
+      "lib/provider.tf": [
+        "azapi",
+        "use_cli",
+        "data \"azapi_client_config\" \"current\""
+      ],
+      "lib/main.tf": [
+        "Microsoft.Resources/resourceGroups",
+        "Microsoft.Storage/storageAccounts@2023-01-01",
+        "Microsoft.Storage/storageAccounts/blobServices@2023-01-01",
+        "Microsoft.Storage/storageAccounts/queueServices@2023-01-01",
+        "Microsoft.Storage/storageAccounts/fileServices@2023-01-01",
+        "Microsoft.Storage/storageAccounts/tableServices@2023-01-01",
+        "Microsoft.ServiceBus/namespaces@2021-11-01",
+        "Microsoft.ServiceBus/namespaces/topics@2021-11-01",
+        "Microsoft.EventGrid/topics@2022-06-15",
+        "Microsoft.EventHub/namespaces@2024-01-01",
+        "Microsoft.EventHub/namespaces/eventhubs@2024-01-01",
+        "Microsoft.AppConfiguration/configurationStores@2023-03-01",
+        "blob_service",
+        "queue_service",
+        "file_service",
+        "table_service"
+      ],
+      "lib/outputs.tf": [
+        "ClaimsEvidenceStorageAccountName",
+        "ClaimsEvidenceContainerName",
+        "ClaimsJobsQueueName",
+        "ClaimsFilesShareName",
+        "ClaimsLedgerTableName",
+        "ClaimsEventsTopicName",
+        "ClaimsStreamHubName",
+        "ClaimsConfigStoreName"
+      ]
+    },
+    "anyFileContains": []
+  },
+  "integrationChecks": [
+    {
+      "label": "storage-account",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azclaimsterrafazureter",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azclaimsterrafazureter",
+      "expectedType": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "label": "blob-container",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azclaimsterrafazureter/blobServices/default/containers/claims-evidence",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azclaimsterrafazureter/default/claims-evidence",
+      "expectedType": "Microsoft.Storage/storageAccounts/blobServices/containers"
+    },
+    {
+      "label": "queue",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azclaimsterrafazureter/queueServices/default/queues/claims-jobs",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azclaimsterrafazureter/default/claims-jobs",
+      "expectedType": "Microsoft.Storage/storageAccounts/queueServices/queues"
+    },
+    {
+      "label": "file-share",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azclaimsterrafazureter/fileServices/default/shares/claimsfiles",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azclaimsterrafazureter/default/claimsfiles",
+      "expectedType": "Microsoft.Storage/storageAccounts/fileServices/shares"
+    },
+    {
+      "label": "table",
+      "provider": "Microsoft.Storage",
+      "typePath": "storageAccounts/azclaimsterrafazureter/tableServices/default/tables/claimsledger",
+      "apiVersion": "2023-01-01",
+      "expectedName": "azclaimsterrafazureter/default/claimsledger",
+      "expectedType": "Microsoft.Storage/storageAccounts/tableServices/tables"
+    },
+    {
+      "label": "service-bus-namespace",
+      "provider": "Microsoft.ServiceBus",
+      "typePath": "namespaces/sb-claims-terraf-azureter0526",
+      "apiVersion": "2021-11-01",
+      "expectedName": "sb-claims-terraf-azureter0526",
+      "expectedType": "Microsoft.ServiceBus/namespaces"
+    },
+    {
+      "label": "service-bus-topic",
+      "provider": "Microsoft.ServiceBus",
+      "typePath": "namespaces/sb-claims-terraf-azureter0526/topics/claims-events",
+      "apiVersion": "2021-11-01",
+      "expectedName": "sb-claims-terraf-azureter0526/claims-events",
+      "expectedType": "Microsoft.ServiceBus/namespaces/topics"
+    },
+    {
+      "label": "event-grid-topic",
+      "provider": "Microsoft.EventGrid",
+      "typePath": "topics/eg-claims-terraf-azureter0526",
+      "apiVersion": "2022-06-15",
+      "expectedName": "eg-claims-terraf-azureter0526",
+      "expectedType": "Microsoft.EventGrid/topics"
+    },
+    {
+      "label": "event-hub-namespace",
+      "provider": "Microsoft.EventHub",
+      "typePath": "namespaces/eh-claims-terraf-azureter0526",
+      "apiVersion": "2024-01-01",
+      "expectedName": "eh-claims-terraf-azureter0526",
+      "expectedType": "Microsoft.EventHub/namespaces"
+    },
+    {
+      "label": "event-hub",
+      "provider": "Microsoft.EventHub",
+      "typePath": "namespaces/eh-claims-terraf-azureter0526/eventhubs/claims-stream",
+      "apiVersion": "2024-01-01",
+      "expectedName": "eh-claims-terraf-azureter0526/claims-stream",
+      "expectedType": "Microsoft.EventHub/namespaces/eventhubs"
+    },
+    {
+      "label": "app-config-store",
+      "provider": "Microsoft.AppConfiguration",
+      "typePath": "configurationStores/cfgclaimsterrafazureter",
+      "apiVersion": "2023-03-01",
+      "expectedName": "cfgclaimsterrafazureter",
+      "expectedType": "Microsoft.AppConfiguration/configurationStores"
+    }
+  ],
+  "stageCommands": {
+    "unit-tests": "python3 test/terraform.unit.test.py",
+    "integration-tests": "node test/claims-behavior.int.test.mjs",
+    "management-tests": "python3 test/terraform.int.test.py"
+  },
+  "baselineModelLabel": "gpt-5.5",
+  "behaviorContract": "../CONTRACT.md",
+  "baselineSource": "verified/2c1d6f0e-3640-4fc2-a41a-5d2b8c0d2f01/Pr91301"
+}
