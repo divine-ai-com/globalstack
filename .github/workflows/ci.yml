@@ -40,6 +40,8 @@ jobs:
       - run: npm run test:gcp:unit
       - run: npm run test:repository
       - run: npm run research:claims:test
+      - run: node --test experiments/paired-lifecycle/*.test.mjs
+      - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - name: Verify paper evidence and generated tables
         run: |
           node docs/research/globalstack/render-evidence.mjs

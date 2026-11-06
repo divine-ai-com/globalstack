@@ -1166,3 +1166,25 @@ test('scoped Event Grid event subscriptions can be created under a topic resourc
     assert.equal(get.body.name, 'sub-audit');
   });
 });
+
+test('resource-group PATCH preserves omitted fields and exposes only Azure resource data', async () => {
+  await withServer(async port => {
+    const path = `${subscriptionPath}/resourceGroups/rg-patch-contract?api-version=2021-04-01`;
+    const missing = await httpJson(port, 'PATCH', path, { tags: { revision: 'one' } });
+    assert.equal(missing.status, 404);
+    assert.equal(missing.body.error.code, 'ResourceGroupNotFound');
+    const created = await httpJson(port, 'PUT', path, { location: 'eastus', tags: { revision: 'one', retained: 'yes' } });
+    assert.equal(created.status, 201); assert.equal('globalstack' in created.body, false);
+    const changed = await httpJson(port, 'PATCH', path, { tags: { revision: 'external' } });
+    assert.equal(changed.status, 200); assert.equal(changed.body.location, 'eastus');
+    assert.deepEqual(changed.body.tags, { revision: 'external' });
+    const unchanged = await httpJson(port, 'PATCH', path, {});
+    assert.deepEqual(unchanged.body.tags, changed.body.tags);
+    const fetched = await httpJson(port, 'GET', path);
+    assert.equal(fetched.body.tags.revision, 'external'); assert.equal('globalstack' in fetched.body, false);
+    const listed = await httpJson(port, 'GET', `${subscriptionPath}/resourceGroups?api-version=2021-04-01`);
+    assert.equal(listed.body.value.find(group => group.name === 'rg-patch-contract').globalstack, undefined);
+    await httpJson(port, 'DELETE', path);
+    assert.equal((await httpJson(port, 'GET', path)).status, 404);
+  });
+});

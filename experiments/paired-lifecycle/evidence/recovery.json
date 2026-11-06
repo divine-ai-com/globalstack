@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "experiment": "controller termination after native Azure create",
+  "sourceRevision": "24ff83a0217fed3d985e6c8c1e46a8f2c44cb9f4",
+  "source": {
+    ".terraform.lock.hcl": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6",
+    "main.tf": "8f0f11938ecac9b2d21831c815e2b9377379659adb3de41a20cf61a0cbf75e85"
+  },
+  "watchdog": {
+    "absent": true,
+    "fallbackDelete": true,
+    "watchdog": true,
+    "completedAt": "2026-11-06T20:49:57.439Z"
+  },
+  "verification": {
+    "absent": true,
+    "fallbackDelete": false
+  },
+  "privateFilesRemoved": true,
+  "passed": true
+}
