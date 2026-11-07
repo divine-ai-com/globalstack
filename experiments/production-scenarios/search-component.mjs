@@ -23,6 +23,8 @@ assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: repo, encodin
 const disk = await statfs(out);
 assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3, '40 GiB free required');
 const config = process.env.PAIRED_AZURE_CONFIG_DIR;
+const region = process.env.PAIRED_SEARCH_REGION ?? 'westus2';
+assert.ok(['eastus2', 'westus2'].includes(region), 'Choose a region with a verified Basic Search price');
 const account = azureCli(config, ['account', 'show']);
 assert.equal(account.id, process.env.PAIRED_SUBSCRIPTION_ID);
 assert.equal(account.state, 'Enabled');
@@ -37,8 +39,9 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   scope: 'Search-only lifecycle and data-plane probes. Neither full application is deployed.',
   transport: 'Native Bicep compilation followed by ARM template deployment and Search HTTP requests.',
   portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
+  region,
   budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 2, rateUsdPerHour: 0.101, runtimeMinutes: 20, cleanupReserveMinutes: 10,
-    source: 'Azure Retail Prices API, East US 2 Basic Search consumption meter, verified 2026-11-07. Cost reporting can lag.' } };
+    source: `Azure Retail Prices API, ${region} Basic Search consumption meter, verified 2026-11-07. Cost reporting can lag.` } };
 let phase = 'preflight', arm, search, runtime, watchdog, manifestPath;
 const donePath = resolve(out, 'cleanup.done');
 function observe(target, event) {
@@ -80,8 +83,8 @@ try {
   report.templateSha256 = createHash('sha256').update(compiled).digest('hex');
   await writeFile(resolve(out, 'compiled-template.json'), compiled, { mode: 0o600 });
   emit('command-end', { target: 'azure', phase, exitCode: 0 });
-  const body = { location: 'eastus2', properties: { mode: 'Incremental', template: JSON.parse(compiled), parameters: Object.fromEntries(Object.entries({
-    groupName: manifest.group, serviceName: manifest.service, location: 'eastus2', runId, runnerIp: `${ip}/32`,
+  const body = { location: region, properties: { mode: 'Incremental', template: JSON.parse(compiled), parameters: Object.fromEntries(Object.entries({
+    groupName: manifest.group, serviceName: manifest.service, location: region, runId, runnerIp: `${ip}/32`,
   }).map(([key, value]) => [key, { value }])) } };
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
