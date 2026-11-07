@@ -91,15 +91,15 @@ export function storageBatch(operations) {
       '--changeset_native', 'Content-Type: application/http', 'Content-Transfer-Encoding: binary', `Content-ID: ${index + 1}`, '',
       `${operation.method ?? 'POST'} https://{account}.table.core.windows.net/${operation.path ?? 'NativePartitions'} HTTP/1.1`,
       'Content-Type: application/json', 'Accept: application/json;odata=nometadata', 'Prefer: return-no-content',
-      ...Object.entries(operation.headers ?? {}).map(([name, value]) => `${name}: ${value}`), '', JSON.stringify(operation.body),
+      ...Object.entries(operation.headers ?? {}).map(([name, value]) => `${name}: ${value}`), '', operation.body === undefined ? '' : JSON.stringify(operation.body),
     ]), '--changeset_native--', '--batch_native--', ''].join('\r\n');
 }
 const batchHeaders = { 'content-type': 'multipart/mixed; boundary=batch_native', accept: 'application/json;odata=nometadata', dataserviceversion: '3.0' };
 storageCases.push(
-  { id: 'table-second-row', surface: 'table', method: 'POST', path: '/NativePartitions', headers: { 'content-type': 'application/json', prefer: 'return-no-content' }, body: '{"PartitionKey":"taskhub","RowKey":"1","Owner":"worker-three"}' },
+  { id: 'table-second-row', surface: 'table', method: 'POST', path: '/NativePartitions', headers: { 'content-type': 'application/json', accept: 'application/json;odata=nometadata', prefer: 'return-no-content' }, body: '{"PartitionKey":"taskhub","RowKey":"1","Owner":"worker-three"}' },
   { id: 'table-projected-top', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$top=1&$select=Owner,Missing,PartitionKey,RowKey&$format=application/json;odata=minimalmetadata" },
   { id: 'table-projected-no-keys', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$select=Owner&$format=application/json;odata=nometadata" },
-  { id: 'table-top-zero', surface: 'table', method: 'GET', path: '/NativePartitions()?$top=0' },
+  { id: 'table-top-zero', surface: 'table', method: 'GET', path: '/NativePartitions()?$top=0', headers: { accept: 'application/json;odata=nometadata' } },
   { id: 'table-batch-insert', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
     body: storageBatch([{ body: { PartitionKey: 'batch', RowKey: '1', Owner: 'first' } }, { body: { PartitionKey: 'batch', RowKey: '2', Owner: 'second' } }]) },
   { id: 'table-batch-read', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'", headers: { accept: 'application/json;odata=nometadata' } },
@@ -108,4 +108,14 @@ storageCases.push(
   { id: 'table-batch-rollback-read', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'", headers: { accept: 'application/json;odata=nometadata' } },
   { id: 'table-batch-mixed-partitions', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
     body: storageBatch([{ body: { PartitionKey: 'batch', RowKey: '4' } }, { body: { PartitionKey: 'foreign', RowKey: '5' } }]) },
+);
+
+storageCases.push(
+  { id: 'table-compound-filter', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'%20and%20(RowKey%20eq%20'1'%20or%20Owner%20eq%20'second')", headers: { accept: 'application/json;odata=nometadata' } },
+  { id: 'table-batch-merge-delete', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
+    body: storageBatch([
+      { method: 'MERGE', path: "NativePartitions(PartitionKey='batch',RowKey='1')?$format=application%2Fjson%3Bodata%3Dminimalmetadata", body: { Owner: 'merged' } },
+      { method: 'DELETE', path: "NativePartitions(PartitionKey='batch',RowKey='2')", headers: { 'If-Match': '*' } },
+    ]) },
+  { id: 'table-batch-final-read', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'", headers: { accept: 'application/json;odata=nometadata' } },
 );

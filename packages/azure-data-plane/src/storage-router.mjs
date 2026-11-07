@@ -2,6 +2,8 @@ import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { leaseHeaders, leaseGuard, operateLease, blobConditions, leaseState } from './storage-lease.mjs';
+import { tableFilter } from './storage-table-filter.mjs';
+import { parseTableBatch, executeTableBatch, tableBatchResponse } from './storage-table-batch.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 
 function nowUtc() {
@@ -643,13 +645,27 @@ export class StorageDataPlaneRouter {
       if (!accountName) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: 'The storage account host was not found.' } }), { 'content-type': 'application/json' });
       const account = this.account(accountName);
       if (!account) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: `The storage account '${accountName}' was not found.` } }), { 'content-type': 'application/json' });
-      const format = url.searchParams.get('$format') ?? req.headers.accept ?? 'application/json;odata=minimalmetadata';
+      const format = url.searchParams.get('$format') ?? req.headers.accept ?? 'application/atom+xml';
       const common = { 'content-type': format.startsWith('application/json') ? format : 'application/json;odata=nometadata', 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() };
       const failure = (status, code, message) => send(res, status, JSON.stringify({ 'odata.error': { code,
         message: { lang: 'en-US', value: `${message}\nRequestId:${requestId}\nTime:${isoNow()}` } } }), common);
       if (!validateTableKey(req, url, account)) return failure(403, 'AuthenticationFailed', 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.');
       const entityBody = entity => Object.fromEntries(Object.entries(entity).filter(([key]) => !format.includes('odata=nometadata') || !key.startsWith('odata.')));
       const path = url.pathname.replace(/^\/+/, '');
+      if (req.method === 'POST' && path === '$batch') {
+        const chunks = []; let bytes = 0;
+        for await (const chunk of req) { bytes += chunk.length; if (bytes <= 4 * 1024 ** 2) chunks.push(chunk); }
+        if (bytes > 4 * 1024 ** 2) return failure(413, 'RequestBodyTooLarge', 'The request body is too large.');
+        let operations;
+        try { operations = parseTableBatch(Buffer.concat(chunks).toString('utf8'), req.headers['content-type'], account.accountName); }
+        catch (error) { return failure(error.status ?? 400, error.code ?? 'InvalidInput', error.message); }
+        const response = tableBatchResponse(executeTableBatch(account, operations), requestId);
+        return send(res, 202, response.body, { ...common, 'content-type': response.contentType });
+      }
+      if (!/^application\/json(?:;|$)/.test(format)) return send(res, 415,
+        `<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>AtomFormatNotSupported</code><message xml:lang="en-US">Atom format is not supported.\nRequestId:${requestId}\nTime:${isoNow()}</message></error>`,
+        { ...common, 'content-type': 'application/xml;charset=utf-8' });
+
       if (req.method === 'POST' && path === 'Tables') {
         let body;
         try { body = JSON.parse((await readBody(req)).toString('utf8')); } catch { return failure(400, 'InvalidInput', 'The request body is invalid.'); }
@@ -675,14 +691,27 @@ export class StorageDataPlaneRouter {
       if (req.method === 'GET' && queryPath) {
         const table = account.tables.get(lower(queryPath[1]));
         if (!table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
-        if ([...url.searchParams.keys()].some(key => !['$filter', 'timeout', '$format'].includes(key))) return failure(501, 'NotImplemented', 'This Table query option is not implemented.');
+        if ([...url.searchParams.keys()].some(key => !['$filter', '$select', '$top', 'timeout', '$format'].includes(key))) return failure(501, 'NotImplemented', 'This Table query option is not implemented.');
         const filter = url.searchParams.get('$filter');
-        const match = filter?.match(/^PartitionKey eq '((?:[^']|'')*)'$/);
-        if (filter && !match) return failure(501, 'NotImplemented', 'Only PartitionKey equality is implemented for Table filtering.');
-        const values = [...table.entities.values()].filter(entity => !match || entity.PartitionKey === match[1].replaceAll("''", "'"));
-        if (values.length > 1000) return failure(501, 'NotImplemented', 'Entity query continuation is not implemented.');
+        let predicate;
+        try { predicate = tableFilter(filter); } catch (error) { return failure(501, 'NotImplemented', error.message); }
+        const values = [...table.entities.values()].filter(predicate);
+        const top = url.searchParams.get('$top');
+        if (top !== null && (!/^\d+$/.test(top) || Number(top) < 1 || Number(top) > 1000)) return failure(400, 'InvalidInput', 'The query parameter value is invalid.');
+        const limit = top === null ? 1000 : Number(top);
+        if (values.length > limit) return failure(501, 'NotImplemented', 'Entity query continuation is not implemented.');
+        const select = url.searchParams.get('$select');
+        const selected = select === null ? null : select.split(',');
+        if (selected && (selected.length > 255 || selected.some(name => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)))) return failure(400, 'InvalidInput', 'The projection is invalid.');
         values.sort((a, b) => a.PartitionKey < b.PartitionKey ? -1 : a.PartitionKey > b.PartitionKey ? 1 : a.RowKey < b.RowKey ? -1 : a.RowKey > b.RowKey ? 1 : 0);
-        return send(res, 200, JSON.stringify({ value: values.map(entityBody) }), common);
+        const projected = values.map(entity => selected ? {
+          ...(!format.includes('odata=nometadata') ? { 'odata.etag': entity['odata.etag'] } : {}),
+          ...Object.fromEntries(selected.map(name => [name, entity[name] ?? null])),
+        } : entityBody(entity));
+        const metadata = format.includes('odata=nometadata') ? {} : {
+          'odata.metadata': `https://${account.accountName}.table.core.windows.net/$metadata#${table.tableName}${select ? `&$select=${select}` : ''}`,
+        };
+        return send(res, 200, JSON.stringify({ ...metadata, value: projected }), common);
       }
       if (req.method === 'POST' && path && path !== 'Tables') {
         const table = account.tables.get(lower(decodeURIComponent(path)));

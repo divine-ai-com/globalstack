@@ -178,3 +178,27 @@ networking, real application deployment, and durable recovery across emulator
 restarts. Both full scenarios remain unexecuted.
 
 The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
+
+### Native Durable Storage transactions
+
+The [third Storage capture](evidence/storage-durable-92c1e82/) retains 39 paired
+requests, including projected queries, atomic two-entity batches, rollback on a
+conflict and rejection of mixed partitions. Two diagnostic requests omitted
+JSON `Accept` and failed on Azure with `AtomFormatNotSupported`. Those failures
+remain in the capture. Account and group deletion were verified.
+
+The local Table implementation now supports a single JSON changeset with up to
+100 operations and a 4 MiB body limit, conditional writes, transactional rollback,
+projection, and bounded string-equality filters with `and`, `or` and parentheses.
+Tests replay the Azure decisions and verify that concurrent stale writers cannot
+both commit. Query pagination, other filter operators, multiple changesets,
+read batches and complete OData type/metadata fidelity remain unsupported.
+These changes do not establish complete Table compatibility.
+
+Run `FUNCTIONS_PROBE_ORCHESTRATION=1 node experiments/production-scenarios/functions-storage-probe.mjs`
+to exercise the official Functions container against local Storage. This mode
+intentionally omits downstream application settings and expects the real
+orchestration to persist a failure after activity retries. Its success is a
+failure-path runtime check, not a completed document pipeline. Host-only mode
+remains available without that environment variable. Neither mode deploys the
+Function App to Azure or supplies Portal screenshots.

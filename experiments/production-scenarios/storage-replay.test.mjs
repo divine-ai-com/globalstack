@@ -55,8 +55,8 @@ test('Table Shared Key requests reproduce captured create, duplicate, insert and
   assert.equal(invalid.status, 403);
   const foreignFilter = await storageExchange({ ...config, method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'foreign'", headers: { accept: 'application/json;odata=nometadata' } });
   assert.deepEqual(JSON.parse(foreignFilter.body), { value: [] });
-  assert.equal((await storageExchange({ ...config, method: 'GET', path: '/NativePartitions()?$filter=unsupported' })).status, 501);
-  const lite = await storageExchange({ ...config, scheme: 'SharedKeyLite', method: 'GET', path: '/Tables' });
+  assert.equal((await storageExchange({ ...config, method: 'GET', path: '/NativePartitions()?$filter=unsupported', headers: { accept: 'application/json;odata=nometadata' } })).status, 501);
+  const lite = await storageExchange({ ...config, scheme: 'SharedKeyLite', method: 'GET', path: '/Tables', headers: { accept: 'application/json;odata=nometadata' } });
   assert.equal(lite.status, 200);
 });
 
@@ -127,7 +127,7 @@ test('second Azure capture validates leased metadata and optimistic Table update
   const path = "/NativePartitions(PartitionKey='taskhub',RowKey='0')";
   const before = await storageExchange({ ...config, method: 'GET', path, headers: { accept: 'application/json;odata=nometadata' } });
   const changes = await Promise.all(Array.from({ length: 8 }, (_, i) => storageExchange({ ...config, method: 'PUT', path,
-    headers: { 'content-type': 'application/json', 'if-match': before.headers.etag }, body: JSON.stringify({ Owner: `concurrent-${i}` }) })));
+    headers: { 'content-type': 'application/json', accept: 'application/json;odata=nometadata', 'if-match': before.headers.etag }, body: JSON.stringify({ Owner: `concurrent-${i}` }) })));
   assert.equal(changes.filter(item => item.status === 204).length, 1);
   assert.equal(changes.filter(item => item.status === 412).length, 7);
   const after = await storageExchange({ ...config, method: 'GET', path, headers: { accept: 'application/json;odata=nometadata' } });
