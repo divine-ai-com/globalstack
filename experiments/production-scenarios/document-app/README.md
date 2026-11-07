@@ -33,9 +33,12 @@ Search-side ACL filtering or service authentication.
 The Functions package registers an Event Grid entrypoint, Durable orchestration,
 real SDK-backed scanning/storage activities, outbox retries and explicit Service
 Bus dead-letter settlement. Its image pins Microsoft's Node 22 host and the
-bundled extension version. A local host probe executed the HTTP health function,
-but Durable storage initialization failed on missing container operations in
-GlobalStack. Package import outside the host only checks module loading; the
+bundled extension version. The initial local host probe executed HTTP health but failed Durable storage
+initialization. After paired Storage comparisons and fixes, the clean
+[host-startup capture](../evidence/functions-storage-2fb0e55/) shows the native
+Durable task hub worker starting and acquiring its host lease. Timer functions
+invoke the application and fail on missing service settings in this storage-only
+probe. No document workflow completed. Package import outside the host only checks module loading; the
 SDK's test mode is not a deployed worker test.
 
 The SQL file currently initializes a fresh experiment database. Upgrade

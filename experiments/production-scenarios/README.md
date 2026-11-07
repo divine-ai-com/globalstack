@@ -176,3 +176,5 @@ Current limitations include bounded Table query support, missing Table batch
 transactions, incomplete blob listing/versioning, application identity/private
 networking, real application deployment, and durable recovery across emulator
 restarts. Both full scenarios remain unexecuted.
+
+The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
