@@ -25,8 +25,8 @@ function normalize(input) {
   assert.ok(input.fileName?.length > 0 && input.fileName.length <= 255);
   assert.ok(typeof input.version === 'string' && input.version.length > 0 && input.version.length <= 256);
   assert.match(input.sequence, /^[a-fA-F0-9]{1,64}$/);
-  assert.ok(['clean', 'detected', 'deleted'].includes(input.status), 'Transient processing failures must be retried, not committed as clean');
-  if (input.status !== 'deleted') {
+  assert.ok(['pending', 'unresolved', 'clean', 'detected', 'deleted'].includes(input.status));
+  if (['clean', 'detected'].includes(input.status)) {
     assert.match(input.scan?.sha256, /^[a-f0-9]{64}$/);
     assert.equal(input.scan?.status, input.status);
   }
@@ -40,7 +40,8 @@ function normalize(input) {
     assert.ok(text.trim().length > 0 && Buffer.byteLength(text) <= 2 * 1024 * 1024);
   }
   const documentId = documentIdentity(input.tenant, input.blobUrl);
-  const revisionId = digest([documentId, input.version, input.status === 'deleted' ? 'delete' : 'content']);
+  const phase = ['pending', 'unresolved', 'deleted'].includes(input.status) ? input.status : 'content';
+  const revisionId = digest([documentId, input.version, phase]);
   const outcome = { tenant: input.tenant, blobUrl: input.blobUrl, fileName: input.fileName, version: input.version,
     status: input.status, contentHash: input.scan?.sha256 ?? null, text,
     pages: input.scan?.pages ?? null, provenance: input.scan?.provenance ?? null,
@@ -56,17 +57,20 @@ export async function commitRevision(pool, input) {
     await client.query('BEGIN');
     await client.query(`INSERT INTO scanned_documents(document_id, tenant_id, blob_url, file_name, scan_status)
       VALUES ($1, $2, $3, $4, 'PENDING') ON CONFLICT (document_id) DO NOTHING`, [documentId, input.tenant, input.blobUrl, input.fileName]);
-    const current = (await client.query('SELECT source_sequence FROM scanned_documents WHERE document_id=$1 FOR UPDATE', [documentId])).rows[0];
+    const current = (await client.query('SELECT source_sequence, scan_status, blob_version FROM scanned_documents WHERE document_id=$1 FOR UPDATE', [documentId])).rows[0];
     const previous = (await client.query('SELECT outcome_hash, source_sequence FROM document_revisions WHERE revision_id=$1', [revisionId])).rows[0];
     if (previous) {
       assert.equal(previous.outcome_hash.trim(), outcomeHash, 'A blob revision cannot have conflicting committed outcomes');
       assert.equal(previous.source_sequence, sequence, 'A blob revision cannot change sequence');
       await client.query('COMMIT');
-      return { documentId, revisionId, state: 'duplicate' };
+      return { documentId, revisionId, state: 'duplicate',
+        needsProcessing: current.blob_version === input.version && ['PENDING', 'UNRESOLVED'].includes(current.scan_status) };
     }
     await client.query(`INSERT INTO document_revisions(revision_id, document_id, outcome_hash, source_sequence, outcome)
       VALUES ($1,$2,$3,$4,$5)`, [revisionId, documentId, outcomeHash, sequence, outcome]);
-    if (BigInt(sequence) <= BigInt(current.source_sequence)) {
+    const sameSequence = BigInt(sequence) === BigInt(current.source_sequence);
+    const canResolveCurrent = sameSequence && current.blob_version === input.version && ['PENDING', 'UNRESOLVED'].includes(current.scan_status);
+    if (BigInt(sequence) < BigInt(current.source_sequence) || (sameSequence && !canResolveCurrent)) {
       await client.query('COMMIT');
       return { documentId, revisionId, state: 'stale' };
     }

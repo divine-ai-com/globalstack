@@ -87,4 +87,16 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
   assert.equal((await deliverNext(pool, sink)).state, 'delivered');
   assert.equal(calls[0].operation, 'delete');
   assert.equal((await deliverNext(pool, sink)).state, 'idle');
+  const next = { ...input, version: 'version-5', sequence: '05' };
+  assert.equal((await commitRevision(pool, { ...next, status: 'pending', scan: undefined })).state, 'committed');
+  assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'PENDING');
+  assert.deepEqual(await currentSearchResults(pool, input.tenant, [hit]), []);
+  assert.equal((await commitRevision(pool, { ...next, status: 'unresolved', scan: undefined })).state, 'committed');
+  assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'UNRESOLVED');
+  assert.equal((await commitRevision(pool, next)).state, 'committed');
+  const recovered = (await pool.query('SELECT * FROM scanned_documents')).rows[0];
+  assert.equal(recovered.scan_status, 'CLEAN');
+  assert.equal((await currentSearchResults(pool, input.tenant, [{ document_id: recovered.document_id, revision_id: recovered.revision_id }])).length, 1);
+  assert.equal((await commitRevision(pool, { ...next, status: 'pending', scan: undefined })).state, 'duplicate');
+  assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'CLEAN');
 });
