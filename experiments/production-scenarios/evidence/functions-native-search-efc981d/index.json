@@ -1,0 +1,14 @@
+{
+  "scope": "Native image Search SDK identity/TLS diagnostic, with Storage and database adapter checks. No live Azure Search or full application comparison.",
+  "sourceRevision": "efc981d91c206285cb20937d064f689f02dc569c",
+  "files": {
+    "result.json": {
+      "sha256": "6489346c23ebbc8f66364ca9699b21c39c64901ae287aa7ba7b3ac8ecbee94d1",
+      "bytes": 63595
+    },
+    "host.log": {
+      "sha256": "e7c7901ac1762f98a966fb70ec7b8aa9df95e12468611b83a6b014d0421cfb72",
+      "bytes": 73816
+    }
+  }
+}

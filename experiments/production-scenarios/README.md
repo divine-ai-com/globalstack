@@ -548,3 +548,9 @@ both plan IDs and the deployment record returned 404, while the operator group
 remained present. This uses a dedicated certificate-authenticated service
 principal, so interactive sign-in is no longer the blocker. It does not resolve
 the hosting restriction, prove plan deployment, or complete either workflow.
+
+See [current execution status](STATUS.md) for the completion gate, blockers and
+remaining full-scenario work. To inspect a retained HTTP comparison without
+starting another run, execute `node experiments/production-scenarios/render-replay.mjs
+<evidence-directory>`. Its `replay.html` embeds timestamped observations and labels
+its scope and outcome. It is a replay, not a live recording or Portal screenshot.

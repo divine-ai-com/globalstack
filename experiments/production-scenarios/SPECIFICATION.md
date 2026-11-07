@@ -1,6 +1,6 @@
 # Production scenario differential testing specification
 
-Status: planned application experiments with read-only Azure preflight and local gap probes. No complete deployment or end-to-end pass is claimed for either scenario. The earlier nine-platform resource-group results are a separate experiment.
+Status: application experiments in progress, with bounded live Azure component captures and local runtime diagnostics. No complete deployment or end-to-end pass is claimed for either scenario. See [current execution status](STATUS.md) for measured work and remaining gates. The earlier nine-platform resource-group results are a separate experiment.
 
 The objective is to run unchanged IaC and unchanged application artifacts on Azure and GlobalStack, preserve every attempted revision, and measure where their deployment and runtime contracts differ. The application must not inspect an emulator flag or change its business behavior by environment. Credentials, subscription, DNS, certificate trust, network routing and instance names are supplied externally. Every difference in those inputs must be recorded.
 

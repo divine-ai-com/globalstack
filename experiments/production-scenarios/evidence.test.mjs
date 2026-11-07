@@ -376,3 +376,22 @@ test('scoped hosting retains Azure throttling and verifies individual resource c
   assert.equal(new Set(failures.map(item => item.properties.targetResource.id)).size, 2);
   assert.ok(!report.exchanges.some(item => item.target === 'azure' && item.method === 'DELETE' && /\/resourceGroups\/<group>\?/.test(item.path)));
 });
+
+test('native Search SDK evidence retains write, read-only and revoked phases', async () => {
+  const prefix = 'functions-native-search-efc981d/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.sourceRevision, index.sourceRevision); assert.equal(report.sourceDirty, false);
+  assert.equal(report.cleanup, true); assert.equal(report.error, undefined); assert.equal(report.businessWorkflowCompleted, false);
+  const search = report.nativeIdentity.search;
+  assert.deepEqual(search.checks, [{ phase: 'authorized', queryAllowed: true, writesAllowed: true },
+    { phase: 'reader', queryAllowed: true, writesAllowed: false }, { phase: 'none', queryAllowed: false, writesAllowed: false }]);
+  assert.deepEqual(search.requests.map(item => item.status), [201, 200, 200, 403, 403, 200, 403, 403, 403]);
+  assert.ok(search.requests.every(item => item.bearer));
+  assert.equal(report.nativeIdentity.database.cleanup, true);
+});

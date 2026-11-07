@@ -122,6 +122,7 @@ try {
     await new Promise(done => arm.close(done));
   }
   report.completedAt = new Date().toISOString();
+  emit('run-end', { summary: report.error ? `Attempt incomplete: ${report.error}` : 'Bounded observations recorded; inspect scope and response differences.' });
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
 }
 console.log(JSON.stringify({ out, observationsComplete: report.observationsComplete, error: report.error, cleanup: report.cleanup }));
