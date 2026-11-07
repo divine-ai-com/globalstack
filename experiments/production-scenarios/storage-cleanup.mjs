@@ -15,7 +15,7 @@ export function storageScope(manifest) {
 export function storageArmClient(manifest, observe = () => {}, transport = fetch) {
   const scope = storageScope(manifest);
   const allowed = new Map([[scope.group, ['GET', 'PUT', 'DELETE']], [`${scope.group}/resources`, ['GET']],
-    [scope.account, ['GET', 'PUT']], [`${scope.account}/listKeys`, ['POST']]]);
+    [scope.account, ['GET', 'PUT']], [`${scope.account}/blobServices/default`, ['GET', 'PUT']], [`${scope.account}/listKeys`, ['POST']]]);
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash
@@ -41,7 +41,7 @@ export async function cleanupStorage(manifest, request = storageArmClient(manife
     const inventory = await request('GET', `${scope.group}/resources?api-version=2025-04-01`);
     assert.equal(inventory.status, 200);
     assert.ok(!inventory.body.nextLink && Array.isArray(inventory.body.value), 'Incomplete resource inventory');
-    assert.ok(inventory.body.value.every(resource => resource.id.toLowerCase() === scope.account.toLowerCase()), 'Unexpected resources in Storage-only group');
+    assert.ok(inventory.body.value.every(resource => [scope.account, `${scope.account}/blobServices/default`].some(id => resource.id.toLowerCase() === id.toLowerCase())), 'Unexpected resources in Storage-only group');
     const deleted = await request('DELETE', group);
     assert.ok([200, 202, 204, 404].includes(deleted.status), 'Group deletion failed');
   }

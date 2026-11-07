@@ -5,13 +5,17 @@ import { mkdir, statfs, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { isIP } from 'node:net';
 import { createServer } from 'node:http';
-import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/src/storage-router.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { azureCli, azureToken } from './azure-session.mjs';
 import { storageScope, storageArmClient, cleanupStorage } from './storage-cleanup.mjs';
 import { storageCases, storageExchange } from './storage-http.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
+import { storageVersionCases } from './storage-version-cases.mjs';
+import { httpExchange } from './http-exchange.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -46,7 +50,7 @@ const observe = (target, event) => {
 const request = storageArmClient({ ...manifest, token }, event => observe('azure', event));
 const donePath = resolve(out, 'cleanup.done'), manifestPath = resolve(out, 'private-cleanup.json');
 const servers = [], endpoints = {};
-let armed = false;
+let armed = false, runtime;
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 try {
   assert.equal((await request('GET', `${scope.group}?api-version=2025-04-01`)).status, 404);
@@ -62,12 +66,13 @@ try {
   watchdog.unref(); armed = true;
   const tags = { run: runId, project: 'globalstack-storage-component' };
   assert.ok([200, 201].includes((await request('PUT', `${scope.group}?api-version=2025-04-01`, { location: 'westus2', tags })).status));
-  const create = await request('PUT', `${scope.account}?api-version=2023-05-01`, {
+  const accountBody = {
     location: 'westus2', tags, kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {
       allowBlobPublicAccess: false, allowSharedKeyAccess: true, supportsHttpsTrafficOnly: true, minimumTlsVersion: 'TLS1_2',
       publicNetworkAccess: 'Enabled', networkAcls: { bypass: 'None', defaultAction: 'Deny', ipRules: [{ value: ip, action: 'Allow' }] },
     },
-  });
+  };
+  const create = await request('PUT', `${scope.account}?api-version=2023-05-01`, accountBody);
   assert.ok([200, 201, 202].includes(create.status), 'Storage account creation rejected');
   while (true) {
     assert.ok(Date.now() < manifest.deadline - 5 * 60000, 'Storage provisioning runtime exceeded');
@@ -82,7 +87,21 @@ try {
   const key = keys.body.keys[0].value;
   for (const item of keys.body.keys) replacements.push([item.value, '<redacted>']);
   const localKey = randomBytes(64).toString('base64');
-  const router = createStorageDataPlaneRouter();
+  process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = manifest.subscription;
+  const store = new ResourceStore();
+  runtime = createEmulatorRuntime({ store });
+  const router = runtime.storageRouter;
+  const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource });
+  await new Promise(resolve => arm.listen(0, '127.0.0.1', resolve));
+  servers.push(arm);
+  const localArm = async (method, path, body) => {
+    const response = await httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, { method, body, headers: { authorization: 'Bearer globalstack-local-token' } });
+    observe('local', { method, path, request: body, ...response });
+    return response;
+  };
+  phase = 'local-storage-setup';
+  await localArm('PUT', `${scope.group}?api-version=2025-04-01`, { location: 'westus2', tags });
+  await localArm('PUT', `${scope.account}?api-version=2023-05-01`, accountBody);
   router.registerStorageAccount({ accountName: manifest.account, accountKey: localKey });
   for (const surface of ['blob', 'table', 'queue']) {
     const handler = router[`${surface}Handler`]();
@@ -112,6 +131,29 @@ try {
         ...response, startedAt, completedAt: new Date().toISOString() });
     }
   }
+  if (process.env.STORAGE_PROBE_VERSIONS === '1') {
+    phase = 'enable-blob-versioning';
+    const path = `${scope.account}/blobServices/default?api-version=2023-05-01`;
+    const body = { properties: { isVersioningEnabled: true, deleteRetentionPolicy: { enabled: false }, containerDeleteRetentionPolicy: { enabled: false } } };
+    assert.equal((await request('PUT', path, body)).status, 200, 'Azure did not enable versioning');
+    await localArm('PUT', path, body);
+    report.versionObservations = {};
+    for (const target of ['azure', 'local']) {
+      try {
+        const versions = await storageVersionCases(async item => {
+          assert.ok(Date.now() < manifest.deadline - 2 * 60000, 'Version diagnostic runtime exhausted');
+          phase = item.id;
+          const response = await storageExchange({ ...item, account: manifest.account, key: target === 'azure' ? key : localKey,
+            origin: target === 'azure' ? `https://${manifest.account}.blob.core.windows.net` : endpoints.blob });
+          observe(target, { method: item.method, path: item.path, surface: 'blob', request: { headers: item.headers, body: item.body }, ...response });
+          return response;
+        });
+        report.versionObservations[target] = { complete: true, ...versions };
+      } catch (error) {
+        report.versionObservations[target] = { complete: false, error: sanitize(error.message, replacements) };
+      }
+    }
+  }
   report.probesComplete = true;
 } catch (error) {
   report.error = sanitize(String(error.message), replacements);
@@ -128,6 +170,7 @@ try {
     } catch (error) { report.cleanupError = sanitize(String(error.message), replacements); process.exitCode = 1; }
   }
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+  await runtime?.dispose();
   report.completedAt = new Date().toISOString();
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
   emit('run-end', { probesComplete: report.probesComplete ?? false, cleanup: report.cleanup });

@@ -10,6 +10,8 @@ test('Storage cleanup restricts origin, methods and exact owned resource paths',
   for (const path of ['https://external.example/', `https://user@management.azure.com${scope.group}`, `${scope.group}/foreign`, `${scope.group}#fragment`]) await assert.rejects(request('GET', path));
   await assert.rejects(request('DELETE', `${scope.account}/listKeys`));
   await assert.rejects(request('PUT', `${scope.group}/resources`));
+  await assert.rejects(request('PUT', `${scope.account}/blobServices/foreign`));
+  await assert.rejects(request('DELETE', `${scope.account}/blobServices/default`));
   assert.equal(calls.length, 0);
   await request('GET', scope.account);
   assert.equal(calls.length, 1);
@@ -34,7 +36,7 @@ test('Storage cleanup verifies group and account absence', async () => {
     calls.push([method, path]);
     if (method === 'DELETE') { exists = false; return { status: 202 }; }
     if (!exists) return { status: 404 };
-    if (path.includes('/resources?')) return { status: 200, body: { value: [{ id: scope.account }] } };
+    if (path.includes('/resources?')) return { status: 200, body: { value: [{ id: scope.account }, { id: `${scope.account}/blobServices/default` }] } };
     return { status: 200, body: { tags: { run: manifest.runId, project: 'globalstack-storage-component' } } };
   });
   assert.deepEqual(result, { groupAbsent: true, accountAbsent: true });

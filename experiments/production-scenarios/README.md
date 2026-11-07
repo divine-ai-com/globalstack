@@ -165,6 +165,14 @@ Azure/Playwright configuration:
 node experiments/platform-lifecycle/walkthrough.mjs --storage-component
 ```
 
+Set `STORAGE_PROBE_VERSIONS=1` to additionally configure Blob versioning through
+ARM and record immutable writes, historical reads, invalid selectors, attempted
+historical updates, listing and deletion. The same sequence runs Azure first
+and then locally, using version IDs returned by each target. Inspect
+`versionObservations` and individual responses; completing the diagnostic is
+not a claim that the responses match. It uses the same USD 1 run envelope and
+ownership-checked account cleanup. It does not enable soft delete or retention.
+
 The runner permits one Standard_LRS StorageV2 account, a USD 1 run envelope within
 the existing USD 150 total, a 20-minute runtime and 10-minute cleanup reserve. It
 rejects nonempty Azure inventory, restricts access to the runner IPv4 address,
