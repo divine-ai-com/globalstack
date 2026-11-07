@@ -98,7 +98,8 @@ try {
     assert.ok(response.status === 403 && Date.now() < readyDeadline, 'Storage firewall readiness failed');
     await pause(3000);
   }
-  for (const item of storageCases) {
+  for (const template of storageCases) {
+    const item = { ...template, body: template.body?.replaceAll('{account}', manifest.account) };
     assert.ok(Date.now() < manifest.deadline - 2 * 60000, 'Storage diagnostic runtime exhausted');
     phase = item.id;
     for (const target of ['azure', 'local']) {

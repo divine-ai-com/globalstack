@@ -45,7 +45,7 @@ export function storageExchange({ account, key, surface, origin, method, path, h
       response.on('error', reject);
       response.on('end', () => resolve({ status: response.statusCode, body: Buffer.concat(chunks).toString('utf8'),
         headers: Object.fromEntries(Object.entries(response.headers).filter(([name]) =>
-          ['content-type', 'content-length', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration', 'x-ms-popreceipt', 'x-ms-time-next-visible'].includes(name))) }));
+          ['content-type', 'content-length', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration', 'x-ms-popreceipt', 'x-ms-time-next-visible', 'x-ms-continuation-nextpartitionkey', 'x-ms-continuation-nextrowkey'].includes(name))) }));
     });
     request.on('error', reject); request.end(payload);
   });
@@ -83,3 +83,29 @@ export const storageCases = [
   { id: 'queue-receive', surface: 'queue', method: 'GET', path: '/native-control/messages?numofmessages=1&visibilitytimeout=30' },
   { id: 'queue-hidden-message', surface: 'queue', method: 'GET', path: '/native-control/messages?peekonly=true' },
 ];
+
+// The account placeholder is resolved by the capture runner before signing.
+export function storageBatch(operations) {
+  return ['--batch_native', 'Content-Type: multipart/mixed; boundary=changeset_native', '',
+    ...operations.flatMap((operation, index) => [
+      '--changeset_native', 'Content-Type: application/http', 'Content-Transfer-Encoding: binary', `Content-ID: ${index + 1}`, '',
+      `${operation.method ?? 'POST'} https://{account}.table.core.windows.net/${operation.path ?? 'NativePartitions'} HTTP/1.1`,
+      'Content-Type: application/json', 'Accept: application/json;odata=nometadata', 'Prefer: return-no-content',
+      ...Object.entries(operation.headers ?? {}).map(([name, value]) => `${name}: ${value}`), '', JSON.stringify(operation.body),
+    ]), '--changeset_native--', '--batch_native--', ''].join('\r\n');
+}
+const batchHeaders = { 'content-type': 'multipart/mixed; boundary=batch_native', accept: 'application/json;odata=nometadata', dataserviceversion: '3.0' };
+storageCases.push(
+  { id: 'table-second-row', surface: 'table', method: 'POST', path: '/NativePartitions', headers: { 'content-type': 'application/json', prefer: 'return-no-content' }, body: '{"PartitionKey":"taskhub","RowKey":"1","Owner":"worker-three"}' },
+  { id: 'table-projected-top', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$top=1&$select=Owner,Missing,PartitionKey,RowKey&$format=application/json;odata=minimalmetadata" },
+  { id: 'table-projected-no-keys', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$select=Owner&$format=application/json;odata=nometadata" },
+  { id: 'table-top-zero', surface: 'table', method: 'GET', path: '/NativePartitions()?$top=0' },
+  { id: 'table-batch-insert', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
+    body: storageBatch([{ body: { PartitionKey: 'batch', RowKey: '1', Owner: 'first' } }, { body: { PartitionKey: 'batch', RowKey: '2', Owner: 'second' } }]) },
+  { id: 'table-batch-read', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'", headers: { accept: 'application/json;odata=nometadata' } },
+  { id: 'table-batch-conflict', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
+    body: storageBatch([{ body: { PartitionKey: 'batch', RowKey: '3', Owner: 'must-roll-back' } }, { body: { PartitionKey: 'batch', RowKey: '1', Owner: 'conflict' } }]) },
+  { id: 'table-batch-rollback-read', surface: 'table', method: 'GET', path: "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'", headers: { accept: 'application/json;odata=nometadata' } },
+  { id: 'table-batch-mixed-partitions', surface: 'table', method: 'POST', path: '/$batch', headers: batchHeaders,
+    body: storageBatch([{ body: { PartitionKey: 'batch', RowKey: '4' } }, { body: { PartitionKey: 'foreign', RowKey: '5' } }]) },
+);
