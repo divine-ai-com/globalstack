@@ -502,3 +502,22 @@ records a Blob-generated event reaching the actual Functions trigger. The
 trigger returns a visible failure because downstream settings are missing.
 The worker, network and temporary management credential were removed. No Azure
 Functions comparison or completed document workflow is claimed by this capture.
+
+### Resource-group scoped automation
+
+`scoped-preflight.mjs` checks access to an existing dedicated resource group,
+inventories it, and compares provider validation of the same compiled Bicep
+hosting template on Azure and GlobalStack. It never creates or deletes cloud
+resources. An accepted validation is not a deployment or workflow pass.
+Use `PAIRED_AZURE_CONFIG_DIR`, `PAIRED_SUBSCRIPTION_ID`, `PAIRED_RESOURCE_GROUP`
+and an explicit private `PAIRED_RUN_DIR`. For certificate-based service-principal
+sessions, set `PAIRED_AZURE_CERTIFICATE_FILE` to an absolute owner-private PEM
+file containing the certificate and private key. The Docker CLI mounts it
+read-only at `/credential/pilot-login.pem`, matching the path used at login.
+Keep credentials and Azure CLI profiles outside this repository.
+
+The older component runners create subscription-level deployments and disposable
+resource groups. They require broader permissions and must not be used with a
+resource-group-scoped identity. Their group-deletion cleanup must not be applied
+to the persistent operator-created group. Resource-group scoped deployment and
+ownership-checked individual resource cleanup are separate work still required.

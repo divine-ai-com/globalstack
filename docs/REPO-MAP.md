@@ -105,6 +105,7 @@ flowchart TD
 - `packages/azure-data-plane/src/functions-router.mjs`
 - `packages/azure-data-plane/src/iot-hub-router.mjs`
 - `packages/azure-data-plane/src/key-vault-router.mjs`
+- `packages/azure-data-plane/src/key-vault-token-auth.mjs`
 - `packages/azure-data-plane/src/kubernetes-router.mjs`
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
 - `packages/azure-data-plane/src/managed-identity-service.mjs`
@@ -132,6 +133,7 @@ flowchart TD
 - `packages/azure-data-plane/src/synapse-sql-runner.mjs`
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
 - `packages/azure-data-plane/src/workflow-runner.mjs`
+- `packages/azure-data-plane/src/workload-token-auth.mjs`
 - `packages/conformance/src/api-management-forwarding.test.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/arm-deployment-history.test.mjs`
@@ -157,6 +159,7 @@ flowchart TD
 - `packages/conformance/src/hybrid-conformance.test.mjs`
 - `packages/conformance/src/iot-hub-router.test.mjs`
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
+- `packages/conformance/src/key-vault-token-auth.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/managed-identity.test.mjs`
 - `packages/conformance/src/native-functions-worker.test.mjs`
