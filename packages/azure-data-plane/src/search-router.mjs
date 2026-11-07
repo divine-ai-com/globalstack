@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { evaluateSearch } from './search-query.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -82,18 +83,8 @@ function etagFor(value) {
   return `"${createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 16)}"`;
 }
 
-function searchableFields(index) {
-  return index.fields.filter(field => field.searchable !== false).map(field => field.name);
-}
-
 function keyField(index) {
   return index.fields.find(field => field.key === true)?.name ?? 'id';
-}
-
-function matchesSearch(index, document, searchText) {
-  if (!searchText || searchText === '*') return true;
-  const needle = String(searchText).toLowerCase();
-  return searchableFields(index).some(field => String(document[field] ?? '').toLowerCase().includes(needle));
 }
 
 export class SearchRouter {
@@ -198,13 +189,11 @@ export class SearchRouter {
         return sendJson(res, 200, { value: results });
       }
 
-      if (indexName && method === 'POST' && url.pathname.endsWith('/docs/search')) {
+      if (indexName && method === 'POST' && (url.pathname.endsWith('/docs/search') || url.pathname.endsWith('/docs/search.post.search'))) {
         const body = await readBody(req);
-        const searchText = body?.search ?? '*';
-        const value = [...index.documents.values()]
-          .filter(document => matchesSearch(index, document, searchText))
-          .map(document => ({ '@search.score': 1, ...document }));
-        return sendJson(res, 200, { value, count: value.length });
+        const result = evaluateSearch(index, body);
+        if (result.error) return sendError(res, result.error.status, result.error.code, result.error.message);
+        return sendJson(res, 200, result.body);
       }
 
       return sendError(res, 404, 'RouteNotFound', `No Azure AI Search route handled ${url.pathname}.`);

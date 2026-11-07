@@ -39,3 +39,29 @@ The process-level regression starts the ordinary emulator entrypoint, deploys
 resources over ARM, indexes a document, delivers a correlated request to an
 actual HTTP backend, breaks/restores its URL, and checks deletion. This is a
 local component flow, not completion of either production application scenario.
+
+## Bounded Search query evaluation
+
+The local query evaluator supports plain token matching, `searchMode`,
+`searchFields`, full-query fuzzy terms with zero to two edits, pagination,
+retrievable-field projection and requested result counts. Fuzzy terms support
+adjacent transpositions and at most 50 dictionary expansions. It uses a simple
+Unicode tokenizer, not Azure's complete analyzer/Lucene implementation. Plain
+text scores are constant; BM25 ranking, language analyzers, phrases, Boolean
+syntax, wildcard expressions and fielded syntax are not implemented.
+
+One explicit vector query against one cosine field runs an exhaustive nearest
+neighbor calculation with the configured dimensions and requested `k`. Scores
+use `1 / (2 - cosineSimilarity)`. It does not model HNSW graph construction,
+approximate recall or Azure performance. Hybrid fusion, semantic ranking,
+integrated vectorization and additional query options return an explicit 501
+until implemented. Unsupported options must not silently become successful
+unfiltered or unrelated result sets. These limits remain gaps for the complete
+document and financial research scenarios.
+
+The initial local bounds are 32 query terms, 255 characters per term, 50 default
+results and 1,000 maximum results per page. They are operational limits, not
+claims about the full Azure service. Sources:
+[fuzzy queries](https://learn.microsoft.com/en-us/azure/search/search-query-fuzzy),
+[vector ranking](https://learn.microsoft.com/en-us/azure/search/vector-search-ranking),
+and [Search REST parameters](https://learn.microsoft.com/en-us/rest/api/searchservice/documents/search-post?view=rest-searchservice-2024-07-01).

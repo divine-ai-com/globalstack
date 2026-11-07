@@ -111,6 +111,7 @@ flowchart TD
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
 - `packages/azure-data-plane/src/relational-backend-manager.mjs`
+- `packages/azure-data-plane/src/search-query.mjs`
 - `packages/azure-data-plane/src/search-router.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/service-errors.mjs`
@@ -145,6 +146,7 @@ flowchart TD
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`
+- `packages/conformance/src/search-query.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
