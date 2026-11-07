@@ -298,3 +298,15 @@ A detached watchdog checks exact resource IDs and ownership before deleting the
 owned group; normal cleanup verifies both plans and deployment history absent.
 No quota increase, account upgrade or application success is inferred from the
 component runner's completion.
+
+The [first actual hosting capture](evidence/web-hosting-abf979f/) successfully
+creates both plans on Azure, repeats each PUT, updates tags and rejects an
+invalid SKU without changing the accepted plan. GlobalStack originally returns
+501 for valid plans and the invalid SKU. Both targets verify group and plan
+absence after cleanup; Azure also verifies deployment-history deletion.
+
+The subsequent local fix accepts the bounded single-instance Linux shapes,
+normalizes the captured SKU fields, and returns the captured invalid-SKU error
+without mutating existing state. Replay tests use independent resource names and
+a second invalid SKU string. Wider plan configurations remain explicitly
+unsupported. No native application execution or full protocol parity is claimed.

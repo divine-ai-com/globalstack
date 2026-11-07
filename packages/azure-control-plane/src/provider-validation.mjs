@@ -1,3 +1,4 @@
+import { validateWebPlan } from './web-plan-validation.mjs';
 import { isIP } from 'node:net';
 
 import {
@@ -2351,9 +2352,7 @@ function isFunctionAppKind(kind) {
 
 function validateFunctionAppPayload(resourceType, body, options = {}) {
   if (resourceType === 'Microsoft.Web/serverfarms') {
-    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
-      return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
-    }
+    if (body.sku?.name !== 'Y1') return validateWebPlan(body);
     const reserved = body.properties?.reserved ?? body.reserved;
     const localSupportedConsumptionPlan =
       body.sku?.name === 'Y1'

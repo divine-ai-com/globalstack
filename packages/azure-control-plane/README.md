@@ -27,3 +27,19 @@ returns synchronous HTTP 200, one of the statuses allowed by the
 Azure can instead return 202 and require polling. The local route does not yet
 reproduce that asynchronous path or every response field. A successful preflight
 is not evidence that the application deploys or runs successfully.
+
+### Linux hosting plan subset
+
+The `Microsoft.Web/serverfarms` control plane accepts the recorded single-instance
+Linux P0v3 (`kind: linux`) and EP1 (`kind: elastic`) shapes, in addition to the
+existing Y1 metadata surface. P0v3 reads normalize its tier to `Premium0V3`, as
+observed on Azure. Unknown SKU names outside the recognized family syntax return
+an App Service `BadRequest` envelope. Unsupported scaling, zones, operating
+systems and additional plan configuration return an explicit 501.
+
+The same bounded P0v3/EP1 shapes are accepted by ARM template provider validation.
+Local validation does not consult Azure account quota, regional capacity or real
+RBAC. This metadata support does not start a native application worker or emulate
+the hosted scale controller. Asynchronous timing, read-driven lifecycle progress,
+extra diagnostic fields and the full Azure plan response remain differences.
+See the retained [Azure-first hosting capture](../../experiments/production-scenarios/evidence/web-hosting-abf979f/).

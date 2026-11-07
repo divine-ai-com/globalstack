@@ -1,3 +1,4 @@
+import { validateWebPlan } from './web-plan-validation.mjs';
 import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import {
@@ -146,6 +147,15 @@ export function validateDeployment({ subscriptionId, resourceGroupName = null, d
       const type = `${route.providerNamespace}/${route.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
       const id = `${route.scopeId ?? `/subscriptions/${subscriptionId}/resourceGroups/${route.resourceGroupName}`}/providers/${route.providerNamespace}/${route.typePath}`;
       if (level !== 'Template') {
+        if (type === 'Microsoft.Web/serverfarms') {
+          const planName = route.typePath.split('/').at(-1);
+          if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/.test(planName)) unsupported('Hosting plan name validation is outside the supported subset.', 'properties.template.resources');
+          const planError = validateWebPlan(operation.body);
+          if (planError) unsupported('Provider validation outside the bounded Linux hosting plan subset is not implemented.', 'properties.template.resources');
+          if (typeof operation.body.location !== 'string' || !operation.body.location) invalid('A hosting plan requires a location.', 'properties.template.resources');
+          validatedResources.push({ id });
+          continue;
+        }
         if (type !== 'Microsoft.Search/searchServices') unsupported(`Provider validation for ${type} is not implemented.`, 'properties.template.resources');
         const error = validateSearchServiceName(route.typePath.split('/').at(-1));
         if (error) return { status: 400, body: { error: {

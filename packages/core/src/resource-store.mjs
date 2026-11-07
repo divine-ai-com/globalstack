@@ -520,7 +520,10 @@ export class ResourceStore {
                 name: (body.sku ?? body.properties?.sku ?? existing?.sku)?.name ?? 'Basic',
                 tier: (body.sku ?? body.properties?.sku ?? existing?.sku)?.tier ?? 'Regional',
               }
-            : (body.sku ?? body.properties?.sku),
+            : type === 'Microsoft.Web/serverfarms' && ['P0v3', 'EP1'].includes(body.sku?.name)
+              ? { ...body.sku, tier: body.sku.name === 'P0v3' ? 'Premium0V3' : 'ElasticPremium',
+                  size: body.sku.name, family: body.sku.name === 'P0v3' ? 'Pv3' : 'EP' }
+              : (body.sku ?? body.properties?.sku),
       kind: body.kind,
       identity: materializeIdentity(body.identity ?? existing?.identity, id),
       properties: {
@@ -682,6 +685,11 @@ export class ResourceStore {
               gatewayUrl: existing?.properties?.gatewayUrl ?? apiManagementGatewayUrl(name),
               developerPortalUrl: existing?.properties?.developerPortalUrl ?? `${apiManagementGatewayUrl(name)}/developer`,
             }
+          : {}),
+        ...(type === 'Microsoft.Web/serverfarms' && ['P0v3', 'EP1'].includes(body.sku?.name)
+          ? { name, reserved: true, numberOfWorkers: 1, currentNumberOfWorkers: 1,
+              perSiteScaling: false, elasticScaleEnabled: body.sku.name === 'EP1', maximumElasticWorkerCount: 1,
+              zoneRedundant: false, provisioningState: lifecycleSequence ? 'Creating' : 'Succeeded' }
           : {}),
         ...(type === 'Microsoft.Web/sites'
           ? {
