@@ -1,0 +1,9 @@
+{
+  "scope": "Local runtime diagnostics, not live Azure or complete application tests.",
+  "files": {
+    "local-gaps.json": {
+      "sha256": "6dbd60d6eb1468574f88ce40c08b6ffbb493cbd5f902c1709ea99f6559b73950",
+      "bytes": 6981
+    }
+  }
+}

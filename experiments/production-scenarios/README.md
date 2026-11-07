@@ -88,6 +88,47 @@ Required environment names are `PAIRED_AZURE_CONFIG_DIR`, `PAIRED_SUBSCRIPTION_I
 
 ## Preflight state and next work
 
+### Runtime wiring and backend forwarding
+
+Revision `905f53b` connects Search and API Management to the full emulator
+entrypoint, synchronizes their ARM lifecycle and forwards APIM requests to an
+actual backend for configured operations. Process-level tests cover correlated
+delivery, a deliberately broken backend URL, recovery and deletion. The
+[repeated local diagnostic](evidence/runtime-after-905f53b/local-gaps.json) passes
+APIM forwarding and index-key checks. Fuzzy search and vector-field validation
+still fail. These local results do not establish live Azure or full application
+parity. The revised gateway fixture explicitly registers its GET operation.
+
+### Bounded live Search component capture
+
+`node experiments/platform-lifecycle/walkthrough.mjs --search-component` uses
+the same environment variables as the validation recording. This command can
+create a paid Basic Search service. Its USD 2 run allowance is part of the
+owner-authorized USD 150 total, not an additional authorization. The recorded
+Basic meter is USD 0.101/hour in East US 2. The run permits 20 minutes plus a
+10-minute cleanup reserve, one replica/partition, small synthetic documents and
+bounded requests. It refuses to overlap an existing resource inventory.
+
+The fixture temporarily permits only the runner's IPv4 address on the public
+Search endpoint and uses service admin keys held in memory. This is a component
+diagnostic configuration, not the final private-network/managed-identity
+application architecture. Credentials and the runner address are removed from
+recorded evidence. The complete architecture still needs its own priced plan.
+
+A detached watchdog can cancel the owned deployment and remove its Search-only
+resource group if the runner exits or exceeds its deadline. Both ordinary
+cleanup and the watchdog verify ownership, reject unexpected resources and
+verify resource/group/deployment-history absence. The private recovery manifest
+contains the CLI config path and owned resource names, not an access token. Keep
+that manifest if cleanup is incomplete; do not start another paid experiment.
+
+The native Bicep compiler produces one template for direct ARM submission to
+Azure first and GlobalStack second, including rejected Azure attempts. This is
+not a recording of native `az deployment` traffic. Data-plane probes cover
+invalid/corrected index schemas, indexing, fuzzy and vector queries, and index
+deletion. Component results and videos cannot mark the 101 application
+assertions complete or substitute for Portal screenshots.
+
 Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling is USD 150.
 
 The following remain required: actual application code and container images, effective identity/network configuration, safe full-stack ownership/cleanup controls, Azure deployment and live event-flow captures, equivalent local runtime execution, fixes for measured gaps, Portal evidence, and subsequent scenario 2 execution. No paid license or trial will be purchased. The Cosmos-backed application dashboard replaces Power BI at the owner's instruction; Power BI is not evaluated.
