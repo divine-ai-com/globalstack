@@ -3,6 +3,32 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
+test('native Durable failure capture executed retries and retained the terminal failure', async () => {
+  const prefix = new URL('./evidence/functions-orchestration-bf66e7f/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', prefix), 'utf8'));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, prefix));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = JSON.parse(await readFile(new URL('result.json', prefix), 'utf8'));
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.configurationMode, 'expected-application-failure');
+  assert.equal(report.workerHealthReady, true); assert.equal(report.durableWorkerStarted, true);
+  assert.equal(report.hostLeaseAcquired, true); assert.equal(report.cleanup, true);
+  assert.equal(report.businessWorkflowCompleted, false); assert.equal(report.expectedFailurePersisted, true);
+  assert.equal(report.orchestrationStart.status, 202);
+  assert.equal(report.orchestrationPolls.at(-1).runtimeStatus, 'Failed');
+  assert.equal(report.orchestrationPolls.at(-1).status, 200);
+  assert.ok(report.requests.some(item => item.surface === 'table' && item.path === '/$batch' && item.status === 202));
+  assert.deepEqual(report.requests.filter(item => item.surface === 'table' && item.status >= 400), []);
+  const log = await readFile(new URL('host.log', prefix), 'utf8');
+  for (const activity of ['scanAndStore', 'recordProcessingFailure']) {
+    const observed = [...log.matchAll(new RegExp(`Executed 'Functions\\.${activity}' \\(Failed`, 'g'))].length;
+    assert.equal(observed, 3); assert.equal(index.activityFailures[activity], observed);
+  }
+});
+
 const base = new URL('./evidence/', import.meta.url);
 const load = async name => JSON.parse(await readFile(new URL(name, base), 'utf8'));
 test('retained scenario diagnostics preserve integrity and do not claim application success', async () => {
