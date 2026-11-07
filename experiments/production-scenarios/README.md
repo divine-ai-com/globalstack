@@ -172,8 +172,8 @@ keeps service keys in memory and installs an ownership-checked cleanup watchdog.
 No paid add-on features are enabled. A completed capture can still contain
 mismatches; inspect the responses rather than treating exit status as parity.
 
-Current limitations include bounded Table query support, missing Table batch
-transactions, incomplete blob listing/versioning, application identity/private
+The first Storage capture still lacked Table batch transactions. Remaining
+limitations include bounded Table query support, incomplete blob listing/versioning, application identity/private
 networking, real application deployment, and durable recovery across emulator
 restarts. Both full scenarios remain unexecuted.
 
@@ -238,7 +238,7 @@ P0v3 App Service instance and one Linux EP1 Functions Premium instance in West U
 has zero current usage and zero limit, and attach the sanitized validation
 responses. These are short-lived document-processing research deployments under
 the existing USD 150 total experiment limit. Requesting quota does not authorize
-additional spending. No quota/support request has been submitted by this runner.
+additional spending. The later request outcomes are recorded below; the proposed limits were not approved.
 
 ## Function App refresh regression
 
@@ -257,3 +257,17 @@ local plan validator still supports only the bounded Y1 Dynamic configuration.
 The required P0v3/EP1 plans must not be advertised as supported on the basis of
 this lifecycle fix. Live Azure Web comparison remains blocked by subscription
 quota. See issues #26 and #27.
+
+## Quota request outcome
+
+The owner authorized the free quota requests after the failed hosting preflight.
+Microsoft.Quota API `2023-02-01` accepted both requests asynchronously, then
+returned terminal `ResourceNotAvailableForOffer` for a new limit of one P0v3 and
+one EP1 instance in West US 2. The Support API attempt separately failed with
+`InvalidSupportPlan`; no ticket was created. No plan was purchased or upgraded,
+and the USD 150 spending ceiling is unchanged. The sanitized
+[operation outcomes](evidence/web-quota-requests-20261107.json) retain the request
+IDs. Manual free quota review or an eligible subscription is still needed.
+Newer quota API versions returned a misleading missing-registration error even
+after provider registration; the supported older version exposed the real
+quota records and terminal decisions.
