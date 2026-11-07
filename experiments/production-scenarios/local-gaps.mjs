@@ -61,6 +61,7 @@ try {
   const apim = createApiManagementRouter();
   apim.registerService({ serviceName: 'diagnostic-gateway' });
   apim.registerApi({ serviceName: 'diagnostic-gateway', apiId: 'research', properties: { path: 'research', serviceUrl: `http://127.0.0.1:${backendPort}`, subscriptionRequired: false } });
+  apim.registerOperation({ serviceName: 'diagnostic-gateway', apiId: 'research', operationId: 'root', properties: { method: 'GET', urlTemplate: '/' } });
   const gatewayPort = await listen(createApiManagementRouterServer(apim));
   const forwarded = await json(gatewayPort, 'diagnostic-gateway.azure-api.net', 'GET', '/research');
   note('apim-backend-forwarding', 'The gateway invokes the configured backend and returns its response.', hits === 1 && forwarded.body.sentinel === 'actual-backend', { ...forwarded, backendHits: hits });

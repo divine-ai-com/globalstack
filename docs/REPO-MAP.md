@@ -91,6 +91,7 @@ flowchart TD
 - `packages/azure-data-plane/src/app-configuration-router.mjs`
 - `packages/azure-data-plane/src/azure-files-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
+- `packages/azure-data-plane/src/backend-proxy.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/cosmos-sql-router.mjs`
 - `packages/azure-data-plane/src/digital-twins-router.mjs`
@@ -119,6 +120,7 @@ flowchart TD
 - `packages/azure-data-plane/src/synapse-sql-runner.mjs`
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
 - `packages/azure-data-plane/src/workflow-runner.mjs`
+- `packages/conformance/src/api-management-forwarding.test.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/arm-deployment-validation.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
@@ -134,6 +136,7 @@ flowchart TD
 - `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`
+- `packages/conformance/src/emulator-process-runtime.test.mjs`
 - `packages/conformance/src/flow-study.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`

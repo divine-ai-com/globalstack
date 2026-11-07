@@ -106,7 +106,7 @@ export class SearchRouter {
     this.services.set(serviceKey(name), {
       serviceName: name,
       endpoint: endpoint ?? `https://${name}.search.windows.net`,
-      indexes: new Map(),
+      indexes: this.services.get(serviceKey(name))?.indexes ?? new Map(),
     });
   }
 

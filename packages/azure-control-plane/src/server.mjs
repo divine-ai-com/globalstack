@@ -314,6 +314,14 @@ export function createArmRequestHandler({
       'Microsoft.Synapse/workspaces/sqlPools',
     ]);
     const referencesExistingServerFarm = siteReferencesExistingServerFarm(store, resourceType, body);
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const properties = body.properties;
+      if (!properties || typeof properties.displayName !== 'string' || !properties.displayName
+        || !/^(GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS|TRACE|\*)$/i.test(properties.method ?? '')
+        || typeof properties.urlTemplate !== 'string' || !properties.urlTemplate.startsWith('/')) {
+        return { status: 400, body: { error: { code: 'ValidationError', message: 'An API operation requires displayName, an HTTP method and a URL template starting with /.' } } };
+      }
+    }
     if (resourceType === 'Microsoft.Search/searchServices') {
       const error = validateSearchServiceName(providerRoute.typePath.split('/').at(-1));
       if (error) return { status: 400, body: { error } };
