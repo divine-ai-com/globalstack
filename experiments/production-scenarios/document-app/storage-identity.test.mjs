@@ -78,10 +78,11 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
   const blob = container.getBlockBlobClient('tenant/report.txt');
   const original = await blob.upload('original document bytes', 23);
   await blob.upload('replacement', 11);
+  assert.equal((await blob.downloadToBuffer(2, 4)).toString(), 'plac');
   const input = { container: 'landing', blobName: 'tenant/report.txt', etag: original.etag.replaceAll('"', '') };
   assert.equal((await sourceRevision(blobs, input)).bytes.toString(), 'original document bytes');
   assert.ok(identityRequests >= 1);
-  assert.ok(requests.some(request => request.method === 'GET' && request.path.includes('versionid=') && request.status === 200));
+  assert.ok(requests.some(request => request.method === 'GET' && request.path.includes('versionid=') && request.status === 206));
   store.resources.delete(roleId.toLowerCase());
   await assert.rejects(sourceRevision(blobs, input), { statusCode: 403 });
   await assert.rejects(blob.upload('forbidden', 9), { statusCode: 403 });

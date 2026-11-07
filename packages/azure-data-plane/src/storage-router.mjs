@@ -7,6 +7,7 @@ import { parseTableBatch, executeTableBatch, tableBatchResponse } from './storag
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 import { publishBlob, versionHeaders, validVersionId, listBlobs } from './storage-versions.mjs';
 import { storageTokenAuthorizer } from './storage-token-auth.mjs';
+import { blobRange, blobContentMd5 } from './storage-range.mjs';
 
 function nowUtc() {
   return new Date().toUTCString();
@@ -515,6 +516,7 @@ export class StorageDataPlaneRouter {
         this.onBlobEvent?.({ account, blob: account.blobs.get(key), api: 'PutBlob', requestId, clientRequestId: req.headers['x-ms-client-request-id'] });
         return send(res, 201, '', {
           etag: account.blobs.get(key).etag,
+          'content-md5': blobContentMd5(body),
           'last-modified': account.blobs.get(key).lastModified,
           ...versionHeaders(account.blobs.get(key), true),
           'x-ms-request-id': requestId,
@@ -527,7 +529,13 @@ export class StorageDataPlaneRouter {
       if (!blob) return sendXmlError(res, 404, 'BlobNotFound', 'The specified blob does not exist.', requestId);
 
       if (req.method === 'GET') {
-        return send(res, 200, blob.body, {
+        const range = blobRange(blob.body, req.headers);
+        if (range.code) {
+          for (const name of ['content-range']) if (range.headers[name]) res.setHeader(name, range.headers[name]);
+          return sendXmlError(res, range.status, range.code, range.message, requestId);
+        }
+        return send(res, range.status, range.body, {
+          ...range.headers,
           'content-type': blob.contentType,
           etag: blob.etag,
           'last-modified': blob.lastModified,
@@ -545,6 +553,7 @@ export class StorageDataPlaneRouter {
           etag: blob.etag,
           'last-modified': blob.lastModified,
           'content-length': String(blob.body.length),
+          'content-md5': blobContentMd5(blob.body),
           'x-ms-blob-type': 'BlockBlob',
           ...(selectedVersion === null ? leaseHeaders(blob) : {}), ...blob.metadata, ...versionHeaders(blob, selectedVersion !== null),
           'x-ms-request-id': requestId,

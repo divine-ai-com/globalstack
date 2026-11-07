@@ -122,6 +122,7 @@ flowchart TD
 - `packages/azure-data-plane/src/storage-lease.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
+- `packages/azure-data-plane/src/storage-range.mjs`
 - `packages/azure-data-plane/src/storage-router.mjs`
 - `packages/azure-data-plane/src/storage-table-batch.mjs`
 - `packages/azure-data-plane/src/storage-table-filter.mjs`
@@ -165,6 +166,7 @@ flowchart TD
 - `packages/conformance/src/storage-client-observation.test.mjs`
 - `packages/conformance/src/storage-event-delivery.test.mjs`
 - `packages/conformance/src/storage-lease.test.mjs`
+- `packages/conformance/src/storage-range.test.mjs`
 - `packages/conformance/src/storage-table-batch.test.mjs`
 - `packages/conformance/src/storage-table-filter.test.mjs`
 - `packages/conformance/src/storage-token-auth.test.mjs`

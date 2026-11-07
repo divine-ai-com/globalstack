@@ -135,3 +135,9 @@ The supported permission mapping covers existing Blob and container read, list, 
 The SDK integration test uses `DefaultAzureCredential` against a loopback App Service identity protocol fixture, actual signed tokens, certificate-verified HTTPS Blob requests, and the unchanged document source adapter. It verifies historical bytes and role revocation. The fixture supplies identity and transport configuration externally; automatic worker identity provisioning and paired Azure authorization measurements remain pending. It does not establish either full production scenario as passed.
 
 Contract references: [Microsoft Entra authorization for Storage REST](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-azure-active-directory), [built-in Storage roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/storage).
+
+### Blob download ranges
+
+Current and historical Blob downloads support bounded and open-ended byte ranges, `x-ms-range` precedence, HTTP 206 with the selected bytes, HTTP 416 past the end, and requested MD5 integrity checksums up to 4 MiB. The standard-header fallback for malformed, reversed and suffix ranges follows the retained Azure capture. Multiple ranges return 400. Unknown custom-header syntax and CRC64 requests remain explicitly unsupported.
+
+The range regression compares response status, successful bytes and selected headers against `experiments/production-scenarios/evidence/blob-ranges-before-d3e3ead`. This capture contains both Azure and the pre-fix GlobalStack responses and verifies account/group cleanup. One known difference remains: integer-overflow ranges receive Azure front-end HTML, while GlobalStack returns XML `InvalidHeaderValue` with the same HTTP 400 status. This is a measured component contract, not complete Blob protocol parity.

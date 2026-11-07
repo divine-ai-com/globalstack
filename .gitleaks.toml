@@ -223,3 +223,10 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/production-scenarios/evidence/functions-native-keys-1697560/result\.json$''']
 regexes = ['''^PartitionKey='probe-28706f33b5'$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Table page cursors in the pre-fix Blob range capture"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-ranges-before-d3e3ead/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
