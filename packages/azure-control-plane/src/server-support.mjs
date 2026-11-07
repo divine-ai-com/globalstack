@@ -1382,13 +1382,22 @@ function armResourcePath(resourceType, names) {
   return `${namespace}/${types.map((type, index) => `${type}/${names[index]}`).join('/')}`;
 }
 
+function validationExpressionValue(value, parameters) {
+  if (value === undefined && parameters.__strictValidation) {
+    const error = new Error('This ARM reference could not be resolved during local template validation.');
+    error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+    throw error;
+  }
+  return value;
+}
+
 export function evaluateArmExpression(expression, parameters) {
   const text = expression.trim();
   const parameterMatch = text.match(/^parameters\('([^']+)'\)$/);
-  if (parameterMatch) return parameters[parameterMatch[1]];
+  if (parameterMatch) return validationExpressionValue(parameters[parameterMatch[1]], parameters);
 
   const variableMatch = text.match(/^variables\('([^']+)'\)$/);
-  if (variableMatch) return parameters.__variables?.[variableMatch[1]];
+  if (variableMatch) return validationExpressionValue(parameters.__variables?.[variableMatch[1]], parameters);
 
   if (text === 'subscription().subscriptionId') return parameters.__subscriptionId;
   if (text === 'resourceGroup().name') return parameters.__resourceGroupName;
@@ -1443,9 +1452,14 @@ export function evaluateArmExpression(expression, parameters) {
       parameters.__deploymentOutputs?.[targetName] ??
       Object.entries(parameters.__deploymentOutputs ?? {})
         .find(([key]) => key.toLowerCase().endsWith(`/${String(targetName).toLowerCase()}`))?.[1];
-    return outputs?.[referenceOutputMatch[2]]?.value ?? `[${text}]`;
+    return validationExpressionValue(outputs?.[referenceOutputMatch[2]]?.value, parameters) ?? `[${text}]`;
   }
 
+  if (parameters.__strictValidation) {
+    const error = new Error('This ARM expression is not supported by local template validation.');
+    error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+    throw error;
+  }
   return expression;
 }
 

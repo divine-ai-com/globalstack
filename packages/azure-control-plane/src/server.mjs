@@ -6,6 +6,8 @@ import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { deterministicFunctionKey, deterministicHostKey } from '../../azure-data-plane/src/functions-router.mjs';
 import { acceptsDeleteMissing, capturedProviderValidation, capturedPutMissingParent, storageAccountNotProvisioned, storagePostDeleteNotFound } from './provider-validation.mjs';
+import { validateDeployment } from './deployment-validation.mjs';
+import { validateSearchServiceName } from './search-validation.mjs';
 import {
   authorizeRequest,
   apiManagementProductApiLinkedApiRoute,
@@ -312,6 +314,10 @@ export function createArmRequestHandler({
       'Microsoft.Synapse/workspaces/sqlPools',
     ]);
     const referencesExistingServerFarm = siteReferencesExistingServerFarm(store, resourceType, body);
+    if (resourceType === 'Microsoft.Search/searchServices') {
+      const error = validateSearchServiceName(providerRoute.typePath.split('/').at(-1));
+      if (error) return { status: 400, body: { error } };
+    }
     const validationBeforeParent = validationBeforeParentTypes.has(resourceType) && body.properties !== null
       ? capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm })
       : null;
@@ -629,7 +635,12 @@ export function createArmRequestHandler({
       }
 
       const subscriptionDeploymentRoute = parseSubscriptionDeploymentRoute(pathname);
-      if (subscriptionDeploymentRoute && method === 'GET') {
+      if (subscriptionDeploymentRoute && rawSegments.length === 7 && lowered[6] === 'validate' && method === 'POST') {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        const result = validateDeployment({ ...subscriptionDeploymentRoute, body: await readBody(req) });
+        return sendJson(res, result.status, result.body);
+      }
+      if (subscriptionDeploymentRoute && rawSegments.length === 6 && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: subscriptionDeploymentRoute.subscriptionId,
           resourceGroupName: null,
@@ -639,7 +650,7 @@ export function createArmRequestHandler({
         return sendJson(res, 200, deployment);
       }
 
-      if (subscriptionDeploymentRoute && method === 'PUT') {
+      if (subscriptionDeploymentRoute && rawSegments.length === 6 && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
           subscriptionId: subscriptionDeploymentRoute.subscriptionId,
@@ -668,7 +679,7 @@ export function createArmRequestHandler({
         res.writeHead(202, { location: `${facadeOrigin(req)}${operationPath}?api-version=${url.searchParams.get('api-version') ?? '2022-09-01'}`, 'retry-after': '0' });
         res.end(); return;
       }
-      if (resourceGroupDeploymentRoute && method === 'GET') {
+      if (resourceGroupDeploymentRoute && rawSegments.length === 8 && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
           resourceGroupName: resourceGroupDeploymentRoute.resourceGroupName,
@@ -678,7 +689,7 @@ export function createArmRequestHandler({
         return sendJson(res, 200, deployment);
       }
 
-      if (resourceGroupDeploymentRoute && method === 'PUT') {
+      if (resourceGroupDeploymentRoute && rawSegments.length === 8 && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
