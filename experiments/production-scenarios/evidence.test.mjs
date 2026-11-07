@@ -45,3 +45,39 @@ test('all 101 application assertions remain required and unexecuted', async () =
     assert.equal(item.globalstack, 'not-run');
   }
 });
+
+test('partial fixes retain the initial-status difference and remaining local failures', async () => {
+  const prefix = 'validation-after-4b40af6/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const data = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(data).digest('hex'), metadata.sha256);
+    assert.equal(data.byteLength, metadata.bytes);
+  }
+  const report = await load(`${prefix}validation.json`);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.noResourcesCreated, true);
+  assert.equal(report.provisioningPerformed, false);
+  assert.equal(report.validationTerminalsComplete, true);
+  assert.equal(report.fullProtocolParityEvaluated, false);
+  assert.equal(report.portalEvidenceComplete, false);
+  for (const attempt of report.attempts) {
+    const [azure, local] = attempt.targets;
+    assert.deepEqual(attempt.targets.map(item => item.target), ['azure', 'local']);
+    assert.deepEqual(azure.request, local.request);
+    const terminal = azure.polls.at(-1) ?? azure;
+    assert.equal(terminal.status, local.status);
+    assert.equal(terminal.body?.error?.code, local.body?.error?.code);
+  }
+  assert.equal(report.attempts[1].targets[0].status, 202);
+  assert.equal(report.attempts[1].targets[1].status, 200);
+  const recording = await load(`${prefix}validation-recording.json`);
+  const events = await readFile(new URL(`${prefix}validation-events.ndjson`, base));
+  assert.equal(createHash('sha256').update(events).digest('hex'), recording.eventSha256);
+  const local = await load(`${prefix}local-gaps.json`);
+  assert.equal(local.sourceDirty, false);
+  assert.equal(local.results.find(item => item.id === 'search-multiple-keys').status, 'pass');
+  assert.deepEqual(local.results.filter(item => item.status === 'fail').map(item => item.id), [
+    'search-fuzzy', 'search-invalid-vector', 'apim-backend-forwarding',
+  ]);
+});

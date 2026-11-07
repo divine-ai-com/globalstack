@@ -1,0 +1,290 @@
+{
+  "scope": "Local diagnostic probes, not Azure-paired observations or complete application tests.",
+  "revision": "c42af2edb6ca332837b4e15d70f04387ea1c5e41",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T06:03:41.774Z",
+  "results": [
+    {
+      "id": "search-fuzzy",
+      "assertion": "A one-edit fuzzy term finds the known clean document.",
+      "status": "fail",
+      "observed": {
+        "status": 200,
+        "body": {
+          "value": [],
+          "count": 0
+        }
+      },
+      "evidenceClass": "local-observation",
+      "azurePaired": false
+    },
+    {
+      "id": "search-invalid-vector",
+      "assertion": "A vector query against an undefined field is rejected.",
+      "status": "fail",
+      "observed": {
+        "status": 200,
+        "body": {
+          "value": [
+            {
+              "@search.score": 1,
+              "id": "a",
+              "text": "financial report",
+              "tenant": "alpha"
+            },
+            {
+              "@search.score": 1,
+              "id": "b",
+              "text": "private report",
+              "tenant": "beta"
+            }
+          ],
+          "count": 2
+        }
+      },
+      "evidenceClass": "local-observation",
+      "azurePaired": false
+    },
+    {
+      "id": "search-multiple-keys",
+      "assertion": "An index cannot have two key fields.",
+      "status": "pass",
+      "observed": {
+        "status": 400,
+        "body": {
+          "error": {
+            "code": "InvalidRequestParameter",
+            "message": "Index payload requires exactly one key field."
+          }
+        }
+      },
+      "evidenceClass": "local-observation",
+      "azurePaired": false
+    },
+    {
+      "id": "apim-backend-forwarding",
+      "assertion": "The gateway invokes the configured backend and returns its response.",
+      "status": "fail",
+      "observed": {
+        "status": 200,
+        "body": {
+          "serviceName": "diagnostic-gateway",
+          "apiId": "research",
+          "path": "research",
+          "method": "GET",
+          "requestPath": "/research",
+          "backendUrl": "http://127.0.0.1:36227",
+          "body": null
+        },
+        "backendHits": 0
+      },
+      "evidenceClass": "local-observation",
+      "azurePaired": false
+    }
+  ],
+  "exchanges": [
+    {
+      "startedAt": "2026-11-07T06:03:41.785Z",
+      "completedAt": "2026-11-07T06:03:41.806Z",
+      "host": "diagnostic-search.search.windows.net",
+      "method": "PUT",
+      "path": "/indexes('docs')?api-version=2024-07-01",
+      "request": {
+        "name": "docs",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Edm.String",
+            "key": true,
+            "searchable": false
+          },
+          {
+            "name": "text",
+            "type": "Edm.String",
+            "searchable": true
+          },
+          {
+            "name": "tenant",
+            "type": "Edm.String",
+            "filterable": true
+          }
+        ]
+      },
+      "response": {
+        "status": 201,
+        "body": {
+          "name": "docs",
+          "fields": [
+            {
+              "name": "id",
+              "type": "Edm.String",
+              "key": true,
+              "searchable": false
+            },
+            {
+              "name": "text",
+              "type": "Edm.String",
+              "searchable": true
+            },
+            {
+              "name": "tenant",
+              "type": "Edm.String",
+              "filterable": true
+            }
+          ],
+          "@odata.etag": "\"77314e2e2f5fbd77\""
+        }
+      }
+    },
+    {
+      "startedAt": "2026-11-07T06:03:41.806Z",
+      "completedAt": "2026-11-07T06:03:41.809Z",
+      "host": "diagnostic-search.search.windows.net",
+      "method": "POST",
+      "path": "/indexes('docs')/docs/search.index?api-version=2024-07-01",
+      "request": {
+        "value": [
+          {
+            "@search.action": "upload",
+            "id": "a",
+            "text": "financial report",
+            "tenant": "alpha"
+          },
+          {
+            "@search.action": "upload",
+            "id": "b",
+            "text": "private report",
+            "tenant": "beta"
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "value": [
+            {
+              "key": "a",
+              "status": true,
+              "statusCode": 201
+            },
+            {
+              "key": "b",
+              "status": true,
+              "statusCode": 201
+            }
+          ]
+        }
+      }
+    },
+    {
+      "startedAt": "2026-11-07T06:03:41.809Z",
+      "completedAt": "2026-11-07T06:03:41.812Z",
+      "host": "diagnostic-search.search.windows.net",
+      "method": "POST",
+      "path": "/indexes('docs')/docs/search?api-version=2024-07-01",
+      "request": {
+        "search": "financal~1",
+        "queryType": "full"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "value": [],
+          "count": 0
+        }
+      }
+    },
+    {
+      "startedAt": "2026-11-07T06:03:41.812Z",
+      "completedAt": "2026-11-07T06:03:41.814Z",
+      "host": "diagnostic-search.search.windows.net",
+      "method": "POST",
+      "path": "/indexes('docs')/docs/search?api-version=2024-07-01",
+      "request": {
+        "vectorQueries": [
+          {
+            "kind": "vector",
+            "vector": [
+              1,
+              0
+            ],
+            "fields": "missing-vector-field",
+            "k": 1
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "value": [
+            {
+              "@search.score": 1,
+              "id": "a",
+              "text": "financial report",
+              "tenant": "alpha"
+            },
+            {
+              "@search.score": 1,
+              "id": "b",
+              "text": "private report",
+              "tenant": "beta"
+            }
+          ],
+          "count": 2
+        }
+      }
+    },
+    {
+      "startedAt": "2026-11-07T06:03:41.814Z",
+      "completedAt": "2026-11-07T06:03:41.817Z",
+      "host": "diagnostic-search.search.windows.net",
+      "method": "PUT",
+      "path": "/indexes('badkeys')?api-version=2024-07-01",
+      "request": {
+        "name": "badkeys",
+        "fields": [
+          {
+            "name": "a",
+            "type": "Edm.String",
+            "key": true
+          },
+          {
+            "name": "b",
+            "type": "Edm.String",
+            "key": true
+          }
+        ]
+      },
+      "response": {
+        "status": 400,
+        "body": {
+          "error": {
+            "code": "InvalidRequestParameter",
+            "message": "Index payload requires exactly one key field."
+          }
+        }
+      }
+    },
+    {
+      "startedAt": "2026-11-07T06:03:41.818Z",
+      "completedAt": "2026-11-07T06:03:41.821Z",
+      "host": "diagnostic-gateway.azure-api.net",
+      "method": "GET",
+      "path": "/research",
+      "request": null,
+      "response": {
+        "status": 200,
+        "body": {
+          "serviceName": "diagnostic-gateway",
+          "apiId": "research",
+          "path": "research",
+          "method": "GET",
+          "requestPath": "/research",
+          "backendUrl": "http://127.0.0.1:36227",
+          "body": null
+        }
+      }
+    }
+  ],
+  "completedAt": "2026-11-07T06:03:41.822Z"
+}

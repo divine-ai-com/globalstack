@@ -4,7 +4,7 @@ Neither application scenario has completed deployment or end-to-end testing. The
 
 Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28). The [nine-platform resource-group matrix](../platform-lifecycle/LIVE.md) is background evidence for a different scenario.
 
-## Captured findings
+## Captured baseline findings
 
 | Finding | Evidence class | Tracker |
 | --- | --- | --- |
@@ -25,6 +25,41 @@ node experiments/production-scenarios/local-gaps.mjs reports/production-scenario
 ```
 
 The diagnostic command intentionally exits nonzero while any checked capability is missing. CI verifies retained evidence and safety boundaries; it does not pretend these product gaps are passing tests.
+
+## Partial fixes and retained comparison
+
+Revision `4b40af6` adds side-effect-free subscription validation for inline
+templates and Search service names. The [new paired capture](evidence/validation-after-4b40af6/validation.json)
+preserves the same source fixtures and Azure-first request order:
+
+| Attempt | Azure | GlobalStack |
+| --- | --- | --- |
+| Missing location parameter | 400 `InvalidTemplate`, parameter path supplied | 400 `InvalidTemplate`, same parameter path |
+| Invalid Search name, Template | 202, then 200 completion | 200, synchronous completion |
+| Invalid Search name, Provider | 400 `InvalidTemplateDeployment`, nested `InvalidServiceName` | Same status and error codes |
+| Corrected Search name, Provider | 200 | 200 |
+
+Both targets again confirmed that no group or deployment record was created.
+This is matching validation decisions in four attempts, with an initial-status
+difference in one attempt. It is not full protocol parity. Local asynchronous
+completion, broader provider rules, quota and RBAC checks remain unsupported;
+see the [implementation scope](../../packages/azure-control-plane/README.md).
+Issue #27 stays open. The original baseline evidence is retained above and below.
+
+Revision `c42af2e` rejects indexes with zero or multiple key fields and preserves
+an existing index when an invalid update is rejected. Independent local
+regressions cover both failure and corrected-input behavior. The
+[repeated diagnostic](evidence/validation-after-4b40af6/local-gaps.json) now passes
+the key-field check; fuzzy search, invalid vector queries and APIM forwarding
+still fail. Issue #23 stays open until a live Azure data-plane comparison and the
+affected application flow have been rerun. Neither application assertion set
+has changed to passed.
+
+[Updated events](evidence/validation-after-4b40af6/validation-events.ndjson),
+[recording metadata](evidence/validation-after-4b40af6/validation-recording.json)
+and [artifact digests](evidence/validation-after-4b40af6/index.json) accompany the
+comparison. The recording contains live terminal/API observations, not Portal
+screenshots.
 
 ## Recorded Azure-first validation comparison
 
