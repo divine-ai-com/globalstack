@@ -89,7 +89,9 @@ site deletion removes routing but does not own or terminate that worker.
 
 For a bound site, HTTP and Durable requests reach the native host with their
 body, application hostname and authentication headers. Host responses are
-returned directly, including authentication failures. Redirects are not followed.
+returned with a fixed allowlist of HTTP, authentication, tracing, CORS and security
+headers. Custom response headers outside that list are not forwarded.
+Authentication failures are preserved. Redirects are not followed.
 Requests are bounded to 12 MiB and 120 seconds. Unavailable workers return 502;
 timeouts return 504. These failures never fall back to the metadata simulation.
 SCM package deployment and ARM key management return 501 for bound sites because

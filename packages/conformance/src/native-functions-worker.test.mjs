@@ -42,7 +42,7 @@ test('ARM site lifecycle controls actual worker forwarding without synthetic fal
   const worker = createServer(async (req, res) => {
     calls++; const chunks = []; for await (const chunk of req) chunks.push(chunk);
     last = { method: req.method, path: req.url, headers: req.headers, bytes: Buffer.concat(chunks).toString('hex') };
-    res.writeHead(req.headers['x-functions-key'] === 'worker-key' ? 202 : 401, { 'content-type': 'application/json', 'x-worker-proof': 'observed' });
+    res.writeHead(req.headers['x-functions-key'] === 'worker-key' ? 202 : 401, { 'content-type': 'application/json', 'x-ms-request-id': 'observed', 'x-unreviewed-header': 'discarded' });
     res.end(JSON.stringify({ received: last.bytes }));
   });
   const upstream = await listen(t, worker), store = new ResourceStore();
@@ -68,7 +68,8 @@ test('ARM site lifecycle controls actual worker forwarding without synthetic fal
   const result = await wireFetch(`${endpoint}/runtime/webhooks/durabletask/orchestrators/actual?x=one%20two`, {
     method: 'POST', headers: { ...host, 'x-functions-key': 'worker-key', 'content-type': 'application/octet-stream', 'x-forwarded-host': 'forged' }, body: payload,
   });
-  assert.equal(result.status, 202); assert.equal(result.headers.get('x-worker-proof'), 'observed');
+  assert.equal(result.status, 202); assert.equal(result.headers.get('x-ms-request-id'), 'observed');
+  assert.equal(result.headers.get('x-unreviewed-header'), null);
   assert.deepEqual(await result.json(), { received: payload.toString('hex') });
   assert.equal(last.path, '/runtime/webhooks/durabletask/orchestrators/actual?x=one%20two');
   assert.equal(last.headers['x-forwarded-host'], undefined);

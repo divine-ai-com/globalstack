@@ -8,6 +8,23 @@ function headersFor(headers) {
   const excluded = new Set([...hopHeaders, ...String(headers.connection ?? '').toLowerCase().split(',').map(value => value.trim())]);
   return Object.fromEntries(Object.entries(headers).filter(([name]) => !excluded.has(name.toLowerCase())));
 }
+function workerResponseHeaders(headers) {
+  const result = Object.create(null);
+  const excluded = new Set(String(headers.connection ?? '').toLowerCase().split(',').map(value => value.trim()));
+  // Keep response names fixed so upstream-controlled names cannot become
+  // properties on the public response. Custom application headers need review.
+  for (const name of ['content-type', 'content-length', 'content-encoding', 'content-language', 'content-disposition',
+    'cache-control', 'etag', 'last-modified', 'expires', 'vary', 'location', 'retry-after', 'www-authenticate',
+    'set-cookie', 'date', 'allow', 'accept-ranges', 'content-range', 'x-ms-request-id', 'request-id', 'traceparent',
+    'access-control-allow-origin', 'access-control-allow-credentials', 'access-control-allow-methods',
+    'access-control-allow-headers', 'access-control-expose-headers', 'access-control-max-age',
+    'content-security-policy', 'content-security-policy-report-only', 'strict-transport-security',
+    'x-content-type-options', 'x-frame-options', 'referrer-policy', 'permissions-policy']) {
+    if (!excluded.has(name) && Object.hasOwn(headers, name)) result[name] = headers[name];
+  }
+  return result;
+}
+
 function localAddress(hostname) {
   if (hostname === 'localhost' || hostname === '[::1]') return true;
   if (isIP(hostname) !== 4) return false;
@@ -72,7 +89,7 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
     request.on('error', () => { if (!settled) fail(502, 'NativeFunctionsWorkerUnavailable'); });
     request.on('response', upstream => {
       if (settled) { upstream.destroy(); return; }
-      res.writeHead(upstream.statusCode, headersFor(upstream.headers));
+      res.writeHead(upstream.statusCode, workerResponseHeaders(upstream.headers));
       upstream.on('error', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
       upstream.once('aborted', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
       upstream.pipe(res);
