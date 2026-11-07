@@ -1,6 +1,7 @@
 """Bounded file scanning and extraction, shared by both deployment targets."""
 
 import hashlib
+import os
 from functools import lru_cache
 from pathlib import Path
 import re
@@ -54,11 +55,16 @@ def engine_result(engine, source, directory, database, rules):
     started = time.monotonic()
     try:
         if engine == "clamav":
-            code, output = command([
-                "clamscan", "--no-summary", f"--database={database}",
-                "--max-filesize=10M", "--max-scansize=50M", "--max-files=512",
-                "--max-recursion=8", "--alert-exceeds-max=yes", str(source),
-            ], directory)
+            daemon_config = os.environ.get("CLAMD_CONFIG")
+            if daemon_config:
+                # A missing or failed daemon is an error, never a fallback that
+                # silently reloads a different signature set for this request.
+                args = ["clamdscan", "--no-summary", "--stream", f"--config-file={daemon_config}", str(source)]
+            else:
+                args = ["clamscan", "--no-summary", f"--database={database}",
+                        "--max-filesize=10M", "--max-scansize=50M", "--max-files=512",
+                        "--max-recursion=8", "--alert-exceeds-max=yes", str(source)]
+            code, output = command(args, directory)
             if code not in (0, 1):
                 raise ProcessingError("scan_failed")
             findings = re.findall(r": ([^\r\n]+) FOUND", output)

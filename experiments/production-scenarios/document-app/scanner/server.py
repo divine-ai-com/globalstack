@@ -4,15 +4,20 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
+import signal
 import threading
+from uuid import UUID
 
+from daemon import ScanDaemon
 from worker import MAX_BYTES, ProcessingError, process_document
 
 
 slots = threading.BoundedSemaphore(2)
+log_lock = threading.Lock()
 database = Path(os.environ.get("CLAMAV_DATABASE", "/var/lib/clamav"))
 rules = Path(os.environ.get("YARA_RULES", "/app/rules.yar"))
 ready = False
+engine = None
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -39,7 +44,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path != "/health":
             return self.respond(404, {"error": "route_not_found"})
-        self.respond(200 if ready else 503, {"ready": ready})
+        healthy = ready and engine is not None and engine.healthy()
+        self.respond(200 if healthy else 503, {"ready": healthy})
 
     def do_POST(self):
         if self.path != "/scan":
@@ -59,6 +65,15 @@ class Handler(BaseHTTPRequestHandler):
             if len(content) != length:
                 return self.respond(400, {"error": "incomplete_request"})
             result = process_document(content, self.headers.get("Content-Type", "").split(";")[0], database, rules)
+            try:
+                correlation = str(UUID(self.headers.get("X-Correlation-Id", "")))
+            except ValueError:
+                correlation = None
+            with log_lock:
+                print(json.dumps({"stage": "scanner_completed", "correlationId": correlation,
+                                  "contentHash": result["sha256"], "status": result["status"],
+                                  "engines": [{"engine": item["engine"], "status": item["status"]}
+                                              for item in result["engines"]]}), flush=True)
             self.respond(200, result)
         except ProcessingError as error:
             self.respond(422, {"error": str(error)})
@@ -93,8 +108,16 @@ class BoundedServer(ThreadingHTTPServer):
 
 
 if __name__ == "__main__":
-    try:
-        ready = process_document(b"Document worker readiness probe", "text/plain", database, rules)["status"] == "clean"
-    except (ProcessingError, OSError):
-        ready = False
-    BoundedServer(("0.0.0.0", int(os.environ.get("PORT", "8080"))), Handler).serve_forever()
+    with ScanDaemon(database) as engine:
+        os.environ["CLAMD_CONFIG"] = str(engine.config)
+        try:
+            ready = process_document(b"Document worker readiness probe", "text/plain", database, rules)["status"] == "clean"
+        except (ProcessingError, OSError):
+            ready = False
+        with BoundedServer(("0.0.0.0", int(os.environ.get("PORT", "8080"))), Handler) as server:
+            def stop(_signum, _frame):
+                threading.Thread(target=server.shutdown, daemon=True).start()
+
+            signal.signal(signal.SIGTERM, stop)
+            signal.signal(signal.SIGINT, stop)
+            server.serve_forever()

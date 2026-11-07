@@ -2,7 +2,10 @@
 
 This is an application component under development, not a completed Azure or
 GlobalStack deployment. The same image is intended for both targets. It has no
-emulator flag and performs actual ClamAV/YARA subprocess calls and extraction.
+emulator flag and performs actual ClamAV/YARA scanning and extraction. The HTTP
+worker starts one non-root ClamAV daemon with a private mode-0600 Unix socket.
+No ClamAV TCP listener is enabled. `clamdscan --stream` sends each immutable
+input to the shared engine; YARA remains an independent subprocess.
 
 `POST /scan` accepts a length-delimited document with its content type. Both
 engines inspect the same immutable temporary bytes. Detection prevents
@@ -15,6 +18,12 @@ extraction cannot establish rendered page numbers.
 Limits are 10 MiB input, 20 PDF pages, 50 MiB expanded archive content and 2 MiB
 extracted text. Child commands have CPU, output-file and wall-clock bounds.
 The HTTP listener admits 16 connections and two active processing requests.
+The daemon has two scan threads, a queue of four, a 15-second scan limit and the
+same file/expansion limits. Engine initialization has a 90-second deadline.
+Readiness requires both the initial two-engine check and a responsive daemon.
+Daemon loss returns unresolved scans with no extracted text; there is no silent
+fallback to another engine/database. Graceful shutdown terminates and reaps the
+daemon.
 Container memory, PIDs and temporary storage must also be bounded by the runner.
 The listener is internal. Identity, private ingress and caller authorization
 must be deployed and tested before exposing it in either full scenario.
@@ -41,3 +50,21 @@ The base image is pinned by digest. Debian package versions are resolved at
 build time, so a rebuild is not claimed byte-identical. Retain the final image
 digest and `dpkg-query` inventory and use that exact image for both targets.
 No scanner test is counted as a complete document-pipeline assertion.
+
+The [official-database baseline](../../evidence/scanner-vendor-2c9f2f4/) uses the
+same 2-vCPU/4-GiB bounds intended for the pilot scanner. Four sequential checks
+passed, but one of two concurrent clean scans timed out while each request
+loaded its own ClamAV engine. This is why the HTTP worker now shares a loaded
+engine. The local tests additionally exercise HTTP readiness after engine loss
+and process cleanup. A complete application performance result is still absent.
+Vendor database bytes are retained in the operator workspace; a later FreshClam
+download may differ despite the recorded versions and hashes.
+
+The one-shot binary tests use a small harmless fixture database and need 1 GiB.
+Use 4 GiB for the official database run, with the same frozen database mounted
+read-only on both targets. Do not perform automatic signature refresh during a
+paired run. Refresh and revalidate outside the frozen experiment.
+
+References: [ClamAV daemon and one-shot scanning](https://docs.clamav.net/manual/Usage/Scanning.html),
+[signature management](https://docs.clamav.net/manual/Usage/SignatureManagement.html),
+and [official memory guidance](https://docs.clamav.net/manual/Installing/Docker.html).

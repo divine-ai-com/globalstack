@@ -42,7 +42,7 @@ probe. No document workflow completed. Package import outside the host only chec
 SDK's test mode is not a deployed worker test.
 
 The SQL file currently initializes a fresh experiment database. Upgrade
-migrations, complete outbox reconciliation, ingress, effective identity/network
+migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows
 remain required. The Functions pool enforces PostgreSQL TLS verification and
 uses an Entra token or a Key Vault secret through managed credentials. No

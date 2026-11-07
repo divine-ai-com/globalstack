@@ -2,13 +2,22 @@
 
 import hashlib
 import io
+from concurrent.futures import ThreadPoolExecutor
+import http.client
+import json
+import os
 from pathlib import Path
+import signal
+import subprocess
 import tempfile
+import time
 import unittest
+from unittest.mock import patch
 import zipfile
 import zlib
 
 from worker import ProcessingError, command, process_document
+from daemon import ScanDaemon
 
 
 def pdf(objects):
@@ -64,6 +73,76 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(result["pages"][0]["text"], content.decode())
         self.assertIn("ClamAV", result["provenance"]["versions"]["clamav"])
         self.assertEqual(result["provenance"]["clamavDatabases"][0]["sha256"], hashlib.sha256((self.database / "pilot.ndb").read_bytes()).hexdigest())
+
+    def test_persistent_engine_scans_concurrently_and_fails_closed_after_loss(self):
+        with ScanDaemon(self.database) as engine:
+            self.assertTrue(engine.healthy())
+            self.assertEqual(engine.socket.stat().st_mode & 0o777, 0o600)
+            with patch.dict(os.environ, {"CLAMD_CONFIG": str(engine.config)}):
+                with ThreadPoolExecutor(max_workers=2) as executor:
+                    results = list(executor.map(self.scan, [b"Concurrent clean report", self.clam_marker]))
+                self.assertEqual([item["status"] for item in results], ["clean", "detected"], results)
+                self.assertNotIn("pages", results[1])
+                engine.close()
+                self.assertFalse(engine.healthy())
+                failed = self.scan(b"A report cannot pass without its engine")
+                self.assertEqual(failed["status"], "unresolved", failed)
+                self.assertEqual(failed["engines"][0]["status"], "error")
+                self.assertNotIn("pages", failed)
+
+    def test_http_health_tracks_engine_loss_and_shutdown_reaps_worker(self):
+        # The test runs in its own network-isolated container, not on a host port.
+        port = 18081
+        environment = {**os.environ, "CLAMAV_DATABASE": str(self.database), "PORT": str(port)}
+        process = subprocess.Popen(["python", "/app/server.py"], env=environment,
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        engine_pid = None
+
+        def request(method, path, content=None):
+            connection = http.client.HTTPConnection("127.0.0.1", port, timeout=3)
+            try:
+                connection.request(method, path, body=content, headers={"Content-Type": "text/plain"})
+                response = connection.getresponse()
+                return response.status, json.loads(response.read())
+            finally:
+                connection.close()
+
+        try:
+            deadline = time.monotonic() + 15
+            while time.monotonic() < deadline:
+                try:
+                    if request("GET", "/health") == (200, {"ready": True}):
+                        break
+                except (OSError, http.client.HTTPException):
+                    pass
+                self.assertIsNone(process.poll(), "HTTP worker exited during startup")
+                time.sleep(0.1)
+            self.assertEqual(request("GET", "/health"), (200, {"ready": True}))
+            status, result = request("POST", "/scan", b"HTTP scanner lifecycle report")
+            self.assertEqual(status, 200)
+            self.assertEqual(result["status"], "clean", result)
+            children = Path(f"/proc/{process.pid}/task/{process.pid}/children").read_text().split()
+            self.assertEqual(len(children), 1)
+            engine_pid = int(children[0])
+            os.kill(engine_pid, signal.SIGTERM)
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline and request("GET", "/health")[0] != 503:
+                time.sleep(0.1)
+            self.assertEqual(request("GET", "/health"), (503, {"ready": False}))
+            status, result = request("POST", "/scan", b"Must remain excluded after engine loss")
+            self.assertEqual(status, 200)
+            self.assertEqual(result["status"], "unresolved", result)
+            self.assertNotIn("pages", result)
+        finally:
+            process.terminate()
+            try:
+                process.wait(timeout=8)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=3)
+            if engine_pid and Path(f"/proc/{engine_pid}").exists():
+                os.kill(engine_pid, signal.SIGKILL)
+                self.fail("Scanner shutdown did not reap its engine")
 
     def test_independent_detections_never_reach_extraction(self):
         for content, expected in [(self.clam_marker, ["detected", "clean"]),
