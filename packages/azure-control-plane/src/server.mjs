@@ -1132,7 +1132,10 @@ export function createArmRequestHandler({
           if (!site) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webHostKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
-          if (functionsRouter?.hasNativeWorker(site.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
+          if (functionsRouter?.hasNativeWorker(site.id)) {
+            const result = await functionsRouter.readNativeHostKeys(site.id);
+            return sendJson(res, result.status, result.body, { 'cache-control': 'no-store' });
+          }
           return sendJson(res, 200, {
             masterKey: deterministicHostKey(site.name, 'master'),
             functionKeys: {

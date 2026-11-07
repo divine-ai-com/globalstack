@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { createServer, request as httpRequest } from 'node:http';
-import { mkdir, statfs, writeFile } from 'node:fs/promises';
+import { mkdir, statfs, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/src/storage-router.mjs';
@@ -24,7 +24,9 @@ const report = { scope: 'Local official Functions host against GlobalStack Stora
   sourceDirty: Boolean((await exec('git', ['status', '--porcelain'])).stdout.trim()),
   startedAt: new Date().toISOString(), configurationMode: 'host-storage-only', requests: [], workerHealthReady: false, durableWorkerStarted: false, hostLeaseAcquired: false, businessWorkflowCompleted: false, cleanup: false };
 const servers = [];
-let connection, systemKey, nativeRuntime;
+let connection, systemKey, nativeRuntime, masterKeyFileOwned = false;
+const masterKeyFile = resolve(out, 'native-master-key.private');
+const privateHostKeys = [];
 function request(url, options = {}) {
   return new Promise((resolve, reject) => {
     const req = httpRequest(url, { method: options.method ?? 'GET', headers: options.headers, signal: options.signal }, response => {
@@ -81,7 +83,7 @@ try {
     siteId = `${group}/providers/Microsoft.Web/sites/${name}`;
     const planId = `${group}/providers/Microsoft.Web/serverfarms/${name}`;
     const store = new ResourceStore();
-    nativeRuntime = createEmulatorRuntime({ store, nativeFunctionsWorkers: [{ appResourceId: siteId, origin: workerEndpoint }] });
+    nativeRuntime = createEmulatorRuntime({ store, nativeFunctionsWorkers: [{ appResourceId: siteId, origin: workerEndpoint, masterKeyFile }] });
     const armServer = createArmServer({ store, onResourcePut: nativeRuntime.syncResource, onResourceDelete: nativeRuntime.unsyncResource,
       functionsRouter: nativeRuntime.functionsRouter });
     const proxy = createServer(nativeRuntime.functionsRouter.handler());
@@ -116,9 +118,25 @@ try {
     // real Failed orchestration, not report a completed document workflow.
     const secrets = JSON.parse((await exec('docker', ['exec', name, 'node', '-e',
       "const fs=require('fs');for(const p of ['/azure-functions-host/Secrets/host.json','/home/data/Functions/secrets/host.json']){if(fs.existsSync(p)){process.stdout.write(fs.readFileSync(p));process.exit(0)}}process.exit(1)"])).stdout.replace(/^\uFEFF/, ''));
+    privateHostKeys.push(...[secrets.masterKey, ...(secrets.functionKeys ?? []), ...(secrets.systemKeys ?? [])].map(item => item?.value).filter(Boolean));
     const entry = secrets.systemKeys?.find(item => item.name === 'durabletask_extension');
     assert.ok(entry?.value && !entry.encrypted, 'A plaintext local Durable system key is required');
     systemKey = entry.value;
+    if (report.nativeRouting) {
+      assert.ok(secrets.masterKey?.value && !secrets.masterKey.encrypted, 'Native host management needs its plaintext local master key');
+      await writeFile(masterKeyFile, secrets.masterKey.value, { mode: 0o600, flag: 'wx' });
+      masterKeyFileOwned = true;
+      const keysResponse = await request(`${armEndpoint}${siteId}/host/default/listKeys?api-version=2023-12-01`, {
+        method: 'POST', headers: { authorization: 'Bearer globalstack-local-token' }, signal: AbortSignal.timeout(35000),
+      });
+      assert.equal(keysResponse.status, 200, 'ARM must read the actual native host keys');
+      const keys = await keysResponse.json();
+      assert.equal(keys.masterKey, secrets.masterKey.value);
+      assert.equal(keys.systemKeys.durabletask_extension, entry.value);
+      report.nativeRouting.hostKeys = { status: keysResponse.status, masterMatches: true,
+        systemKeyNames: Object.keys(keys.systemKeys), functionKeyNames: Object.keys(keys.functionKeys), durableKeyMatches: true };
+      systemKey = keys.systemKeys.durabletask_extension;
+    }
     const instance = `probe-${id}`;
     const headers = { 'x-functions-key': systemKey, 'content-type': 'application/json' };
     if (report.nativeRouting) {
@@ -157,10 +175,12 @@ try {
 
 } catch (error) {
   report.error = String(error.message).split(connection ?? '\0').join('<local-storage-connection>').split(key).join('<local-storage-key>').split(systemKey ?? '\0').join('<local-system-key>');
+  for (const value of privateHostKeys) report.error = report.error.split(value).join('<native-host-key>');
 } finally {
   try {
     const logs = await exec('docker', ['logs', name], { maxBuffer: 8 * 1024 ** 2 });
-    const safe = `${logs.stdout}\n${logs.stderr}`.split(connection ?? '\0').join('<local-storage-connection>').split(key).join('<local-storage-key>').split(systemKey ?? '\0').join('<local-system-key>');
+    let safe = `${logs.stdout}\n${logs.stderr}`.split(connection ?? '\0').join('<local-storage-connection>').split(key).join('<local-storage-key>').split(systemKey ?? '\0').join('<local-system-key>');
+    for (const value of privateHostKeys) safe = safe.split(value).join('<native-host-key>');
     report.durableWorkerStarted = safe.includes('Task hub worker started.');
     report.hostLeaseAcquired = safe.includes('Host lock lease acquired');
     report.missingApplicationSettings = [...new Set([...safe.matchAll(/Missing application setting ([A-Z_]+)/g)].map(match => match[1]))];
@@ -170,6 +190,7 @@ try {
   const removed = await exec('docker', ['rm', '-f', name]).then(() => true, () => false);
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   await nativeRuntime?.dispose();
+  if (masterKeyFileOwned) { await rm(masterKeyFile); report.nativeRouting.managementCredentialRemoved = true; }
   const networkRemoved = await exec('docker', ['network', 'rm', name]).then(() => true, () => false);
   report.cleanup = removed && networkRemoved;
   report.completedAt = new Date().toISOString();

@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { isIP } from 'node:net';
+import { open } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
 
 const hopHeaders = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 function headersFor(headers) {
@@ -44,7 +46,9 @@ export function nativeWorkerBindings(values = []) {
     'Functions workers must use a credential-free loopback or private IP origin');
     const key = value.appResourceId.toLowerCase();
     assert.ok(!bindings.has(key), 'Duplicate Functions worker binding');
-    bindings.set(key, origin.origin);
+    assert.ok(value.masterKeyFile === undefined || typeof value.masterKeyFile === 'string' && isAbsolute(value.masterKeyFile),
+      'Native host master key files must use absolute paths');
+    bindings.set(key, { origin: origin.origin, masterKeyFile: value.masterKeyFile });
   }
   return bindings;
 }
@@ -89,7 +93,9 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
     request.on('error', () => { if (!settled) fail(502, 'NativeFunctionsWorkerUnavailable'); });
     request.on('response', upstream => {
       if (settled) { upstream.destroy(); return; }
-      res.writeHead(upstream.statusCode, workerResponseHeaders(upstream.headers));
+      const status = Number(upstream.statusCode);
+      if (!Number.isInteger(status) || status < 200 || status > 599) return fail(502, 'NativeFunctionsWorkerInvalidResponse');
+      res.writeHead(status, workerResponseHeaders(upstream.headers));
       upstream.on('error', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
       upstream.once('aborted', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
       upstream.pipe(res);
@@ -98,4 +104,51 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
     if (Number(req.headers['content-length'] ?? 0) > maxRequestBytes) return fail(413, 'RequestBodyTooLarge');
     req.pipe(request);
   });
+}
+
+
+export async function readNativeHostKeys(binding) {
+  if (!binding?.masterKeyFile) return { status: 501, body: { error: { code: 'NativeFunctionsKeysNotConfigured',
+    message: 'The native host management credential file is not configured.' } } };
+  try {
+    const file = await open(binding.masterKeyFile, 'r');
+    let masterKey;
+    try {
+      const metadata = await file.stat();
+      assert.ok(metadata.isFile() && metadata.size <= 4096 && (metadata.mode & 0o077) === 0);
+      masterKey = (await file.readFile('utf8')).trim();
+    } finally { await file.close(); }
+    assert.match(masterKey, /^[A-Za-z0-9_+/=-]{16,256}$/);
+    async function get(path) {
+      const response = await fetch(`${binding.origin}${path}`, { headers: { 'x-functions-key': masterKey },
+        redirect: 'error', signal: AbortSignal.timeout(10000) });
+      if (response.status !== 200) { await response.body?.cancel(); throw new Error('Native key lookup failed'); }
+      const chunks = []; let size = 0;
+      for await (const chunk of response.body) {
+        size += chunk.length; assert.ok(size <= 65536); chunks.push(chunk);
+      }
+      return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    }
+    const verifiedMaster = await get('/admin/host/systemkeys/_master');
+    assert.equal(verifiedMaster.value, masterKey);
+    const functionResult = await get('/admin/host/functionkeys');
+    const systemResult = await get('/admin/host/systemkeys');
+    const dictionary = result => {
+      assert.ok(Array.isArray(result.keys));
+      const entries = result.keys.map(item => {
+        assert.ok(typeof item.name === 'string' && item.name.length > 0 && item.name.length <= 256);
+        assert.ok(!['__proto__', 'constructor', 'prototype'].includes(item.name));
+        assert.ok(typeof item.value === 'string' && item.value.length > 0 && item.value.length <= 256);
+        return [item.name, item.value];
+      });
+      assert.equal(new Set(entries.map(([name]) => name)).size, entries.length);
+      return Object.fromEntries(entries);
+    };
+    return { status: 200, body: { masterKey: verifiedMaster.value,
+      functionKeys: dictionary(functionResult), systemKeys: dictionary(systemResult) } };
+  } catch {
+    // Never include credential paths, native response bodies or keys in errors.
+    return { status: 502, body: { error: { code: 'NativeFunctionsKeysUnavailable',
+      message: 'The native host key lookup failed. Check its availability and the private management credential.' } } };
+  }
 }

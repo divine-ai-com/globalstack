@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
 import { createServer, request as httpRequest } from 'node:http';
 import { test } from 'node:test';
+import { randomBytes } from 'node:crypto';
+import { mkdtemp, writeFile, chmod, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { createFunctionsRouter } from '../../azure-data-plane/src/functions-router.mjs';
-import { nativeWorkerBindings, forwardNativeFunction } from '../../azure-data-plane/src/native-functions-worker.mjs';
+import { nativeWorkerBindings, forwardNativeFunction, readNativeHostKeys } from '../../azure-data-plane/src/native-functions-worker.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
@@ -62,7 +66,7 @@ test('ARM site lifecycle controls actual worker forwarding without synthetic fal
   assert.ok([200, 201, 202].includes(created.status)); await created.arrayBuffer();
   const keys = await wireFetch(`${arm}${resourceId}/host/default/listKeys?api-version=2023-12-01`, { method: 'POST', headers: { authorization: 'Bearer globalstack-local-token' } });
   assert.equal(keys.status, 501);
-  assert.equal((await keys.json()).error.code, 'NativeFunctionsKeysNotImplemented');
+  assert.equal((await keys.json()).error.code, 'NativeFunctionsKeysNotConfigured');
   assert.equal((await wireFetch(`${endpoint}/api/real`, { headers: host })).status, 401, 'worker authentication must not be bypassed');
   const payload = Buffer.from([0, 255, 10, 42]);
   const result = await wireFetch(`${endpoint}/runtime/webhooks/durabletask/orchestrators/actual?x=one%20two`, {
@@ -107,4 +111,59 @@ test('native forwarding bounds request bodies and worker response time', async t
   const timedOut = await wireFetch(endpoint);
   assert.equal(timedOut.status, 504);
   assert.equal((await timedOut.json()).error.code, 'NativeFunctionsWorkerTimeout');
+});
+
+
+test('host key lookup uses private credentials and actual native responses without caching', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'gs-worker-keys-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const masterKeyFile = join(dir, 'master'), master = randomBytes(32).toString('base64url');
+  const functionKey = randomBytes(32).toString('base64url'), systemKey = randomBytes(32).toString('base64url');
+  await writeFile(masterKeyFile, master, { mode: 0o600 });
+  let mode = 'valid', calls = 0;
+  const origin = await listen(t, createServer((req, res) => {
+    calls++;
+    if (req.headers['x-functions-key'] !== master) { res.writeHead(401); return res.end('denied'); }
+    if (mode === 'redirect') { res.writeHead(302, { location: '/other' }); return res.end(); }
+    if (mode === 'denied') { res.writeHead(401); return res.end(master); }
+    res.setHeader('content-type', 'application/json');
+    if (mode === 'oversized') return res.end('x'.repeat(70000));
+    if (req.url === '/admin/host/systemkeys/_master') return res.end(JSON.stringify({ name: '_master', value: master }));
+    if (mode === 'duplicate') return res.end(JSON.stringify({ keys: [{ name: 'same', value: functionKey }, { name: 'same', value: systemKey }] }));
+    res.end(JSON.stringify({ keys: req.url.endsWith('functionkeys') ? [{ name: 'default', value: functionKey }]
+      : [{ name: 'durabletask_extension', value: systemKey }] }));
+  }));
+  const binding = nativeWorkerBindings([{ appResourceId: resourceId, origin, masterKeyFile }]).get(resourceId.toLowerCase());
+  const read = await readNativeHostKeys(binding);
+  assert.equal(read.status, 200);
+  assert.deepEqual(read.body, { masterKey: master, functionKeys: { default: functionKey }, systemKeys: { durabletask_extension: systemKey } });
+  assert.equal(calls, 3);
+  for (const changed of ['redirect', 'denied', 'oversized', 'duplicate']) {
+    mode = changed;
+    const result = await readNativeHostKeys(binding);
+    assert.equal(result.status, 502);
+    assert.equal(result.body.error.code, 'NativeFunctionsKeysUnavailable');
+    assert.equal(JSON.stringify(result).includes(master), false);
+    assert.equal(JSON.stringify(result).includes(masterKeyFile), false);
+  }
+  mode = 'valid';
+  const before = calls;
+  await chmod(masterKeyFile, 0o644);
+  assert.equal((await readNativeHostKeys(binding)).status, 502);
+  assert.equal(calls, before, 'world-readable credentials must be rejected before sending a request');
+  await chmod(masterKeyFile, 0o600);
+  await writeFile(masterKeyFile, randomBytes(32).toString('base64url'));
+  assert.equal((await readNativeHostKeys(binding)).status, 502, 'changed credentials must not return cached keys');
+  await rm(masterKeyFile);
+  assert.equal((await readNativeHostKeys(binding)).status, 502);
+  assert.equal((await readNativeHostKeys({ origin })).status, 501);
+});
+
+
+test('native worker status must be a supported final HTTP response code', async t => {
+  const upstream = await listen(t, createServer((_req, res) => { res.writeHead(700); res.end('unexpected'); }));
+  const endpoint = await listen(t, createServer((req, res) => forwardNativeFunction(req, res, upstream)));
+  const result = await wireFetch(endpoint);
+  assert.equal(result.status, 502);
+  assert.equal((await result.json()).error.code, 'NativeFunctionsWorkerInvalidResponse');
 });

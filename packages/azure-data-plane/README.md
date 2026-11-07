@@ -94,9 +94,9 @@ headers. Custom response headers outside that list are not forwarded.
 Authentication failures are preserved. Redirects are not followed.
 Requests are bounded to 12 MiB and 120 seconds. Unavailable workers return 502;
 timeouts return 504. These failures never fall back to the metadata simulation.
-SCM package deployment and ARM key management return 501 for bound sites because
-those native management paths are not implemented. Use native host-issued keys
-for this diagnostic path. Unbound sites retain the existing metadata simulation.
+SCM package deployment and individual function key management return 501 for
+bound sites because those native management paths are not implemented. Host key
+listing can use the native management API as described below. Unbound sites retain the existing metadata simulation.
 
 This binding does not provide automatic container provisioning, package
 installation, app-setting synchronization, Azure managed identity, scaling,
@@ -104,3 +104,22 @@ restart durability or full Azure Functions parity. The native host probe uses
 GlobalStack Storage and can exercise real Durable execution. Its intentionally
 missing downstream service settings produce a failed orchestration, not a
 completed document pipeline. See [issue #26](https://github.com/divine-ai-com/globalstack/issues/26).
+
+
+For native `POST {siteId}/host/default/listKeys`, add `masterKeyFile` to the
+binding. It must be an absolute path to a private file (mode 0600 or stricter)
+containing the native host's current master key. The credential is read for each
+lookup. The emulator checks it against the native host, reads the host function
+and system keys, and returns the ARM host-key shape with `Cache-Control: no-store`.
+It does not generate replacement keys. Missing configuration returns 501;
+unavailable hosts, refused credentials, unsafe file permissions, malformed
+responses or redirects return 502 without returning cached keys. Responses are
+bounded to 64 KiB and each native request has a ten-second deadline. Key creation,
+rotation, deletion and individual function-key listing remain unsupported.
+
+The master key file is operator-owned configuration. It is never part of IaC,
+application artifacts, logs or committed evidence. Protect access to the local
+ARM endpoint because a successful host-key listing intentionally returns secrets.
+The probe creates this file privately and removes it during cleanup. Host
+management routes and key scopes follow Microsoft's [host API](https://github.com/Azure/azure-functions-host/blob/dev/src/WebJobs.Script.WebHost/Controllers/KeysController.cs)
+and [Functions key documentation](https://learn.microsoft.com/en-us/azure/azure-functions/function-keys-how-to).

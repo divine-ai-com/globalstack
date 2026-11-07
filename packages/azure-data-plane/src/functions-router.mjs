@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
-import { nativeWorkerBindings, forwardNativeFunction } from './native-functions-worker.mjs';
+import { nativeWorkerBindings, forwardNativeFunction, readNativeHostKeys } from './native-functions-worker.mjs';
 
 async function readRawBody(req) {
   const chunks = [];
@@ -298,6 +298,10 @@ export class FunctionsRouter {
       triggers: new Map(),
       deployments: [],
     });
+  }
+
+  readNativeHostKeys(resourceId) {
+    return readNativeHostKeys(this.nativeWorkers.get(String(resourceId ?? '').toLowerCase()));
   }
 
   hasNativeWorker(resourceId) {
@@ -1226,7 +1230,7 @@ export class FunctionsRouter {
       const workerOrigin = this.nativeWorkers.get(String(app.resourceId ?? '').toLowerCase());
       if (workerOrigin) {
         if (hostInfo.scm) return sendError(res, 501, 'NativeFunctionsDeploymentNotImplemented', 'Native worker package deployment through SCM is not implemented.');
-        return forwardNativeFunction(req, res, workerOrigin);
+        return forwardNativeFunction(req, res, workerOrigin.origin);
       }
       const origin = `http://${req.headers.host ?? app.defaultHostName}`;
       if (hostInfo.scm) {
