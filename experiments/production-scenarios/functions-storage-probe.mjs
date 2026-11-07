@@ -231,6 +231,11 @@ try {
   report.completedAt = new Date().toISOString();
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
 }
+if (process.env.FUNCTIONS_PROBE_NATIVE_EVENTS === '1' && (!report.nativeEventDelivery?.functionExecutions?.includes('Failed')
+  || !report.nativeEventDelivery?.diagnostics?.some(item => item.reason === 'NativeEventGridHttp500'))) {
+  report.error ??= 'Native Event Grid trigger failure was not observed';
+  await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
+}
 const failures = [...new Set(report.requests.filter(item => item.status >= 400).map(item => `${item.surface} ${item.method} ${item.path} ${item.restype ?? ''} ${item.comp ?? ''} ${item.status}`))];
 console.log(JSON.stringify({ out, workerHealthReady: report.workerHealthReady, cleanup: report.cleanup, durableWorkerStarted: report.durableWorkerStarted, hostLeaseAcquired: report.hostLeaseAcquired, nativeRouting: report.nativeRouting, missingApplicationSettings: report.missingApplicationSettings, orchestrationStart: report.orchestrationStart, expectedFailurePersisted: report.expectedFailurePersisted, error: report.error, nonSuccessResponses: failures }, null, 2));
 

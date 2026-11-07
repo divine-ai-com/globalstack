@@ -41,7 +41,7 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
   const requests = [], handler = router.blobHandler();
   const port = await listen(httpsServer({ key: await readFile(join(directory, 'key.pem')), cert: ca }, (req, res) => {
     assert.match(req.headers.authorization ?? '', /^Bearer /);
-    res.on('finish', () => requests.push({ method: req.method, path: req.url, status: res.statusCode }));
+    res.on('finish', () => requests.push({ method: req.method, path: req.url, range: req.headers.range, storageRange: req.headers['x-ms-range'], status: res.statusCode }));
     return handler(req, res);
   }));
   const identityHeader = randomBytes(32).toString('hex');
@@ -82,7 +82,7 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
   const input = { container: 'landing', blobName: 'tenant/report.txt', etag: original.etag.replaceAll('"', '') };
   assert.equal((await sourceRevision(blobs, input)).bytes.toString(), 'original document bytes');
   assert.ok(identityRequests >= 1);
-  assert.ok(requests.some(request => request.method === 'GET' && request.path.includes('versionid=') && request.status === 206));
+  assert.ok(requests.some(request => request.method === 'GET' && request.path.includes('versionid=') && request.status === 206), JSON.stringify(requests));
   store.resources.delete(roleId.toLowerCase());
   await assert.rejects(sourceRevision(blobs, input), { statusCode: 403 });
   await assert.rejects(blob.upload('forbidden', 9), { statusCode: 403 });

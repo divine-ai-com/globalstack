@@ -253,3 +253,47 @@ test('native host key capture uses genuine runtime keys and removes private boot
     assert.equal([...log.matchAll(new RegExp(`Executed 'Functions\\.${activity}' \\(Failed`, 'g'))].length, 3);
   }
 });
+
+test('fresh Azure range comparison preserves bytes, protocol differences and cleanup', async () => {
+  const prefix = new URL('./evidence/blob-ranges-after-f35ea4f/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', prefix)));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, prefix));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256); assert.equal(bytes.length, metadata.bytes);
+  }
+  const { compareBlobRanges } = await import('./compare-blob-ranges.mjs');
+  const report = JSON.parse(await readFile(new URL('result.json', prefix)));
+  const comparison = compareBlobRanges(report);
+  assert.deepEqual(comparison, JSON.parse(await readFile(new URL('comparison.json', prefix))));
+  assert.equal(comparison.comparedPhases, 21); assert.equal(comparison.knownDifferences.length, 1);
+  for (const mutate of [
+    report => { report.cleanup.accountAbsent = false; },
+    report => { report.exchanges.find(item => item.target === 'local' && item.phase === 'range-bounded').body = 'wrong'; },
+    report => { report.exchanges.find(item => item.target === 'local' && item.phase === 'range-past-end').status = 200; },
+    report => { report.exchanges = report.exchanges.filter(item => !(item.target === 'local' && item.phase === 'range-historical')); },
+  ]) {
+    const changed = structuredClone(report); mutate(changed); assert.throws(() => compareBlobRanges(changed));
+  }
+});
+
+test('native Event Grid evidence ties a Blob upload to a real failed document trigger', async () => {
+  const prefix = new URL('./evidence/functions-native-events-3f4300f/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', prefix)));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, prefix));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256); assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = JSON.parse(await readFile(new URL('result.json', prefix)));
+  assert.equal(report.sourceDirty, false); assert.equal(report.cleanup, true);
+  assert.equal(report.nativeRouting.managementCredentialRemoved, true);
+  assert.equal(report.nativeEventDelivery.uploadStatus, 201);
+  assert.equal(report.nativeEventDelivery.businessWorkflowCompleted, false);
+  assert.equal(report.nativeEventDelivery.pending, 0);
+  assert.deepEqual(report.nativeEventDelivery.functionExecutions, ['Failed']);
+  assert.equal(report.nativeEventDelivery.diagnostics.length, 1);
+  assert.equal(report.nativeEventDelivery.diagnostics[0].state, 'exhausted');
+  assert.equal(report.nativeEventDelivery.diagnostics[0].reason, 'NativeEventGridHttp500');
+  const log = await readFile(new URL('host.log', prefix), 'utf8');
+  assert.match(log, /Executed 'Functions\.documentUploaded' \(Failed/);
+  assert.match(log, /Missing application setting STORAGE_ENDPOINT/);
+});

@@ -230,3 +230,17 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/production-scenarios/evidence/blob-ranges-before-d3e3ead/result\.json$''']
 regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Table page cursors in the post-fix Blob range capture"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-ranges-after-f35ea4f/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Durable instance partition identifier in native event evidence"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/functions-native-events-3f4300f/result\.json$''']
+regexes = ['''^PartitionKey='probe-428aacc141'$''']
