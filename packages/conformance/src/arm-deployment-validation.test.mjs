@@ -129,3 +129,32 @@ test('validation does not echo secure parameter values', () => {
   assert.doesNotMatch(JSON.stringify(result), /synthetic-sensitive-value|synthetic-object-value/);
   assert.equal(result.body.properties.parameters.password.type, 'Securestring');
 });
+
+test('resource-group validation replays the Azure hosting request without creating plans or history', async () => {
+  const capture = JSON.parse(await readFile(new URL('../../../experiments/production-scenarios/evidence/scoped-preflight-before-14e4f4a/result.json', import.meta.url)));
+  const body = capture.exchanges.find(item => item.target === 'azure' && item.method === 'POST').request;
+  body.properties.parameters.serviceName.value = 'independent-hosting-check';
+  const store = new ResourceStore();
+  store.putResourceGroup(subscriptionId, 'rg-validation', { location: 'westus2' });
+  const server = createArmServer({ store });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const path = `/subscriptions/${subscriptionId}/resourceGroups/rg-validation/providers/Microsoft.Resources/deployments/unrelated-name/validate`;
+  const send = (method, version = '?api-version=2025-04-01', input = body, extra = '') => fetch(`http://127.0.0.1:${server.address().port}${path}${extra}${version}`, {
+    method, headers: { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' },
+    ...(['POST', 'PUT'].includes(method) ? { body: JSON.stringify(input) } : {}),
+  });
+  try {
+    const response = await send('POST'); assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.equal(result.properties.provisioningState, 'Succeeded');
+    assert.equal(result.properties.validatedResources.length, 2);
+    assert.ok(result.properties.validatedResources.every(item => item.id.includes('/resourceGroups/rg-validation/') && item.id.includes('/independent-hosting-check-')));
+    const bad = structuredClone(body); delete bad.properties.parameters.location;
+    assert.equal((await send('POST', '?api-version=2025-04-01', bad)).status, 400);
+    assert.equal((await send('POST', '')).status, 400);
+    for (const method of ['GET', 'PUT', 'DELETE']) assert.ok((await send(method)).status >= 400);
+    assert.ok((await send('POST', '?api-version=2025-04-01', body, '/extra')).status >= 400);
+    assert.equal(store.resources.size, 0);
+    assert.equal(store.getDeployment({ subscriptionId, resourceGroupName: 'rg-validation', deploymentName: 'unrelated-name' }), null);
+  } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+});

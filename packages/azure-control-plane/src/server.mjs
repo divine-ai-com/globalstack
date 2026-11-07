@@ -722,6 +722,11 @@ export function createArmRequestHandler({
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      if (resourceGroupDeploymentRoute && rawSegments.length === 9 && lowered[8] === 'validate' && method === 'POST') {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        const result = validateDeployment({ ...resourceGroupDeploymentRoute, body: await readBody(req) });
+        return sendJson(res, result.status, result.body);
+      }
       const operationRoute = subscriptionDeploymentRoute ?? resourceGroupDeploymentRoute;
       const operationOffset = subscriptionDeploymentRoute ? 6 : 8;
       if (operationRoute && lowered[operationOffset] === 'operations' && method === 'GET'
