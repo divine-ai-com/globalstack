@@ -277,3 +277,10 @@ a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/eviden
 
 # Historical source expression reads a runtime response property, not a credential.
 2339cf42aad8fcaf2ba871dcbab0c8e3f8b18dc0:docs/research/globalstack/claims/evidence/public-source/851feedad082c35086b603d03b9870380b26a7fe65ce6d862b9137ef3fc42eb2.txt:generic-api-key:190
+
+# Azure Table pagination cursors for the synthetic NativePartitions fixture.
+# These continuation headers identify a page; they cannot authorize a request.
+experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2316
+f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2316
+experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
+f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
