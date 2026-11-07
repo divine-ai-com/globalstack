@@ -34,3 +34,5 @@ This is a local wiring study. It does not validate Azure delivery or storage fid
 4. Queue observation peeks up to 32 messages. These isolated seven-episode runs remain below that bound; the method is not a general queue audit. Ledger observation reads the expected key and required fields, not every entity or arbitrary external side effect.
 
 These gaps are useful targets for differential testing. No live Azure execution, paid model call or claim of complete compatibility was made. The source artifact is a research preview; the paper remains a draft.
+
+Historical product source bytes are retained under `evidence/product-source/`, named by their original SHA-256 digest. They were extracted from the recorded product revision and checked against the unchanged provenance hashes. The evidence verifier checks those snapshots. It does not require the current implementation to remain identical to the measured historical revision. Current behavior is checked separately by the native CI reproduction. The snapshots are reference text, not executable runtime modules.
