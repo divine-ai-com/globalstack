@@ -1,0 +1,49 @@
+{
+  "scope": "Local scanner component with downloaded official signatures. No Azure or full application evaluation.",
+  "revision": "2c9f2f4feb80fe29537bae6fcc7b4df1a9eb67d8",
+  "imageId": "sha256:858baf819449ada8e0edea83355f2924e41a1f87e45bfb76996d9938c707d5ee",
+  "files": {
+    "download.log": {
+      "sha256": "ffbddac72c11dbc9ec87ee3f8b7115a751d06253115ca98aa0251a4310596946",
+      "bytes": 900
+    },
+    "clean-vendor-scan.json": {
+      "sha256": "9a539af4af674151fdb723f4670d32e472f2135f212939fbc638b844041ecd4c",
+      "bytes": 1195
+    },
+    "vendor_probe.py": {
+      "sha256": "def5d2517aa9ff9e887695f857b4cdbd928f4f1834d7deeceeaed5aa18d89e19",
+      "bytes": 1169
+    },
+    "vendor-probe.json": {
+      "sha256": "5fb88d3c4585f74846292df3c9dd6f44857250712f4e1e8063cddf26cf9e0052",
+      "bytes": 6443
+    },
+    "concurrent-vendor-probe.json": {
+      "sha256": "92d9f37dbb8d9bcb24a2a7aaea2a8359c1557154f9fa02d8902f4cb553ecbaa9",
+      "bytes": 2790
+    }
+  },
+  "limits": {
+    "memoryGiB": 4,
+    "cpus": 2,
+    "pids": 64,
+    "tmpfsMiB": 256,
+    "perCommandTimeoutSeconds": 20
+  },
+  "signatureSources": [
+    "https://database.clamav.net",
+    "https://docs.clamav.net/manual/Usage/SignatureManagement.html"
+  ],
+  "observations": [
+    "FreshClam verified main.cvd version 63, daily.cvd version 28176 and bytecode.cvd version 339. SHA-256 digests are retained with scan outputs.",
+    "Four sequential actual-engine checks returned the expected clean/detected decisions.",
+    "Two concurrent scans on the same 2-vCPU/4-GiB container produced one clean result and one unresolved ClamAV timeout.",
+    "Per-request clamscan reloads signature data. A persistent bounded engine needs testing before claiming the planned concurrency target."
+  ],
+  "reproductionLimitations": [
+    "Vendor databases are retained privately in the operator workspace, not included in Git. A later fresh download can differ.",
+    "YARA coverage is a harmless original pilot marker, not a production rule corpus.",
+    "The concurrent diagnostic used two ThreadPoolExecutor calls to process_document with distinct synthetic TXT payloads; it did not exercise HTTP ingress."
+  ]
+}
