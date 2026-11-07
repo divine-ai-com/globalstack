@@ -4,6 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { test } from 'node:test';
 import { promisify } from 'node:util';
 import pg from 'pg';
+import { registerDocumentAccess, documentAccess, searchAccessFilter } from './access.mjs';
 import { commitRevision, currentSearchResults, deliverNext, migrate } from './repository.mjs';
 
 const exec = promisify(execFile);
@@ -39,6 +40,8 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
       engines: [{ engine: 'clamav', status: 'clean' }, { engine: 'yara', status: 'clean' }],
       provenance: { clamavDatabases: [{ file: 'fixture', sha256: 'b'.repeat(64) }], yaraRulesSha256: 'c'.repeat(64) },
     } };
+  const principal = { tenant: input.tenant, subject: '11111111-1111-4111-8111-111111111111', groups: ['22222222-2222-4222-8222-222222222222'] };
+  const access = await registerDocumentAccess(pool, principal, { ...input, uploadKey: '33333333-3333-4333-8333-333333333333', readGroups: principal.groups });
   const outcomes = await Promise.all(Array.from({ length: 5 }, () => commitRevision(pool, input)));
   assert.equal(outcomes.filter(value => value.state === 'committed').length, 1);
   assert.equal(outcomes.filter(value => value.state === 'duplicate').length, 4);
@@ -50,10 +53,19 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
   assert.equal(before.scan_status, 'CLEAN');
   assert.equal(before.extracted_text, 'Revenue 123.45');
   assert.equal(before.engine_results.length, 2);
+  const outsider = { ...principal, subject: '44444444-4444-4444-8444-444444444444', groups: [] };
+  await assert.rejects(documentAccess(pool, outsider, access.document_id), { status: 404 });
+  const groupReader = { ...outsider, groups: principal.groups };
+  assert.equal((await documentAccess(pool, groupReader, access.document_id)).owner_id, principal.subject);
+  await assert.rejects(documentAccess(pool, groupReader, access.document_id, { write: true }), { status: 404 });
+  await assert.rejects(registerDocumentAccess(pool, principal, { ...input, blobUrl: input.blobUrl + '.different', uploadKey: access.upload_key }), { status: 409 });
+  assert.match(searchAccessFilter(principal), /read_groups\/any/);
   const hit = { document_id: before.document_id, revision_id: before.revision_id, extracted_text: 'Untrusted search payload' };
-  assert.equal((await currentSearchResults(pool, input.tenant, [hit]))[0].extracted_text, 'Revenue 123.45');
-  assert.deepEqual(await currentSearchResults(pool, 'tenant_beta', [hit]), []);
-  assert.deepEqual(await currentSearchResults(pool, input.tenant, [{ ...hit, revision_id: 'old' }]), []);
+  assert.equal((await currentSearchResults(pool, principal, [hit]))[0].extracted_text, 'Revenue 123.45');
+  assert.deepEqual(await currentSearchResults(pool, { ...principal, tenant: 'tenant_beta' }, [hit]), []);
+  assert.deepEqual(await currentSearchResults(pool, outsider, [hit]), []);
+  assert.equal((await currentSearchResults(pool, groupReader, [hit])).length, 1);
+  assert.deepEqual(await currentSearchResults(pool, principal, [{ ...hit, revision_id: 'old' }]), []);
   await assert.rejects(deliverNext(pool, async () => ({ status: false, key: before.document_id })), /did not acknowledge/);
   assert.equal((await pool.query('SELECT delivery_state FROM document_outbox')).rows[0].delivery_state, 'pending');
   let aborted = false;
@@ -79,7 +91,7 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
   assert.ok(events.every(row => row.delivered_at === null));
   assert.equal((await commitRevision(pool, { ...input, version: 'version-3', sequence: '03' })).state, 'stale');
   assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'DELETED');
-  assert.deepEqual(await currentSearchResults(pool, input.tenant, [hit]), []);
+  assert.deepEqual(await currentSearchResults(pool, principal, [hit]), []);
   const calls = [];
   const sink = async event => { calls.push(event); return { status: true, key: event.document.document_id }; };
   assert.equal((await deliverNext(pool, sink)).state, 'superseded');
@@ -90,13 +102,13 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
   const next = { ...input, version: 'version-5', sequence: '05' };
   assert.equal((await commitRevision(pool, { ...next, status: 'pending', scan: undefined })).state, 'committed');
   assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'PENDING');
-  assert.deepEqual(await currentSearchResults(pool, input.tenant, [hit]), []);
+  assert.deepEqual(await currentSearchResults(pool, principal, [hit]), []);
   assert.equal((await commitRevision(pool, { ...next, status: 'unresolved', scan: undefined })).state, 'committed');
   assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'UNRESOLVED');
   assert.equal((await commitRevision(pool, next)).state, 'committed');
   const recovered = (await pool.query('SELECT * FROM scanned_documents')).rows[0];
   assert.equal(recovered.scan_status, 'CLEAN');
-  assert.equal((await currentSearchResults(pool, input.tenant, [{ document_id: recovered.document_id, revision_id: recovered.revision_id }])).length, 1);
+  assert.equal((await currentSearchResults(pool, principal, [{ document_id: recovered.document_id, revision_id: recovered.revision_id }])).length, 1);
   assert.equal((await commitRevision(pool, { ...next, status: 'pending', scan: undefined })).state, 'duplicate');
   assert.equal((await pool.query('SELECT scan_status FROM scanned_documents')).rows[0].scan_status, 'CLEAN');
 });

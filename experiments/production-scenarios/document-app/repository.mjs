@@ -79,7 +79,8 @@ export async function commitRevision(pool, input) {
       content_sha256=$8, engine_results=$9, extraction_pages=$10, signature_provenance=$11, revision_id=$12
       WHERE document_id=$1`, [documentId, input.fileName, input.status.toUpperCase(), input.status === 'detected',
       outcome.text, input.version, sequence, outcome.contentHash, JSON.stringify(outcome.engines), JSON.stringify(outcome.pages), outcome.provenance, revisionId]);
-    const payload = { document_id: documentId, tenant_id: input.tenant, file_name: input.fileName,
+    const access = (await client.query('SELECT owner_id, read_groups FROM document_access WHERE document_id=$1 AND tenant_id=$2', [documentId, input.tenant])).rows[0];
+    const payload = { document_id: documentId, tenant_id: input.tenant, owner_id: access?.owner_id ?? '', read_groups: access?.read_groups ?? [], file_name: input.fileName,
       scan_status: input.status.toUpperCase(), extracted_text: outcome.text, revision_id: revisionId };
     await client.query('INSERT INTO document_outbox(document_id,revision_id,operation,payload) VALUES($1,$2,$3,$4)',
       [documentId, revisionId, input.status === 'clean' ? 'upload' : 'delete', payload]);
@@ -133,13 +134,17 @@ export async function deliverNext(pool, deliver, { timeoutMs = 5000 } = {}) {
   }
 }
 
-export async function currentSearchResults(pool, tenant, hits) {
-  assert.match(tenant, /^[a-zA-Z0-9_-]{1,80}$/);
+export async function currentSearchResults(pool, principal, hits) {
+  assert.match(principal.tenant, /^[a-zA-Z0-9_-]{1,80}$/);
+  assert.match(principal.subject, /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i);
+  assert.ok(Array.isArray(principal.groups) && principal.groups.length <= 200);
   assert.ok(Array.isArray(hits) && hits.length <= 1000);
   const ids = hits.map(hit => hit.document_id).filter(id => typeof id === 'string' && /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id));
   if (!ids.length) return [];
-  const rows = (await pool.query(`SELECT document_id, file_name, scan_status, extracted_text, revision_id, extraction_pages
-    FROM scanned_documents WHERE tenant_id=$1 AND scan_status='CLEAN' AND document_id=ANY($2::uuid[])`, [tenant, ids])).rows;
+  const rows = (await pool.query(`SELECT d.document_id, d.file_name, d.scan_status, d.extracted_text, d.revision_id, d.extraction_pages
+    FROM scanned_documents d JOIN document_access a ON a.document_id=d.document_id AND a.tenant_id=d.tenant_id
+    WHERE d.tenant_id=$1 AND d.scan_status='CLEAN' AND d.document_id=ANY($2::uuid[])
+    AND (a.owner_id=$3 OR a.read_groups && $4::uuid[])`, [principal.tenant, ids, principal.subject, principal.groups])).rows;
   const current = new Map(rows.map(row => [row.document_id, row]));
   // Search can be stale after an uncertain write outcome. PostgreSQL remains
   // authoritative for tenant, clean state, current revision and returned content.

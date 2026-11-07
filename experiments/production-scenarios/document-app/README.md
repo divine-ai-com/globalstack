@@ -25,8 +25,8 @@ work pending, so downstream writes must be idempotent. This is at-least-once
 delivery, not an exactly-once claim. Delivery has a five-second default deadline
 and propagates an abort signal to the transport. An uncertain remote outcome
 still requires idempotent replay and reconciliation.
-`currentSearchResults` checks current tenant, clean state and revision in
-PostgreSQL before returning authoritative content. This prevents stale search
+`currentSearchResults` checks current tenant, owner/group access, clean state and revision in
+PostgreSQL before returning authoritative content. An access row registered by ingress is required; a processed document with no access row is not returned. This prevents stale search
 results from becoming current application answers; it is not a replacement for
 Search-side ACL filtering or service authentication.
 
@@ -66,3 +66,24 @@ The scoped override selects UUID 11.1.1, which retains CommonJS support. A
 regression verifies that recorded deterministic Durable identifiers remain
 unchanged. The package audit reports no known vulnerabilities at preparation
 time; CI repeats the audit and fails on moderate or higher findings.
+
+The API authorization component verifies RS256 signatures against the configured
+Entra tenant's keys, exact issuer/audience/tenant, validity times, approved client,
+API role, and delegated scope or application-token claim. Group-overage tokens
+are rejected until membership resolution is implemented. The application does
+not trust a caller-supplied identity header or token payload without signature
+verification. These are local signed-token tests, not live Entra evidence.
+
+Document access rows bind a tenant, immutable owner, upload idempotency key and
+initial read groups. Sharing is restricted to groups asserted in the verified
+principal. Read-only group members cannot overwrite or delete another owner's
+document. Query results are rechecked against PostgreSQL, even if Search returns
+a stale or unauthorized hit. Search payloads carry owner and group fields for
+an additional filter before retrieval. ACL modification and group-overage
+resolution remain future work; neither is silently treated as permitted.
+
+The [clean native failure-path capture](../evidence/functions-orchestration-bf66e7f/)
+executes the real orchestrator and activity retries against GlobalStack Storage,
+then persists `Failed` because downstream settings were intentionally omitted.
+It does not complete scanning, SQL or indexing, and it is not a paired Azure-host
+run. The capture pins the earlier image digest, before these access components.

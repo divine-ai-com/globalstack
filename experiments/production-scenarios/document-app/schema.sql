@@ -1,3 +1,15 @@
+CREATE TABLE IF NOT EXISTS document_access (
+    document_id UUID PRIMARY KEY,
+    tenant_id TEXT NOT NULL,
+    owner_id UUID NOT NULL,
+    upload_key UUID NOT NULL,
+    blob_url TEXT NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    read_groups UUID[] NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (tenant_id, owner_id, upload_key)
+);
+
 CREATE TABLE IF NOT EXISTS scanned_documents (
     document_id UUID PRIMARY KEY,
     tenant_id TEXT NOT NULL,
