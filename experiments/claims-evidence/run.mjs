@@ -131,7 +131,7 @@ try {
         const entity = { PartitionKey: 'claims', RowKey: event.id, ...item, status: 'queued' };
         const inserted = await storage.insertTableEntity(names.tableName, entity);
         if (inserted.status === 409) {
-          assert.equal(JSON.parse(inserted.body).error.code, 'EntityAlreadyExists');
+          assert.equal(JSON.parse(inserted.body)['odata.error'].code, 'EntityAlreadyExists');
           const existing = await storage.getTableEntity(names.tableName, 'claims', event.id);
           assert.equal(existing.status, 200);
           const retained = JSON.parse(existing.body);
