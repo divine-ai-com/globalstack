@@ -239,6 +239,33 @@ the comparison with `compare-blob-versions.py CAPTURE OUTPUT`; a deliberately
 wrong revision, missing operation or malformed listing must fail comparison.
 The full live application flow and Portal evidence remain outstanding.
 
+The Blob event component retains three distinct revisions. The
+[queue-scoped role capture](evidence/blob-events-92b05a7/) failed Azure
+managed-identity destination authorization on three unchanged submissions.
+The [account-scoped role capture](evidence/blob-events-fc6c225/) succeeded on
+Azure and delivered a correlated BlobCreated event into Storage Queue.
+GlobalStack still rejected the unsupported child subscription in that capture.
+All six cloud cleanup assertions passed. These are component observations,
+not completed document processing scenarios. Account scope changes only the
+Sender role on the temporary experiment account; it is not a broader role.
+
+The local implementation now uses the deployed system topic, subscription,
+role assignment and queue state to route PutBlob/DeleteBlob events. Tests
+exercise actual signed Blob and Queue HTTP requests, filtered and rejected
+writes, ETag/size correlations, role revocation/restoration, firewall denial,
+retry exhaustion and subscription removal. Queue messages use the base64
+Event Grid representation observed on Azure. Basic type and subject filters
+are supported. Advanced filters, other destinations, dead-letter destinations
+and expiring subscriptions fail explicitly. Retry state is in memory, uses a
+bounded local schedule and does not establish Azure timing or restart parity.
+This component contains only a Storage account and its event path;
+Functions, scanning, SQL and Search are still separate outstanding stages.
+
+Encoded queue payloads are decoded for identifier redaction and re-encoded in
+public evidence. Capture indexes distinguish these public copies from original
+operator-held streams and video hashes. No recording is labeled as Portal
+evidence unless it was captured from the actual Azure Portal.
+
 The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
 
 ### Native Durable Storage transactions

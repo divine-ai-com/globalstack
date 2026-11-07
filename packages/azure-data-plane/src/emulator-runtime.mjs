@@ -19,6 +19,7 @@ import { createRelationalBackendManager } from './relational-backend-manager.mjs
 import { createSearchRouter } from './search-router.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
+import { StorageEventDelivery } from './storage-event-delivery.mjs';
 import { createWafEvaluator } from './waf-evaluator.mjs';
 import { createWorkflowRunner } from './workflow-runner.mjs';
 
@@ -139,6 +140,8 @@ function logAsyncRuntimeFailure(surface, error) {
 
 export function createEmulatorRuntime({ store }) {
   const storageRouter = createStorageDataPlaneRouter();
+  const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
+  storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
   const appConfigurationRouter = createAppConfigurationRouter();
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
@@ -573,6 +576,7 @@ export function createEmulatorRuntime({ store }) {
       storageRouter.registerStorageAccount({
         accountName: resource.name,
         accountKey: registeredStorageAccountKey(resourceStore, providerRoute),
+        resourceId: resource.id,
       });
       return;
     }
@@ -1341,11 +1345,13 @@ export function createEmulatorRuntime({ store }) {
   }
 
   async function dispose() {
+    storageEventDelivery.dispose();
     await kubernetesRouter.dispose?.();
   }
 
   return {
     storageRouter,
+    storageEventDelivery,
     appConfigurationRouter,
     digitalTwinsRouter,
     eventGridRouter,

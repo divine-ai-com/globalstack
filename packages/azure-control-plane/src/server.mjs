@@ -4,6 +4,7 @@ import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
+import { validateStorageSystemSubscription } from '../../core/src/event-grid-storage-contract.mjs';
 import { deterministicFunctionKey, deterministicHostKey } from '../../azure-data-plane/src/functions-router.mjs';
 import { acceptsDeleteMissing, capturedProviderValidation, capturedPutMissingParent, storageAccountNotProvisioned, storagePostDeleteNotFound } from './provider-validation.mjs';
 import { validateDeployment } from './deployment-validation.mjs';
@@ -383,6 +384,10 @@ export function createArmRequestHandler({
       }
     }
 
+    if (resourceType === 'Microsoft.EventGrid/systemTopics/eventSubscriptions') {
+      const eventValidation = validateStorageSystemSubscription(store, providerRoute, body);
+      if (eventValidation) return eventValidation;
+    }
     const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
     if (validation) return validation;
 

@@ -282,12 +282,13 @@ export class StorageDataPlaneRouter {
     return this.accounts.get(lower(accountName)) ?? null;
   }
 
-  registerStorageAccount({ accountName, accountKey }) {
+  registerStorageAccount({ accountName, accountKey, resourceId }) {
     const key = lower(accountName);
     const existing = this.accounts.get(key);
     this.accounts.set(key, {
       accountName,
       accountKey,
+      resourceId: resourceId ?? existing?.resourceId,
       containers: existing?.containers ?? new Map(),
       blobs: existing?.blobs ?? new Map(),
       blobVersions: existing?.blobVersions ?? new Map(),
@@ -300,6 +301,20 @@ export class StorageDataPlaneRouter {
 
   unregisterStorageAccount(accountName) {
     this.accounts.delete(lower(accountName));
+  }
+
+  enqueueMessage({ accountName, queueName, text, ttl = 604800, visibility = 0 }) {
+    const queue = this.account(accountName)?.queues.get(lower(queueName));
+    if (!queue) throw Object.assign(new Error('The destination queue does not exist.'), { code: 'QueueNotFound' });
+    if (typeof text !== 'string' || Buffer.byteLength(text) > 65536) throw Object.assign(new Error('Invalid queue message size.'), { code: 'MessageTooLarge' });
+    if (!Number.isInteger(ttl) || ttl < -1 || ttl === 0 || ttl > 2147483647
+      || !Number.isInteger(visibility) || visibility < 0 || visibility > 604800 || ttl !== -1 && visibility >= ttl) throw Object.assign(new Error('Invalid message lifetime.'), { code: 'OutOfRangeQueryParameterValue' });
+    const now = Date.now();
+    const message = { messageId: randomUUID(), text, insertionTime: new Date(now).toUTCString(),
+      expirationTime: ttl === -1 ? 'Fri, 31 Dec 9999 23:59:59 GMT' : new Date(now + ttl * 1000).toUTCString(),
+      visibleAt: now + visibility * 1000, popReceipt: randomUUID(), dequeueCount: 0 };
+    queue.messages.push(message);
+    return message;
   }
 
   configureBlobService({ accountName, isVersioningEnabled }) {
@@ -493,6 +508,7 @@ export class StorageDataPlaneRouter {
           etag: `"0x${randomUUID().replaceAll('-', '')}"`,
           lastModified: nowUtc(),
         });
+        this.onBlobEvent?.({ account, blob: account.blobs.get(key), api: 'PutBlob', requestId, clientRequestId: req.headers['x-ms-client-request-id'] });
         return send(res, 201, '', {
           etag: account.blobs.get(key).etag,
           'last-modified': account.blobs.get(key).lastModified,
@@ -539,7 +555,10 @@ export class StorageDataPlaneRouter {
           const history = account.blobVersions.get(key);
           history.delete(selectedVersion);
           if (!history.size) account.blobVersions.delete(key);
-        } else account.blobs.delete(key);
+        } else {
+          account.blobs.delete(key);
+          this.onBlobEvent?.({ account, blob, api: 'DeleteBlob', requestId, clientRequestId: req.headers['x-ms-client-request-id'] });
+        }
         return send(res, 202, '', {
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
@@ -615,11 +634,7 @@ export class StorageDataPlaneRouter {
         const ttl = integer('messagettl', 604800, -1, 2147483647), visibility = integer('visibilitytimeout', 0, 0, 604800);
         if (!Number.isFinite(ttl) || ttl === 0 || !Number.isFinite(visibility) || ttl !== -1 && visibility >= ttl) return fail(400, 'OutOfRangeQueryParameterValue', 'One of the query parameters specified in the request URI is outside the permissible range.');
         if (account.queues.get(lower(queueName)) !== queue) return fail(404, 'QueueNotFound', 'The specified queue does not exist.');
-        const now = Date.now();
-        const message = { messageId: randomUUID(), text, insertionTime: new Date(now).toUTCString(),
-          expirationTime: ttl === -1 ? 'Fri, 31 Dec 9999 23:59:59 GMT' : new Date(now + ttl * 1000).toUTCString(),
-          visibleAt: now + visibility * 1000, popReceipt: randomUUID(), dequeueCount: 0 };
-        queue.messages.push(message);
+        const message = this.enqueueMessage({ accountName, queueName, text, ttl, visibility });
         return send(res, 201, queueMessagesXml([message], true, false), { ...common, 'content-type': 'application/xml' });
       }
       if (req.method === 'GET' && segments.length === 2 && segments[1] === 'messages') {

@@ -77,6 +77,7 @@ flowchart TD
 - `packages/core/src/azure-differential-scenarios.mjs`
 - `packages/core/src/azure-live-api-catalog.mjs`
 - `packages/core/src/azure-tier1-capabilities.mjs`
+- `packages/core/src/event-grid-storage-contract.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
 - `packages/core/src/resource-store.mjs`
 - `packages/azure-control-plane/src/deployment-validation.mjs`
@@ -85,6 +86,7 @@ flowchart TD
 - `packages/azure-control-plane/src/search-validation.mjs`
 - `packages/azure-control-plane/src/server-support.mjs`
 - `packages/azure-control-plane/src/server.mjs`
+- `packages/azure-control-plane/src/web-plan-validation.mjs`
 - `packages/azure-data-plane/src/activity-log-store.mjs`
 - `packages/azure-data-plane/src/aks-cluster-manager.mjs`
 - `packages/azure-data-plane/src/api-management-router.mjs`
@@ -115,18 +117,21 @@ flowchart TD
 - `packages/azure-data-plane/src/search-router.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/service-errors.mjs`
+- `packages/azure-data-plane/src/storage-event-delivery.mjs`
 - `packages/azure-data-plane/src/storage-lease.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
 - `packages/azure-data-plane/src/storage-router.mjs`
 - `packages/azure-data-plane/src/storage-table-batch.mjs`
 - `packages/azure-data-plane/src/storage-table-filter.mjs`
+- `packages/azure-data-plane/src/storage-versions.mjs`
 - `packages/azure-data-plane/src/synapse-sql-runner.mjs`
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
 - `packages/azure-data-plane/src/workflow-runner.mjs`
 - `packages/conformance/src/api-management-forwarding.test.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/arm-deployment-validation.test.mjs`
+- `packages/conformance/src/arm-resource-dependencies.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
@@ -142,6 +147,7 @@ flowchart TD
 - `packages/conformance/src/docs-navigation.test.mjs`
 - `packages/conformance/src/emulator-process-runtime.test.mjs`
 - `packages/conformance/src/flow-study.test.mjs`
+- `packages/conformance/src/functions-lifecycle.test.mjs`
 - `packages/conformance/src/globalstack-auth.test.mjs`
 - `packages/conformance/src/hybrid-conformance.test.mjs`
 - `packages/conformance/src/iot-hub-router.test.mjs`
@@ -153,6 +159,7 @@ flowchart TD
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
+- `packages/conformance/src/storage-event-delivery.test.mjs`
 - `packages/conformance/src/storage-lease.test.mjs`
 - `packages/conformance/src/storage-table-batch.test.mjs`
 - `packages/conformance/src/storage-table-filter.test.mjs`
