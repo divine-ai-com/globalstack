@@ -1,6 +1,5 @@
-import { createLocalJWKSet, jwtVerify } from 'jose';
+import { createWorkloadTokenVerifier } from './workload-token-auth.mjs';
 
-const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 const lower = value => String(value ?? '').toLowerCase();
 export const blobDataRoles = Object.freeze({
   reader: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1',
@@ -13,45 +12,10 @@ const invalid = () => ({ ok: false, status: 401, code: 'InvalidAuthenticationInf
 // Only operator-pinned public keys are trusted. Token headers cannot select a
 // remote key server, and the emulator never needs the issuer's signing key.
 export function storageTokenAuthorizer({ store, trusts = [] } = {}) {
-  if (!Array.isArray(trusts)) throw new Error('Storage token trusts must be an array.');
-  const configured = trusts.map(trust => {
-    if (!trust || typeof trust.issuer !== 'string' || !uuid.test(trust.tenantId)
-      || !Array.isArray(trust.subscriptionIds) || !trust.subscriptionIds.length || !trust.subscriptionIds.every(id => typeof id === 'string' && uuid.test(id))) {
-      throw new Error('Each storage token trust requires an issuer, tenant UUID and subscription UUIDs.');
-    }
-    const issuer = new URL(trust.issuer);
-    if (issuer.protocol !== 'https:' || issuer.username || issuer.password || issuer.search || issuer.hash) throw new Error('Storage token issuers must be credential-free HTTPS URLs.');
-    const keys = trust.jwks?.keys;
-    if (!Array.isArray(keys) || !keys.length || keys.length > 16 || keys.some(key => !key || key.kty !== 'RSA'
-      || typeof key.kid !== 'string' || !key.kid || typeof key.n !== 'string' || Buffer.from(key.n, 'base64url').length < 256
-      || typeof key.e !== 'string' || key.alg !== 'RS256' || key.use !== 'sig'
-      || ['d', 'p', 'q', 'dp', 'dq', 'qi', 'oth'].some(field => field in key)
-      || key.key_ops !== undefined && (!Array.isArray(key.key_ops) || key.key_ops.length !== 1 || key.key_ops[0] !== 'verify'))
-      || new Set(keys.map(key => key.kid)).size !== keys.length) throw new Error('Storage token trusts require unique public RS256 signing keys of at least 2048 bits.');
-    return { issuer: trust.issuer, tenantId: lower(trust.tenantId), subscriptions: new Set(trust.subscriptionIds.map(lower)),
-      keys: createLocalJWKSet({ keys: structuredClone(keys) }) };
-  });
-
+  const verify = createWorkloadTokenVerifier({ trusts, audiences: ['https://storage.azure.com', 'https://storage.azure.com/'] });
   return async ({ req, url, account, containerName, containerRequest }) => {
-    const match = /^Bearer ([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/i.exec(String(req.headers.authorization ?? ''));
-    if (!match || match[1].length > 16384) return invalid();
     const subscription = /^\/subscriptions\/([^/]+)\//i.exec(account.resourceId ?? '')?.[1];
-    let principal;
-    for (const trust of configured) {
-      if (!trust.subscriptions.has(lower(subscription))) continue;
-      try {
-        const { payload, protectedHeader } = await jwtVerify(match[1], trust.keys, {
-          algorithms: ['RS256'], issuer: trust.issuer, audience: ['https://storage.azure.com', 'https://storage.azure.com/'],
-          requiredClaims: ['exp', 'nbf', 'iat', 'oid', 'tid'], clockTolerance: 0,
-        });
-        if (protectedHeader.jku || protectedHeader.jwk || protectedHeader.x5u || typeof protectedHeader.kid !== 'string'
-          || !uuid.test(payload.oid) || lower(payload.tid) !== trust.tenantId
-          || ![payload.exp, payload.nbf, payload.iat].every(Number.isSafeInteger)
-          || payload.iat > Math.floor(Date.now() / 1000) || payload.exp <= payload.iat || payload.exp <= payload.nbf) continue;
-        principal = lower(payload.oid);
-        break;
-      } catch { /* Invalid or untrusted tokens never reach role evaluation. */ }
-    }
+    const principal = await verify({ authorization: req.headers.authorization, subscription });
     if (!principal) return invalid();
     // Bound authorization to implemented operations. Future operations need an
     // explicit permission mapping before they can use this token path.

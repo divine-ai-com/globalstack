@@ -138,7 +138,7 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [] }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [], keyVaultTokenTrusts = [] }) {
   const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
@@ -170,6 +170,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
     },
   });
   const keyVaultRouter = createKeyVaultRouter({
+    store, tokenTrusts: keyVaultTokenTrusts,
     onSecretSet({ subscriptionId, resourceGroupName, vaultName, secretName, value, contentType, tags, attributes }) {
       if (!subscriptionId || !resourceGroupName) return;
       store.putResource({

@@ -185,3 +185,13 @@ retains those SDK requests and assertions, followed by the expected incomplete
 workflow failure. All 15 Blob requests used Bearer authorization. Historical and
 range reads passed; the final two access attempts returned 403 after role removal.
 Worker, network, management credential and identity TLS files were removed.
+
+The optional native database diagnostic (`FUNCTIONS_PROBE_IDENTITY=1` and
+`FUNCTIONS_PROBE_DATABASE=1` on `functions-storage-probe.mjs`) executes the
+unchanged application database adapter inside the native Functions image.
+It retrieves a secret using a signed local managed-identity token, verifies
+PostgreSQL TLS, and applies the schema to a disposable native PostgreSQL fixture.
+It also checks rejection of an untrusted database certificate and denial after
+removing the Key Vault secret role. This diagnostic uses `docker exec`; it does
+not prove that the Event Grid handler reaches the database. The database is not
+created through ARM and no live Azure PostgreSQL comparison is claimed.

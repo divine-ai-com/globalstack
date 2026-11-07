@@ -6,6 +6,7 @@ import { createServer as httpsServer } from 'node:https';
 import { mkdir, readFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
+import { prepareDatabaseProbe } from './functions-database-probe.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createManagedIdentityService } from '../../packages/azure-data-plane/src/managed-identity-service.mjs';
 import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/src/storage-router.mjs';
@@ -21,7 +22,8 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
   const planId = `${group}/providers/Microsoft.Web/serverfarms/${name}`;
   const account = `gsidentity${suffix}`, accountId = `${group}/providers/Microsoft.Storage/storageAccounts/${account}`;
   const directory = resolve(out, 'identity.private');
-  const service = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub] });
+  const service = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub],
+    audiences: ['https://storage.azure.com', 'https://storage.azure.com/', 'https://vault.azure.net'] });
   const report = { scope: 'Native image SDK and unchanged source adapter; local identity and TLS transport only. No paired Azure identity or completed document workflow.',
     requests: [], sdk: [], cleanup: false };
   let binding;
@@ -69,6 +71,10 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
   const env = { IDENTITY_ENDPOINT: `http://${gateway}:${identityPort}/MSI/token`, IDENTITY_HEADER: binding.identityHeader,
     AZURE_TOKEN_CREDENTIALS: 'ManagedIdentityCredential', NODE_EXTRA_CA_CERTS: '/globalstack-platform-ca.pem',
     STORAGE_ENDPOINT: `https://${account}.blob.core.windows.net:${tlsPort}` };
+  const database = process.env.FUNCTIONS_PROBE_DATABASE === '1'
+    ? await prepareDatabaseProbe({ store, trust: service.trust, arm, listen, name, suffix, gateway, directory,
+      certificateBundle: certificate, group, principalId: site.identity.principalId, registerCleanup, secrets }) : null;
+  if (database) report.database = database.report;
   const script = `
     import assert from 'node:assert/strict';
     import { DefaultAzureCredential } from '@azure/identity';
@@ -92,7 +98,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
       console.log(JSON.stringify({ phase: 'authorized', historicalRead: true, rangeRead: true, deletedCurrentRead: true }));
     }
   `;
-  return { report, env, dockerArgs: ['--add-host', `${account}.blob.core.windows.net:${gateway}`,
+  return { report, env, dockerArgs: [...(database?.dockerArgs ?? []), '--add-host', `${account}.blob.core.windows.net:${gateway}`,
     '-v', `${certificate}:/globalstack-platform-ca.pem:ro`, ...Object.keys(env).flatMap(key => ['-e', key])],
     async exercise(containerName) {
       for (const phase of ['authorized', 'denied']) {
@@ -104,6 +110,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
         } catch { throw new Error(`Native image identity SDK diagnostic failed during ${phase}; credentials and raw SDK diagnostics were not retained`); }
         report.sdk.push(JSON.parse(stdout.trim()));
       }
+      if (database) await database.exercise(containerName);
       assert.ok(report.requests.length > 0 && report.requests.every(item => item.bearer));
     },
   };

@@ -235,7 +235,9 @@ try {
   const removed = await exec('docker', ['rm', '-f', name]).then(() => true, () => false);
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   await nativeRuntime?.dispose();
-  for (const cleanup of identityCleanup) await cleanup();
+  for (const cleanup of identityCleanup) {
+    try { await cleanup(); } catch { report.error ??= 'Local identity or database cleanup did not complete'; }
+  }
   if (masterKeyFileOwned) { await rm(masterKeyFile); report.nativeRouting.managementCredentialRemoved = true; }
   const networkRemoved = await exec('docker', ['network', 'rm', name]).then(() => true, () => false);
   report.cleanup = removed && networkRemoved;

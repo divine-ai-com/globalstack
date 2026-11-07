@@ -181,3 +181,25 @@ Its error envelopes, timing, identity cache and claims are not a measured Entra
 replica. It does not federate with Azure, implement app roles or group claims,
 provision containers, or configure their network automatically. The resource
 store's identity lifecycle also needs paired testing before a broader claim.
+
+### Key Vault workload secret reads
+
+`keyVaultTokenTrusts` on the emulator runtime, or
+`GLOBALSTACK_KEY_VAULT_TOKEN_TRUSTS_FILE` on the application server, enables signed
+workload authentication for Key Vault. It uses the same pinned-key trust schema
+as Blob storage, with the `https://vault.azure.net` audience. When enabled, the
+legacy local tokens and inspection routes cannot authorize secret access.
+
+The bounded permission path supports GET of a named secret or its explicit
+version using the deployed Key Vault Secrets User role. The vault must explicitly
+use RBAC. Secret, vault and ancestor scopes are checked against the current ARM
+role assignments. Wrong issuer, signature, audience or tenant is denied. Role
+removal takes effect for subsequent requests, including a cached access token.
+The role ID follows the [Azure RBAC definition](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/security#key-vault-secrets-user).
+
+Secret listing, mutations, keys, other roles, legacy access policies and private
+network authorization are not implemented for workload tokens. Unsupported
+operations and network configurations return 501. Conditional role assignments
+cannot grant access. This feature does not claim Azure error-message, permission
+propagation, private endpoint or complete Key Vault parity. Paired Azure testing
+and the full document workflow are still required.

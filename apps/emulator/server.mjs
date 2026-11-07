@@ -17,7 +17,9 @@ const nativeFunctionsWorkers = process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE
   ? JSON.parse(await readFile(process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE, 'utf8')) : [];
 const storageTokenTrusts = process.env.GLOBALSTACK_STORAGE_TOKEN_TRUSTS_FILE
   ? JSON.parse(await readFile(process.env.GLOBALSTACK_STORAGE_TOKEN_TRUSTS_FILE, 'utf8')) : [];
-const runtime = createEmulatorRuntime({ store, nativeFunctionsWorkers, storageTokenTrusts });
+const keyVaultTokenTrusts = process.env.GLOBALSTACK_KEY_VAULT_TOKEN_TRUSTS_FILE
+  ? JSON.parse(await readFile(process.env.GLOBALSTACK_KEY_VAULT_TOKEN_TRUSTS_FILE, 'utf8')) : [];
+const runtime = createEmulatorRuntime({ store, nativeFunctionsWorkers, storageTokenTrusts, keyVaultTokenTrusts });
 
 async function listen(server, port, host = process.env.GLOBALSTACK_HOST ?? '127.0.0.1') {
   await new Promise((resolve, reject) => {
