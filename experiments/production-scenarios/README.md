@@ -441,6 +441,11 @@ and all cleanup checks completed. Further paid hosting retries are deferred
 pending resolution of the subscription limit. The earlier authorization for a
 free quota review still covers one P0v3 and one EP1 instance in West US 2;
 it does not authorize paid support or a higher experiment allowance.
+The [post-upgrade free-request follow-up](evidence/web-limit-followup-20261107.json)
+was accepted asynchronously by the Support API, then failed with
+`InvalidSupportPlan`. A final lookup returned 404, so no support ticket was
+created. The artifact retains the contact-free request text for the Portal's
+free quota route. No support plan was purchased.
 
 Set `PAIRED_WEB_REGION=northeurope` to test the alternative region. Its quota
 listing conflicts with provider validation, as documented below. The [retained retail prices](evidence/hosting-prices-20261107.json)
