@@ -1,0 +1,1413 @@
+{
+  "schemaVersion": 1,
+  "revision": "1c376d30ba02c97c0e62e6ef713915b165fe1dd0",
+  "sourceDirty": false,
+  "source": {
+    "search-validation.bicep": "7dcc91770c867744b7edd3024a16805d750ee3367c56936bc148b7c2376ca71e",
+    "search-service.bicep": "ac9b7b58169efbeeab2f8ea67935049aa6a5176025ce7796abab68fb47ee4593"
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "startedAt": "2026-11-07T05:35:05.851Z",
+  "scope": "Bicep-compiled Search foundation ARM validation, not full scenario deployment or integration.",
+  "transport": "Native Bicep compilation followed by direct ARM validation requests, not a native deployment CLI trace.",
+  "attempts": [
+    {
+      "phase": "missing-location-parameter",
+      "validationLevel": "Template",
+      "requestSha256": "6a05d74195fd8f51b3713e087723bf51893e6fbd3b2a7dc3e427d7ad5880b906",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "missing-location-parameter",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:08.325Z",
+          "completedAt": "2026-11-07T05:35:09.438Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Template",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gsce4f82c944bd"
+                }
+              }
+            }
+          },
+          "status": 400,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "395",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 05:35:08 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "66d6fe4b-6b7d-4c24-88cc-10383d744cdb",
+            "x-ms-failure-cause": "gateway",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+            "x-ms-ratelimit-remaining-subscription-writes": "199",
+            "x-ms-request-id": "66d6fe4b-6b7d-4c24-88cc-10383d744cdb",
+            "x-ms-routing-request-id": "UAENORTH:20261107T053509Z:66d6fe4b-6b7d-4c24-88cc-10383d744cdb",
+            "x-msedge-ref": "Ref A: B9B6D0E5D5EE4F509E29451A0D0E3C05 Ref B: AUH211051121031 Ref C: 2026-11-07T05:35:08Z"
+          },
+          "body": {
+            "error": {
+              "code": "InvalidTemplate",
+              "message": "Deployment template validation failed: 'The value for the template parameter 'location' at line '1' and column '422' is not provided. Please see https://aka.ms/arm-create-parameter-file for usage details.'.",
+              "additionalInfo": [
+                {
+                  "type": "TemplateViolation",
+                  "info": {
+                    "lineNumber": 1,
+                    "linePosition": 422,
+                    "path": "properties.template.parameters.location"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "target": "local",
+          "phase": "missing-location-parameter",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:09.441Z",
+          "completedAt": "2026-11-07T05:35:09.461Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Template",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gsce4f82c944bd"
+                }
+              }
+            }
+          },
+          "status": 404,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "440",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 05:35:09 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackRouteNotImplemented",
+              "message": "No GlobalStack Azure route handles POST /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate.",
+              "details": [
+                {
+                  "code": "ExplicitGap",
+                  "message": "Add this route through the capability registry and conformance tests before claiming support."
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    },
+    {
+      "phase": "invalid-search-name-template",
+      "validationLevel": "Template",
+      "requestSha256": "3831261f21266aacd2f815cd353dcb77fc0f4a5bdafd7bfb2d4478cd46a4be4f",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "invalid-search-name-template",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:09.462Z",
+          "completedAt": "2026-11-07T05:35:12.704Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Template",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "Invalid_Search_Name"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 202,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "0",
+            "date": "Sat, 07 Nov 2026 05:35:11 GMT",
+            "expires": "-1",
+            "location": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2025-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>",
+            "pragma": "no-cache",
+            "retry-after": "15",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "4e243a90-0c15-4b22-9b25-10f6e038be65",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2998",
+            "x-ms-ratelimit-remaining-subscription-writes": "198",
+            "x-ms-request-id": "4e243a90-0c15-4b22-9b25-10f6e038be65",
+            "x-ms-routing-request-id": "UAENORTH:20261107T053512Z:4e243a90-0c15-4b22-9b25-10f6e038be65",
+            "x-msedge-ref": "Ref A: 5431A3E94D77428C91F94964D60FFFB8 Ref B: AUH211051121031 Ref C: 2026-11-07T05:35:09Z"
+          },
+          "body": ""
+        },
+        {
+          "target": "local",
+          "phase": "invalid-search-name-template",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:12.705Z",
+          "completedAt": "2026-11-07T05:35:12.710Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Template",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "Invalid_Search_Name"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 404,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "440",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 05:35:12 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackRouteNotImplemented",
+              "message": "No GlobalStack Azure route handles POST /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate.",
+              "details": [
+                {
+                  "code": "ExplicitGap",
+                  "message": "Add this route through the capability registry and conformance tests before claiming support."
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    },
+    {
+      "phase": "invalid-search-name-provider",
+      "validationLevel": "Provider",
+      "requestSha256": "6381445c27e1c53f5177a2f654eda0350c78f365d25fbc3d2d2862e772cf1329",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "invalid-search-name-provider",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:12.711Z",
+          "completedAt": "2026-11-07T05:35:14.248Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "Invalid_Search_Name"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 200,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "1749",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 05:35:13 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "1882e8f3-1d6a-4de6-a269-3b4eab5ed0ae",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2997",
+            "x-ms-ratelimit-remaining-subscription-writes": "197",
+            "x-ms-request-id": "1882e8f3-1d6a-4de6-a269-3b4eab5ed0ae",
+            "x-ms-routing-request-id": "UAENORTH:20261107T053514Z:1882e8f3-1d6a-4de6-a269-3b4eab5ed0ae",
+            "x-msedge-ref": "Ref A: BD17DAEF11BB40AAAA1FF9F8C7B1AFA0 Ref B: AUH211051121031 Ref C: 2026-11-07T05:35:12Z"
+          },
+          "body": {
+            "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+            "name": "<deployment>",
+            "type": "Microsoft.Resources/deployments",
+            "location": "eastus2",
+            "properties": {
+              "templateHash": "1361135250618613280",
+              "parameters": {
+                "groupName": {
+                  "type": "String",
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "type": "String",
+                  "value": "Invalid_Search_Name"
+                },
+                "location": {
+                  "type": "String",
+                  "value": "eastus2"
+                }
+              },
+              "extensions": [],
+              "mode": "Incremental",
+              "provisioningState": "Succeeded",
+              "timestamp": "2026-11-07T05:35:13.3773814Z",
+              "duration": "PT0S",
+              "correlationId": "1882e8f3-1d6a-4de6-a269-3b4eab5ed0ae",
+              "providers": [
+                {
+                  "namespace": "Microsoft.Resources",
+                  "resourceTypes": [
+                    {
+                      "resourceType": "resourceGroups",
+                      "locations": [
+                        "eastus2"
+                      ]
+                    },
+                    {
+                      "resourceType": "deployments",
+                      "locations": [
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "dependsOn": [
+                    {
+                      "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                      "resourceType": "Microsoft.Resources/resourceGroups",
+                      "resourceName": "<group>"
+                    }
+                  ],
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-foundation",
+                  "resourceType": "Microsoft.Resources/deployments",
+                  "resourceName": "search-foundation"
+                }
+              ],
+              "validatedResources": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-foundation"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Search/searchServices/Invalid_Search_Name"
+                }
+              ],
+              "validationLevel": "Provider"
+            }
+          }
+        },
+        {
+          "target": "local",
+          "phase": "invalid-search-name-provider",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:14.251Z",
+          "completedAt": "2026-11-07T05:35:14.257Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "Invalid_Search_Name"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 404,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "440",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 05:35:14 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackRouteNotImplemented",
+              "message": "No GlobalStack Azure route handles POST /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate.",
+              "details": [
+                {
+                  "code": "ExplicitGap",
+                  "message": "Add this route through the capability registry and conformance tests before claiming support."
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    },
+    {
+      "phase": "corrected-search-name-provider",
+      "validationLevel": "Provider",
+      "requestSha256": "60f4a70b189048d823a22c704147b6056905f5de4aabdf4ae742878ac94a87eb",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "corrected-search-name-provider",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:14.258Z",
+          "completedAt": "2026-11-07T05:35:16.710Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gsce4f82c944bd"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 200,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "1738",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 05:35:15 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "99d2e313-98b0-4d8b-b105-18e04d3b2bb4",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+            "x-ms-ratelimit-remaining-subscription-writes": "199",
+            "x-ms-request-id": "99d2e313-98b0-4d8b-b105-18e04d3b2bb4",
+            "x-ms-routing-request-id": "UAECENTRAL:20261107T053516Z:99d2e313-98b0-4d8b-b105-18e04d3b2bb4",
+            "x-msedge-ref": "Ref A: 1D1F2784AFFA4B638DF9414D7D7B884E Ref B: AUH211051121031 Ref C: 2026-11-07T05:35:14Z"
+          },
+          "body": {
+            "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+            "name": "<deployment>",
+            "type": "Microsoft.Resources/deployments",
+            "location": "eastus2",
+            "properties": {
+              "templateHash": "1361135250618613280",
+              "parameters": {
+                "groupName": {
+                  "type": "String",
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "type": "String",
+                  "value": "gsce4f82c944bd"
+                },
+                "location": {
+                  "type": "String",
+                  "value": "eastus2"
+                }
+              },
+              "extensions": [],
+              "mode": "Incremental",
+              "provisioningState": "Succeeded",
+              "timestamp": "2026-11-07T05:35:15.506939Z",
+              "duration": "PT0S",
+              "correlationId": "99d2e313-98b0-4d8b-b105-18e04d3b2bb4",
+              "providers": [
+                {
+                  "namespace": "Microsoft.Resources",
+                  "resourceTypes": [
+                    {
+                      "resourceType": "resourceGroups",
+                      "locations": [
+                        "eastus2"
+                      ]
+                    },
+                    {
+                      "resourceType": "deployments",
+                      "locations": [
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "dependsOn": [
+                    {
+                      "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                      "resourceType": "Microsoft.Resources/resourceGroups",
+                      "resourceName": "<group>"
+                    }
+                  ],
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-foundation",
+                  "resourceType": "Microsoft.Resources/deployments",
+                  "resourceName": "search-foundation"
+                }
+              ],
+              "validatedResources": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-foundation"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Search/searchServices/gsce4f82c944bd"
+                }
+              ],
+              "validationLevel": "Provider"
+            }
+          }
+        },
+        {
+          "target": "local",
+          "phase": "corrected-search-name-provider",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T05:35:16.713Z",
+          "completedAt": "2026-11-07T05:35:16.715Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "1361135250618613280"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "search-foundation",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "8541662915766203738"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Search/searchServices",
+                            "apiVersion": "2025-05-01",
+                            "name": "[parameters('serviceName')]",
+                            "location": "[parameters('location')]",
+                            "sku": {
+                              "name": "basic"
+                            },
+                            "properties": {
+                              "replicaCount": 1,
+                              "partitionCount": 1,
+                              "hostingMode": "Default",
+                              "publicNetworkAccess": "disabled",
+                              "disableLocalAuth": true
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gsce4f82c944bd"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 404,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "440",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 05:35:16 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackRouteNotImplemented",
+              "message": "No GlobalStack Azure route handles POST /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate.",
+              "details": [
+                {
+                  "code": "ExplicitGap",
+                  "message": "Add this route through the capability registry and conformance tests before claiming support."
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    }
+  ],
+  "probes": [
+    {
+      "target": "azure",
+      "phase": "group-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T05:35:16.716Z",
+      "completedAt": "2026-11-07T05:35:17.290Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "cache-control": "no-cache",
+        "content-length": "112",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 07 Nov 2026 05:35:16 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-cache": "CONFIG_NOCACHE",
+        "x-content-type-options": "nosniff",
+        "x-ms-correlation-request-id": "ef589e14-5f67-4df1-a980-18d1d9821bb9",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "3749",
+        "x-ms-ratelimit-remaining-subscription-reads": "249",
+        "x-ms-request-id": "ef589e14-5f67-4df1-a980-18d1d9821bb9",
+        "x-ms-routing-request-id": "UAECENTRAL:20261107T053517Z:ef589e14-5f67-4df1-a980-18d1d9821bb9",
+        "x-msedge-ref": "Ref A: 40612074E8F545DD885FC01FB60C1719 Ref B: AUH211051121031 Ref C: 2026-11-07T05:35:16Z"
+      },
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "deployment-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T05:35:17.291Z",
+      "completedAt": "2026-11-07T05:35:18.451Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "cache-control": "no-cache",
+        "content-length": "111",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 07 Nov 2026 05:35:18 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-cache": "CONFIG_NOCACHE",
+        "x-content-type-options": "nosniff",
+        "x-ms-correlation-request-id": "52816e40-996a-432f-a530-6a1cd661ebdf",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "3749",
+        "x-ms-ratelimit-remaining-subscription-reads": "249",
+        "x-ms-request-id": "52816e40-996a-432f-a530-6a1cd661ebdf",
+        "x-ms-routing-request-id": "QATARCENTRAL:20261107T053518Z:52816e40-996a-432f-a530-6a1cd661ebdf",
+        "x-msedge-ref": "Ref A: 965CB4CCE7664A18AE37909D20D3472F Ref B: AUH211051121062 Ref C: 2026-11-07T05:35:17Z"
+      },
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "group-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T05:35:18.452Z",
+      "completedAt": "2026-11-07T05:35:18.457Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "connection": "keep-alive",
+        "content-length": "144",
+        "content-type": "application/json",
+        "date": "Sat, 07 Nov 2026 05:35:18 GMT",
+        "keep-alive": "timeout=5"
+      },
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group <group> was not found.",
+          "details": []
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "deployment-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T05:35:18.457Z",
+      "completedAt": "2026-11-07T05:35:18.461Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "connection": "keep-alive",
+        "content-length": "150",
+        "content-type": "application/json",
+        "date": "Sat, 07 Nov 2026 05:35:18 GMT",
+        "keep-alive": "timeout=5"
+      },
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found.",
+          "details": []
+        }
+      }
+    }
+  ],
+  "portalEvidenceComplete": false,
+  "provisioningPerformed": false,
+  "compiledSha256": "55383477b541b0c1bdd0c46b2ae0450ee7912a16b6e0045b0b331b62a57d4931",
+  "noResourcesCreated": true,
+  "statusCodeParityObserved": false,
+  "completedAt": "2026-11-07T05:35:18.462Z",
+  "fullProtocolParityEvaluated": false
+}

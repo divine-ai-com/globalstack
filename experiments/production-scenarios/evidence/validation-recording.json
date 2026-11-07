@@ -1,0 +1,15 @@
+{
+  "platform": "document-search-validation",
+  "startedAt": "2026-11-07T05:38:21.579Z",
+  "completedAt": "2026-11-07T05:38:59.550Z",
+  "exitCode": 0,
+  "eventCount": 47,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "108e2a7598aca379281add49dafcafb16e1f5d3ce7903a7cf6263415402dec59",
+  "eventSha256": "62063f6a46c2f0428eb0022e0169189782a35cb6de0f5bf8f13d1714b8190b38",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}

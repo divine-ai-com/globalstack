@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "scope": "Component validation and local diagnostics only. No full application scenario passed.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "55383477b541b0c1bdd0c46b2ae0450ee7912a16b6e0045b0b331b62a57d4931"
+    },
+    "local-gaps.json": {
+      "sha256": "5c8830c68706de2086db001da44b9e0ba9f21eead357ce33743c8256619e4abb"
+    },
+    "validation-events.ndjson": {
+      "sha256": "62063f6a46c2f0428eb0022e0169189782a35cb6de0f5bf8f13d1714b8190b38"
+    },
+    "validation-recording.json": {
+      "sha256": "ae1a1aa3f10540d89c0b1569f393fd9d67d7da28fc6b53a53606789b92f6ac94"
+    },
+    "validation.json": {
+      "sha256": "783f0ce50462525a31c26514b6631e3379987e402b185f69cbd4a032223468ac"
+    },
+    "attempts/984302fc2202/result.json": {
+      "sha256": "59d4b02bb73e6f975480a094c0e4fc743cf6b2a31aac6bbe68e513b62b79966e"
+    },
+    "attempts/984302fc2202/events.ndjson": {
+      "sha256": "184b000932b8217d8171af6c5144a0f844e58f20986a7521e81a11bcd38acff8"
+    },
+    "attempts/9d7d163f6ce8/result.json": {
+      "sha256": "bac96276f2af32684be428de6f039208bec20dcb8e4f5cc71ce3ef656ae19893"
+    },
+    "attempts/9d7d163f6ce8/events.ndjson": {
+      "sha256": "a2c75e700ead5e3e822b93cc120fca4969e6b54359f8a6f06a2855b72d4bb569"
+    },
+    "attempts/050a06ad607b/result.json": {
+      "sha256": "69bbb802574aff27b858ac8bdc6c37732bdfb9047aedaf8b5fcb8725ab1aa25d"
+    },
+    "attempts/050a06ad607b/events.ndjson": {
+      "sha256": "13b676d1e9a1c0cd8ac833d5da0d52bcbc9cac1031ef60447d2fd400fa1f4608"
+    },
+    "attempts/73569ae9ac5d/result.json": {
+      "sha256": "f0b6ff9f69751a6664af11cb4ce81115b9a1e8f1c110a669a1c9b40b6880e7c0"
+    },
+    "attempts/73569ae9ac5d/events.ndjson": {
+      "sha256": "554cfd14e98b89130e8b99bf9e062864641bebaf3bdfa8e05e130a5ee9461ec3"
+    },
+    "attempts/31e205a89ad7/result.json": {
+      "sha256": "965099cac313cafc25043c53aa4a12544f6b6a1edaafa4866ff6051d6f33db34"
+    },
+    "attempts/31e205a89ad7/events.ndjson": {
+      "sha256": "c6c5a425a5387f3c557a23a50b2464f7a9cd4050a411583698059a389567c8eb"
+    }
+  },
+  "privateEvidence": "Authorization and tenant-isolation diagnostics are retained in private advisory GHSA-hx2g-7gvm-wmf2.",
+  "videoAvailability": "Live WebM remains in the operator workspace; its digest is in validation-recording.json. It is not Azure Portal footage.",
+  "earlierAttempts": [
+    {
+      "id": "984302fc2202",
+      "interpretation": "Harness used an unsupported Bicep --file flag; no Azure validation request executed."
+    },
+    {
+      "id": "9d7d163f6ce8",
+      "interpretation": "Harness did not configure the local subscription scope; local authorization rejection, not validation parity."
+    },
+    {
+      "id": "050a06ad607b",
+      "interpretation": "Subscription adapter corrected; two validation requests without explicit validation level."
+    },
+    {
+      "id": "73569ae9ac5d",
+      "interpretation": "Explicit validation levels; Azure 202 was retained without its completion poll."
+    },
+    {
+      "id": "31e205a89ad7",
+      "interpretation": "Safety guard rejected Azure subscription-level operationResults polling; incomplete capture retained."
+    }
+  ]
+}

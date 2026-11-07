@@ -42,6 +42,7 @@ jobs:
       - run: npm run research:claims:test
       - run: node --test experiments/paired-lifecycle/*.test.mjs
       - run: node --test experiments/platform-lifecycle/*.test.mjs
+      - run: node --test experiments/production-scenarios/*.test.mjs
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
       - run: node experiments/platform-lifecycle/render.mjs --check
