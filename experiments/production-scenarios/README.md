@@ -2,10 +2,13 @@
 
 Neither application scenario has completed deployment or end-to-end testing. The [specification](SPECIFICATION.md) defines both business flows, services, configurations, failure cases, lifecycle, cost controls and evidence requirements. The [requirements manifest](requirements.json) registers 50 document-processing and 51 financial-RAG assertions. All remain unexecuted at the full-scenario level. Component probes do not mark those application assertions passed.
 
+Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28).
+
 ## Captured findings
 
 | Finding | Evidence class | Tracker |
 | --- | --- | --- |
+| ARM subscription deployment validation is absent | Azure-first paired requests with template/provider validation and completion polling | [#27](https://github.com/divine-ai-com/globalstack/issues/27) |
 | Full Lucene fuzzy search does not return a known matching document | Local synthetic request/response | [#21](https://github.com/divine-ai-com/globalstack/issues/21) |
 | An undefined vector field is silently accepted | Local synthetic request/response | [#22](https://github.com/divine-ai-com/globalstack/issues/22) |
 | An index with two key fields is accepted | Local synthetic request/response | [#23](https://github.com/divine-ai-com/globalstack/issues/23) |
