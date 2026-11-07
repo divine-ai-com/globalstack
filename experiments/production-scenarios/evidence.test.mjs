@@ -31,6 +31,42 @@ test('native Durable failure capture executed retries and retained the terminal 
 
 const base = new URL('./evidence/', import.meta.url);
 const load = async name => JSON.parse(await readFile(new URL(name, base), 'utf8'));
+test('Web validation preserves Azure quota rejection separately from unsupported local validation', async () => {
+  const prefix = 'web-validation-4a4ee94/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(`${prefix}result.json`);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.provisioningPerformed, false);
+  assert.equal(report.noResourcesCreated, true);
+  assert.equal(report.portalEvidenceComplete, false);
+  assert.equal(report.attempts.length, 3);
+  const regions = [];
+  for (const attempt of report.attempts) {
+    const [azure, local] = attempt.targets;
+    assert.deepEqual(attempt.targets.map(item => item.target), ['azure', 'local']);
+    assert.deepEqual(azure.request, local.request);
+    regions.push(azure.request.properties.parameters.location.value);
+    assert.equal(azure.status, 400);
+    assert.equal(azure.body.error.code, 'InvalidTemplateDeployment');
+    const errors = azure.body.error.details[0].details;
+    assert.equal(errors.length, 2);
+    for (const error of errors) assert.equal(error.code, 'SubscriptionIsOverQuotaForSku');
+    assert.equal(local.status, 501);
+    assert.equal(local.body.error.code, 'GlobalStackValidationNotImplemented');
+    assert.equal(attempt.sameStatusAndErrorCode, false);
+  }
+  assert.deepEqual(regions, ['westus2', 'eastus2', 'canadacentral']);
+  assert.ok(report.probes.every(probe => probe.status === 404));
+  const events = await readFile(new URL(`${prefix}events.ndjson`, base));
+  const recording = await load(`${prefix}recording.json`);
+  assert.equal(createHash('sha256').update(events).digest('hex'), recording.eventSha256);
+});
+
 test('retained scenario diagnostics preserve integrity and do not claim application success', async () => {
   const index = await load('index.json');
   for (const [name, metadata] of Object.entries(index.files)) {

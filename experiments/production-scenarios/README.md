@@ -210,3 +210,32 @@ bounded page. The subsequent local implementation supports both. Local
 continuation tokens have their own documented opaque encoding; exact token
 bytes are not an Azure compatibility claim. Pagination tests follow the issued
 token, preserve the filter/projection and check exhaustion and malformed tokens.
+
+## App Service quota preflight
+
+The [recorded provider validation](evidence/web-validation-4a4ee94/) submits the
+same Bicep-compiled hosting plan request to Azure first, then GlobalStack, in
+West US 2, East US 2 and Canada Central. Azure returns HTTP 400 with nested
+`SubscriptionIsOverQuotaForSku` for both P0v3 and EP1. Each regional limit is zero
+and the requested capacity is one. GlobalStack returns HTTP 501 with
+`GlobalStackValidationNotImplemented` for `Microsoft.Web/serverfarms`.
+Neither target created a resource group or deployment record.
+
+This blocks the selected Azure hosting configuration. A subscription quota
+constraint is separate from a general IaC validation rule; the emulator must
+not reject all otherwise valid plans merely to reproduce this account's limit.
+A configurable quota model and Web provider validation remain separate gaps.
+The application and local-runtime work can continue while quota is resolved.
+
+To repeat this no-provisioning probe, set `VALIDATION_COMPONENT=web` with the
+existing validation environment and run the walkthrough with `--validation-only`.
+A successful runner exit means the capture and absence checks completed. It does
+not mean Azure accepted the plans or that either application passed.
+
+A request to Microsoft, if authorized separately, should ask for **one Linux
+P0v3 App Service instance and one Linux EP1 Functions Premium instance in West US
+2**, with no support-plan purchase or paid commitment. Explain that the account
+has zero current usage and zero limit, and attach the sanitized validation
+responses. These are short-lived document-processing research deployments under
+the existing USD 150 total experiment limit. Requesting quota does not authorize
+additional spending. No quota/support request has been submitted by this runner.
