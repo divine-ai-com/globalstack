@@ -664,17 +664,18 @@ async function runControlAndDataPlaneMatrix() {
         return { status: result.status, errorCode: errorCode(result) };
       });
 
-      await record('server farm minimal body preserves captured quota rejection', async () => {
-        const result = await httpJson(
-          armPort,
-          'PUT',
-          providerPath(resourceGroup, 'Microsoft.Web', planPath),
-          { location: 'eastus', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} },
-        );
-        assert.equal(result.status, 401);
-        assert.equal(errorCode(result), 'Unauthorized');
-        return { status: result.status, errorCode: errorCode(result) };
-      });
+      // Subscription-specific Azure quota failures are historical evidence, not
+      // universal validation rules for otherwise valid local hosting plans.
+      for (const sku of [{ name: 'EP1', tier: 'ElasticPremium' }, { name: 'P0v3', tier: 'PremiumV3' }]) {
+        await record(`unsupported ${sku.name} plan fails explicitly without creating a resource`, async () => {
+          const path = providerPath(resourceGroup, 'Microsoft.Web', `serverfarms/unsupported-${sku.name.toLowerCase()}`);
+          const result = await httpJson(armPort, 'PUT', path, { location: 'eastus', sku, properties: {} });
+          assert.equal(result.status, 501);
+          assert.equal(errorCode(result), 'GlobalStackUnsupportedAppServicePlan');
+          assert.equal((await httpJson(armPort, 'GET', path)).status, 404);
+          return { status: result.status, errorCode: errorCode(result), evidence: 'local capability boundary, not Azure rejection' };
+        });
+      }
 
       await record('server farm invalid name is rejected', async () => {
         const result = await httpJson(
