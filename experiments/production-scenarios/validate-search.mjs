@@ -74,7 +74,9 @@ try {
   }
 
   // The two parameter sets preserve the source template; validation cannot create resources.
-  const attempts = component === 'web' ? ['westus2', 'eastus2', 'canadacentral'].map(region => [`web-hosting-${region}`, `gs${runId}`, 'Provider', region]) : [
+  const webRegions = process.env.PAIRED_WEB_REGION ? [process.env.PAIRED_WEB_REGION] : ['westus2', 'eastus2', 'canadacentral'];
+  assert.ok(webRegions.every(region => ['westus2', 'eastus2', 'canadacentral', 'northeurope'].includes(region)));
+  const attempts = component === 'web' ? webRegions.map(region => [`web-hosting-${region}`, `gs${runId}`, 'Provider', region]) : [
     ['missing-location-parameter', `gs${runId}`, 'Template'],
     ['invalid-search-name-template', 'Invalid_Search_Name', 'Template'],
     ['invalid-search-name-provider', 'Invalid_Search_Name', 'Provider'],

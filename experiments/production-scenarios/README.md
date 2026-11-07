@@ -325,3 +325,19 @@ Tests cover the actual retained nested response and ownership-checked teardown.
 The automatic path still needs live verification once Azure permits creation.
 The account constraint and its proof are tracked in [#36](https://github.com/divine-ai-com/globalstack/issues/36);
 the bounded emulator fix is tracked separately in [#35](https://github.com/divine-ai-com/globalstack/issues/35).
+
+Set `PAIRED_WEB_REGION=northeurope` for the alternative region with existing
+P0v3/EP1 quota. The [retained retail prices](evidence/hosting-prices-20261107.json)
+are USD 0.084/hour for P0v3, and USD 0.167/vCPU-hour plus USD 0.0119/GiB-hour for
+EP1 in North Europe. Both targets receive the same region parameter. Regional
+availability and quotas do not guarantee deployment success.
+
+New hosting runs reserve their USD 1 envelope in the private
+`reports/production-scenarios/budget-ledger.json` before provisioning. The ledger
+starts with a conservative USD 20 allowance for earlier work, enforces the
+USD 150 aggregate ceiling, blocks overlapping allocations until cleanup is
+verified, and never refunds an envelope automatically from delayed billing.
+It is an execution guard, not an Azure spending limit or a measured invoice.
+If a watchdog performs cleanup after the runner exits, reconcile its verified
+absence evidence before marking the ledger allocation cleaned up. Never delete
+the ledger to bypass an exhausted allowance or unresolved cleanup.

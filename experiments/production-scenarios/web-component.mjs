@@ -12,6 +12,7 @@ import { azureCli, azureToken } from './azure-session.mjs';
 import { cleanupWeb, webArmClient, webScope } from './web-cleanup.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { throttledDeploymentOperation } from './deployment-progress.mjs';
+import { reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url)), repo = resolve(here, '../..');
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit evidence directory is required');
@@ -22,6 +23,9 @@ assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: repo, encodin
 const disk = await statfs(out);
 assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3, '40 GiB free required');
 const config = process.env.PAIRED_AZURE_CONFIG_DIR;
+const region = process.env.PAIRED_WEB_REGION ?? 'westus2';
+assert.ok(['westus2', 'northeurope'].includes(region), 'Choose a region with verified hosting prices');
+const budgetPath = resolve(repo, 'reports/production-scenarios/budget-ledger.json');
 const account = azureCli(config, ['account', 'show']);
 assert.equal(account.id, process.env.PAIRED_SUBSCRIPTION_ID);
 assert.equal(account.state, 'Enabled');
@@ -35,11 +39,10 @@ const emit = createRecording(out, { platform: 'Web hosting plan lifecycle', revi
 const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new Date().toISOString(),
   scope: 'Two Linux hosting plans only. No application, private network or business workflow is deployed.',
   transport: 'One native Bicep compilation, then direct ARM deployment and resource requests.',
-  region: 'westus2', portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
+  region, portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
   budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10,
-    hourlyRatesUsd: { P0v3: 0.0775, EP1: 0.16 + 3.5 * 0.0114 }, maxInstancesPerPlan: 1,
-    source: 'Azure Retail Prices API, West US 2 Linux P0v3 and Premium Functions CPU/memory, verified 2026-11-07.',
-    earlierRunEnvelopeUsd: 10, remainingReservedUsd: 139 } };
+    hourlyRatesUsd: region === 'westus2' ? { P0v3: 0.0775, EP1: 0.16 + 3.5 * 0.0114 } : { P0v3: 0.084, EP1: 0.167 + 3.5 * 0.0119 }, maxInstancesPerPlan: 1,
+    source: `Azure Retail Prices API, ${region} Linux P0v3 and Premium Functions CPU/memory, verified 2026-11-07.` } };
 let phase = 'preflight', arm, watchdog, manifestPath;
 const donePath = resolve(out, 'cleanup.done');
 function observe(target, event) {
@@ -78,6 +81,7 @@ try {
   const body = { location: report.region, properties: { mode: 'Incremental', template: JSON.parse(compiled), parameters: Object.fromEntries(Object.entries({
     groupName: manifest.group, serviceName: manifest.service, location: report.region, runId,
   }).map(([key, value]) => [key, { value }])) } };
+  report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: `Hosting comparison in ${region}` });
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'web-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
@@ -146,6 +150,7 @@ try {
       const cleanupToken = azureToken(config); replacements.push([cleanupToken, '<redacted>']);
       report.cleanup = await cleanupWeb(manifest, webArmClient({ ...manifest, token: cleanupToken }, event => observe('azure', event)));
       await writeFile(donePath, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifestPath);
+      await confirmBudgetCleanup(budgetPath, runId);
     } catch { report.cleanup = { cleanupComplete: false, recoveryRequired: true }; }
   }
   if (arm) {
