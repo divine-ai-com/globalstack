@@ -17,7 +17,8 @@ export async function registerDocumentAccess(pool, principal, { blobUrl, fileNam
     VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`, [documentId, principal.tenant, principal.subject, uploadKey, blobUrl, fileName, [...new Set(readGroups.map(value => value.toLowerCase()))]]);
   const access = (await pool.query('SELECT * FROM document_access WHERE tenant_id=$1 AND owner_id=$2 AND upload_key=$3',
     [principal.tenant, principal.subject, uploadKey])).rows[0];
-  if (!access || access.document_id !== documentId || access.file_name !== fileName) throw new AccessError(409, 'upload_key_conflict');
+  if (!access || access.document_id !== documentId || access.file_name !== fileName
+    || JSON.stringify([...access.read_groups].sort()) !== JSON.stringify([...new Set(readGroups.map(value => value.toLowerCase()))].sort())) throw new AccessError(409, 'upload_key_conflict');
   return access;
 }
 

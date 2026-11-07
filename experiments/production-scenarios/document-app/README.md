@@ -87,3 +87,28 @@ executes the real orchestrator and activity retries against GlobalStack Storage,
 then persists `Failed` because downstream settings were intentionally omitted.
 It does not complete scanning, SQL or indexing, and it is not a paired Azure-host
 run. The capture pins the earlier image digest, before these access components.
+
+`ingress.mjs` is the App Service application entrypoint. It accepts authenticated
+uploads with an explicit idempotency key, queries with an owner/group Search
+filter followed by a PostgreSQL recheck, and permits owner-only versioned updates
+and deletion. The upload key is retained as the root correlation ID; the Durable
+instance ID remains specific to the source revision and event sequence. Query
+responses return bounded snippets and page provenance, not arbitrary Search
+payloads. Search visibility and successful processing are never inferred from
+the upload's HTTP 202 response.
+
+The API uses `ENTRA_TENANT_ID`, `API_AUDIENCE` and `API_ALLOWED_CLIENTS` for token
+validation. The application registration must issue v2 access tokens with the
+`Documents.Read`, `Documents.Upload` or `Documents.Delete` role. Delegated tokens
+also need `Documents.Access`; application tokens need `idtyp=app`. Initial read
+groups come from verified membership. Group sharing cannot be changed by
+replaying an upload key. Live role assignment, consent and managed-identity
+behavior have not yet been tested.
+
+The Dockerfile named `Dockerfile.ingress` pins the Node base image and runs as a
+non-root user. Local HTTP tests use real signed test tokens, the Azure Blob SDK,
+GlobalStack's Blob router and a temporary PostgreSQL database. They cover
+upload, duplicate submission, owner/group access, stale ETags, update and
+deletion. Their fixture uses an explicit Shared Key and local database password;
+it does not count as managed identity, private networking or an Azure deployment.
+The full Search/scanner flow is still required.

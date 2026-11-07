@@ -17,6 +17,13 @@ export async function migrate(pool) {
   await pool.query(await readFile(new URL('./schema.sql', import.meta.url), 'utf8'));
 }
 
+export async function processingContext(pool, input) {
+  const access = (await pool.query('SELECT upload_key FROM document_access WHERE document_id=$1 AND tenant_id=$2',
+    [documentIdentity(input.tenant, input.blobUrl), input.tenant])).rows[0];
+  assert.ok(access, 'Document must have a registered ingress owner');
+  return { ...input, rootCorrelationId: access.upload_key };
+}
+
 function normalize(input) {
   assert.match(input.tenant, /^[a-zA-Z0-9_-]{1,80}$/);
   assert.equal(typeof input.blobUrl, 'string');
@@ -43,6 +50,7 @@ function normalize(input) {
   const phase = ['pending', 'unresolved', 'deleted'].includes(input.status) ? input.status : 'content';
   const revisionId = digest([documentId, input.version, phase]);
   const outcome = { tenant: input.tenant, blobUrl: input.blobUrl, fileName: input.fileName, version: input.version,
+    rootCorrelationId: input.rootCorrelationId ?? null,
     status: input.status, contentHash: input.scan?.sha256 ?? null, text,
     pages: input.scan?.pages ?? null, provenance: input.scan?.provenance ?? null,
     engines: input.scan?.engines?.map(({ engine, status, findings }) => ({ engine, status, findings: findings ?? [] })) ?? null };
@@ -79,8 +87,8 @@ export async function commitRevision(pool, input) {
       content_sha256=$8, engine_results=$9, extraction_pages=$10, signature_provenance=$11, revision_id=$12
       WHERE document_id=$1`, [documentId, input.fileName, input.status.toUpperCase(), input.status === 'detected',
       outcome.text, input.version, sequence, outcome.contentHash, JSON.stringify(outcome.engines), JSON.stringify(outcome.pages), outcome.provenance, revisionId]);
-    const access = (await client.query('SELECT owner_id, read_groups FROM document_access WHERE document_id=$1 AND tenant_id=$2', [documentId, input.tenant])).rows[0];
-    const payload = { document_id: documentId, tenant_id: input.tenant, owner_id: access?.owner_id ?? '', read_groups: access?.read_groups ?? [], file_name: input.fileName,
+    const access = (await client.query('SELECT owner_id, read_groups, upload_key FROM document_access WHERE document_id=$1 AND tenant_id=$2', [documentId, input.tenant])).rows[0];
+    const payload = { document_id: documentId, tenant_id: input.tenant, owner_id: access?.owner_id ?? '', read_groups: access?.read_groups ?? [], root_correlation_id: access?.upload_key ?? '', file_name: input.fileName,
       scan_status: input.status.toUpperCase(), extracted_text: outcome.text, revision_id: revisionId };
     await client.query('INSERT INTO document_outbox(document_id,revision_id,operation,payload) VALUES($1,$2,$3,$4)',
       [documentId, revisionId, input.status === 'clean' ? 'upload' : 'delete', payload]);

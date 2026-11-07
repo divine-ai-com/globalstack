@@ -1,7 +1,8 @@
 import { app } from '@azure/functions';
 import df from 'durable-functions';
 import { documentEvent } from './events.mjs';
-import { applicationConfig, drainOutbox, recordFailure, scanAndStore, settleFailures } from './adapters.mjs';
+import { applicationConfig, clients, drainOutbox, recordFailure, scanAndStore, settleFailures } from './adapters.mjs';
+import { processingContext } from './repository.mjs';
 
 app.http('workerHealth', { route: 'health', methods: ['GET'], authLevel: 'anonymous',
   handler: () => ({ jsonBody: { worker: 'ready' } }),
@@ -10,16 +11,18 @@ app.http('workerHealth', { route: 'health', methods: ['GET'], authLevel: 'anonym
 app.eventGrid('documentUploaded', {
   extraInputs: [df.input.durableClient()],
   handler: async (event, context) => {
-    const input = documentEvent(event, applicationConfig());
-    if (!input) { context.log(JSON.stringify({ stage: 'event_ignored' })); return; }
+    const parsed = documentEvent(event, applicationConfig());
+    if (!parsed) { context.log(JSON.stringify({ stage: 'event_ignored' })); return; }
+    const { pool } = await clients();
+    const input = await processingContext(pool, parsed);
     const client = df.getClient(context);
     const existing = await client.getStatus(input.correlationId);
     if (existing) {
-      context.log(JSON.stringify({ stage: 'event_duplicate', correlationId: input.correlationId, runtimeStatus: existing.runtimeStatus }));
+      context.log(JSON.stringify({ stage: 'event_duplicate', correlationId: input.rootCorrelationId, processingId: input.correlationId, runtimeStatus: existing.runtimeStatus }));
       return;
     }
     await client.startNew('documentWorkflow', { instanceId: input.correlationId, input });
-    context.log(JSON.stringify({ stage: 'orchestration_started', correlationId: input.correlationId }));
+    context.log(JSON.stringify({ stage: 'orchestration_started', correlationId: input.rootCorrelationId, processingId: input.correlationId }));
   },
 });
 

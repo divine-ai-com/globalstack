@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import { promisify } from 'node:util';
 import pg from 'pg';
 import { registerDocumentAccess, documentAccess, searchAccessFilter } from './access.mjs';
-import { commitRevision, currentSearchResults, deliverNext, migrate } from './repository.mjs';
+import { commitRevision, currentSearchResults, deliverNext, migrate, processingContext } from './repository.mjs';
 
 const exec = promisify(execFile);
 
@@ -42,6 +42,8 @@ test('PostgreSQL commits metadata and outbox atomically across duplicates, stale
     } };
   const principal = { tenant: input.tenant, subject: '11111111-1111-4111-8111-111111111111', groups: ['22222222-2222-4222-8222-222222222222'] };
   const access = await registerDocumentAccess(pool, principal, { ...input, uploadKey: '33333333-3333-4333-8333-333333333333', readGroups: principal.groups });
+  assert.equal((await processingContext(pool, input)).rootCorrelationId, access.upload_key);
+  await assert.rejects(processingContext(pool, { ...input, tenant: 'foreign' }), /registered ingress owner/);
   const outcomes = await Promise.all(Array.from({ length: 5 }, () => commitRevision(pool, input)));
   assert.equal(outcomes.filter(value => value.state === 'committed').length, 1);
   assert.equal(outcomes.filter(value => value.state === 'duplicate').length, 4);

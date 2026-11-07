@@ -33,6 +33,13 @@ export async function clients() {
   return application;
 }
 
+export async function closeClients() {
+  const pending = application; application = undefined;
+  if (!pending) return;
+  const value = await pending.catch(() => null);
+  if (value) await Promise.allSettled([value.pool.end(), value.bus.close()]);
+}
+
 async function createClients() {
   const config = applicationConfig();
   const credential = new DefaultAzureCredential({ managedIdentityClientId: process.env.AZURE_CLIENT_ID });
@@ -60,7 +67,7 @@ async function createClients() {
 }
 
 function log(context, stage, input, extra = {}) {
-  context.log(JSON.stringify({ stage, correlationId: input.correlationId, ...extra }));
+  context.log(JSON.stringify({ stage, correlationId: input.rootCorrelationId ?? input.correlationId, processingId: input.correlationId, ...extra }));
 }
 
 async function sourceRevision(blobs, input) {
@@ -103,7 +110,8 @@ export async function scanAndStore(input, context) {
     const { bytes, properties } = await sourceRevision(blobs, input);
     const token = await credential.getToken(config.scannerScope);
     const response = await fetch(`${config.scannerEndpoint}/scan`, { method: 'POST', body: bytes, redirect: 'error',
-      headers: { authorization: `Bearer ${token.token}`, 'content-type': properties.contentType }, signal: AbortSignal.timeout(90000) });
+      headers: { authorization: `Bearer ${token.token}`, 'content-type': properties.contentType,
+        'x-correlation-id': input.rootCorrelationId ?? input.correlationId }, signal: AbortSignal.timeout(90000) });
     assert.equal(response.status, 200, 'Scanner request failed');
     const scan = await response.json();
     assert.equal(scan.sha256, createHash('sha256').update(bytes).digest('hex'), 'Scanner result does not refer to the downloaded bytes');
@@ -141,6 +149,8 @@ export async function drainOutbox(context) {
       await blobs.getContainerClient(config.projectionContainer).getBlockBlobClient(`${document.document_id}.json`).uploadData(Buffer.from(JSON.stringify(projection)), {
         blobHTTPHeaders: { blobContentType: 'application/json' }, metadata: { isdeleted: projection.deleted }, abortSignal: signal,
       });
+      context.log(JSON.stringify({ stage: 'search_and_projection_acknowledged', correlationId: document.root_correlation_id,
+        documentId: document.document_id, revisionId: document.revision_id, operation }));
       return { status: true, key: item.key };
     });
     context.log(JSON.stringify({ stage: 'outbox', ...result }));
@@ -152,7 +162,7 @@ export async function recordFailure(input, context) {
   const { bus, config } = await clients();
   const sender = bus.createSender(config.failuresQueue);
   try {
-    await sender.sendMessages({ messageId: input.correlationId, correlationId: input.correlationId,
+    await sender.sendMessages({ messageId: input.correlationId, correlationId: input.rootCorrelationId ?? input.correlationId,
       body: { event: input, reason: 'processing_retries_exhausted' }, applicationProperties: { category: 'document_processing' } }, { abortSignal: AbortSignal.timeout(10000) });
     log(context, 'failure_queue_sent', input);
   } finally { await sender.close(); }
