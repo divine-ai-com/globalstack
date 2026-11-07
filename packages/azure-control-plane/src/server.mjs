@@ -16,6 +16,7 @@ import {
   exactCapabilityForResourceType,
   eventGridTopicListKeysRoute,
   expandDeploymentTemplate,
+  evaluateArmValue,
   facadeOrigin,
   isCollectionRoute,
   lowerSegments,
@@ -33,6 +34,7 @@ import {
   readBody,
   scopedDiagnosticSettingsRoute,
   scopedEventGridEventSubscriptionRoute,
+  scopedRoleAssignmentRoute,
   segments,
   sendError,
   sendJson,
@@ -255,6 +257,10 @@ export function createArmRequestHandler({
     providerRoute = normalizeProviderRoute(providerRoute);
     const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
     const capability = capabilityForResourceType(resourceType);
+    if (resourceType.startsWith('Microsoft.EventGrid/systemTopics/') && !exactCapabilityForResourceType(resourceType)) {
+      return { status: 501, body: { error: { code: 'GlobalStackResourceTypeNotEmulated',
+        message: `GlobalStack does not emulate Azure resource type ${resourceType}.` } } };
+    }
     if (providerRoute.scopeId) {
       const scopeRoute = providerRouteFromResourceId(providerRoute.scopeId);
       if (!scopeRoute || !store.getResource(scopeRoute)) {
@@ -262,6 +268,13 @@ export function createArmRequestHandler({
       }
       if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
         body = { ...body, properties: { ...body.properties, scope: providerRoute.scopeId } };
+      }
+      if (resourceType === 'Microsoft.Authorization/roleAssignments') {
+        body = { ...body, properties: { ...body.properties, scope: providerRoute.scopeId } };
+        const existing = store.getResource(providerRoute);
+        if (existing && ['principalId', 'roleDefinitionId'].some(name => String(existing.properties?.[name]).toLowerCase() !== String(body.properties?.[name]).toLowerCase())) {
+          return { status: 400, body: { error: { code: 'RoleAssignmentUpdateNotPermitted', message: 'The principal, role and scope of an existing role assignment cannot be changed.' } } };
+        }
       }
     }
     if (!apiVersion) {
@@ -468,7 +481,12 @@ export function createArmRequestHandler({
         });
         continue;
       }
-      const result = putProviderResource(operation);
+      let evaluatedBody;
+      const evaluationContext = { ...operation.evaluationContext, __deferResourceReferences: false,
+        __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } };
+      try { evaluatedBody = evaluateArmValue(operation.body, evaluationContext); }
+      catch (error) { return { status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message, details: steps } } }; }
+      const result = putProviderResource({ ...operation, body: evaluatedBody });
       if (result.status === 202 || result.asyncOperation) {
         for (let attempt = 0; attempt < 6; attempt += 1) {
           const ready = store.getResource(operation.providerRoute);
@@ -488,6 +506,13 @@ export function createArmRequestHandler({
         };
       }
     }
+    let outputs;
+    try {
+      outputs = evaluateArmValue(expanded.outputs, { ...expanded.evaluationContext, __deferResourceReferences: false,
+        __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } });
+    } catch (error) {
+      return { status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message, details: steps } } };
+    }
     const deploymentBody = {
       id: resourceGroupName
         ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`
@@ -500,7 +525,7 @@ export function createArmRequestHandler({
         mode: body.properties?.mode ?? 'Incremental',
         timestamp: new Date().toISOString(),
         duration: 'PT0S',
-        outputs: expanded.outputs,
+        outputs,
         globalstackDeploymentSteps: steps,
       },
     };
@@ -959,6 +984,29 @@ export function createArmRequestHandler({
               id: `${scopeResource.id}/providers/Microsoft.Insights/${scopedDiagnosticRoute.diagnosticRoute.typePath}`,
             });
           }
+        }
+
+        const scopedAssignment = scopedRoleAssignmentRoute(providerRoute);
+        if (scopedAssignment) {
+          const parent = store.getResource(scopedAssignment.scopeRoute);
+          if (!parent) return sendError(res, 404, 'ResourceNotFound', 'The role assignment scope does not exist.');
+          const route = { ...scopedAssignment.assignmentRoute, scopeId: parent.id };
+          if (method === 'PUT') {
+            const result = putProviderResource({ providerRoute: route, apiVersion, body: await readBody(req) });
+            return sendJson(res, result.status, result.body);
+          }
+          const resource = store.getResource(route);
+          if (method === 'GET') {
+            if (!resource) return sendError(res, 404, 'RoleAssignmentDoesNotExist', 'The role assignment does not exist.');
+            return sendJson(res, 200, resource);
+          }
+          if (method === 'DELETE') {
+            if (!resource) return sendJson(res, 204);
+            store.deleteResource(route);
+            if (typeof onResourceDelete === 'function') onResourceDelete({ providerRoute: route, resourceType: 'Microsoft.Authorization/roleAssignments', resource });
+            return sendJson(res, 200, resource);
+          }
+          return sendError(res, 405, 'MethodNotAllowed', 'This operation is not supported for role assignments.');
         }
 
         const scopedEventSubscriptionRoute = scopedEventGridEventSubscriptionRoute(providerRoute);

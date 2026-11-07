@@ -793,6 +793,18 @@ export function scopedEventGridEventSubscriptionRoute(providerRoute) {
   };
 }
 
+export function scopedRoleAssignmentRoute(providerRoute) {
+  const marker = '/providers/microsoft.authorization/roleassignments/';
+  const index = providerRoute.typePath.toLowerCase().indexOf(marker);
+  if (index < 0) return null;
+  const scopeTypePath = providerRoute.typePath.slice(0, index);
+  const name = providerRoute.typePath.slice(index + marker.length);
+  if (!scopeTypePath || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(name)) return null;
+  return { scopeRoute: { ...providerRoute, typePath: scopeTypePath },
+    assignmentRoute: { subscriptionId: providerRoute.subscriptionId, resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: 'Microsoft.Authorization', typePath: `roleAssignments/${name}` } };
+}
+
 export function aksCredentialActionRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
   const parts = providerRoute.typePath.split('/');
@@ -1393,6 +1405,7 @@ function validationExpressionValue(value, parameters) {
 
 export function evaluateArmExpression(expression, parameters) {
   const text = expression.trim();
+  if (parameters.__deferResourceReferences && /\breference\(/.test(text)) return `[${text}]`;
   const parameterMatch = text.match(/^parameters\('([^']+)'\)$/);
   if (parameterMatch) return validationExpressionValue(parameters[parameterMatch[1]], parameters);
 
@@ -1455,6 +1468,26 @@ export function evaluateArmExpression(expression, parameters) {
     return validationExpressionValue(outputs?.[referenceOutputMatch[2]]?.value, parameters) ?? `[${text}]`;
   }
 
+  const referenceMatch = text.match(/^reference\((.*)\)(?:\.([A-Za-z_][A-Za-z0-9_.]*))?$/s);
+  if (referenceMatch && typeof parameters.__resourceLookup === 'function') {
+    const [id, , mode] = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmValue(arg, parameters));
+    const resource = parameters.__resourceLookup(id);
+    if (!resource) {
+      const error = new Error(`The referenced resource '${id}' was not found.`);
+      error.code = 'ResourceNotFound'; error.status = 404; throw error;
+    }
+    if (mode !== undefined && String(mode).toLowerCase() !== 'full') throw new Error('Unsupported ARM reference mode.');
+    let value = mode === undefined ? resource.properties : resource;
+    for (const key of referenceMatch[2]?.split('.') ?? []) {
+      if (['__proto__', 'constructor', 'prototype'].includes(key) || !value || typeof value !== 'object' || !Object.hasOwn(value, key)) {
+        const error = new Error(`The referenced resource has no property '${key}'.`);
+        error.code = 'InvalidTemplate'; error.status = 400; throw error;
+      }
+      value = value[key];
+    }
+    return value;
+  }
+
   if (parameters.__strictValidation) {
     const error = new Error('This ARM expression is not supported by local template validation.');
     error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
@@ -1477,7 +1510,7 @@ export function evaluateArmValue(value, parameters) {
 }
 
 export function sortDeploymentOperations(operations) {
-  return operations.sort((left, right) => {
+  const sorted = [...operations].sort((left, right) => {
     if (left.kind === 'resourceGroup' && right.kind !== 'resourceGroup') return -1;
     if (right.kind === 'resourceGroup' && left.kind !== 'resourceGroup') return 1;
     if (left.kind !== 'resource' || right.kind !== 'resource') return 0;
@@ -1485,6 +1518,23 @@ export function sortDeploymentOperations(operations) {
     const rightSegments = right.providerRoute.typePath.split('/').length + (right.providerRoute.scopeId?.split('/').length ?? 0);
     return leftSegments - rightSegments;
   });
+  const id = operation => operation.kind === 'resource'
+    ? `${operation.providerRoute.scopeId ?? `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}`}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`.toLowerCase() : null;
+  const byId = new Map(sorted.filter(operation => id(operation)).map(operation => [id(operation), operation]));
+  const output = [], active = new Set(), complete = new Set();
+  function visit(operation) {
+    if (complete.has(operation)) return;
+    if (active.has(operation)) throw new Error('Circular resource dependency in deployment template.');
+    active.add(operation);
+    const ownId = id(operation);
+    const dependencies = new Set((operation.dependsOn ?? []).map(value => String(value).toLowerCase()));
+    if (ownId) for (const candidate of byId.keys()) if (ownId.startsWith(`${candidate}/`)) dependencies.add(candidate);
+    for (const dependency of dependencies) if (byId.has(dependency)) visit(byId.get(dependency));
+    active.delete(operation); complete.add(operation); output.push(operation);
+  }
+  try { for (const operation of sorted) visit(operation); }
+  catch (error) { return [{ kind: 'error', status: 400, code: 'InvalidTemplate', message: error.message }]; }
+  return output;
 }
 
 function armTemplateResourceEntries(template) {
@@ -1519,6 +1569,7 @@ export function expandDeploymentTemplate({
     __subscriptionId: subscriptionId,
     __resourceGroupName: resourceGroupName,
     __deploymentOutputs: deploymentOutputs,
+    __deferResourceReferences: true,
   });
   // Resolve group locations before nested templates, regardless of declaration order.
   for (const { rawResource } of armTemplateResourceEntries(template)) {
@@ -1599,7 +1650,7 @@ export function expandDeploymentTemplate({
       const groupId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}`;
       scopeId = String(resource.scope).startsWith('/') ? String(resource.scope) : `${groupId}/providers/${resource.scope}`;
       const scopeRoute = providerRouteFromResourceId(scopeId);
-      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings'].includes(resource.type);
+      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings', 'Microsoft.Authorization/roleAssignments'].includes(resource.type);
       if (!supported || !scopeRoute || scopeRoute.subscriptionId !== subscriptionId || scopeRoute.resourceGroupName !== resourceGroupName) {
         operations.push({ kind: 'error', status: 501, code: 'GlobalStackUnsupportedResourceScope', message: 'Only supported resource extensions in the deployment resource group are emulated.' });
         return;
@@ -1607,6 +1658,8 @@ export function expandDeploymentTemplate({
     }
     operations.push({
       kind: 'resource',
+      dependsOn: resource.dependsOn ?? [],
+      evaluationContext: context,
       providerRoute: {
         ...(scopeId ? { scopeId } : {}),
         subscriptionId,
@@ -1634,6 +1687,7 @@ export function expandDeploymentTemplate({
     operations: sortDeploymentOperations(operations),
     outputs,
     deploymentOutputs,
+    evaluationContext: context,
   };
 }
 
