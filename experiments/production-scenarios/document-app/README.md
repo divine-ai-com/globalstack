@@ -112,3 +112,13 @@ upload, duplicate submission, owner/group access, stale ETags, update and
 deletion. Their fixture uses an explicit Shared Key and local database password;
 it does not count as managed identity, private networking or an Azure deployment.
 The full Search/scanner flow is still required.
+
+`sourceRevision` resolves a delayed upload event by its exact ETag. If the
+current blob has been overwritten or returns `BlobNotFound`, it searches at
+most 1,000 listed entries for the matching immutable version, verifies its
+properties, and downloads with an ETag condition. Permission errors, a missing
+container, a missing version and a changed ETag remain failures. Six local
+HTTP-fixture tests use the actual Azure Blob SDK, including the bodyless HEAD
+error response. They are adapter regressions, not live Azure captures or proof
+of GlobalStack versioning support. Full paired update/delete/recovery testing
+and operator replay remain pending.

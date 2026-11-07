@@ -70,12 +70,20 @@ function log(context, stage, input, extra = {}) {
   context.log(JSON.stringify({ stage, correlationId: input.rootCorrelationId ?? input.correlationId, processingId: input.correlationId, ...extra }));
 }
 
-async function sourceRevision(blobs, input) {
+export async function sourceRevision(blobs, input) {
   const container = blobs.getContainerClient(input.container), current = container.getBlobClient(input.blobName);
   const signal = AbortSignal.timeout(30000);
   const match = etag => String(etag ?? '').replace(/^"|"$/g, '') === input.etag;
-  let client = current, properties = await current.getProperties({ abortSignal: signal });
-  if (!match(properties.etag)) {
+  let client = current, properties;
+  try {
+    properties = await current.getProperties({ abortSignal: signal });
+  } catch (error) {
+    // Deleting the current blob can leave immutable versions available. Other
+    // failures, including permissions and a missing container, must propagate.
+    const code = error.code ?? error.details?.errorCode ?? error.response?.headers?.get('x-ms-error-code');
+    if (error.statusCode !== 404 || code !== 'BlobNotFound') throw error;
+  }
+  if (!properties || !match(properties.etag)) {
     client = null;
     let examined = 0;
     for await (const item of container.listBlobsFlat({ prefix: input.blobName, includeVersions: true, abortSignal: signal })) {
@@ -83,6 +91,7 @@ async function sourceRevision(blobs, input) {
       if (item.name === input.blobName && item.versionId && match(item.properties.etag)) {
         client = current.withVersion(item.versionId);
         properties = await client.getProperties({ abortSignal: signal });
+        assert.ok(match(properties.etag), 'Historical version does not match the event ETag');
         break;
       }
     }
