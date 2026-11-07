@@ -1,0 +1,264 @@
+{
+  "scope": "Local official Functions host against GlobalStack Storage routers. No Azure comparison or full application success.",
+  "sourceRevision": "a8135201f93c2c4632543ecb9c8025b8d6cf4da3",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T07:22:48.717Z",
+  "requests": [
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 11
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 52
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 4
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 4
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 3
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 7
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 6
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 16
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 20
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 15
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 7
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/azure-webjobs-hosts",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 2
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 2
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "status": 404,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/741afb89150b-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "status": 404,
+      "durationMs": 1
+    }
+  ],
+  "workerHealthReady": true,
+  "cleanup": true,
+  "imageId": "sha256:9cb78e46e23bc11a09f4071fa455b3f3c9ed44f6bee960de915b3cb07bb39db7",
+  "completedAt": "2026-11-07T07:23:20.276Z"
+}
