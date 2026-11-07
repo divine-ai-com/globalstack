@@ -45,7 +45,7 @@ export function storageExchange({ account, key, surface, origin, method, path, h
       response.on('error', reject);
       response.on('end', () => resolve({ status: response.statusCode, body: Buffer.concat(chunks).toString('utf8'),
         headers: Object.fromEntries(Object.entries(response.headers).filter(([name]) =>
-          ['content-type', 'content-length', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration'].includes(name))) }));
+          ['content-type', 'content-length', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration', 'x-ms-popreceipt', 'x-ms-time-next-visible'].includes(name))) }));
     });
     request.on('error', reject); request.end(payload);
   });

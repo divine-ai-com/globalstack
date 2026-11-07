@@ -1,7 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
 const error = (status, code, message) => ({ status, code, message });
-const validId = value => typeof value === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
+function normalizeId(value) {
+  if (typeof value !== 'string') return null;
+  const text = value.trim().replace(/^(?:\{(.*)\}|\((.*)\))$/, (_, braces, parens) => braces ?? parens);
+  if (/^[a-f0-9]{32}$/i.test(text)) return text.toLowerCase().replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+  return /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(text) ? text.toLowerCase() : null;
+}
 
 export function leaseState(resource, now = Date.now()) {
   const lease = resource?.lease;
@@ -24,17 +29,17 @@ export function leaseGuard(resource, headers, kind, required, now = Date.now()) 
   if (!active && id) return error(412, state === 'expired' ? 'LeaseLost' : `LeaseNotPresentWith${kind}Operation`,
     state === 'expired' ? `A lease ID was specified, but the lease for the ${kind.toLowerCase()} has expired.` : `There is currently no lease on the ${kind.toLowerCase()}.`);
   if (!id && required) return error(412, 'LeaseIdMissing', `There is currently a lease on the ${kind.toLowerCase()} and no lease ID was specified in the request.`);
-  if (id && id.toLowerCase() !== resource.lease.id) return error(412, `LeaseIdMismatchWith${kind}Operation`, `The lease ID specified did not match the lease ID for the ${kind.toLowerCase()}.`);
+  if (id && normalizeId(id) !== resource.lease.id) return error(412, `LeaseIdMismatchWith${kind}Operation`, `The lease ID specified did not match the lease ID for the ${kind.toLowerCase()}.`);
   return null;
 }
 
 export function operateLease(resource, headers, kind, now = Date.now()) {
   const action = headers['x-ms-lease-action'];
-  const id = headers['x-ms-lease-id']?.toLowerCase();
-  const proposed = headers['x-ms-proposed-lease-id']?.toLowerCase();
+  const id = normalizeId(headers['x-ms-lease-id']);
+  const proposed = normalizeId(headers['x-ms-proposed-lease-id']);
   const state = leaseState(resource, now), current = resource.lease;
   if (!action) return error(400, 'MissingRequiredHeader', "An HTTP header that's mandatory for this request is not specified.");
-  if ((id && !validId(id)) || (proposed && !validId(proposed))) return error(400, 'InvalidHeaderValue', 'The value for one of the HTTP headers is not in the correct format.');
+  if ((headers['x-ms-lease-id'] && !id) || (headers['x-ms-proposed-lease-id'] && !proposed)) return error(400, 'InvalidHeaderValue', 'The value for one of the HTTP headers is not in the correct format.');
   if (action === 'acquire') {
     if (headers['x-ms-lease-duration'] === undefined) return error(400, 'MissingRequiredHeader', "An HTTP header that's mandatory for this request is not specified.");
     const duration = Number(headers['x-ms-lease-duration']);

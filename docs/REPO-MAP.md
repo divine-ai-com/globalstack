@@ -115,6 +115,7 @@ flowchart TD
 - `packages/azure-data-plane/src/search-router.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/service-errors.mjs`
+- `packages/azure-data-plane/src/storage-lease.mjs`
 - `packages/azure-data-plane/src/storage-normalizer.mjs`
 - `packages/azure-data-plane/src/storage-proxy.mjs`
 - `packages/azure-data-plane/src/storage-router.mjs`
@@ -150,6 +151,7 @@ flowchart TD
 - `packages/conformance/src/search-router.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
+- `packages/conformance/src/storage-lease.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/conformance/src/workflow-expression-values.test.mjs`
 - `packages/platform-registry/src/index.mjs`

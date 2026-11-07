@@ -1,4 +1,4 @@
-import { createHmac, randomUUID } from 'node:crypto';
+import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { leaseHeaders, leaseGuard, operateLease, blobConditions, leaseState } from './storage-lease.mjs';
@@ -90,6 +90,18 @@ function signSharedKeyLite({ url, headers, accountKey, accountName }) {
   };
 }
 
+function validateTableKey(req, url, account) {
+  const auth = parseAuthorization(req);
+  if (!auth || auth.accountName !== account.accountName) return false;
+  const resource = `/${account.accountName}${url.pathname}${url.searchParams.has('comp') ? `?comp=${url.searchParams.get('comp')}` : ''}`;
+  const date = req.headers['x-ms-date'] ?? req.headers.date ?? '';
+  const fields = auth.scheme === 'SharedKeyLite' ? [date, resource]
+    : [req.method, req.headers['content-md5'] ?? '', req.headers['content-type'] ?? '', date, resource];
+  const expected = createHmac('sha256', Buffer.from(account.accountKey, 'base64')).update(fields.join('\n')).digest();
+  const received = Buffer.from(auth.signature, 'base64');
+  return received.length === expected.length && timingSafeEqual(received, expected);
+}
+
 function send(res, status, body = '', headers = {}) {
   const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
   res.writeHead(status, {
@@ -101,8 +113,10 @@ function send(res, status, body = '', headers = {}) {
 
 function sendXmlError(res, status, code, message, requestId = 'globalstack-storage-router') {
   const body = `<?xml version="1.0" encoding="utf-8"?><Error><Code>${xmlEscape(code)}</Code><Message>${xmlEscape(message)}\nRequestId:${requestId}\nTime:${new Date().toISOString()}</Message></Error>`;
-  send(res, status, body, {
-    'content-type': 'application/xml',
+  // HEAD errors have no entity body. Advertising XML bytes that are not sent
+  // makes native SDKs parse an empty stream instead of handling the error code.
+  send(res, status, res.req?.method === 'HEAD' ? '' : body, {
+    ...(res.req?.method === 'HEAD' ? {} : { 'content-type': 'application/xml' }),
     'x-ms-error-code': code,
     'x-ms-request-id': requestId,
     'x-ms-version': '2023-11-03',
@@ -237,17 +251,22 @@ function entityKey(partitionKey, rowKey) {
 }
 
 function parseQueueMessageXml(text) {
-  const match = String(text).match(/<MessageText>([\s\S]*?)<\/MessageText>/i);
-  if (!match) return null;
+  const match = String(text).match(/^\s*(?:<\?xml[^?]*\?>\s*)?<QueueMessage>\s*<MessageText>([\s\S]*?)<\/MessageText>\s*<\/QueueMessage>\s*$/);
+  if (!match || /[<>]/.test(match[1]) || /&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-f]+;)/i.test(match[1])) return null;
   try {
-    return Buffer.from(match[1], 'base64').toString('utf8');
-  } catch {
-    return null;
-  }
+    return match[1].replace(/&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);/gi, (_, entity) => {
+      if (entity.startsWith('#')) {
+        const code = entity.toLowerCase().startsWith('#x') ? parseInt(entity.slice(2), 16) : Number(entity.slice(1));
+        if (!(code === 9 || code === 10 || code === 13 || code >= 32 && code <= 0xd7ff || code >= 0xe000 && code <= 0xfffd || code >= 0x10000 && code <= 0x10ffff)) throw new Error('Invalid XML character');
+        return String.fromCodePoint(code);
+      }
+      return { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }[entity];
+    });
+  } catch { return null; }
 }
 
-function queueMessagesXml(messages) {
-  return `<?xml version="1.0" encoding="utf-8"?><QueueMessagesList>${messages.map(message => `<QueueMessage><MessageId>${message.messageId}</MessageId><InsertionTime>${xmlEscape(message.insertionTime)}</InsertionTime><ExpirationTime>${xmlEscape(message.expirationTime)}</ExpirationTime><DequeueCount>${message.dequeueCount}</DequeueCount><MessageText>${xmlEscape(Buffer.from(message.text).toString('base64'))}</MessageText></QueueMessage>`).join('')}</QueueMessagesList>`;
+function queueMessagesXml(messages, receive = false, includeText = true) {
+  return `<?xml version="1.0" encoding="utf-8"?><QueueMessagesList>${messages.map(message => `<QueueMessage><MessageId>${message.messageId}</MessageId><InsertionTime>${xmlEscape(message.insertionTime)}</InsertionTime><ExpirationTime>${xmlEscape(message.expirationTime)}</ExpirationTime>${receive ? `<PopReceipt>${xmlEscape(message.popReceipt)}</PopReceipt><TimeNextVisible>${xmlEscape(new Date(message.visibleAt).toUTCString())}</TimeNextVisible>` : ''}${includeText ? `<DequeueCount>${message.dequeueCount}</DequeueCount><MessageText>${xmlEscape(message.text)}</MessageText>` : ''}</QueueMessage>`).join('')}</QueueMessagesList>`;
 }
 
 export class StorageDataPlaneRouter {
@@ -299,7 +318,7 @@ export class StorageDataPlaneRouter {
     if (!account) throw new Error(`Storage account ${accountName} is not registered.`);
     this.queueDeleteTracker.clear({ accountName, queueName });
     if (!account.queues.has(lower(queueName))) {
-      account.queues.set(lower(queueName), { queueName, messages: [] });
+      account.queues.set(lower(queueName), { queueName, messages: [], metadata: {} });
     }
   }
 
@@ -493,7 +512,22 @@ export class StorageDataPlaneRouter {
 
       const segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
       const queueName = segments[0];
-      const queue = account.queues.get(lower(queueName));
+      let queue = account.queues.get(lower(queueName));
+      const comp = url.searchParams.get('comp');
+      const common = { 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() };
+      const fail = (status, code, message) => sendXmlError(res, status, code, message, requestId);
+      const metadata = Object.fromEntries(Object.entries(req.headers).filter(([key]) => key.startsWith('x-ms-meta-')));
+      if (req.method === 'PUT' && segments.length === 1 && !comp) {
+        if (queueName.length < 3 || queueName.length > 63) return fail(400, 'OutOfRangeInput', 'The specified resource name length is not within the permissible limits.');
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(queueName)) return fail(400, 'InvalidResourceName', 'The specifed resource name contains invalid characters.');
+        if (queue) {
+          if (JSON.stringify(Object.entries(queue.metadata ?? {}).sort()) !== JSON.stringify(Object.entries(metadata).sort())) return fail(409, 'QueueAlreadyExists', 'The specified queue already exists.');
+          return send(res, 204, '', common);
+        }
+        this.registerQueue({ accountName, queueName });
+        account.queues.get(queueName).metadata = metadata;
+        return send(res, 201, '', common);
+      }
       if (!queue) {
         if (req.method === 'GET' && segments[1]?.toLowerCase() === 'messages' && url.searchParams.get('peekonly') === 'true') {
           const staleBody = this.queueDeleteTracker.readAfterDelete({ accountName, queueName });
@@ -509,38 +543,65 @@ export class StorageDataPlaneRouter {
         return sendXmlError(res, 404, 'QueueNotFound', 'The specified queue does not exist.', requestId);
       }
 
-      if (req.method === 'POST' && segments[1]?.toLowerCase() === 'messages') {
-        const body = await readBody(req);
-        const text = parseQueueMessageXml(body.toString('utf8'));
-        if (text === null) {
-          return sendXmlError(res, 400, 'InvalidXmlDocument', 'XML specified is not syntactically valid.', requestId);
-        }
-        const message = {
-          messageId: randomUUID(),
-          text,
-          insertionTime: isoNow(),
-          expirationTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          dequeueCount: 1,
-        };
-        queue.messages.push(message);
-        const responseBody = `<?xml version="1.0" encoding="utf-8"?><QueueMessagesList><QueueMessage><MessageId>${message.messageId}</MessageId><InsertionTime>${xmlEscape(message.insertionTime)}</InsertionTime><ExpirationTime>${xmlEscape(message.expirationTime)}</ExpirationTime><PopReceipt>${randomUUID()}</PopReceipt><TimeNextVisible>${xmlEscape(message.insertionTime)}</TimeNextVisible></QueueMessage></QueueMessagesList>`;
-        return send(res, 201, responseBody, {
-          'content-type': 'application/xml',
-          'x-ms-request-id': requestId,
-          'x-ms-version': '2023-11-03',
-          date: nowUtc(),
-        });
+      queue.messages = queue.messages.filter(message => Date.parse(message.expirationTime) > Date.now());
+      if (segments.length === 1 && comp === 'metadata') {
+        if (req.method === 'PUT') { queue.metadata = metadata; return send(res, 204, '', common); }
+        if (req.method === 'GET' || req.method === 'HEAD') return send(res, 200, '', { ...common, ...queue.metadata, 'x-ms-approximate-messages-count': String(queue.messages.length) });
       }
-
-      if (req.method === 'GET' && segments[1]?.toLowerCase() === 'messages' && url.searchParams.get('peekonly') === 'true') {
-        const responseBody = queueMessagesXml(queue.messages.slice(0, Number(url.searchParams.get('numofmessages') ?? 1)));
-        this.queueDeleteTracker.recordPeek({ accountName, queueName, body: responseBody });
-        return send(res, 200, responseBody, {
-          'content-type': 'application/xml',
-          'x-ms-request-id': requestId,
-          'x-ms-version': '2023-11-03',
-          date: nowUtc(),
-        });
+      if (comp) return fail(501, 'NotImplemented', 'This Queue service operation is not implemented.');
+      const integer = (name, fallback, min, max) => {
+        const raw = url.searchParams.get(name);
+        if (raw === null) return fallback;
+        if (!/^-?\d+$/.test(raw)) return NaN;
+        const value = Number(raw);
+        return Number.isSafeInteger(value) && value >= min && value <= max ? value : NaN;
+      };
+      if (req.method === 'POST' && segments.length === 2 && segments[1] === 'messages') {
+        const body = await readBody(req), text = parseQueueMessageXml(body.toString('utf8'));
+        if (text === null) return fail(400, 'InvalidXmlDocument', 'XML specified is not syntactically valid.');
+        if (Buffer.byteLength(text) > 65536) return fail(400, 'MessageTooLarge', 'The message exceeds the maximum allowed size.');
+        const ttl = integer('messagettl', 604800, -1, 2147483647), visibility = integer('visibilitytimeout', 0, 0, 604800);
+        if (!Number.isFinite(ttl) || ttl === 0 || !Number.isFinite(visibility) || ttl !== -1 && visibility >= ttl) return fail(400, 'OutOfRangeQueryParameterValue', 'One of the query parameters specified in the request URI is outside the permissible range.');
+        if (account.queues.get(lower(queueName)) !== queue) return fail(404, 'QueueNotFound', 'The specified queue does not exist.');
+        const now = Date.now();
+        const message = { messageId: randomUUID(), text, insertionTime: new Date(now).toUTCString(),
+          expirationTime: ttl === -1 ? 'Fri, 31 Dec 9999 23:59:59 GMT' : new Date(now + ttl * 1000).toUTCString(),
+          visibleAt: now + visibility * 1000, popReceipt: randomUUID(), dequeueCount: 0 };
+        queue.messages.push(message);
+        return send(res, 201, queueMessagesXml([message], true, false), { ...common, 'content-type': 'application/xml' });
+      }
+      if (req.method === 'GET' && segments.length === 2 && segments[1] === 'messages') {
+        const peek = url.searchParams.get('peekonly') === 'true';
+        const count = integer('numofmessages', 1, 1, 32), visibility = integer('visibilitytimeout', 30, 1, 604800);
+        if (!Number.isFinite(count) || !Number.isFinite(visibility)) return fail(400, 'OutOfRangeQueryParameterValue', 'One of the query parameters specified in the request URI is outside the permissible range.');
+        const now = Date.now(), visible = queue.messages.filter(message => message.visibleAt <= now).slice(0, count);
+        if (!peek) for (const message of visible) { message.visibleAt = now + visibility * 1000; message.popReceipt = randomUUID(); message.dequeueCount++; }
+        const responseBody = queueMessagesXml(visible, !peek);
+        if (peek) this.queueDeleteTracker.recordPeek({ accountName, queueName, body: responseBody });
+        return send(res, 200, responseBody, { ...common, 'content-type': 'application/xml' });
+      }
+      if (segments.length === 3 && segments[1] === 'messages' && ['DELETE', 'PUT'].includes(req.method)) {
+        const message = queue.messages.find(item => item.messageId === segments[2]);
+        if (!message) return fail(404, 'MessageNotFound', 'The specified message does not exist.');
+        if (!url.searchParams.has('popreceipt')) return fail(400, 'MissingRequiredQueryParameter', 'A query parameter required for this request was not specified.');
+        if (url.searchParams.get('popreceipt') !== message.popReceipt) return fail(400, 'PopReceiptMismatch', 'The specified pop receipt did not match the pop receipt for a dequeued message.');
+        if (req.method === 'DELETE') {
+          queue.messages.splice(queue.messages.indexOf(message), 1);
+          return send(res, 204, '', common);
+        }
+        const visibility = integer('visibilitytimeout', NaN, 0, 604800);
+        if (!Number.isFinite(visibility) || Date.now() + visibility * 1000 > Date.parse(message.expirationTime)) return fail(400, 'OutOfRangeQueryParameterValue', 'One of the query parameters specified in the request URI is outside the permissible range.');
+        const body = await readBody(req);
+        const text = body.length ? parseQueueMessageXml(body.toString('utf8')) : message.text;
+        if (text === null) return fail(400, 'InvalidXmlDocument', 'XML specified is not syntactically valid.');
+        if (Buffer.byteLength(text) > 65536) return fail(400, 'MessageTooLarge', 'The message exceeds the maximum allowed size.');
+        // A concurrent receive/update can replace the receipt while this body arrives.
+        if (!queue.messages.includes(message) || url.searchParams.get('popreceipt') !== message.popReceipt) return fail(400, 'PopReceiptMismatch', 'The specified pop receipt did not match the pop receipt for a dequeued message.');
+        message.text = text; message.visibleAt = Date.now() + visibility * 1000; message.popReceipt = randomUUID();
+        return send(res, 204, '', { ...common, 'x-ms-popreceipt': message.popReceipt, 'x-ms-time-next-visible': new Date(message.visibleAt).toUTCString() });
+      }
+      if (req.method === 'DELETE' && segments.length === 2 && segments[1] === 'messages') {
+        queue.messages = []; return send(res, 204, '', common);
       }
 
       if (req.method === 'DELETE' && segments.length === 1) {
@@ -569,12 +630,47 @@ export class StorageDataPlaneRouter {
       if (!accountName) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: 'The storage account host was not found.' } }), { 'content-type': 'application/json' });
       const account = this.account(accountName);
       if (!account) return send(res, 404, JSON.stringify({ error: { code: 'ResourceNotFound', message: `The storage account '${accountName}' was not found.` } }), { 'content-type': 'application/json' });
-      const auth = validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKeyLite');
-      if (!auth.ok) {
-        return send(res, auth.status, JSON.stringify({ error: { code: auth.code, message: auth.message } }), { 'content-type': 'application/json' });
-      }
-
+      const format = url.searchParams.get('$format') ?? req.headers.accept ?? 'application/json;odata=minimalmetadata';
+      const common = { 'content-type': format.startsWith('application/json') ? format : 'application/json;odata=nometadata', 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() };
+      const failure = (status, code, message) => send(res, status, JSON.stringify({ 'odata.error': { code,
+        message: { lang: 'en-US', value: `${message}\nRequestId:${requestId}\nTime:${isoNow()}` } } }), common);
+      if (!validateTableKey(req, url, account)) return failure(403, 'AuthenticationFailed', 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.');
+      const entityBody = entity => Object.fromEntries(Object.entries(entity).filter(([key]) => !format.includes('odata=nometadata') || !key.startsWith('odata.')));
       const path = url.pathname.replace(/^\/+/, '');
+      if (req.method === 'POST' && path === 'Tables') {
+        let body;
+        try { body = JSON.parse((await readBody(req)).toString('utf8')); } catch { return failure(400, 'InvalidInput', 'The request body is invalid.'); }
+        if (!body || typeof body.TableName !== 'string' || !/^[a-zA-Z][a-zA-Z0-9]{2,62}$/.test(body.TableName)) return failure(400, 'InvalidResourceName', 'The specified resource name contains invalid characters.');
+        const name = lower(body.TableName);
+        if (account.tables.has(name)) return failure(409, 'TableAlreadyExists', 'The table specified already exists.');
+        this.registerTable({ accountName, tableName: body.TableName });
+        const noContent = req.headers.prefer === 'return-no-content';
+        return send(res, noContent ? 204 : 201, noContent ? '' : JSON.stringify({ TableName: body.TableName }), common);
+      }
+      if (req.method === 'GET' && path === 'Tables') {
+        if ([...url.searchParams.keys()].some(key => !['timeout', '$format'].includes(key))) return failure(501, 'NotImplemented', 'Table enumeration query options are not implemented.');
+        if (account.tables.size > 1000) return failure(501, 'NotImplemented', 'Table enumeration continuation is not implemented.');
+        return send(res, 200, JSON.stringify({ value: [...account.tables.values()].map(table => ({ TableName: table.tableName })) }), common);
+      }
+      const tablePath = path.match(/^Tables\('([a-zA-Z][a-zA-Z0-9]{2,62})'\)$/);
+      if (req.method === 'DELETE' && tablePath) {
+        if (!account.tables.has(lower(tablePath[1]))) return failure(404, 'TableNotFound', 'The table specified does not exist.');
+        this.unregisterTable({ accountName, tableName: tablePath[1] });
+        return send(res, 204, '', common);
+      }
+      const queryPath = path.match(/^([a-zA-Z][a-zA-Z0-9]{2,62})(?:\(\))?$/);
+      if (req.method === 'GET' && queryPath) {
+        const table = account.tables.get(lower(queryPath[1]));
+        if (!table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
+        if ([...url.searchParams.keys()].some(key => !['$filter', 'timeout', '$format'].includes(key))) return failure(501, 'NotImplemented', 'This Table query option is not implemented.');
+        const filter = url.searchParams.get('$filter');
+        const match = filter?.match(/^PartitionKey eq '((?:[^']|'')*)'$/);
+        if (filter && !match) return failure(501, 'NotImplemented', 'Only PartitionKey equality is implemented for Table filtering.');
+        const values = [...table.entities.values()].filter(entity => !match || entity.PartitionKey === match[1].replaceAll("''", "'"));
+        if (values.length > 1000) return failure(501, 'NotImplemented', 'Entity query continuation is not implemented.');
+        values.sort((a, b) => a.PartitionKey < b.PartitionKey ? -1 : a.PartitionKey > b.PartitionKey ? 1 : a.RowKey < b.RowKey ? -1 : a.RowKey > b.RowKey ? 1 : 0);
+        return send(res, 200, JSON.stringify({ value: values.map(entityBody) }), common);
+      }
       if (req.method === 'POST' && path && path !== 'Tables') {
         const table = account.tables.get(lower(decodeURIComponent(path)));
         if (!table) return send(res, 404, JSON.stringify({ error: { code: 'TableNotFound', message: 'The specified table does not exist.' } }), { 'content-type': 'application/json' });
@@ -584,23 +680,25 @@ export class StorageDataPlaneRouter {
         } catch {
           return send(res, 400, JSON.stringify({ error: { code: 'BadRequest', message: 'Entity body must be valid JSON.' } }), { 'content-type': 'application/json' });
         }
-        if (typeof body.PartitionKey !== 'string' || typeof body.RowKey !== 'string') {
+        if (!body || typeof body.PartitionKey !== 'string' || typeof body.RowKey !== 'string') {
           return send(res, 400, JSON.stringify({ error: { code: 'BadRequest', message: 'PartitionKey and RowKey are required.' } }), { 'content-type': 'application/json' });
         }
         const key = entityKey(body.PartitionKey, body.RowKey);
         // Insert must not silently replace an existing entity, including its metadata.
         if (table.entities.has(key)) {
-          return send(res, 409, JSON.stringify({ error: { code: 'EntityAlreadyExists', message: 'The specified entity already exists.' } }), {
-            'content-type': 'application/json', 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc(),
-          });
+          return failure(409, 'EntityAlreadyExists', 'The specified entity already exists.');
         }
+        table.lastTimestamp = Math.max(Date.now(), (table.lastTimestamp ?? 0) + 1);
+        const timestamp = new Date(table.lastTimestamp).toISOString();
         const entity = {
           ...body,
-          Timestamp: isoNow(),
-          'odata.etag': `W/"datetime'${isoNow()}'"`,
+          Timestamp: timestamp,
+          'odata.etag': `W/"datetime'${timestamp}'"`,
         };
         table.entities.set(key, entity);
-        return send(res, 201, JSON.stringify(entity), {
+        const noContent = req.headers.prefer === 'return-no-content';
+        return send(res, noContent ? 204 : 201, noContent ? '' : JSON.stringify(entityBody(entity)), {
+          etag: entity['odata.etag'],
           'content-type': 'application/json;odata=nometadata',
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
@@ -608,13 +706,14 @@ export class StorageDataPlaneRouter {
         });
       }
 
-      const entityMatch = path.match(/^([^()]+)\(PartitionKey='([^']+)',RowKey='([^']+)'\)$/);
+      const entityMatch = path.match(/^([^()]+)\(PartitionKey='((?:[^']|'')*)',RowKey='((?:[^']|'')*)'\)$/);
       if (req.method === 'GET' && entityMatch) {
-        const [, tableName, partitionKey, rowKey] = entityMatch.map(decodeURIComponent);
+        const [, tableName, partitionKey, rowKey] = entityMatch.map(value => decodeURIComponent(value).replaceAll("''", "'"));
         const table = account.tables.get(lower(tableName));
         const entity = table?.entities.get(entityKey(partitionKey, rowKey));
         if (!entity) return send(res, 404, JSON.stringify({ error: { code: 'EntityNotFound', message: 'The specified entity does not exist.' } }), { 'content-type': 'application/json' });
-        return send(res, 200, JSON.stringify(entity), {
+        return send(res, 200, JSON.stringify(entityBody(entity)), {
+          etag: entity['odata.etag'],
           'content-type': 'application/json;odata=nometadata',
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',

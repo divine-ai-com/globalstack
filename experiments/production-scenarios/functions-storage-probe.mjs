@@ -34,7 +34,7 @@ try {
       res.once('finish', () => {
         const url = new URL(req.url, 'http://localhost');
         report.requests.push({ surface, method: req.method, path: url.pathname, comp: url.searchParams.get('comp'),
-          restype: url.searchParams.get('restype'), status: res.statusCode, durationMs: Date.now() - started });
+          restype: url.searchParams.get('restype'), queryNames: [...url.searchParams.keys()], query: Object.fromEntries([...url.searchParams].filter(([name]) => ['$filter', '$select', '$top', '$format', 'timeout', 'NextPartitionKey', 'NextRowKey'].includes(name))), requestHeaders: Object.fromEntries(Object.entries(req.headers).filter(([name]) => ['x-ms-lease-action', 'x-ms-lease-id', 'x-ms-proposed-lease-id', 'x-ms-lease-duration', 'if-match', 'if-none-match'].includes(name))), status: res.statusCode, durationMs: Date.now() - started });
       });
       Promise.resolve(handler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
     });

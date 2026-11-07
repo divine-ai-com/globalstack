@@ -134,3 +134,45 @@ assertions complete or substitute for Portal screenshots.
 Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling is USD 150.
 
 The following remain required: actual application code and container images, effective identity/network configuration, safe full-stack ownership/cleanup controls, Azure deployment and live event-flow captures, equivalent local runtime execution, fixes for measured gaps, Portal evidence, and subsequent scenario 2 execution. No paid license or trial will be purchased. The Cosmos-backed application dashboard replaces Power BI at the owner's instruction; Power BI is not evaluated.
+
+## Native Functions storage and paired contracts
+
+The pinned official Functions host executed the document application's HTTP health
+function, then exposed missing Storage operations during Durable startup. The
+[clean baseline trace](evidence/functions-storage-a813520/) retains its image ID,
+source revision, request trace, sanitized host log and cleanup outcome. Worker
+health is not orchestration or application success.
+
+The [Azure-first Storage capture](evidence/storage-contracts-ecb7026/) records 25
+paired data-plane requests. Container creation and duplicate rejection matched.
+Conditional writes and leases did not preserve protected content locally; Table
+Shared Key requests and queue creation also failed locally. The account and its
+resource group were deleted and both absence checks passed. This is a direct API
+diagnostic, not a native IaC lifecycle or Portal capture.
+
+Subsequent local replay tests check the captured Blob status/error codes, lease
+headers and protected content; Table create/duplicate/insert/query decisions;
+and queue text, dequeue count and visibility behavior. Additional tests cover
+competing conditional writers, lease expiry/break/release, invalid Table keys,
+foreign partition filtering and stale queue receipts. They do not constitute a
+second live Azure capture. Native-host diagnostics continue under
+[issue #33](https://github.com/divine-ai-com/globalstack/issues/33).
+
+To reproduce the live component recording with the previously described external
+Azure/Playwright configuration:
+
+```bash
+node experiments/platform-lifecycle/walkthrough.mjs --storage-component
+```
+
+The runner permits one Standard_LRS StorageV2 account, a USD 1 run envelope within
+the existing USD 150 total, a 20-minute runtime and 10-minute cleanup reserve. It
+rejects nonempty Azure inventory, restricts access to the runner IPv4 address,
+keeps service keys in memory and installs an ownership-checked cleanup watchdog.
+No paid add-on features are enabled. A completed capture can still contain
+mismatches; inspect the responses rather than treating exit status as parity.
+
+Current limitations include bounded Table query support, missing Table batch
+transactions, incomplete blob listing/versioning, application identity/private
+networking, real application deployment, and durable recovery across emulator
+restarts. Both full scenarios remain unexecuted.
