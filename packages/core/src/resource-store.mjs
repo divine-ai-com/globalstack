@@ -403,6 +403,7 @@ export class ResourceStore {
     this.resourceGroups = new Map();
     this.resources = new Map();
     this.deployments = new Map();
+    this.deploymentOperations = new Map();
     this.asyncOperations = new Map();
     this.calls = [];
   }
@@ -460,7 +461,10 @@ export class ResourceStore {
       if (resourceId.startsWith(`${key}/providers/`)) this.resources.delete(resourceId);
     }
     for (const deploymentId of [...this.deployments.keys()]) {
-      if (deploymentId.startsWith(`${key}/providers/microsoft.resources/deployments/`)) this.deployments.delete(deploymentId);
+      if (deploymentId.startsWith(`${key}/providers/microsoft.resources/deployments/`)) {
+        this.deployments.delete(deploymentId);
+        this.deploymentOperations.delete(deploymentId);
+      }
     }
     return existed;
   }
@@ -483,8 +487,19 @@ export class ResourceStore {
     return deployment ? deepClone(deployment) : null;
   }
 
+  putDeploymentOperations({ subscriptionId, resourceGroupName = null, deploymentName, operations }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    this.deploymentOperations.set(id.toLowerCase(), deepClone(operations));
+  }
+
+  listDeploymentOperations({ subscriptionId, resourceGroupName = null, deploymentName }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    return deepClone(this.deploymentOperations.get(id.toLowerCase()) ?? []);
+  }
+
   deleteDeployment({ subscriptionId, resourceGroupName = null, deploymentName }) {
     const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    this.deploymentOperations.delete(id.toLowerCase());
     return this.deployments.delete(id.toLowerCase());
   }
 

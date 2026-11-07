@@ -130,6 +130,7 @@ flowchart TD
 - `packages/azure-data-plane/src/workflow-runner.mjs`
 - `packages/conformance/src/api-management-forwarding.test.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
+- `packages/conformance/src/arm-deployment-history.test.mjs`
 - `packages/conformance/src/arm-deployment-validation.test.mjs`
 - `packages/conformance/src/arm-resource-dependencies.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`

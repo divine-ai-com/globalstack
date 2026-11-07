@@ -1,4 +1,4 @@
-import { createServer } from 'node:http';
+import { createServer, STATUS_CODES } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
@@ -464,7 +464,46 @@ export function createArmRequestHandler({
     });
     const operations = expanded.operations;
     const steps = [];
+    const operationRecords = [];
+    const deploymentName = body.name ?? 'deployment';
+    const deploymentId = resourceGroupName
+      ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${deploymentName}`
+      : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${deploymentName}`;
+    const startedAt = Date.now();
+    function recordStep(step, operationStartedAt) {
+      steps.push(step);
+      const route = providerRouteFromResourceId(step.id);
+      // Extension resources use their final provider namespace, not the parent resource type.
+      const parts = step.id.split('/providers/').at(-1).split('/');
+      const operationId = randomUUID().replaceAll('-', '').slice(0, 16).toUpperCase();
+      operationRecords.push({ id: `${deploymentId}/operations/${operationId}`, operationId, properties: {
+        provisioningOperation: 'Create', provisioningState: step.error ? 'Failed' : 'Succeeded',
+        timestamp: new Date().toISOString(), duration: `PT${(Date.now() - operationStartedAt) / 1000}S`,
+        statusCode: (STATUS_CODES[step.status] ?? String(step.status)).replaceAll(' ', ''),
+        statusMessage: step.error ? { status: 'Failed', error: step.error } : null,
+        targetResource: { id: step.id,
+          resourceType: route ? `${parts[0]}/${parts.slice(1).filter((_, i) => i % 2 === 0).join('/')}` : 'Microsoft.Resources/resourceGroups',
+          resourceName: route ? parts.slice(1).filter((_, i) => i % 2 === 1).join('/') : step.id.split('/').at(-1),
+        },
+      } });
+    }
+    function saveDeployment({ error, outputs } = {}) {
+      const saved = store.putDeployment({ subscriptionId, resourceGroupName, deploymentName, body: {
+        id: deploymentId, name: deploymentName, type: 'Microsoft.Resources/deployments', location: body.location,
+        properties: { provisioningState: error ? 'Failed' : 'Succeeded', mode: body.properties?.mode ?? 'Incremental',
+          timestamp: new Date().toISOString(), duration: `PT${(Date.now() - startedAt) / 1000}S`,
+          ...(error ? { error } : { outputs }), globalstackDeploymentSteps: steps,
+        },
+      } });
+      store.putDeploymentOperations({ subscriptionId, resourceGroupName, deploymentName, operations: operationRecords });
+      return saved;
+    }
+    function failed(result) {
+      saveDeployment({ error: result.body?.error ?? result.body });
+      return result;
+    }
     for (const operation of operations) {
+      const operationStartedAt = Date.now();
       if (operation.kind === 'error') {
         return {
           status: operation.status,
@@ -479,36 +518,42 @@ export function createArmRequestHandler({
       }
       if (operation.kind === 'resourceGroup') {
         const result = store.putResourceGroup(operation.subscriptionId, operation.name, operation.body);
-        steps.push({
+        recordStep({
           operation: 'PUT',
           id: result.resourceGroup.id,
           status: result.created ? 201 : 200,
-        });
+        }, operationStartedAt);
         continue;
       }
       let evaluatedBody;
       const evaluationContext = { ...operation.evaluationContext, __deferResourceReferences: false,
         __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } };
       try { evaluatedBody = evaluateArmValue(operation.body, evaluationContext); }
-      catch (error) { return { status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message, details: steps } } }; }
-      const result = putProviderResource({ ...operation, body: evaluatedBody });
+      catch (error) { return failed({ status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message } } }); }
+      let result = putProviderResource({ ...operation, body: evaluatedBody });
       if (result.status === 202 || result.asyncOperation) {
         for (let attempt = 0; attempt < 6; attempt += 1) {
           const ready = store.getResource(operation.providerRoute);
           if (ready?.properties?.provisioningState === 'Succeeded') break;
+          if (ready?.properties?.provisioningState === 'Failed') {
+            result = { status: 409, body: { error: result.deferredProvisioningError ?? {
+              code: 'ResourceDeploymentFailure', message: 'The resource reached a failed provisioning state.',
+            } } };
+            break;
+          }
+          if (attempt === 5) result = { status: 501, body: { error: {
+            code: 'GlobalStackDeploymentNotImplemented', message: 'The resource did not reach a terminal state within the supported local deployment lifecycle.',
+          } } };
         }
       }
-      steps.push({
+      recordStep({
         operation: 'PUT',
         id: `${operation.providerRoute.scopeId ?? `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}`}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`,
         status: result.status,
-        error: result.body?.error,
-      });
+        error: result.status >= 400 ? result.body?.error ?? result.body : undefined,
+      }, operationStartedAt);
       if (![200, 201, 202].includes(result.status)) {
-        return {
-          status: result.status,
-          body: result.body,
-        };
+        return failed({ status: result.status, body: result.body });
       }
     }
     let outputs;
@@ -516,35 +561,9 @@ export function createArmRequestHandler({
       outputs = evaluateArmValue(expanded.outputs, { ...expanded.evaluationContext, __deferResourceReferences: false,
         __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } });
     } catch (error) {
-      return { status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message, details: steps } } };
+      return failed({ status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message } } });
     }
-    const deploymentBody = {
-      id: resourceGroupName
-        ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`
-        : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`,
-      name: body.name ?? 'deployment',
-      type: 'Microsoft.Resources/deployments',
-      location: body.location,
-      properties: {
-        provisioningState: 'Succeeded',
-        mode: body.properties?.mode ?? 'Incremental',
-        timestamp: new Date().toISOString(),
-        duration: 'PT0S',
-        outputs,
-        globalstackDeploymentSteps: steps,
-      },
-    };
-    store.putDeployment({
-      subscriptionId,
-      resourceGroupName,
-      deploymentName: body.name ?? 'deployment',
-      resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
-      body: deploymentBody,
-    });
-    return {
-      status: 201,
-      body: deploymentBody,
-    };
+    return { status: 201, body: saveDeployment({ outputs }) };
   }
 
   return async (req, res) => {
@@ -702,6 +721,20 @@ export function createArmRequestHandler({
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      const operationRoute = subscriptionDeploymentRoute ?? resourceGroupDeploymentRoute;
+      const operationOffset = subscriptionDeploymentRoute ? 6 : 8;
+      if (operationRoute && lowered[operationOffset] === 'operations' && method === 'GET'
+        && [operationOffset + 1, operationOffset + 2].includes(rawSegments.length)) {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        if (!store.getDeployment(operationRoute)) return sendError(res, 404, 'DeploymentNotFound', `Deployment '${operationRoute.deploymentName}' could not be found.`);
+        if ([...url.searchParams.keys()].some(key => key !== 'api-version')) return sendError(res, 501, 'NotImplemented', 'Deployment operation query options are not implemented.');
+        const records = store.listDeploymentOperations(operationRoute);
+        const operationId = rawSegments[operationOffset + 1];
+        if (!operationId) return sendJson(res, 200, { value: records });
+        const record = records.find(item => item.operationId.toLowerCase() === operationId.toLowerCase());
+        if (!record) return sendError(res, 404, 'DeploymentOperationNotFound', `Deployment operation '${operationId}' could not be found.`);
+        return sendJson(res, 200, record);
+      }
       const deleteRoute = subscriptionDeploymentRoute && segments(pathname).length === 6
         ? subscriptionDeploymentRoute
         : resourceGroupDeploymentRoute && segments(pathname).length === 8 ? resourceGroupDeploymentRoute : null;
