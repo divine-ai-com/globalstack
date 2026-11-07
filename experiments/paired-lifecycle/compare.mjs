@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-function differences(left, right, path = '', result = []) {
+export function differences(left, right, path = '', result = []) {
   if (JSON.stringify(left) === JSON.stringify(right)) return result;
   if (left && right && typeof left === 'object' && typeof right === 'object' && !Array.isArray(left) && !Array.isArray(right)) {
     for (const key of new Set([...Object.keys(left), ...Object.keys(right)])) differences(left[key], right[key], `${path}/${key}`, result);
@@ -10,7 +10,7 @@ function differences(left, right, path = '', result = []) {
   return result;
 }
 
-function semanticHeaders(headers = {}) {
+export function semanticHeaders(headers = {}) {
   return Object.fromEntries(Object.entries(headers).map(([key, value]) => [key,
     ['x-ms-request-id', 'x-ms-correlation-request-id', 'etag'].includes(key) ? { present: true, type: typeof value } : value]));
 }

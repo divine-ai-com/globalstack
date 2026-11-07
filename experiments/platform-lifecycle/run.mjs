@@ -12,6 +12,7 @@ import { startObserver, sanitize } from '../paired-lifecycle/transport.mjs';
 import { platforms } from './platforms.mjs';
 import { additionalPolicy, deploymentBody } from './policy.mjs';
 import { cleanup } from './cleanup.mjs';
+import { createRecording, recordLines, portalMode } from './recording.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
@@ -21,10 +22,11 @@ assert.ok(platform?.fixture, 'Select a registered --platform');
 const target = option('target', 'local');
 assert.ok(['local', 'azure', 'both'].includes(target));
 const live = target !== 'local';
+const portalCapture = portalMode(option('portal', 'required'));
 const budget = Number(process.env.PAIRED_AUTHORIZED_USD ?? 0);
 if (live) {
   assert.ok(budget > 0 && budget <= 100, 'Explicit authorized USD ceiling, at most 100, required');
-  assert.equal(process.env.PAIRED_PORTAL_CAPTURE_READY, '1', 'Enable and verify browser capture before starting an Azure pair');
+  if (portalCapture === 'required') assert.equal(process.env.PAIRED_PORTAL_CAPTURE_READY, '1', 'Enable and verify browser capture before starting an Azure pair');
 }
 const runId = randomBytes(6).toString('hex');
 const group = `gs-pair-${runId}`;
@@ -41,17 +43,21 @@ const sourceHashes = async path => Object.fromEntries(await Promise.all((await r
 const source = await sourceHashes(sourceDir);
 const image = execFileSync('docker', ['image', 'inspect', `globalstack/validation-runner:${platform.image}`, '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const report = { schemaVersion: 2, platform: platform.id, scope: 'Empty resource group; native lifecycle with external identity and endpoint routing', startedAt: new Date().toISOString(), revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), sourceDirty: !!execFileSync('git', ['status', '--porcelain'], { cwd: repo, encoding: 'utf8' }).trim(), image, source, authorizedUsd: budget, targets: [], ok: false };
+report.portalCapture = live ? portalCapture : 'not-applicable';
+report.portalEvidenceComplete = false;
+const record = createRecording(out, { platform: platform.id, revision: report.revision, sourceDirty: report.sourceDirty, source, image, portalCapture: report.portalCapture, target });
 const save = () => writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n');
 await save();
 console.log(`Results: ${out}`);
 
-async function execute(command, args, timeout = 180000) {
+async function execute(command, args, timeout = 180000, onOutput = () => {}) {
   return new Promise((done, fail) => {
     const child = spawn(command, args, { cwd: repo, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '', stderr = '', truncated = false, timedOut = false;
     const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, timeout);
     const hard = setTimeout(() => child.kill('SIGKILL'), timeout + 5000);
     const collect = which => bytes => {
+      onOutput(which, bytes);
       if (which === 'stdout') { stdout += bytes; if (stdout.length > 1048576) { stdout = stdout.slice(0, 1048576); truncated = true; } }
       else { stderr += bytes; if (stderr.length > 1048576) { stderr = stderr.slice(0, 1048576); truncated = true; } }
     };
@@ -71,6 +77,7 @@ async function azure(args) {
 for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
   const entry = { name, phases: [], traces: [], probes: [], portal: [], cleanup: {}, source, ok: false };
   report.targets.push(entry);
+  record('target-start', { target: name });
   const dir = resolve(out, name), privateDir = resolve(dir, 'private');
   await mkdir(privateDir, { recursive: true, mode: 0o700 });
   await cp(sourceDir, resolve(privateDir, 'task'), { recursive: true });
@@ -113,10 +120,13 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
       const env = { HOME: '/private/home', PATH: '/private/shims:/root/.pulumi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', SSL_CERT_FILE: '/private/ca.pem', REQUESTS_CA_BUNDLE: '/private/ca.pem', NODE_EXTRA_CA_CERTS: '/private/ca.pem', ARM_USE_CLI: 'true', ARM_SUBSCRIPTION_ID: context.subscription, ARM_TENANT_ID: context.tenant, AZURE_SUBSCRIPTION_ID: context.subscription, ANSIBLE_AZURE_AUTH_SOURCE: 'cli', ANSIBLE_COLLECTIONS_PATH: '/root/.ansible/collections', ANSIBLE_LOCAL_TEMP: '/private/ansible-tmp', ANSIBLE_NOCOLOR: '1', AZURE_CONFIG_DIR: '/private/azure', AZURE_CORE_COLLECT_TELEMETRY: 'no', AZURE_ACCESS_TOKEN: context.token, TF_IN_AUTOMATION: '1', CHECKPOINT_DISABLE: '1', TF_VAR_subscription_id: context.subscription, TF_VAR_resource_group_name: group, TF_VAR_location: context.location, TF_VAR_run_id: runId, TF_VAR_expires_at: context.expires, TF_VAR_revision: revision, GROUP_NAME: group, LOCATION: context.location, RUN_ID: runId, EXPIRES: context.expires, REVISION: revision, PULUMI_HOME: '/private/pulumi', PULUMI_CONFIG_PASSPHRASE: '', PULUMI_SKIP_UPDATE_CHECK: 'true', PULUMI_BACKEND_URL: 'file:///private/backend', PYTHONPATH: '/cache/python', npm_config_cache: '/cache/npm', PIP_CACHE_DIR: '/cache/pip' };
       if (observed && observer) Object.assign(env, { HTTPS_PROXY: observer.url, HTTP_PROXY: observer.url, NO_PROXY: '127.0.0.1,localhost' });
       const startedAt = new Date().toISOString();
+      record('command-start', { target: name, phase: label, command: redact([binary, ...args]) });
+      const lines = recordLines((stream, text) => record('output', { target: name, phase: label, stream, text }), redact);
       let result;
-      try { result = await execute('docker', ['run', '--rm', '--name', container, '--network', 'host', '--cap-drop', 'ALL', '--cap-add', 'DAC_OVERRIDE', '--cap-add', 'FOWNER', '--security-opt', 'no-new-privileges', '-v', `${privateDir}:/private`, '-v', `${cache}:/cache`, '-w', '/private/task', ...Object.entries(env).flatMap(([key, value]) => ['-e', `${key}=${value}`]), '--entrypoint', 'sh', image, '-c', 'umask 000; exec "$@"', 'runner', binary, ...args]); }
-      finally { try { execFileSync('docker', ['rm', '-f', container], { stdio: 'ignore' }); } catch {} }
+      try { result = await execute('docker', ['run', '--rm', '--name', container, '--network', 'host', '--cap-drop', 'ALL', '--cap-add', 'DAC_OVERRIDE', '--cap-add', 'FOWNER', '--security-opt', 'no-new-privileges', '-v', `${privateDir}:/private`, '-v', `${cache}:/cache`, '-w', '/private/task', ...Object.entries(env).flatMap(([key, value]) => ['-e', `${key}=${value}`]), '--entrypoint', 'sh', image, '-c', 'umask 000; exec "$@"', 'runner', binary, ...args], 180000, lines.write); }
+      finally { lines.end(); try { execFileSync('docker', ['rm', '-f', container], { stdio: 'ignore' }); } catch {} }
       entry.phases.push({ phase: label, command: redact([binary, ...args]), expectedExitCodes: expected, startedAt, completedAt: new Date().toISOString(), ...redact(result) });
+      record('command-end', { target: name, phase: label, exitCode: result.exitCode, timedOut: result.timedOut });
       await save();
       assert.ok(expected.includes(result.exitCode) && !result.timedOut, `${platform.id}/${name}/${label} failed; inspect the sanitized record`);
       return result.stdout;
@@ -126,6 +136,7 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
       const response = await fetch(`${origin}${groupPath()}?api-version=2021-04-01`, { method, redirect: 'error', signal: AbortSignal.timeout(30000), headers: { authorization: `Bearer ${context.token}`, 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
       const payload = await response.json().catch(() => null);
       entry.probes.push(redact({ phase, method, path: groupPath(), apiVersion: '2021-04-01', requestBody: body ?? null, status: response.status, body: payload, startedAt, completedAt: new Date().toISOString() })); await save();
+      record('probe', { target: name, phase: label, method, status: response.status, revision: payload?.tags?.revision });
       return { status: response.status, body: payload };
     };
     assert.equal((await probe('preflight')).status, 404);
@@ -142,7 +153,7 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
       assert.equal(template.resources[0].type.toLowerCase(), 'microsoft.resources/resourcegroups');
       entry.compiledTemplateSha256 = hash(JSON.stringify(template));
     }
-    observer = await startObserver({ targetOrigin: origin, groupPath: groupPath(), cert: await readFile(resolve(privateDir, 'cert.pem')), key: await readFile(resolve(privateDir, 'key.pem')), replacements, phase: () => phase, record: event => entry.traces.push(event), additionalPolicy: additionalPolicy(context, template) });
+    observer = await startObserver({ targetOrigin: origin, groupPath: groupPath(), cert: await readFile(resolve(privateDir, 'cert.pem')), key: await readFile(resolve(privateDir, 'key.pem')), replacements, phase: () => phase, record: event => { entry.traces.push(event); record('http', { target: name, phase: event.phase, method: event.method, path: event.path, status: event.status, blocked: event.blocked, transportError: event.transportError }); }, additionalPolicy: additionalPolicy(context, template) });
     const { prepare, deploy, stable, update, refresh, forgetImport, destroy } = await import('./stages.mjs').then(module => module.stages({ platform, command, context, privateDir, template, setRevision: value => { revision = value; } }));
     await prepare(); prepared = true;
     if (name === 'azure') {
@@ -152,6 +163,7 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
     }
     const portal = async label => {
       if (name !== 'azure') return;
+      if (portalCapture === 'deferred') { record('portal-pending', { target: name, phase: label, reason: 'Terminal/API run only; Azure Portal capture is pending' }); return; }
       const request = { platform: platform.id, phase: label, resourceId: groupPath(), url: `https://portal.azure.com/#@${context.tenant}/resource${groupPath()}/overview`, requestedAt: new Date().toISOString() };
       await writeFile(resolve(dir, 'portal-request.json'), JSON.stringify(request), { mode: 0o600 });
       console.log(`Portal capture required: ${dir} (${label})`);
@@ -231,12 +243,15 @@ for (const name of target === 'both' ? ['local', 'azure'] : [target]) {
     if (observer) await observer.close();
     if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
     if (!entry.sourceUnchanged || !entry.cleanup.nativeDestroy) entry.ok = false;
+    record('target-end', { target: name, ok: entry.ok, error: entry.error, cleanup: entry.cleanup });
     await save();
   }
   if (!entry.ok || !entry.cleanup.absent || !entry.cleanup.privateFilesRemoved) break;
 }
 report.completedAt = new Date().toISOString();
 report.ok = report.targets.length === (target === 'both' ? 2 : 1) && report.targets.every(entry => entry.ok);
+report.portalEvidenceComplete = live && report.targets.some(entry => entry.name === 'azure' && ['created', 'updated'].every(phase => entry.portal.some(capture => capture.phase === phase)));
+record('run-end', { ok: report.ok, portalEvidenceComplete: report.portalEvidenceComplete });
 await save();
 console.log(JSON.stringify({ platform: platform.id, ok: report.ok, targets: report.targets.map(({ name, ok, error, cleanup, phases, traces }) => ({ name, ok, error, cleanup, stages: phases.length, exchanges: traces.length })) }, null, 2));
 if (!report.ok) process.exitCode = 1;

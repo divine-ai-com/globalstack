@@ -16,7 +16,7 @@ The Ansible runner uses `azure.azcollection` and CLI credentials. CLI REST uses 
 
 ## Portal capture gate
 
-Do not start an Azure target until a signed-in, controllable Azure Portal browser is ready. `PAIRED_PORTAL_CAPTURE_READY=1` is an operator assertion, not proof of browser readiness. Live execution also requires the explicit authorized USD ceiling, the signed-in subscription ID and the private Azure CLI configuration directory. The broader pilot ceiling remains USD 100 total.
+The default `--portal=required` mode requires a signed-in, controllable Azure Portal browser before starting an Azure target. For independent terminal/API evidence, an operator can explicitly select `--portal=deferred`; that mode records pending Portal checkpoints and never reports Portal evidence as complete. It does not waive the requirement for the requested Portal captures. `PAIRED_PORTAL_CAPTURE_READY=1` is an operator assertion, not proof of browser readiness. Live execution also requires the explicit authorized USD ceiling, the signed-in subscription ID and the private Azure CLI configuration directory. The broader pilot ceiling remains USD 100 total.
 
 After creation and update, the runner writes a private `portal-request.json` and waits at most two minutes for the corresponding `portal-created.json` or `portal-updated.json`. Capture the actual portal resource view during that window. The receipt must contain `source: "Azure Portal"`, the requested phase and resource ID, a UTC `capturedAt` after the request, a basename-only PNG `file`, its `sha256`, and a description of any privacy masks. Do not fabricate receipts or substitute report screenshots. Files and receipts remain private until publication review.
 
@@ -39,3 +39,16 @@ Five failed development attempts are retained in a [separate index](evidence/att
 The fixtures and validation image IDs are recorded. TypeScript dependencies have a lockfile; Python pins the principal SDK versions but not every transitive dependency. These results therefore do not establish bit-for-bit reproducibility of every installed package. Native images must be available locally before reproduction. CI validates evidence completeness, fixture hashes and deterministic reports; it does not rerun this nine-platform matrix or access Azure.
 
 The shared fixes cover resource-group HEAD, unfiltered resource inventory, public resource-group responses and deployment-history deletion. They are not conditional on this pilot's names or tags. Regression coverage across arbitrary names and configured subscriptions supports that scope. Other Azure services, OData inventory queries, asynchronous resource-group deletion and application event paths require separate validation.
+
+## Live terminal walkthroughs
+
+`walkthrough.mjs` records a browser view of actual command output and API observations while `run.mjs` executes. This is a terminal walkthrough, not an Azure Portal recording. Output is redacted before capture, including credentials split across process chunks. The output includes a WebM video, timestamped event stream, offline HTML replay, final terminal screenshot, video/event hashes and the normal result JSON. Native command stdout/stderr, direct probes and the observer remain distinct.
+
+Set `PAIRED_PLAYWRIGHT_MODULE` to an installed `playwright-core/index.mjs` and, if required, `PAIRED_CHROMIUM_EXECUTABLE` to the local Chromium executable. Browser and Playwright versions are recorded. The server binds only to loopback and serves only the sanitized live event stream. It does not load Portal cookies or sign in to Azure.
+
+```bash
+node experiments/platform-lifecycle/walkthrough.mjs --platform=azure-terraform-hcl --target=both --portal=deferred
+node experiments/platform-lifecycle/compare.mjs /absolute/run/result.json /absolute/run/comparison.json
+```
+
+Live runs still require the authorized USD ceiling, signed-in subscription and private CLI directory. Video capture does not add permission to provision other resource types. Deferring screenshots changes only the evidence schedule; cleanup and storage protections remain active. A native lifecycle pass, a selected-field comparison and completion of Portal evidence are separate results.
