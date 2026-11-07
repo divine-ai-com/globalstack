@@ -31,6 +31,43 @@ test('native Durable failure capture executed retries and retained the terminal 
 
 const base = new URL('./evidence/', import.meta.url);
 const load = async name => JSON.parse(await readFile(new URL(name, base), 'utf8'));
+test('scanner evidence retains the concurrent timeout and subsequent real HTTP recovery', async () => {
+  for (const prefix of ['scanner-vendor-2c9f2f4/', 'scanner-daemon-cd26108/']) {
+    const index = await load(`${prefix}index.json`);
+    for (const [name, metadata] of Object.entries(index.files)) {
+      const bytes = await readFile(new URL(prefix + name, base));
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+      assert.equal(bytes.length, metadata.bytes);
+    }
+  }
+  const before = await load('scanner-vendor-2c9f2f4/concurrent-vendor-probe.json');
+  assert.deepEqual(before.results.map(item => item.status), ['unresolved', 'clean']);
+  assert.equal(before.results[0].engines[0].reason, 'engine_unavailable_or_timed_out');
+  assert.equal(before.results[0].pages, undefined);
+  const signatures = (await load('scanner-vendor-2c9f2f4/clean-vendor-scan.json')).provenance;
+  const after = await load('scanner-daemon-cd26108/result.json');
+  assert.equal(after.complete, true); assert.equal(after.cleanup, true);
+  assert.equal(after.correlatedScans, true); assert.equal(after.readinessFailedClosed, true);
+  assert.equal(after.requests.length, 9);
+  const scans = after.requests.filter(item => item.expected);
+  assert.equal(scans.length, 7);
+  for (const item of scans) {
+    assert.equal(item.httpStatus, 200);
+    assert.equal(item.body.status, item.expected);
+    assert.deepEqual(item.body.provenance, signatures);
+  }
+  assert.deepEqual(after.requests.filter(item => item.case.startsWith('concurrent-')).map(item => item.body.status), ['clean', 'clean']);
+  assert.equal(after.requests.find(item => item.case === 'engine-loss-health').httpStatus, 503);
+  assert.equal(after.requests.find(item => item.case === 'engine-loss-scan').body.pages, undefined);
+  const logs = (await readFile(new URL('scanner-daemon-cd26108/server.log', base), 'utf8')).trim().split('\n').map(JSON.parse);
+  for (const item of scans) {
+    const observed = logs.filter(log => log.correlationId === item.correlationId);
+    assert.equal(observed.length, 1);
+    assert.equal(observed[0].contentHash, item.body.sha256);
+    assert.equal(observed[0].status, item.expected);
+  }
+});
+
 test('Web validation preserves Azure quota rejection separately from unsupported local validation', async () => {
   const prefix = 'web-validation-4a4ee94/';
   const index = await load(`${prefix}index.json`);

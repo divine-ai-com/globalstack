@@ -68,3 +68,22 @@ paired run. Refresh and revalidate outside the frozen experiment.
 References: [ClamAV daemon and one-shot scanning](https://docs.clamav.net/manual/Usage/Scanning.html),
 [signature management](https://docs.clamav.net/manual/Usage/SignatureManagement.html),
 and [official memory guidance](https://docs.clamav.net/manual/Installing/Docker.html).
+
+The [subsequent HTTP capture](../../evidence/scanner-daemon-cd26108/) retains the
+same signature provenance and 2-vCPU/4-GiB bounds. Engine startup took 17.9 seconds.
+Six warmed scans, including two concurrent requests, took 36-85 ms and returned
+the expected clean/detected decisions. Deliberately terminating the engine made
+readiness return 503 and the next scan unresolved without searchable text.
+Seven scan responses match logged correlation IDs, content hashes and decisions.
+The daemon and container were removed. This single local diagnostic is not a
+latency distribution or an Azure result; the baseline called the worker directly,
+while the new capture includes HTTP overhead.
+
+Reproduce inside the built scanner image with the frozen database read-only:
+mount this directory at `/fixtures`, a writable result directory at `/evidence`,
+and the signature directory at `/var/lib/clamav`. Set `PYTHONPATH=/app:/fixtures`
+and run `python /fixtures/probe_vendor_http.py --output /evidence --image-id <actual-image-id> --revision <source-commit>`.
+Use the same resource/security limits as the baseline, increasing memory to
+4 GiB for official signatures. The probe runs the unmodified `/app/server.py`,
+keeps startup and warmed measurements separate, and deliberately kills only its
+own child engine for the failure test.
