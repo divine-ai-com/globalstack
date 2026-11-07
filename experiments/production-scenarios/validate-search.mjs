@@ -68,11 +68,17 @@ try {
   }
 
   // The two parameter sets preserve the source template; validation cannot create resources.
-  for (const [phase, serviceName] of [['invalid-search-name', 'Invalid_Search_Name'], ['corrected-search-name', `gs${runId}`]]) {
-    const body = { location: 'eastus2', properties: { mode: 'Incremental', template,
+  for (const [phase, serviceName, validationLevel] of [
+    ['missing-location-parameter', `gs${runId}`, 'Template'],
+    ['invalid-search-name-template', 'Invalid_Search_Name', 'Template'],
+    ['invalid-search-name-provider', 'Invalid_Search_Name', 'Provider'],
+    ['corrected-search-name-provider', `gs${runId}`, 'Provider'],
+  ]) {
+    const body = { location: 'eastus2', properties: { mode: 'Incremental', validationLevel, template,
       parameters: { groupName: { value: group }, serviceName: { value: serviceName }, location: { value: 'eastus2' } } } };
+    if (phase === 'missing-location-parameter') delete body.properties.parameters.location;
     const path = `/subscriptions/${subscription}/providers/Microsoft.Resources/deployments/${deployment}/validate?api-version=2025-04-01`;
-    const attempt = { phase, requestSha256: hash(JSON.stringify(body)), targets: [] };
+    const attempt = { phase, validationLevel, requestSha256: hash(JSON.stringify(body)), targets: [] };
     report.attempts.push(attempt);
     for (const target of ['azure', 'local']) {
       record('command-start', { target, phase, command: ['POST', sanitize(path, replacements), `body-sha256=${attempt.requestSha256}`] });
@@ -90,15 +96,16 @@ try {
     ]) report.probes.push(await exchange(target, 'GET', path, undefined, phase));
   }
   report.noResourcesCreated = report.probes.every(probe => probe.status === 404);
-  report.comparisonPassed = report.attempts.every(attempt => attempt.sameStatusAndErrorCode);
+  report.statusCodeParityObserved = report.attempts.every(attempt => attempt.sameStatusAndErrorCode);
 } catch (error) {
   report.error = sanitize(error.message, replacements);
   record('output', { target: 'azure', phase: 'harness-error', text: `[Harness failure] ${report.error}\n` });
 } finally {
   if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
   report.completedAt = new Date().toISOString();
+  report.fullProtocolParityEvaluated = false;
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n');
-  record('run-end', { ok: report.comparisonPassed === true && report.noResourcesCreated === true });
+  record('run-end', { ok: report.statusCodeParityObserved === true && report.noResourcesCreated === true });
 }
 console.log(`Validation evidence: ${out}`);
 process.exitCode = report.error || !report.noResourcesCreated ? 1 : 0;

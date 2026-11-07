@@ -21,7 +21,7 @@ const space = await statfs(root);
 assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3, '40 GiB reserve required');
 const runDir = resolve(root, 'run');
 let template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
-if (validationOnly) template = template.replace('Empty resource group only.', 'Search foundation validation only. No application deployment or event-flow claim.');
+if (validationOnly) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep-compiled template; direct ARM validation against both targets.').replace('Empty resource group only.', 'Search foundation validation only. No application deployment or event-flow claim.');
 const events = async () => {
   try { return (await readFile(resolve(runDir, 'events.ndjson'), 'utf8')).split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
