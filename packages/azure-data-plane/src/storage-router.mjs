@@ -6,6 +6,7 @@ import { tableFilter, tableCursor, readTableCursor } from './storage-table-filte
 import { parseTableBatch, executeTableBatch, tableBatchResponse } from './storage-table-batch.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 import { publishBlob, versionHeaders, validVersionId, listBlobs } from './storage-versions.mjs';
+import { storageTokenAuthorizer } from './storage-token-auth.mjs';
 
 function nowUtc() {
   return new Date().toUTCString();
@@ -273,9 +274,10 @@ function queueMessagesXml(messages, receive = false, includeText = true) {
 }
 
 export class StorageDataPlaneRouter {
-  constructor() {
+  constructor({ store, tokenTrusts = [] } = {}) {
     this.accounts = new Map();
     this.queueDeleteTracker = new QueueDeleteStaleReadTracker();
+    this.authorizeToken = storageTokenAuthorizer({ store, trusts: tokenTrusts });
   }
 
   account(accountName) {
@@ -386,8 +388,10 @@ export class StorageDataPlaneRouter {
       );
       const [containerName, ...blobParts] = segments;
       const containerRequest = segments.length === 1 && url.searchParams.get('restype') === 'container';
-      if (containerRequest && !parseAuthorization(req)) return sendXmlError(res, 501, 'NotImplemented', 'Container SAS authorization is not implemented.', requestId);
-      const auth = String(req.headers.authorization ?? '').trim() !== ''
+      const bearer = /^Bearer(?:\s|$)/i.test(String(req.headers.authorization ?? ''));
+      if (containerRequest && !parseAuthorization(req) && !bearer) return sendXmlError(res, 501, 'NotImplemented', 'Container SAS authorization is not implemented.', requestId);
+      const auth = bearer ? await this.authorizeToken({ req, url, account, containerName, containerRequest })
+        : String(req.headers.authorization ?? '').trim() !== ''
         ? validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
         : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
@@ -860,8 +864,8 @@ export class StorageDataPlaneRouter {
   }
 }
 
-export function createStorageDataPlaneRouter() {
-  return new StorageDataPlaneRouter();
+export function createStorageDataPlaneRouter(options) {
+  return new StorageDataPlaneRouter(options);
 }
 
 export function createBlobStorageServer(router = createStorageDataPlaneRouter()) {

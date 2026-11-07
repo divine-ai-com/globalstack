@@ -15,7 +15,9 @@ import { createApiManagementRouterServer } from '../../packages/azure-data-plane
 const store = new ResourceStore();
 const nativeFunctionsWorkers = process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE
   ? JSON.parse(await readFile(process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE, 'utf8')) : [];
-const runtime = createEmulatorRuntime({ store, nativeFunctionsWorkers });
+const storageTokenTrusts = process.env.GLOBALSTACK_STORAGE_TOKEN_TRUSTS_FILE
+  ? JSON.parse(await readFile(process.env.GLOBALSTACK_STORAGE_TOKEN_TRUSTS_FILE, 'utf8')) : [];
+const runtime = createEmulatorRuntime({ store, nativeFunctionsWorkers, storageTokenTrusts });
 
 async function listen(server, port, host = process.env.GLOBALSTACK_HOST ?? '127.0.0.1') {
   await new Promise((resolve, reject) => {

@@ -123,3 +123,15 @@ ARM endpoint because a successful host-key listing intentionally returns secrets
 The probe creates this file privately and removes it during cleanup. Host
 management routes and key scopes follow Microsoft's [host API](https://github.com/Azure/azure-functions-host/blob/dev/src/WebJobs.Script.WebHost/Controllers/KeysController.cs)
 and [Functions key documentation](https://learn.microsoft.com/en-us/azure/azure-functions/function-keys-how-to).
+
+### Blob token authorization
+
+`GLOBALSTACK_STORAGE_TOKEN_TRUSTS_FILE` optionally names a JSON array of operator-controlled trust entries. Each entry requires `issuer` (an HTTPS issuer identifier), `tenantId`, `subscriptionIds`, and `jwks.keys`. Keys must be public RSA signing JWKs with unique `kid` values, `alg: RS256`, `use: sig`, and at least 2048-bit moduli. Private key fields are rejected. No remote discovery or token-supplied key URL is followed. The runtime API accepts the same array as `storageTokenTrusts`.
+
+Blob requests validate the token signature, issuer, storage audience, tenant, principal UUID, and required `iat`, `nbf`, and `exp` timestamps. Trust is restricted to the configured subscriptions. Successful authentication still requires a currently deployed Storage Blob Data Reader, Contributor, or Owner assignment at an applicable scope. Container-scoped assignments cannot access sibling containers. Removing an assignment takes effect on the next request, including requests using cached tokens. Unsupported conditional assignments do not grant access.
+
+The supported permission mapping covers existing Blob and container read, list, write, metadata, lease, and delete operations. Reader assignments grant only reads and lists. Unknown operations fail closed. Group membership, custom roles, deny assignments, ADLS ACLs, account-specific token audiences, and Azure role propagation timing are not modeled by this path. Storage Blob Data Owner supports the implemented operations, not unimplemented ADLS ownership operations. This is local authorization support, not Entra federation or a complete network-isolation model. Shared Key and SAS remain separate paths.
+
+The SDK integration test uses `DefaultAzureCredential` against a loopback App Service identity protocol fixture, actual signed tokens, certificate-verified HTTPS Blob requests, and the unchanged document source adapter. It verifies historical bytes and role revocation. The fixture supplies identity and transport configuration externally; automatic worker identity provisioning and paired Azure authorization measurements remain pending. It does not establish either full production scenario as passed.
+
+Contract references: [Microsoft Entra authorization for Storage REST](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-azure-active-directory), [built-in Storage roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/storage).

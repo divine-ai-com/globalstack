@@ -138,8 +138,8 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [] }) {
-  const storageRouter = createStorageDataPlaneRouter();
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [] }) {
+  const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
   const appConfigurationRouter = createAppConfigurationRouter();

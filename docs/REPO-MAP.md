@@ -125,6 +125,7 @@ flowchart TD
 - `packages/azure-data-plane/src/storage-router.mjs`
 - `packages/azure-data-plane/src/storage-table-batch.mjs`
 - `packages/azure-data-plane/src/storage-table-filter.mjs`
+- `packages/azure-data-plane/src/storage-token-auth.mjs`
 - `packages/azure-data-plane/src/storage-versions.mjs`
 - `packages/azure-data-plane/src/synapse-sql-runner.mjs`
 - `packages/azure-data-plane/src/waf-evaluator.mjs`
@@ -166,6 +167,7 @@ flowchart TD
 - `packages/conformance/src/storage-lease.test.mjs`
 - `packages/conformance/src/storage-table-batch.test.mjs`
 - `packages/conformance/src/storage-table-filter.test.mjs`
+- `packages/conformance/src/storage-token-auth.test.mjs`
 - `packages/conformance/src/upstream-templates.test.mjs`
 - `packages/conformance/src/workflow-expression-values.test.mjs`
 - `packages/platform-registry/src/index.mjs`
