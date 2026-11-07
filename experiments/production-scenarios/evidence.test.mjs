@@ -226,3 +226,30 @@ test('native worker routing capture preserves host authentication, real executio
     assert.equal(count, 3); assert.equal(index.activityFailures[activity], count);
   }
 });
+
+test('native host key capture uses genuine runtime keys and removes private bootstrap credentials', async () => {
+  const prefix = 'functions-native-keys-1697560/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const result = await load(`${prefix}result.json`);
+  assert.equal(result.sourceDirty, false);
+  assert.equal(result.sourceRevision, '1697560641a36a63da6d0a0c96e1548e211b1857');
+  assert.equal(result.cleanup, true); assert.equal(result.businessWorkflowCompleted, false);
+  assert.equal(result.expectedFailurePersisted, true);
+  assert.equal(result.orchestrationStart.status, 202);
+  assert.equal(result.orchestrationPolls.at(-1).runtimeStatus, 'Failed');
+  assert.deepEqual(result.nativeRouting.hostKeys, { status: 200, masterMatches: true,
+    systemKeyNames: ['durabletask_extension', 'eventgrid_extension'], functionKeyNames: ['default'], durableKeyMatches: true });
+  assert.equal(result.nativeRouting.managementCredentialRemoved, true);
+  assert.equal(result.nativeRouting.unauthorizedStatus, 401);
+  assert.equal(result.nativeRouting.stoppedWorkerStatus, 502);
+  assert.equal(result.nativeRouting.deletedSiteStatus, 404);
+  const log = await readFile(new URL(prefix + 'host.log', base), 'utf8');
+  for (const activity of ['scanAndStore', 'recordProcessingFailure']) {
+    assert.equal([...log.matchAll(new RegExp(`Executed 'Functions\\.${activity}' \\(Failed`, 'g'))].length, 3);
+  }
+});

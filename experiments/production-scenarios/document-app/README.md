@@ -144,3 +144,12 @@ health returned 200, missing host keys returned 401, orchestration start returne
 was then stopped (facade 502), the local ARM site deleted (facade 404), and the
 container/network removed. This adds routing and failure evidence; downstream
 configuration was deliberately absent and no Azure-host comparison occurred.
+
+The [native host-key capture](../evidence/functions-native-keys-1697560/) extends
+this check through `POST .../host/default/listKeys`. ARM retrieved the host's
+actual function and system keys. The returned Durable key authorized the real
+orchestration. The record contains key names and equality checks, never key
+values. The temporary management credential file, worker container and network
+were removed. This clean-source run includes the response-header and numeric
+status validation. Downstream service settings were still intentionally absent,
+so the terminal workflow failure remains the expected result.

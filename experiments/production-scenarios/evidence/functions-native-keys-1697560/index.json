@@ -1,0 +1,23 @@
+{
+  "scope": "Clean local native Functions host key lookup through ARM and routed Durable failure execution. No Azure-host or completed application comparison.",
+  "files": {
+    "result.json": {
+      "sha256": "af9f4679a11bdba209938c8fb7bf2e1510721af91d4f300f3974ac20640eb663",
+      "bytes": 288628
+    },
+    "host.log": {
+      "sha256": "92336c0f02b112f263329b032ad83ac0589757ac3c895003f3eed3d147d0c735",
+      "bytes": 133963
+    }
+  },
+  "activityFailures": {
+    "scanAndStore": 3,
+    "recordProcessingFailure": 3
+  },
+  "observations": [
+    "ARM host/default/listKeys returned genuine native host function/system keys; the returned Durable key authorized actual execution.",
+    "Public evidence records only key names and equality checks. Credential values are excluded; the private management credential file was removed.",
+    "Missing caller key returned 401, stopped worker 502 and deleted ARM site 404.",
+    "Task-owned container/network cleanup completed; no Azure resources created."
+  ]
+}

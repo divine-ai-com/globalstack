@@ -216,3 +216,10 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/production-scenarios/evidence/functions-native-routing-9ad66d3/result\.json$''']
 regexes = ['''^PartitionKey='probe-15ce06c4b2'$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Durable instance partition identifier in native host key evidence"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/functions-native-keys-1697560/result\.json$''']
+regexes = ['''^PartitionKey='probe-28706f33b5'$''']
