@@ -17,6 +17,7 @@ import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup
 import { configureBlobVersioning, storageVersionCases } from './storage-version-cases.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { runBlobEventComponent } from './blob-event-component.mjs';
+import { redactQueueEvents } from './redact-queue-events.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -53,7 +54,7 @@ const observe = (target, event) => {
     }
   }
   identify(event);
-  const safe = sanitize({ target, phase, at: new Date().toISOString(), ...event }, replacements);
+  const safe = sanitize(redactQueueEvents({ target, phase, at: new Date().toISOString(), ...event }, replacements), replacements);
   report.exchanges.push(safe);
   emit('http', { target, phase, method: event.method, path: safe.path, status: event.status });
   emit('output', { target, phase, text: JSON.stringify(safe, null, 2) + '\n' });
