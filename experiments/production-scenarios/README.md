@@ -331,7 +331,12 @@ successful fresh paired validation of the fix.
 The runner now inspects nested provider operations every 15 seconds and stops
 on this throttling response so ordinary cleanup can cancel outstanding work.
 Tests cover the actual retained nested response and ownership-checked teardown.
-The automatic path still needs live verification once Azure permits creation.
+A [subsequent live retry](evidence/web-throttle-guard-7638f46/) verifies the
+automatic path: Azure throttles creation again, the runner detects the nested
+response, cancels the owned deployment with HTTP 204, and verifies the group,
+both plans and deployment history absent. This attempt consumes its conservative
+USD 1 allocation and leaves no unresolved cleanup hold. It is a verified failure
+handling path, not a successful paired hosting or application run.
 The account constraint and its proof are tracked in [#36](https://github.com/divine-ai-com/globalstack/issues/36);
 the bounded emulator fix is tracked separately in [#35](https://github.com/divine-ai-com/globalstack/issues/35).
 

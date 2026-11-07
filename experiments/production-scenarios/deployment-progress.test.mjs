@@ -62,3 +62,25 @@ test('live provider-validation guard rejects the run before allocation or provis
   assert.deepEqual(validation[0].request, validation[1].request);
   assert.equal(report.observationsComplete, undefined);
 });
+
+test('live nested throttle automatically cancels the owned deployment and verifies teardown', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { createHash } = await import('node:crypto');
+  const base = new URL('./evidence/web-throttle-guard-7638f46/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', base)));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = JSON.parse(await readFile(new URL('result.json', base)));
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.error, 'Azure hosting creation is throttled; cancel this attempt and clean up');
+  assert.notEqual(report.observationsComplete, true);
+  const provider = report.exchanges.find(e => e.target === 'azure' && e.phase === 'azure-deploy' && throttledDeploymentOperation(e.body));
+  assert.ok(provider);
+  assert.ok(report.exchanges.some(e => e.target === 'azure' && e.phase === 'cleanup' && e.method === 'POST' && e.path.includes('/cancel?') && e.status === 204));
+  assert.deepEqual(report.cleanup, { groupAbsent: true, plansAbsent: true, deploymentAbsent: true });
+  assert.deepEqual(report.localCleanup, [404, 404, 404]);
+  assert.equal(report.budget.ledger.allocatedUsd, 22);
+});
