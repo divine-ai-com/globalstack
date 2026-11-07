@@ -136,3 +136,11 @@ site. The last two operations must return 502 and 404 through the facade.
 No Azure resources are created. This remains a storage-only failure diagnostic;
 the operator owns the container and supplies its settings. It does not exercise
 automatic deployment, Event Grid delivery or downstream document processing.
+
+The [native-routing capture](../evidence/functions-native-routing-9ad66d3/)
+records this probe from clean source with the rebuilt image digest. Native host
+health returned 200, missing host keys returned 401, orchestration start returned
+202, and actual activity retries ended in persisted `Failed` state. The worker
+was then stopped (facade 502), the local ARM site deleted (facade 404), and the
+container/network removed. This adds routing and failure evidence; downstream
+configuration was deliberately absent and no Azure-host comparison occurred.

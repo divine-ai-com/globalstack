@@ -197,3 +197,32 @@ test('partial fixes retain the initial-status difference and remaining local fai
     'search-fuzzy', 'search-invalid-vector', 'apim-backend-forwarding',
   ]);
 });
+
+test('native worker routing capture preserves host authentication, real execution and teardown failures', async () => {
+  const prefix = 'functions-native-routing-9ad66d3/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const result = await load(`${prefix}result.json`);
+  assert.equal(result.sourceDirty, false);
+  assert.equal(result.sourceRevision, '9ad66d31634616e9b8283dedc6d375001c99f49b');
+  assert.equal(result.cleanup, true); assert.equal(result.businessWorkflowCompleted, false);
+  assert.equal(result.workerHealthReady, true); assert.equal(result.durableWorkerStarted, true);
+  assert.equal(result.expectedFailurePersisted, true);
+  assert.equal(result.orchestrationStart.status, 202);
+  assert.equal(result.orchestrationPolls.at(-1).runtimeStatus, 'Failed');
+  assert.equal(result.nativeRouting.unauthorizedStatus, 401);
+  assert.equal(result.nativeRouting.stoppedWorkerStatus, 502);
+  assert.equal(result.nativeRouting.deletedSiteStatus, 404);
+  const health = result.nativeRouting.requests.filter(item => item.path === '/api/health');
+  assert.ok(health.some(item => item.status === 200));
+  assert.deepEqual(health.slice(-2).map(item => item.status), [502, 404]);
+  const log = await readFile(new URL(prefix + 'host.log', base), 'utf8');
+  for (const activity of ['scanAndStore', 'recordProcessingFailure']) {
+    const count = [...log.matchAll(new RegExp(`Executed 'Functions\\.${activity}' \\(Failed`, 'g'))].length;
+    assert.equal(count, 3); assert.equal(index.activityFailures[activity], count);
+  }
+});
