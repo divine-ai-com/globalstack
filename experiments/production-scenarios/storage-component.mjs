@@ -11,6 +11,7 @@ import { storageScope, storageArmClient, cleanupStorage } from './storage-cleanu
 import { storageCases, storageExchange } from './storage-http.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
+import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -54,6 +55,7 @@ try {
   const ip = (await publicIp.text()).trim();
   assert.equal(isIP(ip), 4);
   replacements.push([ip, '<runner-ip>']);
+  report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: 'Storage comparison in westus2' });
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   const watchdog = spawn(process.execPath, [resolve('experiments/production-scenarios/storage-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((resolve, reject) => { watchdog.once('spawn', resolve); watchdog.once('error', reject); });
@@ -122,6 +124,7 @@ try {
       report.cleanup = await cleanupStorage(manifest, request);
       await writeFile(donePath, 'verified\n', { mode: 0o600 });
       await rm(manifestPath);
+      await confirmBudgetCleanup(budgetPath, runId);
     } catch (error) { report.cleanupError = sanitize(String(error.message), replacements); process.exitCode = 1; }
   }
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }

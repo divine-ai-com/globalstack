@@ -14,6 +14,7 @@ import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { azureCli, azureToken } from './azure-session.mjs';
 import { cleanupSearch, searchArmClient, searchScope } from './search-cleanup.mjs';
 import { httpExchange } from './http-exchange.mjs';
+import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
@@ -83,6 +84,7 @@ try {
   const body = { location: region, properties: { mode: 'Incremental', template: JSON.parse(compiled), parameters: Object.fromEntries(Object.entries({
     groupName: manifest.group, serviceName: manifest.service, location: region, runId, runnerIp: `${ip}/32`,
   }).map(([key, value]) => [key, { value }])) } };
+  report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: `Search comparison in ${region}` });
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'search-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
@@ -198,6 +200,7 @@ try {
       await writeFile(donePath, 'verified\n', { mode: 0o600 });
       watchdog?.kill('SIGTERM');
       await rm(manifestPath);
+      await confirmBudgetCleanup(budgetPath, runId);
     } catch { report.cleanup = { cleanupComplete: false, recoveryRequired: true }; }
   }
   if (arm) {

@@ -29,3 +29,18 @@ test('concurrent reservation requests cannot both allocate against the same bala
   assert.equal(result.filter(item => item.status === 'fulfilled').length, 1);
   assert.equal(JSON.parse(await readFile(path)).allocations.length, 1);
 });
+
+test('Search, Storage and hosting retain their combined allowances across runs', async t => {
+  const path = await ledger(t);
+  for (const [index, purpose, envelopeUsd] of [[1, 'Search', 2], [2, 'Storage', 1], [3, 'Hosting', 1]]) {
+    const runId = String(index).padStart(12, '0');
+    await reserveBudget(path, { runId, purpose, envelopeUsd });
+    await assert.rejects(reserveBudget(path, { runId: '999999999999', purpose: 'Other component', envelopeUsd: 1 }), /previous allocation/);
+    await confirmBudgetCleanup(path, runId);
+  }
+  const state = JSON.parse(await readFile(path));
+  assert.equal(state.priorAllowanceUsd + state.allocations.reduce((sum, item) => sum + item.envelopeUsd, 0), 24);
+  assert.deepEqual(state.allocations.map(item => item.purpose), ['Search', 'Storage', 'Hosting']);
+  await assert.rejects(reserveBudget(path, { runId: '999999999999', envelopeUsd: 127 }), /exceeds/);
+  assert.deepEqual(JSON.parse(await readFile(path)), state);
+});

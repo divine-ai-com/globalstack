@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import { mkdir, open, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+
+// All paid component runners share this path regardless of their output folder.
+export const productionBudgetPath = fileURLToPath(new URL('../../reports/production-scenarios/budget-ledger.json', import.meta.url));
 
 async function update(path, change) {
   await mkdir(dirname(path), { recursive: true, mode: 0o700 });

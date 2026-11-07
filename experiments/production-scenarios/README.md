@@ -286,9 +286,9 @@ Azure/Playwright settings as the other recordings. It compares creation, reads,
 unchanged PUT, tag update, an explicitly invalid SKU update, state preservation
 and cleanup. No Function App or ingress application is deployed by this probe.
 
-The run envelope is USD 1 within the authorized USD 150 total. It reserves
-USD 10 for earlier component attempts and leaves USD 139 for subsequent work
-and cleanup uncertainty. These are conservative allocations, not measured
+The hosting run envelope is USD 1 within the authorized USD 150 total. The shared
+ledger described below retains a conservative USD 20 allowance for earlier work
+plus every subsequent component reservation. These allocations are not measured
 billing. West US 2 retail rates checked on 2026-11-07 are USD 0.0775/hour for
 Linux P0v3 and USD 0.16/vCPU-hour plus USD 0.0114/GiB-hour for Premium Functions.
 One EP1 has one vCPU and 3.5 GiB. The runner limits both plans to one instance,
@@ -326,13 +326,14 @@ The automatic path still needs live verification once Azure permits creation.
 The account constraint and its proof are tracked in [#36](https://github.com/divine-ai-com/globalstack/issues/36);
 the bounded emulator fix is tracked separately in [#35](https://github.com/divine-ai-com/globalstack/issues/35).
 
-Set `PAIRED_WEB_REGION=northeurope` for the alternative region with existing
-P0v3/EP1 quota. The [retained retail prices](evidence/hosting-prices-20261107.json)
+Set `PAIRED_WEB_REGION=northeurope` to test the alternative region. Its quota
+listing conflicts with provider validation, as documented below. The [retained retail prices](evidence/hosting-prices-20261107.json)
 are USD 0.084/hour for P0v3, and USD 0.167/vCPU-hour plus USD 0.0119/GiB-hour for
 EP1 in North Europe. Both targets receive the same region parameter. Regional
 availability and quotas do not guarantee deployment success.
 
-New hosting runs reserve their USD 1 envelope in the private
+New hosting, Search and Storage runs reserve their respective USD 1, USD 2 and
+USD 1 envelopes in the same private
 `reports/production-scenarios/budget-ledger.json` before provisioning. The ledger
 starts with a conservative USD 20 allowance for earlier work, enforces the
 USD 150 aggregate ceiling, blocks overlapping allocations until cleanup is
@@ -341,6 +342,9 @@ It is an execution guard, not an Azure spending limit or a measured invoice.
 If a watchdog performs cleanup after the runner exits, reconcile its verified
 absence evidence before marking the ledger allocation cleaned up. Never delete
 the ledger to bypass an exhausted allowance or unresolved cleanup.
+Run paid comparisons from this one checkout. The file lock coordinates local
+processes, not separate clones or machines. Cloud charges can outlive a run if
+Azure delays deletion; the ledger is not a provider-enforced billing cap.
 
 North Europe's quota API reported 30 instances for each SKU, but [provider
 validation](evidence/web-validation-northeurope-6478043/) rejected both plans

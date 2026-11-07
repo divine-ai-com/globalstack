@@ -12,7 +12,7 @@ import { azureCli, azureToken } from './azure-session.mjs';
 import { cleanupWeb, webArmClient, webScope } from './web-cleanup.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { throttledDeploymentOperation } from './deployment-progress.mjs';
-import { reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
+import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url)), repo = resolve(here, '../..');
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit evidence directory is required');
@@ -25,7 +25,6 @@ assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3, '40 GiB free required');
 const config = process.env.PAIRED_AZURE_CONFIG_DIR;
 const region = process.env.PAIRED_WEB_REGION ?? 'westus2';
 assert.ok(['westus2', 'northeurope'].includes(region), 'Choose a region with verified hosting prices');
-const budgetPath = resolve(repo, 'reports/production-scenarios/budget-ledger.json');
 const account = azureCli(config, ['account', 'show']);
 assert.equal(account.id, process.env.PAIRED_SUBSCRIPTION_ID);
 assert.equal(account.state, 'Enabled');
