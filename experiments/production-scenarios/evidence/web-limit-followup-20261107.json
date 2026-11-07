@@ -1,0 +1,20 @@
+{
+  "scope": "Follow-up to the owner-authorized free quota request after subscription upgrade. No paid support purchase or resources provisioned by this request.",
+  "initialStatus": 202,
+  "terminalStatus": "Failed",
+  "errorCode": "InvalidSupportPlan",
+  "ticketLookupStatus": 404,
+  "ticketCreated": false,
+  "requestedInstances": {
+    "P0v3": 1,
+    "EP1": 1
+  },
+  "region": "westus2",
+  "title": "Follow-up: permit one Linux P0v3 and one Linux EP1 instance in West US 2 after upgrade",
+  "description": "The owner previously requested free quota review for one Linux P0v3 and one Linux EP1 instance in West US 2. The subscription has since been upgraded from trial to pay-as-you-go. Provider validation now accepts the template, and an earlier attempt created both plans, but repeated later attempts are blocked by App Service Plan Create throttling. On 2026-11-07 at 14:29:49 UTC, the nested Microsoft.Web/serverfarms worker operation returned statusCode 429 and error code 429: App Service Plan Create operation is throttled for subscription. Please contact support if issue persists. Tracking ID 2d2ef96f-d3cd-43ca-9954-c00097908954. ARM parent deployment still reported Running. We canceled the deployment and verified the group, both plan IDs and deployment history absent at 14:30 UTC. Please review the subscription service limits or restrictions needed to permit only one instance of each requested SKU. This is a free quota/subscription-limit follow-up, not a request for paid technical support, a paid support plan, a reservation, or automatic resource deployment. Do not purchase or enable anything chargeable. If this cannot be handled in the free category, please say so rather than converting it to paid support. Total experiment allowance remains USD 150; each test stack is deleted immediately. Public evidence: https://github.com/divine-ai-com/globalstack/tree/codex/production-scenario-conformance/experiments/production-scenarios/evidence/web-throttle-a2ec5ef .",
+  "serviceId": "/providers/Microsoft.Support/services/06bfd9d3-516b-d5c6-5802-169c800dec89",
+  "problemClassificationId": "/providers/Microsoft.Support/services/06bfd9d3-516b-d5c6-5802-169c800dec89/problemClassifications/c51897a3-cf1b-7444-30d9-532e0d8895d1",
+  "portalRoute": "Help + support > Create a support request > Service and subscription limits (quotas) > Function or Web App (Windows and Linux)",
+  "spendingLimitUsd": 150,
+  "responseRecordedAt": "2026-11-07T14:34:26.674229+00:00"
+}

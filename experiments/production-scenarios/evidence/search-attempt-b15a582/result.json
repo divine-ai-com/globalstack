@@ -1,0 +1,864 @@
+{
+  "schemaVersion": 1,
+  "revision": "b15a582d71d0c043fbd0ad21af46d87e87855cf1",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T06:30:49.523Z",
+  "scope": "Search-only lifecycle and data-plane probes. Neither full application is deployed.",
+  "transport": "Native Bicep compilation followed by ARM template deployment and Search HTTP requests.",
+  "portalEvidenceComplete": false,
+  "fullProtocolParityEvaluated": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T06:30:52.410Z",
+      "completedAt": "2026-11-07T06:30:53.243Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 201,
+      "startedAt": "2026-11-07T06:30:56.180Z",
+      "completedAt": "2026-11-07T06:31:04.709Z",
+      "request": {
+        "location": "eastus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "18185209126730864783"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "runnerIp": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "search-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    },
+                    "runId": {
+                      "value": "[parameters('runId')]"
+                    },
+                    "runnerIp": {
+                      "value": "[parameters('runnerIp')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "11390924562461679423"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "runId": {
+                        "type": "string"
+                      },
+                      "runnerIp": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Search/searchServices",
+                        "apiVersion": "2025-05-01",
+                        "name": "[parameters('serviceName')]",
+                        "location": "[parameters('location')]",
+                        "tags": {
+                          "project": "globalstack-production-scenarios",
+                          "run": "[parameters('runId')]"
+                        },
+                        "sku": {
+                          "name": "basic"
+                        },
+                        "properties": {
+                          "replicaCount": 1,
+                          "partitionCount": 1,
+                          "hostingMode": "Default",
+                          "publicNetworkAccess": "enabled",
+                          "disableLocalAuth": false,
+                          "networkRuleSet": {
+                            "ipRules": [
+                              {
+                                "value": "[parameters('runnerIp')]"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<search-service>"
+            },
+            "location": {
+              "value": "eastus2"
+            },
+            "runId": {
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "value": "<runner-ip>/32"
+            }
+          }
+        }
+      },
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "eastus2",
+        "properties": {
+          "templateHash": "18185209126730864783",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<search-service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "type": "String",
+              "value": "<runner-ip>/32"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Accepted",
+          "timestamp": "2026-11-07T06:30:58.0172198Z",
+          "duration": "PT0.0001839S",
+          "correlationId": "1ce1925c-8231-46c4-a562-18cb13938fa1",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "search-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:04.712Z",
+      "completedAt": "2026-11-07T06:31:06.102Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "eastus2",
+        "properties": {
+          "templateHash": "18185209126730864783",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<search-service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "type": "String",
+              "value": "<runner-ip>/32"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T06:30:58.0172198Z",
+          "duration": "PT2.6282879S",
+          "correlationId": "1ce1925c-8231-46c4-a562-18cb13938fa1",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "search-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:09.104Z",
+      "completedAt": "2026-11-07T06:31:11.058Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "eastus2",
+        "properties": {
+          "templateHash": "18185209126730864783",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<search-service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "type": "String",
+              "value": "<runner-ip>/32"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Failed",
+          "timestamp": "2026-11-07T06:31:09.8572351Z",
+          "duration": "PT11.8400153S",
+          "correlationId": "1ce1925c-8231-46c4-a562-18cb13938fa1",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "search-component"
+            }
+          ],
+          "error": {
+            "code": "DeploymentFailed",
+            "target": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+            "message": "At least one resource deployment operation failed. Please list deployment operations for details. Please see https://aka.ms/arm-deployment-operations for usage details. Correlation ID: 1ce1925c-8231-46c4-a562-18cb13938fa1",
+            "details": [
+              {
+                "code": "ResourceDeploymentFailure",
+                "target": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+                "message": "The resource write operation failed to complete successfully, because it reached terminal provisioning state 'Failed'."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "local-deploy",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "request": {
+        "location": "eastus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "18185209126730864783"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "runnerIp": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "search-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    },
+                    "runId": {
+                      "value": "[parameters('runId')]"
+                    },
+                    "runnerIp": {
+                      "value": "[parameters('runnerIp')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "11390924562461679423"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "runId": {
+                        "type": "string"
+                      },
+                      "runnerIp": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Search/searchServices",
+                        "apiVersion": "2025-05-01",
+                        "name": "[parameters('serviceName')]",
+                        "location": "[parameters('location')]",
+                        "tags": {
+                          "project": "globalstack-production-scenarios",
+                          "run": "[parameters('runId')]"
+                        },
+                        "sku": {
+                          "name": "basic"
+                        },
+                        "properties": {
+                          "replicaCount": 1,
+                          "partitionCount": 1,
+                          "hostingMode": "Default",
+                          "publicNetworkAccess": "enabled",
+                          "disableLocalAuth": false,
+                          "networkRuleSet": {
+                            "ipRules": [
+                              {
+                                "value": "[parameters('runnerIp')]"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<search-service>"
+            },
+            "location": {
+              "value": "eastus2"
+            },
+            "runId": {
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "value": "<runner-ip>/32"
+            }
+          }
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "eastus2",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-07T06:31:11.086Z",
+          "duration": "PT0S",
+          "outputs": {},
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Search/searchServices/<search-service>",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "startedAt": "2026-11-07T06:31:11.060Z",
+      "completedAt": "2026-11-07T06:31:11.091Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:12.626Z",
+      "completedAt": "2026-11-07T06:31:14.028Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "eastus2",
+        "properties": {
+          "templateHash": "18185209126730864783",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<search-service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "5cfdc09d41b2"
+            },
+            "runnerIp": {
+              "type": "String",
+              "value": "<runner-ip>/32"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Failed",
+          "timestamp": "2026-11-07T06:31:09.8572351Z",
+          "duration": "PT11.8400153S",
+          "correlationId": "1ce1925c-8231-46c4-a562-18cb13938fa1",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "search-component"
+            }
+          ],
+          "error": {
+            "code": "DeploymentFailed",
+            "target": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+            "message": "At least one resource deployment operation failed. Please list deployment operations for details. Please see https://aka.ms/arm-deployment-operations for usage details. Correlation ID: 1ce1925c-8231-46c4-a562-18cb13938fa1",
+            "details": [
+              {
+                "code": "ResourceDeploymentFailure",
+                "target": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/search-component",
+                "message": "The resource write operation failed to complete successfully, because it reached terminal provisioning state 'Failed'."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:14.029Z",
+      "completedAt": "2026-11-07T06:31:15.445Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "eastus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "5cfdc09d41b2"
+        },
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:15.446Z",
+      "completedAt": "2026-11-07T06:31:16.319Z",
+      "body": {
+        "value": []
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 202,
+      "startedAt": "2026-11-07T06:31:16.319Z",
+      "completedAt": "2026-11-07T06:31:16.945Z",
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:16.945Z",
+      "completedAt": "2026-11-07T06:31:17.502Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "eastus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "5cfdc09d41b2"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T06:31:20.506Z",
+      "completedAt": "2026-11-07T06:31:21.486Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "eastus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "5cfdc09d41b2"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T06:31:24.488Z",
+      "completedAt": "2026-11-07T06:31:24.982Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Search/searchServices/<search-service>?api-version=2025-05-01",
+      "status": 404,
+      "startedAt": "2026-11-07T06:31:24.983Z",
+      "completedAt": "2026-11-07T06:31:26.025Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 202,
+      "startedAt": "2026-11-07T06:31:26.025Z",
+      "completedAt": "2026-11-07T06:31:31.065Z",
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T06:31:31.065Z",
+      "completedAt": "2026-11-07T06:31:31.708Z",
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "status": "Deleted",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+      },
+      "startedAt": "2026-11-07T06:31:31.714Z",
+      "completedAt": "2026-11-07T06:31:31.721Z"
+    }
+  ],
+  "cleanup": {
+    "groupAbsent": true,
+    "serviceAbsent": true,
+    "deploymentAbsent": true
+  },
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "thisRunEnvelopeUsd": 2,
+    "rateUsdPerHour": 0.101,
+    "runtimeMinutes": 20,
+    "cleanupReserveMinutes": 10,
+    "source": "Azure Retail Prices API, East US 2 Basic Search consumption meter, verified 2026-11-07. Cost reporting can lag."
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "templateSha256": "ac2bfa9d94979d2ab5fe9f6906d34d8f6d7b7b597e9801955febaa5881e82538",
+  "error": "Azure deployment failed; preserve its response and clean up",
+  "completedAt": "2026-11-07T06:31:31.723Z"
+}

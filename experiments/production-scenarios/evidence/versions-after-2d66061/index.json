@@ -1,0 +1,21 @@
+{
+  "scope": "Fresh Azure-first capture: 22 selected Blob version contracts match. One error-header difference remains. No full protocol or application pass. Cloud cleanup verified. Recording is terminal/API only.",
+  "files": {
+    "result.json": {
+      "sha256": "a8ccfe25db1adda6b5a370a8071dfa669d3270ca4b47f7f39a590a10001a0595",
+      "bytes": 182185
+    },
+    "events.ndjson": {
+      "sha256": "dc7ade61fd70015e207607af69381c6e188c62b2fb659aaf29074a0ed355d1ea",
+      "bytes": 247619
+    },
+    "recording.json": {
+      "sha256": "7c5a675a6e008b65033f42e6f84acfb5866afe62a5373ca69aee4ff272c0ec9a",
+      "bytes": 643
+    },
+    "comparison.json": {
+      "sha256": "cbdab2c0b1de32cf3ea9223e03df0ee9982c32a57e10aa64c3feab291a9b0f36",
+      "bytes": 11375
+    }
+  }
+}

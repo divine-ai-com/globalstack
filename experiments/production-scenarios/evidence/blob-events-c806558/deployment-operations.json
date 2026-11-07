@@ -1,0 +1,146 @@
+[
+  {
+    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/blob-events/operations/4EADDB07C52B3D69",
+    "operationId": "4EADDB07C52B3D69",
+    "properties": {
+      "duration": "PT15.4306513S",
+      "provisioningOperation": "Create",
+      "provisioningState": "Failed",
+      "request": null,
+      "response": null,
+      "serviceRequestId": null,
+      "statusCode": "Conflict",
+      "statusMessage": {
+        "error": {
+          "additionalInfo": null,
+          "code": "Managed Identity Authorization Error",
+          "details": null,
+          "message": "Managed Identity for <subscription>:<group>:<event-subscription-identity>:blob-arrivals does not have permission to perform appropriate action on the destination resource. Managed identity for event subscription does not have authorization to deliver to the endpoint. Visit aka.ms/egmsivalidation for more details.",
+          "target": null
+        },
+        "status": "Failed"
+      },
+      "targetResource": {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.EventGrid/systemTopics/gs-events-d5625d4c2283/eventSubscriptions/blob-arrivals",
+        "identifiers": null,
+        "resourceGroup": "<group>",
+        "resourceName": "gs-events-d5625d4c2283/blob-arrivals",
+        "resourceType": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+        "symbolicName": null
+      },
+      "timestamp": "2026-11-07T13:50:24.897956+00:00",
+      "trackingId": "23d46cd5-84ff-48f0-8c48-f0cf0b11170a"
+    },
+    "resourceGroup": "<group>"
+  },
+  {
+    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/blob-events/operations/461CDEDAA9B3B195",
+    "operationId": "461CDEDAA9B3B195",
+    "properties": {
+      "duration": "PT3.663959S",
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "request": null,
+      "response": null,
+      "serviceRequestId": null,
+      "statusCode": "Created",
+      "statusMessage": null,
+      "targetResource": {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/queueServices/default/queues/event-arrivals/providers/Microsoft.Authorization/roleAssignments/c4ce8657-9942-4d08-8664-f12e31ace0c6",
+        "identifiers": null,
+        "resourceGroup": "<group>",
+        "resourceName": "c4ce8657-9942-4d08-8664-f12e31ace0c6",
+        "resourceType": "Microsoft.Authorization/roleAssignments",
+        "symbolicName": null
+      },
+      "timestamp": "2026-11-07T13:50:24.897956+00:00",
+      "trackingId": "a319b6a4-a38e-4b16-b2f1-dc8c4288f3e4"
+    },
+    "resourceGroup": "<group>"
+  },
+  {
+    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/blob-events/operations/CCF94A1BF82B2016",
+    "operationId": "CCF94A1BF82B2016",
+    "properties": {
+      "duration": "PT15.7060248S",
+      "provisioningOperation": "Read",
+      "provisioningState": "Succeeded",
+      "request": null,
+      "response": null,
+      "serviceRequestId": null,
+      "statusCode": "OK",
+      "statusMessage": null,
+      "targetResource": {
+        "apiVersion": "2025-02-15",
+        "extension": null,
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.EventGrid/systemTopics/gs-events-d5625d4c2283",
+        "identifiers": null,
+        "resourceGroup": "<group>",
+        "resourceName": "gs-events-d5625d4c2283",
+        "resourceType": "Microsoft.EventGrid/systemTopics",
+        "symbolicName": null
+      },
+      "timestamp": "2026-11-07T13:50:08.996509+00:00",
+      "trackingId": "b21a379d-22ee-45e5-8135-573f39fcb469"
+    },
+    "resourceGroup": "<group>"
+  },
+  {
+    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/blob-events/operations/FE5A1CAFF45606E3",
+    "operationId": "FE5A1CAFF45606E3",
+    "properties": {
+      "duration": "PT15.4559959S",
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "request": null,
+      "response": null,
+      "serviceRequestId": null,
+      "statusCode": "OK",
+      "statusMessage": null,
+      "targetResource": {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.EventGrid/systemTopics/gs-events-d5625d4c2283",
+        "identifiers": null,
+        "resourceGroup": "<group>",
+        "resourceName": "gs-events-d5625d4c2283",
+        "resourceType": "Microsoft.EventGrid/systemTopics",
+        "symbolicName": null
+      },
+      "timestamp": "2026-11-07T13:50:08.996509+00:00",
+      "trackingId": "121bc66c-e09f-4bb6-8617-8374921ab952"
+    },
+    "resourceGroup": "<group>"
+  },
+  {
+    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/blob-events/operations/C548C0726ECA2B91",
+    "operationId": "C548C0726ECA2B91",
+    "properties": {
+      "duration": "PT0.279775S",
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "request": null,
+      "response": null,
+      "serviceRequestId": null,
+      "statusCode": "OK",
+      "statusMessage": null,
+      "targetResource": {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/queueServices/default/queues/event-arrivals",
+        "identifiers": null,
+        "resourceGroup": "<group>",
+        "resourceName": "<storage-account>/default/event-arrivals",
+        "resourceType": "Microsoft.Storage/storageAccounts/queueServices/queues",
+        "symbolicName": null
+      },
+      "timestamp": "2026-11-07T13:50:08.996509+00:00",
+      "trackingId": "ae5c46bd-3bbe-461f-bd8d-b16b5195555d"
+    },
+    "resourceGroup": "<group>"
+  }
+]

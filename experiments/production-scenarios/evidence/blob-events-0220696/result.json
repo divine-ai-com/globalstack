@@ -1,0 +1,514 @@
+{
+  "scope": "Local synthetic Blob-to-Event-Grid-to-Storage-Queue diagnostic. No Azure capture or full application pass.",
+  "revision": "0220696746fa06ba62c72a3f926e5ef3af2fb5ac",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T13:42:14.221Z",
+  "exchanges": [
+    {
+      "phase": "group",
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture?api-version=2025-04-01",
+      "request": {
+        "location": "westus2"
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture",
+        "name": "blob-event-fixture",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "account",
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture?api-version=2023-05-01",
+      "request": {
+        "location": "westus2",
+        "kind": "StorageV2",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "properties": {}
+      },
+      "status": 202,
+      "body": null,
+      "headers": {
+        "content-type": "application/json",
+        "retry-after": "0",
+        "azure-asyncoperation": "http://127.0.0.1:42003/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/operationStatuses/mw6gd98s-bxrqmden1dc?api-version=2022-09-01",
+        "location": "http://127.0.0.1:42003/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/operationStatuses/mw6gd98s-bxrqmden1dc?api-version=2022-09-01"
+      }
+    },
+    {
+      "phase": "account-readiness",
+      "method": "GET",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+        "name": "eventsourcefixture",
+        "type": "Microsoft.Storage/storageAccounts",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "westus2",
+        "tags": {},
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "minimumTlsVersion": "TLS1_1",
+          "allowBlobPublicAccess": false,
+          "supportsHttpsTrafficOnly": true,
+          "primaryEndpoints": {
+            "blob": "https://eventsourcefixture.blob.core.windows.net/",
+            "queue": "https://eventsourcefixture.queue.core.windows.net/",
+            "table": "https://eventsourcefixture.table.core.windows.net/",
+            "file": "https://eventsourcefixture.file.core.windows.net/",
+            "web": "https://eventsourcefixture.web.core.windows.net/",
+            "dfs": "https://eventsourcefixture.dfs.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "publicNetworkAccess": "Enabled",
+          "provisioningState": "ResolvingDns"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ],
+          "lifecycleState": {
+            "provisioningSequence": [
+              "Creating",
+              "ResolvingDns",
+              "Succeeded"
+            ],
+            "readCount": 2
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "account-readiness",
+      "method": "GET",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+        "name": "eventsourcefixture",
+        "type": "Microsoft.Storage/storageAccounts",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "westus2",
+        "tags": {},
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "minimumTlsVersion": "TLS1_1",
+          "allowBlobPublicAccess": false,
+          "supportsHttpsTrafficOnly": true,
+          "primaryEndpoints": {
+            "blob": "https://eventsourcefixture.blob.core.windows.net/",
+            "queue": "https://eventsourcefixture.queue.core.windows.net/",
+            "table": "https://eventsourcefixture.table.core.windows.net/",
+            "file": "https://eventsourcefixture.file.core.windows.net/",
+            "web": "https://eventsourcefixture.web.core.windows.net/",
+            "dfs": "https://eventsourcefixture.dfs.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "publicNetworkAccess": "Enabled",
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ],
+          "lifecycleState": {
+            "provisioningSequence": [
+              "Creating",
+              "ResolvingDns",
+              "Succeeded"
+            ],
+            "readCount": 3
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "child",
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/blobServices/default/containers/landing?api-version=2023-05-01",
+      "request": {
+        "properties": {}
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/blobServices/default/containers/landing",
+        "name": "eventsourcefixture/default/landing",
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "child",
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/queueServices/default/queues/arrivals?api-version=2023-05-01",
+      "request": {
+        "properties": {}
+      },
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/queueServices/default/queues/arrivals",
+        "name": "eventsourcefixture/default/arrivals",
+        "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "queue-storage",
+          "backingEngines": [
+            "azurite",
+            "service-bus-emulator"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "Azure Queue Storage and Service Bus queues are both closest equivalents, not exact SQS clones.",
+            "No exact SQS FIFO, delay queue, redrive, or IAM policy parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "subscription",
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/providers/Microsoft.EventGrid/eventSubscriptions/blob-arrivals?api-version=2025-02-15",
+      "request": {
+        "properties": {
+          "destination": {
+            "endpointType": "StorageQueue",
+            "properties": {
+              "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+              "queueName": "arrivals"
+            }
+          },
+          "filter": {
+            "includedEventTypes": [
+              "Microsoft.Storage.BlobCreated"
+            ],
+            "subjectBeginsWith": "/blobServices/default/containers/landing/blobs/"
+          },
+          "eventDeliverySchema": "EventGridSchema"
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/providers/Microsoft.EventGrid/eventSubscriptions/blob-arrivals",
+        "name": "blob-arrivals",
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "destination": {
+            "endpointType": "StorageQueue",
+            "properties": {
+              "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+              "queueName": "arrivals"
+            }
+          },
+          "filter": {
+            "includedEventTypes": [
+              "Microsoft.Storage.BlobCreated"
+            ],
+            "subjectBeginsWith": "/blobServices/default/containers/landing/blobs/"
+          },
+          "eventDeliverySchema": "EventGridSchema",
+          "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+          "provisioningState": "Succeeded",
+          "expirationTimeUtc": null
+        },
+        "apiVersion": "2025-02-15",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "event-grid",
+          "backingEngines": [
+            "globalstack-event-router"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No official Event Grid emulator is available in the MVP path.",
+            "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "subscription-read",
+      "method": "GET",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/providers/Microsoft.EventGrid/eventSubscriptions/blob-arrivals?api-version=2025-02-15",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/providers/Microsoft.EventGrid/eventSubscriptions/blob-arrivals",
+        "name": "blob-arrivals",
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+        "resourceGroupName": "blob-event-fixture",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "destination": {
+            "endpointType": "StorageQueue",
+            "properties": {
+              "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+              "queueName": "arrivals"
+            }
+          },
+          "filter": {
+            "includedEventTypes": [
+              "Microsoft.Storage.BlobCreated"
+            ],
+            "subjectBeginsWith": "/blobServices/default/containers/landing/blobs/"
+          },
+          "eventDeliverySchema": "EventGridSchema",
+          "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+          "provisioningState": "Succeeded",
+          "expirationTimeUtc": null
+        },
+        "apiVersion": "2025-02-15",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "event-grid",
+          "backingEngines": [
+            "globalstack-event-router"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No official Event Grid emulator is available in the MVP path.",
+            "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "phase": "upload",
+      "method": "PUT",
+      "path": "/landing/tenant/document.txt",
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x21a64e67ea064d16ae6537d7b60d36fd\"",
+        "last-modified": "Sat, 07 Nov 2026 13:42:14 GMT",
+        "x-ms-request-id": "efb6c5ec-035b-497b-8ef8-92c053fe89ce",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:14 GMT"
+      }
+    },
+    {
+      "phase": "queue-peek",
+      "method": "GET",
+      "path": "/arrivals/messages?peekonly=true&numofmessages=10",
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "7be8a047-abb6-412f-971e-91605f351877",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:14 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "phase": "queue-peek",
+      "method": "GET",
+      "path": "/arrivals/messages?peekonly=true&numofmessages=10",
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "339c5732-bb6b-484d-a7e6-61ac135e41de",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:14 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "phase": "queue-peek",
+      "method": "GET",
+      "path": "/arrivals/messages?peekonly=true&numofmessages=10",
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "edf7acdc-b70d-47cd-b138-59d0272dc654",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:14 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "phase": "queue-peek",
+      "method": "GET",
+      "path": "/arrivals/messages?peekonly=true&numofmessages=10",
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "36c19065-514c-42ed-b0ff-dbecbe0fd358",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:15 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "phase": "queue-peek",
+      "method": "GET",
+      "path": "/arrivals/messages?peekonly=true&numofmessages=10",
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "3718137f-b5b3-442a-b780-a86e266ebd99",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:42:15 GMT",
+        "content-type": "application/xml"
+      }
+    }
+  ],
+  "receivedEvents": [],
+  "cleanup": true,
+  "subscriptionRead": {
+    "status": 200,
+    "body": {
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture/providers/Microsoft.EventGrid/eventSubscriptions/blob-arrivals",
+      "name": "blob-arrivals",
+      "type": "Microsoft.EventGrid/eventSubscriptions",
+      "resourceGroupName": "blob-event-fixture",
+      "location": "global",
+      "tags": {},
+      "properties": {
+        "destination": {
+          "endpointType": "StorageQueue",
+          "properties": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+            "queueName": "arrivals"
+          }
+        },
+        "filter": {
+          "includedEventTypes": [
+            "Microsoft.Storage.BlobCreated"
+          ],
+          "subjectBeginsWith": "/blobServices/default/containers/landing/blobs/"
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/blob-event-fixture/providers/Microsoft.Storage/storageAccounts/eventsourcefixture",
+        "provisioningState": "Succeeded",
+        "expirationTimeUtc": null
+      },
+      "apiVersion": "2025-02-15",
+      "globalstack": {
+        "supportLevel": "globalstack-facade+real-azure-capture-required",
+        "capabilityId": "event-grid",
+        "backingEngines": [
+          "globalstack-event-router"
+        ],
+        "emulationDepth": "metadata-only-control-plane",
+        "realAzureApiComplete": false,
+        "cloudValidated": false,
+        "knownGaps": [
+          "No official Event Grid emulator is available in the MVP path.",
+          "No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP."
+        ]
+      }
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  },
+  "observed": {
+    "uploadAccepted": true,
+    "subscriptionRetained": true,
+    "queueMessages": 0,
+    "waitWindowMs": 1000
+  },
+  "deliveryObserved": false,
+  "completedAt": "2026-11-07T13:42:15.347Z"
+}

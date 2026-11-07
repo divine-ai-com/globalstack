@@ -1,0 +1,33 @@
+{
+  "scope": "Completed paired Search component queries with verified cleanup. Neither complete application was deployed.",
+  "files": {
+    "result.json": {
+      "sha256": "948e1340f02a350b7bf7a4a89e5db788d4bc544fb8e0be9de99e49b849e1e2b6",
+      "bytes": 402942
+    },
+    "events.ndjson": {
+      "sha256": "769af30109a86b3a305870e99277fb77a80fe72c8398985d8354e3bdc3d87c4e",
+      "bytes": 466983
+    },
+    "compiled-template.json": {
+      "sha256": "ac2bfa9d94979d2ab5fe9f6906d34d8f6d7b7b597e9801955febaa5881e82538",
+      "bytes": 3362
+    },
+    "recording.json": {
+      "sha256": "d5c90c3e1a202cddd8597d04ffdc3dfe1ab2c78156fb5796a4977e0e9200f16f",
+      "bytes": 642
+    }
+  },
+  "observations": [
+    "Matching fuzzy document identity, but different relevance scores.",
+    "Matching nearest-vector document identity and score for this small cosine fixture.",
+    "Both targets reject multiple key fields and unknown vector fields; nested error-code differences remain in this capture.",
+    "Azure omits vector fields by default; this local revision returns them.",
+    "Index deletion and subsequent 404 observed in both targets."
+  ],
+  "limitations": [
+    "No general ranking, HNSW recall or performance parity is established.",
+    "Default fields and response envelopes differ.",
+    "No effective identity/private-network comparison or Portal screenshots."
+  ]
+}

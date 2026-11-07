@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { nativeWorkerBindings, forwardNativeFunction, readNativeHostKeys } from './native-functions-worker.mjs';
 
 async function readRawBody(req) {
   const chunks = [];
@@ -266,14 +267,24 @@ function matchFunction(app, route) {
 }
 
 export class FunctionsRouter {
-  constructor() {
+  constructor({ nativeWorkers = [] } = {}) {
+    this.nativeWorkers = nativeWorkerBindings(nativeWorkers);
     this.apps = new Map();
   }
 
-  registerApp({ appName, defaultHostName }) {
+  registerApp({ appName, defaultHostName, resourceId }) {
     const name = String(appName);
+    const existing = this.apps.get(name.toLowerCase());
+    if (existing) {
+      // ARM PUT/PATCH refreshes site metadata. Only deletion discards the
+      // registered application and its in-memory execution/deployment state.
+      if (resourceId !== undefined) existing.resourceId = resourceId;
+      if (defaultHostName !== undefined && defaultHostName !== null) existing.defaultHostName = defaultHostName;
+      return;
+    }
     this.apps.set(name.toLowerCase(), {
       appName: name,
+      resourceId,
       defaultHostName: defaultHostName ?? `${name}.azurewebsites.net`,
       scmHostName: `${name}.scm.azurewebsites.net`,
       functions: new Map(),
@@ -287,6 +298,14 @@ export class FunctionsRouter {
       triggers: new Map(),
       deployments: [],
     });
+  }
+
+  readNativeHostKeys(resourceId) {
+    return readNativeHostKeys(this.nativeWorkers.get(String(resourceId ?? '').toLowerCase()));
+  }
+
+  hasNativeWorker(resourceId) {
+    return this.nativeWorkers.has(String(resourceId ?? '').toLowerCase());
   }
 
   unregisterApp(appName) {
@@ -1208,6 +1227,11 @@ export class FunctionsRouter {
         return sendError(res, 404, 'ResourceNotFound', `Function App '${hostInfo.appName}' was not found.`);
       }
 
+      const workerOrigin = this.nativeWorkers.get(String(app.resourceId ?? '').toLowerCase());
+      if (workerOrigin) {
+        if (hostInfo.scm) return sendError(res, 501, 'NativeFunctionsDeploymentNotImplemented', 'Native worker package deployment through SCM is not implemented.');
+        return forwardNativeFunction(req, res, workerOrigin.origin);
+      }
       const origin = `http://${req.headers.host ?? app.defaultHostName}`;
       if (hostInfo.scm) {
         if (!this.isAuthorizedPublishingCredentials(app, req)) {
@@ -1382,8 +1406,8 @@ export class FunctionsRouter {
   }
 }
 
-export function createFunctionsRouter() {
-  return new FunctionsRouter();
+export function createFunctionsRouter(options) {
+  return new FunctionsRouter(options);
 }
 
 export function createFunctionsRouterServer(router = createFunctionsRouter()) {

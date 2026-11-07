@@ -46,6 +46,7 @@ export const locationValidatedResourceTypes = new Set([
 
 export const putMissingParentResourceTypes = new Map([
   ['Microsoft.ApiManagement/service/apis', 'ResourceNotFound'],
+  ['Microsoft.ApiManagement/service/apis/operations', 'ResourceNotFound'],
   ['Microsoft.Cdn/profiles/afdEndpoints', 'ParentResourceNotFound'],
   ['Microsoft.Cdn/profiles/endpoints', 'ParentResourceNotFound'],
   ['Microsoft.Cdn/profiles/securityPolicies', 'ParentResourceNotFound'],

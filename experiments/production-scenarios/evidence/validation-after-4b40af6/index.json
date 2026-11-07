@@ -1,0 +1,27 @@
+{
+  "scope": "Partial ARM validation fix and local Search key regression. Neither full application has been run.",
+  "files": {
+    "local-gaps.json": {
+      "sha256": "c0df16f994836d14bd9c0ded840ebc5ac422f30d12528786fddad5d1919b181d",
+      "bytes": 7395
+    },
+    "validation-events.ndjson": {
+      "sha256": "7a5e6524b52ee3abcfa9cacf043471a96d8c353822252fdf77e50123dfa950e4",
+      "bytes": 29972
+    },
+    "validation-recording.json": {
+      "sha256": "e0c26d99d3a561071b0bb8e4585fe6a0994c4de48aa5cdeb5bca6c1cd59e04a9",
+      "bytes": 651
+    },
+    "validation.json": {
+      "sha256": "1a00e9c55ed21428cf7526b558122f1b5e286ef7ae7268f1e3333576abda41c4",
+      "bytes": 62229
+    }
+  },
+  "limitations": [
+    "Azure Template success was asynchronous (202 then 200); local was synchronous (200).",
+    "Provider validation currently covers Search names and required locations, not quota, RBAC or all Search properties.",
+    "Search key rejection has no paired live data-plane capture yet.",
+    "No Azure Portal screenshots are included."
+  ]
+}

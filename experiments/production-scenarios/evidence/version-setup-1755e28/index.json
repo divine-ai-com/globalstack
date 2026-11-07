@@ -1,0 +1,17 @@
+{
+  "scope": "Incomplete attempt: local Blob service returned 201, rejected by an overly strict harness check. Azure and local version behaviors were not exercised. Cleanup verified.",
+  "files": {
+    "result.json": {
+      "sha256": "544c76657a7226395e63e4b27096bbf993a0c5f51a34912773a007fc77bf7012",
+      "bytes": 140236
+    },
+    "events.ndjson": {
+      "sha256": "2c600af5c97e57ea12efb3fe6592bdc02dd3b78375ff2780bd064c872e43b5d2",
+      "bytes": 187957
+    },
+    "recording.json": {
+      "sha256": "ce4efd5a3267bb183975cbbc19c99b104af78be71f5e37fd72b238d4cc8a6d02",
+      "bytes": 643
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "Local ARM-bound forwarding to the official Functions host. Expected downstream configuration failure, not a completed application or Azure comparison.",
+  "files": {
+    "result.json": {
+      "sha256": "666490d2c65067542046cdeacb5a21e0d02dd86584bf9a8759213d6b9f136718",
+      "bytes": 288326
+    },
+    "host.log": {
+      "sha256": "649b2093a8a8c96c316f8735f29ce7668fb24f820cfa812997e167a5a2995237",
+      "bytes": 134050
+    }
+  },
+  "activityFailures": {
+    "scanAndStore": 3,
+    "recordProcessingFailure": 3
+  },
+  "observations": [
+    "Same native host handles facade health, authentication, Durable start and terminal failure polling.",
+    "Stopped worker returns 502 without simulation fallback; deleted ARM site returns 404.",
+    "Worker container and internal network removed; no Azure resources created."
+  ]
+}

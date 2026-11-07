@@ -1,3 +1,4 @@
+import { validateWebPlan } from './web-plan-validation.mjs';
 import { isIP } from 'node:net';
 
 import {
@@ -2351,9 +2352,7 @@ function isFunctionAppKind(kind) {
 
 function validateFunctionAppPayload(resourceType, body, options = {}) {
   if (resourceType === 'Microsoft.Web/serverfarms') {
-    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
-      return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
-    }
+    if (body.sku?.name !== 'Y1') return validateWebPlan(body);
     const reserved = body.properties?.reserved ?? body.reserved;
     const localSupportedConsumptionPlan =
       body.sku?.name === 'Y1'
@@ -2555,6 +2554,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   if (method !== 'PUT') return null;
 
+  if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices'
+    && body.properties?.isVersioningEnabled !== undefined && typeof body.properties.isVersioningEnabled !== 'boolean') {
+    return invalidRequestContent('properties.isVersioningEnabled must be a boolean');
+  }
+
   if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
     const destination = body.properties?.destination ?? body.destination;
     if (!destination || typeof destination !== 'object') {
@@ -2579,6 +2583,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     }
     if (!isNonEmptyString(body.properties.roleDefinitionId)) {
       return invalidRequestContent('roleDefinitionId');
+    }
+    const role = body.properties.roleDefinitionId.match(/^\/subscriptions\/[a-f0-9-]{36}\/providers\/Microsoft\.Authorization\/roleDefinitions\/([a-f0-9-]{36})$/i)?.[1]?.toLowerCase();
+    if (['c6a89b2d-59bc-44d0-9896-0f6e12d7b80a', '974c5e8b-45b9-4653-ba55-5f855dd0fb88'].includes(role)) {
+      if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties.principalId)) return invalidRequestContent('principalId');
+      return null;
     }
     return invalidRequestContent('roleDefinitionId');
   }

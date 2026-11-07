@@ -1,0 +1,26 @@
+{
+  "scope": "Failed Azure Search component deployment and same-template local acceptance. Full applications not run.",
+  "files": {
+    "result.json": {
+      "sha256": "6c24d2d8fe2a68bbfdc4b5b95c7cd6fcfaa38ef6aa977877bc9c318965115fb9",
+      "bytes": 30220
+    },
+    "events.ndjson": {
+      "sha256": "11f25eb546a0a56d8bfa254d673a7fe7c41cf7d6268b3ec07dabeb7702146efb",
+      "bytes": 35647
+    },
+    "compiled-template.json": {
+      "sha256": "ac2bfa9d94979d2ab5fe9f6906d34d8f6d7b7b597e9801955febaa5881e82538",
+      "bytes": 3362
+    },
+    "recording.json": {
+      "sha256": "bce48e7b6fe58f1e0e1f5365b9d5309f777c9e0212f95489bdb640d8aeb1e35b",
+      "bytes": 641
+    }
+  },
+  "limitations": [
+    "Nested provider error was not captured before cleanup. A repeat records it before removal.",
+    "No Azure Portal evidence.",
+    "No data-plane probes reached."
+  ]
+}

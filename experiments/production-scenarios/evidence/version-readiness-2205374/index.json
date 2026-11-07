@@ -1,0 +1,17 @@
+{
+  "scope": "Initial incomplete version probe. Azure setting accepted but upload lacked version ID; local child configuration attempted before parent readiness. Exit code 0 does not mean version checks passed.",
+  "files": {
+    "result.json": {
+      "sha256": "8c2c8a19e05bcea858d2b76f968e6b9b2783f825164c11a9ec03f22e4c9e1fcb",
+      "bytes": 135924
+    },
+    "events.ndjson": {
+      "sha256": "73c96730d2f169cbdb8d9e7bb6614e2b5ac44fd65b37be58b592070c7d07ff4f",
+      "bytes": 183375
+    },
+    "recording.json": {
+      "sha256": "fdc4d33ad9aec9287d9882bce11fc96c7ff1377f46db7b68b0f5209c7f9fc5cb",
+      "bytes": 643
+    }
+  }
+}

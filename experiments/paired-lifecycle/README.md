@@ -2,7 +2,11 @@
 
 This pilot runs identical Terraform source against GlobalStack and Azure. Its current scope is one empty resource group, including refresh, update, externally injected tag drift, repair, import and destruction. It does not deploy the later Storage or event-driven cases in the [test plan](../../docs/research/globalstack/PAIRED-TEST-PLAN.md).
 
-## Prerequisites
+## Inspect the retained run
+
+To inspect the completed run without deploying anything, start with [lifecycle snapshots](SNAPSHOTS.md). Download `SNAPSHOTS.html` for an offline comparison with expandable per-stage records. Regenerate the views with `node experiments/paired-lifecycle/render-snapshots.mjs`; `--check` verifies that they match the retained evidence. The JSON and HTML retain sanitized evidence only, with missing observations explicitly identified.
+
+## Running another pilot
 
 Use Linux x86_64, Node 22.23 or newer, Docker, OpenSSL, curl, and at least 40 GiB free. Build the `globalstack/validation-runner:cli-pinned` image using the [existing validation-image recipe](../../docs/research/globalstack/README.md). The runner resolves that tag to one image ID for both targets and requires Terraform 1.17.1. The lockfile pins AzAPI 2.13.0. The image recipe does not freeze all operating-system dependencies.
 

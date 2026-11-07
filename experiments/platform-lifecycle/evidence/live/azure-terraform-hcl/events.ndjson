@@ -1,0 +1,814 @@
+{"sequence":0,"elapsed":0.00006879499999999438,"at":"2026-11-07T04:44:49.798Z","type":"run-start","platform":"azure-terraform-hcl","revision":"1bc474a3c3623acf61dee3ddf33cc2ce86d02dbc","sourceDirty":false,"source":{".terraform.lock.hcl":"5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6","main.tf":"8f0f11938ecac9b2d21831c815e2b9377379659adb3de41a20cf61a0cbf75e85"},"image":"sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186","portalCapture":"deferred","target":"both"}
+{"sequence":1,"elapsed":0.0036176440000000127,"at":"2026-11-07T04:44:49.801Z","type":"target-start","target":"local"}
+{"sequence":2,"elapsed":0.768782307,"at":"2026-11-07T04:44:50.566Z","type":"probe","target":"local","phase":"preflight","method":"GET","status":404}
+{"sequence":3,"elapsed":0.778146279,"at":"2026-11-07T04:44:50.576Z","type":"command-start","target":"local","phase":"version","command":["terraform","version","-json"]}
+{"sequence":4,"elapsed":1.76566268,"at":"2026-11-07T04:44:51.563Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"{\n"}
+{"sequence":5,"elapsed":1.7659366209999998,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  \"format_version\": \"1.0\",\n"}
+{"sequence":6,"elapsed":1.7660348849999998,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  \"terraform_version\": \"1.17.1\",\n"}
+{"sequence":7,"elapsed":1.7660806209999997,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  \"platform\": \"linux_amd64\",\n"}
+{"sequence":8,"elapsed":1.7661144809999998,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  \"provider_selections\": {\n"}
+{"sequence":9,"elapsed":1.766299433,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"    \"registry.terraform.io/azure/azapi\": \"2.13.0\"\n"}
+{"sequence":10,"elapsed":1.766444159,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  },\n"}
+{"sequence":11,"elapsed":1.7664882179999999,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"  \"terraform_outdated\": false\n"}
+{"sequence":12,"elapsed":1.766516527,"at":"2026-11-07T04:44:51.564Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"}\n"}
+{"sequence":13,"elapsed":1.929322572,"at":"2026-11-07T04:44:51.727Z","type":"command-end","target":"local","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":14,"elapsed":1.9307089000000002,"at":"2026-11-07T04:44:51.728Z","type":"command-start","target":"local","phase":"format","command":["terraform","fmt","-check"]}
+{"sequence":15,"elapsed":2.420772617,"at":"2026-11-07T04:44:52.218Z","type":"command-end","target":"local","phase":"format","exitCode":0,"timedOut":false}
+{"sequence":16,"elapsed":2.4218983869999997,"at":"2026-11-07T04:44:52.220Z","type":"command-start","target":"local","phase":"init","command":["terraform","init","-input=false","-lockfile=readonly","-no-color"]}
+{"sequence":17,"elapsed":2.780354059,"at":"2026-11-07T04:44:52.578Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"Initializing the backend...\n"}
+{"sequence":18,"elapsed":2.791666549,"at":"2026-11-07T04:44:52.589Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"\n"}
+{"sequence":19,"elapsed":2.793587254,"at":"2026-11-07T04:44:52.591Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"Initializing provider plugins...\n"}
+{"sequence":20,"elapsed":2.7937317869999996,"at":"2026-11-07T04:44:52.591Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"- Reusing version 2.13.0 of azure/azapi from the dependency lock file\n"}
+{"sequence":21,"elapsed":5.1238946930000004,"at":"2026-11-07T04:44:54.922Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"- Installing azure/azapi v2.13.0...\n"}
+{"sequence":22,"elapsed":13.542921756,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"- Installed azure/azapi v2.13.0 (signed by a HashiCorp partner, key ID 6F0B91BDE98478CF)\n"}
+{"sequence":23,"elapsed":13.543116447000001,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"Partner and community providers are signed by their developers.\n"}
+{"sequence":24,"elapsed":13.543172317,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"If you'd like to know more about provider signing, you can read about it here:\n"}
+{"sequence":25,"elapsed":13.543210556,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"https://developer.hashicorp.com/terraform/cli/plugins/signing\n"}
+{"sequence":26,"elapsed":13.543245445,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"\n"}
+{"sequence":27,"elapsed":13.543280024,"at":"2026-11-07T04:45:03.341Z","type":"output","target":"local","phase":"init","stream":"stdout","text":"Terraform has been successfully initialized!\n"}
+{"sequence":28,"elapsed":15.140547076999999,"at":"2026-11-07T04:45:04.938Z","type":"command-end","target":"local","phase":"init","exitCode":0,"timedOut":false}
+{"sequence":29,"elapsed":15.142403673999999,"at":"2026-11-07T04:45:04.940Z","type":"command-start","target":"local","phase":"validate","command":["terraform","validate","-no-color"]}
+{"sequence":30,"elapsed":17.696093783000002,"at":"2026-11-07T04:45:07.494Z","type":"output","target":"local","phase":"validate","stream":"stdout","text":"Success! The configuration is valid.\n"}
+{"sequence":31,"elapsed":17.696240755,"at":"2026-11-07T04:45:07.494Z","type":"output","target":"local","phase":"validate","stream":"stdout","text":"\n"}
+{"sequence":32,"elapsed":17.872183778000004,"at":"2026-11-07T04:45:07.670Z","type":"command-end","target":"local","phase":"validate","exitCode":0,"timedOut":false}
+{"sequence":33,"elapsed":17.873448424000003,"at":"2026-11-07T04:45:07.671Z","type":"command-start","target":"local","phase":"plan-create","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":34,"elapsed":20.924301157000002,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":35,"elapsed":20.924428759,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":36,"elapsed":20.92446427,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":37,"elapsed":20.924505745,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"  + create\n"}
+{"sequence":38,"elapsed":20.924534186000002,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":39,"elapsed":20.924560958,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":40,"elapsed":20.924586768,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":41,"elapsed":20.924613068000003,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"  # azapi_resource.group will be created\n"}
+{"sequence":42,"elapsed":20.924639139000003,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"  + resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":43,"elapsed":20.924665007,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + body                      = {}\n"}
+{"sequence":44,"elapsed":20.924699352000005,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + id                        = (known after apply)\n"}
+{"sequence":45,"elapsed":20.924724670000003,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + ignore_body_changes       = (write-only attribute)\n"}
+{"sequence":46,"elapsed":20.924800560000005,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + ignore_casing             = false\n"}
+{"sequence":47,"elapsed":20.924848580000003,"at":"2026-11-07T04:45:10.722Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + ignore_missing_property   = true\n"}
+{"sequence":48,"elapsed":20.92488777,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + ignore_null_property      = false\n"}
+{"sequence":49,"elapsed":20.92492268,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + location                  = \"eastus\"\n"}
+{"sequence":50,"elapsed":20.924966780000002,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + name                      = \"<group>\"\n"}
+{"sequence":51,"elapsed":20.925013893000003,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + output                    = (known after apply)\n"}
+{"sequence":52,"elapsed":20.925052424,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + parent_id                 = \"/subscriptions/<subscription>\"\n"}
+{"sequence":53,"elapsed":20.925088564000003,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + schema_validation_enabled = true\n"}
+{"sequence":54,"elapsed":20.925122202,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + sensitive_body            = (write-only attribute)\n"}
+{"sequence":55,"elapsed":20.925162623,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + tags                      = {\n"}
+{"sequence":56,"elapsed":20.925203606000004,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"          + \"expires\"  = \"<expiry>\"\n"}
+{"sequence":57,"elapsed":20.925237048000003,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"          + \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":58,"elapsed":20.925261757,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"          + \"revision\" = \"one\"\n"}
+{"sequence":59,"elapsed":20.925285805,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"          + \"run\"      = \"<run>\"\n"}
+{"sequence":60,"elapsed":20.92530899,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"        }\n"}
+{"sequence":61,"elapsed":20.925337545,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n"}
+{"sequence":62,"elapsed":20.925361627,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"    }\n"}
+{"sequence":63,"elapsed":20.925388763000004,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":64,"elapsed":20.92542074,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"Plan: 1 to add, 0 to change, 0 to destroy.\n"}
+{"sequence":65,"elapsed":20.925445696000004,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":66,"elapsed":20.925469345,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":67,"elapsed":20.925492924,"at":"2026-11-07T04:45:10.723Z","type":"output","target":"local","phase":"plan-create","stream":"stdout","text":"  + group_id = (known after apply)\n"}
+{"sequence":68,"elapsed":21.101903130000004,"at":"2026-11-07T04:45:10.900Z","type":"command-end","target":"local","phase":"plan-create","exitCode":2,"timedOut":false}
+{"sequence":69,"elapsed":21.103387687,"at":"2026-11-07T04:45:10.901Z","type":"command-start","target":"local","phase":"apply-create","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":70,"elapsed":24.164811729,"at":"2026-11-07T04:45:13.962Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":71,"elapsed":24.164993911,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":72,"elapsed":24.165046366000002,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":73,"elapsed":24.165077123000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"  + create\n"}
+{"sequence":74,"elapsed":24.165110005000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":75,"elapsed":24.165140865,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":76,"elapsed":24.165326302,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":77,"elapsed":24.165370652,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"  # azapi_resource.group will be created\n"}
+{"sequence":78,"elapsed":24.165397664,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"  + resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":79,"elapsed":24.165438107000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + body                      = {}\n"}
+{"sequence":80,"elapsed":24.165468187000002,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + id                        = (known after apply)\n"}
+{"sequence":81,"elapsed":24.165494284,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + ignore_body_changes       = (write-only attribute)\n"}
+{"sequence":82,"elapsed":24.165531434000002,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + ignore_casing             = false\n"}
+{"sequence":83,"elapsed":24.165577260000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + ignore_missing_property   = true\n"}
+{"sequence":84,"elapsed":24.165603136,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + ignore_null_property      = false\n"}
+{"sequence":85,"elapsed":24.165637675000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + location                  = \"eastus\"\n"}
+{"sequence":86,"elapsed":24.165663874000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + name                      = \"<group>\"\n"}
+{"sequence":87,"elapsed":24.165687552,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + output                    = (known after apply)\n"}
+{"sequence":88,"elapsed":24.165715180000003,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + parent_id                 = \"/subscriptions/<subscription>\"\n"}
+{"sequence":89,"elapsed":24.16573968,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + schema_validation_enabled = true\n"}
+{"sequence":90,"elapsed":24.165824816,"at":"2026-11-07T04:45:13.963Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + sensitive_body            = (write-only attribute)\n"}
+{"sequence":91,"elapsed":24.165865237000002,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + tags                      = {\n"}
+{"sequence":92,"elapsed":24.165906105,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"          + \"expires\"  = \"<expiry>\"\n"}
+{"sequence":93,"elapsed":24.165943277000004,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"          + \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":94,"elapsed":24.165979367000002,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"          + \"revision\" = \"one\"\n"}
+{"sequence":95,"elapsed":24.166017021000002,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"          + \"run\"      = \"<run>\"\n"}
+{"sequence":96,"elapsed":24.166058702,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"        }\n"}
+{"sequence":97,"elapsed":24.166095453,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n"}
+{"sequence":98,"elapsed":24.166121709000002,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"    }\n"}
+{"sequence":99,"elapsed":24.166144838,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":100,"elapsed":24.166171730000002,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Plan: 1 to add, 0 to change, 0 to destroy.\n"}
+{"sequence":101,"elapsed":24.166199755,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":102,"elapsed":24.166223233,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":103,"elapsed":24.166246266,"at":"2026-11-07T04:45:13.964Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"  + group_id = (known after apply)\n"}
+{"sequence":104,"elapsed":24.705636281000004,"at":"2026-11-07T04:45:14.503Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"azapi_resource.group: Creating...\n"}
+{"sequence":105,"elapsed":24.792772742,"at":"2026-11-07T04:45:14.590Z","type":"http","target":"local","phase":"apply-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":404}
+{"sequence":106,"elapsed":24.798448197000003,"at":"2026-11-07T04:45:14.596Z","type":"http","target":"local","phase":"apply-create","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":201}
+{"sequence":107,"elapsed":24.802490785000003,"at":"2026-11-07T04:45:14.600Z","type":"http","target":"local","phase":"apply-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":108,"elapsed":24.811841937,"at":"2026-11-07T04:45:14.609Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"azapi_resource.group: Creation complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":109,"elapsed":24.827926037,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":110,"elapsed":24.828064922000003,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Apply complete! Resources: 1 added, 0 changed, 0 destroyed.\n"}
+{"sequence":111,"elapsed":24.828109189000003,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":112,"elapsed":24.828145420000002,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"Outputs:\n"}
+{"sequence":113,"elapsed":24.828179892,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":114,"elapsed":24.828218279,"at":"2026-11-07T04:45:14.626Z","type":"output","target":"local","phase":"apply-create","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":115,"elapsed":25.020448022,"at":"2026-11-07T04:45:14.818Z","type":"command-end","target":"local","phase":"apply-create","exitCode":0,"timedOut":false}
+{"sequence":116,"elapsed":25.033625985000004,"at":"2026-11-07T04:45:14.831Z","type":"probe","target":"local","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":117,"elapsed":25.034435039,"at":"2026-11-07T04:45:14.832Z","type":"command-start","target":"local","phase":"plan-stable","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":118,"elapsed":28.045390182000002,"at":"2026-11-07T04:45:17.843Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":119,"elapsed":28.124598354000003,"at":"2026-11-07T04:45:17.922Z","type":"http","target":"local","phase":"plan-stable","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":120,"elapsed":28.167979435,"at":"2026-11-07T04:45:17.966Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"\n"}
+{"sequence":121,"elapsed":28.168108411000002,"at":"2026-11-07T04:45:17.966Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"No changes. Your infrastructure matches the configuration.\n"}
+{"sequence":122,"elapsed":28.168141475,"at":"2026-11-07T04:45:17.966Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"\n"}
+{"sequence":123,"elapsed":28.168166510000002,"at":"2026-11-07T04:45:17.966Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"Terraform has compared your real infrastructure against your configuration\n"}
+{"sequence":124,"elapsed":28.168190137,"at":"2026-11-07T04:45:17.966Z","type":"output","target":"local","phase":"plan-stable","stream":"stdout","text":"and found no differences, so no changes are needed.\n"}
+{"sequence":125,"elapsed":28.364267299,"at":"2026-11-07T04:45:18.162Z","type":"command-end","target":"local","phase":"plan-stable","exitCode":0,"timedOut":false}
+{"sequence":126,"elapsed":28.365990686,"at":"2026-11-07T04:45:18.164Z","type":"command-start","target":"local","phase":"refresh","command":["terraform","apply","-refresh-only","-auto-approve","-input=false","-no-color"]}
+{"sequence":127,"elapsed":31.421258946000002,"at":"2026-11-07T04:45:21.219Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":128,"elapsed":31.509588399000002,"at":"2026-11-07T04:45:21.307Z","type":"http","target":"local","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":129,"elapsed":31.527353850000004,"at":"2026-11-07T04:45:21.325Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":130,"elapsed":31.527550404000003,"at":"2026-11-07T04:45:21.325Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"No changes. Your infrastructure still matches the configuration.\n"}
+{"sequence":131,"elapsed":31.527616743000003,"at":"2026-11-07T04:45:21.325Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":132,"elapsed":31.527684065000003,"at":"2026-11-07T04:45:21.325Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Terraform has checked that the real remote objects still match the result of\n"}
+{"sequence":133,"elapsed":31.527727873000003,"at":"2026-11-07T04:45:21.325Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"your most recent changes, and found no differences.\n"}
+{"sequence":134,"elapsed":32.075470391,"at":"2026-11-07T04:45:21.873Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":135,"elapsed":32.075627071,"at":"2026-11-07T04:45:21.873Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Apply complete! Resources: 0 added, 0 changed, 0 destroyed.\n"}
+{"sequence":136,"elapsed":32.075683545000004,"at":"2026-11-07T04:45:21.873Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":137,"elapsed":32.075772407,"at":"2026-11-07T04:45:21.873Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Outputs:\n"}
+{"sequence":138,"elapsed":32.075830998,"at":"2026-11-07T04:45:21.873Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":139,"elapsed":32.075874672000005,"at":"2026-11-07T04:45:21.874Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":140,"elapsed":32.255921845,"at":"2026-11-07T04:45:22.054Z","type":"command-end","target":"local","phase":"refresh","exitCode":0,"timedOut":false}
+{"sequence":141,"elapsed":32.257720838000004,"at":"2026-11-07T04:45:22.055Z","type":"command-start","target":"local","phase":"plan-update","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":142,"elapsed":35.203534305,"at":"2026-11-07T04:45:25.001Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":143,"elapsed":35.277392936000005,"at":"2026-11-07T04:45:25.075Z","type":"http","target":"local","phase":"plan-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":144,"elapsed":35.35011248200001,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":145,"elapsed":35.350244186000005,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":146,"elapsed":35.35029812,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":147,"elapsed":35.350337929,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":148,"elapsed":35.350372228,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":149,"elapsed":35.350404034,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":150,"elapsed":35.350433599000006,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":151,"elapsed":35.350466704,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":152,"elapsed":35.350525816,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":153,"elapsed":35.350565735,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":154,"elapsed":35.350604107,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":155,"elapsed":35.350634641000006,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":156,"elapsed":35.350666002,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":157,"elapsed":35.350697003,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":158,"elapsed":35.350727688,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":159,"elapsed":35.350791363000006,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"            }\n"}
+{"sequence":160,"elapsed":35.350827049,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":161,"elapsed":35.350857857,"at":"2026-11-07T04:45:25.148Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":162,"elapsed":35.350889465,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":163,"elapsed":35.350919829,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"              - revision = \"one\"\n"}
+{"sequence":164,"elapsed":35.350951357,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":165,"elapsed":35.350981148,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"            }\n"}
+{"sequence":166,"elapsed":35.351012968000006,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":167,"elapsed":35.351057613,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":168,"elapsed":35.351090129000006,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":169,"elapsed":35.351120463,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":170,"elapsed":35.351158389000005,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":171,"elapsed":35.351189202,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"          ~ \"revision\" = \"one\" -> \"two\"\n"}
+{"sequence":172,"elapsed":35.351219883999995,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":173,"elapsed":35.35125020900001,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"        }\n"}
+{"sequence":174,"elapsed":35.351281083,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":175,"elapsed":35.351312118,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"    }\n"}
+{"sequence":176,"elapsed":35.351342242,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":177,"elapsed":35.351372393999995,"at":"2026-11-07T04:45:25.149Z","type":"output","target":"local","phase":"plan-update","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":178,"elapsed":35.543459669,"at":"2026-11-07T04:45:25.341Z","type":"command-end","target":"local","phase":"plan-update","exitCode":2,"timedOut":false}
+{"sequence":179,"elapsed":35.545686866000004,"at":"2026-11-07T04:45:25.343Z","type":"command-start","target":"local","phase":"apply-update","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":180,"elapsed":38.518188723,"at":"2026-11-07T04:45:28.316Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":181,"elapsed":38.586868313,"at":"2026-11-07T04:45:28.385Z","type":"http","target":"local","phase":"apply-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":182,"elapsed":38.638809359,"at":"2026-11-07T04:45:28.436Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":183,"elapsed":38.6390595,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":184,"elapsed":38.639119363999995,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":185,"elapsed":38.639155266,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":186,"elapsed":38.639187854000006,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":187,"elapsed":38.639219817000004,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":188,"elapsed":38.639446462,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":189,"elapsed":38.639511838,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":190,"elapsed":38.639544412000006,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":191,"elapsed":38.639583016,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":192,"elapsed":38.639613817000004,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":193,"elapsed":38.639642866,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":194,"elapsed":38.639673669000004,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":195,"elapsed":38.639703509,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":196,"elapsed":38.639732632,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":197,"elapsed":38.639798466,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"            }\n"}
+{"sequence":198,"elapsed":38.63983008,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":199,"elapsed":38.639859267,"at":"2026-11-07T04:45:28.437Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":200,"elapsed":38.639888657,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":201,"elapsed":38.639916893,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"              - revision = \"one\"\n"}
+{"sequence":202,"elapsed":38.639947387,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":203,"elapsed":38.639977057,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"            }\n"}
+{"sequence":204,"elapsed":38.640015808,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":205,"elapsed":38.640143477,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":206,"elapsed":38.640185029,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":207,"elapsed":38.640216168,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":208,"elapsed":38.640258974000005,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":209,"elapsed":38.640288508000005,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"          ~ \"revision\" = \"one\" -> \"two\"\n"}
+{"sequence":210,"elapsed":38.640318616,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":211,"elapsed":38.640348422,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"        }\n"}
+{"sequence":212,"elapsed":38.640377861,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":213,"elapsed":38.640407102000005,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"    }\n"}
+{"sequence":214,"elapsed":38.640435581999995,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":215,"elapsed":38.640474887,"at":"2026-11-07T04:45:28.438Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":216,"elapsed":39.207970718000006,"at":"2026-11-07T04:45:29.006Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":217,"elapsed":39.284979589,"at":"2026-11-07T04:45:29.083Z","type":"http","target":"local","phase":"apply-update","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":218,"elapsed":39.290322466000006,"at":"2026-11-07T04:45:29.088Z","type":"http","target":"local","phase":"apply-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":219,"elapsed":39.300244538,"at":"2026-11-07T04:45:29.098Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Modifications complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":220,"elapsed":39.317138388,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":221,"elapsed":39.317295335000004,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"Apply complete! Resources: 0 added, 1 changed, 0 destroyed.\n"}
+{"sequence":222,"elapsed":39.317398597,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":223,"elapsed":39.317438106000004,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"Outputs:\n"}
+{"sequence":224,"elapsed":39.317470204,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":225,"elapsed":39.317508018,"at":"2026-11-07T04:45:29.115Z","type":"output","target":"local","phase":"apply-update","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":226,"elapsed":39.487674194,"at":"2026-11-07T04:45:29.285Z","type":"command-end","target":"local","phase":"apply-update","exitCode":0,"timedOut":false}
+{"sequence":227,"elapsed":39.498428814,"at":"2026-11-07T04:45:29.296Z","type":"probe","target":"local","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":228,"elapsed":39.511181271,"at":"2026-11-07T04:45:29.309Z","type":"probe","target":"local","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":229,"elapsed":39.511453273,"at":"2026-11-07T04:45:29.309Z","type":"command-start","target":"local","phase":"plan-drift","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":230,"elapsed":42.508888468,"at":"2026-11-07T04:45:32.307Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":231,"elapsed":42.575371137000005,"at":"2026-11-07T04:45:32.373Z","type":"http","target":"local","phase":"plan-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":232,"elapsed":42.626979944,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":233,"elapsed":42.627130245000004,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":234,"elapsed":42.62719136300001,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":235,"elapsed":42.627223705000006,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":236,"elapsed":42.627247027,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":237,"elapsed":42.627269439,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":238,"elapsed":42.627290582,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":239,"elapsed":42.627312182000004,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":240,"elapsed":42.627333812,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":241,"elapsed":42.627357471,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":242,"elapsed":42.627379385,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":243,"elapsed":42.627400509,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":244,"elapsed":42.62742253300001,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":245,"elapsed":42.627444143,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":246,"elapsed":42.627465476000005,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":247,"elapsed":42.627486576,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"            }\n"}
+{"sequence":248,"elapsed":42.627573057,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":249,"elapsed":42.627616238,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":250,"elapsed":42.627638156,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":251,"elapsed":42.627658101,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"              - revision = \"external\"\n"}
+{"sequence":252,"elapsed":42.627677661,"at":"2026-11-07T04:45:32.425Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":253,"elapsed":42.627865051,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"            }\n"}
+{"sequence":254,"elapsed":42.627931829,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":255,"elapsed":42.627969573,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":256,"elapsed":42.628003107000005,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":257,"elapsed":42.628037198,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":258,"elapsed":42.628068595,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":259,"elapsed":42.628099921,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"          ~ \"revision\" = \"external\" -> \"two\"\n"}
+{"sequence":260,"elapsed":42.628131352000004,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":261,"elapsed":42.628171324,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"        }\n"}
+{"sequence":262,"elapsed":42.62820967100001,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":263,"elapsed":42.628245635,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"    }\n"}
+{"sequence":264,"elapsed":42.62827748,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":265,"elapsed":42.628306906000006,"at":"2026-11-07T04:45:32.426Z","type":"output","target":"local","phase":"plan-drift","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":266,"elapsed":42.827003945,"at":"2026-11-07T04:45:32.625Z","type":"command-end","target":"local","phase":"plan-drift","exitCode":2,"timedOut":false}
+{"sequence":267,"elapsed":42.828382463000004,"at":"2026-11-07T04:45:32.626Z","type":"command-start","target":"local","phase":"apply-repair","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":268,"elapsed":45.820196495000005,"at":"2026-11-07T04:45:35.618Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":269,"elapsed":45.891974299000005,"at":"2026-11-07T04:45:35.690Z","type":"http","target":"local","phase":"apply-repair","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":270,"elapsed":45.945857467,"at":"2026-11-07T04:45:35.743Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":271,"elapsed":45.946094794000004,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":272,"elapsed":45.946154399,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":273,"elapsed":45.946188258,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":274,"elapsed":45.94621752,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":275,"elapsed":45.946246396,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":276,"elapsed":45.946447674000005,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":277,"elapsed":45.946500378,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":278,"elapsed":45.94653070700001,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":279,"elapsed":45.94656315700001,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":280,"elapsed":45.946593089000004,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":281,"elapsed":45.946620066,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":282,"elapsed":45.946650454,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":283,"elapsed":45.946679315000004,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":284,"elapsed":45.946706894,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":285,"elapsed":45.946734225,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"            }\n"}
+{"sequence":286,"elapsed":45.946791663000006,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":287,"elapsed":45.946828807,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":288,"elapsed":45.94686102000001,"at":"2026-11-07T04:45:35.744Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":289,"elapsed":45.946889298,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"              - revision = \"external\"\n"}
+{"sequence":290,"elapsed":45.946932479000004,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":291,"elapsed":45.946961623,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"            }\n"}
+{"sequence":292,"elapsed":45.946988481,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":293,"elapsed":45.947016354,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":294,"elapsed":45.947043732,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":295,"elapsed":45.947076562,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":296,"elapsed":45.947106241,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":297,"elapsed":45.947144345,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"          ~ \"revision\" = \"external\" -> \"two\"\n"}
+{"sequence":298,"elapsed":45.947173098,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":299,"elapsed":45.94720108,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"        }\n"}
+{"sequence":300,"elapsed":45.94722952,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":301,"elapsed":45.947255587,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"    }\n"}
+{"sequence":302,"elapsed":45.947284791,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":303,"elapsed":45.947313220000005,"at":"2026-11-07T04:45:35.745Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":304,"elapsed":46.488703008,"at":"2026-11-07T04:45:36.286Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":305,"elapsed":46.55564872200001,"at":"2026-11-07T04:45:36.353Z","type":"http","target":"local","phase":"apply-repair","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":306,"elapsed":46.558685574,"at":"2026-11-07T04:45:36.356Z","type":"http","target":"local","phase":"apply-repair","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":307,"elapsed":46.566774609,"at":"2026-11-07T04:45:36.364Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Modifications complete after 0s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":308,"elapsed":46.581683873,"at":"2026-11-07T04:45:36.379Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":309,"elapsed":46.581863826,"at":"2026-11-07T04:45:36.380Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"Apply complete! Resources: 0 added, 1 changed, 0 destroyed.\n"}
+{"sequence":310,"elapsed":46.581919458,"at":"2026-11-07T04:45:36.380Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":311,"elapsed":46.581945374,"at":"2026-11-07T04:45:36.380Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"Outputs:\n"}
+{"sequence":312,"elapsed":46.581964459000005,"at":"2026-11-07T04:45:36.380Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":313,"elapsed":46.581984966,"at":"2026-11-07T04:45:36.380Z","type":"output","target":"local","phase":"apply-repair","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":314,"elapsed":46.772231637000004,"at":"2026-11-07T04:45:36.570Z","type":"command-end","target":"local","phase":"apply-repair","exitCode":0,"timedOut":false}
+{"sequence":315,"elapsed":46.782355938,"at":"2026-11-07T04:45:36.580Z","type":"probe","target":"local","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":316,"elapsed":46.782882457,"at":"2026-11-07T04:45:36.581Z","type":"command-start","target":"local","phase":"state-remove","command":["terraform","state","rm","azapi_resource.group"]}
+{"sequence":317,"elapsed":50.340070391,"at":"2026-11-07T04:45:40.138Z","type":"output","target":"local","phase":"state-remove","stream":"stdout","text":"Removed azapi_resource.group\n"}
+{"sequence":318,"elapsed":51.87153002,"at":"2026-11-07T04:45:41.669Z","type":"output","target":"local","phase":"state-remove","stream":"stdout","text":"Successfully removed 1 resource instance(s).\n"}
+{"sequence":319,"elapsed":52.130705599,"at":"2026-11-07T04:45:41.928Z","type":"command-end","target":"local","phase":"state-remove","exitCode":0,"timedOut":false}
+{"sequence":320,"elapsed":52.134134782000004,"at":"2026-11-07T04:45:41.932Z","type":"command-start","target":"local","phase":"import","command":["terraform","import","-input=false","-no-color","azapi_resource.group","/subscriptions/<subscription>/resourcegroups/<group>"]}
+{"sequence":321,"elapsed":54.609699994,"at":"2026-11-07T04:45:44.407Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"azapi_resource.group: Importing from ID \"/subscriptions/<subscription>/resourcegroups/<group>\"...\n"}
+{"sequence":322,"elapsed":54.694103313,"at":"2026-11-07T04:45:44.492Z","type":"http","target":"local","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":323,"elapsed":54.702259372,"at":"2026-11-07T04:45:44.500Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"azapi_resource.group: Import prepared!\n"}
+{"sequence":324,"elapsed":54.702418066999996,"at":"2026-11-07T04:45:44.500Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"  Prepared azapi_resource for import\n"}
+{"sequence":325,"elapsed":54.703874946000006,"at":"2026-11-07T04:45:44.502Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":326,"elapsed":54.709152307000004,"at":"2026-11-07T04:45:44.507Z","type":"http","target":"local","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":327,"elapsed":54.734582497000005,"at":"2026-11-07T04:45:44.532Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":328,"elapsed":54.73468995,"at":"2026-11-07T04:45:44.532Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Import successful!\n"}
+{"sequence":329,"elapsed":54.734715983,"at":"2026-11-07T04:45:44.532Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":330,"elapsed":54.734761604,"at":"2026-11-07T04:45:44.532Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"The resources that were imported are shown above. These resources are now in\n"}
+{"sequence":331,"elapsed":54.73482112,"at":"2026-11-07T04:45:44.532Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"your Terraform state and will henceforth be managed by Terraform.\n"}
+{"sequence":332,"elapsed":54.734864071000004,"at":"2026-11-07T04:45:44.533Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":333,"elapsed":54.910204029,"at":"2026-11-07T04:45:44.708Z","type":"command-end","target":"local","phase":"import","exitCode":0,"timedOut":false}
+{"sequence":334,"elapsed":54.911888457,"at":"2026-11-07T04:45:44.710Z","type":"command-start","target":"local","phase":"plan-imported","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":335,"elapsed":57.885795890000004,"at":"2026-11-07T04:45:47.683Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":336,"elapsed":57.959451744999996,"at":"2026-11-07T04:45:47.757Z","type":"http","target":"local","phase":"plan-imported","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":337,"elapsed":58.000145623,"at":"2026-11-07T04:45:47.798Z","type":"http","target":"local","phase":"plan-imported","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":338,"elapsed":58.013658138,"at":"2026-11-07T04:45:47.811Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"\n"}
+{"sequence":339,"elapsed":58.013805618999996,"at":"2026-11-07T04:45:47.811Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"No changes. Your infrastructure matches the configuration.\n"}
+{"sequence":340,"elapsed":58.013857358,"at":"2026-11-07T04:45:47.811Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"\n"}
+{"sequence":341,"elapsed":58.013897230000005,"at":"2026-11-07T04:45:47.812Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"Terraform has compared your real infrastructure against your configuration\n"}
+{"sequence":342,"elapsed":58.013926712,"at":"2026-11-07T04:45:47.812Z","type":"output","target":"local","phase":"plan-imported","stream":"stdout","text":"and found no differences, so no changes are needed.\n"}
+{"sequence":343,"elapsed":58.203275872,"at":"2026-11-07T04:45:48.001Z","type":"command-end","target":"local","phase":"plan-imported","exitCode":0,"timedOut":false}
+{"sequence":344,"elapsed":58.204976531,"at":"2026-11-07T04:45:48.003Z","type":"command-start","target":"local","phase":"destroy","command":["terraform","destroy","-auto-approve","-input=false","-no-color"]}
+{"sequence":345,"elapsed":61.193551181000004,"at":"2026-11-07T04:45:50.991Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":346,"elapsed":61.273133974000004,"at":"2026-11-07T04:45:51.071Z","type":"http","target":"local","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":347,"elapsed":61.322218043,"at":"2026-11-07T04:45:51.120Z","type":"http","target":"local","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":348,"elapsed":61.90547576,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":349,"elapsed":61.905623787,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":350,"elapsed":61.905668308,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":351,"elapsed":61.905717212000006,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"  - destroy\n"}
+{"sequence":352,"elapsed":61.905782178,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":353,"elapsed":61.905840109,"at":"2026-11-07T04:45:51.703Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":354,"elapsed":61.905870724,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":355,"elapsed":61.905900522,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"  # azapi_resource.group will be destroyed\n"}
+{"sequence":356,"elapsed":61.905930005,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"  - resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":357,"elapsed":61.905957098,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - body                      = {\n"}
+{"sequence":358,"elapsed":61.905985673,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - properties = {}\n"}
+{"sequence":359,"elapsed":61.906018629,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":360,"elapsed":61.906047872,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - id                        = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\n"}
+{"sequence":361,"elapsed":61.906076446,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - ignore_body_changes       = (write-only attribute) -> null\n"}
+{"sequence":362,"elapsed":61.906102017,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - ignore_casing             = false -> null\n"}
+{"sequence":363,"elapsed":61.906127407,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - ignore_missing_property   = true -> null\n"}
+{"sequence":364,"elapsed":61.906152662000004,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - ignore_null_property      = false -> null\n"}
+{"sequence":365,"elapsed":61.906179839,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - location                  = \"eastus\" -> null\n"}
+{"sequence":366,"elapsed":61.90621299,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - name                      = \"<group>\" -> null\n"}
+{"sequence":367,"elapsed":61.906241558000005,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - output                    = {\n"}
+{"sequence":368,"elapsed":61.906272171000005,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":369,"elapsed":61.906299199,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":370,"elapsed":61.906326902,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":371,"elapsed":61.906357381,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"            }\n"}
+{"sequence":372,"elapsed":61.906393038000004,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":373,"elapsed":61.906421161,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":374,"elapsed":61.906447254,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":375,"elapsed":61.906486528,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"              - revision = \"two\"\n"}
+{"sequence":376,"elapsed":61.90651303,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":377,"elapsed":61.906538578,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"            }\n"}
+{"sequence":378,"elapsed":61.906571633,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":379,"elapsed":61.906597542,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":380,"elapsed":61.906623935000006,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - parent_id                 = \"/subscriptions/<subscription>\" -> null\n"}
+{"sequence":381,"elapsed":61.906650044,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - schema_validation_enabled = true -> null\n"}
+{"sequence":382,"elapsed":61.906676534,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - sensitive_body            = (write-only attribute) -> null\n"}
+{"sequence":383,"elapsed":61.906702163,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - tags                      = {\n"}
+{"sequence":384,"elapsed":61.906727888,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - \"expires\"  = \"<expiry>\"\n"}
+{"sequence":385,"elapsed":61.906783441,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":386,"elapsed":61.906812057,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - \"revision\" = \"two\"\n"}
+{"sequence":387,"elapsed":61.906838144,"at":"2026-11-07T04:45:51.704Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"          - \"run\"      = \"<run>\"\n"}
+{"sequence":388,"elapsed":61.906863493,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":389,"elapsed":61.906890086,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"      - type                      = \"Microsoft.Resources/resourceGroups@2025-04-01\" -> null\n"}
+{"sequence":390,"elapsed":61.906915343,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"    }\n"}
+{"sequence":391,"elapsed":61.906940541000004,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":392,"elapsed":61.906966373,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Plan: 0 to add, 0 to change, 1 to destroy.\n"}
+{"sequence":393,"elapsed":61.907002822,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":394,"elapsed":61.907029233,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":395,"elapsed":61.907057236,"at":"2026-11-07T04:45:51.705Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"  - group_id = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\n"}
+{"sequence":396,"elapsed":62.402720587000005,"at":"2026-11-07T04:45:52.200Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Destroying... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":397,"elapsed":62.489481760000004,"at":"2026-11-07T04:45:52.287Z","type":"http","target":"local","phase":"destroy","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":398,"elapsed":62.49248252,"at":"2026-11-07T04:45:52.290Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Destruction complete after 0s\n"}
+{"sequence":399,"elapsed":62.510928602,"at":"2026-11-07T04:45:52.309Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":400,"elapsed":62.511059927000005,"at":"2026-11-07T04:45:52.309Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Destroy complete! Resources: 1 destroyed.\n"}
+{"sequence":401,"elapsed":62.6933493,"at":"2026-11-07T04:45:52.491Z","type":"command-end","target":"local","phase":"destroy","exitCode":0,"timedOut":false}
+{"sequence":402,"elapsed":62.701406773,"at":"2026-11-07T04:45:52.499Z","type":"probe","target":"local","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":403,"elapsed":62.708594287,"at":"2026-11-07T04:45:52.506Z","type":"probe","target":"local","phase":"cleanup-read","method":"GET","status":404}
+{"sequence":404,"elapsed":62.719826921,"at":"2026-11-07T04:45:52.517Z","type":"probe","target":"local","phase":"cleanup-absence","method":"GET","status":404}
+{"sequence":405,"elapsed":63.191980143,"at":"2026-11-07T04:45:52.990Z","type":"target-end","target":"local","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"privateFilesRemoved":true}}
+{"sequence":406,"elapsed":63.194561456,"at":"2026-11-07T04:45:52.992Z","type":"target-start","target":"azure"}
+{"sequence":407,"elapsed":67.15645067999999,"at":"2026-11-07T04:45:56.954Z","type":"probe","target":"azure","phase":"preflight","method":"GET","status":404}
+{"sequence":408,"elapsed":67.159627365,"at":"2026-11-07T04:45:56.957Z","type":"command-start","target":"azure","phase":"version","command":["terraform","version","-json"]}
+{"sequence":409,"elapsed":67.50457436100001,"at":"2026-11-07T04:45:57.302Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"{\n"}
+{"sequence":410,"elapsed":67.50469527199999,"at":"2026-11-07T04:45:57.302Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  \"format_version\": \"1.0\",\n"}
+{"sequence":411,"elapsed":67.504723658,"at":"2026-11-07T04:45:57.302Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  \"terraform_version\": \"1.17.1\",\n"}
+{"sequence":412,"elapsed":67.504792277,"at":"2026-11-07T04:45:57.302Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  \"platform\": \"linux_amd64\",\n"}
+{"sequence":413,"elapsed":67.504843626,"at":"2026-11-07T04:45:57.302Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  \"provider_selections\": {\n"}
+{"sequence":414,"elapsed":67.504876059,"at":"2026-11-07T04:45:57.303Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"    \"registry.terraform.io/azure/azapi\": \"2.13.0\"\n"}
+{"sequence":415,"elapsed":67.504923507,"at":"2026-11-07T04:45:57.303Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  },\n"}
+{"sequence":416,"elapsed":67.504946228,"at":"2026-11-07T04:45:57.303Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"  \"terraform_outdated\": false\n"}
+{"sequence":417,"elapsed":67.504963227,"at":"2026-11-07T04:45:57.303Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"}\n"}
+{"sequence":418,"elapsed":67.661139993,"at":"2026-11-07T04:45:57.459Z","type":"command-end","target":"azure","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":419,"elapsed":67.662832111,"at":"2026-11-07T04:45:57.460Z","type":"command-start","target":"azure","phase":"format","command":["terraform","fmt","-check"]}
+{"sequence":420,"elapsed":68.155331578,"at":"2026-11-07T04:45:57.953Z","type":"command-end","target":"azure","phase":"format","exitCode":0,"timedOut":false}
+{"sequence":421,"elapsed":68.15703789400001,"at":"2026-11-07T04:45:57.955Z","type":"command-start","target":"azure","phase":"init","command":["terraform","init","-input=false","-lockfile=readonly","-no-color"]}
+{"sequence":422,"elapsed":68.48453023600001,"at":"2026-11-07T04:45:58.282Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"Initializing the backend...\n"}
+{"sequence":423,"elapsed":68.491206647,"at":"2026-11-07T04:45:58.289Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"\n"}
+{"sequence":424,"elapsed":68.49409104,"at":"2026-11-07T04:45:58.292Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"Initializing provider plugins...\n"}
+{"sequence":425,"elapsed":68.494235533,"at":"2026-11-07T04:45:58.292Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"- Reusing version 2.13.0 of azure/azapi from the dependency lock file\n"}
+{"sequence":426,"elapsed":69.449761513,"at":"2026-11-07T04:45:59.247Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"- Installing azure/azapi v2.13.0...\n"}
+{"sequence":427,"elapsed":76.94373407200001,"at":"2026-11-07T04:46:06.741Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"- Installed azure/azapi v2.13.0 (signed by a HashiCorp partner, key ID 6F0B91BDE98478CF)\n"}
+{"sequence":428,"elapsed":76.943928332,"at":"2026-11-07T04:46:06.742Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"Partner and community providers are signed by their developers.\n"}
+{"sequence":429,"elapsed":76.943973572,"at":"2026-11-07T04:46:06.742Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"If you'd like to know more about provider signing, you can read about it here:\n"}
+{"sequence":430,"elapsed":76.944005502,"at":"2026-11-07T04:46:06.742Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"https://developer.hashicorp.com/terraform/cli/plugins/signing\n"}
+{"sequence":431,"elapsed":76.944167145,"at":"2026-11-07T04:46:06.742Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"\n"}
+{"sequence":432,"elapsed":76.944198758,"at":"2026-11-07T04:46:06.742Z","type":"output","target":"azure","phase":"init","stream":"stdout","text":"Terraform has been successfully initialized!\n"}
+{"sequence":433,"elapsed":78.78070295600001,"at":"2026-11-07T04:46:08.578Z","type":"command-end","target":"azure","phase":"init","exitCode":0,"timedOut":false}
+{"sequence":434,"elapsed":78.782459183,"at":"2026-11-07T04:46:08.580Z","type":"command-start","target":"azure","phase":"validate","command":["terraform","validate","-no-color"]}
+{"sequence":435,"elapsed":81.282115657,"at":"2026-11-07T04:46:11.080Z","type":"output","target":"azure","phase":"validate","stream":"stdout","text":"Success! The configuration is valid.\n"}
+{"sequence":436,"elapsed":81.28225420199999,"at":"2026-11-07T04:46:11.080Z","type":"output","target":"azure","phase":"validate","stream":"stdout","text":"\n"}
+{"sequence":437,"elapsed":81.442482115,"at":"2026-11-07T04:46:11.240Z","type":"command-end","target":"azure","phase":"validate","exitCode":0,"timedOut":false}
+{"sequence":438,"elapsed":81.44490163900001,"at":"2026-11-07T04:46:11.243Z","type":"command-start","target":"azure","phase":"plan-create","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":439,"elapsed":84.520466041,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":440,"elapsed":84.520611004,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":441,"elapsed":84.520641936,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":442,"elapsed":84.52066312900001,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"  + create\n"}
+{"sequence":443,"elapsed":84.520682995,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":444,"elapsed":84.520703213,"at":"2026-11-07T04:46:14.318Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":445,"elapsed":84.5220359,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":446,"elapsed":84.522157386,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"  # azapi_resource.group will be created\n"}
+{"sequence":447,"elapsed":84.522200248,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"  + resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":448,"elapsed":84.52223216,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + body                      = {}\n"}
+{"sequence":449,"elapsed":84.522261715,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + id                        = (known after apply)\n"}
+{"sequence":450,"elapsed":84.52229224,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + ignore_body_changes       = (write-only attribute)\n"}
+{"sequence":451,"elapsed":84.522319979,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + ignore_casing             = false\n"}
+{"sequence":452,"elapsed":84.522471737,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + ignore_missing_property   = true\n"}
+{"sequence":453,"elapsed":84.522511299,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + ignore_null_property      = false\n"}
+{"sequence":454,"elapsed":84.522540874,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + location                  = \"eastus\"\n"}
+{"sequence":455,"elapsed":84.52257006399999,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + name                      = \"<group>\"\n"}
+{"sequence":456,"elapsed":84.522599477,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + output                    = (known after apply)\n"}
+{"sequence":457,"elapsed":84.522629111,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + parent_id                 = \"/subscriptions/<subscription>\"\n"}
+{"sequence":458,"elapsed":84.52265677,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + schema_validation_enabled = true\n"}
+{"sequence":459,"elapsed":84.522701442,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + sensitive_body            = (write-only attribute)\n"}
+{"sequence":460,"elapsed":84.522728333,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + tags                      = {\n"}
+{"sequence":461,"elapsed":84.522795593,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"          + \"expires\"  = \"<expiry>\"\n"}
+{"sequence":462,"elapsed":84.522829931,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"          + \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":463,"elapsed":84.52285723199999,"at":"2026-11-07T04:46:14.320Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"          + \"revision\" = \"one\"\n"}
+{"sequence":464,"elapsed":84.522883313,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"          + \"run\"      = \"<run>\"\n"}
+{"sequence":465,"elapsed":84.522910169,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"        }\n"}
+{"sequence":466,"elapsed":84.522936193,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n"}
+{"sequence":467,"elapsed":84.522962417,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"    }\n"}
+{"sequence":468,"elapsed":84.52299066399999,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":469,"elapsed":84.523017438,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"Plan: 1 to add, 0 to change, 0 to destroy.\n"}
+{"sequence":470,"elapsed":84.523042456,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"\n"}
+{"sequence":471,"elapsed":84.52306880500001,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":472,"elapsed":84.52309825500001,"at":"2026-11-07T04:46:14.321Z","type":"output","target":"azure","phase":"plan-create","stream":"stdout","text":"  + group_id = (known after apply)\n"}
+{"sequence":473,"elapsed":84.688116478,"at":"2026-11-07T04:46:14.486Z","type":"command-end","target":"azure","phase":"plan-create","exitCode":2,"timedOut":false}
+{"sequence":474,"elapsed":84.695597863,"at":"2026-11-07T04:46:14.493Z","type":"command-start","target":"azure","phase":"apply-create","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":475,"elapsed":87.787198418,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":476,"elapsed":87.787357505,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":477,"elapsed":87.78740924399999,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":478,"elapsed":87.787462205,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"  + create\n"}
+{"sequence":479,"elapsed":87.787494573,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":480,"elapsed":87.787540507,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":481,"elapsed":87.787572541,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":482,"elapsed":87.787601058,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"  # azapi_resource.group will be created\n"}
+{"sequence":483,"elapsed":87.787629697,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"  + resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":484,"elapsed":87.787657053,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + body                      = {}\n"}
+{"sequence":485,"elapsed":87.78768514000001,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + id                        = (known after apply)\n"}
+{"sequence":486,"elapsed":87.78771481400001,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + ignore_body_changes       = (write-only attribute)\n"}
+{"sequence":487,"elapsed":87.787776827,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + ignore_casing             = false\n"}
+{"sequence":488,"elapsed":87.787814944,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + ignore_missing_property   = true\n"}
+{"sequence":489,"elapsed":87.787845326,"at":"2026-11-07T04:46:17.585Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + ignore_null_property      = false\n"}
+{"sequence":490,"elapsed":87.78787545200001,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + location                  = \"eastus\"\n"}
+{"sequence":491,"elapsed":87.78790523800001,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + name                      = \"<group>\"\n"}
+{"sequence":492,"elapsed":87.787936032,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + output                    = (known after apply)\n"}
+{"sequence":493,"elapsed":87.787967201,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + parent_id                 = \"/subscriptions/<subscription>\"\n"}
+{"sequence":494,"elapsed":87.787995467,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + schema_validation_enabled = true\n"}
+{"sequence":495,"elapsed":87.788023984,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + sensitive_body            = (write-only attribute)\n"}
+{"sequence":496,"elapsed":87.78805298799999,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + tags                      = {\n"}
+{"sequence":497,"elapsed":87.788082937,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"          + \"expires\"  = \"<expiry>\"\n"}
+{"sequence":498,"elapsed":87.788111185,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"          + \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":499,"elapsed":87.788139581,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"          + \"revision\" = \"one\"\n"}
+{"sequence":500,"elapsed":87.788196462,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"          + \"run\"      = \"<run>\"\n"}
+{"sequence":501,"elapsed":87.788226235,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"        }\n"}
+{"sequence":502,"elapsed":87.788252853,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"      + type                      = \"Microsoft.Resources/resourceGroups@2021-04-01\"\n"}
+{"sequence":503,"elapsed":87.788281622,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"    }\n"}
+{"sequence":504,"elapsed":87.78830912800001,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":505,"elapsed":87.788338225,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Plan: 1 to add, 0 to change, 0 to destroy.\n"}
+{"sequence":506,"elapsed":87.788365946,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":507,"elapsed":87.788393578,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":508,"elapsed":87.788433746,"at":"2026-11-07T04:46:17.586Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"  + group_id = (known after apply)\n"}
+{"sequence":509,"elapsed":88.353332611,"at":"2026-11-07T04:46:18.151Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"azapi_resource.group: Creating...\n"}
+{"sequence":510,"elapsed":90.21040290299999,"at":"2026-11-07T04:46:20.008Z","type":"http","target":"azure","phase":"apply-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":404}
+{"sequence":511,"elapsed":92.190119488,"at":"2026-11-07T04:46:21.988Z","type":"http","target":"azure","phase":"apply-create","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":201}
+{"sequence":512,"elapsed":92.962252538,"at":"2026-11-07T04:46:22.760Z","type":"http","target":"azure","phase":"apply-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":513,"elapsed":92.971250977,"at":"2026-11-07T04:46:22.769Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"azapi_resource.group: Creation complete after 5s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":514,"elapsed":92.9847017,"at":"2026-11-07T04:46:22.782Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":515,"elapsed":92.98486622700001,"at":"2026-11-07T04:46:22.783Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Apply complete! Resources: 1 added, 0 changed, 0 destroyed.\n"}
+{"sequence":516,"elapsed":92.98490350300001,"at":"2026-11-07T04:46:22.783Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":517,"elapsed":92.984923583,"at":"2026-11-07T04:46:22.783Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"Outputs:\n"}
+{"sequence":518,"elapsed":92.984941502,"at":"2026-11-07T04:46:22.783Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"\n"}
+{"sequence":519,"elapsed":92.98496150000001,"at":"2026-11-07T04:46:22.783Z","type":"output","target":"azure","phase":"apply-create","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":520,"elapsed":93.182369445,"at":"2026-11-07T04:46:22.980Z","type":"command-end","target":"azure","phase":"apply-create","exitCode":0,"timedOut":false}
+{"sequence":521,"elapsed":93.768666778,"at":"2026-11-07T04:46:23.566Z","type":"probe","target":"azure","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":522,"elapsed":93.768790024,"at":"2026-11-07T04:46:23.566Z","type":"portal-pending","target":"azure","phase":"created","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":523,"elapsed":93.769082482,"at":"2026-11-07T04:46:23.567Z","type":"command-start","target":"azure","phase":"plan-stable","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":524,"elapsed":96.79297465,"at":"2026-11-07T04:46:26.591Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":525,"elapsed":97.385860848,"at":"2026-11-07T04:46:27.183Z","type":"http","target":"azure","phase":"plan-stable","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":526,"elapsed":97.431460131,"at":"2026-11-07T04:46:27.229Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"\n"}
+{"sequence":527,"elapsed":97.43162364800001,"at":"2026-11-07T04:46:27.229Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"No changes. Your infrastructure matches the configuration.\n"}
+{"sequence":528,"elapsed":97.431659939,"at":"2026-11-07T04:46:27.229Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"\n"}
+{"sequence":529,"elapsed":97.431682068,"at":"2026-11-07T04:46:27.229Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"Terraform has compared your real infrastructure against your configuration\n"}
+{"sequence":530,"elapsed":97.43170209,"at":"2026-11-07T04:46:27.229Z","type":"output","target":"azure","phase":"plan-stable","stream":"stdout","text":"and found no differences, so no changes are needed.\n"}
+{"sequence":531,"elapsed":97.627551438,"at":"2026-11-07T04:46:27.425Z","type":"command-end","target":"azure","phase":"plan-stable","exitCode":0,"timedOut":false}
+{"sequence":532,"elapsed":97.629127708,"at":"2026-11-07T04:46:27.427Z","type":"command-start","target":"azure","phase":"refresh","command":["terraform","apply","-refresh-only","-auto-approve","-input=false","-no-color"]}
+{"sequence":533,"elapsed":100.758382587,"at":"2026-11-07T04:46:30.556Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":534,"elapsed":101.32898590699999,"at":"2026-11-07T04:46:31.127Z","type":"http","target":"azure","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":535,"elapsed":101.349084909,"at":"2026-11-07T04:46:31.147Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":536,"elapsed":101.349252276,"at":"2026-11-07T04:46:31.147Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"No changes. Your infrastructure still matches the configuration.\n"}
+{"sequence":537,"elapsed":101.349301203,"at":"2026-11-07T04:46:31.147Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":538,"elapsed":101.349335155,"at":"2026-11-07T04:46:31.147Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Terraform has checked that the real remote objects still match the result of\n"}
+{"sequence":539,"elapsed":101.349371444,"at":"2026-11-07T04:46:31.147Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"your most recent changes, and found no differences.\n"}
+{"sequence":540,"elapsed":101.904042227,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":541,"elapsed":101.904149923,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Apply complete! Resources: 0 added, 0 changed, 0 destroyed.\n"}
+{"sequence":542,"elapsed":101.904224258,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":543,"elapsed":101.90424689,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Outputs:\n"}
+{"sequence":544,"elapsed":101.904264644,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":545,"elapsed":101.904284717,"at":"2026-11-07T04:46:31.702Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":546,"elapsed":102.101412576,"at":"2026-11-07T04:46:31.899Z","type":"command-end","target":"azure","phase":"refresh","exitCode":0,"timedOut":false}
+{"sequence":547,"elapsed":102.10417146500001,"at":"2026-11-07T04:46:31.902Z","type":"command-start","target":"azure","phase":"plan-update","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":548,"elapsed":105.179013915,"at":"2026-11-07T04:46:34.977Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":549,"elapsed":105.432576849,"at":"2026-11-07T04:46:35.230Z","type":"http","target":"azure","phase":"plan-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":550,"elapsed":105.48744978100001,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":551,"elapsed":105.487587024,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":552,"elapsed":105.48764814600001,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":553,"elapsed":105.48767909200001,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":554,"elapsed":105.487705024,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":555,"elapsed":105.487731108,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":556,"elapsed":105.48780722400001,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":557,"elapsed":105.487844119,"at":"2026-11-07T04:46:35.285Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":558,"elapsed":105.487868012,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":559,"elapsed":105.48789345600001,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":560,"elapsed":105.48791642500001,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":561,"elapsed":105.48793942399999,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":562,"elapsed":105.487981562,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":563,"elapsed":105.488007162,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":564,"elapsed":105.488033798,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":565,"elapsed":105.488058939,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"            }\n"}
+{"sequence":566,"elapsed":105.488083872,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":567,"elapsed":105.488116844,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":568,"elapsed":105.488143433,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":569,"elapsed":105.488169383,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"              - revision = \"one\"\n"}
+{"sequence":570,"elapsed":105.48819517999999,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":571,"elapsed":105.488219924,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"            }\n"}
+{"sequence":572,"elapsed":105.488245812,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":573,"elapsed":105.48827071500001,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":574,"elapsed":105.48829605200001,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":575,"elapsed":105.488322019,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":576,"elapsed":105.488346693,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":577,"elapsed":105.488372019,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"          ~ \"revision\" = \"one\" -> \"two\"\n"}
+{"sequence":578,"elapsed":105.488397948,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":579,"elapsed":105.488422496,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"        }\n"}
+{"sequence":580,"elapsed":105.48844663400001,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":581,"elapsed":105.488470981,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"    }\n"}
+{"sequence":582,"elapsed":105.488495046,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"\n"}
+{"sequence":583,"elapsed":105.488537778,"at":"2026-11-07T04:46:35.286Z","type":"output","target":"azure","phase":"plan-update","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":584,"elapsed":105.660102771,"at":"2026-11-07T04:46:35.458Z","type":"command-end","target":"azure","phase":"plan-update","exitCode":2,"timedOut":false}
+{"sequence":585,"elapsed":105.66226026199999,"at":"2026-11-07T04:46:35.460Z","type":"command-start","target":"azure","phase":"apply-update","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":586,"elapsed":108.655162734,"at":"2026-11-07T04:46:38.453Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":587,"elapsed":108.95621846,"at":"2026-11-07T04:46:38.754Z","type":"http","target":"azure","phase":"apply-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":588,"elapsed":109.007460496,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":589,"elapsed":109.007679388,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":590,"elapsed":109.00776175,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":591,"elapsed":109.007804517,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":592,"elapsed":109.007834352,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":593,"elapsed":109.007857557,"at":"2026-11-07T04:46:38.805Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":594,"elapsed":109.007977653,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":595,"elapsed":109.008016377,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":596,"elapsed":109.008039396,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":597,"elapsed":109.00806105800001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":598,"elapsed":109.008080979,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":599,"elapsed":109.008100278,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":600,"elapsed":109.00812019600001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":601,"elapsed":109.008139285,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":602,"elapsed":109.00815824,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":603,"elapsed":109.00819175,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"            }\n"}
+{"sequence":604,"elapsed":109.00821571600001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":605,"elapsed":109.008235557,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":606,"elapsed":109.008257653,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":607,"elapsed":109.00827589800001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"              - revision = \"one\"\n"}
+{"sequence":608,"elapsed":109.008307863,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":609,"elapsed":109.00832610200001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"            }\n"}
+{"sequence":610,"elapsed":109.008344123,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":611,"elapsed":109.00836129100001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":612,"elapsed":109.008378854,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":613,"elapsed":109.008396588,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":614,"elapsed":109.00841399400001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":615,"elapsed":109.008431667,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"          ~ \"revision\" = \"one\" -> \"two\"\n"}
+{"sequence":616,"elapsed":109.00844971100001,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":617,"elapsed":109.008467334,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"        }\n"}
+{"sequence":618,"elapsed":109.008484857,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":619,"elapsed":109.008502183,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"    }\n"}
+{"sequence":620,"elapsed":109.008522063,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":621,"elapsed":109.008539822,"at":"2026-11-07T04:46:38.806Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":622,"elapsed":109.563785764,"at":"2026-11-07T04:46:39.361Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":623,"elapsed":110.902490362,"at":"2026-11-07T04:46:40.700Z","type":"http","target":"azure","phase":"apply-update","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":624,"elapsed":111.110706977,"at":"2026-11-07T04:46:40.908Z","type":"http","target":"azure","phase":"apply-update","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":625,"elapsed":111.122275574,"at":"2026-11-07T04:46:40.920Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"azapi_resource.group: Modifications complete after 2s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":626,"elapsed":111.140356618,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":627,"elapsed":111.140490336,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"Apply complete! Resources: 0 added, 1 changed, 0 destroyed.\n"}
+{"sequence":628,"elapsed":111.140522918,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":629,"elapsed":111.140550007,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"Outputs:\n"}
+{"sequence":630,"elapsed":111.14057495,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"\n"}
+{"sequence":631,"elapsed":111.140602836,"at":"2026-11-07T04:46:40.938Z","type":"output","target":"azure","phase":"apply-update","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":632,"elapsed":111.34232067800001,"at":"2026-11-07T04:46:41.140Z","type":"command-end","target":"azure","phase":"apply-update","exitCode":0,"timedOut":false}
+{"sequence":633,"elapsed":112.16404146200001,"at":"2026-11-07T04:46:41.962Z","type":"probe","target":"azure","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":634,"elapsed":112.164147862,"at":"2026-11-07T04:46:41.962Z","type":"portal-pending","target":"azure","phase":"updated","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":635,"elapsed":114.123380062,"at":"2026-11-07T04:46:43.921Z","type":"probe","target":"azure","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":636,"elapsed":114.123644795,"at":"2026-11-07T04:46:43.921Z","type":"command-start","target":"azure","phase":"plan-drift","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":637,"elapsed":117.061010674,"at":"2026-11-07T04:46:46.859Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":638,"elapsed":117.687113218,"at":"2026-11-07T04:46:47.485Z","type":"http","target":"azure","phase":"plan-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":639,"elapsed":117.74082203500001,"at":"2026-11-07T04:46:47.538Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":640,"elapsed":117.740972513,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":641,"elapsed":117.741024056,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":642,"elapsed":117.741055684,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":643,"elapsed":117.74108266300001,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":644,"elapsed":117.74112451399999,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":645,"elapsed":117.741260796,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":646,"elapsed":117.741296507,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":647,"elapsed":117.741322267,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":648,"elapsed":117.74135084100001,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":649,"elapsed":117.74137632,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":650,"elapsed":117.741402115,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":651,"elapsed":117.741428711,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":652,"elapsed":117.741453469,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":653,"elapsed":117.74147823999999,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":654,"elapsed":117.741502945,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"            }\n"}
+{"sequence":655,"elapsed":117.741543538,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":656,"elapsed":117.741569325,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":657,"elapsed":117.741594838,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":658,"elapsed":117.741620459,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"              - revision = \"external\"\n"}
+{"sequence":659,"elapsed":117.741646617,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":660,"elapsed":117.74167220100001,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"            }\n"}
+{"sequence":661,"elapsed":117.741698162,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":662,"elapsed":117.741724514,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":663,"elapsed":117.741793655,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":664,"elapsed":117.74182819699999,"at":"2026-11-07T04:46:47.539Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":665,"elapsed":117.741868111,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":666,"elapsed":117.74189521299999,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"          ~ \"revision\" = \"external\" -> \"two\"\n"}
+{"sequence":667,"elapsed":117.741921694,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":668,"elapsed":117.741947246,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"        }\n"}
+{"sequence":669,"elapsed":117.741972777,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":670,"elapsed":117.74199688200001,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"    }\n"}
+{"sequence":671,"elapsed":117.742023059,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"\n"}
+{"sequence":672,"elapsed":117.74206073500001,"at":"2026-11-07T04:46:47.540Z","type":"output","target":"azure","phase":"plan-drift","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":673,"elapsed":117.914169371,"at":"2026-11-07T04:46:47.712Z","type":"command-end","target":"azure","phase":"plan-drift","exitCode":2,"timedOut":false}
+{"sequence":674,"elapsed":117.91724519899999,"at":"2026-11-07T04:46:47.715Z","type":"command-start","target":"azure","phase":"apply-repair","command":["terraform","apply","-auto-approve","-input=false","-no-color"]}
+{"sequence":675,"elapsed":120.979929084,"at":"2026-11-07T04:46:50.778Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":676,"elapsed":121.683882314,"at":"2026-11-07T04:46:51.482Z","type":"http","target":"azure","phase":"apply-repair","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":677,"elapsed":121.73404362500001,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":678,"elapsed":121.734200687,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":679,"elapsed":121.734249404,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":680,"elapsed":121.73428463799999,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"  ~ update in-place\n"}
+{"sequence":681,"elapsed":121.73431799,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":682,"elapsed":121.734349687,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":683,"elapsed":121.734528435,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":684,"elapsed":121.7345871,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"  # azapi_resource.group will be updated in-place\n"}
+{"sequence":685,"elapsed":121.734623603,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"  ~ resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":686,"elapsed":121.73467600400001,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"        id                        = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":687,"elapsed":121.73470790900001,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"        name                      = \"<group>\"\n"}
+{"sequence":688,"elapsed":121.734734442,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"      ~ output                    = {\n"}
+{"sequence":689,"elapsed":121.734798132,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":690,"elapsed":121.734829096,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":691,"elapsed":121.734857372,"at":"2026-11-07T04:46:51.532Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":692,"elapsed":121.73488509900001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"            }\n"}
+{"sequence":693,"elapsed":121.73491194900001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":694,"elapsed":121.73494068699999,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":695,"elapsed":121.73496776,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":696,"elapsed":121.734996438,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"              - revision = \"external\"\n"}
+{"sequence":697,"elapsed":121.735025999,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":698,"elapsed":121.735056079,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"            }\n"}
+{"sequence":699,"elapsed":121.73508438300001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":700,"elapsed":121.73511133100001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"        } -> (known after apply)\n"}
+{"sequence":701,"elapsed":121.73513847400001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"      ~ tags                      = {\n"}
+{"sequence":702,"elapsed":121.735166623,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"            \"expires\"  = \"<expiry>\"\n"}
+{"sequence":703,"elapsed":121.735195201,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"            \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":704,"elapsed":121.735223398,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"          ~ \"revision\" = \"external\" -> \"two\"\n"}
+{"sequence":705,"elapsed":121.735249677,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"            \"run\"      = \"<run>\"\n"}
+{"sequence":706,"elapsed":121.73529017999999,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"        }\n"}
+{"sequence":707,"elapsed":121.73532203500001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"        # (10 unchanged attributes hidden)\n"}
+{"sequence":708,"elapsed":121.73534802600001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"    }\n"}
+{"sequence":709,"elapsed":121.73537567700001,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":710,"elapsed":121.735404261,"at":"2026-11-07T04:46:51.533Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"Plan: 0 to add, 1 to change, 0 to destroy.\n"}
+{"sequence":711,"elapsed":122.303734304,"at":"2026-11-07T04:46:52.101Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Modifying... [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":712,"elapsed":124.234145003,"at":"2026-11-07T04:46:54.032Z","type":"http","target":"azure","phase":"apply-repair","method":"PUT","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":713,"elapsed":124.671708928,"at":"2026-11-07T04:46:54.469Z","type":"http","target":"azure","phase":"apply-repair","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":714,"elapsed":124.68100454399999,"at":"2026-11-07T04:46:54.479Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"azapi_resource.group: Modifications complete after 2s [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":715,"elapsed":124.700058223,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":716,"elapsed":124.700194594,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"Apply complete! Resources: 0 added, 1 changed, 0 destroyed.\n"}
+{"sequence":717,"elapsed":124.700228204,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":718,"elapsed":124.70025572600001,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"Outputs:\n"}
+{"sequence":719,"elapsed":124.700282292,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"\n"}
+{"sequence":720,"elapsed":124.700311711,"at":"2026-11-07T04:46:54.498Z","type":"output","target":"azure","phase":"apply-repair","stream":"stdout","text":"group_id = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":721,"elapsed":124.881018588,"at":"2026-11-07T04:46:54.679Z","type":"command-end","target":"azure","phase":"apply-repair","exitCode":0,"timedOut":false}
+{"sequence":722,"elapsed":125.751902496,"at":"2026-11-07T04:46:55.550Z","type":"probe","target":"azure","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":723,"elapsed":125.75219902,"at":"2026-11-07T04:46:55.550Z","type":"command-start","target":"azure","phase":"state-remove","command":["terraform","state","rm","azapi_resource.group"]}
+{"sequence":724,"elapsed":129.27137945500002,"at":"2026-11-07T04:46:59.069Z","type":"output","target":"azure","phase":"state-remove","stream":"stdout","text":"Removed azapi_resource.group\n"}
+{"sequence":725,"elapsed":130.846819757,"at":"2026-11-07T04:47:00.644Z","type":"output","target":"azure","phase":"state-remove","stream":"stdout","text":"Successfully removed 1 resource instance(s).\n"}
+{"sequence":726,"elapsed":131.017143378,"at":"2026-11-07T04:47:00.815Z","type":"command-end","target":"azure","phase":"state-remove","exitCode":0,"timedOut":false}
+{"sequence":727,"elapsed":131.019597654,"at":"2026-11-07T04:47:00.817Z","type":"command-start","target":"azure","phase":"import","command":["terraform","import","-input=false","-no-color","azapi_resource.group","/subscriptions/<subscription>/resourcegroups/<group>"]}
+{"sequence":728,"elapsed":133.61891194,"at":"2026-11-07T04:47:03.417Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"azapi_resource.group: Importing from ID \"/subscriptions/<subscription>/resourcegroups/<group>\"...\n"}
+{"sequence":729,"elapsed":134.40372795099998,"at":"2026-11-07T04:47:04.201Z","type":"http","target":"azure","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":730,"elapsed":134.409076681,"at":"2026-11-07T04:47:04.207Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"azapi_resource.group: Import prepared!\n"}
+{"sequence":731,"elapsed":134.409228502,"at":"2026-11-07T04:47:04.207Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"  Prepared azapi_resource for import\n"}
+{"sequence":732,"elapsed":134.409426471,"at":"2026-11-07T04:47:04.207Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":733,"elapsed":134.93024593899997,"at":"2026-11-07T04:47:04.728Z","type":"http","target":"azure","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":734,"elapsed":134.951354472,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":735,"elapsed":134.951484837,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Import successful!\n"}
+{"sequence":736,"elapsed":134.951521058,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":737,"elapsed":134.951551901,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"The resources that were imported are shown above. These resources are now in\n"}
+{"sequence":738,"elapsed":134.95158072499999,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"your Terraform state and will henceforth be managed by Terraform.\n"}
+{"sequence":739,"elapsed":134.95160791299998,"at":"2026-11-07T04:47:04.749Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":740,"elapsed":135.143836893,"at":"2026-11-07T04:47:04.941Z","type":"command-end","target":"azure","phase":"import","exitCode":0,"timedOut":false}
+{"sequence":741,"elapsed":135.14739806499998,"at":"2026-11-07T04:47:04.945Z","type":"command-start","target":"azure","phase":"plan-imported","command":["terraform","plan","-input=false","-no-color","-detailed-exitcode"]}
+{"sequence":742,"elapsed":138.193648449,"at":"2026-11-07T04:47:07.991Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":743,"elapsed":138.748644883,"at":"2026-11-07T04:47:08.546Z","type":"http","target":"azure","phase":"plan-imported","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":744,"elapsed":138.97985573399998,"at":"2026-11-07T04:47:08.777Z","type":"http","target":"azure","phase":"plan-imported","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":745,"elapsed":138.99276441399996,"at":"2026-11-07T04:47:08.790Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"\n"}
+{"sequence":746,"elapsed":138.99291305799997,"at":"2026-11-07T04:47:08.791Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"No changes. Your infrastructure matches the configuration.\n"}
+{"sequence":747,"elapsed":138.99294437499998,"at":"2026-11-07T04:47:08.791Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"\n"}
+{"sequence":748,"elapsed":138.99296404599997,"at":"2026-11-07T04:47:08.791Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"Terraform has compared your real infrastructure against your configuration\n"}
+{"sequence":749,"elapsed":138.99298249199998,"at":"2026-11-07T04:47:08.791Z","type":"output","target":"azure","phase":"plan-imported","stream":"stdout","text":"and found no differences, so no changes are needed.\n"}
+{"sequence":750,"elapsed":139.19550574299998,"at":"2026-11-07T04:47:08.993Z","type":"command-end","target":"azure","phase":"plan-imported","exitCode":0,"timedOut":false}
+{"sequence":751,"elapsed":139.19762388499998,"at":"2026-11-07T04:47:08.995Z","type":"command-start","target":"azure","phase":"destroy","command":["terraform","destroy","-auto-approve","-input=false","-no-color"]}
+{"sequence":752,"elapsed":142.294294612,"at":"2026-11-07T04:47:12.092Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Refreshing state... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":753,"elapsed":142.604578832,"at":"2026-11-07T04:47:12.402Z","type":"http","target":"azure","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":200}
+{"sequence":754,"elapsed":143.256318466,"at":"2026-11-07T04:47:13.054Z","type":"http","target":"azure","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":755,"elapsed":143.81325862799997,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":756,"elapsed":143.813418041,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Terraform used the selected providers to generate the following execution\n"}
+{"sequence":757,"elapsed":143.813503226,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"plan. Resource actions are indicated with the following symbols:\n"}
+{"sequence":758,"elapsed":143.81355197399998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"  - destroy\n"}
+{"sequence":759,"elapsed":143.81357648399998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":760,"elapsed":143.81359647399998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Terraform will perform the following actions:\n"}
+{"sequence":761,"elapsed":143.81371829699998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":762,"elapsed":143.81379419799998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"  # azapi_resource.group will be destroyed\n"}
+{"sequence":763,"elapsed":143.81383423699998,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"  - resource \"azapi_resource\" \"group\" {\n"}
+{"sequence":764,"elapsed":143.81385919999997,"at":"2026-11-07T04:47:13.611Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - body                      = {\n"}
+{"sequence":765,"elapsed":143.81388894199998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - properties = {}\n"}
+{"sequence":766,"elapsed":143.81390922,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":767,"elapsed":143.81394241499999,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - id                        = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\n"}
+{"sequence":768,"elapsed":143.81396218799998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - ignore_body_changes       = (write-only attribute) -> null\n"}
+{"sequence":769,"elapsed":143.81398014599998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - ignore_casing             = false -> null\n"}
+{"sequence":770,"elapsed":143.813998008,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - ignore_missing_property   = true -> null\n"}
+{"sequence":771,"elapsed":143.814015518,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - ignore_null_property      = false -> null\n"}
+{"sequence":772,"elapsed":143.81403281099998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - location                  = \"eastus\" -> null\n"}
+{"sequence":773,"elapsed":143.81405086799998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - name                      = \"<group>\" -> null\n"}
+{"sequence":774,"elapsed":143.814068351,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - output                    = {\n"}
+{"sequence":775,"elapsed":143.814086934,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - id         = \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":776,"elapsed":143.814104505,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - properties = {\n"}
+{"sequence":777,"elapsed":143.8141224,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"              - provisioningState = \"Succeeded\"\n"}
+{"sequence":778,"elapsed":143.81413946499998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"            }\n"}
+{"sequence":779,"elapsed":143.81415673599997,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - tags       = {\n"}
+{"sequence":780,"elapsed":143.81417465599998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"              - expires  = \"<expiry>\"\n"}
+{"sequence":781,"elapsed":143.814192207,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"              - project  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":782,"elapsed":143.81420932499998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"              - revision = \"two\"\n"}
+{"sequence":783,"elapsed":143.81422694,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"              - run      = \"<run>\"\n"}
+{"sequence":784,"elapsed":143.814244326,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"            }\n"}
+{"sequence":785,"elapsed":143.81426161199997,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - type       = \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":786,"elapsed":143.814278995,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":787,"elapsed":143.814301927,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - parent_id                 = \"/subscriptions/<subscription>\" -> null\n"}
+{"sequence":788,"elapsed":143.814320254,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - schema_validation_enabled = true -> null\n"}
+{"sequence":789,"elapsed":143.814337871,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - sensitive_body            = (write-only attribute) -> null\n"}
+{"sequence":790,"elapsed":143.81435499,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - tags                      = {\n"}
+{"sequence":791,"elapsed":143.81437372599999,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - \"expires\"  = \"<expiry>\"\n"}
+{"sequence":792,"elapsed":143.814394405,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - \"project\"  = \"globalstack-paired-lifecycle\"\n"}
+{"sequence":793,"elapsed":143.814411867,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - \"revision\" = \"two\"\n"}
+{"sequence":794,"elapsed":143.81442957099998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"          - \"run\"      = \"<run>\"\n"}
+{"sequence":795,"elapsed":143.814456182,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"        } -> null\n"}
+{"sequence":796,"elapsed":143.814484948,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"      - type                      = \"Microsoft.Resources/resourceGroups@2025-04-01\" -> null\n"}
+{"sequence":797,"elapsed":143.81451895499998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"    }\n"}
+{"sequence":798,"elapsed":143.81454543899997,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":799,"elapsed":143.81457390199998,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Plan: 0 to add, 0 to change, 1 to destroy.\n"}
+{"sequence":800,"elapsed":143.814597147,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":801,"elapsed":143.814615165,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Changes to Outputs:\n"}
+{"sequence":802,"elapsed":143.81463411699997,"at":"2026-11-07T04:47:13.612Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"  - group_id = \"/subscriptions/<subscription>/resourcegroups/<group>\" -> null\n"}
+{"sequence":803,"elapsed":144.325372999,"at":"2026-11-07T04:47:14.123Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Destroying... [id=/subscriptions/<subscription>/resourcegroups/<group>]\n"}
+{"sequence":804,"elapsed":144.679544135,"at":"2026-11-07T04:47:14.477Z","type":"http","target":"azure","phase":"destroy","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2025-04-01","status":202}
+{"sequence":805,"elapsed":154.32606888799998,"at":"2026-11-07T04:47:24.124Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Still destroying... [id=/subscriptions/<subscription>/resourcegroups/<group>, 00m10s elapsed]\n"}
+{"sequence":806,"elapsed":160.43662344099997,"at":"2026-11-07T04:47:30.234Z","type":"http","target":"azure","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/operationresults/<operation>?api-version=2025-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>","status":200}
+{"sequence":807,"elapsed":160.43936316399999,"at":"2026-11-07T04:47:30.237Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"azapi_resource.group: Destruction complete after 16s\n"}
+{"sequence":808,"elapsed":160.45434501,"at":"2026-11-07T04:47:30.252Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":809,"elapsed":160.454491594,"at":"2026-11-07T04:47:30.252Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Destroy complete! Resources: 1 destroyed.\n"}
+{"sequence":810,"elapsed":160.63669272899998,"at":"2026-11-07T04:47:30.434Z","type":"command-end","target":"azure","phase":"destroy","exitCode":0,"timedOut":false}
+{"sequence":811,"elapsed":161.18759520199998,"at":"2026-11-07T04:47:30.985Z","type":"probe","target":"azure","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":812,"elapsed":162.433200521,"at":"2026-11-07T04:47:32.231Z","type":"target-end","target":"azure","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"fallbackDelete":false,"privateFilesRemoved":true}}
+{"sequence":813,"elapsed":162.435557195,"at":"2026-11-07T04:47:32.233Z","type":"run-end","ok":true,"portalEvidenceComplete":false}

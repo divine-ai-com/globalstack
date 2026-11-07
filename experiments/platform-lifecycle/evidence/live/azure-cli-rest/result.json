@@ -1,0 +1,1395 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-cli-rest",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-07T05:06:19.174Z",
+  "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+  "sourceDirty": false,
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "source": {
+    "deploy.sh": "913a94ef1e74fad85d1487e76cb9690f59e20944bf8f679d9f761c412dda0328"
+  },
+  "authorizedUsd": 100,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "/usr/bin/az",
+            "version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:19.586Z",
+          "completedAt": "2026-11-07T05:06:23.772Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"azure-cli\": \"2.92.0\",\n  \"azure-cli-core\": \"2.92.0\",\n  \"azure-cli-telemetry\": \"1.1.0\",\n  \"extensions\": {}\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "syntax-check",
+          "command": [
+            "bash",
+            "-n",
+            "deploy.sh"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:23.774Z",
+          "completedAt": "2026-11-07T05:06:24.193Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-create",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:24.195Z",
+          "completedAt": "2026-11-07T05:06:25.214Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-stable",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:25.221Z",
+          "completedAt": "2026-11-07T05:06:26.292Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "read"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:26.293Z",
+          "completedAt": "2026-11-07T05:06:27.350Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-update",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:27.351Z",
+          "completedAt": "2026-11-07T05:06:28.413Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-drift",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "read"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:28.437Z",
+          "completedAt": "2026-11-07T05:06:29.618Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"external\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-repair",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:29.619Z",
+          "completedAt": "2026-11-07T05:06:30.722Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-final",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:30.732Z",
+          "completedAt": "2026-11-07T05:06:31.872Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "absent"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:31.873Z",
+          "completedAt": "2026-11-07T05:06:32.989Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"status\": \"Deleted\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "apply-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:24.910Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:24.918Z"
+        },
+        {
+          "phase": "repeat-stable",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:25.960Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:25.964Z"
+        },
+        {
+          "phase": "read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:27.016Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:27.020Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:28.106Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:28.110Z"
+        },
+        {
+          "phase": "read-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:29.279Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "external"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:29.285Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:30.402Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:30.404Z"
+        },
+        {
+          "phase": "repeat-final",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:31.539Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:31.542Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:32.662Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-07T05:06:32.664Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-07T05:06:19.543Z",
+          "completedAt": "2026-11-07T05:06:19.575Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "one"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:25.215Z",
+          "completedAt": "2026-11-07T05:06:25.220Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:28.415Z",
+          "completedAt": "2026-11-07T05:06:28.420Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:28.423Z",
+          "completedAt": "2026-11-07T05:06:28.435Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:30.726Z",
+          "completedAt": "2026-11-07T05:06:30.730Z"
+        },
+        {
+          "phase": "post-destroy-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-07T05:06:32.990Z",
+          "completedAt": "2026-11-07T05:06:32.993Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-07T05:06:32.995Z",
+          "completedAt": "2026-11-07T05:06:32.997Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-07T05:06:32.998Z",
+          "completedAt": "2026-11-07T05:06:33.000Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroyAccepted": true,
+        "nativeDestroy": true,
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "deploy.sh": "913a94ef1e74fad85d1487e76cb9690f59e20944bf8f679d9f761c412dda0328"
+      },
+      "ok": true,
+      "sourceUnchanged": true
+    },
+    {
+      "name": "azure",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "/usr/bin/az",
+            "version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:36.781Z",
+          "completedAt": "2026-11-07T05:06:40.547Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"azure-cli\": \"2.92.0\",\n  \"azure-cli-core\": \"2.92.0\",\n  \"azure-cli-telemetry\": \"1.1.0\",\n  \"extensions\": {}\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "syntax-check",
+          "command": [
+            "bash",
+            "-n",
+            "deploy.sh"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:40.548Z",
+          "completedAt": "2026-11-07T05:06:40.967Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-create",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:40.971Z",
+          "completedAt": "2026-11-07T05:06:44.176Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-stable",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:44.777Z",
+          "completedAt": "2026-11-07T05:06:47.604Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "read"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:47.606Z",
+          "completedAt": "2026-11-07T05:06:49.264Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"one\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-update",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:49.266Z",
+          "completedAt": "2026-11-07T05:06:51.879Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "read-drift",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "read"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:53.989Z",
+          "completedAt": "2026-11-07T05:06:55.564Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"external\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-repair",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:55.567Z",
+          "completedAt": "2026-11-07T05:06:58.538Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-final",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "present"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:06:59.019Z",
+          "completedAt": "2026-11-07T05:07:00.919Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n  \"location\": \"eastus\",\n  \"name\": \"<group>\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": {\n    \"expires\": \"<expiry>\",\n    \"project\": \"globalstack-paired-lifecycle\",\n    \"revision\": \"two\",\n    \"run\": \"<run>\"\n  },\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy",
+          "command": [
+            "bash",
+            "deploy.sh",
+            "absent"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-07T05:07:00.921Z",
+          "completedAt": "2026-11-07T05:07:02.410Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "apply-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:41.710Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-ratelimit-remaining-subscription-writes": "199",
+              "x-ms-request-id": "9c25d23c-dd37-4c43-b045-2a56fea237a0",
+              "x-ms-correlation-request-id": "9c25d23c-dd37-4c43-b045-2a56fea237a0"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:43.849Z"
+        },
+        {
+          "phase": "repeat-stable",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:45.643Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-ratelimit-remaining-subscription-writes": "199",
+              "x-ms-request-id": "9227dc83-228d-41c2-b3cf-49538d52622b",
+              "x-ms-correlation-request-id": "9227dc83-228d-41c2-b3cf-49538d52622b"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:47.260Z"
+        },
+        {
+          "phase": "read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:48.409Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-request-id": "f5fe670e-8ff2-42f8-816c-f2da517c0c87",
+              "x-ms-correlation-request-id": "f5fe670e-8ff2-42f8-816c-f2da517c0c87"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:48.937Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:50.038Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-ratelimit-remaining-subscription-writes": "199",
+              "x-ms-request-id": "beb4bd56-ea38-48b3-bea0-bbce8989991a",
+              "x-ms-correlation-request-id": "beb4bd56-ea38-48b3-bea0-bbce8989991a"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:51.544Z"
+        },
+        {
+          "phase": "read-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:54.761Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-request-id": "140940fb-41b6-435e-9147-dc85c73eb8e1",
+              "x-ms-correlation-request-id": "140940fb-41b6-435e-9147-dc85c73eb8e1"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "external"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:55.242Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:56.353Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-ratelimit-remaining-subscription-writes": "199",
+              "x-ms-request-id": "12bf9328-7250-4749-8e5a-25864aaf3672",
+              "x-ms-correlation-request-id": "12bf9328-7250-4749-8e5a-25864aaf3672"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:06:58.213Z"
+        },
+        {
+          "phase": "repeat-final",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:06:59.776Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json; charset=utf-8",
+              "x-ms-ratelimit-remaining-subscription-writes": "198",
+              "x-ms-request-id": "355dabc4-2749-4b93-9b07-77a16224be31",
+              "x-ms-correlation-request-id": "355dabc4-2749-4b93-9b07-77a16224be31"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-07T05:07:00.550Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "startedAt": "2026-11-07T05:07:01.748Z",
+          "request": {
+            "headers": {
+              "user-agent": "python/3.14.9 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) AZURECLI/2.92.0 (DEB)"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 202,
+          "response": {
+            "headers": {
+              "location": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2021-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>",
+              "retry-after": "15",
+              "x-ms-request-id": "1a24ceff-b7c9-48a0-bfba-616eb61d5030",
+              "x-ms-correlation-request-id": "1a24ceff-b7c9-48a0-bfba-616eb61d5030"
+            },
+            "body": null
+          },
+          "completedAt": "2026-11-07T05:07:02.048Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group '<group>' could not be found."
+            }
+          },
+          "startedAt": "2026-11-07T05:06:35.898Z",
+          "completedAt": "2026-11-07T05:06:36.777Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "one"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:44.177Z",
+          "completedAt": "2026-11-07T05:06:44.774Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:51.881Z",
+          "completedAt": "2026-11-07T05:06:52.453Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:52.455Z",
+          "completedAt": "2026-11-07T05:06:53.987Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-07T05:06:58.542Z",
+          "completedAt": "2026-11-07T05:06:59.017Z"
+        },
+        {
+          "phase": "post-destroy-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group '<group>' could not be found."
+            }
+          },
+          "startedAt": "2026-11-07T05:07:02.411Z",
+          "completedAt": "2026-11-07T05:07:03.058Z"
+        },
+        {
+          "phase": "cleanup-verification",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group '<group>' could not be found."
+            }
+          },
+          "startedAt": "2026-11-07T05:07:03.061Z",
+          "completedAt": "2026-11-07T05:07:03.364Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroyAccepted": true,
+        "nativeDestroy": true,
+        "absent": true,
+        "fallbackDelete": false,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "deploy.sh": "913a94ef1e74fad85d1487e76cb9690f59e20944bf8f679d9f761c412dda0328"
+      },
+      "ok": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": true,
+  "portalCapture": "deferred",
+  "portalEvidenceComplete": false,
+  "completedAt": "2026-11-07T05:07:03.782Z"
+}

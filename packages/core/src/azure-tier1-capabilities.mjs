@@ -216,7 +216,7 @@ export const tier1Capabilities = [
     tier: 1,
     awsAnalogue: 'API Gateway',
     azureEquivalent: 'Azure API Management',
-    resourceTypes: ['Microsoft.ApiManagement/service', 'Microsoft.ApiManagement/service/apis'],
+    resourceTypes: ['Microsoft.ApiManagement/service', 'Microsoft.ApiManagement/service/apis', 'Microsoft.ApiManagement/service/apis/operations'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-http-router'],
     implementedOperations: [
@@ -228,6 +228,10 @@ export const tier1Capabilities = [
       'Apis.Get',
       'Apis.List',
       'Apis.Delete',
+      'ApiOperations.CreateOrUpdate',
+      'ApiOperations.Get',
+      'ApiOperations.List',
+      'ApiOperations.Delete',
       'Gateway.RouteLocal',
       'Gateway.RejectUnknownHost',
       'Gateway.RejectUnknownPath',
@@ -407,7 +411,7 @@ export const tier1Capabilities = [
     tier: 1,
     awsAnalogue: 'EventBridge',
     azureEquivalent: 'Event Grid',
-    resourceTypes: ['Microsoft.EventGrid/topics', 'Microsoft.EventGrid/eventSubscriptions'],
+    resourceTypes: ['Microsoft.EventGrid/topics', 'Microsoft.EventGrid/eventSubscriptions', 'Microsoft.EventGrid/systemTopics/eventSubscriptions'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-event-router'],
     implementedOperations: [
@@ -419,6 +423,7 @@ export const tier1Capabilities = [
       'EventSubscriptions.CreateRejected',
       'Events.PublishLocal',
       'Events.ListLocal',
+      'StorageSystemTopics.QueueDeliveryLocal',
     ],
     contractTested: false,
     cloudValidated: false,
@@ -426,6 +431,7 @@ export const tier1Capabilities = [
     knownGaps: [
       'No official Event Grid emulator is available in the MVP path.',
       'No full schema registry, partner event, advanced filter, retry, or DLQ parity in MVP.',
+      'Storage system topics support PutBlob/DeleteBlob events, basic subject/type filters, managed-identity queue delivery and bounded in-memory retries. Restart durability, exact retry timing and other destinations are not implemented.',
     ],
   },
   {

@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { evaluateSearch } from './search-query.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -24,8 +25,8 @@ function sendJson(res, status, body, headers = {}) {
   res.end(payload);
 }
 
-function sendError(res, status, code, message) {
-  sendJson(res, status, { error: { code, message } });
+function sendError(res, status, code, message, details) {
+  sendJson(res, status, { error: { code, message, ...(details ? { details } : {}) } });
 }
 
 function serviceKey(serviceName) {
@@ -70,7 +71,13 @@ function validateIndex(body) {
   }
   if (!body.name || typeof body.name !== 'string') return 'Index payload requires a string name.';
   if (!Array.isArray(body.fields) || body.fields.length === 0) return 'Index payload requires at least one field.';
-  if (!body.fields.some(field => field?.key === true)) return 'Index payload requires exactly one key field.';
+  const keyCount = body.fields.filter(field => field?.key === true).length;
+  if (keyCount > 1) {
+    const message = `Found ${keyCount} key fields in index '${body.name}'. Each index must have exactly one key field.`;
+    return { code: 'OperationNotAllowed', message: `The request is invalid. Details: index : ${message}`,
+      details: [{ code: 'CompoundKeysNotSupported', message: `${message} Parameters: index` }] };
+  }
+  if (keyCount === 0) return 'Index payload requires exactly one key field.';
   for (const field of body.fields) {
     if (!field?.name || typeof field.name !== 'string') return 'Each index field requires a string name.';
     if (!field?.type || typeof field.type !== 'string') return `Field '${field.name}' requires a string type.`;
@@ -82,18 +89,8 @@ function etagFor(value) {
   return `"${createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 16)}"`;
 }
 
-function searchableFields(index) {
-  return index.fields.filter(field => field.searchable !== false).map(field => field.name);
-}
-
 function keyField(index) {
   return index.fields.find(field => field.key === true)?.name ?? 'id';
-}
-
-function matchesSearch(index, document, searchText) {
-  if (!searchText || searchText === '*') return true;
-  const needle = String(searchText).toLowerCase();
-  return searchableFields(index).some(field => String(document[field] ?? '').toLowerCase().includes(needle));
 }
 
 export class SearchRouter {
@@ -106,7 +103,7 @@ export class SearchRouter {
     this.services.set(serviceKey(name), {
       serviceName: name,
       endpoint: endpoint ?? `https://${name}.search.windows.net`,
-      indexes: new Map(),
+      indexes: this.services.get(serviceKey(name))?.indexes ?? new Map(),
     });
   }
 
@@ -141,9 +138,14 @@ export class SearchRouter {
       if (indexName && (method === 'PUT' || method === 'POST') && /^\/indexes\('[^']+'\)$/.test(url.pathname)) {
         const body = await readBody(req);
         const validation = validateIndex(body);
-        if (validation) return sendError(res, 400, 'InvalidRequestParameter', validation);
+        if (validation) return typeof validation === 'string'
+          ? sendError(res, 400, 'InvalidRequestParameter', validation)
+          : sendJson(res, 400, { error: validation });
         if (body.name !== indexName) return sendError(res, 400, 'InvalidRequestParameter', 'Index name in URI and body must match.');
         const definition = { ...structuredClone(body), '@odata.etag': etagFor(body) };
+        for (const field of definition.fields) {
+          if (field.vectorSearchProfile && field.retrievable === undefined) field.retrievable = false;
+        }
         service.indexes.set(indexName, {
           definition,
           fields: definition.fields,
@@ -198,13 +200,11 @@ export class SearchRouter {
         return sendJson(res, 200, { value: results });
       }
 
-      if (indexName && method === 'POST' && url.pathname.endsWith('/docs/search')) {
+      if (indexName && method === 'POST' && (url.pathname.endsWith('/docs/search') || url.pathname.endsWith('/docs/search.post.search'))) {
         const body = await readBody(req);
-        const searchText = body?.search ?? '*';
-        const value = [...index.documents.values()]
-          .filter(document => matchesSearch(index, document, searchText))
-          .map(document => ({ '@search.score': 1, ...document }));
-        return sendJson(res, 200, { value, count: value.length });
+        const result = evaluateSearch(index, body);
+        if (result.error) return sendError(res, result.error.status, result.error.code, result.error.message, result.error.details);
+        return sendJson(res, 200, result.body);
       }
 
       return sendError(res, 404, 'RouteNotFound', `No Azure AI Search route handled ${url.pathname}.`);

@@ -1,0 +1,15 @@
+{
+  "platform": "azure-ansible-yaml",
+  "startedAt": "2026-11-07T05:03:14.472Z",
+  "completedAt": "2026-11-07T05:06:16.727Z",
+  "exitCode": 0,
+  "eventCount": 340,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "b865cc678d3f4951ef1498cbdce49ffc04a9e5d590286f17a56afd3bbcb31df7",
+  "eventSha256": "c500fb1c2ad494e21866d1a81ef3815c57c616c6853b1df9f06abce313b2c536",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}

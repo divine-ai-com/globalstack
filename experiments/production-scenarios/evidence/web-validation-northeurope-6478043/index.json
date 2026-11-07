@@ -1,0 +1,25 @@
+{
+  "scope": "Failed North Europe preflight or interrupted follow-up. No successful paired lifecycle or application result.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "50fac19dbf61fd920ed03f36e697fc9f031b139f678324b61286800b91940892",
+      "bytes": 3068
+    },
+    "events.ndjson": {
+      "sha256": "4e47a75f803464e77c8818e0e84ff659bc04b6e15e4e57b0e934f73eda62d58e",
+      "bytes": 13415
+    },
+    "recording.json": {
+      "sha256": "8cc6256c0e45bb72c4aceeb69ec576129e7bb8d88988cfc2d5b8e5bb5a2dd9ac",
+      "bytes": 648
+    },
+    "result.json": {
+      "sha256": "edb192b1cdd370c7627c20d99b84425702fa13109d514f58dc2e026f1a11cb8e",
+      "bytes": 22673
+    },
+    "quota-projection.json": {
+      "sha256": "d064cbaa1cd75e4c600a3723aee2dcb05fb4f187e5397acfb7650cb0a53fe743",
+      "bytes": 1411
+    }
+  }
+}

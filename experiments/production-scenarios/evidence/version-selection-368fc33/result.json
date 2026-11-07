@@ -1,0 +1,85 @@
+{
+  "revision": "368fc330cbfd034e6957c8a55805a245feef5327",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T12:13:43.063Z",
+  "scope": "Local synthetic diagnostic only. No live Azure comparison or application pass.",
+  "exchanges": [
+    {
+      "phase": "create-container",
+      "method": "PUT",
+      "path": "/versions?restype=container",
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "bb641baf-6ff6-4cf9-8d8d-0c87940b0b55",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 12:13:43 GMT",
+        "etag": "\"dd909580-9423-4198-b264-7c12af5a52a4\"",
+        "last-modified": "Sat, 07 Nov 2026 12:13:43 GMT"
+      }
+    },
+    {
+      "phase": "create-current",
+      "method": "PUT",
+      "path": "/versions/document",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"2b36aaf0-febe-4c8d-88b2-568725e2518b\"",
+        "last-modified": "Sat, 07 Nov 2026 12:13:43 GMT",
+        "x-ms-request-id": "2560646f-bfd5-4cb6-86ef-cfe1d19a321d",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 12:13:43 GMT"
+      },
+      "body": "",
+      "status": 201
+    },
+    {
+      "phase": "read-missing-version",
+      "method": "GET",
+      "path": "/versions/document?versionid=2026-01-01T00%3A00%3A00.0000000Z",
+      "status": 200,
+      "body": "current synthetic contents",
+      "headers": {
+        "content-length": "26",
+        "content-type": "application/octet-stream",
+        "etag": "\"2b36aaf0-febe-4c8d-88b2-568725e2518b\"",
+        "last-modified": "Sat, 07 Nov 2026 12:13:43 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "50d40fd5-e6a8-4b45-ab45-afd7c954f779",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 12:13:43 GMT"
+      }
+    },
+    {
+      "phase": "delete-missing-version",
+      "method": "DELETE",
+      "path": "/versions/document?versionid=2026-01-01T00%3A00%3A00.0000000Z",
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "234b9258-d496-43eb-aa6c-87873f3cb4b8",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 12:13:43 GMT"
+      }
+    },
+    {
+      "phase": "read-current-after-version-delete",
+      "method": "GET",
+      "path": "/versions/document",
+      "status": 404,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:bde14254-b915-4aae-9fc2-23100f2386f0\nTime:2026-11-07T12:13:43.109Z</Message></Error>",
+      "headers": {
+        "content-length": "208",
+        "content-type": "application/xml",
+        "x-ms-error-code": "BlobNotFound",
+        "x-ms-request-id": "bde14254-b915-4aae-9fc2-23100f2386f0",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 12:13:43 GMT"
+      }
+    }
+  ],
+  "completedAt": "2026-11-07T12:13:43.110Z"
+}

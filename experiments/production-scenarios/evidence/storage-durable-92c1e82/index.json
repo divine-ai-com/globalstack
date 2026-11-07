@@ -1,0 +1,23 @@
+{
+  "scope": "Azure-first Storage API diagnostics. No full application or IaC deployment claim.",
+  "files": {
+    "result.json": {
+      "sha256": "cb5752787b458a5623cfbaf083c4667a2ed1e8a75652b38e22a7de37d211d32c",
+      "bytes": 114983
+    },
+    "events.ndjson": {
+      "sha256": "8ea4e99016f039507ab7607b8a19fc3715d45e37cb7d49c89fe5aa93e26bbfeb",
+      "bytes": 156291
+    },
+    "recording.json": {
+      "sha256": "908682424947d0516e9c0e079c0b86825a1947f3490b0a4bd3c3beabc0123cc4",
+      "bytes": 643
+    }
+  },
+  "observations": [
+    "Projected queries and batch transactions succeed on Azure but are unsupported locally at this revision.",
+    "Azure rolls back an earlier insert when a later batch operation conflicts.",
+    "Two requests omit JSON Accept and receive 415 AtomFormatNotSupported. These request failures are preserved.",
+    "The owned group and account were verified absent after cleanup."
+  ]
+}

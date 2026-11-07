@@ -318,3 +318,65 @@ test('queue server preserves a bounded stale-read window after delete on host-st
     await new Promise(resolve => server.close(resolve));
   }
 });
+
+test('container lifecycle replays archived Azure statuses without pre-registering resources', async t => {
+  const { readFile } = await import('node:fs/promises');
+  const capture = JSON.parse(await readFile(new URL('../../../fixtures/azure-storage-data-plane-captures/storage-data-plane-blob-queue-wave-1.json', import.meta.url), 'utf8'));
+  const router = createStorageDataPlaneRouter();
+  const accountName = 'nativecontainer987';
+  const accountKey = Buffer.alloc(64, 19).toString('base64');
+  router.registerStorageAccount({ accountName, accountKey });
+  const server = createBlobStorageServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const call = (method, path, extraHeaders = {}, body) => storageRequest(server.address().port, {
+    method, path, extraHeaders, body, host: `${accountName}.blob.core.windows.net`, accountName, accountKey,
+  });
+  const check = async (id, method, path) => {
+    const expected = capture.cases.find(item => item.id === id).response;
+    const response = await call(method, path);
+    assert.equal(response.status, expected.status, id);
+    assert.equal(response.headers['x-ms-error-code'] ?? null, expected.errorCode, id);
+    return response;
+  };
+  for (const [id, name] of [['uppercase', 'Bad'], ['too-short', 'ab'], ['leading-dash', '-bad'], ['trailing-dash', 'bad-'], ['consecutive-dash', 'bad--name']]) {
+    await check(`blob-invalid-container-${id}`, 'PUT', `/${name}?restype=container`);
+  }
+  const path = '/independent-container?restype=container';
+  const created = await check('blob-create-container', 'PUT', path);
+  const original = (await call('GET', path)).headers.etag;
+  assert.equal(original, created.headers.etag);
+  await check('blob-duplicate-container-create', 'PUT', path);
+  assert.equal((await call('HEAD', path)).headers.etag, original);
+  assert.equal((await call('PUT', path + '&comp=metadata', { 'x-ms-meta-owner': 'test' })).status, 200);
+  assert.equal((await call('HEAD', path)).headers['x-ms-meta-owner'], 'test');
+  assert.equal((await call('PUT', '/independent-container/retained.txt', { 'x-ms-blob-type': 'BlockBlob' }, 'body')).status, 201);
+  await check('blob-delete-container', 'DELETE', path);
+  await check('blob-get-container-after-delete', 'HEAD', path);
+  await check('blob-create-container', 'PUT', path);
+  assert.equal((await call('GET', '/independent-container/retained.txt')).status, 404);
+  assert.equal((await call('PUT', path + '&comp=unsupported')).status, 501);
+  // A control-plane refresh must preserve existing data-plane state.
+  router.registerContainer({ accountName, containerName: 'independent-container' });
+  const current = (await call('HEAD', path)).headers.etag;
+  router.registerContainer({ accountName, containerName: 'independent-container' });
+  assert.equal((await call('HEAD', path)).headers.etag, current);
+});
+
+test('concurrent conditional blob creation has one winner and preserves its content', async t => {
+  const router = createStorageDataPlaneRouter();
+  const accountName = 'concurrentblob123', accountKey = Buffer.alloc(64, 41).toString('base64');
+  router.registerStorageAccount({ accountName, accountKey });
+  router.registerContainer({ accountName, containerName: 'locks' });
+  const server = createBlobStorageServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const config = { host: `${accountName}.blob.core.windows.net`, path: '/locks/shared', accountName, accountKey };
+  const results = await Promise.all(Array.from({ length: 16 }, (_, i) => storageRequest(server.address().port, {
+    ...config, method: 'PUT', body: `writer-${i}`, extraHeaders: { 'x-ms-blob-type': 'BlockBlob', 'if-none-match': '*' },
+  })));
+  assert.equal(results.filter(item => item.status === 201).length, 1);
+  assert.equal(results.filter(item => item.status === 409).length, 15);
+  const retained = await storageRequest(server.address().port, { ...config, method: 'GET' });
+  assert.equal(retained.body.toString(), `writer-${results.findIndex(item => item.status === 201)}`);
+});

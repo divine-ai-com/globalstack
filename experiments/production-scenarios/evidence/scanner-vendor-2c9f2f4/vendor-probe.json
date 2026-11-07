@@ -1,0 +1,213 @@
+{
+  "scope": "Local scanner component with official frozen ClamAV databases and pilot YARA rule. No Azure or full pipeline claim.",
+  "startedAt": "2026-11-07T08:57:44.015407+00:00",
+  "results": [
+    {
+      "case": "clean-txt",
+      "expected": "clean",
+      "durationMs": 20100,
+      "result": {
+        "sha256": "3ba0bf24dd6b3c879453c7f81613096b2c787b7b0d4edcdd96eef08baeef59a6",
+        "bytes": 49,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 19653
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 17
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Pilot vendor-signature check: revenue 123.45 USD."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "case": "clean-pdf",
+      "expected": "clean",
+      "durationMs": 19464,
+      "result": {
+        "sha256": "73d9d4bc33702d97b0afdb54dddd17099899e17d4c73ea79616980cc55d93989",
+        "bytes": 594,
+        "mediaType": "application/pdf",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 19246
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 17
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "pdf_text",
+            "text": "Revenue 123.45 USD"
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "case": "clamav-harmless-detection",
+      "expected": "detected",
+      "durationMs": 18613,
+      "result": {
+        "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "bytes": 68,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "detected",
+            "findings": [
+              "Eicar-Test-Signature"
+            ],
+            "durationMs": 18596
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 17
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "case": "yara-harmless-detection",
+      "expected": "detected",
+      "durationMs": 18865,
+      "result": {
+        "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 18848
+          },
+          {
+            "engine": "yara",
+            "status": "detected",
+            "findings": [
+              "PilotDocumentDetection"
+            ],
+            "durationMs": 17
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    }
+  ],
+  "completedAt": "2026-11-07T08:59:01.058489+00:00"
+}

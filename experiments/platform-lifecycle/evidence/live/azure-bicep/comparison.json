@@ -1,0 +1,1386 @@
+{
+  "schemaVersion": 1,
+  "platform": "azure-bicep",
+  "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+  "lifecyclePassed": true,
+  "portalEvidenceComplete": false,
+  "traceCounts": {
+    "local": 12,
+    "azure": 13
+  },
+  "pairedExchanges": 12,
+  "unmatchedExchanges": 1,
+  "exchangesWithDifferences": 12,
+  "interpretation": "Lifecycle success is separate from API equivalence. These selected fields and one scenario cannot establish 100% Azure compatibility. Video is a walkthrough, not proof of equivalence.",
+  "normalization": "Known private identifiers are sanitized before comparison. Request-ID and ETag values are compared by presence/type; other selected fields remain visible. Repeated requests are paired by phase, method, path and occurrence, not treated as independent scenarios.",
+  "probes": [
+    {
+      "phase": "read-create",
+      "differences": []
+    },
+    {
+      "phase": "read-update",
+      "differences": []
+    },
+    {
+      "phase": "inject-drift",
+      "differences": []
+    },
+    {
+      "phase": "read-repair",
+      "differences": []
+    }
+  ],
+  "exchanges": [
+    {
+      "operation": "deploy-create PUT /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/azure-asyncoperation",
+          "local": {
+            "missing": true
+          },
+          "azure": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>/operationStatuses/08584075788223958160?api-version=2022-09-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/provisioningState",
+          "local": "Succeeded",
+          "azure": "Accepted"
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:16.719Z",
+          "azure": "2026-11-07T05:07:43.0732572Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT0.0000929S"
+        },
+        {
+          "path": "/response/body/properties/outputs",
+          "local": {
+            "groupId": {
+              "type": "string",
+              "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+            }
+          },
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 201
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "one"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "4f05cc25-3824-45ef-bf2f-14c55ab4d4b0"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        }
+      ]
+    },
+    {
+      "operation": "deploy-create-read-0 GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:16.719Z",
+          "azure": "2026-11-07T05:07:50.7817697Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT7.7085125S"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/type",
+          "local": "string",
+          "azure": "String"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/value",
+          "local": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>",
+          "azure": "/subscriptions/<subscription>/resourceGroups/<group>"
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 201
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "one"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "4f05cc25-3824-45ef-bf2f-14c55ab4d4b0"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        },
+        {
+          "path": "/response/body/properties/outputResources",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operation": "read-stable GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:16.719Z",
+          "azure": "2026-11-07T05:07:50.7817697Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT7.7085125S"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/type",
+          "local": "string",
+          "azure": "String"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/value",
+          "local": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>",
+          "azure": "/subscriptions/<subscription>/resourceGroups/<group>"
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 201
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "one"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "4f05cc25-3824-45ef-bf2f-14c55ab4d4b0"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        },
+        {
+          "path": "/response/body/properties/outputResources",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operation": "read-group GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "deploy-update PUT /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/status",
+          "local": 201,
+          "azure": 200
+        },
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/azure-asyncoperation",
+          "local": {
+            "missing": true
+          },
+          "azure": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>/operationStatuses/08584075788065146342?api-version=2022-09-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/provisioningState",
+          "local": "Succeeded",
+          "azure": "Accepted"
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:20.880Z",
+          "azure": "2026-11-07T05:07:58.9558498Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT0.0009987S"
+        },
+        {
+          "path": "/response/body/properties/outputs",
+          "local": {
+            "groupId": {
+              "type": "string",
+              "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+            }
+          },
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 200
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "two"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "95294689-47e1-420a-a707-cedb776a9816"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        }
+      ]
+    },
+    {
+      "operation": "deploy-update-read-0 GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/retry-after",
+          "local": {
+            "missing": true
+          },
+          "azure": "5"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/provisioningState",
+          "local": "Succeeded",
+          "azure": "Running"
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:20.880Z",
+          "azure": "2026-11-07T05:07:58.9558498Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT2.6278173S"
+        },
+        {
+          "path": "/response/body/properties/outputs",
+          "local": {
+            "groupId": {
+              "type": "string",
+              "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+            }
+          },
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 200
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "two"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "95294689-47e1-420a-a707-cedb776a9816"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        }
+      ]
+    },
+    {
+      "operation": "read-drift GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "deploy-repair PUT /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/status",
+          "local": 201,
+          "azure": 200
+        },
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/azure-asyncoperation",
+          "local": {
+            "missing": true
+          },
+          "azure": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>/operationStatuses/08584075787885158394?api-version=2022-09-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/provisioningState",
+          "local": "Succeeded",
+          "azure": "Accepted"
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:24.109Z",
+          "azure": "2026-11-07T05:08:16.949895Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT0.0008659S"
+        },
+        {
+          "path": "/response/body/properties/outputs",
+          "local": {
+            "groupId": {
+              "type": "string",
+              "value": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>"
+            }
+          },
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 200
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "two"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "41ba451d-62f5-4045-b037-8afdf39c8b17"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        }
+      ]
+    },
+    {
+      "operation": "deploy-repair-read-0 GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:24.109Z",
+          "azure": "2026-11-07T05:08:22.5318535Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT5.5819585S"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/type",
+          "local": "string",
+          "azure": "String"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/value",
+          "local": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>",
+          "azure": "/subscriptions/<subscription>/resourceGroups/<group>"
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 200
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "two"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "41ba451d-62f5-4045-b037-8afdf39c8b17"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        },
+        {
+          "path": "/response/body/properties/outputResources",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operation": "read-final GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/properties/timestamp",
+          "local": "2026-11-07T05:07:24.109Z",
+          "azure": "2026-11-07T05:08:22.5318535Z"
+        },
+        {
+          "path": "/response/body/properties/duration",
+          "local": "PT0S",
+          "azure": "PT5.5819585S"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/type",
+          "local": "string",
+          "azure": "String"
+        },
+        {
+          "path": "/response/body/properties/outputs/groupId/value",
+          "local": "/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>",
+          "azure": "/subscriptions/<subscription>/resourceGroups/<group>"
+        },
+        {
+          "path": "/response/body/properties/globalstackDeploymentSteps",
+          "local": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 200
+            }
+          ],
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/body/properties/templateHash",
+          "local": {
+            "missing": true
+          },
+          "azure": "9922873965759736815"
+        },
+        {
+          "path": "/response/body/properties/parameters",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus"
+            },
+            "runId": {
+              "type": "String",
+              "value": "<run>"
+            },
+            "expires": {
+              "type": "String",
+              "value": "<expiry>"
+            },
+            "revision": {
+              "type": "String",
+              "value": "two"
+            }
+          }
+        },
+        {
+          "path": "/response/body/properties/correlationId",
+          "local": {
+            "missing": true
+          },
+          "azure": "41ba451d-62f5-4045-b037-8afdf39c8b17"
+        },
+        {
+          "path": "/response/body/properties/providers",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "eastus"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "/response/body/properties/dependencies",
+          "local": {
+            "missing": true
+          },
+          "azure": []
+        },
+        {
+          "path": "/response/body/properties/outputResources",
+          "local": {
+            "missing": true
+          },
+          "azure": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operation": "destroy-group DELETE /subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/status",
+          "local": 200,
+          "azure": 202
+        },
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/headers/location",
+          "local": {
+            "missing": true
+          },
+          "azure": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2021-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/retry-after",
+          "local": {
+            "missing": true
+          },
+          "azure": "15"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body",
+          "local": {
+            "status": "Deleted",
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+          },
+          "azure": null
+        }
+      ]
+    },
+    {
+      "operation": "destroy-deployment DELETE /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/location",
+          "local": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/operationResults/<operation>?api-version=2022-09-01",
+          "azure": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2022-09-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/retry-after",
+          "local": "0",
+          "azure": "15"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "deploy-update-read-1 GET /subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01",
+      "occurrence": 0,
+      "unmatched": "azure"
+    }
+  ]
+}

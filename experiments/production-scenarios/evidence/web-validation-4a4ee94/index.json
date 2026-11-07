@@ -1,0 +1,27 @@
+{
+  "scope": "Azure-first provider validation of App Service and Functions hosting plans. No provisioning or business workflow.",
+  "files": {
+    "result.json": {
+      "sha256": "9149dc80a2da416bfad70ad741204f79449b3504f1ff5fd3065aebfb919f8f6d",
+      "bytes": 51938
+    },
+    "events.ndjson": {
+      "sha256": "67778945f986e2f23d13a7b79d972bd50ea541541327fde4b24d30ed72710391",
+      "bytes": 23587
+    },
+    "compiled-template.json": {
+      "sha256": "50fac19dbf61fd920ed03f36e697fc9f031b139f678324b61286800b91940892",
+      "bytes": 3068
+    },
+    "recording.json": {
+      "sha256": "3c04ca5e0ee547186a96eb5805e957ede76df746a87eb21209475e3c99c1637a",
+      "bytes": 648
+    }
+  },
+  "observations": [
+    "Azure rejected P0v3 and EP1 with SubscriptionIsOverQuotaForSku in westus2, eastus2 and canadacentral. Both limits were zero; each plan requires one instance.",
+    "GlobalStack returned GlobalStackValidationNotImplemented for Microsoft.Web/serverfarms.",
+    "Subscription quota is an environment constraint. These observations do not define universal rejection of valid hosting plans.",
+    "Resource group and deployment record absence verified on both targets."
+  ]
+}

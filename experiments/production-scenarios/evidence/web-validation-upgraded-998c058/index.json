@@ -1,0 +1,9 @@
+{
+  "scope": "Post-upgrade provider validation only; no provisioning or full application assertion.",
+  "files": {
+    "compiled-template.json": "50fac19dbf61fd920ed03f36e697fc9f031b139f678324b61286800b91940892",
+    "events.ndjson": "6c324f4a8ba822de4f87df3191a7674bf07a1d736deda2a5c166c7fccfc0cb08",
+    "recording.json": "a9da04473861d912bacd6d124058d11c5fc017f473a1b9cde0cfd17c59469d70",
+    "result.json": "262842d1caa5e4838c66b6e7d51750cc6f23f06fb1f04b74675734f2aac20cd3"
+  }
+}

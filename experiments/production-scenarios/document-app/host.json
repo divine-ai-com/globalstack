@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "functionTimeout": "00:05:00",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.41.1, 4.41.2)"
+  },
+  "extensions": {
+    "durableTask": {
+      "hubName": "DocumentPilot",
+      "maxConcurrentActivityFunctions": 2,
+      "maxConcurrentOrchestratorFunctions": 4,
+      "tracing": { "traceInputsAndOutputs": false }
+    }
+  },
+  "logging": {
+    "applicationInsights": { "samplingSettings": { "isEnabled": false } }
+  }
+}

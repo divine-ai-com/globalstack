@@ -1,0 +1,19 @@
+---
+- name: Manage an empty resource group
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Reconcile the resource group
+      azure.azcollection.azure_rm_resourcegroup:
+        subscription_id: "{{ subscription_id }}"
+        auth_source: cli
+        name: "{{ group_name }}"
+        location: "{{ location }}"
+        state: "{{ desired_state | default('present') }}"
+        append_tags: false
+        tags:
+          project: globalstack-paired-lifecycle
+          run: "{{ run_id }}"
+          expires: "{{ expires }}"
+          revision: "{{ revision }}"

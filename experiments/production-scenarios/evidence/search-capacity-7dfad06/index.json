@@ -1,0 +1,27 @@
+{
+  "scope": "Azure East US 2 capacity failure and same-template local acceptance. Neither full application tested.",
+  "files": {
+    "result.json": {
+      "sha256": "e5bea2d22f90cbb368dfd0dbc0c94b2587cc4d558581ea8a5c59c1ae3c6e2f2f",
+      "bytes": 42153
+    },
+    "events.ndjson": {
+      "sha256": "8d1eb2fcddcfff66db67a3abfd10e18995dbcdf9d2235783c982779b4e03feef",
+      "bytes": 49211
+    },
+    "compiled-template.json": {
+      "sha256": "ac2bfa9d94979d2ab5fe9f6906d34d8f6d7b7b597e9801955febaa5881e82538",
+      "bytes": 3362
+    },
+    "recording.json": {
+      "sha256": "3e0bfebe800c239fc671c98bbd3dcce2f138352be4c639d0cb33fbe54eab0e18",
+      "bytes": 641
+    }
+  },
+  "classification": "Environment capacity constraint. Do not encode permanent region rejection into the emulator.",
+  "limitations": [
+    "Azure provider reports InsufficientResourcesAvailable.",
+    "Local provisioning completes synchronously; no capacity failure injection is enabled.",
+    "No data-plane probes or Portal screenshots."
+  ]
+}

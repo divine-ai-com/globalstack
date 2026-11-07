@@ -2,6 +2,7 @@ import { URL } from 'node:url';
 import { capabilityForResourceType } from '../../core/src/azure-tier1-capabilities.mjs';
 import { createActivityLogStore } from './activity-log-store.mjs';
 import { createAppConfigurationRouter } from './app-configuration-router.mjs';
+import { createApiManagementRouter } from './api-management-router.mjs';
 import { createDigitalTwinsRouter } from './digital-twins-router.mjs';
 import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
@@ -18,6 +19,7 @@ import { createRelationalBackendManager } from './relational-backend-manager.mjs
 import { createSearchRouter } from './search-router.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
+import { StorageEventDelivery } from './storage-event-delivery.mjs';
 import { createWafEvaluator } from './waf-evaluator.mjs';
 import { createWorkflowRunner } from './workflow-runner.mjs';
 
@@ -136,12 +138,14 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [] }) {
   const storageRouter = createStorageDataPlaneRouter();
+  const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
+  storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
   const appConfigurationRouter = createAppConfigurationRouter();
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
-  const functionsRouter = createFunctionsRouter();
+  const functionsRouter = createFunctionsRouter({ nativeWorkers: nativeFunctionsWorkers });
   const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();
@@ -150,6 +154,7 @@ export function createEmulatorRuntime({ store }) {
   const logAnalyticsStore = createLogAnalyticsStore();
   const relationalBackends = createRelationalBackendManager();
   const searchRouter = createSearchRouter();
+  const apiManagementRouter = createApiManagementRouter();
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
@@ -571,7 +576,14 @@ export function createEmulatorRuntime({ store }) {
       storageRouter.registerStorageAccount({
         accountName: resource.name,
         accountKey: registeredStorageAccountKey(resourceStore, providerRoute),
+        resourceId: resource.id,
       });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices') {
+      storageRouter.configureBlobService({ accountName: providerRoute.typePath.split('/')[1],
+        isVersioningEnabled: resource.properties?.isVersioningEnabled });
       return;
     }
 
@@ -627,6 +639,23 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.ApiManagement/service') {
+      apiManagementRouter.registerService({ serviceName: resource.name, gatewayUrl: resource.properties?.gatewayUrl });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.registerApi({ serviceName: parts[1], apiId: parts[3], properties: resource.properties ?? {} });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.registerOperation({ serviceName: parts[1], apiId: parts[3], operationId: parts[5], properties: resource.properties });
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.registerInstance({
         instanceName: resource.name,
@@ -646,6 +675,7 @@ export function createEmulatorRuntime({ store }) {
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
+        resourceId: resource.id,
         defaultHostName: resource.properties?.defaultHostName,
       });
       return;
@@ -1011,6 +1041,23 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.ApiManagement/service') {
+      apiManagementRouter.unregisterService(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.unregisterApi({ serviceName: parts[1], apiId: parts[3] });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.unregisterOperation({ serviceName: parts[1], apiId: parts[3], operationId: parts[5] });
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.unregisterInstance(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1299,11 +1346,13 @@ export function createEmulatorRuntime({ store }) {
   }
 
   async function dispose() {
+    storageEventDelivery.dispose();
     await kubernetesRouter.dispose?.();
   }
 
   return {
     storageRouter,
+    storageEventDelivery,
     appConfigurationRouter,
     digitalTwinsRouter,
     eventGridRouter,
@@ -1319,6 +1368,7 @@ export function createEmulatorRuntime({ store }) {
     activityLogStore,
     logAnalyticsStore,
     searchRouter,
+    apiManagementRouter,
     dnsRegistry,
     networkModel,
     metricStore,

@@ -1,0 +1,1109 @@
+WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+
+MS_FUNCTION_LOGS 4,,mesh-placeholder,,RuntimeVersionInventory,Functions.Linux.RuntimeInventory,"runtime=node;actualVersion=22.23.4;probeStatus=success","Runtime version inventory.",4.1055.300.3,2026-11-07T07:22:49.796Z,,"",,,,,,
+info: Host.Triggers.DurableTask[0]
+      Using the default storage provider: AzureStorage.
+warn: Host.Triggers.DurableTask[0]
+      Durable Functions Distributed Tracing V2 is GA now! Learn how to enable the feature by visiting aka.ms/durable-distributed-tracing. To disable this message, you can configure distributedTracingEnabled to "true" and version to "V2" or "None". Setting it to "None" would in effect disable the feature.
+info: Host.Triggers.Warmup[0]
+      Initializing Warmup Extension.
+info: Host.Triggers.DurableTask[0]
+      Durable extension configuration loaded: {"defaultVersion":null,"versionMatchStrategy":"CurrentOrOlder","versionFailureStrategy":"Reject","httpSettings":{"defaultAsyncRequestSleepTimeMilliseconds":30000,"useForwardedHost":false},"hubName":"DocumentPilot","storageProvider":{"connectionName":null,"connectionStringName":null,"controlQueueBatchSize":32,"partitionCount":4,"controlQueueBufferThreshold":256,"controlQueueVisibilityTimeout":"00:05:00","workItemQueueVisibilityTimeout":"00:05:00","trackingStoreConnectionName":null,"trackingStoreConnectionStringName":null,"trackingStoreNamePrefix":null,"fetchLargeMessagesAutomatically":true,"maxQueuePollingInterval":"00:00:30","useLegacyPartitionManagement":false,"useTablePartitionManagement":true,"allowReplayingTerminalInstances":false,"partitionTableOperationTimeout":"00:00:02","queueClientMessageEncoding":"UTF8","useInstanceTableEtag":false},"tracing":{"traceInputsAndOutputs":false,"allowVerboseLinuxTelemetry":false,"traceReplayEvents":false,"distributedTracingEnabled":false,"distributedTracingProtocol":"HttpCorrelationProtocol","version":"V1","includeInstanceIdInOperationName":false},"notifications":{"eventGrid":null},"maxConcurrentActivityFunctions":2,"maxConcurrentOrchestratorFunctions":4,"maxConcurrentEntityFunctions":20,"localRpcEndpointEnabled":null,"maxEntityOperationBatchSize":5000,"extendedSessionsEnabled":false,"extendedSessionIdleTimeoutInSeconds":30,"maxOrchestrationActions":100000,"overridableExistingInstanceStates":"NonRunningStates","entityMessageReorderWindowInMinutes":0,"useGracefulShutdown":false,"rollbackEntityOperationsOnExceptions":true,"throwStatusExceptionsOnRaiseEvent":null,"useAppLease":true,"storeInputsInOrchestrationHistory":false,"appLeaseOptions":{"renewInterval":"00:00:25","acquireInterval":"00:05:00","leaseInterval":"00:01:00"},"maxGrpcMessageSizeInBytes":4194304,"grpcHttpClientTimeout":"00:01:40"}. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2.
+info: Microsoft.Azure.WebJobs.Extensions.EventGrid.Config.EventGridExtensionConfigProvider[0]
+      registered EventGrid Endpoint = https://localhost/runtime/webhooks/eventgrid
+info: Host.Startup[503]
+      Initializing Host. OperationId: 'f7d57a3d-ad36-4555-87e0-5ef82038b2ab'.
+info: Host.Startup[504]
+      Host initialization: ConsecutiveErrors=0, StartupCount=1, OperationId=f7d57a3d-ad36-4555-87e0-5ef82038b2ab
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScriptJobHostOptions
+      {
+        "FileWatchingEnabled": true,
+        "FileLoggingMode": "DebugOnly",
+        "FunctionTimeout": "00:05:00",
+        "TelemetryMode": "ApplicationInsights"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      LoggerFilterOptions
+      {
+        "MinLevel": "None",
+        "Rules": [
+          {
+            "ProviderName": null,
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": "None",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": null,
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": null,
+            "CategoryName": "Host.Function.ToolingConsoleLog",
+            "LogLevel": "Information",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": "None",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          }
+        ]
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      HttpWorkerOptions
+      {
+        "Type": 0,
+        "Description": null,
+        "Arguments": null,
+        "Port": 43441,
+        "IsPortManuallySet": false,
+        "EnableForwardingHttpRequest": false,
+        "EnableProxyingHttpRequest": false,
+        "InitializationTimeout": "00:00:30",
+        "CustomRoutesEnabled": false,
+        "Http": null
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScriptJobHostOptions
+      {
+        "FileWatchingEnabled": true,
+        "FileLoggingMode": "DebugOnly",
+        "FunctionTimeout": "00:05:00",
+        "TelemetryMode": "ApplicationInsights"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      FunctionResultAggregatorOptions
+      {
+        "BatchSize": 1000,
+        "FlushTimeout": "00:00:30",
+        "IsEnabled": true
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ConcurrencyOptions
+      {
+        "DynamicConcurrencyEnabled": false,
+        "MaximumFunctionConcurrency": 500,
+        "CPUThreshold": 0.8,
+        "SnapshotPersistenceEnabled": true
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      DurableTaskOptions
+      {
+        "HubName": "DocumentPilot",
+        "DefaultVersion": null,
+        "VersionMatchStrategy": "CurrentOrOlder",
+        "VersionFailureStrategy": "Reject",
+        "MaxConcurrentActivityFunctions": 2,
+        "MaxConcurrentOrchestratorFunctions": 4,
+        "MaxConcurrentEntityFunctions": null,
+        "MaxEntityOperationBatchSize": null,
+        "ExtendedSessionsEnabled": false,
+        "ExtendedSessionIdleTimeoutInSeconds": 30,
+        "MaxOrchestrationActions": 100000,
+        "OverridableExistingInstanceStates": "NonRunningStates",
+        "EntityMessageReorderWindowInMinutes": 30,
+        "UseGracefulShutdown": false,
+        "RollbackEntityOperationsOnExceptions": true,
+        "ThrowStatusExceptionsOnRaiseEvent": null,
+        "UseAppLease": true,
+        "StoreInputsInOrchestrationHistory": false,
+        "LocalRpcEndpointEnabled": null,
+        "MaxGrpcMessageSizeInBytes": 4194304,
+        "GrpcHttpClientTimeout": "00:01:40",
+        "HttpSettings": {
+          "DefaultAsyncRequestSleepTimeMilliseconds": 30000,
+          "UseForwardedHost": false
+        },
+        "Tracing": {
+          "TraceInputsAndOutputs": false,
+          "AllowVerboseLinuxTelemetry": false,
+          "TraceReplayEvents": false,
+          "DistributedTracingEnabled": false,
+          "DistributedTracingProtocol": "HttpCorrelationProtocol",
+          "Version": 1,
+          "IncludeInstanceIdInOperationName": false
+        },
+        "Notifications": {
+          "EventGrid": null
+        },
+        "AppLeaseOptions": {
+          "RenewInterval": "00:00:25",
+          "AcquireInterval": "00:05:00",
+          "LeaseInterval": "00:01:00"
+        }
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      SingletonOptions
+      {
+        "LockPeriod": "00:00:15",
+        "ListenerLockPeriod": "00:01:00",
+        "LockAcquisitionTimeout": "10675199.02:48:05.4775807",
+        "LockAcquisitionPollingInterval": "00:00:05",
+        "ListenerLockRecoveryPollingInterval": "00:01:00"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      TimerTriggerPlatformOptions
+      {
+        "NonCronScheduleBehavior": "Allow"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScaleOptions
+      {
+        "ScaleMetricsMaxAge": "00:02:00",
+        "ScaleMetricsSampleInterval": "00:00:10",
+        "MetricsPurgeEnabled": true,
+        "IsTargetScalingEnabled": true,
+        "IsRuntimeScalingEnabled": false
+      }
+info: Microsoft.Azure.WebJobs.Hosting.JobHostService[0]
+      Starting JobHost
+info: Host.Startup[401]
+      Starting Host (HostId=741afb89150b-2137340777, InstanceId=d2cadd96-4a8c-4db5-8e03-973a4334bec2, Version=4.1055.300.3, ProcessId=9, AppDomainId=1, InDebugMode=False, InDiagnosticMode=False, FunctionsExtensionVersion=(null))
+info: Host.Startup[314]
+      Loading functions metadata
+info: Host.Startup[326]
+      Reading functions metadata (Custom)
+info: Host.Startup[327]
+      0 functions found (Custom)
+info: Host.Startup[315]
+      8 functions loaded
+info: Host.Startup[0]
+      Generating 8 job function(s)
+info: Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcFunctionInvocationDispatcher[0]
+      Worker process started and initialized.
+info: Host.Startup[0]
+      Found the following functions:
+      Host.Functions.deliverIndexChanges
+      Host.Functions.documentUploaded
+      Host.Functions.documentWorkflow
+      Host.Functions.recordProcessingFailure
+      Host.Functions.retryIndexChanges
+      Host.Functions.scanAndStore
+      Host.Functions.settleDocumentFailures
+      Host.Functions.workerHealth
+      
+info: Microsoft.Azure.WebJobs.Script.WebHost.WebScriptHostHttpRoutesManager[0]
+      Initializing function HTTP routes
+      Mapped function route 'api/health' [GET] to 'workerHealth'
+      
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      HttpOptions
+      {
+        "DynamicThrottlesEnabled": false,
+        "EnableChunkedRequestBinding": false,
+        "MaxConcurrentRequests": -1,
+        "MaxOutstandingRequests": -1,
+        "RoutePrefix": "api"
+      }
+info: Host.Startup[412]
+      Host initialized (351ms)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 0.
+fail: Host.Startup[0]
+      The listener for function 'Functions.retryIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.retryIndexChanges' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+fail: Host.Startup[0]
+      The listener for function 'Functions.settleDocumentFailures' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.settleDocumentFailures' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 1.
+fail: Host.Startup[0]
+      The listener for function 'Functions.deliverIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.deliverIndexChanges' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:0c13fd56-a9e7-4cf2-8e91-cea5a06a5f5e
+      Time:2026-11-07T07:23:02.183Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:0c13fd56-a9e7-4cf2-8e91-cea5a06a5f5e
+      Time:2026-11-07T07:23:02.183Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 0c13fd56-a9e7-4cf2-8e91-cea5a06a5f5e
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:02 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 2.
+fail: Host.Startup[0]
+      The listener for function 'Functions.documentWorkflow' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.documentWorkflow' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:e891339c-9869-443c-8835-ba05c61ee92a
+      Time:2026-11-07T07:23:02.486Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:e891339c-9869-443c-8835-ba05c61ee92a
+      Time:2026-11-07T07:23:02.486Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: e891339c-9869-443c-8835-ba05c61ee92a
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:02 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 3.
+fail: Host.Startup[0]
+      The listener for function 'Functions.recordProcessingFailure' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.recordProcessingFailure' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:c2f78236-e1a2-438e-b74e-86817e77f936
+      Time:2026-11-07T07:23:02.492Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:c2f78236-e1a2-438e-b74e-86817e77f936
+      Time:2026-11-07T07:23:02.492Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: c2f78236-e1a2-438e-b74e-86817e77f936
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:02 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+fail: Host.Startup[0]
+      The listener for function 'Functions.scanAndStore' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.scanAndStore' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:34e9a168-16da-4cf2-a73f-723326a38595
+      Time:2026-11-07T07:23:02.499Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:34e9a168-16da-4cf2-a73f-723326a38595
+      Time:2026-11-07T07:23:02.499Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 34e9a168-16da-4cf2-a73f-723326a38595
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:02 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[413]
+      Host started (1219ms)
+info: Host.Startup[0]
+      Job host started
+info: Function.workerHealth[1]
+      Executing 'Functions.workerHealth' (Reason='This function was programmatically called via the host APIs.', Id=bca3c355-b246-4c35-9091-383a92ff47d6)
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.settleDocumentFailures' (Attempt 1)
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.retryIndexChanges' (Attempt 1)
+fail: Host.Startup[0]
+      The listener for function 'Functions.settleDocumentFailures' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.settleDocumentFailures' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+fail: Host.Startup[0]
+      The listener for function 'Functions.retryIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.retryIndexChanges' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.deliverIndexChanges' (Attempt 1)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 4.
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.documentWorkflow' (Attempt 1)
+fail: Host.Startup[0]
+      The listener for function 'Functions.deliverIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.deliverIndexChanges' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:23556300-7734-41a9-9f61-efa05af27108
+      Time:2026-11-07T07:23:04.496Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:23556300-7734-41a9-9f61-efa05af27108
+      Time:2026-11-07T07:23:04.496Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 23556300-7734-41a9-9f61-efa05af27108
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:04 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.recordProcessingFailure' (Attempt 1)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 5.
+info: Function.workerHealth[2]
+      Executed 'Functions.workerHealth' (Succeeded, Id=bca3c355-b246-4c35-9091-383a92ff47d6, Duration=335ms)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 6.
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.scanAndStore' (Attempt 1)
+fail: Host.Startup[0]
+      The listener for function 'Functions.documentWorkflow' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.documentWorkflow' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:5c3f5f53-5d45-4998-99e3-868df87397f9
+      Time:2026-11-07T07:23:04.512Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:5c3f5f53-5d45-4998-99e3-868df87397f9
+      Time:2026-11-07T07:23:04.512Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 5c3f5f53-5d45-4998-99e3-868df87397f9
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:04 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 7.
+fail: Host.Startup[0]
+      The listener for function 'Functions.recordProcessingFailure' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.recordProcessingFailure' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:758995d1-94a2-49f3-894c-67c804295cd2
+      Time:2026-11-07T07:23:04.540Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:758995d1-94a2-49f3-894c-67c804295cd2
+      Time:2026-11-07T07:23:04.540Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 758995d1-94a2-49f3-894c-67c804295cd2
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:04 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+fail: Host.Startup[0]
+      The listener for function 'Functions.scanAndStore' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.scanAndStore' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:d17ea186-e310-4d5c-b57b-7917753b58ff
+      Time:2026-11-07T07:23:04.572Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:d17ea186-e310-4d5c-b57b-7917753b58ff
+      Time:2026-11-07T07:23:04.572Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: d17ea186-e310-4d5c-b57b-7917753b58ff
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:04 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+warn: Microsoft.Azure.WebJobs.Script.Diagnostics.HealthChecks.TelemetryHealthCheckPublisher[0]
+      [Tag=''] Process reporting unhealthy: Unhealthy. Health check entries are {"azure.functions.web_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.script_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.webjobs.storage":{"status":"Unhealthy","description":"Unable to access AzureWebJobsStorage","errorCode":"ResourceNotFound"}}
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.retryIndexChanges' (Attempt 2)
+fail: Host.Startup[0]
+      The listener for function 'Functions.retryIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.retryIndexChanges' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.scanAndStore' (Attempt 2)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 8.
+fail: Host.Startup[0]
+      The listener for function 'Functions.scanAndStore' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.scanAndStore' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:97662566-8052-4f91-8758-09d4e5c1a880
+      Time:2026-11-07T07:23:08.410Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:97662566-8052-4f91-8758-09d4e5c1a880
+      Time:2026-11-07T07:23:08.410Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 97662566-8052-4f91-8758-09d4e5c1a880
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:08 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.deliverIndexChanges' (Attempt 2)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 9.
+fail: Host.Startup[0]
+      The listener for function 'Functions.deliverIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.deliverIndexChanges' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:0cb547a7-3490-481f-9e96-6bd4d8361c7c
+      Time:2026-11-07T07:23:08.564Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:0cb547a7-3490-481f-9e96-6bd4d8361c7c
+      Time:2026-11-07T07:23:08.564Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 0cb547a7-3490-481f-9e96-6bd4d8361c7c
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:08 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.settleDocumentFailures' (Attempt 2)
+fail: Host.Startup[0]
+      The listener for function 'Functions.settleDocumentFailures' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.settleDocumentFailures' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.documentWorkflow' (Attempt 2)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 10.
+fail: Host.Startup[0]
+      The listener for function 'Functions.documentWorkflow' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.documentWorkflow' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:1f0f6629-6472-43cb-a2ce-bd5d04a3332b
+      Time:2026-11-07T07:23:08.868Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:1f0f6629-6472-43cb-a2ce-bd5d04a3332b
+      Time:2026-11-07T07:23:08.868Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 1f0f6629-6472-43cb-a2ce-bd5d04a3332b
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:08 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.recordProcessingFailure' (Attempt 2)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 11.
+fail: Host.Startup[0]
+      The listener for function 'Functions.recordProcessingFailure' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.recordProcessingFailure' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:fc88c375-1ee6-415b-9e97-151fdef7b82c
+      Time:2026-11-07T07:23:08.966Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:fc88c375-1ee6-415b-9e97-151fdef7b82c
+      Time:2026-11-07T07:23:08.966Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: fc88c375-1ee6-415b-9e97-151fdef7b82c
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:08 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.retryIndexChanges' (Attempt 3)
+fail: Host.Startup[0]
+      The listener for function 'Functions.retryIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.retryIndexChanges' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.scanAndStore' (Attempt 3)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 12.
+fail: Host.Startup[0]
+      The listener for function 'Functions.scanAndStore' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.scanAndStore' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:6bb2cbb8-68e1-48e0-afd4-0efd436f9b21
+      Time:2026-11-07T07:23:13.932Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:6bb2cbb8-68e1-48e0-afd4-0efd436f9b21
+      Time:2026-11-07T07:23:13.932Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 6bb2cbb8-68e1-48e0-afd4-0efd436f9b21
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:13 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.settleDocumentFailures' (Attempt 3)
+fail: Host.Startup[0]
+      The listener for function 'Functions.settleDocumentFailures' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.settleDocumentFailures' was unable to start.
+       ---> System.Xml.XmlException: Root element is missing.
+         at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+         at System.Xml.XmlTextReaderImpl.ThrowWithoutLineInfo(String res)
+         at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+         at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+         at System.Xml.Linq.XDocument.Load(Stream stream, LoadOptions options)
+         at Azure.Core.Pipeline.StorageRequestFailedDetailsParser.TryParse(Response response, ResponseError& error, IDictionary`2& data)
+         at Azure.RequestFailedException.CreateExceptionDetails(Response response, RequestFailedDetailsParser parser)
+         at Azure.RequestFailedException..ctor(Response response)
+         at Azure.Core.HttpPipelineExtensions.ProcessMessageAsync(HttpPipeline pipeline, HttpMessage message, RequestContext requestContext, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobRestClient.GetPropertiesAsync(String snapshot, String versionId, Nullable`1 timeout, String leaseId, String encryptionKey, String encryptionKeySha256, String encryptionAlgorithm, String ifTags, RequestConditions requestConditions, RequestContext context)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesInternal(BlobRequestConditions conditions, Boolean async, RequestContext context, String operationName)
+         at Azure.Storage.Blobs.Specialized.BlobBaseClient.GetPropertiesAsync(BlobRequestConditions conditions, CancellationToken cancellationToken)
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.ReadLeaseBlobMetadata(BlobClient blobClient, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 337
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryAcquireLeaseAsync(BlobClient blobClient, TimeSpan leasePeriod, String proposedLeaseId, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 175
+         at Microsoft.Azure.WebJobs.Host.BlobLeaseDistributedLockManager.TryLockAsync(String account, String lockId, String lockOwnerId, String proposedLeaseId, TimeSpan lockPeriod, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host.Storage/Singleton/BlobLeaseDistributedLockManager.cs:line 83
+         at Microsoft.Azure.WebJobs.Host.SingletonManager.TryLockAsync(String lockId, String functionInstanceId, SingletonAttribute attribute, CancellationToken cancellationToken, Boolean retry) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonManager.cs:line 113
+         at Microsoft.Azure.WebJobs.Host.Listeners.SingletonListener.StartAsync(CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Singleton/SingletonListener.cs:line 48
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.recordProcessingFailure' (Attempt 3)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 13.
+fail: Host.Startup[0]
+      The listener for function 'Functions.recordProcessingFailure' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.recordProcessingFailure' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:50eaa2e5-a049-4719-a3c8-edc612bedf98
+      Time:2026-11-07T07:23:14.746Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:50eaa2e5-a049-4719-a3c8-edc612bedf98
+      Time:2026-11-07T07:23:14.746Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 50eaa2e5-a049-4719-a3c8-edc612bedf98
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:14 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.documentWorkflow' (Attempt 3)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 14.
+fail: Host.Startup[0]
+      The listener for function 'Functions.documentWorkflow' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.documentWorkflow' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:3eeccedd-86dc-4191-9024-0813ed9c9736
+      Time:2026-11-07T07:23:14.935Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:3eeccedd-86dc-4191-9024-0813ed9c9736
+      Time:2026-11-07T07:23:14.935Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 3eeccedd-86dc-4191-9024-0813ed9c9736
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:14 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+info: Host.Startup[0]
+      Retrying to start listener for function 'Functions.deliverIndexChanges' (Attempt 3)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 55ac8d53-d37a-4816-890f-283154d344ca. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 15.
+fail: Host.Startup[0]
+      The listener for function 'Functions.deliverIndexChanges' was unable to start.
+      Microsoft.Azure.WebJobs.Host.Listeners.FunctionListenerException: The listener for function 'Functions.deliverIndexChanges' was unable to start.
+       ---> DurableTask.AzureStorage.Storage.DurableTaskStorageException: An error occurred while communicating with Azure Storage
+       ---> Azure.RequestFailedException: The blob path is incomplete.
+      RequestId:ed6e14b9-f6af-45ce-9d50-b2e220568416
+      Time:2026-11-07T07:23:15.179Z
+      Status: 404 (Not Found)
+      ErrorCode: ResourceNotFound
+      
+      Content:
+      <?xml version="1.0" encoding="utf-8"?><Error><Code>ResourceNotFound</Code><Message>The blob path is incomplete.
+      RequestId:ed6e14b9-f6af-45ce-9d50-b2e220568416
+      Time:2026-11-07T07:23:15.179Z</Message></Error>
+      
+      Headers:
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: ed6e14b9-f6af-45ce-9d50-b2e220568416
+      x-ms-version: 2023-11-03
+      Date: Sat, 07 Nov 2026 07:23:15 GMT
+      Connection: keep-alive
+      Keep-Alive: REDACTED
+      Content-Length: 206
+      Content-Type: application/xml
+      
+         at Azure.Storage.Blobs.ContainerRestClient.CreateAsync(Nullable`1 timeout, IDictionary`2 metadata, Nullable`1 access, String defaultEncryptionScope, Nullable`1 preventEncryptionScopeOverride, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken, String operationName)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsInternal(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, Boolean async, CancellationToken cancellationToken)
+         at Azure.Storage.Blobs.BlobContainerClient.CreateIfNotExistsAsync(PublicAccessType publicAccessType, IDictionary`2 metadata, BlobContainerEncryptionScopeOptions encryptionScopeOptions, CancellationToken cancellationToken)
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask)
+         --- End of inner exception stack trace ---
+         at DurableTask.AzureStorage.Storage.ClientResponseExtensions.DecorateFailure[T](Task`1 responseTask) in /_/src/DurableTask.AzureStorage/Storage/ClientResponseExtensions.cs:line 46
+         at DurableTask.AzureStorage.Storage.BlobContainer.CreateIfNotExistsAsync(CancellationToken cancellationToken) in /_/src/DurableTask.AzureStorage/Storage/BlobContainer.cs:line 51
+         at DurableTask.AzureStorage.Partitioning.AppLeaseManager.CreateContainerIfNotExistsAsync() in /_/src/DurableTask.AzureStorage/Partitioning/AppLeaseManager.cs:line 207
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.GetTaskHubCreatorTask() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 371
+         at DurableTask.AzureStorage.AzureStorageOrchestrationService.EnsureTaskHubAsync() in /_/src/DurableTask.AzureStorage/AzureStorageOrchestrationService.cs:line 352
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.StartTaskHubWorkerIfNotStartedAsync() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 1606
+         at Microsoft.Azure.WebJobs.Host.Listeners.FunctionListener.StartAsync(CancellationToken cancellationToken, Boolean allowRetry) in /_/src/Microsoft.Azure.WebJobs.Host/Listeners/FunctionListener.cs:line 68
+         --- End of inner exception stack trace ---
+

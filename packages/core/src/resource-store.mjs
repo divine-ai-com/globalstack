@@ -403,6 +403,7 @@ export class ResourceStore {
     this.resourceGroups = new Map();
     this.resources = new Map();
     this.deployments = new Map();
+    this.deploymentOperations = new Map();
     this.asyncOperations = new Map();
     this.calls = [];
   }
@@ -460,7 +461,10 @@ export class ResourceStore {
       if (resourceId.startsWith(`${key}/providers/`)) this.resources.delete(resourceId);
     }
     for (const deploymentId of [...this.deployments.keys()]) {
-      if (deploymentId.startsWith(`${key}/providers/microsoft.resources/deployments/`)) this.deployments.delete(deploymentId);
+      if (deploymentId.startsWith(`${key}/providers/microsoft.resources/deployments/`)) {
+        this.deployments.delete(deploymentId);
+        this.deploymentOperations.delete(deploymentId);
+      }
     }
     return existed;
   }
@@ -481,6 +485,22 @@ export class ResourceStore {
     const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
     const deployment = this.deployments.get(id.toLowerCase());
     return deployment ? deepClone(deployment) : null;
+  }
+
+  putDeploymentOperations({ subscriptionId, resourceGroupName = null, deploymentName, operations }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    this.deploymentOperations.set(id.toLowerCase(), deepClone(operations));
+  }
+
+  listDeploymentOperations({ subscriptionId, resourceGroupName = null, deploymentName }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    return deepClone(this.deploymentOperations.get(id.toLowerCase()) ?? []);
+  }
+
+  deleteDeployment({ subscriptionId, resourceGroupName = null, deploymentName }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    this.deploymentOperations.delete(id.toLowerCase());
+    return this.deployments.delete(id.toLowerCase());
   }
 
   putResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null, body = {}, apiVersion, capability }) {
@@ -515,7 +535,10 @@ export class ResourceStore {
                 name: (body.sku ?? body.properties?.sku ?? existing?.sku)?.name ?? 'Basic',
                 tier: (body.sku ?? body.properties?.sku ?? existing?.sku)?.tier ?? 'Regional',
               }
-            : (body.sku ?? body.properties?.sku),
+            : type === 'Microsoft.Web/serverfarms' && ['P0v3', 'EP1'].includes(body.sku?.name)
+              ? { ...body.sku, tier: body.sku.name === 'P0v3' ? 'Premium0V3' : 'ElasticPremium',
+                  size: body.sku.name, family: body.sku.name === 'P0v3' ? 'Pv3' : 'EP' }
+              : (body.sku ?? body.properties?.sku),
       kind: body.kind,
       identity: materializeIdentity(body.identity ?? existing?.identity, id),
       properties: {
@@ -677,6 +700,11 @@ export class ResourceStore {
               gatewayUrl: existing?.properties?.gatewayUrl ?? apiManagementGatewayUrl(name),
               developerPortalUrl: existing?.properties?.developerPortalUrl ?? `${apiManagementGatewayUrl(name)}/developer`,
             }
+          : {}),
+        ...(type === 'Microsoft.Web/serverfarms' && ['P0v3', 'EP1'].includes(body.sku?.name)
+          ? { name, reserved: true, numberOfWorkers: 1, currentNumberOfWorkers: 1,
+              perSiteScaling: false, elasticScaleEnabled: body.sku.name === 'EP1', maximumElasticWorkerCount: 1,
+              zoneRedundant: false, provisioningState: lifecycleSequence ? 'Creating' : 'Succeeded' }
           : {}),
         ...(type === 'Microsoft.Web/sites'
           ? {
@@ -1118,10 +1146,10 @@ export class ResourceStore {
           }
         : {}),
       globalstack: {
-        supportLevel,
+        supportLevel: type === 'Microsoft.Web/serverfarms' ? 'globalstack-facade' : supportLevel,
         capabilityId: capability.id,
-        backingEngines: capability.backingEngines,
-        emulationDepth: emulationDepth(capability),
+        backingEngines: type === 'Microsoft.Web/serverfarms' ? [] : capability.backingEngines,
+        emulationDepth: type === 'Microsoft.Web/serverfarms' ? 'metadata-only-control-plane' : emulationDepth(capability),
         realAzureApiComplete: false,
         cloudValidated: capability.cloudValidated,
         knownGaps: capability.knownGaps,

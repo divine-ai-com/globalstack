@@ -1,0 +1,40 @@
+{
+  "scope": "Account-scoped Sender role: Azure deployment and first Blob event delivery succeeded. GlobalStack still rejected the unsupported child subscription before the delivery implementation. All six Azure cleanup checks passed.",
+  "postCaptureRedaction": "Identifiers inside base64 Event Grid queue payloads are decoded, replaced and re-encoded in public copies. Original video and recording metadata reference the operator-held stream.",
+  "originalPrivateFileDigests": {
+    "result.json": {
+      "sha256": "3e3c2e0f5dcd521f1849ae897cee604d9b8a44e9904385609ab745bf7bfdeebd",
+      "bytes": 228727
+    },
+    "events.ndjson": {
+      "sha256": "3963ad26a0facb6ee45416aff394ff487fd860b3bd3f01d11a8e10ed97785f4a",
+      "bytes": 282882
+    },
+    "recording.json": {
+      "sha256": "acf72c4934f456852593dcea98ef06d3ac4f9e3e19a42067c80b0018615414d5",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "f4ed4fc2317ea8bca743d803543394a37b7cac7263d2b4f137a738203ecd0fda",
+      "bytes": 4180
+    }
+  },
+  "files": {
+    "result.json": {
+      "sha256": "e8bc42dae9fe69d595dc8485f45bffcc9bddd8f1b2d17bcca4df29301e50cd48",
+      "bytes": 228683
+    },
+    "events.ndjson": {
+      "sha256": "7456e16c49f76b8a80d565f47c7b13c496faa581b94dcf22db2613d9ce8680b6",
+      "bytes": 282838
+    },
+    "recording.json": {
+      "sha256": "acf72c4934f456852593dcea98ef06d3ac4f9e3e19a42067c80b0018615414d5",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "f4ed4fc2317ea8bca743d803543394a37b7cac7263d2b4f137a738203ecd0fda",
+      "bytes": 4180
+    }
+  }
+}

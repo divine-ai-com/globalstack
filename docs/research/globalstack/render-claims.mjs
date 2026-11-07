@@ -10,7 +10,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), 'claims/evidence')
 const read = async name => JSON.parse(await readFile(resolve(root, name), 'utf8'));
 const provenance = await read('provenance.json');
 for (const source of provenance.productSources) {
-  const bytes = await readFile(resolve(root, '../../../../..', source.path));
+  // Historical observations bind to their original source bytes, not today's implementation.
+  assert.match(source.sha256, /^[a-f0-9]{64}$/);
+  const bytes = await readFile(resolve(root, 'product-source', `${source.sha256}.txt`));
   assert.equal(createHash('sha256').update(bytes).digest('hex'), source.sha256);
 }
 for (const name of provenance.preFixRuns) {
@@ -93,7 +95,8 @@ for (const name of provenance.retainedRuns) {
 // The public sample supersedes the private-harness sample without pooling observations.
 const publicProvenance = await read('public-provenance.json');
 for (const source of publicProvenance.sourceFiles) {
-  const bytes = await readFile(resolve(root, '../../../../..', source.path));
+  assert.match(source.sha256, /^[a-f0-9]{64}$/);
+  const bytes = await readFile(resolve(root, 'public-source', `${source.sha256}.txt`));
   assert.equal(createHash('sha256').update(bytes).digest('hex'), source.sha256);
 }
 const publicReports = await Promise.all(publicProvenance.reports.map(read));

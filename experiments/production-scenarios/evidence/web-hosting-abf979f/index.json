@@ -1,0 +1,21 @@
+{
+  "scope": "Azure-first Linux hosting plan lifecycle; neither application deployed.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+      "bytes": 3228
+    },
+    "events.ndjson": {
+      "sha256": "e2aa25065880e90aa0dcd7f4347e0719b5ec2b7dfac3d60219155756febb5329",
+      "bytes": 120088
+    },
+    "recording.json": {
+      "sha256": "096d5a91913d4f4effac18a42a2fedc3718a1b66ca730d4f4938c09d524c4664",
+      "bytes": 639
+    },
+    "result.json": {
+      "sha256": "e602f6ebf3c6b5a03f7c266981362a4075dba81d06939a7532f28cb3dbb083b7",
+      "bytes": 96851
+    }
+  }
+}

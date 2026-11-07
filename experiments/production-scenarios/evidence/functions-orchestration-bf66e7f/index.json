@@ -1,0 +1,22 @@
+{
+  "scope": "Clean local official Functions host execution of the document failure path. No Azure-host or complete business-workflow comparison.",
+  "files": {
+    "result.json": {
+      "sha256": "cc179af33ead5e612288bf522757dce95545044f1b820e594f4adf199d76eef5",
+      "bytes": 284178
+    },
+    "host.log": {
+      "sha256": "b211d2f6e7e5145e6dd509f4008f69accea8bb5f0fad24811b36686a1f96025c",
+      "bytes": 118615
+    }
+  },
+  "activityFailures": {
+    "scanAndStore": 3,
+    "recordProcessingFailure": 3
+  },
+  "observations": [
+    "Native Durable orchestration accepted with HTTP 202 and persisted Failed with HTTP 200 after actual activity retries.",
+    "Downstream service settings were intentionally absent. This is expected failure evidence, not a successful document run.",
+    "Task-owned Docker container and network removed."
+  ]
+}

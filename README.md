@@ -36,6 +36,32 @@ GLOBALSTACK_ENDPOINT=http://127.0.0.1:4570 npm run demo
 
 Set `GLOBALSTACK_ARM_PORT` to change the port. Stop the server with Ctrl+C. State is currently in memory and is lost on restart. The local management API needs no activation key. Protected resource requests still require the local Azure bearer token, which the demo supplies automatically.
 
+To start the management API together with the available service routers:
+
+```bash
+npm run hybrid:emulator
+```
+
+This entrypoint uses ARM port 4566, Search port 10006 and API Management port
+10007 by default. Set `GLOBALSTACK_ARM_PORT`, `GLOBALSTACK_SEARCH_PORT` and
+`GLOBALSTACK_API_MANAGEMENT_PORT` to override them. All listeners bind to loopback
+unless explicitly configured otherwise. A deployed Search service or APIM API
+is synchronized with its router; deleting the resource removes its route.
+Creating resources alone does not provide function workers or complete service
+behavior. See the [runtime scope](packages/azure-data-plane/README.md).
+
+Direct local HTTP requests must retain the deployed service host. After deploying
+`example-search`, set `SEARCH_API_KEY` to your synthetic local test key and run:
+
+```bash
+curl --header 'Host: example-search.search.windows.net' \
+  --header "api-key: ${SEARCH_API_KEY}" \
+  'http://127.0.0.1:10006/indexes?api-version=2024-07-01'
+```
+
+SDK use additionally needs external DNS/endpoint and certificate configuration.
+The application should not branch on the target environment.
+
 ## Run the container
 
 Build the image from this checkout:
@@ -46,6 +72,10 @@ docker run --rm -p 127.0.0.1:4570:4566 globalstack/azure-emulator:local
 ```
 
 Run `GLOBALSTACK_ENDPOINT=http://127.0.0.1:4570 npm run demo` from another terminal. This publishes only the management API. Additional service runtimes and ports need separate configuration.
+
+For Search and APIM, also publish `127.0.0.1:10006:10006` and
+`127.0.0.1:10007:10007`. Backends configured in APIM must be reachable from the
+emulator container's network namespace.
 
 ## What this verifies
 

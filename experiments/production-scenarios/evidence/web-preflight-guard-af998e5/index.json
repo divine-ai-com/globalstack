@@ -1,0 +1,21 @@
+{
+  "scope": "Live rejected provider validation stopped provisioning and budget allocation; not an application pass.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+      "bytes": 3228
+    },
+    "events.ndjson": {
+      "sha256": "083f776f59aa7e1a2e3574ab5644f19913aa8e498acdf812c4e4e8264a5142ca",
+      "bytes": 24762
+    },
+    "recording.json": {
+      "sha256": "dca36f0b7042cd654b1b41dcc05cdace3585b7d1da5e2a4496d8e8aca13f8763",
+      "bytes": 638
+    },
+    "result.json": {
+      "sha256": "817e19263b314dec33f89f60e2395d82c6a14539a893b8294ef74f710fd9c55d",
+      "bytes": 21170
+    }
+  }
+}

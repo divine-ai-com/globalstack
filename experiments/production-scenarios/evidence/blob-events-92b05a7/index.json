@@ -1,0 +1,40 @@
+{
+  "scope": "Three unchanged Azure-first Event Grid attempts failed managed-identity destination authorization. Local deployment failed resource-scoped role handling. No event flow exercised. All six cleanup assertions passed.",
+  "postCaptureRedaction": "Provider-internal event subscription identities in error messages are replaced in public text copies. Original recording metadata references the operator-held event stream.",
+  "originalPrivateFileDigests": {
+    "result.json": {
+      "sha256": "ccc5efed22369618acc0086e181e0a519b96d94ce77647385d12deb0326fdaca",
+      "bytes": 381992
+    },
+    "events.ndjson": {
+      "sha256": "e8318b6cdbb99291780801c1c61653768b42c1c50ba411157a4e902f44e5b381",
+      "bytes": 441700
+    },
+    "recording.json": {
+      "sha256": "00661f7dc6529ccc23a103cb134fbdd0b9b9e92ea5fec7c03f887409f774b990",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "9f3fd90888a597ee378c4606cdda061014784a0a8e107f2cbee0530e58757339",
+      "bytes": 4468
+    }
+  },
+  "files": {
+    "result.json": {
+      "sha256": "7243330f6a30d3fff8f4485d550f60441631c1078e6edfcd1888b400f3471a39",
+      "bytes": 381971
+    },
+    "events.ndjson": {
+      "sha256": "f099c935139bc2b34108f3229537a0c9b6f13b5cbb0d0cf4049088c87e943399",
+      "bytes": 441679
+    },
+    "recording.json": {
+      "sha256": "00661f7dc6529ccc23a103cb134fbdd0b9b9e92ea5fec7c03f887409f774b990",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "9f3fd90888a597ee378c4606cdda061014784a0a8e107f2cbee0530e58757339",
+      "bytes": 4468
+    }
+  }
+}
