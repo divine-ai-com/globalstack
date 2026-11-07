@@ -179,3 +179,9 @@ custom SDK transport or application emulation branch is used in this container
 check. It remains an adapter diagnostic invoked inside the image, not a
 successful Event Grid-to-scanner workflow or automatic worker deployment.
 Temporary identity headers and TLS private keys are removed during cleanup.
+
+The [clean native identity capture](../evidence/functions-native-identity-0e584f3/)
+retains those SDK requests and assertions, followed by the expected incomplete
+workflow failure. All 15 Blob requests used Bearer authorization. Historical and
+range reads passed; the final two access attempts returned 403 after role removal.
+Worker, network, management credential and identity TLS files were removed.

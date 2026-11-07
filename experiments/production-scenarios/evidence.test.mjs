@@ -297,3 +297,30 @@ test('native Event Grid evidence ties a Blob upload to a real failed document tr
   assert.match(log, /Executed 'Functions\.documentUploaded' \(Failed/);
   assert.match(log, /Missing application setting STORAGE_ENDPOINT/);
 });
+
+test('native identity capture retains SDK authorization and cleanup without claiming workflow success', async () => {
+  const prefix = 'functions-native-identity-0e584f3/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(`${prefix}result.json`);
+  assert.equal(report.sourceRevision, index.sourceRevision);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.cleanup, true);
+  assert.equal(report.nativeIdentity.cleanup, true);
+  assert.equal(report.nativeRouting.managementCredentialRemoved, true);
+  assert.equal(report.businessWorkflowCompleted, false);
+  assert.equal(report.expectedFailurePersisted, true);
+  assert.deepEqual(report.nativeIdentity.sdk, [
+    { phase: 'authorized', historicalRead: true, rangeRead: true, deletedCurrentRead: true },
+    { phase: 'role-removed', readStatus: 403, writeStatus: 403 },
+  ]);
+  assert.ok(report.nativeIdentity.requests.every(request => request.bearer));
+  assert.ok(report.nativeIdentity.requests.some(request => request.method === 'GET' && request.status === 206));
+  assert.deepEqual(report.nativeIdentity.requests.slice(-2).map(request => request.status), [403, 403]);
+  assert.equal(report.nativeRouting.stoppedWorkerStatus, 502);
+  assert.equal(report.nativeRouting.deletedSiteStatus, 404);
+});

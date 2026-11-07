@@ -1,0 +1,14 @@
+{
+  "scope": "Native image SDK using the local managed identity broker, standard environment and verified TLS. Adapter diagnostic only; full document workflow still fails on absent downstream settings. No Azure identity comparison.",
+  "sourceRevision": "0e584f3f0d01594cc99265c88a75d15258a9d2fd",
+  "files": {
+    "result.json": {
+      "sha256": "d5e1122fb6021ea859f3353e70562671d6f4b520a2622d3987a0a8a514e955e3",
+      "bytes": 295425
+    },
+    "host.log": {
+      "sha256": "1047886d6d36f9f27da5fc6abae02c3e530650ea112b36eaed1518b2f738a3ae",
+      "bytes": 126210
+    }
+  }
+}
