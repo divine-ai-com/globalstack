@@ -7,6 +7,7 @@ import { mkdir, readFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { prepareDatabaseProbe } from './functions-database-probe.mjs';
+import { prepareSearchProbe } from './functions-search-probe.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createManagedIdentityService } from '../../packages/azure-data-plane/src/managed-identity-service.mjs';
 import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/src/storage-router.mjs';
@@ -23,7 +24,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
   const account = `gsidentity${suffix}`, accountId = `${group}/providers/Microsoft.Storage/storageAccounts/${account}`;
   const directory = resolve(out, 'identity.private');
   const service = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub],
-    audiences: ['https://storage.azure.com', 'https://storage.azure.com/', 'https://vault.azure.net'] });
+    audiences: ['https://storage.azure.com', 'https://storage.azure.com/', 'https://vault.azure.net', 'https://search.azure.com'] });
   const report = { scope: 'Native image SDK and unchanged source adapter; local identity and TLS transport only. No paired Azure identity or completed document workflow.',
     requests: [], sdk: [], cleanup: false };
   let binding;
@@ -75,6 +76,9 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
     ? await prepareDatabaseProbe({ store, trust: service.trust, arm, listen, name, suffix, gateway, directory,
       certificateBundle: certificate, group, principalId: site.identity.principalId, registerCleanup, secrets }) : null;
   if (database) report.database = database.report;
+  const search = process.env.FUNCTIONS_PROBE_SEARCH === '1'
+    ? await prepareSearchProbe({ store, trust: service.trust, arm, listen, suffix, gateway, directory, certificateBundle: certificate, group, principalId: site.identity.principalId }) : null;
+  if (search) report.search = search.report;
   const script = `
     import assert from 'node:assert/strict';
     import { DefaultAzureCredential } from '@azure/identity';
@@ -98,7 +102,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
       console.log(JSON.stringify({ phase: 'authorized', historicalRead: true, rangeRead: true, deletedCurrentRead: true }));
     }
   `;
-  return { report, env, dockerArgs: [...(database?.dockerArgs ?? []), '--add-host', `${account}.blob.core.windows.net:${gateway}`,
+  return { report, env, dockerArgs: [...(database?.dockerArgs ?? []), ...(search?.dockerArgs ?? []), '--add-host', `${account}.blob.core.windows.net:${gateway}`,
     '-v', `${certificate}:/globalstack-platform-ca.pem:ro`, ...Object.keys(env).flatMap(key => ['-e', key])],
     async exercise(containerName) {
       for (const phase of ['authorized', 'denied']) {
@@ -111,6 +115,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
         report.sdk.push(JSON.parse(stdout.trim()));
       }
       if (database) await database.exercise(containerName);
+      if (search) await search.exercise(containerName);
       assert.ok(report.requests.length > 0 && report.requests.every(item => item.bearer));
     },
   };

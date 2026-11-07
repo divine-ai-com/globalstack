@@ -2587,7 +2587,8 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     const role = body.properties.roleDefinitionId.match(/^\/subscriptions\/[a-f0-9-]{36}\/providers\/Microsoft\.Authorization\/roleDefinitions\/([a-f0-9-]{36})$/i)?.[1]?.toLowerCase();
     if (['c6a89b2d-59bc-44d0-9896-0f6e12d7b80a', '974c5e8b-45b9-4653-ba55-5f855dd0fb88',
       '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b',
-      '4633458b-17de-408a-b874-0445c86b69e6'].includes(role)) {
+      '4633458b-17de-408a-b874-0445c86b69e6', '7ca78c08-252a-4471-8644-bb5ff32d4ba0',
+      '8ebe5a00-799e-43f5-93ac-243d3dce84a7', '1407120a-92aa-4202-b7e9-c0e197c71c8f'].includes(role)) {
       if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties.principalId)) return invalidRequestContent('principalId');
       return null;
     }

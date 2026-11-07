@@ -251,6 +251,7 @@ export function createArmRequestHandler({
   metricStore = null,
   kubernetesRouter = null,
   functionsRouter = null,
+  searchRouter = null,
 } = {}) {
   void persist;
   const completedDeploymentDeletions = new Map();
@@ -265,7 +266,8 @@ export function createArmRequestHandler({
     }
     if (providerRoute.scopeId) {
       const scopeRoute = providerRouteFromResourceId(providerRoute.scopeId);
-      if (!scopeRoute || !store.getResource(scopeRoute)) {
+      if (!scopeRoute || !(store.getResource(scopeRoute)
+        || resourceType === 'Microsoft.Authorization/roleAssignments' && searchRouter?.resolveIndexScope(scopeRoute))) {
         return { status: 404, body: { error: { code: 'ResourceNotFound', message: 'The extension resource scope was not found.', details: [] } } };
       }
       if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
@@ -1032,7 +1034,7 @@ export function createArmRequestHandler({
 
         const scopedAssignment = scopedRoleAssignmentRoute(providerRoute);
         if (scopedAssignment) {
-          const parent = store.getResource(scopedAssignment.scopeRoute);
+          const parent = store.getResource(scopedAssignment.scopeRoute) ?? searchRouter?.resolveIndexScope(scopedAssignment.scopeRoute);
           if (!parent) return sendError(res, 404, 'ResourceNotFound', 'The role assignment scope does not exist.');
           const route = { ...scopedAssignment.assignmentRoute, scopeId: parent.id };
           if (method === 'PUT') {

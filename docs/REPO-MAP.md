@@ -118,6 +118,7 @@ flowchart TD
 - `packages/azure-data-plane/src/relational-backend-manager.mjs`
 - `packages/azure-data-plane/src/search-query.mjs`
 - `packages/azure-data-plane/src/search-router.mjs`
+- `packages/azure-data-plane/src/search-token-auth.mjs`
 - `packages/azure-data-plane/src/service-discovery-registry.mjs`
 - `packages/azure-data-plane/src/service-errors.mjs`
 - `packages/azure-data-plane/src/storage-event-delivery.mjs`
@@ -167,6 +168,7 @@ flowchart TD
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`
 - `packages/conformance/src/search-query.test.mjs`
 - `packages/conformance/src/search-router.test.mjs`
+- `packages/conformance/src/search-token-auth.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
 - `packages/conformance/src/storage-event-delivery.test.mjs`

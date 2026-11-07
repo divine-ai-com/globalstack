@@ -195,3 +195,9 @@ It also checks rejection of an untrusted database certificate and denial after
 removing the Key Vault secret role. This diagnostic uses `docker exec`; it does
 not prove that the Event Grid handler reaches the database. The database is not
 created through ARM and no live Azure PostgreSQL comparison is claimed.
+
+`FUNCTIONS_PROBE_SEARCH=1` adds a native-image Search SDK diagnostic to the
+identity probe. It exercises TLS, signed credentials, schema creation, document
+upload/query, read-only access and role removal. These calls run through
+`docker exec`, not the deployed document handler, and do not establish an
+Azure Search comparison or completed outbox delivery.

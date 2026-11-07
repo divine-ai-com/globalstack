@@ -203,3 +203,27 @@ operations and network configurations return 501. Conditional role assignments
 cannot grant access. This feature does not claim Azure error-message, permission
 propagation, private endpoint or complete Key Vault parity. Paired Azure testing
 and the full document workflow are still required.
+
+### Search workload-token subset
+
+`createEmulatorRuntime({ store, searchTokenTrusts })` and
+`GLOBALSTACK_SEARCH_TOKEN_TRUSTS_FILE` enable signed workload-token authorization
+on the Search data plane. Trust entries use the same pinned public RS256 key,
+issuer, tenant and subscription configuration as Storage. Tokens must target
+`https://search.azure.com`. In this mode a legacy token or arbitrary API key
+cannot authorize a request. The deployed service must enable role authentication.
+
+The implemented built-in roles are Search Service Contributor for supported
+index-schema operations, Search Index Data Contributor for document writes and
+queries, and Search Index Data Reader for supported queries/counts. Assignments
+can target a deployed service or an existing index. Index-scoped assignments
+require the runtime Search router to be supplied to the ARM handler; the main
+emulator entrypoint wires this automatically. Role removal affects subsequent
+requests. Service management alone does not grant document access.
+
+This is a bounded local implementation of the [documented role model](https://learn.microsoft.com/en-us/azure/search/search-security-rbac).
+Live Azure claim, error-envelope, propagation-delay and permission parity remain
+unverified. Custom roles, assignment conditions, private-network/IP-rule checks,
+indexers and unsupported operations are rejected in this mode. The legacy
+router remains a permissive local fixture surface when no token trusts are
+configured; its acceptance is not evidence of identity authorization.

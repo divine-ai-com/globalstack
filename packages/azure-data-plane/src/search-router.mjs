@@ -2,6 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { evaluateSearch } from './search-query.mjs';
+import { searchTokenAuthorizer } from './search-token-auth.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -94,14 +95,17 @@ function keyField(index) {
 }
 
 export class SearchRouter {
-  constructor() {
+  constructor({ store, tokenTrusts = [] } = {}) {
+    if (!Array.isArray(tokenTrusts)) throw new Error('Search token trusts must be an array.');
+    this.store = store;
+    this.workloadAuthorization = tokenTrusts.length ? searchTokenAuthorizer({ store, trusts: tokenTrusts }) : null;
     this.services = new Map();
   }
 
-  registerService({ serviceName, endpoint }) {
+  registerService({ serviceName, endpoint, resourceId }) {
     const name = String(serviceName);
     this.services.set(serviceKey(name), {
-      serviceName: name,
+      serviceName: name, resourceId,
       endpoint: endpoint ?? `https://${name}.search.windows.net`,
       indexes: this.services.get(serviceKey(name))?.indexes ?? new Map(),
     });
@@ -109,6 +113,16 @@ export class SearchRouter {
 
   unregisterService(serviceName) {
     this.services.delete(serviceKey(serviceName));
+  }
+
+  resolveIndexScope(route) {
+    if (route.providerNamespace?.toLowerCase() !== 'microsoft.search') return null;
+    const parts = route.typePath.split('/');
+    if (parts.length !== 4 || parts[0].toLowerCase() !== 'searchservices' || parts[2].toLowerCase() !== 'indexes') return null;
+    const service = this.services.get(serviceKey(parts[1]));
+    const parent = `/subscriptions/${route.subscriptionId}/resourceGroups/${route.resourceGroupName}/providers/Microsoft.Search/searchServices/${parts[1]}`;
+    if (service?.resourceId?.toLowerCase() !== parent.toLowerCase() || !this.store?.resources.has(parent.toLowerCase()) || !service.indexes.has(parts[3])) return null;
+    return { id: `${service.resourceId}/indexes/${parts[3]}` };
   }
 
   serviceForHost(host) {
@@ -124,12 +138,17 @@ export class SearchRouter {
       const method = req.method.toUpperCase();
       const versionError = requireApiVersion(url);
       if (versionError) return sendError(res, versionError.status, versionError.code, versionError.message);
-      const authError = requireAuth(req);
-      if (authError) return sendError(res, authError.status, authError.code, authError.message);
 
+      if (!this.workloadAuthorization) {
+        const legacyError = requireAuth(req);
+        if (legacyError) return sendError(res, legacyError.status, legacyError.code, legacyError.message);
+      }
       const service = this.serviceForHost(requestHost(req));
       if (!service) return sendError(res, 404, 'SearchServiceNotFound', 'The Azure AI Search service host was not found.');
       const indexName = indexNameFromPath(url.pathname);
+      const authError = this.workloadAuthorization
+        ? await this.workloadAuthorization({ req, url, service, indexName }) : requireAuth(req);
+      if (authError) return sendError(res, authError.status, authError.code, authError.message);
 
       if (url.pathname === '/indexes' && method === 'GET') {
         return sendJson(res, 200, { value: [...service.indexes.values()].map(index => index.definition) });
@@ -212,8 +231,8 @@ export class SearchRouter {
   }
 }
 
-export function createSearchRouter() {
-  return new SearchRouter();
+export function createSearchRouter(options) {
+  return new SearchRouter(options);
 }
 
 export function createSearchRouterServer(router = createSearchRouter()) {

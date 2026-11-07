@@ -138,7 +138,7 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [], keyVaultTokenTrusts = [] }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
   const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
@@ -154,7 +154,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
   const metricStore = createMetricStore();
   const logAnalyticsStore = createLogAnalyticsStore();
   const relationalBackends = createRelationalBackendManager();
-  const searchRouter = createSearchRouter();
+  const searchRouter = createSearchRouter({ store, tokenTrusts: searchTokenTrusts });
   const apiManagementRouter = createApiManagementRouter();
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
@@ -635,6 +635,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
 
     if (resourceType === 'Microsoft.Search/searchServices') {
       searchRouter.registerService({
+        resourceId: resource.id,
         serviceName: resource.name,
         endpoint: resource.properties?.endpoint,
       });
