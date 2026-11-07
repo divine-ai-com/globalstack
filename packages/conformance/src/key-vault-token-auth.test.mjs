@@ -90,7 +90,7 @@ test('wrong credentials, conditions and unsupported operations cannot return sec
   for (const credential of ['globalstack-local-token', 'invalid', await f.token('https://storage.azure.com')]) {
     const response = await f.send(path, credential);
     assert.equal(response.status, 401); assert.equal(response.body.value, undefined);
-    assert.match(response.headers['www-authenticate'], /vault.azure.net/);
+    assert.equal(response.headers['www-authenticate'].split(', ')[1], 'resource="https://vault.azure.net"');
   }
   for (const [url, method] of [[path, 'PUT'], ['/secrets?api-version=7.4', 'GET'], ['/keys/key?api-version=7.4', 'GET'],
     ['/secrets/database-password/versions?api-version=7.4', 'GET']]) {
