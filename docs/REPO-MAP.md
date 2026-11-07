@@ -107,6 +107,7 @@ flowchart TD
 - `packages/azure-data-plane/src/key-vault-router.mjs`
 - `packages/azure-data-plane/src/kubernetes-router.mjs`
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
+- `packages/azure-data-plane/src/managed-identity-service.mjs`
 - `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
 - `packages/azure-data-plane/src/native-functions-worker.mjs`
@@ -157,6 +158,7 @@ flowchart TD
 - `packages/conformance/src/iot-hub-router.test.mjs`
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
+- `packages/conformance/src/managed-identity.test.mjs`
 - `packages/conformance/src/native-functions-worker.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`

@@ -7,7 +7,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { generateKeyPair, exportJWK, SignJWT } from 'jose';
+import { createManagedIdentityService } from '../../../packages/azure-data-plane/src/managed-identity-service.mjs';
 import { DefaultAzureCredential } from '@azure/identity';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { createDefaultHttpClient, createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
@@ -19,13 +19,16 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
   const sub = '00000000-0000-0000-0000-000000000000', tenant = '11111111-1111-4111-8111-111111111111';
   const principal = '22222222-2222-4222-8222-222222222222', account = 'sdktokenfixture';
   const resourceId = `/subscriptions/${sub}/resourceGroups/identity-test/providers/Microsoft.Storage/storageAccounts/${account}`;
-  const issuer = 'https://identity.globalstack.test/tenant', pair = await generateKeyPair('RS256', { extractable: true });
-  const jwk = { ...await exportJWK(pair.publicKey), kid: 'sdk-test', alg: 'RS256', use: 'sig' };
   const roleId = `${resourceId}/providers/Microsoft.Authorization/roleAssignments/33333333-3333-4333-8333-333333333333`;
   const role = { type: 'Microsoft.Authorization/roleAssignments', properties: { scope: resourceId, principalId: principal,
     roleDefinitionId: `/subscriptions/${sub}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe` } };
-  const store = { resources: new Map([[roleId.toLowerCase(), role]]) };
-  const router = createStorageDataPlaneRouter({ store, tokenTrusts: [{ issuer, tenantId: tenant, subscriptionIds: [sub], jwks: { keys: [jwk] } }] });
+  const siteId = `/subscriptions/${sub}/resourceGroups/identity-test/providers/Microsoft.Web/sites/sdk-worker`;
+  const site = { type: 'Microsoft.Web/sites', identity: { type: 'SystemAssigned', principalId: principal, tenantId: tenant } };
+  const store = { resources: new Map([[roleId.toLowerCase(), role], [siteId.toLowerCase(), site]]) };
+  const identities = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [sub] });
+  t.after(() => identities.dispose());
+  const binding = identities.bind(siteId);
+  const router = createStorageDataPlaneRouter({ store, tokenTrusts: [identities.trust] });
   router.registerStorageAccount({ accountName: account, accountKey: randomBytes(64).toString('base64'), resourceId });
   router.configureBlobService({ accountName: account, isVersioningEnabled: true });
   const directory = await mkdtemp(join(tmpdir(), 'globalstack-token-sdk-'));
@@ -47,23 +50,12 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
     })));
     return handler(req, res);
   }));
-  const identityHeader = randomBytes(32).toString('hex');
   let identityRequests = 0;
-  // This local fixture implements the App Service managed-identity wire shape.
-  // It does not claim Entra federation or automatic worker identity provisioning.
-  const identityPort = await listen(httpServer(async (req, res) => {
-    const url = new URL(req.url, 'http://localhost');
-    if (req.headers['x-identity-header'] !== identityHeader || url.searchParams.get('resource') !== 'https://storage.azure.com') {
-      res.writeHead(403); return res.end();
-    }
-    identityRequests++;
-    const now = Math.floor(Date.now() / 1000), exp = now + 3600;
-    const accessToken = await new SignJWT({ iss: issuer, tid: tenant, oid: principal, aud: 'https://storage.azure.com', iat: now, nbf: now, exp })
-      .setProtectedHeader({ alg: 'RS256', kid: 'sdk-test' }).sign(pair.privateKey);
-    res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-    res.end(JSON.stringify({ access_token: accessToken, expires_on: String(exp), resource: 'https://storage.azure.com', token_type: 'Bearer' }));
+  const identityPort = await listen(httpServer((req, res) => {
+    res.once('finish', () => { if (res.statusCode === 200) identityRequests++; });
+    return binding.handler(req, res);
   }));
-  const settings = { AZURE_TOKEN_CREDENTIALS: 'ManagedIdentityCredential', IDENTITY_ENDPOINT: `http://127.0.0.1:${identityPort}/token`, IDENTITY_HEADER: identityHeader };
+  const settings = { AZURE_TOKEN_CREDENTIALS: 'ManagedIdentityCredential', IDENTITY_ENDPOINT: `http://127.0.0.1:${identityPort}/MSI/token`, IDENTITY_HEADER: binding.identityHeader };
   const previous = Object.fromEntries(Object.keys(settings).map(key => [key, process.env[key]]));
   Object.assign(process.env, settings);
   t.after(() => { for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } });

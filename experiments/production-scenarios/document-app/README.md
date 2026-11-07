@@ -153,3 +153,29 @@ values. The temporary management credential file, worker container and network
 were removed. This clean-source run includes the response-header and numeric
 status validation. Downstream service settings were still intentionally absent,
 so the terminal workflow failure remains the expected result.
+
+The [native Event Grid capture](../evidence/functions-native-events-3f4300f/)
+adds `FUNCTIONS_PROBE_NATIVE_EVENTS=1` to the native-routing and orchestration
+flags. An actual Blob upload emits an event, which reaches the native
+`documentUploaded` function through its Event Grid extension endpoint. The
+function fails because its downstream application settings are absent. The
+capture retains the event ID, HTTP 500 delivery result and exhausted retry
+record. It verifies delivery and visible failure, not document processing.
+
+The SDK identity test now uses GlobalStack's managed identity service instead
+of a token-issuing test fixture. `DefaultAzureCredential` obtains a signed token
+through the standard App Service environment variables. The existing source
+adapter then reads current and historical Blob bytes over certificate-verified
+HTTPS. Removing the scoped Blob role denies both reads and writes even with a
+cached token. The test supplies local DNS routing through the SDK transport;
+container networking and automatic worker provisioning remain separate work.
+
+Add `FUNCTIONS_PROBE_IDENTITY=1` to the native-routing probe to configure a local
+managed identity endpoint and a certificate-verified Blob endpoint in the native
+container. The probe executes the unchanged source adapter and Azure SDK inside
+that running image. It verifies range reads, historical reads after overwrite
+and deletion, then denies reads and writes after the ARM role is removed. No
+custom SDK transport or application emulation branch is used in this container
+check. It remains an adapter diagnostic invoked inside the image, not a
+successful Event Grid-to-scanner workflow or automatic worker deployment.
+Temporary identity headers and TLS private keys are removed during cleanup.

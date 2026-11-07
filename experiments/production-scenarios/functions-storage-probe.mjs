@@ -10,6 +10,7 @@ import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { storageExchange } from './storage-http.mjs';
+import { prepareWorkerIdentity } from './functions-identity-probe.mjs';
 
 const exec = promisify(execFile);
 const id = randomBytes(5).toString('hex'), name = `gs-functions-probe-${id}`;
@@ -24,7 +25,9 @@ const report = { scope: 'Local official Functions host against GlobalStack Stora
   sourceRevision: (await exec('git', ['rev-parse', 'HEAD'])).stdout.trim(),
   sourceDirty: Boolean((await exec('git', ['status', '--porcelain'])).stdout.trim()),
   startedAt: new Date().toISOString(), configurationMode: 'host-storage-only', requests: [], workerHealthReady: false, durableWorkerStarted: false, hostLeaseAcquired: false, businessWorkflowCompleted: false, cleanup: false };
-const servers = [];
+const servers = [], identityCleanup = [];
+const store = new ResourceStore();
+let workerIdentity;
 let connection, systemKey, nativeRuntime, masterKeyFileOwned = false;
 const masterKeyFile = resolve(out, 'native-master-key.private');
 const privateHostKeys = [];
@@ -43,6 +46,12 @@ try {
   await exec('docker', ['network', 'create', '--internal', '--label', 'globalstack.experiment=functions-storage', name]);
   const network = JSON.parse((await exec('docker', ['network', 'inspect', name])).stdout)[0];
   const gateway = network.IPAM.Config[0].Gateway;
+  if (process.env.FUNCTIONS_PROBE_IDENTITY === '1') {
+    assert.equal(process.env.FUNCTIONS_PROBE_NATIVE_ROUTING, '1', 'Identity diagnostic requires native routing');
+    workerIdentity = await prepareWorkerIdentity({ store, gateway, name, suffix: id, out, servers, secrets: privateHostKeys,
+      registerCleanup: callback => identityCleanup.push(callback) });
+    report.nativeIdentity = workerIdentity.report;
+  }
   const endpoints = {};
   for (const [surface, handler] of [['blob', router.blobHandler()], ['queue', router.queueHandler()], ['table', router.tableHandler()]]) {
     const server = createServer((req, res) => {
@@ -64,8 +73,9 @@ try {
   await exec('docker', ['run', '-d', '--name', name, '--network', name, '--label', 'globalstack.experiment=functions-storage',
     '--memory', '1g', '--cpus', '2', '--pids-limit', '256', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     ...['blob', 'queue', 'table'].flatMap(surface => ['--add-host', `${account}.${surface}.core.windows.net:${gateway}`]),
+    ...(workerIdentity?.dockerArgs ?? []),
     '-e', 'AzureWebJobsStorage', '-e', 'AzureWebJobsSecretStorageType=files', '-e', 'WEBSITE_HOSTNAME=localhost',
-    report.imageId], { env: { ...process.env, AzureWebJobsStorage: connection } });
+    report.imageId], { env: { ...process.env, ...workerIdentity?.env, AzureWebJobsStorage: connection } });
   const container = JSON.parse((await exec('docker', ['inspect', name])).stdout)[0];
   const address = container.NetworkSettings.Networks[name].IPAddress;
   let workerEndpoint = `http://${address}`, workerHost;
@@ -83,7 +93,6 @@ try {
     const group = `/subscriptions/${subscription}/resourceGroups/${name}`;
     siteId = `${group}/providers/Microsoft.Web/sites/${name}`;
     const planId = `${group}/providers/Microsoft.Web/serverfarms/${name}`;
-    const store = new ResourceStore();
     nativeRuntime = createEmulatorRuntime({ store, nativeFunctionsWorkers: [{ appResourceId: siteId, origin: workerEndpoint, masterKeyFile }] });
     const armServer = createArmServer({ store, onResourcePut: nativeRuntime.syncResource, onResourceDelete: nativeRuntime.unsyncResource,
       functionsRouter: nativeRuntime.functionsRouter });
@@ -111,6 +120,7 @@ try {
     } catch {}
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
+  if (workerIdentity && report.workerHealthReady) await workerIdentity.exercise(name);
   // Observe background Durable storage setup even if the HTTP worker is ready.
   await new Promise(resolve => setTimeout(resolve, 15000));
   if (process.env.FUNCTIONS_PROBE_ORCHESTRATION === '1' && report.workerHealthReady) {
@@ -225,6 +235,7 @@ try {
   const removed = await exec('docker', ['rm', '-f', name]).then(() => true, () => false);
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   await nativeRuntime?.dispose();
+  for (const cleanup of identityCleanup) await cleanup();
   if (masterKeyFileOwned) { await rm(masterKeyFile); report.nativeRouting.managementCredentialRemoved = true; }
   const networkRemoved = await exec('docker', ['network', 'rm', name]).then(() => true, () => false);
   report.cleanup = removed && networkRemoved;

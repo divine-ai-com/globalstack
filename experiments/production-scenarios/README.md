@@ -488,3 +488,17 @@ DELETE request and reserves no additional budget. All four Azure resource/group/
 deployment absence checks return 404. This verifies the execution guard on an
 actual rejection; it does not complete either application or resolve Azure's
 account constraints.
+
+The [Blob range comparison](evidence/blob-ranges-after-f35ea4f/) retains 21
+Azure-first HTTP phases and their GlobalStack counterparts. Statuses match in
+all 21 phases, with successful bytes and selected range/checksum headers checked.
+One oversized-range error envelope still differs. The earlier
+[capture](evidence/blob-ranges-before-d3e3ead/) preserves the original incorrect
+full-body responses. Both cloud resource groups were removed and their absence
+verified. These are bounded Storage contracts, not completed application runs.
+
+The [native Event Grid capture](evidence/functions-native-events-3f4300f/)
+records a Blob-generated event reaching the actual Functions trigger. The
+trigger returns a visible failure because downstream settings are missing.
+The worker, network and temporary management credential were removed. No Azure
+Functions comparison or completed document workflow is claimed by this capture.

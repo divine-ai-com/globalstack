@@ -149,3 +149,35 @@ Storage system-topic subscriptions can target an existing `Microsoft.Web/sites/f
 Delivery records an accepted HTTP response separately from any business workflow result. Failures retain the same event ID through bounded retries; the local implementation permits at most eight concurrent native deliveries. Removing a subscription prevents subsequent delivery, and runtime disposal cancels pending requests. Function batching, identity-based Event Grid delivery, private-endpoint networking, persistent retry state, dead lettering, and Azure retry timing/status-specific policy remain unsupported. This path requires explicitly registered function metadata and does not yet discover functions from an installed package.
 
 Run the native component diagnostic with `FUNCTIONS_PROBE_NATIVE_ROUTING=1 FUNCTIONS_PROBE_ORCHESTRATION=1 FUNCTIONS_PROBE_NATIVE_EVENTS=1 node experiments/production-scenarios/functions-storage-probe.mjs`. Its application settings are intentionally incomplete: a real function failure is expected and is not a passed document scenario. Protocol reference: [Event Grid triggers in Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/event-grid-how-tos).
+
+### Local managed identity service
+
+`createManagedIdentityService` in `managed-identity-service.mjs` provides a
+bounded App Service token endpoint for operator-bound local workloads. It uses
+the live resource store to resolve system identities and attached user
+identities. The operator supplies a tenant, permitted subscriptions and resource
+audiences. The default audience is Azure Storage. Unsupported audiences return
+501 instead of issuing an unrestricted token.
+
+After creating the ARM site, call `service.bind(siteId)` and serve the returned
+`handler` on an isolated workload-network listener. Inject that listener's
+`/MSI/token` URL as `IDENTITY_ENDPOINT` and the binding's `identityHeader` as
+`IDENTITY_HEADER` into the worker environment. Never publish this endpoint or
+put the header in application code, reports or ARM outputs. Pass `service.trust`
+to the Blob router's token trusts. The application can use the normal Azure SDK
+credential chain. The signing key is generated in memory and is not exported.
+
+Bindings use independent random headers. Rebinding rotates the header and
+revokes the previous handler. Identity removal or resource deletion prevents new
+token issuance. Call `revoke()` when a worker stops and `dispose()` when its local
+platform stops. Already issued tokens remain valid until expiry unless the data
+plane denies their permissions. The default lifetime is five minutes.
+
+The endpoint implements `GET /MSI/token`, API version `2019-08-01`, and explicit
+user selection through `client_id`, `principal_id`, `object_id` or `mi_res_id`.
+It checks current attachments rather than trusting a caller-supplied principal.
+It follows the [documented App Service request shape](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity#rest-endpoint-reference).
+Its error envelopes, timing, identity cache and claims are not a measured Entra
+replica. It does not federate with Azure, implement app roles or group claims,
+provision containers, or configure their network automatically. The resource
+store's identity lifecycle also needs paired testing before a broader claim.
