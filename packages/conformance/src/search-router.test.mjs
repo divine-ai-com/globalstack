@@ -132,7 +132,8 @@ test('invalid index key definitions do not create or overwrite an index', async 
     for (const fields of [[{ ...first, key: false }], [first, second]]) {
       const rejected = await httpJson(port, 'PUT', path, { name: 'contracts', fields });
       assert.equal(rejected.status, 400);
-      assert.equal(rejected.body.error.code, 'InvalidRequestParameter');
+      assert.equal(rejected.body.error.code, fields.length === 2 ? 'OperationNotAllowed' : 'InvalidRequestParameter');
+      if (fields.length === 2) assert.equal(rejected.body.error.details[0].code, 'CompoundKeysNotSupported');
       assert.equal((await httpJson(port, 'GET', path)).status, 404);
     }
     const definition = { name: 'contracts', fields: [first, { ...second, key: false }] };

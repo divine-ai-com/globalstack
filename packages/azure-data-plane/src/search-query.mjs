@@ -1,7 +1,7 @@
 // This evaluator covers a bounded local query surface. Unsupported syntax must
 // fail explicitly rather than return an unrelated set of documents as success.
-function invalid(message, code = 'InvalidRequestParameter') {
-  return { error: { status: 400, code, message } };
+function invalid(message, code = 'InvalidRequestParameter', detailCode) {
+  return { error: { status: 400, code, message, ...(detailCode ? { details: [{ code: detailCode, message }] } : {}) } };
 }
 
 function unsupported(message) {
@@ -83,7 +83,7 @@ function vectorCandidates(index, documents, request) {
   if (typeof query.fields !== 'string' || !query.fields.trim()) return invalid('A vector query requires a field name.');
   const names = query.fields.split(',').map(name => name.trim());
   for (const name of names) {
-    if (!index.fields.some(field => field.name === name)) return invalid(`Unknown field '${name}' in vector field list.`);
+    if (!index.fields.some(field => field.name === name)) return invalid(`Unknown field '${name}' in vector field list.`, 'InvalidRequestParameter', 'UnknownField');
   }
   if (names.length !== 1) return unsupported('Multi-field vector fusion is not implemented by the local evaluator.');
   const field = index.fields.find(field => field.name === names[0]);
@@ -117,7 +117,7 @@ export function evaluateSearch(index, request) {
   if (Object.keys(request).some(key => !supported.has(key) && request[key] != null)) return unsupported('One or more query options are not implemented by the local evaluator.');
   if (request.queryType === 'semantic') return unsupported('Semantic query execution is not implemented by the local evaluator.');
   if (request.count !== undefined && typeof request.count !== 'boolean') return invalid('Search count must be a boolean.');
-  let fields = index.fields.filter(field => field.retrievable !== false).map(field => field.name);
+  let fields = index.fields.filter(field => field.retrievable ?? !field.vectorSearchProfile).map(field => field.name);
   if (request.select !== undefined && request.select !== '*') {
     if (typeof request.select !== 'string') return invalid('Search select must be a comma-separated string.');
     const names = request.select.split(',').map(name => name.trim());

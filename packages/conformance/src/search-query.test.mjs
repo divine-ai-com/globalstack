@@ -38,6 +38,10 @@ test('cosine query uses vector similarity, k, and Azure score transformation', (
   assert.deepEqual(result.body.value.map(item => item['@search.score']), [1, 0.5, 1 / 3]);
   assert.deepEqual(keys(evaluateSearch(index(), query({ k: 1 }))), ['exact']);
   assert.equal(result.body.value[0].privateNote, undefined);
+  assert.equal(result.body.value[0].vec, undefined);
+  const retrievable = index();
+  retrievable.fields.find(field => field.name === 'vec').retrievable = true;
+  assert.deepEqual(evaluateSearch(retrievable, query({ k: 1 })).body.value[0].vec, [1, 0, 0]);
   assert.deepEqual(keys(evaluateSearch(index(), { ...query({}), skip: 1, top: 1 })), ['orthogonal']);
 });
 
@@ -50,6 +54,7 @@ test('invalid vectors and unsupported ranking never fall through to all document
   for (const request of [{ ...query({}), search: 'financial' }, { ...query({}), queryType: 'semantic' }, query({ kind: 'text', text: 'financial' })]) {
     assert.equal(evaluateSearch(index(), request).error.status, 501);
   }
+  assert.deepEqual(evaluateSearch(index(), query({ fields: 'unknown' })).error.details, [{ code: 'UnknownField', message: "Unknown field 'unknown' in vector field list." }]);
 });
 
 test('selection and pagination respect retrievable fields and requested count', () => {
