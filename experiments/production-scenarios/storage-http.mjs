@@ -45,7 +45,7 @@ export function storageExchange({ account, key, surface, origin, method, path, h
       response.on('error', reject);
       response.on('end', () => resolve({ status: response.statusCode, body: Buffer.concat(chunks).toString('utf8'),
         headers: Object.fromEntries(Object.entries(response.headers).filter(([name]) =>
-          ['content-type', 'content-length', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-version-id', 'x-ms-is-current-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration', 'x-ms-popreceipt', 'x-ms-time-next-visible', 'x-ms-continuation-nextpartitionkey', 'x-ms-continuation-nextrowkey'].includes(name))) }));
+          ['content-type', 'content-length', 'content-range', 'content-md5', 'etag', 'last-modified', 'date', 'x-ms-request-id', 'x-ms-version', 'x-ms-version-id', 'x-ms-is-current-version', 'x-ms-error-code', 'x-ms-lease-id', 'x-ms-lease-time', 'x-ms-lease-state', 'x-ms-lease-status', 'x-ms-lease-duration', 'x-ms-popreceipt', 'x-ms-time-next-visible', 'x-ms-continuation-nextpartitionkey', 'x-ms-continuation-nextrowkey'].includes(name))) }));
     });
     request.on('error', reject); request.end(payload);
   });

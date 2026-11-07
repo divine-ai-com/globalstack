@@ -18,6 +18,7 @@ import { configureBlobVersioning, storageVersionCases } from './storage-version-
 import { httpExchange } from './http-exchange.mjs';
 import { runBlobEventComponent } from './blob-event-component.mjs';
 import { redactQueueEvents } from './redact-queue-events.mjs';
+import { storageRangeCases } from './storage-range-cases.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -175,6 +176,16 @@ try {
         report.versionObservations[target] = { complete: false, error: sanitize(error.message, replacements) };
       }
     }
+  }
+  if (process.env.STORAGE_PROBE_RANGES === '1') {
+    for (const target of ['azure', 'local']) await storageRangeCases(async item => {
+      assert.ok(Date.now() < manifest.deadline - 2 * 60000, 'Range diagnostic runtime exhausted');
+      phase = item.id;
+      const response = await storageExchange({ ...item, account: manifest.account, key: target === 'azure' ? key : localKey,
+        origin: target === 'azure' ? `https://${manifest.account}.blob.core.windows.net` : endpoints.blob });
+      observe(target, { method: item.method, path: item.path, surface: 'blob', request: { headers: item.headers, body: item.body }, ...response });
+      return response;
+    });
   }
   if (manifest.eventing) {
     report.eventObservations = sanitize(await runBlobEventComponent({ manifest, scope, out,
