@@ -11,9 +11,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const validationOnly = args.includes('--validation-only');
 const searchComponent = args.includes('--search-component');
-assert.ok(!(validationOnly && searchComponent), 'Select only one scenario runner');
-const platform = validationOnly ? 'document-search-validation' : searchComponent ? 'search-component' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
-assert.ok(validationOnly || searchComponent || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
+const storageComponent = args.includes('--storage-component');
+assert.ok([validationOnly, searchComponent, storageComponent].filter(Boolean).length <= 1, 'Select only one scenario runner');
+const platform = validationOnly ? 'document-search-validation' : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
+assert.ok(validationOnly || searchComponent || storageComponent || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
 const modulePath = process.env.PAIRED_PLAYWRIGHT_MODULE;
 assert.ok(modulePath?.startsWith('/'), 'Absolute path to installed playwright-core/index.mjs required');
 const { chromium } = await import(pathToFileURL(modulePath).href);
@@ -25,6 +26,7 @@ const runDir = resolve(root, 'run');
 let template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
 if (validationOnly) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep-compiled template; direct ARM validation against both targets.').replace('Empty resource group only.', 'Search foundation validation only. No application deployment or event-flow claim.');
 if (searchComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep-compiled template; Azure-first Search component deployment and requests.').replace('Empty resource group only.', 'Search component only. Full applications and Portal evidence remain pending.');
+if (storageComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'Azure-first Storage API contract requests, then identical local requests.').replace('Empty resource group only.', 'Storage component diagnostics. Not a native IaC deployment or Portal recording.');
 const events = async () => {
   try { return (await readFile(resolve(runDir, 'events.ndjson'), 'utf8')).split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
@@ -49,7 +51,8 @@ try {
   console.log(`Walkthrough: ${root}`);
   exitCode = await new Promise((done, fail) => {
     const runner = validationOnly ? resolve(here, '../production-scenarios/validate-search.mjs')
-      : searchComponent ? resolve(here, '../production-scenarios/search-component.mjs') : resolve(here, 'run.mjs');
+      : searchComponent ? resolve(here, '../production-scenarios/search-component.mjs')
+      : storageComponent ? resolve(here, '../production-scenarios/storage-component.mjs') : resolve(here, 'run.mjs');
     const child = spawn(process.execPath, [runner, ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
     child.on('error', fail); child.on('exit', code => done(code ?? 1));
   });
