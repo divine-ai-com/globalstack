@@ -363,6 +363,11 @@ export class StorageDataPlaneRouter {
         ? validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
         : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
+      // Historical selectors must never fall through to the current blob. The
+      // router does not retain versions or snapshots yet, including for deletes.
+      if (url.searchParams.has('versionid') || url.searchParams.has('snapshot')) {
+        return sendXmlError(res, 501, 'NotImplemented', 'Blob versions and snapshots are not implemented.', requestId);
+      }
       if (containerRequest) {
         const comp = url.searchParams.get('comp');
         if (comp && !['metadata', 'lease'].includes(comp)) return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);

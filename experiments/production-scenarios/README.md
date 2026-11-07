@@ -177,6 +177,15 @@ limitations include bounded Table query support, incomplete blob listing/version
 networking, real application deployment, and durable recovery across emulator
 restarts. Both full scenarios remain unexecuted.
 
+A later [local diagnostic](evidence/version-selection-368fc33/) found that
+`versionid` selectors were ignored: reading a nonexistent version returned
+current content, and deleting it removed the current blob. The router now
+rejects version and snapshot selectors with HTTP 501 before reads or mutations.
+Tests verify current content, ETag, metadata and lease remain intact. This is an
+explicit unsupported-operation guard, not an implementation of versioning or
+Azure status-code parity. Historical version retention, listing and live paired
+update/delete recovery remain required for the document scenario.
+
 The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
 
 ### Native Durable Storage transactions
