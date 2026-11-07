@@ -55,9 +55,9 @@ export function nativeWorkerBindings(values = []) {
 
 // Bindings are trusted operator configuration. Request hosts and ARM bodies
 // cannot select an upstream address. Redirects are returned, never followed.
-export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, maxRequestBytes = 12 * 1024 * 1024 } = {}) {
+export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, connectTimeoutMs = 3000, maxRequestBytes = 12 * 1024 * 1024 } = {}) {
   return new Promise(resolve => {
-    let settled = false, bytes = 0;
+    let settled = false, bytes = 0, connectTimer;
     const target = new URL(origin);
     const headers = headersFor(req.headers);
     // The application hostname keeps host-generated Durable URLs on the facade.
@@ -71,7 +71,7 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
     });
     function finish() {
       if (settled) return;
-      settled = true; clearTimeout(timer);
+      settled = true; clearTimeout(timer); clearTimeout(connectTimer);
       req.off('aborted', abort); req.off('data', count); res.off('close', disconnected);
       resolve();
     }
@@ -90,8 +90,17 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
     const timer = setTimeout(() => fail(504, 'NativeFunctionsWorkerTimeout'), timeoutMs);
     timer.unref?.();
     req.once('aborted', abort); req.on('data', count); res.once('close', disconnected);
+    request.once('socket', socket => {
+      if (request.reusedSocket || target.protocol === 'http:' && !socket.connecting) return;
+      // A removed container can leave a route that drops connection attempts.
+      // Bound TCP/TLS establishment separately from valid long-running work.
+      connectTimer = setTimeout(() => fail(502, 'NativeFunctionsWorkerUnavailable'), Math.min(connectTimeoutMs, timeoutMs));
+      connectTimer.unref?.();
+      socket.once(target.protocol === 'https:' ? 'secureConnect' : 'connect', () => clearTimeout(connectTimer));
+    });
     request.on('error', () => { if (!settled) fail(502, 'NativeFunctionsWorkerUnavailable'); });
     request.on('response', upstream => {
+      clearTimeout(connectTimer);
       if (settled) { upstream.destroy(); return; }
       const status = Number(upstream.statusCode);
       if (!Number.isInteger(status) || status < 200 || status > 599) return fail(502, 'NativeFunctionsWorkerInvalidResponse');

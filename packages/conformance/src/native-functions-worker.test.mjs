@@ -167,3 +167,16 @@ test('native worker status must be a supported final HTTP response code', async 
   assert.equal(result.status, 502);
   assert.equal((await result.json()).error.code, 'NativeFunctionsWorkerInvalidResponse');
 });
+
+test('native connection establishment has a deadline separate from function execution', async t => {
+  const { createServer: tcpServer } = await import('node:net');
+  const sockets = new Set();
+  const stalled = tcpServer(socket => { sockets.add(socket); socket.on('close', () => sockets.delete(socket)); socket.on('error', () => {}); });
+  await new Promise(resolve => stalled.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { for (const socket of sockets) socket.destroy(); stalled.close(resolve); }));
+  const origin = `https://127.0.0.1:${stalled.address().port}`;
+  const endpoint = await listen(t, createServer((req, res) => forwardNativeFunction(req, res, origin, { timeoutMs: 10000, connectTimeoutMs: 50 })));
+  const response = await fetch(endpoint, { signal: AbortSignal.timeout(2000) });
+  assert.equal(response.status, 502);
+  assert.equal((await response.json()).error.code, 'NativeFunctionsWorkerUnavailable');
+});
