@@ -1,0 +1,45 @@
+{
+  "scope": "Failed local development attempts, excluded from the final frozen matrix. Dirty revisions are not exact source snapshots.",
+  "attempts": [
+    {
+      "file": "cli-4a70a75de118.json",
+      "sha256": "874a94fc108bf849308ad17cb0fac63d270ea89711dbaca5224bda232cd1f4e9",
+      "platform": "azure-cli-rest",
+      "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+      "sourceDirty": true,
+      "cause": "Container could not access the private bind directory with the initial capability configuration."
+    },
+    {
+      "file": "ansible-9a631cff961a.json",
+      "sha256": "9e7b82124b3cac6835ab817267dbeb8e6be96edfe8afe8dec2b9a5808cd41304",
+      "platform": "azure-ansible-yaml",
+      "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+      "sourceDirty": true,
+      "cause": "Observer denied the resource-group inventory request."
+    },
+    {
+      "file": "ansible-4ae2be145fb1.json",
+      "sha256": "5ad6944d952b587cc7c3c2dafca6176e8775673512d3c280362021b94b3a8c97",
+      "platform": "azure-ansible-yaml",
+      "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+      "sourceDirty": true,
+      "cause": "The emulator lacked the generic resource-group inventory route; native destroy returned zero but fallback cleanup was required."
+    },
+    {
+      "file": "opentofu-82ae74c48cf0.json",
+      "sha256": "4fa490851c261bd26b10769539f6dc2c0386aba7ecfe91542e1d869bb4ecadf8",
+      "platform": "azure-opentofu-hcl",
+      "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+      "sourceDirty": true,
+      "cause": "Readonly provider initialization rejected the Terraform registry address in the OpenTofu lockfile."
+    },
+    {
+      "file": "bicep-0057e1e7486a.json",
+      "sha256": "3a56ba651942e4de19342daddf9dfe09a4e3a6395acd16c13b1ab4a9dbcde8d6",
+      "platform": "azure-bicep",
+      "revision": "9b20d7118f808da32da18edc79484feb6dcd8ec6",
+      "sourceDirty": false,
+      "cause": "Deployment-history DELETE was not implemented."
+    }
+  ]
+}

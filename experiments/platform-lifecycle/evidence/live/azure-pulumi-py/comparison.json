@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 1,
+  "platform": "azure-pulumi-py",
+  "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+  "lifecyclePassed": true,
+  "portalEvidenceComplete": false,
+  "traceCounts": {
+    "local": 14,
+    "azure": 15
+  },
+  "pairedExchanges": 14,
+  "unmatchedExchanges": 1,
+  "exchangesWithDifferences": 14,
+  "interpretation": "Lifecycle success is separate from API equivalence. These selected fields and one scenario cannot establish 100% Azure compatibility. Video is a walkthrough, not proof of equivalence.",
+  "normalization": "Known private identifiers are sanitized before comparison. Request-ID and ETag values are compared by presence/type; other selected fields remain visible. Repeated requests are paired by phase, method, path and occurrence, not treated as independent scenarios.",
+  "probes": [
+    {
+      "phase": "read-create",
+      "differences": []
+    },
+    {
+      "phase": "read-update",
+      "differences": []
+    },
+    {
+      "phase": "inject-drift",
+      "differences": []
+    },
+    {
+      "phase": "read-repair",
+      "differences": []
+    }
+  ],
+  "exchanges": [
+    {
+      "operation": "up-create GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body/error/message",
+          "local": "Resource group <group> was not found.",
+          "azure": "Resource group '<group>' could not be found."
+        },
+        {
+          "path": "/response/body/error/details",
+          "local": [],
+          "azure": {
+            "missing": true
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-create PUT /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-create GET /subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "refresh GET /subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "refresh GET /subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+      "occurrence": 1,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-update PUT /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-update GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "refresh-drift GET /subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "refresh-drift GET /subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01",
+      "occurrence": 1,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-repair PUT /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-ratelimit-remaining-subscription-writes",
+          "local": {
+            "missing": true
+          },
+          "azure": "199"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "up-repair GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "import GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "import GET /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 1,
+      "differences": [
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": "application/json; charset=utf-8"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "destroy DELETE /subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01",
+      "occurrence": 0,
+      "differences": [
+        {
+          "path": "/status",
+          "local": 200,
+          "azure": 202
+        },
+        {
+          "path": "/response/headers/content-type",
+          "local": "application/json",
+          "azure": {
+            "missing": true
+          }
+        },
+        {
+          "path": "/response/headers/location",
+          "local": {
+            "missing": true
+          },
+          "azure": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2024-03-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+        },
+        {
+          "path": "/response/headers/retry-after",
+          "local": {
+            "missing": true
+          },
+          "azure": "15"
+        },
+        {
+          "path": "/response/headers/x-ms-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/headers/x-ms-correlation-request-id",
+          "local": {
+            "missing": true
+          },
+          "azure": {
+            "present": true,
+            "type": "string"
+          }
+        },
+        {
+          "path": "/response/body",
+          "local": {
+            "status": "Deleted",
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+          },
+          "azure": null
+        }
+      ]
+    },
+    {
+      "operation": "destroy GET /subscriptions/<subscription>/operationresults/<operation>?api-version=2024-03-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>",
+      "occurrence": 0,
+      "unmatched": "azure"
+    }
+  ]
+}

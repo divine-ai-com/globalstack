@@ -1,0 +1,2836 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><title>Terraform lifecycle snapshots</title><style>
+body{font:16px/1.55 system-ui,sans-serif;color:#172c42;background:#f4f7fb;margin:0}main{max-width:1200px;margin:auto;padding:32px}h1,h2,h3{line-height:1.2}h1{font-size:34px}a{color:#174b9b}nav{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}nav a{background:white;border:1px solid #b6c6db;border-radius:6px;padding:5px 10px;text-decoration:none}section{background:white;border:1px solid #ccd6e3;border-radius:8px;padding:24px;margin:24px 0;scroll-margin-top:16px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}.pair>article{min-width:0;border-top:4px solid #2765ad}.pair>article+article{border-color:#008579}pre{font:13px/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4f8;padding:14px;border-radius:4px}summary{cursor:pointer;font-weight:600;padding:8px 0}.note{border-left:4px solid #a76700;padding-left:16px}small{color:#44556a}table{width:100%;border-collapse:collapse}td,th{text-align:left;vertical-align:top;padding:12px;border:1px solid #ccd6e3}code{overflow-wrap:anywhere}@media(max-width:760px){main{padding:16px}.pair{grid-template-columns:1fr}section{padding:16px}}@media print{body{background:white}main{max-width:none;padding:0}nav{display:none}section{break-before:page;border:0}details{display:block}details::details-content{content-visibility:visible}pre{font-size:10px}.pair{grid-template-columns:1fr 1fr}}
+</style></head><body><main><h1>Terraform lifecycle snapshots</h1><p>Unchanged HCL, Terraform 1.17.1 and AzAPI 2.13.0. One empty resource group on GlobalStack and real Azure. All 16 recorded command stages completed; protocol differences remain.</p><h2>Lifecycle before comparison</h2><p>Prepare → plan → create → check stability → refresh → update → inject drift → detect and repair → remove state ownership → import → check imported state → destroy → verify absence.</p><p>Four direct probes and cleanup are shown separately from native Terraform commands. Select a step, then expand either target's retained fields and the comparison.</p><nav aria-label="Lifecycle steps"><a href="#preflight">1. Check the group does not exist</a><a href="#version">2. Check Terraform version</a><a href="#format">3. Check configuration format</a><a href="#init">4. Initialize the working directory</a><a href="#validate">5. Validate configuration</a><a href="#plan-create">6. Plan creation</a><a href="#apply-create">7. Create the group</a><a href="#plan-stable">8. Check for an empty plan</a><a href="#refresh">9. Refresh Terraform state</a><a href="#plan-update">10. Plan a tag update</a><a href="#apply-update">11. Apply the tag update</a><a href="#read-update">12. Verify the update independently</a><a href="#inject-drift">13. Introduce external drift</a><a href="#plan-drift">14. Detect the external drift</a><a href="#apply-repair">15. Repair the drift</a><a href="#read-repair">16. Verify the repair independently</a><a href="#state-remove">17. Remove Terraform ownership</a><a href="#import">18. Import the existing group</a><a href="#plan-imported">19. Check the imported state</a><a href="#destroy">20. Destroy the group</a><a href="#cleanup">21. Confirm absence and remove private files</a></nav><div class="note"><h2>What a snapshot contains</h2><ul><li>These snapshots reproduce the published sanitized record. Account identifiers, signed polling material and credentials are redacted; selected headers and parsed JSON bodies are retained, not all wire bytes.</li><li>Command descriptions and step ordering come from the frozen runner. The original record has exit codes and durations but no command arguments or per-command start/end timestamps. ARM exchanges do have recorded UTC timestamps.</li><li>No per-stage Terraform state files, saved plan JSON, console screenshots or full command logs are included in this published evidence. A stage without an ARM exchange is marked as such, without inventing a remote-state snapshot.</li><li>Direct probes retain response status/body but not request headers, request bodies or timestamps. Cleanup retains result flags rather than a complete verification exchange.</li><li>The targets ran sequentially on one host. Command durations include container/provider overhead and are not a performance comparison. Identity token acquisition and provider downloads are outside ARM capture.</li><li>This is one Terraform/AzAPI empty-group lifecycle. It does not establish other providers, other IaC tools, invalid-input behavior, data-plane behavior or cross-service event delivery.</li></ul></div><section id="preflight"><small>Step 1 · probe</small><h2>Check the group does not exist</h2><p>Refuse to modify an existing group. This is a runner probe, outside Terraform.</p><pre>Direct GET of the generated resource-group path</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>GET 404</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;preflight&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 404,
+      &quot;body&quot;: {
+        &quot;error&quot;: {
+          &quot;code&quot;: &quot;ResourceGroupNotFound&quot;,
+          &quot;message&quot;: &quot;Resource group &lt;group&gt; was not found.&quot;,
+          &quot;details&quot;: []
+        }
+      }
+    }
+  ]
+}</pre></details></article><article><h3>Azure</h3><p>GET 404</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;preflight&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 404,
+      &quot;body&quot;: {
+        &quot;error&quot;: {
+          &quot;code&quot;: &quot;ResourceGroupNotFound&quot;,
+          &quot;message&quot;: &quot;Resource group &#39;&lt;group&gt;&#39; could not be found.&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article></div><p>Differing fields: /body/error/message, /body/error/details.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;operation&quot;: &quot;preflight GET&quot;,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/body/error/message&quot;,
+          &quot;local&quot;: &quot;Resource group &lt;group&gt; was not found.&quot;,
+          &quot;azure&quot;: &quot;Resource group &#39;&lt;group&gt;&#39; could not be found.&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/body/error/details&quot;,
+          &quot;local&quot;: [],
+          &quot;azure&quot;: {
+            &quot;missing&quot;: true
+          }
+        }
+      ]
+    }
+  ]
+}</pre></details></section><section id="version"><small>Step 2 · native</small><h2>Check Terraform version</h2><p>Check the pinned Terraform 1.17.1 executable.</p><pre>terraform version -json</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 12035 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;version&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 12035
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 515 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;version&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 515
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="format"><small>Step 3 · native</small><h2>Check configuration format</h2><p>Check HCL formatting without changing the source.</p><pre>terraform fmt -check</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 677 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;format&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 677
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 467 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;format&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 467
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="init"><small>Step 4 · native</small><h2>Initialize the working directory</h2><p>Install the pinned provider and initialize Terraform. Provider downloads are outside ARM capture.</p><pre>terraform init -input=false -lockfile=readonly -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 18625 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;init&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 18625
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 13582 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;init&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 13582
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="validate"><small>Step 5 · native</small><h2>Validate configuration</h2><p>Validate the configuration using the installed provider.</p><pre>terraform validate -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 4299 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;validate&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4299
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 3974 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;validate&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 3974
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="plan-create"><small>Step 6 · native</small><h2>Plan creation</h2><p>Plan the new group with revision=one. Expected exit 2 means changes are planned.</p><pre>terraform plan -input=false -detailed-exitcode -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 2 (expected 2); 9091 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-create&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 9091
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 2 (expected 2); 4184 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-create&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4184
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="apply-create"><small>Step 7 · native</small><h2>Create the group</h2><p>Create and read the group. Apply computes its own plan; this run did not apply a saved plan file.</p><pre>terraform apply -auto-approve -input=false -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 13802 ms. GET 404 → PUT 201 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-create&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 13802
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:44:17.448Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 404,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;error&quot;: {
+            &quot;code&quot;: &quot;ResourceGroupNotFound&quot;,
+            &quot;message&quot;: &quot;Resource group &lt;group&gt; was not found.&quot;,
+            &quot;details&quot;: []
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:44:17.487Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:44:17.490Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 201,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:44:17.499Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:44:17.505Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:44:17.513Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 10180 ms. GET 404 → PUT 201 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-create&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 10180
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:35.797Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 404,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;359dc28b-7b6c-433c-ac4c-0885e42de5df&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;7a265e8b-6199-7f07-f027-ba06f3238559&quot;
+        },
+        &quot;body&quot;: {
+          &quot;error&quot;: {
+            &quot;code&quot;: &quot;ResourceGroupNotFound&quot;,
+            &quot;message&quot;: &quot;Resource group &#39;&lt;group&gt;&#39; could not be found.&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:37.739Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:37.740Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 201,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-ratelimit-remaining-subscription-writes&quot;: &quot;199&quot;,
+          &quot;x-ms-request-id&quot;: &quot;0689d52a-fb95-44a9-8ae0-f9f012182cf9&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;7a265e8b-6199-7f07-f027-ba06f3238559&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:41.009Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-create&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:41.011Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;bd7e4a93-1bdd-47dc-9dd1-680f3e1a442f&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;7a265e8b-6199-7f07-f027-ba06f3238559&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:41.572Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id, /response/body/error/message, /response/body/error/details, /response/headers/x-ms-ratelimit-remaining-subscription-writes.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;apply-create GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/body/error/message&quot;,
+          &quot;local&quot;: &quot;Resource group &lt;group&gt; was not found.&quot;,
+          &quot;azure&quot;: &quot;Resource group &#39;&lt;group&gt;&#39; could not be found.&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/body/error/details&quot;,
+          &quot;local&quot;: [],
+          &quot;azure&quot;: {
+            &quot;missing&quot;: true
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-create GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-create PUT /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-ratelimit-remaining-subscription-writes&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: &quot;199&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="plan-stable"><small>Step 8 · native</small><h2>Check for an empty plan</h2><p>Read the group and check that no change is needed.</p><pre>terraform plan -input=false -detailed-exitcode -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 12788 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-stable&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 12788
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-stable&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:44:29.174Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:44:29.189Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 3967 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-stable&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 3967
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-stable&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:45.017Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;13616e1e-216c-4443-ad54-e26a3a6f0bed&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;9de399e0-d4ea-7350-a9e1-eaaa639b9628&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:45.509Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;plan-stable GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="refresh"><small>Step 9 · native</small><h2>Refresh Terraform state</h2><p>Refresh state from the remote group without requesting a configuration change.</p><pre>terraform apply -refresh-only -auto-approve -input=false -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 22802 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;refresh&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 22802
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;refresh&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:44:51.556Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:44:51.568Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 5118 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;refresh&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 5118
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;refresh&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:49.351Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;97428b72-daf2-455c-9d04-79556192835d&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;bafd055e-1329-d62b-6800-93f344595664&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:49.924Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;refresh GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="plan-update"><small>Step 10 · native</small><h2>Plan a tag update</h2><p>The runner changes the external revision input from one to two. HCL source remains unchanged.</p><pre>terraform plan -input=false -detailed-exitcode -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 2 (expected 2); 11488 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-update&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 11488
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:04.089Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:04.093Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 2 (expected 2); 3704 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-update&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 3704
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:54.122Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;66bc8c30-b3f8-4293-a3b7-0c976dd475b8&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;aa3b8085-f59d-605e-d48d-0164f17cf0f6&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:54.316Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;plan-update GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="apply-update"><small>Step 11 · native</small><h2>Apply the tag update</h2><p>Update the desired revision tag to two and read back the group.</p><pre>terraform apply -auto-approve -input=false -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 15653 ms. GET 200 → PUT 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-update&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 15653
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:16.754Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:16.770Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:20.252Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:20.274Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:20.280Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:20.292Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 5807 ms. GET 200 → PUT 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-update&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 5807
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:57.777Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;8bc4063c-fb8f-45c5-8cbd-5aadeebed8ca&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;99a5be6a-b0fb-6dd5-2f40-e84c6185ef13&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;one&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:58.267Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:58.853Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-ratelimit-remaining-subscription-writes&quot;: &quot;199&quot;,
+          &quot;x-ms-request-id&quot;: &quot;0c4f8f1b-ff88-4838-9574-b4abb18b68a3&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;af4f487a-f8e9-5864-9766-2dc584512a9d&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:59.958Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:59.960Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;3e720b75-c725-4cbc-aa46-9d6c6b8be100&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;af4f487a-f8e9-5864-9766-2dc584512a9d&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:00.174Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id, /response/headers/x-ms-ratelimit-remaining-subscription-writes.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;apply-update GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-update GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-update PUT /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-ratelimit-remaining-subscription-writes&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: &quot;199&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="read-update"><small>Step 12 · probe</small><h2>Verify the update independently</h2><p>Check revision=two outside the native provider trace.</p><pre>Direct GET of the resource-group path</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>GET 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;read-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;two&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article><article><h3>Azure</h3><p>GET 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;read-update&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;two&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article></div><p>Retained status/body fields agree.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;operation&quot;: &quot;read-update GET&quot;,
+      &quot;differences&quot;: []
+    }
+  ]
+}</pre></details></section><section id="inject-drift"><small>Step 13 · probe</small><h2>Introduce external drift</h2><p>Intentionally change the remote tag without changing Terraform inputs. This is a test action, not a Terraform deployment step.</p><pre>Direct PATCH with existing tags and revision=external</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>PATCH 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;inject-drift&quot;,
+      &quot;method&quot;: &quot;PATCH&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;external&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article><article><h3>Azure</h3><p>PATCH 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;inject-drift&quot;,
+      &quot;method&quot;: &quot;PATCH&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;external&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article></div><p>Retained status/body fields agree.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;operation&quot;: &quot;inject-drift PATCH&quot;,
+      &quot;differences&quot;: []
+    }
+  ]
+}</pre></details></section><section id="plan-drift"><small>Step 14 · native</small><h2>Detect the external drift</h2><p>Read revision=external and plan to restore the desired revision=two.</p><pre>terraform plan -input=false -detailed-exitcode -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 2 (expected 2); 13053 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-drift&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 13053
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-drift&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:32.763Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;external&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:32.772Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 2 (expected 2); 4035 ms. GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-drift&quot;,
+    &quot;exitCode&quot;: 2,
+    &quot;expected&quot;: 2,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4035
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-drift&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:05.470Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;67a1ac82-a72e-41a9-b06c-f330a990b1cb&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;78506be0-9563-a63a-33ca-2f4a617d137c&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;external&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:06.016Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;plan-drift GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="apply-repair"><small>Step 15 · native</small><h2>Repair the drift</h2><p>Restore the desired tag and read back the group.</p><pre>terraform apply -auto-approve -input=false -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 11577 ms. GET 200 → PUT 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-repair&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 11577
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:44.341Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;external&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:44.344Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:45.374Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:45.376Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:45.377Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:45.379Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 7003 ms. GET 200 → PUT 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;apply-repair&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 7003
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:09.460Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;7266f62f-4d74-42b5-8bae-dabe81266128&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;fa3e2995-c57a-8388-9480-89f98fe50a64&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;external&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:10.397Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;PUT&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:10.998Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;,
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          }
+        },
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-ratelimit-remaining-subscription-writes&quot;: &quot;199&quot;,
+          &quot;x-ms-request-id&quot;: &quot;ce84df5a-1d31-4d77-8b9a-10df3619ec2c&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;de7596f1-c577-0e21-c5d1-7dfec916edfb&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:12.474Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;apply-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:12.476Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;ce5b2e41-6ea1-456f-9ecf-e7471368e0b1&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;de7596f1-c577-0e21-c5d1-7dfec916edfb&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:13.060Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id, /response/headers/x-ms-ratelimit-remaining-subscription-writes.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;apply-repair GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-repair GET /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;apply-repair PUT /subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-ratelimit-remaining-subscription-writes&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: &quot;199&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="read-repair"><small>Step 16 · probe</small><h2>Verify the repair independently</h2><p>Check revision=two outside the native provider trace.</p><pre>Direct GET of the resource-group path</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>GET 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;read-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;two&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article><article><h3>Azure</h3><p>GET 200</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: null,
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;phase&quot;: &quot;read-repair&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;status&quot;: 200,
+      &quot;body&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+        &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+        &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+        &quot;location&quot;: &quot;eastus&quot;,
+        &quot;tags&quot;: {
+          &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+          &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+          &quot;revision&quot;: &quot;two&quot;,
+          &quot;run&quot;: &quot;&lt;run&gt;&quot;
+        },
+        &quot;properties&quot;: {
+          &quot;provisioningState&quot;: &quot;Succeeded&quot;
+        }
+      }
+    }
+  ]
+}</pre></details></article></div><p>Retained status/body fields agree.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: [
+    {
+      &quot;operation&quot;: &quot;read-repair GET&quot;,
+      &quot;differences&quot;: []
+    }
+  ]
+}</pre></details></section><section id="state-remove"><small>Step 17 · native</small><h2>Remove Terraform ownership</h2><p>Remove the resource from Terraform state without deleting the remote group.</p><pre>terraform state rm azapi_resource.group</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 7001 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;state-remove&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 7001
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 6144 ms. No ARM exchange captured.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;state-remove&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 6144
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Command outcomes available; no captured ARM exchange to compare.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="import"><small>Step 18 · native</small><h2>Import the existing group</h2><p>Reattach the existing group to Terraform state. The recorded provider requests use API version 2025-04-01.</p><pre>terraform import -input=false -no-color azapi_resource.group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 3312 ms. GET 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;import&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 3312
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;import&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:55.740Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:55.742Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;import&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:55.750Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:55.751Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 4164 ms. GET 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;import&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4164
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;import&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:23.175Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;e47952e1-1963-4ac8-8764-346968b0d70f&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;08fe768d-92cb-afcc-b3ff-30491b4f16c2&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:23.853Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;import&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:23.864Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;494196a3-f8e5-4d23-839e-ca609a04f5a7&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;08fe768d-92cb-afcc-b3ff-30491b4f16c2&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:24.339Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;import GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;import GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="plan-imported"><small>Step 19 · native</small><h2>Check the imported state</h2><p>Check that no change is needed after import. Retain both observed API versions.</p><pre>terraform plan -input=false -detailed-exitcode -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 3472 ms. GET 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-imported&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 3472
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-imported&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:59.182Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:59.183Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;plan-imported&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:45:59.224Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:45:59.225Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 4612 ms. GET 200 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;plan-imported&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4612
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;plan-imported&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:27.796Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;130cf47a-122c-4fc3-abb9-dc2a09b4af40&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;394f20a0-eb50-61e2-0132-0032bcb7725c&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:27.984Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;plan-imported&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:28.026Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;e054680c-8bdc-4aa6-b8b5-834ca2b68990&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;394f20a0-eb50-61e2-0132-0032bcb7725c&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:28.942Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;plan-imported GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;plan-imported GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="destroy"><small>Step 20 · native</small><h2>Destroy the group</h2><p>Read and delete the group. Preserve the different deletion responses and Azure polling request.</p><pre>terraform destroy -auto-approve -input=false -no-color</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Exit 0 (expected 0); 4587 ms. GET 200 → GET 200 → DELETE 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;destroy&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 4587
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:02.744Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:02.746Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:02.789Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:02.790Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;DELETE&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:46:03.810Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json&quot;
+        },
+        &quot;body&quot;: {
+          &quot;status&quot;: &quot;Deleted&quot;,
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:46:03.812Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Exit 0 (expected 0); 21355 ms. GET 200 → GET 200 → DELETE 202 → GET 200.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;phase&quot;: &quot;destroy&quot;,
+    &quot;exitCode&quot;: 0,
+    &quot;expected&quot;: 0,
+    &quot;timedOut&quot;: false,
+    &quot;elapsedMs&quot;: 21355
+  },
+  &quot;traces&quot;: [
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:32.803Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;a447bc7f-b787-4fba-a04f-334f824a84cd&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;d8a97368-7df9-af0b-704c-d3c5def90415&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:32.993Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:33.024Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;content-type&quot;: &quot;application/json; charset=utf-8&quot;,
+          &quot;x-ms-request-id&quot;: &quot;161206c2-936f-44e8-8a1a-00978f3f2acc&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;d8a97368-7df9-af0b-704c-d3c5def90415&quot;
+        },
+        &quot;body&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;,
+          &quot;name&quot;: &quot;&lt;group&gt;&quot;,
+          &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;,
+          &quot;location&quot;: &quot;eastus&quot;,
+          &quot;tags&quot;: {
+            &quot;expires&quot;: &quot;&lt;expiry&gt;&quot;,
+            &quot;project&quot;: &quot;globalstack-paired-lifecycle&quot;,
+            &quot;revision&quot;: &quot;two&quot;,
+            &quot;run&quot;: &quot;&lt;run&gt;&quot;
+          },
+          &quot;properties&quot;: {
+            &quot;provisioningState&quot;: &quot;Succeeded&quot;
+          }
+        }
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:33.226Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;DELETE&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:34.226Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 202,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;location&quot;: &quot;https://management.azure.com/subscriptions/&lt;subscription&gt;/operationresults/&lt;operation&gt;?api-version=2025-04-01&amp;t=&lt;redacted&gt;&amp;c=&lt;redacted&gt;&amp;s=&lt;redacted&gt;&amp;h=&lt;redacted&gt;&quot;,
+          &quot;retry-after&quot;: &quot;15&quot;,
+          &quot;x-ms-request-id&quot;: &quot;a90664f2-554f-4e73-8f86-62360e757338&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;25138cf9-3f6d-cb29-9a6d-759085e0dbe7&quot;
+        },
+        &quot;body&quot;: null
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:34.528Z&quot;
+    },
+    {
+      &quot;phase&quot;: &quot;destroy&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/subscriptions/&lt;subscription&gt;/operationresults/&lt;operation&gt;?api-version=2025-04-01&amp;t=&lt;redacted&gt;&amp;c=&lt;redacted&gt;&amp;s=&lt;redacted&gt;&amp;h=&lt;redacted&gt;&quot;,
+      &quot;startedAt&quot;: &quot;2026-11-06T20:47:49.539Z&quot;,
+      &quot;request&quot;: {
+        &quot;headers&quot;: {
+          &quot;user-agent&quot;: &quot;HashiCorp Terraform/1.17.1 (+https://www.terraform.io) terraform-provider-azapi/v2.13.0 pid-222c6c49-1b0a-5959-a213-6608f9eb8820&quot;
+        },
+        &quot;body&quot;: null,
+        &quot;authenticated&quot;: true
+      },
+      &quot;status&quot;: 200,
+      &quot;response&quot;: {
+        &quot;headers&quot;: {
+          &quot;x-ms-request-id&quot;: &quot;ab16cd07-7d5d-48f3-a5a4-c825553dac66&quot;,
+          &quot;x-ms-correlation-request-id&quot;: &quot;25138cf9-3f6d-cb29-9a6d-759085e0dbe7&quot;
+        },
+        &quot;body&quot;: null
+      },
+      &quot;completedAt&quot;: &quot;2026-11-06T20:47:50.291Z&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Differing fields: /response/headers/content-type, /response/headers/x-ms-request-id, /response/headers/x-ms-correlation-request-id, /status, /response/headers/location, /response/headers/retry-after, /response/body. Unmatched azure exchange: destroy GET /subscriptions/&lt;subscription&gt;/operationresults/&lt;operation&gt;?api-version=2025-04-01&amp;t=&lt;redacted&gt;&amp;c=&lt;redacted&gt;&amp;s=&lt;redacted&gt;&amp;h=&lt;redacted&gt;.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [
+    {
+      &quot;operation&quot;: &quot;destroy GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;destroy GET /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: &quot;application/json; charset=utf-8&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;destroy DELETE /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2025-04-01&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;differences&quot;: [
+        {
+          &quot;path&quot;: &quot;/status&quot;,
+          &quot;local&quot;: 200,
+          &quot;azure&quot;: 202
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/content-type&quot;,
+          &quot;local&quot;: &quot;application/json&quot;,
+          &quot;azure&quot;: {
+            &quot;missing&quot;: true
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/location&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: &quot;https://management.azure.com/subscriptions/&lt;subscription&gt;/operationresults/&lt;operation&gt;?api-version=2025-04-01&amp;t=&lt;redacted&gt;&amp;c=&lt;redacted&gt;&amp;s=&lt;redacted&gt;&amp;h=&lt;redacted&gt;&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/retry-after&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: &quot;15&quot;
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/headers/x-ms-correlation-request-id&quot;,
+          &quot;local&quot;: {
+            &quot;missing&quot;: true
+          },
+          &quot;azure&quot;: {
+            &quot;present&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        {
+          &quot;path&quot;: &quot;/response/body&quot;,
+          &quot;local&quot;: {
+            &quot;status&quot;: &quot;Deleted&quot;,
+            &quot;id&quot;: &quot;/subscriptions/&lt;subscription&gt;/resourceGroups/&lt;group&gt;&quot;
+          },
+          &quot;azure&quot;: null
+        }
+      ]
+    },
+    {
+      &quot;operation&quot;: &quot;destroy GET /subscriptions/&lt;subscription&gt;/operationresults/&lt;operation&gt;?api-version=2025-04-01&amp;t=&lt;redacted&gt;&amp;c=&lt;redacted&gt;&amp;s=&lt;redacted&gt;&amp;h=&lt;redacted&gt;&quot;,
+      &quot;occurrence&quot;: 0,
+      &quot;unmatched&quot;: &quot;azure&quot;
+    }
+  ],
+  &quot;probes&quot;: []
+}</pre></details></section><section id="cleanup"><small>Step 21 · cleanup</small><h2>Confirm absence and remove private files</h2><p>The cleanup record reports confirmed absence and removal of credentials, certificates and state. It does not contain the full verification HTTP exchange.</p><pre>Independent cleanup verification and private-file removal</pre><small>Command or action reconstructed from the frozen runner.</small><div class="pair"><article><h3>GlobalStack</h3><p>Native destroy: true; absent: true; private files removed: true.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;nativeDestroy&quot;: true,
+    &quot;absent&quot;: true,
+    &quot;privateFilesRemoved&quot;: true
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article><article><h3>Azure</h3><p>Native destroy: true; absent: true; private files removed: true.</p><details><summary>Recorded outcome and exchanges</summary><pre>{
+  &quot;outcome&quot;: {
+    &quot;nativeDestroy&quot;: true,
+    &quot;absent&quot;: true,
+    &quot;fallbackDelete&quot;: false,
+    &quot;privateFilesRemoved&quot;: true
+  },
+  &quot;traces&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></article></div><p>Both report successful cleanup; raw verification traffic is not retained.</p><details><summary>Compared fields and unmatched exchanges</summary><pre>{
+  &quot;exchanges&quot;: [],
+  &quot;probes&quot;: []
+}</pre></details></section><section><h2>Scope of the fixes</h2><h3>Resource-group PATCH</h3><p>Shared ARM resource-group route, for the requested subscription and group. No pilot name or tag is special-cased. Valid tag updates, replacement of the supplied tag map, preservation of omitted fields and 404 for a missing group. Local regression also checks distinct group names and subscriptions.</p><p>No claim of complete validation for malformed payloads, location changes, other resource types or every API version.</p><h3>Public resource-group responses</h3><p>Shared GET, PUT, PATCH and list responses omit the internal globalstack field. Applies to resource-group callers regardless of which IaC tool sends the request. Local regression checks response shape and isolation.</p><p>Other resource families have not received this same audit.</p><h3>Deletion polling observer</h3><p>Experiment transport, not the GlobalStack service implementation. It accepts only scoped read-only polling URLs granted by allowed upstream 202 responses. Allows the native Azure provider to complete this deletion and preserves the extra polling exchange.</p><p>Still scoped to this empty-group pilot. It does not implement asynchronous deletion in GlobalStack or authorize arbitrary service operations.</p><p>The corrections are shared resource-group behavior and a scoped observer change. They do not establish correctness of all services or all IaC tools.</p></section><section><h2>Provenance</h2><pre>{
+  &quot;evidence&quot;: &quot;corrected.json&quot;,
+  &quot;evidenceSha256&quot;: &quot;b9f7ca402afc68746b7a51cea1e414ac6f6da47aff5df5ad4ed31e0bf7039dfb&quot;,
+  &quot;revision&quot;: &quot;356645fbb153c8a1850eac1109ff4b35785b190d&quot;,
+  &quot;sourceDirty&quot;: false,
+  &quot;source&quot;: {
+    &quot;.terraform.lock.hcl&quot;: &quot;5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6&quot;,
+    &quot;main.tf&quot;: &quot;8f0f11938ecac9b2d21831c815e2b9377379659adb3de41a20cf61a0cbf75e85&quot;
+  },
+  &quot;image&quot;: &quot;sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186&quot;,
+  &quot;startedAt&quot;: &quot;2026-11-06T20:43:17.677Z&quot;,
+  &quot;completedAt&quot;: &quot;2026-11-06T20:47:50.903Z&quot;,
+  &quot;location&quot;: &quot;eastus&quot;,
+  &quot;publication&quot;: {
+    &quot;originalReportSha256&quot;: &quot;339091e68f022c7b07daa0d6df378a264532b9fc9aceed167ff54f9ff0b0804c&quot;,
+    &quot;sanitizerSha256&quot;: &quot;a0375f3b685653d6d857286a859c3572f277c8fe135524a2231b7ea59d978505&quot;,
+    &quot;redactions&quot;: [
+      &quot;deployment identifiers&quot;,
+      &quot;signed polling query values&quot;,
+      &quot;opaque operation identifiers&quot;
+    ]
+  }
+}</pre><p>Derived from retained sanitized evidence. No new Azure deployment was needed to generate this view.</p></section></main></body></html>

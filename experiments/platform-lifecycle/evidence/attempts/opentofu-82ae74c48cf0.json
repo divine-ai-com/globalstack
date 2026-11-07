@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-opentofu-hcl",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:24:57.821Z",
+  "revision": "3e1f67e9875e6172ad046b7f746b905e4cbcb0c0",
+  "sourceDirty": true,
+  "image": "sha256:af5133d1c3ef42a09d2681b6b88fc0ce43f4cb494f0982b4e1ad05e5d1283e57",
+  "source": {
+    ".terraform.lock.hcl": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6",
+    "main.tf": "b7f9544910eb6304016cf576b81003cf52bea64265943d7a9cf278c37e698d75"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "tofu",
+            "version",
+            "-json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:24:58.262Z",
+          "completedAt": "2026-11-06T21:24:59.416Z",
+          "exitCode": 0,
+          "stdout": "{\n  \"terraform_version\": \"1.13.2\",\n  \"platform\": \"linux_amd64\",\n  \"provider_selections\": {\n    \"registry.terraform.io/azure/azapi\": \"2.13.0\"\n  }\n}\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "format",
+          "command": [
+            "tofu",
+            "fmt",
+            "-check"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:24:59.417Z",
+          "completedAt": "2026-11-06T21:24:59.937Z",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "init",
+          "command": [
+            "tofu",
+            "init",
+            "-input=false",
+            "-lockfile=readonly",
+            "-no-color"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:24:59.938Z",
+          "completedAt": "2026-11-06T21:25:11.104Z",
+          "exitCode": 1,
+          "stdout": "\nInitializing the backend...\n\nInitializing provider plugins...\n- Finding azure/azapi versions matching \"2.13.0\"...\n- Installing azure/azapi v2.13.0...\n- Installed azure/azapi v2.13.0 (signed, key ID 6F0B91BDE98478CF)\n\nProviders are signed by their developers.\nIf you'd like to know more about provider signing, you can read about it here:\nhttps://opentofu.org/docs/cli/plugins/signing/\n",
+          "stderr": "\nError: Provider dependency changes detected\n\nChanges to the required provider dependencies were detected, but the lock\nfile is read-only. To use and record these requirements, run \"tofu init\"\nwithout the \"-lockfile=readonly\" flag.\n\n",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:24:58.216Z",
+          "completedAt": "2026-11-06T21:24:58.250Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:25:11.106Z",
+          "completedAt": "2026-11-06T21:25:11.112Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:25:11.113Z",
+          "completedAt": "2026-11-06T21:25:11.116Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        ".terraform.lock.hcl": "5790a5e6ffc3a4d073e04ec1d43939d23573403f5026b4ac33dc290ff343e5c6",
+        "main.tf": "b7f9544910eb6304016cf576b81003cf52bea64265943d7a9cf278c37e698d75"
+      },
+      "ok": false,
+      "error": "azure-opentofu-hcl/local/init failed; inspect the sanitized record",
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": false,
+  "completedAt": "2026-11-06T21:25:11.584Z"
+}

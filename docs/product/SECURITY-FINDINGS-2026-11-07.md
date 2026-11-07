@@ -19,3 +19,13 @@ The cleanup URL has a fixed HTTPS Azure management origin. Subscription and gene
 Successful verified cleanup removes temporary credentials, certificates, provider working files and Terraform state. An unresolved cleanup preserves the private recovery manifest and blocks further targets. A host outage can interrupt both controller and watchdog; external recovery remains necessary. The runner has no claim of isolation from another process running as the same operating-system user.
 
 The two medium findings remain visible. No severity gate was lowered. The pilot writes no compute, storage, messaging or monitoring resources. Later billable scenarios need their own permitted-resource list, runtime controls and cleanup validation.
+
+## Native platform capture extension
+
+PR 20's complete scan at `7192faabe735d8c4f4b99bc0cb4c52c27a69f748` contains 30 medium findings and zero high or critical findings. Alerts 59 and 60 are additional file-to-HTTP flows in `experiments/platform-lifecycle/cleanup.mjs`: the private recovery manifest supplies the subscription, deployment name and bearer token. Their SARIF source-to-sink paths were reviewed. These findings remain visible; no query or severity threshold is suppressed.
+
+The new helper uses the fixed HTTPS management origin, rejects redirects, validates subscription/run syntax and requires the group name to equal the generated run name. Before deleting anything, template cleanup reads the deployment, verifies its run and group parameters, and waits for a terminal provisioning state. A bounded timeout preserves recovery context instead of deleting a group that an active deployment could recreate. Group cleanup additionally checks ownership and empty inventory. Regression tests cover malformed scope, ownership mismatch, active-deployment timeout, terminal-state ordering, absence checks and credential exclusion from observations.
+
+The extended observer permits only the exact frozen template and parameter combinations at the owned subscription deployment path. Read-only inventory is scoped to the owned group. Compressed capture decoding is bounded to 1 MiB; oversized decoded content retains compressed size and digest instead of being expanded without limit. Forwarded response bytes are unchanged. Tests cover gzip and deflate limits as well as the public ARM authority and scheme.
+
+This runner executes trusted checked-in fixtures. Its containers, shared dependency cache and identity adapter are not a sandbox for hostile IaC. The CLI identity shim does not test Entra authentication. Portal receipts require operator review of actual browser captures and are not independent image attestations. No live matrix execution or Portal screenshot is implied by the nine local captures.

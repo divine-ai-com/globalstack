@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { test } from 'node:test';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
+import { ResourceStore } from '../../core/src/resource-store.mjs';
 
 const subscriptionPath = '/subscriptions/00000000-0000-0000-0000-000000000000';
 
@@ -40,8 +41,8 @@ function httpJson(port, method, path, body) {
   });
 }
 
-async function withServer(fn) {
-  const server = createArmServer({ persist: false });
+async function withServer(fn, options = {}) {
+  const server = createArmServer({ persist: false, ...options });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
   try {
@@ -1164,6 +1165,103 @@ test('scoped Event Grid event subscriptions can be created under a topic resourc
     assert.equal(get.status, 200);
     assert.equal(get.body.type, 'Microsoft.EventGrid/eventSubscriptions');
     assert.equal(get.body.name, 'sub-audit');
+  });
+});
+
+test('deployment history deletion preserves resources and provides scoped completion polling', async () => {
+  const store = new ResourceStore();
+  const subscriptionId = subscriptionPath.split('/').at(-1);
+  store.putResourceGroup(subscriptionId, 'kept-group', { location: 'eastus' });
+  const root = `${subscriptionPath}/providers/Microsoft.Resources/deployments/history`;
+  const scoped = `${subscriptionPath}/resourceGroups/kept-group/providers/Microsoft.Resources/deployments/history`;
+  const query = '?api-version=2022-09-01';
+  for (const resourceGroupName of [null, 'kept-group']) store.putDeployment({ subscriptionId, resourceGroupName, deploymentName: 'history', body: { properties: { provisioningState: 'Succeeded' } } });
+  store.putDeployment({ subscriptionId, deploymentName: 'active', body: { properties: { provisioningState: 'Running' } } });
+  await withServer(async port => {
+    assert.equal((await httpJson(port, 'DELETE', `${root}/operations/unknown${query}`)).status, 404);
+    assert.equal((await httpJson(port, 'GET', root + query)).status, 200);
+    assert.equal((await httpJson(port, 'DELETE', root.replace('/history', '/active') + query)).status, 409);
+    for (const path of [root, scoped]) {
+      const deleted = await httpJson(port, 'DELETE', path + query);
+      assert.equal(deleted.status, 202); assert.equal(deleted.body, null);
+      const poll = new URL(deleted.headers.location);
+      assert.equal((await httpJson(port, 'GET', poll.pathname + poll.search)).status, 204);
+      assert.equal((await httpJson(port, 'GET', path + query)).status, 404);
+      assert.equal((await httpJson(port, 'DELETE', path + query)).status, 204);
+      assert.equal((await httpJson(port, 'GET', `${subscriptionPath}/resourceGroups/kept-group${query}`)).status, 200);
+    }
+    assert.equal((await httpJson(port, 'GET', `${subscriptionPath}/providers/Microsoft.Resources/operationResults/unknown${query}`)).status, 404);
+  }, { store });
+});
+
+test('resource-group existence and inventory reflect actual scoped resources', async () => {
+  await withServer(async port => {
+    const group = `${subscriptionPath}/resourceGroups/inventory-primary`;
+    const other = `${subscriptionPath}/resourceGroups/inventory-other`;
+    const query = '?api-version=2021-04-01';
+    assert.equal((await httpJson(port, 'HEAD', group + query)).status, 404);
+    assert.equal((await httpJson(port, 'GET', `${group}/resources${query}`)).status, 404);
+    for (const path of [group, other]) await httpJson(port, 'PUT', path + query, { location: 'eastus' });
+    const exists = await httpJson(port, 'HEAD', group + query);
+    assert.equal(exists.status, 204); assert.equal(exists.body, null);
+    assert.deepEqual((await httpJson(port, 'GET', `${group}/resources${query}`)).body, { value: [] });
+    const resource = `${group}/providers/Microsoft.Storage/storageAccounts/inventoryprimary`;
+    await httpJson(port, 'PUT', `${resource}?api-version=2023-01-01`, { location: 'eastus', kind: 'StorageV2', sku: { name: 'Standard_LRS' } });
+    await httpJson(port, 'PUT', `${other}/providers/Microsoft.Storage/storageAccounts/inventoryother?api-version=2023-01-01`, { location: 'eastus', kind: 'StorageV2', sku: { name: 'Standard_LRS' } });
+    const listed = await httpJson(port, 'GET', `${group}/resources${query}`);
+    assert.equal(listed.status, 200);
+    assert.deepEqual(listed.body.value.map(item => item.id.toLowerCase()), [resource.toLowerCase()]);
+    assert.equal('globalstack' in listed.body.value[0], false);
+    assert.equal((await httpJson(port, 'GET', `${group}/resources${query}&$top=1`)).status, 501);
+    await httpJson(port, 'DELETE', group + query);
+    assert.equal((await httpJson(port, 'HEAD', group + query)).status, 404);
+    assert.equal((await httpJson(port, 'HEAD', other + query)).status, 204);
+  });
+});
+
+test('resource-group fixes apply across names and configured subscriptions without cross-group changes', async t => {
+  const originalSubscription = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID;
+  t.after(() => {
+    if (originalSubscription === undefined) delete process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID;
+    else process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = originalSubscription;
+  });
+  await withServer(async port => {
+    const subscriptions = [subscriptionPath, '/subscriptions/11111111-1111-1111-1111-111111111111'];
+    const groups = [
+      { subscription: subscriptions[0], name: 'accounting-production', location: 'eastus', tags: { owner: 'finance', obsolete: 'remove' } },
+      { subscription: subscriptions[0], name: 'research-sandbox', location: 'westus2', tags: { owner: 'research' } },
+      { subscription: subscriptions[1], name: 'accounting-production', location: 'canadacentral', tags: { owner: 'other-project' } },
+    ];
+    const url = group => `${group.subscription}/resourceGroups/${group.name}?api-version=2021-04-01`;
+    const requestAs = (group, method, body) => {
+      // Select the supported local subscription context; retain normal authentication.
+      process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = group.subscription.split('/').at(-1);
+      return httpJson(port, method, url(group), body);
+    };
+    for (const group of groups) {
+      const created = await requestAs(group, 'PUT', { location: group.location, tags: group.tags });
+      assert.equal(created.status, 201);
+      assert.equal('globalstack' in created.body, false);
+    }
+    assert.equal((await httpJson(port, 'PATCH', url(groups[0]), { tags: { owner: 'unauthorized' } })).status, 403);
+    const patched = await requestAs(groups[0], 'PATCH', { tags: { owner: 'treasury' } });
+    assert.equal(patched.status, 200);
+    assert.deepEqual(patched.body.tags, { owner: 'treasury' });
+    assert.equal('globalstack' in patched.body, false);
+    assert.deepEqual((await requestAs(groups[0], 'PATCH', {})).body.tags, patched.body.tags);
+    for (const [index, group] of groups.entries()) {
+      const fetched = await requestAs(group, 'GET');
+      assert.equal(fetched.body.location, group.location);
+      assert.deepEqual(fetched.body.tags, index === 0 ? { owner: 'treasury' } : group.tags);
+      assert.equal('globalstack' in fetched.body, false);
+    }
+    for (const subscription of subscriptions) {
+      process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription.split('/').at(-1);
+      const listed = await httpJson(port, 'GET', `${subscription}/resourceGroups?api-version=2021-04-01`);
+      assert.equal(listed.status, 200);
+      assert.deepEqual(listed.body.value.map(group => group.name).sort(), groups.filter(group => group.subscription === subscription).map(group => group.name).sort());
+      assert.ok(listed.body.value.every(group => !('globalstack' in group)));
+    }
   });
 });
 

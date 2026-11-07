@@ -3,13 +3,15 @@ import { readFile, writeFile, access } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-export async function removeOwnedGroup(manifest) {
+export async function removeOwnedGroup(manifest, observe = () => {}) {
   assert.match(manifest.subscription, /^[a-f0-9-]{36}$/i);
   assert.match(manifest.group, /^gs-pair-[a-f0-9]{12}$/);
   const base = `https://management.azure.com/subscriptions/${manifest.subscription}/resourcegroups/${manifest.group}`;
   const request = async (method, suffix = '?api-version=2021-04-01') => {
+    const startedAt = new Date().toISOString();
     const response = await fetch(base + suffix, { method, redirect: 'error', signal: AbortSignal.timeout(30000), headers: { authorization: `Bearer ${manifest.token}` } });
     const body = await response.json().catch(() => null);
+    observe({ phase: 'cleanup-verification', method, path: new URL(base + suffix).pathname + new URL(base + suffix).search, status: response.status, body, startedAt, completedAt: new Date().toISOString() });
     return { status: response.status, body };
   };
   const existing = await request('GET');

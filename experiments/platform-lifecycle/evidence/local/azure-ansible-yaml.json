@@ -1,0 +1,1163 @@
+{
+  "schemaVersion": 2,
+  "platform": "azure-ansible-yaml",
+  "scope": "Empty resource group; native lifecycle with external identity and endpoint routing",
+  "startedAt": "2026-11-06T21:50:46.208Z",
+  "revision": "7192faabe735d8c4f4b99bc0cb4c52c27a69f748",
+  "sourceDirty": false,
+  "image": "sha256:2bd92b226c9ded8d00d7e116c31abff309e17e32d7ab79803027cc993d54239f",
+  "source": {
+    "playbook.yml": "76779d2d7caf610d6a4425266d7353718f9868cd02910ac10b3588c873c9cbe3"
+  },
+  "authorizedUsd": 0,
+  "targets": [
+    {
+      "name": "local",
+      "phases": [
+        {
+          "phase": "version",
+          "command": [
+            "ansible-playbook",
+            "--version"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:46.661Z",
+          "completedAt": "2026-11-06T21:50:48.042Z",
+          "exitCode": 0,
+          "stdout": "ansible-playbook [core 2.21.6]\n  config file = None\n  configured module search path = ['/private/home/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']\n  ansible python module location = /usr/local/lib/python3.12/dist-packages/ansible\n  ansible collection location = /root/.ansible/collections\n  executable location = /usr/local/bin/ansible-playbook\n  python version = 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0] (/usr/bin/python3)\n  jinja version = 3.1.6\n  pyyaml version = 6.0.3 (with libyaml v0.2.5)\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "syntax-check",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json",
+            "--syntax-check"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:48.044Z",
+          "completedAt": "2026-11-06T21:50:49.549Z",
+          "exitCode": 0,
+          "stdout": "\nplaybook: playbook.yml\n",
+          "stderr": "",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "check-create",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json",
+            "--check",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:49.553Z",
+          "completedAt": "2026-11-06T21:50:59.372Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-create",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:50:59.374Z",
+          "completedAt": "2026-11-06T21:51:08.285Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-stable",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:08.297Z",
+          "completedAt": "2026-11-06T21:51:14.252Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "check-stable",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json",
+            "--check",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:14.255Z",
+          "completedAt": "2026-11-06T21:51:19.699Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "check-update",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json",
+            "--check",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:19.700Z",
+          "completedAt": "2026-11-06T21:51:24.957Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-update",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:24.958Z",
+          "completedAt": "2026-11-06T21:51:30.483Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "check-drift",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json",
+            "--check",
+            "--diff"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:30.500Z",
+          "completedAt": "2026-11-06T21:51:35.968Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "apply-repair",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:35.971Z",
+          "completedAt": "2026-11-06T21:51:41.507Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "repeat-final",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:41.515Z",
+          "completedAt": "2026-11-06T21:51:46.957Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        },
+        {
+          "phase": "destroy",
+          "command": [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "playbook.yml",
+            "-e",
+            "@/private/vars.json"
+          ],
+          "expectedExitCodes": [
+            0
+          ],
+          "startedAt": "2026-11-06T21:51:46.959Z",
+          "completedAt": "2026-11-06T21:51:52.419Z",
+          "exitCode": 0,
+          "stdout": "\nPLAY [Manage an empty resource group] ******************************************\n\nTASK [Reconcile the resource group] ********************************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+          "stderr": "[WARNING]: Host 'localhost' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.\n",
+          "truncated": false,
+          "timedOut": false
+        }
+      ],
+      "traces": [
+        {
+          "phase": "check-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:50:56.898Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "ResourceGroupNotFound",
+                "message": "Resource group <group> was not found.",
+                "details": []
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:50:56.908Z"
+        },
+        {
+          "phase": "apply-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:03.992Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {
+                "code": "ResourceGroupNotFound",
+                "message": "Resource group <group> was not found.",
+                "details": []
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:03.996Z"
+        },
+        {
+          "phase": "apply-create",
+          "method": "HEAD",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:04.003Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 404,
+          "response": {
+            "headers": {},
+            "body": null
+          },
+          "completedAt": "2026-11-06T21:51:04.006Z"
+        },
+        {
+          "phase": "apply-create",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:04.009Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 201,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:04.054Z"
+        },
+        {
+          "phase": "repeat-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:13.243Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:13.246Z"
+        },
+        {
+          "phase": "repeat-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:13.253Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:13.256Z"
+        },
+        {
+          "phase": "check-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:18.755Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:18.762Z"
+        },
+        {
+          "phase": "check-stable",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:18.770Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:18.773Z"
+        },
+        {
+          "phase": "check-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:23.984Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:23.987Z"
+        },
+        {
+          "phase": "check-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:23.992Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:23.995Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:29.440Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "one"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:29.443Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:29.449Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:29.451Z"
+        },
+        {
+          "phase": "apply-update",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:29.454Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:29.497Z"
+        },
+        {
+          "phase": "check-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:34.991Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "external"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:34.993Z"
+        },
+        {
+          "phase": "check-drift",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:34.999Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:35.001Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:40.460Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "external"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:40.462Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:40.468Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:40.469Z"
+        },
+        {
+          "phase": "apply-repair",
+          "method": "PUT",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:40.473Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6",
+              "content-type": "application/json"
+            },
+            "body": {
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              }
+            },
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:40.515Z"
+        },
+        {
+          "phase": "repeat-final",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:45.933Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:45.936Z"
+        },
+        {
+          "phase": "repeat-final",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:45.942Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:45.944Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:51.406Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "name": "<group>",
+              "type": "Microsoft.Resources/resourceGroups",
+              "location": "eastus",
+              "tags": {
+                "project": "globalstack-paired-lifecycle",
+                "run": "<run>",
+                "expires": "<expiry>",
+                "revision": "two"
+              },
+              "properties": {
+                "provisioningState": "Succeeded"
+              }
+            }
+          },
+          "completedAt": "2026-11-06T21:51:51.408Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:51.414Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "value": []
+            }
+          },
+          "completedAt": "2026-11-06T21:51:51.415Z"
+        },
+        {
+          "phase": "destroy",
+          "method": "DELETE",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>?api-version=2022-09-01",
+          "startedAt": "2026-11-06T21:51:51.418Z",
+          "request": {
+            "headers": {
+              "user-agent": "azsdk-python-azure-mgmt-resource/23.2.0 Python/3.12.3 (Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39) Ansible/2.21.6"
+            },
+            "body": null,
+            "authenticated": true
+          },
+          "status": 200,
+          "response": {
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "status": "Deleted",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            }
+          },
+          "completedAt": "2026-11-06T21:51:51.420Z"
+        }
+      ],
+      "probes": [
+        {
+          "phase": "preflight",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:50:46.614Z",
+          "completedAt": "2026-11-06T21:50:46.648Z"
+        },
+        {
+          "phase": "read-create",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "one"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:51:08.287Z",
+          "completedAt": "2026-11-06T21:51:08.293Z"
+        },
+        {
+          "phase": "read-update",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:51:30.484Z",
+          "completedAt": "2026-11-06T21:51:30.488Z"
+        },
+        {
+          "phase": "inject-drift",
+          "method": "PATCH",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": {
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            }
+          },
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "external"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:51:30.490Z",
+          "completedAt": "2026-11-06T21:51:30.498Z"
+        },
+        {
+          "phase": "read-repair",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+            "name": "<group>",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "project": "globalstack-paired-lifecycle",
+              "run": "<run>",
+              "expires": "<expiry>",
+              "revision": "two"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          "startedAt": "2026-11-06T21:51:41.509Z",
+          "completedAt": "2026-11-06T21:51:41.512Z"
+        },
+        {
+          "phase": "post-destroy-read-0",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:51:52.420Z",
+          "completedAt": "2026-11-06T21:51:52.424Z"
+        },
+        {
+          "phase": "cleanup-read",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:51:52.425Z",
+          "completedAt": "2026-11-06T21:51:52.427Z"
+        },
+        {
+          "phase": "cleanup-absence",
+          "method": "GET",
+          "path": "/subscriptions/<subscription>/resourcegroups/<group>",
+          "apiVersion": "2021-04-01",
+          "requestBody": null,
+          "status": 404,
+          "body": {
+            "error": {
+              "code": "ResourceGroupNotFound",
+              "message": "Resource group <group> was not found.",
+              "details": []
+            }
+          },
+          "startedAt": "2026-11-06T21:51:52.429Z",
+          "completedAt": "2026-11-06T21:51:52.431Z"
+        }
+      ],
+      "portal": [],
+      "cleanup": {
+        "nativeDestroyAccepted": true,
+        "nativeDestroy": true,
+        "absent": true,
+        "privateFilesRemoved": true
+      },
+      "source": {
+        "playbook.yml": "76779d2d7caf610d6a4425266d7353718f9868cd02910ac10b3588c873c9cbe3"
+      },
+      "ok": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "ok": true,
+  "completedAt": "2026-11-06T21:51:52.808Z"
+}

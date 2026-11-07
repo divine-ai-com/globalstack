@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
@@ -246,6 +247,7 @@ export function createArmRequestHandler({
   kubernetesRouter = null,
 } = {}) {
   void persist;
+  const completedDeploymentDeletions = new Map();
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
     providerRoute = normalizeProviderRoute(providerRoute);
@@ -563,6 +565,13 @@ export function createArmRequestHandler({
         });
       }
 
+      const deletionResult = /^\/subscriptions\/[^/]+\/providers\/microsoft\.resources\/operationresults\/[^/]+$/i.test(pathname);
+      if (method === 'GET' && deletionResult) {
+        const expiry = completedDeploymentDeletions.get(pathname.toLowerCase());
+        if (!expiry || expiry < Date.now()) return sendError(res, 404, 'OperationNotFound', 'The deployment deletion operation was not found.');
+        res.writeHead(204); res.end(); return;
+      }
+
       if (method === 'GET' && lowerSegments(pathname).includes('operationstatuses')) {
         const rawOperationSegments = segments(pathname);
         const operationIndex = rawOperationSegments.findIndex(segment => segment.toLowerCase() === 'operationstatuses');
@@ -644,6 +653,21 @@ export function createArmRequestHandler({
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      const deleteRoute = subscriptionDeploymentRoute && segments(pathname).length === 6
+        ? subscriptionDeploymentRoute
+        : resourceGroupDeploymentRoute && segments(pathname).length === 8 ? resourceGroupDeploymentRoute : null;
+      if (deleteRoute && method === 'DELETE') {
+        const deployment = store.getDeployment(deleteRoute);
+        if (!deployment) { res.writeHead(204); res.end(); return; }
+        if (!['Succeeded', 'Failed', 'Canceled'].includes(deployment.properties?.provisioningState)) return sendError(res, 409, 'DeploymentActive', 'A nonterminal deployment cannot be removed from history.');
+        // Removing history does not delete the resources created by the deployment.
+        store.deleteDeployment(deleteRoute);
+        for (const [path, expiry] of completedDeploymentDeletions) if (expiry < Date.now()) completedDeploymentDeletions.delete(path);
+        const operationPath = `/subscriptions/${deleteRoute.subscriptionId}/providers/Microsoft.Resources/operationResults/${randomUUID()}`;
+        completedDeploymentDeletions.set(operationPath.toLowerCase(), Date.now() + 300000);
+        res.writeHead(202, { location: `${facadeOrigin(req)}${operationPath}?api-version=${url.searchParams.get('api-version') ?? '2022-09-01'}`, 'retry-after': '0' });
+        res.end(); return;
+      }
       if (resourceGroupDeploymentRoute && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
@@ -668,9 +692,22 @@ export function createArmRequestHandler({
       }
 
       const rgRoute = parseResourceGroupRoute(pathname);
+      if (rgRoute?.resourceGroupName && rgRoute.rest.length === 1 && rgRoute.rest[0].toLowerCase() === 'resources' && method === 'GET') {
+        if (!store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName)) return sendError(res, 404, 'ResourceGroupNotFound', `Resource group ${rgRoute.resourceGroupName} was not found.`);
+        // Do not silently return an unfiltered list for unsupported OData requests.
+        if (['$filter', '$expand', '$top'].some(key => url.searchParams.has(key))) return sendError(res, 501, 'NotImplemented', 'Resource inventory query options are not implemented.');
+        return sendJson(res, 200, {
+          value: store.listResources(rgRoute.subscriptionId, rgRoute.resourceGroupName).map(({ globalstack: _diagnostics, ...resource }) => resource),
+        });
+      }
       if (rgRoute && rgRoute.rest.length === 0) {
         // Capability diagnostics stay in the store, outside Azure resource responses.
         const publicGroup = ({ globalstack: _diagnostics, ...resourceGroup }) => resourceGroup;
+        if (rgRoute.resourceGroupName && method === 'HEAD') {
+          res.writeHead(store.getResourceGroup(rgRoute.subscriptionId, rgRoute.resourceGroupName) ? 204 : 404);
+          res.end();
+          return;
+        }
         if (!rgRoute.resourceGroupName && method === 'GET') {
           return sendJson(res, 200, {
             value: store.listResourceGroups(rgRoute.subscriptionId).map(publicGroup),

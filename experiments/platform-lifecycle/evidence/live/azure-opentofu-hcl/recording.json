@@ -1,0 +1,15 @@
+{
+  "platform": "azure-opentofu-hcl",
+  "startedAt": "2026-11-07T04:47:45.852Z",
+  "completedAt": "2026-11-07T04:50:19.387Z",
+  "exitCode": 0,
+  "eventCount": 830,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "ae8ce8934bcac0d46305b44f0de02ec98e9ace361d48b94662b0da597bd70ad5",
+  "eventSha256": "2dccaa6ffb4a5a28929eab6ae95b883c2ed6826824785ab21d0766057dcdbc56",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}
