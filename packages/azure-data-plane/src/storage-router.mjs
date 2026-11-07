@@ -423,6 +423,18 @@ export class StorageDataPlaneRouter {
         if (result.code) return sendXmlError(res, result.status, result.code, result.message, requestId);
         return send(res, result.status, '', { ...result.headers, etag: existingBlob.etag, 'last-modified': existingBlob.lastModified, 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() });
       }
+      if (req.method === 'PUT' && comp === 'metadata') {
+        if (!existingBlob) return sendXmlError(res, 404, 'BlobNotFound', 'The specified blob does not exist.', requestId);
+        const metadataLeaseError = leaseGuard(existingBlob, req.headers, 'Blob', true);
+        if (metadataLeaseError) return sendXmlError(res, metadataLeaseError.status, metadataLeaseError.code, metadataLeaseError.message, requestId);
+        if (['x-ms-encryption-scope', 'x-ms-encryption-key', 'x-ms-encryption-key-sha256'].some(name => req.headers[name])) return sendXmlError(res, 501, 'NotImplemented', 'Customer-provided blob encryption is not implemented.', requestId);
+        existingBlob.metadata = Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-')));
+        existingBlob.etag = `"${randomUUID()}"`;
+        existingBlob.lastModified = nowUtc();
+        if (!['leased', 'breaking'].includes(leaseState(existingBlob))) delete existingBlob.lease;
+        return send(res, 200, '', { etag: existingBlob.etag, 'last-modified': existingBlob.lastModified,
+          'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() });
+      }
       if (comp) return sendXmlError(res, 501, 'NotImplemented', `Blob operation '${comp}' is not implemented.`, requestId);
       const leaseError = leaseGuard(existingBlob, req.headers, 'Blob', ['PUT', 'DELETE'].includes(req.method));
       if (leaseError) return sendXmlError(res, leaseError.status, leaseError.code, leaseError.message, requestId);
@@ -442,6 +454,7 @@ export class StorageDataPlaneRouter {
           ...(existingBlob && ['leased', 'breaking'].includes(leaseState(existingBlob)) ? { lease: existingBlob.lease } : {}),
           blobName,
           containerName,
+          metadata: Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-'))),
           contentType: String(req.headers['content-type'] ?? 'application/octet-stream'),
           body,
           etag: `"${randomUUID()}"`,
@@ -465,7 +478,7 @@ export class StorageDataPlaneRouter {
           etag: blob.etag,
           'last-modified': blob.lastModified,
           'x-ms-blob-type': 'BlockBlob',
-          ...leaseHeaders(blob),
+          ...leaseHeaders(blob), ...blob.metadata,
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
@@ -479,7 +492,7 @@ export class StorageDataPlaneRouter {
           'last-modified': blob.lastModified,
           'content-length': String(blob.body.length),
           'x-ms-blob-type': 'BlockBlob',
-          ...leaseHeaders(blob),
+          ...leaseHeaders(blob), ...blob.metadata,
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
@@ -707,6 +720,34 @@ export class StorageDataPlaneRouter {
       }
 
       const entityMatch = path.match(/^([^()]+)\(PartitionKey='((?:[^']|'')*)',RowKey='((?:[^']|'')*)'\)$/);
+      if (entityMatch && ['PUT', 'MERGE', 'DELETE'].includes(req.method)) {
+        const [, tableName, partitionKey, rowKey] = entityMatch.map(value => decodeURIComponent(value).replaceAll("''", "'"));
+        const table = account.tables.get(lower(tableName));
+        if (!table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
+        let body = {};
+        if (req.method !== 'DELETE') {
+          try { body = JSON.parse((await readBody(req)).toString('utf8')); } catch { return failure(400, 'InvalidInput', 'The request body is invalid.'); }
+          if (!body || typeof body !== 'object' || Array.isArray(body)
+            || body.PartitionKey !== undefined && body.PartitionKey !== partitionKey
+            || body.RowKey !== undefined && body.RowKey !== rowKey) return failure(400, 'InvalidInput', 'The entity keys do not match the request URI.');
+        }
+        if (account.tables.get(lower(tableName)) !== table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
+        const key = entityKey(partitionKey, rowKey), existing = table.entities.get(key), condition = req.headers['if-match'];
+        if (!existing && (condition || req.method === 'DELETE')) return failure(404, 'ResourceNotFound', 'The specified resource does not exist.');
+        if (condition && condition !== '*' && condition !== existing?.['odata.etag']) return failure(412, 'UpdateConditionNotSatisfied', 'The update condition specified in the request was not satisfied.');
+        if (req.method === 'DELETE') {
+          if (!condition) return failure(400, 'MissingRequiredHeader', 'A required header was not specified.');
+          table.entities.delete(key); return send(res, 204, '', common);
+        }
+        // No If-Match selects insert-or-replace/merge on supported modern versions.
+        const properties = Object.fromEntries(Object.entries(body).filter(([name, value]) => value !== null && name !== 'Timestamp' && !name.startsWith('odata.')));
+        table.lastTimestamp = Math.max(Date.now(), (table.lastTimestamp ?? 0) + 1);
+        const timestamp = new Date(table.lastTimestamp).toISOString();
+        const entity = { ...(req.method === 'MERGE' ? existing : {}), ...properties, PartitionKey: partitionKey, RowKey: rowKey,
+          Timestamp: timestamp, 'odata.etag': `W/"datetime'${timestamp}'"` };
+        table.entities.set(key, entity);
+        return send(res, 204, '', { ...common, etag: entity['odata.etag'] });
+      }
       if (req.method === 'GET' && entityMatch) {
         const [, tableName, partitionKey, rowKey] = entityMatch.map(value => decodeURIComponent(value).replaceAll("''", "'"));
         const table = account.tables.get(lower(tableName));

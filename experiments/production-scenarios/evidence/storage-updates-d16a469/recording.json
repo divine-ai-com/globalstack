@@ -1,0 +1,15 @@
+{
+  "platform": "storage-component",
+  "startedAt": "2026-11-07T07:47:17.152Z",
+  "completedAt": "2026-11-07T07:49:19.844Z",
+  "exitCode": 0,
+  "eventCount": 190,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "05f6ea71e2a5fa9e80ed12072b316303bb09c396453b47398d3584be48c9d832",
+  "eventSha256": "aae814575c8d2a4613964a2ea1488c43a08e6535a219b1dfccc6b03a538ab661",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}

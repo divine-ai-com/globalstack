@@ -94,3 +94,45 @@ test('Queue replay preserves raw text and hides received messages; stale receipt
   const empty = await storageExchange({ ...config, method: 'GET', path: '/native-control/messages' });
   assert.equal(xml(empty.body, 'MessageId'), undefined);
 });
+
+test('second Azure capture validates leased metadata and optimistic Table updates', async t => {
+  const base = new URL('./evidence/storage-updates-d16a469/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', base), 'utf8'));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+  }
+  const capture = JSON.parse(await readFile(new URL('result.json', base), 'utf8'));
+  assert.deepEqual(capture.cleanup, { groupAbsent: true, accountAbsent: true });
+  assert.equal(capture.probesComplete, true); assert.equal(capture.sourceDirty, false);
+  const router = createStorageDataPlaneRouter(), account = 'optimisticworker234', key = Buffer.alloc(64, 51).toString('base64');
+  router.registerStorageAccount({ accountName: account, accountKey: key });
+  const servers = {};
+  for (const surface of ['blob', 'table', 'queue']) {
+    const server = createServer(router[`${surface}Handler`]());
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); servers[surface] = server;
+    t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  }
+  const normalize = value => Array.isArray(value) ? value.map(normalize) : value && typeof value === 'object'
+    ? Object.fromEntries(Object.entries(value).filter(([name]) => name !== 'Timestamp').map(([name, nested]) => [name, normalize(nested)])) : value;
+  for (const azure of capture.exchanges.filter(item => item.target === 'azure' && item.surface && item.request)) {
+    const local = await storageExchange({ account, key, origin: `http://127.0.0.1:${servers[azure.surface].address().port}`,
+      surface: azure.surface, method: azure.method, path: azure.path, ...azure.request });
+    assert.equal(local.status, azure.status, azure.phase);
+    if (azure.surface === 'table' && local.status >= 400) assert.equal(JSON.parse(local.body)['odata.error'].code, JSON.parse(azure.body)['odata.error'].code, azure.phase);
+    else if (azure.surface === 'table' && local.body) assert.deepEqual(normalize(JSON.parse(local.body)), normalize(JSON.parse(azure.body)), azure.phase);
+    else assert.equal(local.headers['x-ms-error-code'], azure.headers['x-ms-error-code'], azure.phase);
+  }
+  const config = { account, key, origin: `http://127.0.0.1:${servers.table.address().port}`, surface: 'table' };
+  const path = "/NativePartitions(PartitionKey='taskhub',RowKey='0')";
+  const before = await storageExchange({ ...config, method: 'GET', path, headers: { accept: 'application/json;odata=nometadata' } });
+  const changes = await Promise.all(Array.from({ length: 8 }, (_, i) => storageExchange({ ...config, method: 'PUT', path,
+    headers: { 'content-type': 'application/json', 'if-match': before.headers.etag }, body: JSON.stringify({ Owner: `concurrent-${i}` }) })));
+  assert.equal(changes.filter(item => item.status === 204).length, 1);
+  assert.equal(changes.filter(item => item.status === 412).length, 7);
+  const after = await storageExchange({ ...config, method: 'GET', path, headers: { accept: 'application/json;odata=nometadata' } });
+  assert.equal(JSON.parse(after.body).Owner, `concurrent-${changes.findIndex(item => item.status === 204)}`);
+  assert.equal(JSON.parse(after.body).Phase, undefined, 'Replacement removes omitted properties');
+  const missing = await storageExchange({ account, key, origin: `http://127.0.0.1:${servers.blob.address().port}`, surface: 'blob', method: 'HEAD', path: '/missing?restype=container' });
+  assert.equal(missing.status, 404); assert.equal(missing.body, ''); assert.equal(missing.headers['content-type'], undefined);
+});

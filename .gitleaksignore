@@ -272,3 +272,5 @@ a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/eviden
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:788
 # Reviewed historical README placeholder, not a credential. The current example uses an environment variable.
 905f53bc84e05cebd98df776a40d1459be558553:README.md:curl-auth-header:54
+# Public Azurite development key in the hash-verified historical source snapshot.
+2efa47b84647b862fe80721442e9f53d993dfa92:docs/research/globalstack/claims/evidence/product-source/92848b5b6910340dd79abe4935ebe3bbc141d3a2041f30f9288ae4f77656d1a0.txt:generic-api-key:5
