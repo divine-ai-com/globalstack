@@ -324,3 +324,38 @@ test('native identity capture retains SDK authorization and cleanup without clai
   assert.equal(report.nativeRouting.stoppedWorkerStatus, 502);
   assert.equal(report.nativeRouting.deletedSiteStatus, 404);
 });
+
+test('scoped validation evidence preserves the routing failure and fresh paired acceptance', async () => {
+  for (const [prefix, localStatus] of [['scoped-preflight-before-14e4f4a/', 501], ['scoped-preflight-after-73b25e3/', 200]]) {
+    const index = await load(prefix + 'index.json');
+    for (const [name, metadata] of Object.entries(index.files)) {
+      const bytes = await readFile(new URL(prefix + name, base));
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+      assert.equal(bytes.length, metadata.bytes);
+    }
+    const report = await load(prefix + 'result.json');
+    assert.equal(report.sourceDirty, false); assert.equal(report.cloudResourcesProvisioned, false);
+    assert.equal(report.resourceCountBefore, 0); assert.equal(report.resourceCountAfter, 0);
+    const attempts = report.exchanges.filter(item => item.method === 'POST');
+    assert.deepEqual(attempts.map(item => item.status), [200, localStatus]);
+    assert.deepEqual(attempts[0].request, attempts[1].request);
+  }
+});
+test('native database adapter evidence verifies TLS and secret-role removal without claiming a workflow', async () => {
+  const prefix = 'functions-native-database-14e4f4a/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.sourceRevision, index.sourceRevision); assert.equal(report.sourceDirty, false);
+  assert.equal(report.cleanup, true); assert.equal(report.businessWorkflowCompleted, false); assert.equal(report.error, undefined);
+  const database = report.nativeIdentity.database;
+  assert.equal(database.cleanup, true);
+  assert.deepEqual(database.vaultRequests.map(item => item.status), [200, 403]);
+  assert.ok(database.vaultRequests.every(item => item.bearer));
+  assert.deepEqual(database.checks, [{ phase: 'authorized', encrypted: true, tlsVersion: 'TLSv1.3', schemaMigrated: true },
+    { phase: 'untrusted-ca', certificateRejected: true }, { phase: 'role-removed', connectionDenied: true }]);
+});

@@ -521,3 +521,22 @@ resource groups. They require broader permissions and must not be used with a
 resource-group-scoped identity. Their group-deletion cleanup must not be applied
 to the persistent operator-created group. Resource-group scoped deployment and
 ownership-checked individual resource cleanup are separate work still required.
+
+`scoped-hosting.mjs` performs the next bounded lifecycle step using the same
+certificate/session variables and existing group. It compiles
+`fixtures/scoped-web-plans.bicep`, validates with Azure before reserving a USD 1
+envelope, and records deployment, reads, repeated writes, tag updates and an
+invalid-SKU attempt on both targets. It uses direct ARM deployment requests after
+native Bicep compilation, not a native CLI deployment invocation. A detached
+watchdog cancels active owned deployment work and deletes only the two plans
+whose run/project tags match, then removes the owned deployment record. The
+operator-created group is preserved. The runner requires an empty group before
+starting and never treats provider validation as deployment success.
+
+The [fresh scoped validation comparison](evidence/scoped-preflight-after-73b25e3/)
+records HTTP 200 from both targets after fixing the missing resource-group action
+route. The [original 501](evidence/scoped-preflight-before-14e4f4a/) is retained.
+Both observations leave the cloud group empty. The
+[native database adapter capture](evidence/functions-native-database-14e4f4a/)
+verifies signed secret access, native PostgreSQL TLS and the negative certificate
+and role-removal checks. It is a local adapter diagnostic, not a full workflow.

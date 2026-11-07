@@ -1,0 +1,18 @@
+{
+  "scope": "Paired resource-group provider validation after routing fix. No resource deployment or full workflow.",
+  "sourceRevision": "73b25e34c404b7226a8b1412d6b131dd587088bf",
+  "files": {
+    "result.json": {
+      "sha256": "93af657b2bf4b010d01847151912b2775db1dcbdc91d6c46eb0efd6719a0baa1",
+      "bytes": 12274
+    },
+    "compiled-template.json": {
+      "sha256": "116d760efa3a1b5551552cdf09ef25f76318f723bdb989f2fb4c8a2ce39f37e0",
+      "bytes": 1296
+    },
+    "events.ndjson": {
+      "sha256": "022d64227850fe931ca19fc7842cdeaa6d03108fd3f836dcf014ba88cc44efdc",
+      "bytes": 12342
+    }
+  }
+}
