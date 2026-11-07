@@ -1,0 +1,461 @@
+{
+  "scope": "Selected version lifecycle statuses, logical error codes, bytes, ETag/version relationships and listing fields. Not full Storage or application parity.",
+  "sourceRevision": "2d660616061b15ddd882fe7866748a543ea03d46",
+  "sourceDirty": false,
+  "cleanup": {
+    "groupAbsent": true,
+    "accountAbsent": true
+  },
+  "evaluated": 22,
+  "matched": 22,
+  "errorHeaderDifferences": 1,
+  "normalization": [
+    "Generated versions and ETags map independently to each target first/second write.",
+    "XML storage-account placeholder is escaped for parsing; original evidence is retained.",
+    "Logical error code comes from the header or XML Code; header differences remain separate."
+  ],
+  "notCompared": [
+    "Readiness delay and retries",
+    "Complete error messages",
+    "All response headers",
+    "Unselected listing properties and XML formatting",
+    "Full application behavior",
+    "Restart durability"
+  ],
+  "rows": [
+    {
+      "phase": "versions-container",
+      "match": true,
+      "azure": {
+        "status": 201
+      },
+      "local": {
+        "status": 201
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-first-write",
+      "match": true,
+      "azure": {
+        "status": 201,
+        "version": "first",
+        "etag": "first"
+      },
+      "local": {
+        "status": 201,
+        "version": "first",
+        "etag": "first"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-second-write",
+      "match": true,
+      "azure": {
+        "status": 201,
+        "version": "second",
+        "etag": "second"
+      },
+      "local": {
+        "status": 201,
+        "version": "second",
+        "etag": "second"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-old",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null,
+        "body": "original document"
+      },
+      "local": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null,
+        "body": "original document"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-head-old",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null
+      },
+      "local": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-current",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": "true",
+        "body": "updated document"
+      },
+      "local": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": "true",
+        "body": "updated document"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-invalid-date",
+      "match": true,
+      "azure": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "local": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "errorHeaderPresenceMatches": false
+    },
+    {
+      "phase": "versions-delete-current-by-id",
+      "match": true,
+      "azure": {
+        "status": 403,
+        "errorCode": "OperationNotAllowedOnRootBlob"
+      },
+      "local": {
+        "status": 403,
+        "errorCode": "OperationNotAllowedOnRootBlob"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-after-current-id-delete",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": "true",
+        "body": "updated document"
+      },
+      "local": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": "true",
+        "body": "updated document"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-write-old",
+      "match": true,
+      "azure": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "local": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-metadata-old",
+      "match": true,
+      "azure": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "local": {
+        "status": 400,
+        "errorCode": "InvalidQueryParameterValue"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-list-current-and-old",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "blobs": [
+          {
+            "name": "document.txt",
+            "version": "first",
+            "current": false,
+            "etag": "first",
+            "length": 17,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {
+              "owner": "first"
+            }
+          },
+          {
+            "name": "document.txt",
+            "version": "second",
+            "current": true,
+            "etag": "second",
+            "length": 16,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          }
+        ],
+        "nextMarker": ""
+      },
+      "local": {
+        "status": 200,
+        "blobs": [
+          {
+            "name": "document.txt",
+            "version": "first",
+            "current": false,
+            "etag": "first",
+            "length": 17,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {
+              "owner": "first"
+            }
+          },
+          {
+            "name": "document.txt",
+            "version": "second",
+            "current": true,
+            "etag": "second",
+            "length": 16,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          }
+        ],
+        "nextMarker": ""
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-delete-current",
+      "match": true,
+      "azure": {
+        "status": 202
+      },
+      "local": {
+        "status": 202
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-head-deleted-current",
+      "match": true,
+      "azure": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "local": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-old-after-delete",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null,
+        "body": "original document"
+      },
+      "local": {
+        "status": 200,
+        "version": "first",
+        "etag": "first",
+        "contentType": "text/plain",
+        "length": "17",
+        "currentVersionHeader": null,
+        "body": "original document"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-list-after-delete",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "blobs": [
+          {
+            "name": "document.txt",
+            "version": "first",
+            "current": false,
+            "etag": "first",
+            "length": 17,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          },
+          {
+            "name": "document.txt",
+            "version": "second",
+            "current": false,
+            "etag": "second",
+            "length": 16,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          }
+        ],
+        "nextMarker": ""
+      },
+      "local": {
+        "status": 200,
+        "blobs": [
+          {
+            "name": "document.txt",
+            "version": "first",
+            "current": false,
+            "etag": "first",
+            "length": 17,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          },
+          {
+            "name": "document.txt",
+            "version": "second",
+            "current": false,
+            "etag": "second",
+            "length": 16,
+            "contentType": "text/plain",
+            "blobType": "BlockBlob",
+            "metadata": {}
+          }
+        ],
+        "nextMarker": ""
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-delete-missing",
+      "match": true,
+      "azure": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "local": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-delete-old",
+      "match": true,
+      "azure": {
+        "status": 202
+      },
+      "local": {
+        "status": 202
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-deleted-old",
+      "match": true,
+      "azure": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "local": {
+        "status": 404,
+        "errorCode": "BlobNotFound"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-read-retained-second",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": null,
+        "body": "updated document"
+      },
+      "local": {
+        "status": 200,
+        "version": "second",
+        "etag": "second",
+        "contentType": "text/plain",
+        "length": "16",
+        "currentVersionHeader": null,
+        "body": "updated document"
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-delete-second",
+      "match": true,
+      "azure": {
+        "status": 202
+      },
+      "local": {
+        "status": 202
+      },
+      "errorHeaderPresenceMatches": true
+    },
+    {
+      "phase": "versions-list-empty",
+      "match": true,
+      "azure": {
+        "status": 200,
+        "blobs": [],
+        "nextMarker": ""
+      },
+      "local": {
+        "status": 200,
+        "blobs": [],
+        "nextMarker": ""
+      },
+      "errorHeaderPresenceMatches": true
+    }
+  ]
+}

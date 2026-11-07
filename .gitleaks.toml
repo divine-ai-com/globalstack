@@ -172,3 +172,11 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/production-scenarios/evidence/version-baseline-97a7821/result\.json$''']
 regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in paired version evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/versions-after-2d66061/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']

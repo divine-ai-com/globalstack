@@ -120,5 +120,9 @@ properties, and downloads with an ETag condition. Permission errors, a missing
 container, a missing version and a changed ETag remain failures. Six local
 HTTP-fixture tests use the actual Azure Blob SDK, including the bodyless HEAD
 error response. They are adapter regressions, not live Azure captures or proof
-of GlobalStack versioning support. Full paired update/delete/recovery testing
-and operator replay remain pending.
+of GlobalStack versioning support. A seventh test now runs the native SDK and
+adapter against the actual Blob router, covering overwrite, deletion, retained
+bytes, metadata and pagination. The separate paired Storage component capture
+confirms 22 selected version contracts on Azure and GlobalStack. Neither test
+executes the complete document workflow. Full application update/delete/recovery
+testing and operator replay remain pending.

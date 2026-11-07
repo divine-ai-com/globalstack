@@ -1,0 +1,4628 @@
+{
+  "revision": "2d660616061b15ddd882fe7866748a543ea03d46",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T13:33:51.032Z",
+  "scope": "Temporary Storage account API diagnostics. Not a native IaC tool lifecycle or a complete application deployment.",
+  "portalEvidenceComplete": false,
+  "fullProtocolParityEvaluated": false,
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "thisRunEnvelopeUsd": 1,
+    "runtimeMinutes": 20,
+    "cleanupReserveMinutes": 10,
+    "limits": "One Standard_LRS StorageV2 account, less than 1 MiB stored, fewer than 200 requests, no added paid features.",
+    "ledger": {
+      "totalAuthorizedUsd": 150,
+      "allocatedUsd": 26,
+      "remainingUnallocatedUsd": 124
+    }
+  },
+  "exchanges": [
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:33:51.945Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:33:54.977Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 201,
+      "request": {
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        }
+      },
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:33:58.709Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 202,
+      "request": {
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "kind": "StorageV2",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "properties": {
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "supportsHttpsTrafficOnly": true,
+          "minimumTlsVersion": "TLS1_2",
+          "publicNetworkAccess": "Enabled",
+          "networkAcls": {
+            "bypass": "None",
+            "defaultAction": "Deny",
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ]
+          }
+        }
+      },
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:33:59.098Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "Creating",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:02.482Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "ResolvingDns",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:06.073Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "ResolvingDns",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:10.204Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "ResolvingDns",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:13.504Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "ResolvingDns",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:16.832Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "keyCreationTime": {
+            "key1": "2026-11-07T13:33:56.2334433Z",
+            "key2": "2026-11-07T13:33:56.2334433Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ],
+            "defaultAction": "Deny"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-07T13:33:56.2437183Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "Succeeded",
+          "creationTime": "2026-11-07T13:33:55.9320957Z",
+          "primaryEndpoints": {
+            "dfs": "https://<storage-account>.dfs.core.windows.net/",
+            "web": "https://<storage-account>.z5.web.core.windows.net/",
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "setup",
+      "at": "2026-11-07T13:34:17.601Z",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/listKeys?api-version=2023-05-01",
+      "status": 200,
+      "body": "<credential response omitted>"
+    },
+    {
+      "target": "local",
+      "phase": "local-storage-setup",
+      "at": "2026-11-07T13:34:17.665Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "request": {
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "local-storage-setup",
+      "at": "2026-11-07T13:34:17.709Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "request": {
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "kind": "StorageV2",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "properties": {
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "supportsHttpsTrafficOnly": true,
+          "minimumTlsVersion": "TLS1_2",
+          "publicNetworkAccess": "Enabled",
+          "networkAcls": {
+            "bypass": "None",
+            "defaultAction": "Deny",
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ]
+          }
+        }
+      },
+      "status": 202,
+      "body": null,
+      "headers": {
+        "content-type": "application/json",
+        "retry-after": "0",
+        "azure-asyncoperation": "http://127.0.0.1:43123/subscriptions/<subscription>/providers/Microsoft.Resources/operationStatuses/mw6g31i8-xaapplst2xp?api-version=2022-09-01",
+        "location": "http://127.0.0.1:43123/subscriptions/<subscription>/providers/Microsoft.Resources/operationStatuses/mw6g31i8-xaapplst2xp?api-version=2022-09-01"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "local-storage-setup",
+      "at": "2026-11-07T13:34:17.715Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "resourceGroupName": "<group>",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "supportsHttpsTrafficOnly": true,
+          "minimumTlsVersion": "TLS1_2",
+          "publicNetworkAccess": "Enabled",
+          "networkAcls": {
+            "bypass": "None",
+            "defaultAction": "Deny",
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ]
+          },
+          "primaryEndpoints": {
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/",
+            "web": "https://<storage-account>.web.core.windows.net/",
+            "dfs": "https://<storage-account>.dfs.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "provisioningState": "ResolvingDns"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ],
+          "lifecycleState": {
+            "provisioningSequence": [
+              "Creating",
+              "ResolvingDns",
+              "Succeeded"
+            ],
+            "readCount": 2
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "local-storage-setup",
+      "at": "2026-11-07T13:34:17.993Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+        "name": "<storage-account>",
+        "type": "Microsoft.Storage/storageAccounts",
+        "resourceGroupName": "<group>",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "supportsHttpsTrafficOnly": true,
+          "minimumTlsVersion": "TLS1_2",
+          "publicNetworkAccess": "Enabled",
+          "networkAcls": {
+            "bypass": "None",
+            "defaultAction": "Deny",
+            "ipRules": [
+              {
+                "value": "<runner-ip>",
+                "action": "Allow"
+              }
+            ]
+          },
+          "primaryEndpoints": {
+            "blob": "https://<storage-account>.blob.core.windows.net/",
+            "queue": "https://<storage-account>.queue.core.windows.net/",
+            "table": "https://<storage-account>.table.core.windows.net/",
+            "file": "https://<storage-account>.file.core.windows.net/",
+            "web": "https://<storage-account>.web.core.windows.net/",
+            "dfs": "https://<storage-account>.dfs.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ],
+          "lifecycleState": {
+            "provisioningSequence": [
+              "Creating",
+              "ResolvingDns",
+              "Succeeded"
+            ],
+            "readCount": 3
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "firewall-readiness",
+      "at": "2026-11-07T13:34:19.760Z",
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/not-created?restype=container",
+      "status": 404,
+      "body": "",
+      "headers": {
+        "x-ms-request-id": "f09d311c-701e-0071-1ebc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "ContainerNotFound",
+        "date": "Sat, 07 Nov 2026 13:34:19 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "container-create",
+      "at": "2026-11-07T13:34:19.987Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:19 GMT",
+        "etag": "\"0x8DF3CD3D3C77A09\"",
+        "x-ms-request-id": "f09d3205-701e-0071-7ebc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:19 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:19.763Z",
+      "completedAt": "2026-11-07T13:34:19.987Z"
+    },
+    {
+      "target": "local",
+      "phase": "container-create",
+      "at": "2026-11-07T13:34:20.040Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "42c1bfe9-867a-44f9-b35b-1edebd85c9e7",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT",
+        "etag": "\"fe61a5bd-7c8d-400c-9834-0f0edf545242\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.013Z",
+      "completedAt": "2026-11-07T13:34:20.040Z"
+    },
+    {
+      "target": "azure",
+      "phase": "container-duplicate",
+      "at": "2026-11-07T13:34:20.261Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 409,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:f09d334a-701e-0071-2abc-6ea609000000\nTime:2026-11-07T13:34:20.1510548Z</Message></Error>",
+      "headers": {
+        "content-length": "230",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d334a-701e-0071-2abc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "date": "Sat, 07 Nov 2026 13:34:19 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.040Z",
+      "completedAt": "2026-11-07T13:34:20.261Z"
+    },
+    {
+      "target": "local",
+      "phase": "container-duplicate",
+      "at": "2026-11-07T13:34:20.276Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 409,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:ac2abd1c-1039-45a0-a71a-03bbdedbdb3c\nTime:2026-11-07T13:34:20.273Z</Message></Error>",
+      "headers": {
+        "content-length": "223",
+        "content-type": "application/xml",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "ac2abd1c-1039-45a0-a71a-03bbdedbdb3c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.262Z",
+      "completedAt": "2026-11-07T13:34:20.276Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-create",
+      "at": "2026-11-07T13:34:20.506Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "if-none-match": "*"
+        },
+        "body": "lease fixture"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT",
+        "etag": "\"0x8DF3CD3D4157FB6\"",
+        "x-ms-request-id": "f09d3445-701e-0071-1fbc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:19 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.277Z",
+      "completedAt": "2026-11-07T13:34:20.506Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-create",
+      "at": "2026-11-07T13:34:20.526Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "if-none-match": "*"
+        },
+        "body": "lease fixture"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x6a95391711aa4f58b033a9f032d2830f\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT",
+        "x-ms-request-id": "bcdcea46-85de-43b6-9286-a11221b60edd",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.506Z",
+      "completedAt": "2026-11-07T13:34:20.526Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-conditional-conflict",
+      "at": "2026-11-07T13:34:20.769Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "if-none-match": "*"
+        },
+        "body": "must not replace"
+      },
+      "status": 409,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The specified blob already exists.\nRequestId:f09d3555-701e-0071-24bc-6ea609000000\nTime:2026-11-07T13:34:20.6549033Z</Message></Error>",
+      "headers": {
+        "content-length": "220",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d3555-701e-0071-24bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "BlobAlreadyExists",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.540Z",
+      "completedAt": "2026-11-07T13:34:20.769Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-conditional-conflict",
+      "at": "2026-11-07T13:34:20.789Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "if-none-match": "*"
+        },
+        "body": "must not replace"
+      },
+      "status": 409,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The specified blob already exists.\nRequestId:4bf0dee5-bdaa-4dfd-9b45-f743822e37eb\nTime:2026-11-07T13:34:20.785Z</Message></Error>",
+      "headers": {
+        "content-length": "213",
+        "content-type": "application/xml",
+        "x-ms-error-code": "BlobAlreadyExists",
+        "x-ms-request-id": "4bf0dee5-bdaa-4dfd-9b45-f743822e37eb",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.776Z",
+      "completedAt": "2026-11-07T13:34:20.789Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-acquire-lease",
+      "at": "2026-11-07T13:34:21.018Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "60",
+          "x-ms-proposed-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT",
+        "etag": "\"0x8DF3CD3D4157FB6\"",
+        "x-ms-request-id": "f09d3646-701e-0071-08bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:20.790Z",
+      "completedAt": "2026-11-07T13:34:21.018Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-acquire-lease",
+      "at": "2026-11-07T13:34:21.043Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "60",
+          "x-ms-proposed-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc",
+        "etag": "\"0x6a95391711aa4f58b033a9f032d2830f\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT",
+        "x-ms-request-id": "b5948987-b0af-49d8-b8e2-00f2caceeb47",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.019Z",
+      "completedAt": "2026-11-07T13:34:21.043Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-metadata-without-lease",
+      "at": "2026-11-07T13:34:21.263Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "wrong-worker"
+        },
+        "body": ""
+      },
+      "status": 412,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:f09d3775-701e-0071-25bc-6ea609000000\nTime:2026-11-07T13:34:21.1544419Z</Message></Error>",
+      "headers": {
+        "content-length": "267",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d3775-701e-0071-25bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "LeaseIdMissing",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.044Z",
+      "completedAt": "2026-11-07T13:34:21.263Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-metadata-without-lease",
+      "at": "2026-11-07T13:34:21.274Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "wrong-worker"
+        },
+        "body": ""
+      },
+      "status": 412,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:2f6478e9-c618-4af4-a8e9-e91e8ec9f381\nTime:2026-11-07T13:34:21.269Z</Message></Error>",
+      "headers": {
+        "content-length": "260",
+        "content-type": "application/xml",
+        "x-ms-error-code": "LeaseIdMissing",
+        "x-ms-request-id": "2f6478e9-c618-4af4-a8e9-e91e8ec9f381",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.263Z",
+      "completedAt": "2026-11-07T13:34:21.274Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-metadata-with-lease",
+      "at": "2026-11-07T13:34:21.504Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "lease-worker",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "etag": "\"0x8DF3CD3D4AE3D9F\"",
+        "x-ms-request-id": "f09d3867-701e-0071-0dbc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.274Z",
+      "completedAt": "2026-11-07T13:34:21.504Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-metadata-with-lease",
+      "at": "2026-11-07T13:34:21.523Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "lease-worker",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x67d1851a730046699e0cc6e633d82132\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "x-ms-request-id": "8bc3d27c-38bf-4b67-bb58-5e3ec8715be6",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.510Z",
+      "completedAt": "2026-11-07T13:34:21.523Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-competing-lease",
+      "at": "2026-11-07T13:34:21.750Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "60",
+          "x-ms-proposed-lease-id": "51234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 409,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There is already a lease present.\nRequestId:f09d3959-701e-0071-70bc-6ea609000000\nTime:2026-11-07T13:34:21.6408548Z</Message></Error>",
+      "headers": {
+        "content-length": "221",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d3959-701e-0071-70bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "LeaseAlreadyPresent",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.523Z",
+      "completedAt": "2026-11-07T13:34:21.750Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-competing-lease",
+      "at": "2026-11-07T13:34:21.758Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "60",
+          "x-ms-proposed-lease-id": "51234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 409,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There is already a lease present.\nRequestId:c6262e10-c64c-4eaa-a709-3d6589f0e9f0\nTime:2026-11-07T13:34:21.756Z</Message></Error>",
+      "headers": {
+        "content-length": "214",
+        "content-type": "application/xml",
+        "x-ms-error-code": "LeaseAlreadyPresent",
+        "x-ms-request-id": "c6262e10-c64c-4eaa-a709-3d6589f0e9f0",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.751Z",
+      "completedAt": "2026-11-07T13:34:21.757Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-properties-leased",
+      "at": "2026-11-07T13:34:21.992Z",
+      "method": "HEAD",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "13",
+        "content-type": "application/octet-stream",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "etag": "\"0x8DF3CD3D4AE3D9F\"",
+        "x-ms-request-id": "f09d3a4c-701e-0071-55bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-lease-status": "locked",
+        "x-ms-lease-state": "leased",
+        "x-ms-lease-duration": "fixed",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.762Z",
+      "completedAt": "2026-11-07T13:34:21.992Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-properties-leased",
+      "at": "2026-11-07T13:34:22.038Z",
+      "method": "HEAD",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "13",
+        "content-type": "application/octet-stream",
+        "etag": "\"0x67d1851a730046699e0cc6e633d82132\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "x-ms-lease-state": "leased",
+        "x-ms-lease-status": "locked",
+        "x-ms-lease-duration": "fixed",
+        "x-ms-request-id": "9ad3cf1e-d7f1-42e3-b8a7-6e080a5b2399",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:21.994Z",
+      "completedAt": "2026-11-07T13:34:22.038Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-write-without-lease",
+      "at": "2026-11-07T13:34:22.281Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "must not replace"
+      },
+      "status": 412,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:f09d3b73-701e-0071-67bc-6ea609000000\nTime:2026-11-07T13:34:22.1589912Z</Message></Error>",
+      "headers": {
+        "content-length": "267",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d3b73-701e-0071-67bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "LeaseIdMissing",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.039Z",
+      "completedAt": "2026-11-07T13:34:22.281Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-write-without-lease",
+      "at": "2026-11-07T13:34:22.290Z",
+      "method": "PUT",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "must not replace"
+      },
+      "status": 412,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:ce324615-1382-4d41-af3c-84e3061044ec\nTime:2026-11-07T13:34:22.289Z</Message></Error>",
+      "headers": {
+        "content-length": "260",
+        "content-type": "application/xml",
+        "x-ms-error-code": "LeaseIdMissing",
+        "x-ms-request-id": "ce324615-1382-4d41-af3c-84e3061044ec",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.284Z",
+      "completedAt": "2026-11-07T13:34:22.290Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-renew-lease",
+      "at": "2026-11-07T13:34:22.510Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "renew",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "etag": "\"0x8DF3CD3D4AE3D9F\"",
+        "x-ms-request-id": "f09d3c30-701e-0071-1cbc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc",
+        "date": "Sat, 07 Nov 2026 13:34:21 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.290Z",
+      "completedAt": "2026-11-07T13:34:22.510Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-renew-lease",
+      "at": "2026-11-07T13:34:22.521Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "renew",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc",
+        "etag": "\"0x67d1851a730046699e0cc6e633d82132\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "x-ms-request-id": "004410ef-8441-4400-84ec-cc2a11840e7d",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.511Z",
+      "completedAt": "2026-11-07T13:34:22.521Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-release-wrong-lease",
+      "at": "2026-11-07T13:34:22.761Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "51234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 409,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithLeaseOperation</Code><Message>The lease ID specified did not match the lease ID for the blob.\nRequestId:f09d3d02-701e-0071-61bc-6ea609000000\nTime:2026-11-07T13:34:22.6394915Z</Message></Error>",
+      "headers": {
+        "content-length": "265",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d3d02-701e-0071-61bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "LeaseIdMismatchWithLeaseOperation",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.521Z",
+      "completedAt": "2026-11-07T13:34:22.761Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-release-wrong-lease",
+      "at": "2026-11-07T13:34:22.775Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "51234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 409,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithLeaseOperation</Code><Message>The lease ID specified did not match the lease ID for the blob.\nRequestId:065824c2-236e-44b3-b5db-59870ec74059\nTime:2026-11-07T13:34:22.770Z</Message></Error>",
+      "headers": {
+        "content-length": "258",
+        "content-type": "application/xml",
+        "x-ms-error-code": "LeaseIdMismatchWithLeaseOperation",
+        "x-ms-request-id": "065824c2-236e-44b3-b5db-59870ec74059",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.761Z",
+      "completedAt": "2026-11-07T13:34:22.775Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-release-lease",
+      "at": "2026-11-07T13:34:23.013Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "etag": "\"0x8DF3CD3D4AE3D9F\"",
+        "x-ms-request-id": "f09d3df0-701e-0071-3ebc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:22.780Z",
+      "completedAt": "2026-11-07T13:34:23.013Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-release-lease",
+      "at": "2026-11-07T13:34:23.024Z",
+      "method": "PUT",
+      "path": "/native-host/lock?comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "41234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x67d1851a730046699e0cc6e633d82132\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "x-ms-request-id": "2207b392-af03-41ed-969b-b6ce2679e02e",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.014Z",
+      "completedAt": "2026-11-07T13:34:23.024Z"
+    },
+    {
+      "target": "azure",
+      "phase": "blob-retained-content",
+      "at": "2026-11-07T13:34:23.248Z",
+      "method": "GET",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "lease fixture",
+      "headers": {
+        "content-length": "13",
+        "content-type": "application/octet-stream",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "etag": "\"0x8DF3CD3D4AE3D9F\"",
+        "x-ms-request-id": "f09d3ee9-701e-0071-28bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-lease-state": "available",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.025Z",
+      "completedAt": "2026-11-07T13:34:23.248Z"
+    },
+    {
+      "target": "local",
+      "phase": "blob-retained-content",
+      "at": "2026-11-07T13:34:23.270Z",
+      "method": "GET",
+      "path": "/native-host/lock",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "lease fixture",
+      "headers": {
+        "content-length": "13",
+        "content-type": "application/octet-stream",
+        "etag": "\"0x67d1851a730046699e0cc6e633d82132\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:21 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "f7195fc9-ddaf-4dd9-a9d3-806919a7e5e3",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.252Z",
+      "completedAt": "2026-11-07T13:34:23.270Z"
+    },
+    {
+      "target": "azure",
+      "phase": "container-acquire-lease",
+      "at": "2026-11-07T13:34:23.494Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container&comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "-1",
+          "x-ms-proposed-lease-id": "61234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:19 GMT",
+        "etag": "\"0x8DF3CD3D3C77A09\"",
+        "x-ms-request-id": "f09d3fec-701e-0071-17bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-lease-id": "61234567-1234-4321-8123-123456789abc",
+        "date": "Sat, 07 Nov 2026 13:34:22 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.270Z",
+      "completedAt": "2026-11-07T13:34:23.494Z"
+    },
+    {
+      "target": "local",
+      "phase": "container-acquire-lease",
+      "at": "2026-11-07T13:34:23.516Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container&comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "acquire",
+          "x-ms-lease-duration": "-1",
+          "x-ms-proposed-lease-id": "61234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "07c34089-594d-44d4-84c8-ee8ed8e08e1b",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT",
+        "x-ms-lease-id": "61234567-1234-4321-8123-123456789abc",
+        "etag": "\"fe61a5bd-7c8d-400c-9834-0f0edf545242\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.495Z",
+      "completedAt": "2026-11-07T13:34:23.516Z"
+    },
+    {
+      "target": "azure",
+      "phase": "container-delete-without-lease",
+      "at": "2026-11-07T13:34:23.745Z",
+      "method": "DELETE",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 412,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the container and no lease ID was specified in the request.\nRequestId:f09d40f5-701e-0071-08bc-6ea609000000\nTime:2026-11-07T13:34:23.6353233Z</Message></Error>",
+      "headers": {
+        "content-length": "272",
+        "content-type": "application/xml",
+        "x-ms-request-id": "f09d40f5-701e-0071-08bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "LeaseIdMissing",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.520Z",
+      "completedAt": "2026-11-07T13:34:23.745Z"
+    },
+    {
+      "target": "local",
+      "phase": "container-delete-without-lease",
+      "at": "2026-11-07T13:34:23.758Z",
+      "method": "DELETE",
+      "path": "/native-host?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 412,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the container and no lease ID was specified in the request.\nRequestId:1bebddef-7fae-4f1e-9772-9b19e7e3c8c7\nTime:2026-11-07T13:34:23.754Z</Message></Error>",
+      "headers": {
+        "content-length": "265",
+        "content-type": "application/xml",
+        "x-ms-error-code": "LeaseIdMissing",
+        "x-ms-request-id": "1bebddef-7fae-4f1e-9772-9b19e7e3c8c7",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.745Z",
+      "completedAt": "2026-11-07T13:34:23.758Z"
+    },
+    {
+      "target": "azure",
+      "phase": "container-release-lease",
+      "at": "2026-11-07T13:34:23.984Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container&comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "61234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:19 GMT",
+        "etag": "\"0x8DF3CD3D3C77A09\"",
+        "x-ms-request-id": "f09d41d6-701e-0071-61bc-6ea609000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.758Z",
+      "completedAt": "2026-11-07T13:34:23.984Z"
+    },
+    {
+      "target": "local",
+      "phase": "container-release-lease",
+      "at": "2026-11-07T13:34:23.991Z",
+      "method": "PUT",
+      "path": "/native-host?restype=container&comp=lease",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-lease-action": "release",
+          "x-ms-lease-id": "61234567-1234-4321-8123-123456789abc"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "fef28c02-7b19-4529-b200-2b22e336e90f",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:23 GMT",
+        "etag": "\"fe61a5bd-7c8d-400c-9834-0f0edf545242\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:20 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.984Z",
+      "completedAt": "2026-11-07T13:34:23.991Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-create",
+      "at": "2026-11-07T13:34:25.404Z",
+      "method": "POST",
+      "path": "/Tables",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0",
+          "maxdataserviceversion": "3.0",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"TableName\":\"NativePartitions\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "c4e01d1e-8002-0075-25bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:23.992Z",
+      "completedAt": "2026-11-07T13:34:25.404Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-create",
+      "at": "2026-11-07T13:34:25.422Z",
+      "method": "POST",
+      "path": "/Tables",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0",
+          "maxdataserviceversion": "3.0",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"TableName\":\"NativePartitions\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "442cbfc8-72d6-415e-ac40-388d5d442429",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.408Z",
+      "completedAt": "2026-11-07T13:34:25.422Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-create-duplicate",
+      "at": "2026-11-07T13:34:25.642Z",
+      "method": "POST",
+      "path": "/Tables",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": "{\"TableName\":\"NativePartitions\"}"
+      },
+      "status": 409,
+      "body": "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-US\",\"value\":\"The table specified already exists.\\nRequestId:c4e01db2-8002-0075-37bc-6e2b0e000000\\nTime:2026-11-07T13:34:25.5285884Z\"}}}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e01db2-8002-0075-37bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.423Z",
+      "completedAt": "2026-11-07T13:34:25.642Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-create-duplicate",
+      "at": "2026-11-07T13:34:25.689Z",
+      "method": "POST",
+      "path": "/Tables",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": "{\"TableName\":\"NativePartitions\"}"
+      },
+      "status": 409,
+      "body": "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-US\",\"value\":\"The table specified already exists.\\nRequestId:f39a2956-10de-45a1-bcf2-e9a0441d7151\\nTime:2026-11-07T13:34:25.675Z\"}}}",
+      "headers": {
+        "content-length": "197",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "f39a2956-10de-45a1-bcf2-e9a0441d7151",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.645Z",
+      "completedAt": "2026-11-07T13:34:25.689Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-insert",
+      "at": "2026-11-07T13:34:25.937Z",
+      "method": "POST",
+      "path": "/NativePartitions",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-one\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13%3A34%3A25.8046509Z'\"",
+        "x-ms-request-id": "c4e01e5c-8002-0075-5fbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.690Z",
+      "completedAt": "2026-11-07T13:34:25.937Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-insert",
+      "at": "2026-11-07T13:34:25.963Z",
+      "method": "POST",
+      "path": "/NativePartitions",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-one\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13:34:25.962Z'\"",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "781121e0-47fd-4359-a274-8f4ab74365ce",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:25 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.946Z",
+      "completedAt": "2026-11-07T13:34:25.963Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-point-read",
+      "at": "2026-11-07T13:34:26.191Z",
+      "method": "GET",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Timestamp\":\"2026-11-07T13:34:25.8046509Z\",\"Owner\":\"worker-one\"}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "etag": "W/\"datetime'2026-11-07T13%3A34%3A25.8046509Z'\"",
+        "x-ms-request-id": "c4e01f08-8002-0075-0abc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:25.966Z",
+      "completedAt": "2026-11-07T13:34:26.191Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-point-read",
+      "at": "2026-11-07T13:34:26.234Z",
+      "method": "GET",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-one\",\"Timestamp\":\"2026-11-07T13:34:25.962Z\"}",
+      "headers": {
+        "content-length": "99",
+        "etag": "W/\"datetime'2026-11-07T13:34:25.962Z'\"",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "e2a083f0-55c8-4d8e-a324-063ba6132af2",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.191Z",
+      "completedAt": "2026-11-07T13:34:26.234Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-replace-stale-etag",
+      "at": "2026-11-07T13:34:26.459Z",
+      "method": "PUT",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "W/\"datetime'2000-01-01T00%3A00%3A00.0000000Z'\""
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"must-not-change\"}"
+      },
+      "status": 412,
+      "body": "{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\":{\"lang\":\"en-US\",\"value\":\"The update condition specified in the request was not satisfied.\\nRequestId:c4e01f9f-8002-0075-21bc-6e2b0e000000\\nTime:2026-11-07T13:34:26.3456156Z\"}}}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e01f9f-8002-0075-21bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.235Z",
+      "completedAt": "2026-11-07T13:34:26.459Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-replace-stale-etag",
+      "at": "2026-11-07T13:34:26.494Z",
+      "method": "PUT",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "W/\"datetime'2000-01-01T00%3A00%3A00.0000000Z'\""
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"must-not-change\"}"
+      },
+      "status": 412,
+      "body": "{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\":{\"lang\":\"en-US\",\"value\":\"The update condition specified in the request was not satisfied.\\nRequestId:8b5f514a-b54f-401c-84ed-ac22bd5a9548\\nTime:2026-11-07T13:34:26.485Z\"}}}",
+      "headers": {
+        "content-length": "235",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "8b5f514a-b54f-401c-84ed-ac22bd5a9548",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.460Z",
+      "completedAt": "2026-11-07T13:34:26.494Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-replace",
+      "at": "2026-11-07T13:34:26.720Z",
+      "method": "PUT",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "*"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-two\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13%3A34%3A26.6034154Z'\"",
+        "x-ms-request-id": "c4e0203b-8002-0075-3dbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.496Z",
+      "completedAt": "2026-11-07T13:34:26.720Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-replace",
+      "at": "2026-11-07T13:34:26.740Z",
+      "method": "PUT",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "*"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-two\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "b1c8dfe8-feee-43c4-ac71-ccf2e7f1d361",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT",
+        "etag": "W/\"datetime'2026-11-07T13:34:26.739Z'\""
+      },
+      "startedAt": "2026-11-07T13:34:26.721Z",
+      "completedAt": "2026-11-07T13:34:26.740Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-merge",
+      "at": "2026-11-07T13:34:26.967Z",
+      "method": "MERGE",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "*"
+        },
+        "body": "{\"Phase\":\"processing\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13%3A34%3A26.8474727Z'\"",
+        "x-ms-request-id": "c4e020cd-8002-0075-4bbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.741Z",
+      "completedAt": "2026-11-07T13:34:26.967Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-merge",
+      "at": "2026-11-07T13:34:26.977Z",
+      "method": "MERGE",
+      "path": "/NativePartitions(PartitionKey='taskhub',RowKey='0')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "if-match": "*"
+        },
+        "body": "{\"Phase\":\"processing\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "353c3057-107b-4d8f-9303-803a992638a8",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:26 GMT",
+        "etag": "W/\"datetime'2026-11-07T13:34:26.976Z'\""
+      },
+      "startedAt": "2026-11-07T13:34:26.968Z",
+      "completedAt": "2026-11-07T13:34:26.977Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-filtered-read",
+      "at": "2026-11-07T13:34:27.210Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Timestamp\":\"2026-11-07T13:34:26.8474727Z\",\"Owner\":\"worker-two\",\"Phase\":\"processing\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02163-8002-0075-60bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:27 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:26.984Z",
+      "completedAt": "2026-11-07T13:34:27.210Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-filtered-read",
+      "at": "2026-11-07T13:34:27.249Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Owner\":\"worker-two\",\"Timestamp\":\"2026-11-07T13:34:26.976Z\",\"Phase\":\"processing\"}]}",
+      "headers": {
+        "content-length": "132",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "ed93a722-9185-4b85-a803-c69c328f4f9d",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:27 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:27.223Z",
+      "completedAt": "2026-11-07T13:34:27.249Z"
+    },
+    {
+      "target": "azure",
+      "phase": "queue-create",
+      "at": "2026-11-07T13:34:28.934Z",
+      "method": "PUT",
+      "path": "/native-control",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "b76beb2c-6003-001f-7bbc-6ef326000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:27 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:27.255Z",
+      "completedAt": "2026-11-07T13:34:28.934Z"
+    },
+    {
+      "target": "local",
+      "phase": "queue-create",
+      "at": "2026-11-07T13:34:28.953Z",
+      "method": "PUT",
+      "path": "/native-control",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "51578ab9-ee11-4928-9ba4-eef7f6317011",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:28 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:28.936Z",
+      "completedAt": "2026-11-07T13:34:28.953Z"
+    },
+    {
+      "target": "azure",
+      "phase": "queue-create-duplicate",
+      "at": "2026-11-07T13:34:29.207Z",
+      "method": "PUT",
+      "path": "/native-control",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "b76beb5e-6003-001f-22bc-6ef326000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:28 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:28.953Z",
+      "completedAt": "2026-11-07T13:34:29.207Z"
+    },
+    {
+      "target": "local",
+      "phase": "queue-create-duplicate",
+      "at": "2026-11-07T13:34:29.229Z",
+      "method": "PUT",
+      "path": "/native-control",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "b243dab8-9b78-4749-8bc4-1a667a5180cc",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:29 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:29.208Z",
+      "completedAt": "2026-11-07T13:34:29.229Z"
+    },
+    {
+      "target": "azure",
+      "phase": "queue-send-raw-message",
+      "at": "2026-11-07T13:34:29.486Z",
+      "method": "POST",
+      "path": "/native-control/messages",
+      "surface": "queue",
+      "request": {
+        "headers": {
+          "content-type": "application/xml"
+        },
+        "body": "<QueueMessage><MessageText>native-text</MessageText></QueueMessage>"
+      },
+      "status": 201,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>ac10d8c1-b12b-4f85-9c66-9c9566eaa341</MessageId><InsertionTime>Sat, 07 Nov 2026 13:34:29 GMT</InsertionTime><ExpirationTime>Sat, 14 Nov 2026 13:34:29 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAQ0f4trxu3QE=</PopReceipt><TimeNextVisible>Sat, 07 Nov 2026 13:34:29 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "b76beb96-6003-001f-58bc-6ef326000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:28 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:29.234Z",
+      "completedAt": "2026-11-07T13:34:29.486Z"
+    },
+    {
+      "target": "local",
+      "phase": "queue-send-raw-message",
+      "at": "2026-11-07T13:34:29.519Z",
+      "method": "POST",
+      "path": "/native-control/messages",
+      "surface": "queue",
+      "request": {
+        "headers": {
+          "content-type": "application/xml"
+        },
+        "body": "<QueueMessage><MessageText>native-text</MessageText></QueueMessage>"
+      },
+      "status": 201,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>367c4f82-7eb4-4d26-9931-d17de4182035</MessageId><InsertionTime>Sat, 07 Nov 2026 13:34:29 GMT</InsertionTime><ExpirationTime>Sat, 14 Nov 2026 13:34:29 GMT</ExpirationTime><PopReceipt>55d01ae3-7d4a-4fac-91bf-ca02b2a66996</PopReceipt><TimeNextVisible>Sat, 07 Nov 2026 13:34:29 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>",
+      "headers": {
+        "content-length": "412",
+        "x-ms-request-id": "fe368b8a-2ecf-4d69-89b1-488c3d5f7ef9",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:29 GMT",
+        "content-type": "application/xml"
+      },
+      "startedAt": "2026-11-07T13:34:29.487Z",
+      "completedAt": "2026-11-07T13:34:29.519Z"
+    },
+    {
+      "target": "azure",
+      "phase": "queue-receive",
+      "at": "2026-11-07T13:34:29.762Z",
+      "method": "GET",
+      "path": "/native-control/messages?numofmessages=1&visibilitytimeout=30",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>ac10d8c1-b12b-4f85-9c66-9c9566eaa341</MessageId><InsertionTime>Sat, 07 Nov 2026 13:34:29 GMT</InsertionTime><ExpirationTime>Sat, 14 Nov 2026 13:34:29 GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAspQDybxu3QE=</PopReceipt><TimeNextVisible>Sat, 07 Nov 2026 13:34:59 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>native-text</MessageText></QueueMessage></QueueMessagesList>",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "b76bebc8-6003-001f-01bc-6ef326000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:28 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:29.522Z",
+      "completedAt": "2026-11-07T13:34:29.762Z"
+    },
+    {
+      "target": "local",
+      "phase": "queue-receive",
+      "at": "2026-11-07T13:34:29.782Z",
+      "method": "GET",
+      "path": "/native-control/messages?numofmessages=1&visibilitytimeout=30",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>367c4f82-7eb4-4d26-9931-d17de4182035</MessageId><InsertionTime>Sat, 07 Nov 2026 13:34:29 GMT</InsertionTime><ExpirationTime>Sat, 14 Nov 2026 13:34:29 GMT</ExpirationTime><PopReceipt>5dcd46bb-d990-4fdd-9b26-0167bb464a56</PopReceipt><TimeNextVisible>Sat, 07 Nov 2026 13:34:59 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>native-text</MessageText></QueueMessage></QueueMessagesList>",
+      "headers": {
+        "content-length": "480",
+        "x-ms-request-id": "829f92ee-d816-44f8-9fc3-5e1e4d27f3ee",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:29 GMT",
+        "content-type": "application/xml"
+      },
+      "startedAt": "2026-11-07T13:34:29.763Z",
+      "completedAt": "2026-11-07T13:34:29.782Z"
+    },
+    {
+      "target": "azure",
+      "phase": "queue-hidden-message",
+      "at": "2026-11-07T13:34:30.019Z",
+      "method": "GET",
+      "path": "/native-control/messages?peekonly=true",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList />",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "b76bec1f-6003-001f-4dbc-6ef326000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:29 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:29.782Z",
+      "completedAt": "2026-11-07T13:34:30.019Z"
+    },
+    {
+      "target": "local",
+      "phase": "queue-hidden-message",
+      "at": "2026-11-07T13:34:30.033Z",
+      "method": "GET",
+      "path": "/native-control/messages?peekonly=true",
+      "surface": "queue",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList></QueueMessagesList>",
+      "headers": {
+        "content-length": "77",
+        "x-ms-request-id": "6edcb68f-7cfa-41d1-9748-51c689082cb0",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT",
+        "content-type": "application/xml"
+      },
+      "startedAt": "2026-11-07T13:34:30.020Z",
+      "completedAt": "2026-11-07T13:34:30.033Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-second-row",
+      "at": "2026-11-07T13:34:30.278Z",
+      "method": "POST",
+      "path": "/NativePartitions",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"1\",\"Owner\":\"worker-three\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13%3A34%3A30.1611704Z'\"",
+        "x-ms-request-id": "c4e02884-8002-0075-6bbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.034Z",
+      "completedAt": "2026-11-07T13:34:30.277Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-second-row",
+      "at": "2026-11-07T13:34:30.305Z",
+      "method": "POST",
+      "path": "/NativePartitions",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "application/json",
+          "accept": "application/json;odata=nometadata",
+          "prefer": "return-no-content"
+        },
+        "body": "{\"PartitionKey\":\"taskhub\",\"RowKey\":\"1\",\"Owner\":\"worker-three\"}"
+      },
+      "status": 204,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "W/\"datetime'2026-11-07T13:34:30.290Z'\"",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "eb0b043e-42c7-4ea8-b84a-8d3b9b8da1e6",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.279Z",
+      "completedAt": "2026-11-07T13:34:30.305Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-projected-top",
+      "at": "2026-11-07T13:34:30.562Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$top=1&$select=Owner,Missing,PartitionKey,RowKey&$format=application/json;odata=minimalmetadata",
+      "surface": "table",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"odata.metadata\":\"https://<storage-account>.table.core.windows.net/$metadata#NativePartitions&$select=Owner,Missing,PartitionKey,RowKey\",\"value\":[{\"odata.etag\":\"W/\\\"datetime'2026-11-07T13%3A34%3A26.8474727Z'\\\"\",\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\",\"Missing\":null,\"Owner\":\"worker-two\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=minimalmetadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e0292d-8002-0075-13bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-continuation-nextpartitionkey": "1!12!dGFza2h1Yg--",
+        "x-ms-continuation-nextrowkey": "1!4!MQ--",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.315Z",
+      "completedAt": "2026-11-07T13:34:30.562Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-projected-top",
+      "at": "2026-11-07T13:34:30.579Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$top=1&$select=Owner,Missing,PartitionKey,RowKey&$format=application/json;odata=minimalmetadata",
+      "surface": "table",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"odata.metadata\":\"https://<storage-account>.table.core.windows.net/$metadata#NativePartitions&$select=Owner,Missing,PartitionKey,RowKey\",\"value\":[{\"odata.etag\":\"W/\\\"datetime'2026-11-07T13:34:26.976Z'\\\"\",\"Owner\":\"worker-two\",\"Missing\":null,\"PartitionKey\":\"taskhub\",\"RowKey\":\"0\"}]}",
+      "headers": {
+        "content-length": "277",
+        "content-type": "application/json;odata=minimalmetadata",
+        "x-ms-request-id": "28b756af-25e4-428f-abbc-eb22176e35b4",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT",
+        "x-ms-continuation-nextpartitionkey": "gs1.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd",
+        "x-ms-continuation-nextrowkey": "gs1.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd"
+      },
+      "startedAt": "2026-11-07T13:34:30.563Z",
+      "completedAt": "2026-11-07T13:34:30.579Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-projected-no-keys",
+      "at": "2026-11-07T13:34:30.834Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$select=Owner&$format=application/json;odata=nometadata",
+      "surface": "table",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"Owner\":\"worker-two\"},{\"Owner\":\"worker-three\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e029c9-8002-0075-2cbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.580Z",
+      "completedAt": "2026-11-07T13:34:30.834Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-projected-no-keys",
+      "at": "2026-11-07T13:34:30.884Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'taskhub'&$select=Owner&$format=application/json;odata=nometadata",
+      "surface": "table",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"Owner\":\"worker-two\"},{\"Owner\":\"worker-three\"}]}",
+      "headers": {
+        "content-length": "59",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "118d9ad1-22d3-4340-b5b6-a297431cc81c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.835Z",
+      "completedAt": "2026-11-07T13:34:30.884Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-top-zero",
+      "at": "2026-11-07T13:34:31.116Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$top=0",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02a87-8002-0075-6abc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:30 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:30.885Z",
+      "completedAt": "2026-11-07T13:34:31.116Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-top-zero",
+      "at": "2026-11-07T13:34:31.135Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$top=0",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[]}",
+      "headers": {
+        "content-length": "12",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "4bde3361-dbfd-4ba4-9a10-a1539a2b9aa1",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.116Z",
+      "completedAt": "2026-11-07T13:34:31.135Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-insert",
+      "at": "2026-11-07T13:34:31.368Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"first\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Owner\":\"second\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_12f39fe7-6f0b-41e3-80a6-2dc62265d7bf\r\nContent-Type: multipart/mixed; boundary=changesetresponse_ab6b369a-89b5-4c59-86e3-6e7bc7332024\r\n\r\n--changesetresponse_ab6b369a-89b5-4c59-86e3-6e7bc7332024\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied: return-no-content\r\nDataServiceVersion: 3.0;\r\nLocation: https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='1')\r\nDataServiceId: https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='1')\r\nETag: W/\"datetime'2026-11-07T13%3A34%3A31.2483657Z'\"\r\n\r\n\r\n--changesetresponse_ab6b369a-89b5-4c59-86e3-6e7bc7332024\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied: return-no-content\r\nDataServiceVersion: 3.0;\r\nLocation: https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='2')\r\nDataServiceId: https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='2')\r\nETag: W/\"datetime'2026-11-07T13%3A34%3A31.2483657Z'\"\r\n\r\n\r\n--changesetresponse_ab6b369a-89b5-4c59-86e3-6e7bc7332024--\r\n--batchresponse_12f39fe7-6f0b-41e3-80a6-2dc62265d7bf--\r\n",
+      "headers": {
+        "content-type": "multipart/mixed; boundary=batchresponse_12f39fe7-6f0b-41e3-80a6-2dc62265d7bf",
+        "x-ms-request-id": "c4e02b2a-8002-0075-06bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.136Z",
+      "completedAt": "2026-11-07T13:34:31.368Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-insert",
+      "at": "2026-11-07T13:34:31.420Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"first\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Owner\":\"second\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_2978c10a-a10e-4b8f-b635-d1c2708610c1\r\nContent-Type: multipart/mixed; boundary=changesetresponse_e415627f-0a1b-4ec1-9381-7e7b1468c2cf\r\n\r\n--changesetresponse_e415627f-0a1b-4ec1-9381-7e7b1468c2cf\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nDataServiceVersion: 3.0;\r\nETag: W/\"datetime'2026-11-07T13:34:31.407Z'\"\r\n\r\n\r\n--changesetresponse_e415627f-0a1b-4ec1-9381-7e7b1468c2cf\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nDataServiceVersion: 3.0;\r\nETag: W/\"datetime'2026-11-07T13:34:31.408Z'\"\r\n\r\n\r\n--changesetresponse_e415627f-0a1b-4ec1-9381-7e7b1468c2cf--\r\n--batchresponse_2978c10a-a10e-4b8f-b635-d1c2708610c1--\r\n",
+      "headers": {
+        "content-length": "724",
+        "content-type": "multipart/mixed; boundary=batchresponse_2978c10a-a10e-4b8f-b635-d1c2708610c1",
+        "x-ms-request-id": "20b6b217-1cde-4dd8-a740-264b5213f205",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.371Z",
+      "completedAt": "2026-11-07T13:34:31.420Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-read",
+      "at": "2026-11-07T13:34:31.639Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"first\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"second\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02bc3-8002-0075-1fbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.420Z",
+      "completedAt": "2026-11-07T13:34:31.639Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-read",
+      "at": "2026-11-07T13:34:31.646Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"first\",\"Timestamp\":\"2026-11-07T13:34:31.407Z\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Owner\":\"second\",\"Timestamp\":\"2026-11-07T13:34:31.408Z\"}]}",
+      "headers": {
+        "content-length": "198",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "e71aba71-f096-40ac-ae77-174dd6cac144",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.639Z",
+      "completedAt": "2026-11-07T13:34:31.646Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-conflict",
+      "at": "2026-11-07T13:34:31.874Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"3\",\"Owner\":\"must-roll-back\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"conflict\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_bf5df057-e4aa-44c4-abbc-04a39d3c8220\r\nContent-Type: multipart/mixed; boundary=changesetresponse_c5f7cdbb-aba9-4165-90f1-d66a158a1706\r\n\r\n--changesetresponse_c5f7cdbb-aba9-4165-90f1-d66a158a1706\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 409 Conflict\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied: return-no-content\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=nometadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"EntityAlreadyExists\",\"message\":{\"lang\":\"en-US\",\"value\":\"1:The specified entity already exists.\\nRequestId:c4e02c3d-8002-0075-19bc-6e2b0e000000\\nTime:2026-11-07T13:34:31.7560597Z\"}}}\r\n--changesetresponse_c5f7cdbb-aba9-4165-90f1-d66a158a1706--\r\n--batchresponse_bf5df057-e4aa-44c4-abbc-04a39d3c8220--\r\n",
+      "headers": {
+        "content-type": "multipart/mixed; boundary=batchresponse_bf5df057-e4aa-44c4-abbc-04a39d3c8220",
+        "x-ms-request-id": "c4e02c3d-8002-0075-19bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.646Z",
+      "completedAt": "2026-11-07T13:34:31.874Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-conflict",
+      "at": "2026-11-07T13:34:31.898Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"3\",\"Owner\":\"must-roll-back\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"conflict\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_be2dd4e8-beaa-4ddc-91e6-c990ae2b5d10\r\nContent-Type: multipart/mixed; boundary=changesetresponse_3457beaa-6ef3-4d34-9df7-50345cd72240\r\n\r\n--changesetresponse_3457beaa-6ef3-4d34-9df7-50345cd72240\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 409 Conflict\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=minimalmetadata\r\n\r\n{\"odata.error\":{\"code\":\"EntityAlreadyExists\",\"message\":{\"lang\":\"en-US\",\"value\":\"1:The specified entity already exists.\\nRequestId:801f2ec7-0685-4834-9099-40ba9502f37f\\nTime:2026-11-07T13:34:31.884Z\"}}}\r\n--changesetresponse_3457beaa-6ef3-4d34-9df7-50345cd72240--\r\n--batchresponse_be2dd4e8-beaa-4ddc-91e6-c990ae2b5d10--\r\n",
+      "headers": {
+        "content-length": "703",
+        "content-type": "multipart/mixed; boundary=batchresponse_be2dd4e8-beaa-4ddc-91e6-c990ae2b5d10",
+        "x-ms-request-id": "801f2ec7-0685-4834-9099-40ba9502f37f",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.874Z",
+      "completedAt": "2026-11-07T13:34:31.898Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-rollback-read",
+      "at": "2026-11-07T13:34:32.123Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"first\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"second\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02cc4-8002-0075-1fbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:31 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:31.899Z",
+      "completedAt": "2026-11-07T13:34:32.123Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-rollback-read",
+      "at": "2026-11-07T13:34:32.134Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"first\",\"Timestamp\":\"2026-11-07T13:34:31.407Z\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Owner\":\"second\",\"Timestamp\":\"2026-11-07T13:34:31.408Z\"}]}",
+      "headers": {
+        "content-length": "198",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "3501ecf1-7244-4d08-87e8-3c814ef739b2",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.124Z",
+      "completedAt": "2026-11-07T13:34:32.134Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-mixed-partitions",
+      "at": "2026-11-07T13:34:32.355Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"4\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"foreign\",\"RowKey\":\"5\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_b641103d-280f-4a65-a433-ee59cf39db7c\r\nContent-Type: multipart/mixed; boundary=changesetresponse_89870be9-d669-44e8-ac37-cc8cf2644a30\r\n\r\n--changesetresponse_89870be9-d669-44e8-ac37-cc8cf2644a30\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 400 Bad Request\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied: return-no-content\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=nometadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"CommandsInBatchActOnDifferentPartitions\",\"message\":{\"lang\":\"en-US\",\"value\":\"1:All commands in a batch must operate on same entity group.\\nRequestId:c4e02d58-8002-0075-2fbc-6e2b0e000000\\nTime:2026-11-07T13:34:32.2397695Z\"}}}\r\n--changesetresponse_89870be9-d669-44e8-ac37-cc8cf2644a30--\r\n--batchresponse_b641103d-280f-4a65-a433-ee59cf39db7c--\r\n",
+      "headers": {
+        "content-type": "multipart/mixed; boundary=batchresponse_b641103d-280f-4a65-a433-ee59cf39db7c",
+        "x-ms-request-id": "c4e02d58-8002-0075-2fbc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.134Z",
+      "completedAt": "2026-11-07T13:34:32.355Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-mixed-partitions",
+      "at": "2026-11-07T13:34:32.400Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"batch\",\"RowKey\":\"4\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nPOST https://<storage-account>.table.core.windows.net/NativePartitions HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"PartitionKey\":\"foreign\",\"RowKey\":\"5\"}\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_59302cf1-a480-4ac0-8cc5-580f43b5ccfc\r\nContent-Type: multipart/mixed; boundary=changesetresponse_facff095-92b7-46af-880e-42ad49be9d1c\r\n\r\n--changesetresponse_facff095-92b7-46af-880e-42ad49be9d1c\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 400 Bad Request\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=minimalmetadata\r\n\r\n{\"odata.error\":{\"code\":\"CommandsInBatchActOnDifferentPartitions\",\"message\":{\"lang\":\"en-US\",\"value\":\"1:All commands in a batch must operate on same entity group.\\nRequestId:aed94057-56bf-4cc5-8860-516152bcedd6\\nTime:2026-11-07T13:34:32.392Z\"}}}\r\n--changesetresponse_facff095-92b7-46af-880e-42ad49be9d1c--\r\n--batchresponse_59302cf1-a480-4ac0-8cc5-580f43b5ccfc--\r\n",
+      "headers": {
+        "content-length": "748",
+        "content-type": "multipart/mixed; boundary=batchresponse_59302cf1-a480-4ac0-8cc5-580f43b5ccfc",
+        "x-ms-request-id": "aed94057-56bf-4cc5-8860-516152bcedd6",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.369Z",
+      "completedAt": "2026-11-07T13:34:32.399Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-compound-filter",
+      "at": "2026-11-07T13:34:32.635Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'%20and%20(RowKey%20eq%20'1'%20or%20Owner%20eq%20'second')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"first\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Timestamp\":\"2026-11-07T13:34:31.2483657Z\",\"Owner\":\"second\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02dec-8002-0075-43bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.404Z",
+      "completedAt": "2026-11-07T13:34:32.635Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-compound-filter",
+      "at": "2026-11-07T13:34:32.660Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'%20and%20(RowKey%20eq%20'1'%20or%20Owner%20eq%20'second')",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"first\",\"Timestamp\":\"2026-11-07T13:34:31.407Z\"},{\"PartitionKey\":\"batch\",\"RowKey\":\"2\",\"Owner\":\"second\",\"Timestamp\":\"2026-11-07T13:34:31.408Z\"}]}",
+      "headers": {
+        "content-length": "198",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "10399724-ec56-4d2c-9018-08d9cb0fba20",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.643Z",
+      "completedAt": "2026-11-07T13:34:32.660Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-merge-delete",
+      "at": "2026-11-07T13:34:32.888Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nMERGE https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='1')?$format=application%2Fjson%3Bodata%3Dminimalmetadata HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"Owner\":\"merged\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='2') HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\nIf-Match: *\r\n\r\n\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_bdffe0d0-3df6-4b43-90f5-7d4583b70ffa\r\nContent-Type: multipart/mixed; boundary=changesetresponse_f5182a67-6bc9-4ea3-a3c0-a38d8eeb1ea1\r\n\r\n--changesetresponse_f5182a67-6bc9-4ea3-a3c0-a38d8eeb1ea1\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied: return-no-content\r\nDataServiceVersion: 3.0;\r\nETag: W/\"datetime'2026-11-07T13%3A34%3A32.7662056Z'\"\r\n\r\n\r\n--changesetresponse_f5182a67-6bc9-4ea3-a3c0-a38d8eeb1ea1\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nDataServiceVersion: 1.0;\r\n\r\n\r\n--changesetresponse_f5182a67-6bc9-4ea3-a3c0-a38d8eeb1ea1--\r\n--batchresponse_bdffe0d0-3df6-4b43-90f5-7d4583b70ffa--\r\n",
+      "headers": {
+        "content-type": "multipart/mixed; boundary=batchresponse_bdffe0d0-3df6-4b43-90f5-7d4583b70ffa",
+        "x-ms-request-id": "c4e02e77-8002-0075-4ebc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.660Z",
+      "completedAt": "2026-11-07T13:34:32.888Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-merge-delete",
+      "at": "2026-11-07T13:34:32.906Z",
+      "method": "POST",
+      "path": "/$batch",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "content-type": "multipart/mixed; boundary=batch_native",
+          "accept": "application/json;odata=nometadata",
+          "dataserviceversion": "3.0"
+        },
+        "body": "--batch_native\r\nContent-Type: multipart/mixed; boundary=changeset_native\r\n\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nMERGE https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='1')?$format=application%2Fjson%3Bodata%3Dminimalmetadata HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\n\r\n{\"Owner\":\"merged\"}\r\n--changeset_native\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE https://<storage-account>.table.core.windows.net/NativePartitions(PartitionKey='batch',RowKey='2') HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata=nometadata\r\nPrefer: return-no-content\r\nIf-Match: *\r\n\r\n\r\n--changeset_native--\r\n--batch_native--\r\n"
+      },
+      "status": 202,
+      "body": "--batchresponse_31fa453a-98d8-418e-a852-02ef00b331d3\r\nContent-Type: multipart/mixed; boundary=changesetresponse_5047d623-8840-48c0-80be-c01edb840928\r\n\r\n--changesetresponse_5047d623-8840-48c0-80be-c01edb840928\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nDataServiceVersion: 3.0;\r\nETag: W/\"datetime'2026-11-07T13:34:32.897Z'\"\r\n\r\n\r\n--changesetresponse_5047d623-8840-48c0-80be-c01edb840928\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204 No Content\r\nDataServiceVersion: 3.0;\r\n\r\n\r\n--changesetresponse_5047d623-8840-48c0-80be-c01edb840928--\r\n--batchresponse_31fa453a-98d8-418e-a852-02ef00b331d3--\r\n",
+      "headers": {
+        "content-length": "678",
+        "content-type": "multipart/mixed; boundary=batchresponse_31fa453a-98d8-418e-a852-02ef00b331d3",
+        "x-ms-request-id": "0bd02928-f157-48d3-ae2e-60cdae460d52",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.889Z",
+      "completedAt": "2026-11-07T13:34:32.906Z"
+    },
+    {
+      "target": "azure",
+      "phase": "table-batch-final-read",
+      "at": "2026-11-07T13:34:33.132Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Timestamp\":\"2026-11-07T13:34:32.7662056Z\",\"Owner\":\"merged\"}]}",
+      "headers": {
+        "content-type": "application/json;odata=nometadata;streaming=true;charset=utf-8",
+        "x-ms-request-id": "c4e02ef9-8002-0075-50bc-6e2b0e000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:32 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:32.911Z",
+      "completedAt": "2026-11-07T13:34:33.132Z"
+    },
+    {
+      "target": "local",
+      "phase": "table-batch-final-read",
+      "at": "2026-11-07T13:34:33.140Z",
+      "method": "GET",
+      "path": "/NativePartitions()?$filter=PartitionKey%20eq%20'batch'",
+      "surface": "table",
+      "request": {
+        "headers": {
+          "accept": "application/json;odata=nometadata"
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "{\"value\":[{\"PartitionKey\":\"batch\",\"RowKey\":\"1\",\"Owner\":\"merged\",\"Timestamp\":\"2026-11-07T13:34:32.897Z\"}]}",
+      "headers": {
+        "content-length": "105",
+        "content-type": "application/json;odata=nometadata",
+        "x-ms-request-id": "f8def4b4-e27b-4d37-8e96-bea9ad1dbefc",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:33 GMT"
+      },
+      "startedAt": "2026-11-07T13:34:33.133Z",
+      "completedAt": "2026-11-07T13:34:33.140Z"
+    },
+    {
+      "target": "azure",
+      "phase": "enable-blob-versioning",
+      "at": "2026-11-07T13:34:34.962Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/blobServices/default?api-version=2023-05-01",
+      "status": 200,
+      "request": {
+        "properties": {
+          "isVersioningEnabled": true,
+          "deleteRetentionPolicy": {
+            "enabled": false
+          },
+          "containerDeleteRetentionPolicy": {
+            "enabled": false
+          }
+        }
+      },
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/blobServices/default",
+        "name": "default",
+        "type": "Microsoft.Storage/storageAccounts/blobServices",
+        "properties": {
+          "containerDeleteRetentionPolicy": {
+            "enabled": false
+          },
+          "deleteRetentionPolicy": {
+            "enabled": false
+          },
+          "isVersioningEnabled": true
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "enable-blob-versioning",
+      "at": "2026-11-07T13:34:34.979Z",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/blobServices/default?api-version=2023-05-01",
+      "request": {
+        "properties": {
+          "isVersioningEnabled": true,
+          "deleteRetentionPolicy": {
+            "enabled": false
+          },
+          "containerDeleteRetentionPolicy": {
+            "enabled": false
+          }
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>/blobServices/default",
+        "name": "<storage-account>/default",
+        "type": "Microsoft.Storage/storageAccounts/blobServices",
+        "resourceGroupName": "<group>",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "isVersioningEnabled": true,
+          "deleteRetentionPolicy": {
+            "enabled": false
+          },
+          "containerDeleteRetentionPolicy": {
+            "enabled": false
+          },
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-05-01",
+        "globalstack": {
+          "supportLevel": "official-emulator+globalstack-facade",
+          "capabilityId": "blob-storage",
+          "backingEngines": [
+            "azurite"
+          ],
+          "emulationDepth": "official-emulator-backed-local",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "No full Azure Storage RBAC parity in MVP.",
+            "No lifecycle, replication, immutability, legal hold, or private endpoint behavior in MVP.",
+            "Azurite covers data-plane behavior only; GlobalStack models ARM resources around it."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-container",
+      "at": "2026-11-07T13:34:35.990Z",
+      "method": "PUT",
+      "path": "/revision-probe?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:35 GMT",
+        "etag": "\"0x8DF3CD3DD4D2EBC\"",
+        "x-ms-request-id": "9e126c3e-901e-0034-55bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:35 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-readiness-1",
+      "at": "2026-11-07T13:34:36.343Z",
+      "method": "PUT",
+      "path": "/revision-probe/readiness",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "r"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DD7355E0\"",
+        "x-ms-request-id": "9e126d7c-901e-0034-73bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.0999137Z",
+        "date": "Sat, 07 Nov 2026 13:34:35 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-first-write",
+      "at": "2026-11-07T13:34:36.590Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "content-type": "text/plain",
+          "x-ms-meta-owner": "first"
+        },
+        "body": "original document"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDAB5935\"",
+        "x-ms-request-id": "9e126ef0-901e-0034-4fbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.4660021Z",
+        "date": "Sat, 07 Nov 2026 13:34:36 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-second-write",
+      "at": "2026-11-07T13:34:36.812Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "content-type": "text/plain"
+        },
+        "body": "updated document"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDCE64AA\"",
+        "x-ms-request-id": "9e126ff4-901e-0034-49bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.6966714Z",
+        "date": "Sat, 07 Nov 2026 13:34:36 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-old",
+      "at": "2026-11-07T13:34:37.038Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "original document",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDAB5935\"",
+        "x-ms-request-id": "9e1270c4-901e-0034-07bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.4660021Z",
+        "date": "Sat, 07 Nov 2026 13:34:36 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-head-old",
+      "at": "2026-11-07T13:34:37.256Z",
+      "method": "HEAD",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDAB5935\"",
+        "x-ms-request-id": "9e1271d3-901e-0034-7dbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.4660021Z",
+        "date": "Sat, 07 Nov 2026 13:34:36 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-current",
+      "at": "2026-11-07T13:34:37.481Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDCE64AA\"",
+        "x-ms-request-id": "9e1272ef-901e-0034-06bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.6966714Z",
+        "x-ms-is-current-version": "true",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-lease-state": "available",
+        "date": "Sat, 07 Nov 2026 13:34:37 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-invalid-date",
+      "at": "2026-11-07T13:34:37.699Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=invalid-date",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 400,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:9e1273da-901e-0034-62bc-6e73ea000000\nTime:2026-11-07T13:34:37.5858659Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>invalid-date</QueryParameterValue></Error>",
+      "headers": {
+        "content-length": "379",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e1273da-901e-0034-62bc-6e73ea000000",
+        "date": "Sat, 07 Nov 2026 13:34:37 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-delete-current-by-id",
+      "at": "2026-11-07T13:34:37.918Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.6966714Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 403,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>OperationNotAllowedOnRootBlob</Code><Message>The specified operation is not allowed on root blob.\nRequestId:9e1274d1-901e-0034-4bbc-6e73ea000000\nTime:2026-11-07T13:34:37.8068219Z</Message></Error>",
+      "headers": {
+        "content-length": "250",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e1274d1-901e-0034-4bbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "OperationNotAllowedOnRootBlob",
+        "date": "Sat, 07 Nov 2026 13:34:37 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-after-current-id-delete",
+      "at": "2026-11-07T13:34:38.144Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDCE64AA\"",
+        "x-ms-request-id": "9e1275d0-901e-0034-40bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.6966714Z",
+        "x-ms-is-current-version": "true",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-lease-state": "available",
+        "date": "Sat, 07 Nov 2026 13:34:37 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-write-old",
+      "at": "2026-11-07T13:34:38.371Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "must not replace"
+      },
+      "status": 400,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:9e1276ea-901e-0034-43bc-6e73ea000000\nTime:2026-11-07T13:34:38.2604485Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>2026-11-07T13:34:36.4660021Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Version id should not be provided.</Reason></Error>",
+      "headers": {
+        "content-length": "494",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e1276ea-901e-0034-43bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "date": "Sat, 07 Nov 2026 13:34:37 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-metadata-old",
+      "at": "2026-11-07T13:34:38.588Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z&comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "must-not-change"
+        },
+        "body": ""
+      },
+      "status": 400,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:9e127790-901e-0034-65bc-6e73ea000000\nTime:2026-11-07T13:34:38.4772322Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>2026-11-07T13:34:36.4660021Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Version id should not be provided.</Reason></Error>",
+      "headers": {
+        "content-length": "494",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e127790-901e-0034-65bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "date": "Sat, 07 Nov 2026 13:34:38 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-list-current-and-old",
+      "at": "2026-11-07T13:34:38.810Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions,metadata&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:36.4660021Z</VersionId><Properties><Creation-Time>Sat, 07 Nov 2026 13:34:36 GMT</Creation-Time><Last-Modified>Sat, 07 Nov 2026 13:34:36 GMT</Last-Modified><Etag>0x8DF3CD3DDAB5935</Etag><Content-Length>17</Content-Length><Content-Type>text/plain</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>6W5mEb3GEBq+3HKpNc+Ybg==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><owner>first</owner></Metadata><OrMetadata /></Blob><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:36.6966714Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Sat, 07 Nov 2026 13:34:36 GMT</Creation-Time><Last-Modified>Sat, 07 Nov 2026 13:34:36 GMT</Last-Modified><Etag>0x8DF3CD3DDCE64AA</Etag><Content-Length>16</Content-Length><Content-Type>text/plain</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>I8BNhrO6toP3oyEhMYT53Q==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata /><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e127860-901e-0034-2fbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:38 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-delete-current",
+      "at": "2026-11-07T13:34:39.120Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "9e1279aa-901e-0034-07bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:38 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-head-deleted-current",
+      "at": "2026-11-07T13:34:39.346Z",
+      "method": "HEAD",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "",
+      "headers": {
+        "x-ms-request-id": "9e127b29-901e-0034-6ebc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "BlobNotFound",
+        "date": "Sat, 07 Nov 2026 13:34:38 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-old-after-delete",
+      "at": "2026-11-07T13:34:39.594Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "if-match": "\"0x8DF3CD3DDAB5935\""
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "original document",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDAB5935\"",
+        "x-ms-request-id": "9e127c13-901e-0034-47bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.4660021Z",
+        "date": "Sat, 07 Nov 2026 13:34:39 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-list-after-delete",
+      "at": "2026-11-07T13:34:39.817Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:36.4660021Z</VersionId><Properties><Creation-Time>Sat, 07 Nov 2026 13:34:36 GMT</Creation-Time><Last-Modified>Sat, 07 Nov 2026 13:34:36 GMT</Last-Modified><Etag>0x8DF3CD3DDAB5935</Etag><Content-Length>17</Content-Length><Content-Type>text/plain</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>6W5mEb3GEBq+3HKpNc+Ybg==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:36.6966714Z</VersionId><Properties><Creation-Time>Sat, 07 Nov 2026 13:34:36 GMT</Creation-Time><Last-Modified>Sat, 07 Nov 2026 13:34:36 GMT</Last-Modified><Etag>0x8DF3CD3DDCE64AA</Etag><Content-Length>16</Content-Length><Content-Type>text/plain</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>I8BNhrO6toP3oyEhMYT53Q==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e127d07-901e-0034-2bbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:39 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-delete-missing",
+      "at": "2026-11-07T13:34:40.037Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2020-01-01T00%3A00%3A00.0000000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:9e127dbf-901e-0034-5bbc-6e73ea000000\nTime:2026-11-07T13:34:39.9252804Z</Message></Error>",
+      "headers": {
+        "content-length": "215",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e127dbf-901e-0034-5bbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "BlobNotFound",
+        "date": "Sat, 07 Nov 2026 13:34:39 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-delete-old",
+      "at": "2026-11-07T13:34:40.259Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "9e127ec0-901e-0034-42bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:39 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-deleted-old",
+      "at": "2026-11-07T13:34:40.478Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.4660021Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:9e127f9a-901e-0034-16bc-6e73ea000000\nTime:2026-11-07T13:34:40.3667399Z</Message></Error>",
+      "headers": {
+        "content-length": "215",
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e127f9a-901e-0034-16bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-error-code": "BlobNotFound",
+        "date": "Sat, 07 Nov 2026 13:34:40 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-read-retained-second",
+      "at": "2026-11-07T13:34:40.701Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.6966714Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "last-modified": "Sat, 07 Nov 2026 13:34:36 GMT",
+        "etag": "\"0x8DF3CD3DDCE64AA\"",
+        "x-ms-request-id": "9e128061-901e-0034-54bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "x-ms-version-id": "2026-11-07T13:34:36.6966714Z",
+        "date": "Sat, 07 Nov 2026 13:34:40 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-delete-second",
+      "at": "2026-11-07T13:34:40.931Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A36.6966714Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "9e128140-901e-0034-1cbc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:40 GMT"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "versions-list-empty",
+      "at": "2026-11-07T13:34:41.151Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs /><NextMarker /></EnumerationResults>",
+      "headers": {
+        "content-type": "application/xml",
+        "x-ms-request-id": "9e128208-901e-0034-58bc-6e73ea000000",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:40 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-container",
+      "at": "2026-11-07T13:34:41.159Z",
+      "method": "PUT",
+      "path": "/revision-probe?restype=container",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "09a4f69d-c48b-4aa2-bbbd-a8b1f95c8aa1",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "etag": "\"75111c26-fecc-4cff-9321-297fe0d3a62b\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-readiness-1",
+      "at": "2026-11-07T13:34:41.174Z",
+      "method": "PUT",
+      "path": "/revision-probe/readiness",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "r"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0xf30078cb8d1b4b85aa25186cbcb3e2a6\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1730000Z",
+        "x-ms-request-id": "253813b8-de2c-40ca-bf4c-e9b53bd9cc8b",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-first-write",
+      "at": "2026-11-07T13:34:41.180Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "content-type": "text/plain",
+          "x-ms-meta-owner": "first"
+        },
+        "body": "original document"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x8066495863344a4d8ec99177aee3322c\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1790000Z",
+        "x-ms-request-id": "08d5bb92-5935-4834-b89e-51543abf768b",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-second-write",
+      "at": "2026-11-07T13:34:41.187Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "content-type": "text/plain"
+        },
+        "body": "updated document"
+      },
+      "status": 201,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "etag": "\"0x2d9e9c82aaf842698533b72a32b09e0e\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1860000Z",
+        "x-ms-request-id": "ef6e93e0-ce86-4bbe-a3d8-4da5f2ad2c32",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-old",
+      "at": "2026-11-07T13:34:41.194Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "original document",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "etag": "\"0x8066495863344a4d8ec99177aee3322c\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1790000Z",
+        "x-ms-request-id": "3fe66d03-7813-4a2b-a096-d918c34501cd",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-head-old",
+      "at": "2026-11-07T13:34:41.197Z",
+      "method": "HEAD",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "etag": "\"0x8066495863344a4d8ec99177aee3322c\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1790000Z",
+        "x-ms-request-id": "0c945a59-319c-4373-9dcf-81531a64446f",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-current",
+      "at": "2026-11-07T13:34:41.199Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "etag": "\"0x2d9e9c82aaf842698533b72a32b09e0e\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-version-id": "2026-11-07T13:34:41.1860000Z",
+        "x-ms-is-current-version": "true",
+        "x-ms-request-id": "a51204e6-f755-4453-a72c-c65adada68da",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-invalid-date",
+      "at": "2026-11-07T13:34:41.201Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=invalid-date",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 400,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>The versionid parameter is invalid for this operation.\nRequestId:eb777ce6-03c8-487e-b617-a1ab9d12ff76\nTime:2026-11-07T13:34:41.200Z</Message></Error>",
+      "headers": {
+        "content-length": "242",
+        "content-type": "application/xml",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "eb777ce6-03c8-487e-b617-a1ab9d12ff76",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-delete-current-by-id",
+      "at": "2026-11-07T13:34:41.204Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1860000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 403,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>OperationNotAllowedOnRootBlob</Code><Message>The specified operation is not allowed on root blob.\nRequestId:d2637c8f-d345-426b-a595-76514fbbb983\nTime:2026-11-07T13:34:41.203Z</Message></Error>",
+      "headers": {
+        "content-length": "243",
+        "content-type": "application/xml",
+        "x-ms-error-code": "OperationNotAllowedOnRootBlob",
+        "x-ms-request-id": "d2637c8f-d345-426b-a595-76514fbbb983",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-after-current-id-delete",
+      "at": "2026-11-07T13:34:41.213Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "etag": "\"0x2d9e9c82aaf842698533b72a32b09e0e\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-version-id": "2026-11-07T13:34:41.1860000Z",
+        "x-ms-is-current-version": "true",
+        "x-ms-request-id": "65402aaf-24e6-49b5-8be3-6cb02d14891c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-write-old",
+      "at": "2026-11-07T13:34:41.219Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-blob-type": "BlockBlob"
+        },
+        "body": "must not replace"
+      },
+      "status": 400,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>The versionid parameter is invalid for this operation.\nRequestId:2e4a1317-4712-478c-9eea-5a11e69df9f7\nTime:2026-11-07T13:34:41.215Z</Message></Error>",
+      "headers": {
+        "content-length": "242",
+        "content-type": "application/xml",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "2e4a1317-4712-478c-9eea-5a11e69df9f7",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-metadata-old",
+      "at": "2026-11-07T13:34:41.225Z",
+      "method": "PUT",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z&comp=metadata",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "x-ms-meta-owner": "must-not-change"
+        },
+        "body": ""
+      },
+      "status": 400,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>The versionid parameter is invalid for this operation.\nRequestId:408d2036-8da3-4a2f-b036-619f86e37d8c\nTime:2026-11-07T13:34:41.221Z</Message></Error>",
+      "headers": {
+        "content-length": "242",
+        "content-type": "application/xml",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "408d2036-8da3-4a2f-b036-619f86e37d8c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-list-current-and-old",
+      "at": "2026-11-07T13:34:41.232Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions,metadata&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:41.1790000Z</VersionId><Properties><Last-Modified>Sat, 07 Nov 2026 13:34:41 GMT</Last-Modified><Etag>0x8066495863344a4d8ec99177aee3322c</Etag><Content-Length>17</Content-Length><Content-Type>text/plain</Content-Type><BlobType>BlockBlob</BlobType></Properties><Metadata><owner>first</owner></Metadata></Blob><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:41.1860000Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Last-Modified>Sat, 07 Nov 2026 13:34:41 GMT</Last-Modified><Etag>0x2d9e9c82aaf842698533b72a32b09e0e</Etag><Content-Length>16</Content-Length><Content-Type>text/plain</Content-Type><BlobType>BlockBlob</BlobType></Properties><Metadata></Metadata></Blob></Blobs><NextMarker></NextMarker></EnumerationResults>",
+      "headers": {
+        "content-length": "992",
+        "x-ms-request-id": "d91c0363-0ef3-44a2-af33-a7ef139159c2",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-delete-current",
+      "at": "2026-11-07T13:34:41.235Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "728d3dc8-4997-417c-8f21-c747bd664d45",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-head-deleted-current",
+      "at": "2026-11-07T13:34:41.240Z",
+      "method": "HEAD",
+      "path": "/revision-probe/document.txt",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-error-code": "BlobNotFound",
+        "x-ms-request-id": "63c584a0-5d55-4cca-a0f2-0d820c6b48ae",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-old-after-delete",
+      "at": "2026-11-07T13:34:41.250Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {
+          "if-match": "\"0x8066495863344a4d8ec99177aee3322c\""
+        },
+        "body": ""
+      },
+      "status": 200,
+      "body": "original document",
+      "headers": {
+        "content-length": "17",
+        "content-type": "text/plain",
+        "etag": "\"0x8066495863344a4d8ec99177aee3322c\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1790000Z",
+        "x-ms-request-id": "a4f8c124-cc50-48a0-bad3-b29b19e1061d",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-list-after-delete",
+      "at": "2026-11-07T13:34:41.256Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:41.1790000Z</VersionId><Properties><Last-Modified>Sat, 07 Nov 2026 13:34:41 GMT</Last-Modified><Etag>0x8066495863344a4d8ec99177aee3322c</Etag><Content-Length>17</Content-Length><Content-Type>text/plain</Content-Type><BlobType>BlockBlob</BlobType></Properties></Blob><Blob><Name>document.txt</Name><VersionId>2026-11-07T13:34:41.1860000Z</VersionId><Properties><Last-Modified>Sat, 07 Nov 2026 13:34:41 GMT</Last-Modified><Etag>0x2d9e9c82aaf842698533b72a32b09e0e</Etag><Content-Length>16</Content-Length><Content-Type>text/plain</Content-Type><BlobType>BlockBlob</BlobType></Properties></Blob></Blobs><NextMarker></NextMarker></EnumerationResults>",
+      "headers": {
+        "content-length": "889",
+        "x-ms-request-id": "9632d920-33ef-478a-b100-1e94e5887bc9",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-delete-missing",
+      "at": "2026-11-07T13:34:41.264Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2020-01-01T00%3A00%3A00.0000000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:802d6bb5-4719-48ea-9e19-0eae42eeb155\nTime:2026-11-07T13:34:41.261Z</Message></Error>",
+      "headers": {
+        "content-length": "208",
+        "content-type": "application/xml",
+        "x-ms-error-code": "BlobNotFound",
+        "x-ms-request-id": "802d6bb5-4719-48ea-9e19-0eae42eeb155",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-delete-old",
+      "at": "2026-11-07T13:34:41.266Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "30a4e96d-bdb1-4832-bd91-14439ba0e2ba",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-deleted-old",
+      "at": "2026-11-07T13:34:41.275Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1790000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 404,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:c91f9493-1ae2-4a62-b75d-52eb9c075794\nTime:2026-11-07T13:34:41.274Z</Message></Error>",
+      "headers": {
+        "content-length": "208",
+        "content-type": "application/xml",
+        "x-ms-error-code": "BlobNotFound",
+        "x-ms-request-id": "c91f9493-1ae2-4a62-b75d-52eb9c075794",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-read-retained-second",
+      "at": "2026-11-07T13:34:41.278Z",
+      "method": "GET",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1860000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "updated document",
+      "headers": {
+        "content-length": "16",
+        "content-type": "text/plain",
+        "etag": "\"0x2d9e9c82aaf842698533b72a32b09e0e\"",
+        "last-modified": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "x-ms-version-id": "2026-11-07T13:34:41.1860000Z",
+        "x-ms-request-id": "2de62f13-da80-4c52-a760-36bf1dff18a5",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-delete-second",
+      "at": "2026-11-07T13:34:41.280Z",
+      "method": "DELETE",
+      "path": "/revision-probe/document.txt?versionid=2026-11-07T13%3A34%3A41.1860000Z",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 202,
+      "body": "",
+      "headers": {
+        "content-length": "0",
+        "x-ms-request-id": "0aa98a12-b08e-4785-8769-7986f499232c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "versions-list-empty",
+      "at": "2026-11-07T13:34:41.284Z",
+      "method": "GET",
+      "path": "/revision-probe?restype=container&comp=list&include=versions&prefix=document",
+      "surface": "blob",
+      "request": {
+        "headers": {},
+        "body": ""
+      },
+      "status": 200,
+      "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://<storage-account>.blob.core.windows.net/\" ContainerName=\"revision-probe\"><Prefix>document</Prefix><Blobs></Blobs><NextMarker></NextMarker></EnumerationResults>",
+      "headers": {
+        "content-length": "239",
+        "x-ms-request-id": "ddf206ae-1176-4613-a7de-dc7050c5ee8c",
+        "x-ms-version": "2023-11-03",
+        "date": "Sat, 07 Nov 2026 13:34:41 GMT",
+        "content-type": "application/xml"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:42.455Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:43.159Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>",
+            "name": "<storage-account>",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+              "name": "Standard_LRS",
+              "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "location": "westus2",
+            "tags": {
+              "run": "07e77006867d",
+              "project": "globalstack-storage-component"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:44.367Z",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 202,
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:45.446Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:48.761Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:52.355Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:55.658Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:34:58.909Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:02.172Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:05.425Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:08.717Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:11.971Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:15.231Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:18.502Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:21.753Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:25.014Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:28.345Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:31.600Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:34.855Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:38.108Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:41.380Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:44.643Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "run": "07e77006867d",
+          "project": "globalstack-storage-component"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:48.363Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "at": "2026-11-07T13:35:49.329Z",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/<storage-account>?api-version=2023-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    }
+  ],
+  "cleanup": {
+    "groupAbsent": true,
+    "accountAbsent": true
+  },
+  "versionObservations": {
+    "azure": {
+      "complete": true,
+      "firstVersion": "2026-11-07T13:34:36.4660021Z",
+      "secondVersion": "2026-11-07T13:34:36.6966714Z"
+    },
+    "local": {
+      "complete": true,
+      "firstVersion": "2026-11-07T13:34:41.1790000Z",
+      "secondVersion": "2026-11-07T13:34:41.1860000Z"
+    }
+  },
+  "probesComplete": true,
+  "completedAt": "2026-11-07T13:35:49.334Z"
+}

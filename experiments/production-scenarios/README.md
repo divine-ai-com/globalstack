@@ -202,8 +202,16 @@ Account refresh preserves versions; container deletion removes them. Snapshot,
 soft-delete, retention-policy and restart-durability parity are not established.
 Snapshots and unsupported listing options remain explicit failures. Local
 regressions replay the captured Azure decisions with new identifiers, and the
-native Blob SDK exercises the document adapter against the router. A fresh
-paired capture and the full live application flow remain required.
+native Blob SDK exercises the document adapter against the router. The
+[fresh paired capture](evidence/versions-after-2d66061/comparison.json) matches
+22 selected version contracts: status, logical error code, retained bytes,
+ETag/version relationships and selected listing fields. One error-header
+difference remains in that recording. Both targets completed the sequence and
+Azure account/group absence was verified. Full messages, other listing fields,
+timing and broader protocol parity are not included in this count. Reproduce
+the comparison with `compare-blob-versions.py CAPTURE OUTPUT`; a deliberately
+wrong revision, missing operation or malformed listing must fail comparison.
+The full live application flow and Portal evidence remain outstanding.
 
 The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
 
