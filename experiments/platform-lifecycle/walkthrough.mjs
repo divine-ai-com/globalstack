@@ -9,8 +9,9 @@ import { platforms } from './platforms.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
-const platform = args.find(arg => arg.startsWith('--platform='))?.slice(11);
-assert.ok(platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
+const validationOnly = args.includes('--validation-only');
+const platform = validationOnly ? 'document-search-validation' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
+assert.ok(validationOnly || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
 const modulePath = process.env.PAIRED_PLAYWRIGHT_MODULE;
 assert.ok(modulePath?.startsWith('/'), 'Absolute path to installed playwright-core/index.mjs required');
 const { chromium } = await import(pathToFileURL(modulePath).href);
@@ -19,7 +20,8 @@ await mkdir(root, { recursive: true, mode: 0o700 });
 const space = await statfs(root);
 assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3, '40 GiB reserve required');
 const runDir = resolve(root, 'run');
-const template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
+let template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
+if (validationOnly) template = template.replace('Empty resource group only.', 'Search foundation validation only. No application deployment or event-flow claim.');
 const events = async () => {
   try { return (await readFile(resolve(runDir, 'events.ndjson'), 'utf8')).split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
@@ -43,7 +45,8 @@ try {
   await page.waitForTimeout(500);
   console.log(`Walkthrough: ${root}`);
   exitCode = await new Promise((done, fail) => {
-    const child = spawn(process.execPath, [resolve(here, 'run.mjs'), ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
+    const runner = validationOnly ? resolve(here, '../production-scenarios/validate-search.mjs') : resolve(here, 'run.mjs');
+    const child = spawn(process.execPath, [runner, ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
     child.on('error', fail); child.on('exit', code => done(code ?? 1));
   });
   await page.waitForTimeout(1500);
