@@ -1,5 +1,14 @@
 import assert from 'node:assert/strict';
 
+export async function configureBlobVersioning(request, accountPath) {
+  const response = await request('PUT', `${accountPath}/blobServices/default?api-version=2023-05-01`, {
+    properties: { isVersioningEnabled: true, deleteRetentionPolicy: { enabled: false }, containerDeleteRetentionPolicy: { enabled: false } },
+  });
+  assert.ok([200, 201].includes(response.status), 'Blob service configuration did not complete');
+  assert.equal(response.body?.properties?.isVersioningEnabled, true, 'Blob service did not retain the versioning setting');
+  return response;
+}
+
 // The same sequence runs on both targets. Version identifiers are outputs of
 // each target, not fixed values copied from Azure into the emulator.
 export async function storageVersionCases(exchange, { sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {

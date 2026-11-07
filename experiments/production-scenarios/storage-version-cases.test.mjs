@@ -2,7 +2,30 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
-import { storageVersionCases } from './storage-version-cases.mjs';
+import { configureBlobVersioning, storageVersionCases } from './storage-version-cases.mjs';
+import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { httpExchange } from './http-exchange.mjs';
+
+test('local ARM setup waits for parent readiness and accepts completed Blob-service creation', async t => {
+  const store = new ResourceStore(), runtime = createEmulatorRuntime({ store });
+  const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource });
+  await new Promise(resolve => arm.listen(0, '127.0.0.1', resolve));
+  t.after(async () => { arm.closeAllConnections(); await new Promise(resolve => arm.close(resolve)); await runtime.dispose(); });
+  const request = (method, path, body) => httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, { method, body, headers: { authorization: 'Bearer globalstack-local-token' } });
+  const group = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/version-setup', account = `${group}/providers/Microsoft.Storage/storageAccounts/versionfixture`;
+  assert.equal((await request('PUT', `${group}?api-version=2025-04-01`, { location: 'westus2' })).status, 201);
+  assert.ok([200, 201, 202].includes((await request('PUT', `${account}?api-version=2023-05-01`, { location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {} })).status));
+  let ready;
+  for (let i = 0; i < 20; i++) {
+    ready = (await request('GET', `${account}?api-version=2023-05-01`)).body.properties.provisioningState;
+    if (ready === 'Succeeded') break;
+  }
+  assert.equal(ready, 'Succeeded');
+  assert.equal((await configureBlobVersioning(request, account)).status, 201);
+  assert.equal((await configureBlobVersioning(request, account)).status, 200);
+});
 
 test('version diagnostics wait for observed data-plane activation and bound retries', async () => {
   const calls = [], delays = [];

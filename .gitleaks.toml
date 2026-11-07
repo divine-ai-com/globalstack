@@ -156,3 +156,11 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/claims-evidence/run\.mjs$''', '''^scripts/repository/check-research-secret-scan\.mjs$''']
 regexes = ['''^eventKey = topicKeys\.body\.key1;$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in version setup evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/version-setup-1755e28/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']

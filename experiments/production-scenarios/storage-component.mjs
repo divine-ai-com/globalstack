@@ -14,7 +14,7 @@ import { storageCases, storageExchange } from './storage-http.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
-import { storageVersionCases } from './storage-version-cases.mjs';
+import { configureBlobVersioning, storageVersionCases } from './storage-version-cases.mjs';
 import { httpExchange } from './http-exchange.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
@@ -141,10 +141,8 @@ try {
   }
   if (process.env.STORAGE_PROBE_VERSIONS === '1') {
     phase = 'enable-blob-versioning';
-    const path = `${scope.account}/blobServices/default?api-version=2023-05-01`;
-    const body = { properties: { isVersioningEnabled: true, deleteRetentionPolicy: { enabled: false }, containerDeleteRetentionPolicy: { enabled: false } } };
-    assert.equal((await request('PUT', path, body)).status, 200, 'Azure did not enable versioning');
-    assert.equal((await localArm('PUT', path, body)).status, 200, 'Local Blob service configuration failed');
+    await configureBlobVersioning(request, scope.account);
+    await configureBlobVersioning(localArm, scope.account);
     report.versionObservations = {};
     for (const target of ['azure', 'local']) {
       try {
