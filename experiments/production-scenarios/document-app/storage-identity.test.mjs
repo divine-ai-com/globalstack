@@ -38,10 +38,13 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
     t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
     return server.address().port;
   }
-  const requests = [], handler = router.blobHandler();
+  const requests = [], responseFinishes = [], handler = router.blobHandler();
   const port = await listen(httpsServer({ key: await readFile(join(directory, 'key.pem')), cert: ca }, (req, res) => {
     assert.match(req.headers.authorization ?? '', /^Bearer /);
-    res.on('finish', () => requests.push({ method: req.method, path: req.url, range: req.headers.range, storageRange: req.headers['x-ms-range'], status: res.statusCode }));
+    responseFinishes.push(new Promise(resolve => res.once('finish', () => {
+      requests.push({ method: req.method, path: req.url, range: req.headers.range, storageRange: req.headers['x-ms-range'], status: res.statusCode });
+      resolve();
+    })));
     return handler(req, res);
   }));
   const identityHeader = randomBytes(32).toString('hex');
@@ -81,6 +84,9 @@ test('DefaultAzureCredential and the unchanged source adapter use signed tokens 
   assert.equal((await blob.downloadToBuffer(2, 4)).toString(), 'plac');
   const input = { container: 'landing', blobName: 'tenant/report.txt', etag: original.etag.replaceAll('"', '') };
   assert.equal((await sourceRevision(blobs, input)).bytes.toString(), 'original document bytes');
+  // The SDK consuming the response and the server's finish callback can run in
+  // different event-loop turns. Await the observation before asserting it.
+  await Promise.all(responseFinishes);
   assert.ok(identityRequests >= 1);
   assert.ok(requests.some(request => request.method === 'GET' && request.path.includes('versionid=') && request.status === 206), JSON.stringify(requests));
   store.resources.delete(roleId.toLowerCase());
