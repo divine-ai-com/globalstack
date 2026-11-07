@@ -2,7 +2,7 @@
 
 Neither application scenario has completed deployment or end-to-end testing. The [specification](SPECIFICATION.md) defines both business flows, services, configurations, failure cases, lifecycle, cost controls and evidence requirements. The [requirements manifest](requirements.json) registers 50 document-processing and 51 financial-RAG assertions. All remain unexecuted at the full-scenario level. Component probes do not mark those application assertions passed.
 
-Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28).
+Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28). The [nine-platform resource-group matrix](../platform-lifecycle/LIVE.md) is background evidence for a different scenario.
 
 ## Captured findings
 
