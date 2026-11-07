@@ -181,18 +181,29 @@ No paid add-on features are enabled. A completed capture can still contain
 mismatches; inspect the responses rather than treating exit status as parity.
 
 The first Storage capture still lacked Table batch transactions. Remaining
-limitations include bounded Table query support, incomplete blob listing/versioning, application identity/private
+limitations include bounded Table queries and Blob version operations, application identity/private
 networking, real application deployment, and durable recovery across emulator
 restarts. Both full scenarios remain unexecuted.
 
 A later [local diagnostic](evidence/version-selection-368fc33/) found that
 `versionid` selectors were ignored: reading a nonexistent version returned
-current content, and deleting it removed the current blob. The router now
-rejects version and snapshot selectors with HTTP 501 before reads or mutations.
-Tests verify current content, ETag, metadata and lease remain intact. This is an
-explicit unsupported-operation guard, not an implementation of versioning or
-Azure status-code parity. Historical version retention, listing and live paired
-update/delete recovery remain required for the document scenario.
+current content, and deleting it removed the current blob. An initial guard
+rejected version and snapshot selectors with HTTP 501. The subsequent
+[Azure baseline](evidence/version-baseline-97a7821/) records version retention,
+selection, listing and deletion, including rejection of historical mutations
+and deletion of the current version by ID. Local version activation failed in
+that baseline; its successful Azure operations are not paired passes.
+
+The router now applies ARM's boolean versioning setting to its data plane.
+It retains immutable versions on BlockBlob writes and metadata changes,
+supports historical GET/HEAD/DELETE and flat listing with prefix, versions,
+metadata and scoped pagination. Deleting the root retains its history.
+Account refresh preserves versions; container deletion removes them. Snapshot,
+soft-delete, retention-policy and restart-durability parity are not established.
+Snapshots and unsupported listing options remain explicit failures. Local
+regressions replay the captured Azure decisions with new identifiers, and the
+native Blob SDK exercises the document adapter against the router. A fresh
+paired capture and the full live application flow remain required.
 
 The [second Storage capture](evidence/storage-updates-d16a469/) adds leased blob metadata and conditional Table replacement/merge, with 30 paired requests and verified cleanup. It confirms the earlier condition/lease/Table/queue fixes in a fresh Azure-first run and preserves the remaining update gaps before their correction. The subsequent [clean native-host probe](evidence/functions-storage-2fb0e55/) starts the Durable worker and acquires its host lease. Timer invocation then exposes missing application configuration in this deliberately storage-only probe. Neither a complete orchestration nor a document business flow is claimed.
 

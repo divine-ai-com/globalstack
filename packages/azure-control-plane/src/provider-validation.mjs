@@ -2554,6 +2554,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   if (method !== 'PUT') return null;
 
+  if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices'
+    && body.properties?.isVersioningEnabled !== undefined && typeof body.properties.isVersioningEnabled !== 'boolean') {
+    return invalidRequestContent('properties.isVersioningEnabled must be a boolean');
+  }
+
   if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
     const destination = body.properties?.destination ?? body.destination;
     if (!destination || typeof destination !== 'object') {

@@ -1,0 +1,17 @@
+{
+  "scope": "Azure version lifecycle completed; local versioning never became effective. This is a baseline failure, not a paired pass. Both cloud resources were verified absent. Recording is terminal/API only.",
+  "files": {
+    "result.json": {
+      "sha256": "0363e8c362cbeea0f21eb2ad3374f9ad7a83720a944e1c15085255a2fb099c72",
+      "bytes": 181715
+    },
+    "events.ndjson": {
+      "sha256": "5ca75e6f6bc280a20c266fce343726956da6c5c486dd47bab8abff38ae5862a0",
+      "bytes": 247701
+    },
+    "recording.json": {
+      "sha256": "9f0b86d69c52ad641a95abbfebc0a413ebb0fb802395560e15fdb2780c561418",
+      "bytes": 643
+    }
+  }
+}

@@ -3,6 +3,9 @@ import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { sourceRevision } from './adapters.mjs';
+import { createDefaultHttpClient, createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
+import { toCompatResponse } from '@azure/core-http-compat';
+import { createStorageDataPlaneRouter } from '../../../packages/azure-data-plane/src/storage-router.mjs';
 
 const input = { container: 'landing', blobName: 'tenant/report.txt', etag: 'original' };
 const version = '2026-11-07T00:00:00.0000000Z';
@@ -93,4 +96,47 @@ test('a failed download ETag condition remains a failure', async t => {
   const { blobs, calls } = await fixture(t, { downloadStatus: 412 });
   await assert.rejects(sourceRevision(blobs, input), { statusCode: 412, code: 'ConditionNotMet' });
   assert.equal(calls.at(-1).ifMatch, '"original"');
+});
+
+test('native Blob SDK and document adapter recover immutable versions from the actual emulator router', async t => {
+  const router = createStorageDataPlaneRouter(), account = 'sdkversionfixture';
+  router.registerStorageAccount({ accountName: account, accountKey: key });
+  router.configureBlobService({ accountName: account, isVersioningEnabled: true });
+  const server = createServer(router.blobHandler());
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const transport = createDefaultHttpClient();
+  // Route signed SDK requests to loopback. The account host and signed paths
+  // remain unchanged; neither SDK nor application receives synthetic responses.
+  const blobs = new BlobServiceClient(`http://${account}.blob.core.windows.net`, new StorageSharedKeyCredential(account, key), {
+    retryOptions: { maxTries: 1 }, httpClient: { async sendRequest(request) {
+      const url = new URL(request.url);
+      request.headers.set('host', url.hostname);
+      url.hostname = '127.0.0.1'; url.port = String(server.address().port); request.url = url.href;
+      const outgoing = createPipelineRequest({ ...request, headers: createHttpHeaders(request.headers.toJson()), allowInsecureConnection: true });
+      return { ...toCompatResponse(await transport.sendRequest(outgoing)), request };
+    } },
+  });
+  const container = blobs.getContainerClient('landing');
+  await container.create();
+  const blob = container.getBlockBlobClient('tenant/report.txt');
+  const original = await blob.upload('original application bytes', 26, { metadata: { owner: 'original' } });
+  const changed = await blob.upload('new bytes', 9);
+  assert.notEqual(original.versionId, changed.versionId);
+  const event = { ...input, etag: original.etag.replaceAll('"', '') };
+  assert.equal((await sourceRevision(blobs, event)).bytes.toString(), 'original application bytes');
+  await blob.delete();
+  assert.equal((await sourceRevision(blobs, event)).bytes.toString(), 'original application bytes');
+  const versions = [];
+  for await (const page of container.listBlobsFlat({ includeVersions: true, includeMetadata: true }).byPage({ maxPageSize: 1 })) {
+    assert.equal(page.segment.blobItems.length, 1);
+    versions.push(...page.segment.blobItems);
+  }
+  assert.equal(versions.length, 2);
+  assert.equal(versions[0].metadata.owner, 'original');
+  assert.equal(versions[0].properties.etag.replaceAll('"', ''), event.etag);
+  await blob.withVersion(original.versionId).delete();
+  await assert.rejects(sourceRevision(blobs, event), /unavailable/);
+  const retained = await sourceRevision(blobs, { ...input, etag: changed.etag.replaceAll('"', '') });
+  assert.equal(retained.bytes.toString(), 'new bytes');
 });

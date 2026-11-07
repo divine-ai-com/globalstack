@@ -577,6 +577,12 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices') {
+      storageRouter.configureBlobService({ accountName: providerRoute.typePath.split('/')[1],
+        isVersioningEnabled: resource.properties?.isVersioningEnabled });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices/containers') {
       const accountName = providerRoute.typePath.split('/')[1];
       const containerName = providerRoute.typePath.split('/').at(-1);

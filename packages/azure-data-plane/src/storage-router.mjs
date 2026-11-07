@@ -5,6 +5,7 @@ import { leaseHeaders, leaseGuard, operateLease, blobConditions, leaseState } fr
 import { tableFilter, tableCursor, readTableCursor } from './storage-table-filter.mjs';
 import { parseTableBatch, executeTableBatch, tableBatchResponse } from './storage-table-batch.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
+import { publishBlob, versionHeaders, validVersionId, listBlobs } from './storage-versions.mjs';
 
 function nowUtc() {
   return new Date().toUTCString();
@@ -289,6 +290,9 @@ export class StorageDataPlaneRouter {
       accountKey,
       containers: existing?.containers ?? new Map(),
       blobs: existing?.blobs ?? new Map(),
+      blobVersions: existing?.blobVersions ?? new Map(),
+      versioningEnabled: existing?.versioningEnabled ?? false,
+      versionClock: existing?.versionClock ?? 0n,
       queues: existing?.queues ?? new Map(),
       tables: existing?.tables ?? new Map(),
     });
@@ -296,6 +300,12 @@ export class StorageDataPlaneRouter {
 
   unregisterStorageAccount(accountName) {
     this.accounts.delete(lower(accountName));
+  }
+
+  configureBlobService({ accountName, isVersioningEnabled }) {
+    const account = this.account(accountName);
+    if (!account) throw new Error(`Storage account ${accountName} is not registered.`);
+    if (typeof isVersioningEnabled === 'boolean') account.versioningEnabled = isVersioningEnabled;
   }
 
   registerContainer({ accountName, containerName }) {
@@ -312,6 +322,9 @@ export class StorageDataPlaneRouter {
     account.containers.delete(lower(containerName));
     for (const key of [...account.blobs.keys()]) {
       if (key.startsWith(`${lower(containerName)}\0`)) account.blobs.delete(key);
+    }
+    for (const key of account.blobVersions.keys()) {
+      if (key.startsWith(`${lower(containerName)}\0`)) account.blobVersions.delete(key);
     }
   }
 
@@ -363,14 +376,19 @@ export class StorageDataPlaneRouter {
         ? validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
         : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
-      // Historical selectors must never fall through to the current blob. The
-      // router does not retain versions or snapshots yet, including for deletes.
-      if (url.searchParams.has('versionid') || url.searchParams.has('snapshot')) {
-        return sendXmlError(res, 501, 'NotImplemented', 'Blob versions and snapshots are not implemented.', requestId);
+      if (Object.keys(req.headers).some(name => name.startsWith('x-ms-meta-') && !/^[a-z_][a-z0-9_]*$/.test(name.slice(10)))) {
+        return sendXmlError(res, 400, 'InvalidMetadata', 'Metadata names must be valid identifiers.', requestId);
+      }
+      if (url.searchParams.has('snapshot')) {
+        return sendXmlError(res, 501, 'NotImplemented', 'Blob snapshots are not implemented.', requestId);
+      }
+      const selectedVersion = url.searchParams.get('versionid');
+      if (selectedVersion !== null && (!validVersionId(selectedVersion) || !['GET', 'HEAD', 'DELETE'].includes(req.method) || containerRequest)) {
+        return sendXmlError(res, 400, 'InvalidQueryParameterValue', 'The versionid parameter is invalid for this operation.', requestId);
       }
       if (containerRequest) {
         const comp = url.searchParams.get('comp');
-        if (comp && !['metadata', 'lease'].includes(comp)) return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);
+        if (comp && !['metadata', 'lease', 'list'].includes(comp)) return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);
         if (!['$root', '$logs', '$web'].includes(containerName)) {
           if (containerName.length < 3 || containerName.length > 63) return sendXmlError(res, 400, 'OutOfRangeInput', 'The specified resource name length is not within the permissible limits.', requestId);
           if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(containerName)) return sendXmlError(res, 400, 'InvalidResourceName', 'The specifed resource name contains invalid characters.', requestId);
@@ -388,6 +406,12 @@ export class StorageDataPlaneRouter {
           return send(res, 201, '', { ...headers, etag: created.etag, 'last-modified': created.lastModified });
         }
         if (!existing) return sendXmlError(res, 404, 'ContainerNotFound', 'The specified container does not exist.', requestId);
+        if (comp === 'list') {
+          if (req.method !== 'GET') return sendXmlError(res, 405, 'MethodNotAllowed', 'Blob listing requires GET.', requestId);
+          const listing = listBlobs(account, containerName, url.searchParams);
+          if (listing.code) return sendXmlError(res, listing.status, listing.code, listing.message, requestId);
+          return send(res, 200, listing.body, { ...headers, 'content-type': 'application/xml' });
+        }
         if (req.method === 'PUT' && comp === 'lease') {
           const result = operateLease(existing, req.headers, 'Container');
           if (result.code) return sendXmlError(res, result.status, result.code, result.message, requestId);
@@ -417,7 +441,7 @@ export class StorageDataPlaneRouter {
       if (!container) return sendXmlError(res, 404, 'ContainerNotFound', `The specified container does not exist.`, requestId);
       const blobName = blobParts.join('/');
       const key = blobKey(containerName, blobName);
-      let existingBlob = account.blobs.get(key);
+      let existingBlob = selectedVersion === null ? account.blobs.get(key) : account.blobVersions.get(key)?.get(selectedVersion);
       const comp = url.searchParams.get('comp');
       const conditionError = blobConditions(existingBlob, req.headers, req.method);
       if (conditionError) {
@@ -435,11 +459,13 @@ export class StorageDataPlaneRouter {
         const metadataLeaseError = leaseGuard(existingBlob, req.headers, 'Blob', true);
         if (metadataLeaseError) return sendXmlError(res, metadataLeaseError.status, metadataLeaseError.code, metadataLeaseError.message, requestId);
         if (['x-ms-encryption-scope', 'x-ms-encryption-key', 'x-ms-encryption-key-sha256'].some(name => req.headers[name])) return sendXmlError(res, 501, 'NotImplemented', 'Customer-provided blob encryption is not implemented.', requestId);
-        existingBlob.metadata = Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-')));
-        existingBlob.etag = `"${randomUUID()}"`;
-        existingBlob.lastModified = nowUtc();
+        existingBlob = { ...existingBlob,
+          metadata: Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-'))),
+          etag: `"0x${randomUUID().replaceAll('-', '')}"`, lastModified: nowUtc() };
         if (!['leased', 'breaking'].includes(leaseState(existingBlob))) delete existingBlob.lease;
+        publishBlob(account, key, existingBlob);
         return send(res, 200, '', { etag: existingBlob.etag, 'last-modified': existingBlob.lastModified,
+          ...versionHeaders(existingBlob, true),
           'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() });
       }
       if (comp) return sendXmlError(res, 501, 'NotImplemented', `Blob operation '${comp}' is not implemented.`, requestId);
@@ -457,26 +483,27 @@ export class StorageDataPlaneRouter {
         existingBlob = account.blobs.get(key);
         const currentError = blobConditions(existingBlob, req.headers, req.method) || leaseGuard(existingBlob, req.headers, 'Blob', true);
         if (currentError) return sendXmlError(res, currentError.status, currentError.code, currentError.message, requestId);
-        account.blobs.set(key, {
+        publishBlob(account, key, {
           ...(existingBlob && ['leased', 'breaking'].includes(leaseState(existingBlob)) ? { lease: existingBlob.lease } : {}),
           blobName,
           containerName,
           metadata: Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-'))),
           contentType: String(req.headers['content-type'] ?? 'application/octet-stream'),
           body,
-          etag: `"${randomUUID()}"`,
+          etag: `"0x${randomUUID().replaceAll('-', '')}"`,
           lastModified: nowUtc(),
         });
         return send(res, 201, '', {
           etag: account.blobs.get(key).etag,
           'last-modified': account.blobs.get(key).lastModified,
+          ...versionHeaders(account.blobs.get(key), true),
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
         });
       }
 
-      const blob = account.blobs.get(key);
+      const blob = existingBlob;
       if (!blob) return sendXmlError(res, 404, 'BlobNotFound', 'The specified blob does not exist.', requestId);
 
       if (req.method === 'GET') {
@@ -485,7 +512,7 @@ export class StorageDataPlaneRouter {
           etag: blob.etag,
           'last-modified': blob.lastModified,
           'x-ms-blob-type': 'BlockBlob',
-          ...leaseHeaders(blob), ...blob.metadata,
+          ...(selectedVersion === null ? leaseHeaders(blob) : {}), ...blob.metadata, ...versionHeaders(blob, selectedVersion !== null),
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
@@ -499,7 +526,7 @@ export class StorageDataPlaneRouter {
           'last-modified': blob.lastModified,
           'content-length': String(blob.body.length),
           'x-ms-blob-type': 'BlockBlob',
-          ...leaseHeaders(blob), ...blob.metadata,
+          ...(selectedVersion === null ? leaseHeaders(blob) : {}), ...blob.metadata, ...versionHeaders(blob, selectedVersion !== null),
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
@@ -507,7 +534,12 @@ export class StorageDataPlaneRouter {
       }
 
       if (req.method === 'DELETE') {
-        account.blobs.delete(key);
+        if (selectedVersion !== null) {
+          if (account.blobs.get(key)?.versionId === selectedVersion) return sendXmlError(res, 403, 'OperationNotAllowedOnRootBlob', 'The specified operation is not allowed on root blob.', requestId);
+          const history = account.blobVersions.get(key);
+          history.delete(selectedVersion);
+          if (!history.size) account.blobVersions.delete(key);
+        } else account.blobs.delete(key);
         return send(res, 202, '', {
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',

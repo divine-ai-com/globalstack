@@ -25,6 +25,9 @@ test('local ARM setup waits for parent readiness and accepts completed Blob-serv
   assert.equal(ready, 'Succeeded');
   assert.equal((await configureBlobVersioning(request, account)).status, 201);
   assert.equal((await configureBlobVersioning(request, account)).status, 200);
+  assert.equal(runtime.storageRouter.account('versionfixture').versioningEnabled, true);
+  assert.equal((await request('PUT', `${account}/blobServices/default?api-version=2023-05-01`, { properties: { isVersioningEnabled: 'false' } })).status, 400);
+  assert.equal(runtime.storageRouter.account('versionfixture').versioningEnabled, true);
 });
 
 test('version diagnostics wait for observed data-plane activation and bound retries', async () => {
