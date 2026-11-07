@@ -9,13 +9,26 @@ export function storageScope(manifest) {
   assert.equal(manifest.group, `gs-storage-${manifest.runId}`);
   assert.equal(manifest.account, `gs${manifest.runId}`);
   const group = `/subscriptions/${manifest.subscription}/resourceGroups/${manifest.group}`;
-  return { group, account: `${group}/providers/Microsoft.Storage/storageAccounts/${manifest.account}` };
+  const account = `${group}/providers/Microsoft.Storage/storageAccounts/${manifest.account}`;
+  if (manifest.eventing !== undefined) assert.equal(typeof manifest.eventing, 'boolean');
+  if (!manifest.eventing) return { group, account };
+  assert.match(manifest.roleName, /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/);
+  const topic = `${group}/providers/Microsoft.EventGrid/systemTopics/gs-events-${manifest.runId}`;
+  const queue = `${account}/queueServices/default/queues/event-arrivals`;
+  return { group, account, topic, queue, subscription: `${topic}/eventSubscriptions/blob-arrivals`,
+    role: `${queue}/providers/Microsoft.Authorization/roleAssignments/${manifest.roleName}`,
+    deployment: `${group}/providers/Microsoft.Resources/deployments/blob-events` };
 }
 
 export function storageArmClient(manifest, observe = () => {}, transport = fetch) {
   const scope = storageScope(manifest);
   const allowed = new Map([[scope.group, ['GET', 'PUT', 'DELETE']], [`${scope.group}/resources`, ['GET']],
     [scope.account, ['GET', 'PUT']], [`${scope.account}/blobServices/default`, ['GET', 'PUT']], [`${scope.account}/listKeys`, ['POST']]]);
+  if (manifest.eventing) {
+    for (const id of [scope.topic, scope.queue, scope.subscription]) allowed.set(id, ['GET']);
+    allowed.set(scope.role, ['GET', 'DELETE']);
+    allowed.set(scope.deployment, ['GET', 'PUT']);
+  }
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash
@@ -41,7 +54,18 @@ export async function cleanupStorage(manifest, request = storageArmClient(manife
     const inventory = await request('GET', `${scope.group}/resources?api-version=2025-04-01`);
     assert.equal(inventory.status, 200);
     assert.ok(!inventory.body.nextLink && Array.isArray(inventory.body.value), 'Incomplete resource inventory');
-    assert.ok(inventory.body.value.every(resource => [scope.account, `${scope.account}/blobServices/default`].some(id => resource.id.toLowerCase() === id.toLowerCase())), 'Unexpected resources in Storage-only group');
+    const owned = [scope.account, `${scope.account}/blobServices/default`, ...(manifest.eventing
+      ? [`${scope.account}/queueServices/default`, scope.queue, scope.topic, scope.subscription, scope.role, scope.deployment] : [])];
+    assert.ok(inventory.body.value.every(resource => owned.some(id => resource.id.toLowerCase() === id.toLowerCase())), 'Unexpected resources in Storage component group');
+    if (manifest.eventing) {
+      const role = await request('GET', `${scope.role}?api-version=2022-04-01`);
+      assert.ok([200, 404].includes(role.status), 'Role ownership lookup failed');
+      if (role.status === 200) {
+        assert.equal(role.body.id.toLowerCase(), scope.role.toLowerCase());
+        assert.equal(role.body.properties.roleDefinitionId.toLowerCase(), `/subscriptions/${manifest.subscription}/providers/Microsoft.Authorization/roleDefinitions/c6a89b2d-59bc-44d0-9896-0f6e12d7b80a`.toLowerCase());
+        assert.ok([200, 202, 204, 404].includes((await request('DELETE', `${scope.role}?api-version=2022-04-01`)).status), 'Sender role deletion failed');
+      }
+    }
     const deleted = await request('DELETE', group);
     assert.ok([200, 202, 204, 404].includes(deleted.status), 'Group deletion failed');
   }
@@ -54,6 +78,12 @@ export async function cleanupStorage(manifest, request = storageArmClient(manife
     await sleep(3000);
   }
   assert.equal((await request('GET', account)).status, 404, 'Storage account still exists');
+  if (manifest.eventing) {
+    for (const [id, apiVersion] of [[scope.topic, '2025-02-15'], [scope.subscription, '2025-02-15'], [scope.role, '2022-04-01'], [scope.deployment, '2025-04-01']]) {
+      assert.equal((await request('GET', `${id}?api-version=${apiVersion}`)).status, 404, 'Eventing resource still exists');
+    }
+    return { groupAbsent: true, accountAbsent: true, topicAbsent: true, subscriptionAbsent: true, roleAbsent: true, deploymentAbsent: true };
+  }
   return { groupAbsent: true, accountAbsent: true };
 }
 

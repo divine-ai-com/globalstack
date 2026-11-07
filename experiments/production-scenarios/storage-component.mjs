@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, statfs, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { isIP } from 'node:net';
@@ -16,6 +16,7 @@ import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { productionBudgetPath as budgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 import { configureBlobVersioning, storageVersionCases } from './storage-version-cases.mjs';
 import { httpExchange } from './http-exchange.mjs';
+import { runBlobEventComponent } from './blob-event-component.mjs';
 
 const out = resolve(process.env.PAIRED_RUN_DIR);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -30,7 +31,8 @@ assert.equal(session.state, 'Enabled');
 assert.equal(azureCli(config, ['resource', 'list', '--subscription', session.id]).length, 0, 'Reconcile existing inventory before provisioning');
 const runId = randomBytes(6).toString('hex');
 const manifest = { subscription: session.id, runId, group: `gs-storage-${runId}`, account: `gs${runId}`,
-  config, parentPid: process.pid, deadline: Date.now() + 20 * 60000 };
+  config, parentPid: process.pid, deadline: Date.now() + 20 * 60000,
+  ...(process.env.STORAGE_PROBE_EVENTS === '1' ? { eventing: true, roleName: randomUUID() } : {}) };
 const scope = storageScope(manifest);
 const token = azureToken(config);
 const replacements = [[token, '<redacted>'], [session.id, '<subscription>'], [session.tenantId, '<tenant>'], [manifest.group, '<group>'], [manifest.account, '<storage-account>']];
@@ -42,6 +44,15 @@ const report = { revision, sourceDirty: false, startedAt: new Date().toISOString
     limits: 'One Standard_LRS StorageV2 account, less than 1 MiB stored, fewer than 200 requests, no added paid features.' }, exchanges: [], cleanup: null };
 let phase = 'setup';
 const observe = (target, event) => {
+  function identify(value) {
+    if (!value || typeof value !== 'object') return;
+    for (const [name, child] of Object.entries(value)) {
+      if (['principalId', 'clientId'].includes(name) && typeof child === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(child) && !replacements.some(([from]) => from === child)) {
+        replacements.push([child, `<${target}-${name}-${replacements.length}>`]);
+      } else identify(child);
+    }
+  }
+  identify(event);
   const safe = sanitize({ target, phase, at: new Date().toISOString(), ...event }, replacements);
   report.exchanges.push(safe);
   emit('http', { target, phase, method: event.method, path: safe.path, status: event.status });
@@ -60,6 +71,10 @@ try {
   assert.equal(isIP(ip), 4);
   replacements.push([ip, '<runner-ip>']);
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: 'Storage comparison in westus2' });
+  if (manifest.eventing) {
+    report.budget.limits = 'One Standard_LRS account, one Event Grid system topic/subscription, one queue-scoped sender role, less than 1 MiB, fewer than 500 HTTP requests and 100 event operations. No Event Grid namespace or throughput-unit reservation.';
+    report.budget.eventGridRate = { usdPerMillionEventOperations: 0.6, region: 'westus2', verified: '2026-11-07', source: 'Azure Retail Prices API, Standard Event Operations' };
+  }
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   const watchdog = spawn(process.execPath, [resolve('experiments/production-scenarios/storage-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((resolve, reject) => { watchdog.once('spawn', resolve); watchdog.once('error', reject); });
@@ -69,7 +84,7 @@ try {
   const accountBody = {
     location: 'westus2', tags, kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {
       allowBlobPublicAccess: false, allowSharedKeyAccess: true, supportsHttpsTrafficOnly: true, minimumTlsVersion: 'TLS1_2',
-      publicNetworkAccess: 'Enabled', networkAcls: { bypass: 'None', defaultAction: 'Deny', ipRules: [{ value: ip, action: 'Allow' }] },
+      publicNetworkAccess: 'Enabled', networkAcls: { bypass: manifest.eventing ? 'AzureServices' : 'None', defaultAction: 'Deny', ipRules: [{ value: ip, action: 'Allow' }] },
     },
   };
   const create = await request('PUT', `${scope.account}?api-version=2023-05-01`, accountBody);
@@ -159,6 +174,18 @@ try {
         report.versionObservations[target] = { complete: false, error: sanitize(error.message, replacements) };
       }
     }
+  }
+  if (manifest.eventing) {
+    report.eventObservations = sanitize(await runBlobEventComponent({ manifest, scope, out,
+      arm: { azure: request, local: localArm }, emit, phase: value => { phase = value; },
+      exchange: async (target, item) => {
+        const response = await storageExchange({ ...item, account: manifest.account, key: target === 'azure' ? key : localKey,
+          origin: target === 'azure' ? `https://${manifest.account}.${item.surface}.core.windows.net` : endpoints[item.surface] });
+        observe(target, { method: item.method, path: item.path, surface: item.surface, request: { headers: item.headers ?? {}, body: item.body ?? '' }, ...response });
+        return response;
+      },
+    }), replacements);
+    if (!Object.values(report.eventObservations.targets).every(target => target.deliveryObserved)) process.exitCode = 1;
   }
   report.probesComplete = true;
   if (report.versionObservations && !Object.values(report.versionObservations).every(item => item.complete)) process.exitCode = 1;

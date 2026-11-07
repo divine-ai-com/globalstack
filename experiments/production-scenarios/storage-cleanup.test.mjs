@@ -42,3 +42,53 @@ test('Storage cleanup verifies group and account absence', async () => {
   assert.deepEqual(result, { groupAbsent: true, accountAbsent: true });
   assert.equal(calls.at(-1)[1], `${scope.account}?api-version=2023-05-01`);
 });
+
+test('eventing mode permits only the declared deployment and role, with verified teardown', async () => {
+  const eventManifest = { ...manifest, eventing: true, roleName: '11111111-2222-4333-8444-555555555555' };
+  const owned = storageScope(eventManifest), network = [];
+  const transport = storageArmClient(eventManifest, () => {}, async (url, options) => {
+    network.push([url.pathname, options.method]); return { status: 200, json: async () => ({}) };
+  });
+  await transport('PUT', owned.deployment, { properties: {} });
+  await transport('DELETE', owned.role);
+  for (const [method, path] of [['PUT', owned.role], ['DELETE', owned.topic], ['PUT', owned.deployment + '-foreign'],
+    ['DELETE', owned.role.replace(eventManifest.roleName, 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee')]]) {
+    await assert.rejects(transport(method, path));
+  }
+  assert.equal(network.length, 2);
+  assert.throws(() => storageScope({ ...eventManifest, eventing: 'true' }));
+  let exists = true;
+  const deletions = [];
+  const request = async (method, path) => {
+    if (method === 'DELETE') {
+      deletions.push(path);
+      if (path.startsWith(owned.group + '?')) exists = false;
+      return { status: 202 };
+    }
+    if (!exists) return { status: 404 };
+    if (path.startsWith(owned.role + '?')) return { status: 200, body: { id: owned.role, properties: {
+      roleDefinitionId: `/subscriptions/${manifest.subscription}/providers/Microsoft.Authorization/roleDefinitions/c6a89b2d-59bc-44d0-9896-0f6e12d7b80a`,
+    } } };
+    if (path.includes('/resources?')) return { status: 200, body: { value: [owned.account, owned.topic, owned.queue].map(id => ({ id })) } };
+    return { status: 200, body: { tags: { run: manifest.runId, project: 'globalstack-storage-component' } } };
+  };
+  assert.deepEqual(await cleanupStorage(eventManifest, request), { groupAbsent: true, accountAbsent: true,
+    topicAbsent: true, subscriptionAbsent: true, roleAbsent: true, deploymentAbsent: true });
+  assert.equal(deletions.length, 2);
+  assert.ok(deletions[0].startsWith(owned.role + '?'));
+});
+
+test('eventing cleanup refuses a foreign resource or a changed role definition', async () => {
+  const eventManifest = { ...manifest, eventing: true, roleName: '11111111-2222-4333-8444-555555555555' };
+  const owned = storageScope(eventManifest);
+  for (const changed of ['inventory', 'role']) {
+    const mutations = [];
+    await assert.rejects(cleanupStorage(eventManifest, async (method, path) => {
+      if (method === 'DELETE') mutations.push(path);
+      if (path.includes('/resources?')) return { status: 200, body: { value: [{ id: changed === 'inventory' ? `${owned.topic}-foreign` : owned.topic }] } };
+      if (path.startsWith(owned.role + '?')) return { status: 200, body: { id: owned.role, properties: { roleDefinitionId: 'foreign-role' } } };
+      return { status: 200, body: { tags: { run: manifest.runId, project: 'globalstack-storage-component' } } };
+    }));
+    assert.equal(mutations.length, 0);
+  }
+});

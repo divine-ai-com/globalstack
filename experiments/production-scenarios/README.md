@@ -180,6 +180,21 @@ keeps service keys in memory and installs an ownership-checked cleanup watchdog.
 No paid add-on features are enabled. A completed capture can still contain
 mismatches; inspect the responses rather than treating exit status as parity.
 
+`STORAGE_PROBE_EVENTS=1` adds an Event Grid system topic, subscription and a
+queue-scoped Storage Queue Data Message Sender role. One compiled Bicep template
+and deployment body are used on both targets. The account retains its runner-IP
+firewall and enables the trusted Azure services exception for managed-identity
+delivery. This is a component configuration, not proof of full private-network
+or authorization parity. The run remains within USD 1, including at most 100
+event operations at the observed USD 0.60 per million rate, and creates no
+Event Grid namespace or reserved throughput. Cleanup verifies the role, topic,
+subscription, deployment, account and group are absent. Azure Retail Prices
+API rates were checked on 2026-11-07; the free event grant is not needed for the
+envelope. [Identity delivery requirements](https://learn.microsoft.com/en-us/azure/event-grid/deliver-events-using-managed-identity)
+and [Storage event schema](https://learn.microsoft.com/en-us/azure/event-grid/event-schema-blob-storage)
+define the intended route. A Storage Queue destination does not replace the
+required real Functions destination in the complete document scenario.
+
 The first Storage capture still lacked Table batch transactions. Remaining
 limitations include bounded Table queries and Blob version operations, application identity/private
 networking, real application deployment, and durable recovery across emulator
