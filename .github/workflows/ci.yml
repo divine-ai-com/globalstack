@@ -43,6 +43,14 @@ jobs:
       - run: node --test experiments/paired-lifecycle/*.test.mjs
       - run: node --test experiments/platform-lifecycle/*.test.mjs
       - run: node --test experiments/production-scenarios/*.test.mjs
+      - name: Exercise document scanner binaries
+        if: matrix.node == 22
+        run: |
+          docker build -t globalstack/document-scanner:ci experiments/production-scenarios/document-app/scanner
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --memory 1g --cpus 2 --pids-limit 64 --tmpfs /tmp:rw,nosuid,nodev,size=268435456 \
+            -v "$PWD/experiments/production-scenarios/document-app/scanner:/app:ro" \
+            globalstack/document-scanner:ci python /app/test_worker.py
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
       - run: node experiments/platform-lifecycle/render.mjs --check
