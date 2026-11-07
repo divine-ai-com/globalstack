@@ -239,3 +239,21 @@ has zero current usage and zero limit, and attach the sanitized validation
 responses. These are short-lived document-processing research deployments under
 the existing USD 150 total experiment limit. Requesting quota does not authorize
 additional spending. No quota/support request has been submitted by this runner.
+
+## Function App refresh regression
+
+A local lifecycle regression found that repeating `PUT Microsoft.Web/sites`
+replaced the Function router's application object. A previously available HTTP
+route returned 404 and the same reset also discarded trigger registrations,
+Durable instances and deployment records. The fix preserves the existing
+application object while refreshing host metadata; explicit deletion still
+removes it. The regression exercises unchanged PUT, a tag update, retained
+running-instance history, deletion and recreation through the ARM/data-plane
+servers with independent names.
+
+This checks the existing metadata router. It does not establish native worker
+execution or Azure-host parity. Web site PATCH remains unsupported, and the
+local plan validator still supports only the bounded Y1 Dynamic configuration.
+The required P0v3/EP1 plans must not be advertised as supported on the basis of
+this lifecycle fix. Live Azure Web comparison remains blocked by subscription
+quota. See issues #26 and #27.

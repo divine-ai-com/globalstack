@@ -272,6 +272,13 @@ export class FunctionsRouter {
 
   registerApp({ appName, defaultHostName }) {
     const name = String(appName);
+    const existing = this.apps.get(name.toLowerCase());
+    if (existing) {
+      // ARM PUT/PATCH refreshes site metadata. Only deletion discards the
+      // registered application and its in-memory execution/deployment state.
+      if (defaultHostName !== undefined && defaultHostName !== null) existing.defaultHostName = defaultHostName;
+      return;
+    }
     this.apps.set(name.toLowerCase(), {
       appName: name,
       defaultHostName: defaultHostName ?? `${name}.azurewebsites.net`,
