@@ -13,6 +13,7 @@ import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { azureCli, azureToken } from './azure-session.mjs';
 import { cleanupSearch, searchArmClient, searchScope } from './search-cleanup.mjs';
+import { httpExchange } from './http-exchange.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
@@ -30,7 +31,7 @@ assert.equal(account.id, process.env.PAIRED_SUBSCRIPTION_ID);
 assert.equal(account.state, 'Enabled');
 const runId = randomBytes(6).toString('hex');
 const manifest = { subscription: account.id, runId, group: `gs-prod-${runId}`, service: `gs${runId}`, deployment: `gs-search-${runId}`, config,
-  parentPid: process.pid, deadline: Date.now() + 20 * 60000 };
+  parentPid: process.pid, deadline: Date.now() + 30 * 60000 };
 const scope = searchScope(manifest);
 const token = azureToken(config);
 const replacements = [[token, '<redacted>'], [account.id, '<subscription>'], [account.tenantId, '<tenant>'], [manifest.group, '<group>'], [manifest.service, '<search-service>'], [manifest.deployment, '<deployment>']];
@@ -40,7 +41,7 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   transport: 'Native Bicep compilation followed by ARM template deployment and Search HTTP requests.',
   portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
   region,
-  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 2, rateUsdPerHour: 0.101, runtimeMinutes: 20, cleanupReserveMinutes: 10,
+  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 2, rateUsdPerHour: 0.101, runtimeMinutes: 30, cleanupReserveMinutes: 10,
     source: `Azure Retail Prices API, ${region} Basic Search consumption meter, verified 2026-11-07. Cost reporting can lag.` } };
 let phase = 'preflight', arm, search, runtime, watchdog, manifestPath;
 const donePath = resolve(out, 'cleanup.done');
@@ -54,14 +55,10 @@ const request = searchArmClient({ ...manifest, token }, event => observe('azure'
 async function pause(ms = 3000) { await new Promise(resolve => setTimeout(resolve, ms)); }
 async function json(target, origin, method, path, body, headers) {
   const startedAt = new Date().toISOString();
-  const response = await fetch(origin + path, { method, redirect: 'error', signal: AbortSignal.timeout(30000), headers: { 'content-type': 'application/json', ...headers },
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
-  const text = await response.text();
-  let parsed;
-  try { parsed = text ? JSON.parse(text) : null; } catch { parsed = { unparsedBytes: Buffer.byteLength(text) }; }
-  const event = { method, path, request: body, status: response.status, body: parsed, startedAt, completedAt: new Date().toISOString() };
+  const response = await httpExchange(origin + path, { method, body, headers });
+  const event = { method, path, request: body, ...response, startedAt, completedAt: new Date().toISOString() };
   observe(target, event);
-  return { status: response.status, body: parsed };
+  return response;
 }
 try {
   // Refuse to overlap any owned paid-resource experiment or silently exceed the

@@ -105,7 +105,9 @@ parity. The revised gateway fixture explicitly registers its GET operation.
 the same environment variables as the validation recording. This command can
 create a paid Basic Search service. Its USD 2 run allowance is part of the
 owner-authorized USD 150 total, not an additional authorization. The recorded
-Basic meter is USD 0.101/hour in East US 2. The run permits 20 minutes plus a
+Basic meter is USD 0.101/hour in East US 2 and West US 2, verified on 2026-11-07.
+West US 2 is the default after a captured East US 2 capacity rejection; set
+`PAIRED_SEARCH_REGION` to either verified region. The run permits 30 minutes plus a
 10-minute cleanup reserve, one replica/partition, small synthetic documents and
 bounded requests. It refuses to overlap an existing resource inventory.
 
