@@ -9,6 +9,7 @@ import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/sr
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { storageExchange } from './storage-http.mjs';
 
 const exec = promisify(execFile);
 const id = randomBytes(5).toString('hex'), name = `gs-functions-probe-${id}`;
@@ -69,8 +70,8 @@ try {
   const address = container.NetworkSettings.Networks[name].IPAddress;
   let workerEndpoint = `http://${address}`, workerHost;
   let armEndpoint, siteId;
-  const arm = async (method, resourceId, body) => {
-    const response = await request(`${armEndpoint}${resourceId}?api-version=2023-12-01`, { method,
+  const arm = async (method, resourceId, body, version = '2023-12-01') => {
+    const response = await request(`${armEndpoint}${resourceId}?api-version=${version}`, { method,
       headers: { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' },
       ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(10000) });
     const text = await response.text();
@@ -137,6 +138,39 @@ try {
         systemKeyNames: Object.keys(keys.systemKeys), functionKeyNames: Object.keys(keys.functionKeys), durableKeyMatches: true };
       systemKey = keys.systemKeys.durabletask_extension;
     }
+    if (process.env.FUNCTIONS_PROBE_NATIVE_EVENTS === '1') {
+      assert.ok(nativeRuntime && armEndpoint, 'Native event probe requires native routing');
+      const group = siteId.slice(0, siteId.indexOf('/providers/'));
+      const sourceId = `${group}/providers/Microsoft.Storage/storageAccounts/${account}`;
+      const topicId = `${group}/providers/Microsoft.EventGrid/systemTopics/${name}`;
+      const subscriptionId = `${topicId}/eventSubscriptions/document-uploaded`;
+      await arm('PUT', sourceId, { location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {} }, '2023-05-01');
+      for (let i = 0; i < 6; i++) await arm('GET', sourceId, undefined, '2023-05-01');
+      await arm('PUT', `${siteId}/functions/documentUploaded`, { properties: { config: { bindings: [{ name: 'event', type: 'eventGridTrigger', direction: 'in' }] } } });
+      await arm('PUT', topicId, { location: 'westus2', properties: { source: sourceId, topicType: 'Microsoft.Storage.StorageAccounts' } }, '2025-02-15');
+      await arm('PUT', subscriptionId, { properties: {
+        destination: { endpointType: 'AzureFunction', properties: { resourceId: `${siteId}/functions/documentUploaded` } },
+        filter: { includedEventTypes: ['Microsoft.Storage.BlobCreated'], subjectBeginsWith: '/blobServices/default/containers/event-landing/' },
+        retryPolicy: { maxDeliveryAttempts: 1, eventTimeToLiveInMinutes: 1 },
+      } }, '2025-02-15');
+      router.registerStorageAccount({ accountName: account, accountKey: key, resourceId: sourceId });
+      router.onBlobEvent = event => nativeRuntime.storageEventDelivery.publish(event);
+      const blobServer = createServer(router.blobHandler());
+      await new Promise(resolve => blobServer.listen(0, '127.0.0.1', resolve)); servers.push(blobServer);
+      const origin = `http://127.0.0.1:${blobServer.address().port}`;
+      const exchange = (method, path, body = '', headers = {}) => storageExchange({ account, key, surface: 'blob', origin, method, path, body, headers });
+      assert.equal((await exchange('PUT', '/event-landing?restype=container')).status, 201);
+      const upload = await exchange('PUT', '/event-landing/document.txt', 'native event document bytes', { 'x-ms-blob-type': 'BlockBlob', 'x-ms-client-request-id': `native-event-${id}` });
+      assert.equal(upload.status, 201);
+      const eventDeadline = Date.now() + 40000;
+      while (nativeRuntime.storageEventDelivery.pending.size && Date.now() < eventDeadline) await new Promise(resolve => setTimeout(resolve, 250));
+      report.nativeEventDelivery = { uploadStatus: upload.status, uploadEtag: upload.headers.etag,
+        diagnostics: structuredClone(nativeRuntime.storageEventDelivery.diagnostics), pending: nativeRuntime.storageEventDelivery.pending.size,
+        businessWorkflowCompleted: false };
+      assert.equal(report.nativeEventDelivery.pending, 0, 'Native Event Grid delivery did not settle');
+      assert.ok(report.nativeEventDelivery.diagnostics.length > 0, 'The upload did not generate a delivery observation');
+      await arm('DELETE', subscriptionId, undefined, '2025-02-15');
+    }
     const instance = `probe-${id}`;
     const headers = { 'x-functions-key': systemKey, 'content-type': 'application/json' };
     if (report.nativeRouting) {
@@ -182,6 +216,7 @@ try {
     let safe = `${logs.stdout}\n${logs.stderr}`.split(connection ?? '\0').join('<local-storage-connection>').split(key).join('<local-storage-key>').split(systemKey ?? '\0').join('<local-system-key>');
     for (const value of privateHostKeys) safe = safe.split(value).join('<native-host-key>');
     report.durableWorkerStarted = safe.includes('Task hub worker started.');
+    if (report.nativeEventDelivery) report.nativeEventDelivery.functionExecutions = [...safe.matchAll(/Executed 'Functions\.documentUploaded' \((Succeeded|Failed)/g)].map(match => match[1]);
     report.hostLeaseAcquired = safe.includes('Host lock lease acquired');
     report.missingApplicationSettings = [...new Set([...safe.matchAll(/Missing application setting ([A-Z_]+)/g)].map(match => match[1]))];
     report.timerInvocations = [...safe.matchAll(/Executed 'Functions\.(retryIndexChanges|settleDocumentFailures)' \((Succeeded|Failed)/g)].map(match => ({ function: match[1], outcome: match[2] }));

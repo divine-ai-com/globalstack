@@ -107,7 +107,7 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, ma
 }
 
 
-export async function readNativeHostKeys(binding) {
+export async function readNativeHostKeys(binding, { signal } = {}) {
   if (!binding?.masterKeyFile) return { status: 501, body: { error: { code: 'NativeFunctionsKeysNotConfigured',
     message: 'The native host management credential file is not configured.' } } };
   try {
@@ -121,7 +121,7 @@ export async function readNativeHostKeys(binding) {
     assert.match(masterKey, /^[A-Za-z0-9_+/=-]{16,256}$/);
     async function get(path) {
       const response = await fetch(`${binding.origin}${path}`, { headers: { 'x-functions-key': masterKey },
-        redirect: 'error', signal: AbortSignal.timeout(10000) });
+        redirect: 'error', signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(10000)]) : AbortSignal.timeout(10000) });
       if (response.status !== 200) { await response.body?.cancel(); throw new Error('Native key lookup failed'); }
       const chunks = []; let size = 0;
       for await (const chunk of response.body) {
@@ -151,4 +151,21 @@ export async function readNativeHostKeys(binding) {
     return { status: 502, body: { error: { code: 'NativeFunctionsKeysUnavailable',
       message: 'The native host key lookup failed. Check its availability and the private management credential.' } } };
   }
+}
+
+export async function deliverNativeEventGrid(binding, functionName, event, { signal } = {}) {
+  const keys = await readNativeHostKeys(binding, { signal });
+  if (keys.status !== 200) return { reason: keys.body.error.code };
+  const key = keys.body.systemKeys.eventgrid_extension;
+  if (!key) return { reason: 'NativeEventGridKeyUnavailable' };
+  try {
+    const url = new URL('/runtime/webhooks/eventgrid', binding.origin);
+    url.searchParams.set('functionName', functionName);
+    const response = await fetch(url, { method: 'POST', redirect: 'error',
+      headers: { 'content-type': 'application/json', 'aeg-event-type': 'Notification', 'x-functions-key': key },
+      body: JSON.stringify([event]), signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000) });
+    await response.body?.cancel();
+    return response.status >= 200 && response.status < 300 ? { status: response.status }
+      : { status: response.status, reason: `NativeEventGridHttp${response.status}` };
+  } catch { return { reason: 'NativeEventGridUnavailable' }; }
 }

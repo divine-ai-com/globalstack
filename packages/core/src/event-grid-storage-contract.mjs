@@ -24,7 +24,7 @@ export function systemTopicDestination(store, topic, properties) {
   return { delivery, destination, account, queueId, queue: storedResource(store, queueId), principal: topic?.identity?.principalId };
 }
 
-export function validateStorageSystemSubscription(store, providerRoute, body) {
+export function validateStorageSystemSubscription(store, providerRoute, body, functionsRouter) {
   const topicId = `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}/providers/Microsoft.EventGrid/${providerRoute.typePath.split('/').slice(0, 2).join('/')}`;
   const topic = storedResource(store, topicId);
   if (!topic) return error(404, 'ResourceNotFound', 'The system topic does not exist.');
@@ -38,14 +38,25 @@ export function validateStorageSystemSubscription(store, providerRoute, body) {
   if (filter.includedEventTypes !== undefined && (!Array.isArray(filter.includedEventTypes) || !filter.includedEventTypes.every(type => typeof type === 'string'))) return error(400, 'InvalidRequest', 'includedEventTypes must be a string array.');
   if (['subjectBeginsWith', 'subjectEndsWith'].some(key => filter[key] !== undefined && typeof filter[key] !== 'string')
     || filter.isSubjectCaseSensitive !== undefined && typeof filter.isSubjectCaseSensitive !== 'boolean') return error(400, 'InvalidRequest', 'Invalid subject filter.');
+  const policy = properties.retryPolicy ?? {};
+  if (policy.maxDeliveryAttempts !== undefined && (!Number.isInteger(policy.maxDeliveryAttempts) || policy.maxDeliveryAttempts < 1 || policy.maxDeliveryAttempts > 30)
+    || policy.eventTimeToLiveInMinutes !== undefined && (!Number.isInteger(policy.eventTimeToLiveInMinutes) || policy.eventTimeToLiveInMinutes < 1 || policy.eventTimeToLiveInMinutes > 1440)) return error(400, 'InvalidRequest', 'Invalid event retry policy.');
+  if (properties.destination?.endpointType === 'AzureFunction') {
+    if (properties.deliveryWithResourceIdentity) return unsupported('Identity-based Azure Function delivery is not implemented.');
+    const destination = properties.destination.properties ?? {};
+    if (Object.keys(destination).some(key => key !== 'resourceId')) return unsupported('Azure Function batching options are not implemented.');
+    const functionId = destination.resourceId;
+    const match = typeof functionId === 'string' && /^(.*\/providers\/Microsoft\.Web\/sites\/[^/]+)\/functions\/[^/]+$/i.exec(functionId);
+    const fn = match && storedResource(store, functionId), site = match && storedResource(store, match[1]);
+    if (!fn || !site || !fn.properties?.config?.bindings?.some(binding => lower(binding.type) === 'eventgridtrigger')) return error(400, 'InvalidRequest', 'The destination must be an existing Event Grid function.');
+    if (!functionsRouter?.hasNativeWorker(site.id)) return unsupported('The destination function needs a configured native worker.');
+    return null;
+  }
   const { delivery, destination, account, queue, principal } = systemTopicDestination(store, topic, properties);
   if (delivery?.identity?.type !== 'SystemAssigned' || destination?.endpointType !== 'StorageQueue') return unsupported('Only system-assigned identity delivery to Storage Queue is implemented.');
   if (!account || account.type !== 'Microsoft.Storage/storageAccounts' || !queue) return error(400, 'InvalidRequest', 'The destination Storage account or queue does not exist.');
   const ttl = destination.properties.queueMessageTimeToLiveInSeconds ?? 604800;
   if (!Number.isInteger(ttl) || ttl < 1 || ttl > 604800) return unsupported('This delivery path supports queue message TTL between 1 and 604800 seconds.');
-  const policy = properties.retryPolicy ?? {};
-  if (policy.maxDeliveryAttempts !== undefined && (!Number.isInteger(policy.maxDeliveryAttempts) || policy.maxDeliveryAttempts < 1 || policy.maxDeliveryAttempts > 30)
-    || policy.eventTimeToLiveInMinutes !== undefined && (!Number.isInteger(policy.eventTimeToLiveInMinutes) || policy.eventTimeToLiveInMinutes < 1 || policy.eventTimeToLiveInMinutes > 1440)) return error(400, 'InvalidRequest', 'Invalid event retry policy.');
   // Account-scoped setup has a successful Azure capture. Queue-only setup
   // failed there, but the cause is not established as a universal Azure rule.
   if (!queueSenderAuthorized(store, principal, account.id)) {

@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
-import { nativeWorkerBindings, forwardNativeFunction, readNativeHostKeys } from './native-functions-worker.mjs';
+import { nativeWorkerBindings, forwardNativeFunction, readNativeHostKeys, deliverNativeEventGrid } from './native-functions-worker.mjs';
 
 async function readRawBody(req) {
   const chunks = [];
@@ -306,6 +306,15 @@ export class FunctionsRouter {
 
   hasNativeWorker(resourceId) {
     return this.nativeWorkers.has(String(resourceId ?? '').toLowerCase());
+  }
+
+  async deliverEventGrid(functionId, event, options) {
+    const match = /^(.*\/providers\/Microsoft\.Web\/sites\/([^/]+))\/functions\/([^/]+)$/i.exec(functionId ?? '');
+    const app = match && this.apps.get(match[2].toLowerCase());
+    const binding = match && this.nativeWorkers.get(match[1].toLowerCase());
+    if (!app || !binding || app.resourceId?.toLowerCase() !== match[1].toLowerCase()) return { reason: 'NativeFunctionDestinationUnavailable' };
+    if (app.triggers.get(match[3].toLowerCase())?.type !== 'eventGridTrigger') return { reason: 'NativeEventGridTriggerNotRegistered' };
+    return deliverNativeEventGrid(binding, match[3], event, options);
   }
 
   unregisterApp(appName) {

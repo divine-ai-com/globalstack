@@ -7,6 +7,7 @@ export class StorageEventDelivery {
   constructor({ store, storageRouter, now = Date.now, schedule = setTimeout, cancel = clearTimeout }) {
     this.store = store; this.storageRouter = storageRouter; this.now = now; this.schedule = schedule; this.cancel = cancel;
     this.pending = new Map(); this.diagnostics = []; this.timer = null; this.sequences = new Map();
+    this.inFlight = new Map(); this.disposed = false;
   }
 
   record(item, state, reason) {
@@ -15,6 +16,7 @@ export class StorageEventDelivery {
   }
 
   publish({ account, blob, api, requestId, clientRequestId }) {
+    if (this.disposed) return;
     if (!account.resourceId || ['$logs', '$blobchangefeed'].includes(blob.containerName)) return;
     const source = account.resourceId;
     const sequenceKey = `${source.toLowerCase()}/${blob.containerName}/${blob.blobName}`;
@@ -41,12 +43,35 @@ export class StorageEventDelivery {
   }
 
   drain() {
+    if (this.disposed) return;
     if (this.timer !== null) { this.cancel(this.timer); this.timer = null; }
     for (const [key, item] of this.pending) {
-      if (item.expires <= this.now()) { this.record(item, 'expired'); this.pending.delete(key); continue; }
+      if (item.expires <= this.now()) { this.inFlight.get(key)?.abort(); this.record(item, 'expired'); this.pending.delete(key); continue; }
+      if (this.inFlight.has(key)) continue;
       if (item.next > this.now()) continue;
       const subscription = storedResource(this.store, item.subscriptionId), topic = storedResource(this.store, item.topicId);
       if (!subscription || !topic) { this.record(item, 'canceled', 'Subscription or topic removed'); this.pending.delete(key); continue; }
+      if (subscription.properties?.destination?.endpointType === 'AzureFunction') {
+        if (this.inFlight.size >= 8) continue;
+        item.attempts++;
+        const functionId = subscription.properties.destination.properties?.resourceId;
+        const siteId = /^(.*)\/functions\/[^/]+$/i.exec(functionId ?? '')?.[1];
+        const fn = storedResource(this.store, functionId), site = storedResource(this.store, siteId);
+        if (!fn || !site || site.properties?.publicNetworkAccess === 'Disabled' || !this.functionsRouter) {
+          this.complete(key, item, 'NativeFunctionDestinationUnavailable'); continue;
+        }
+        const controller = new AbortController(); this.inFlight.set(key, controller);
+        Promise.resolve(this.functionsRouter.deliverEventGrid(functionId, item.event, { signal: controller.signal }))
+          .then(result => {
+            if (this.pending.get(key) !== item || this.disposed) return;
+            if (!storedResource(this.store, item.subscriptionId) || !storedResource(this.store, item.topicId)) {
+              this.record(item, 'canceled', 'Subscription or topic removed'); this.pending.delete(key); return;
+            }
+            this.complete(key, item, result.reason);
+          }, () => { if (!this.disposed && this.pending.get(key) === item) this.complete(key, item, 'NativeEventGridUnavailable'); })
+          .finally(() => { this.inFlight.delete(key); this.drain(); });
+        continue;
+      }
       item.attempts++;
       const { account, queue, queueId, principal, destination } = systemTopicDestination(this.store, topic, subscription.properties);
       let reason;
@@ -60,16 +85,25 @@ export class StorageEventDelivery {
             text: Buffer.from(JSON.stringify(item.event)).toString('base64'), ttl: destination.properties.queueMessageTimeToLiveInSeconds ?? 604800 });
         } catch (error) { reason = error.code ?? 'DeliveryFailed'; }
       }
-      if (!reason) { this.record(item, 'delivered'); this.pending.delete(key); }
-      else if (item.attempts >= item.maxAttempts) { this.record(item, 'exhausted', reason); this.pending.delete(key); }
-      else { this.record(item, 'retrying', reason); item.next = this.now() + delays[Math.min(item.attempts - 1, delays.length - 1)]; }
+      this.complete(key, item, reason);
     }
     if (this.pending.size) {
-      const next = Math.min(...[...this.pending.values()].map(item => Math.min(item.next, item.expires)));
+      const next = Math.min(...[...this.pending.entries()].map(([key, item]) => this.inFlight.has(key) || this.inFlight.size >= 8 ? item.expires : Math.min(item.next, item.expires)));
       this.timer = this.schedule(() => this.drain(), Math.max(1, next - this.now()));
       this.timer?.unref?.();
     }
   }
 
-  dispose() { if (this.timer !== null) this.cancel(this.timer); this.timer = null; this.pending.clear(); this.sequences.clear(); }
+  complete(key, item, reason) {
+    if (!reason) { this.record(item, 'delivered'); this.pending.delete(key); }
+    else if (item.attempts >= item.maxAttempts) { this.record(item, 'exhausted', reason); this.pending.delete(key); }
+    else { this.record(item, 'retrying', reason); item.next = this.now() + delays[Math.min(item.attempts - 1, delays.length - 1)]; }
+  }
+
+  dispose() {
+    this.disposed = true;
+    if (this.timer !== null) this.cancel(this.timer);
+    for (const controller of this.inFlight.values()) controller.abort();
+    this.inFlight.clear(); this.timer = null; this.pending.clear(); this.sequences.clear();
+  }
 }

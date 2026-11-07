@@ -386,7 +386,7 @@ export function createArmRequestHandler({
     }
 
     if (resourceType === 'Microsoft.EventGrid/systemTopics/eventSubscriptions') {
-      const eventValidation = validateStorageSystemSubscription(store, providerRoute, body);
+      const eventValidation = validateStorageSystemSubscription(store, providerRoute, body, functionsRouter);
       if (eventValidation) return eventValidation;
     }
     const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });

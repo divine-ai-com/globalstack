@@ -146,6 +146,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
   const functionsRouter = createFunctionsRouter({ nativeWorkers: nativeFunctionsWorkers });
+  storageEventDelivery.functionsRouter = functionsRouter;
   const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();

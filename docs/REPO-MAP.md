@@ -165,6 +165,7 @@ flowchart TD
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
 - `packages/conformance/src/storage-event-delivery.test.mjs`
+- `packages/conformance/src/storage-function-events.test.mjs`
 - `packages/conformance/src/storage-lease.test.mjs`
 - `packages/conformance/src/storage-range.test.mjs`
 - `packages/conformance/src/storage-table-batch.test.mjs`
