@@ -41,6 +41,8 @@ test('independent hosting names reproduce captured SKU defaults and preserve sta
     assert.equal((await api('PUT', path, body)).status, 201);
     const read = await api('GET', path);
     assert.equal(read.status, 200);
+    assert.equal(read.body.globalstack.emulationDepth, 'metadata-only-control-plane');
+    assert.deepEqual(read.body.globalstack.backingEngines, []);
     assert.deepEqual(read.body.sku, azure(`${sku}-read`).body.sku);
     for (const key of ['reserved', 'numberOfWorkers', 'currentNumberOfWorkers', 'perSiteScaling', 'elasticScaleEnabled', 'maximumElasticWorkerCount', 'zoneRedundant']) {
       assert.equal(read.body.properties[key], azure(`${sku}-read`).body.properties[key], key);

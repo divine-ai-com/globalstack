@@ -1131,10 +1131,10 @@ export class ResourceStore {
           }
         : {}),
       globalstack: {
-        supportLevel,
+        supportLevel: type === 'Microsoft.Web/serverfarms' ? 'globalstack-facade' : supportLevel,
         capabilityId: capability.id,
-        backingEngines: capability.backingEngines,
-        emulationDepth: emulationDepth(capability),
+        backingEngines: type === 'Microsoft.Web/serverfarms' ? [] : capability.backingEngines,
+        emulationDepth: type === 'Microsoft.Web/serverfarms' ? 'metadata-only-control-plane' : emulationDepth(capability),
         realAzureApiComplete: false,
         cloudValidated: capability.cloudValidated,
         knownGaps: capability.knownGaps,
