@@ -279,7 +279,9 @@ export class StorageDataPlaneRouter {
   registerContainer({ accountName, containerName }) {
     const account = this.account(accountName);
     if (!account) throw new Error(`Storage account ${accountName} is not registered.`);
-    account.containers.set(lower(containerName), { containerName });
+    if (!account.containers.has(lower(containerName))) {
+      account.containers.set(lower(containerName), { containerName, etag: `"${randomUUID()}"`, lastModified: nowUtc(), metadata: {} });
+    }
   }
 
   unregisterContainer({ accountName, containerName }) {
@@ -332,12 +334,51 @@ export class StorageDataPlaneRouter {
         url.pathname.split('/').filter(Boolean).map(decodeURIComponent),
         accountName,
       );
-      if (segments.length < 2) return sendXmlError(res, 404, 'ResourceNotFound', 'The blob path is incomplete.', requestId);
       const [containerName, ...blobParts] = segments;
+      const containerRequest = segments.length === 1 && url.searchParams.get('restype') === 'container';
+      if (containerRequest && !parseAuthorization(req)) return sendXmlError(res, 501, 'NotImplemented', 'Container SAS authorization is not implemented.', requestId);
       const auth = String(req.headers.authorization ?? '').trim() !== ''
         ? validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), ['SharedKey', 'SharedKeyLite'])
         : validateServiceSas(url, account, `/blob/${accountName}/${containerName}/${blobParts.join('/')}`, req.method);
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
+      if (containerRequest) {
+        const comp = url.searchParams.get('comp');
+        if (comp && comp !== 'metadata') return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);
+        if (!['$root', '$logs', '$web'].includes(containerName)) {
+          if (containerName.length < 3 || containerName.length > 63) return sendXmlError(res, 400, 'OutOfRangeInput', 'The specified resource name length is not within the permissible limits.', requestId);
+          if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(containerName)) return sendXmlError(res, 400, 'InvalidResourceName', 'The specifed resource name contains invalid characters.', requestId);
+        }
+        const existing = account.containers.get(containerName);
+        const headers = { 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() };
+        const metadata = Object.fromEntries(Object.entries(req.headers).filter(([key]) => key.startsWith('x-ms-meta-')));
+        if (req.method === 'PUT' && !comp) {
+          if (existing) return sendXmlError(res, 409, 'ContainerAlreadyExists', 'The specified container already exists.', requestId);
+          // Public access and encryption overrides require account policy evaluation.
+          if (req.headers['x-ms-blob-public-access'] || req.headers['x-ms-default-encryption-scope']) return sendXmlError(res, 501, 'NotImplemented', 'Public access and encryption-scope overrides are not implemented.', requestId);
+          this.registerContainer({ accountName, containerName });
+          const created = account.containers.get(containerName);
+          created.metadata = metadata;
+          return send(res, 201, '', { ...headers, etag: created.etag, 'last-modified': created.lastModified });
+        }
+        if (!existing) return sendXmlError(res, 404, 'ContainerNotFound', 'The specified container does not exist.', requestId);
+        if (req.method === 'PUT' && comp === 'metadata') {
+          existing.metadata = metadata;
+          existing.etag = `"${randomUUID()}"`;
+          existing.lastModified = nowUtc();
+          return send(res, 200, '', { ...headers, etag: existing.etag, 'last-modified': existing.lastModified });
+        }
+        if (req.method === 'GET' || req.method === 'HEAD') return send(res, 200, '', {
+          ...headers, ...existing.metadata, etag: existing.etag, 'last-modified': existing.lastModified,
+          'x-ms-lease-status': 'unlocked', 'x-ms-lease-state': 'available',
+          'x-ms-has-immutability-policy': 'false', 'x-ms-has-legal-hold': 'false',
+        });
+        if (req.method === 'DELETE' && !comp) {
+          this.unregisterContainer({ accountName, containerName });
+          return send(res, 202, '', headers);
+        }
+        return sendXmlError(res, 405, 'MethodNotAllowed', `Method ${req.method} is not allowed for containers.`, requestId);
+      }
+      if (segments.length < 2) return sendXmlError(res, 501, 'NotImplemented', 'This Blob service operation is not implemented.', requestId);
       const container = account.containers.get(lower(containerName));
       if (!container) return sendXmlError(res, 404, 'ContainerNotFound', `The specified container does not exist.`, requestId);
       const blobName = blobParts.join('/');
