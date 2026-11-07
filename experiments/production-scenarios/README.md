@@ -271,3 +271,30 @@ IDs. Manual free quota review or an eligible subscription is still needed.
 Newer quota API versions returned a misleading missing-registration error even
 after provider registration; the supported older version exposed the real
 quota records and terminal decisions.
+
+### Hosting validation after subscription upgrade
+
+The owner upgraded the subscription. The [fresh paired validation](evidence/web-validation-upgraded-998c058/)
+now records Azure accepting the unchanged template in West US 2. East US 2 and
+Canada Central still report zero quota. GlobalStack continues to reject provider
+validation for `Microsoft.Web/serverfarms` with HTTP 501. All group/deployment
+absence checks passed. This is validation evidence, not resource provisioning.
+
+`node experiments/platform-lifecycle/walkthrough.mjs --web-component` captures
+one Linux P0v3 and one EP1 hosting plan in West US 2, using the same external
+Azure/Playwright settings as the other recordings. It compares creation, reads,
+unchanged PUT, tag update, an explicitly invalid SKU update, state preservation
+and cleanup. No Function App or ingress application is deployed by this probe.
+
+The run envelope is USD 1 within the authorized USD 150 total. It reserves
+USD 10 for earlier component attempts and leaves USD 139 for subsequent work
+and cleanup uncertainty. These are conservative allocations, not measured
+billing. West US 2 retail rates checked on 2026-11-07 are USD 0.0775/hour for
+Linux P0v3 and USD 0.16/vCPU-hour plus USD 0.0114/GiB-hour for Premium Functions.
+One EP1 has one vCPU and 3.5 GiB. The runner limits both plans to one instance,
+permits 20 minutes of execution and 10 minutes of cleanup, and starts only with
+empty Azure resource inventory and at least 40 GiB of local free space.
+A detached watchdog checks exact resource IDs and ownership before deleting the
+owned group; normal cleanup verifies both plans and deployment history absent.
+No quota increase, account upgrade or application success is inferred from the
+component runner's completion.
