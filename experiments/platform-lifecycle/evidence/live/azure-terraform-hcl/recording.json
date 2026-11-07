@@ -1,0 +1,15 @@
+{
+  "platform": "azure-terraform-hcl",
+  "startedAt": "2026-11-07T04:44:48.493Z",
+  "completedAt": "2026-11-07T04:47:34.410Z",
+  "exitCode": 0,
+  "eventCount": 814,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "8e0832edde2a3f379e9ce1ca3e02868ac8927b0fb0c65b8d9b5074c7c8bf9b85",
+  "eventSha256": "59009edafe791e4ded1ff79cf9b7fce95b1bf7eb50f9d6798594c870f653deed",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}
