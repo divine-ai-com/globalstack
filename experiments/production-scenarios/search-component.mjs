@@ -108,7 +108,19 @@ try {
       if (state === 'Succeeded') break;
       await pause();
     }
-  } catch (error) { deploymentError = error; }
+  } catch (error) {
+    deploymentError = error;
+    phase = 'azure-deployment-diagnostic';
+    for (const path of [
+      `${scope.deployment}/operations`,
+      `${scope.group}/providers/Microsoft.Resources/deployments/search-component`,
+      `${scope.group}/providers/Microsoft.Resources/deployments/search-component/operations`,
+    ]) {
+      // Read nested provider errors before cleanup removes the deployment. A
+      // failed diagnostic must never prevent replay or resource removal.
+      await request('GET', `${path}?api-version=2025-04-01`).catch(() => {});
+    }
+  }
   // Replay failed Azure attempts too. A successful local create after an Azure
   // rejection is evidence of a gap, not a reason to discard the attempted pair.
   phase = 'local-deploy';

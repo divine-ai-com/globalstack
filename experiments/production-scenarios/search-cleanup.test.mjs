@@ -51,3 +51,16 @@ test('cleanup does not delete a deployment with mismatched ownership', async () 
   }), /ownership mismatch/);
   assert.deepEqual(actions, ['GET']);
 });
+
+test('nested diagnostic scope permits reads but rejects mutations', async () => {
+  const calls = [];
+  const client = searchArmClient(manifest, () => {}, async (url, options) => {
+    calls.push(options.method);
+    return { status: 200, json: async () => ({}) };
+  });
+  const path = `${scope.group}/providers/Microsoft.Resources/deployments/search-component/operations?api-version=2025-04-01`;
+  assert.equal((await client('GET', path)).status, 200);
+  await assert.rejects(client('DELETE', path), /escaped/);
+  await assert.rejects(client('PUT', path), /escaped/);
+  assert.deepEqual(calls, ['GET']);
+});

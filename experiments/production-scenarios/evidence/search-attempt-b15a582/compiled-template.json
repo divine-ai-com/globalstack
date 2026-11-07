@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "18185209126730864783"
+    }
+  },
+  "parameters": {
+    "groupName": {
+      "type": "string"
+    },
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "runnerIp": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2025-04-01",
+      "name": "[parameters('groupName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "project": "globalstack-production-scenarios",
+        "run": "[parameters('runId')]"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "search-component",
+      "resourceGroup": "[parameters('groupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "serviceName": {
+            "value": "[parameters('serviceName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "runId": {
+            "value": "[parameters('runId')]"
+          },
+          "runnerIp": {
+            "value": "[parameters('runnerIp')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.48.1.52935",
+              "templateHash": "11390924562461679423"
+            }
+          },
+          "parameters": {
+            "serviceName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "runId": {
+              "type": "string"
+            },
+            "runnerIp": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Search/searchServices",
+              "apiVersion": "2025-05-01",
+              "name": "[parameters('serviceName')]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "project": "globalstack-production-scenarios",
+                "run": "[parameters('runId')]"
+              },
+              "sku": {
+                "name": "basic"
+              },
+              "properties": {
+                "replicaCount": 1,
+                "partitionCount": 1,
+                "hostingMode": "Default",
+                "publicNetworkAccess": "enabled",
+                "disableLocalAuth": false,
+                "networkRuleSet": {
+                  "ipRules": [
+                    {
+                      "value": "[parameters('runnerIp')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+      ]
+    }
+  ]
+}

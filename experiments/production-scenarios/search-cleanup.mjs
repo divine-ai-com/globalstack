@@ -19,7 +19,9 @@ export function searchArmClient(manifest, observe = () => {}, transport = fetch)
   const scope = searchScope(manifest);
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
+    const nestedDeployment = `${scope.group}/providers/Microsoft.Resources/deployments/search-component`;
     const allowed = [scope.group, `${scope.group}/resources`, scope.service, `${scope.service}/listAdminKeys`, scope.deployment, `${scope.deployment}/cancel`];
+    if (method === 'GET') allowed.push(nestedDeployment, `${nestedDeployment}/operations`, `${scope.deployment}/operations`);
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed.some(item => item.toLowerCase() === url.pathname.toLowerCase()), 'Request escaped the owned Search scope');
     const startedAt = new Date().toISOString();
     const response = await transport(url.href, { method, redirect: 'error', signal: AbortSignal.timeout(60000),
@@ -80,8 +82,11 @@ export async function cleanupSearch(manifest, request = searchArmClient(manifest
   if (found.status !== 404) {
     const removed = await request('DELETE', deployment);
     assert.ok([200, 202, 204, 404].includes(removed.status), 'Deployment record deletion failed');
-    while ((await request('GET', deployment)).status !== 404) {
+    while (true) {
       assert.ok(Date.now() < deadline, 'Deployment record cleanup deadline exceeded');
+      const observed = await request('GET', deployment);
+      if (observed.status === 404) break;
+      assert.ok([200, 409].includes(observed.status), 'Deployment record cleanup polling failed');
       await sleep(3000);
     }
   }
