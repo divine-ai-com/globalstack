@@ -1,0 +1,25 @@
+{
+  "scope": "Fresh Azure attempt blocked by provider creation throttling, canceled with verified teardown. No successful paired rerun or application pass.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+      "bytes": 3228
+    },
+    "events.ndjson": {
+      "sha256": "1e92f97b263354507073d68b515b7e436db947350f0bff88bc72bbd230ca9587",
+      "bytes": 345162
+    },
+    "operator-cancellation.json": {
+      "sha256": "c39779531575b1efbfda559e5f1dacb814fc36016da06dafa02ed9bb79e13a3b",
+      "bytes": 5660
+    },
+    "recording.json": {
+      "sha256": "1dc026ffb03830b105f6629a2faf7ce97c4e9ce2f435dcef6de54569f3c992fd",
+      "bytes": 639
+    },
+    "result.json": {
+      "sha256": "36c0d310ffe8d4e68f43145656b3494886c7da9be11a137fde3c9d7f1b7be9dc",
+      "bytes": 295668
+    }
+  }
+}

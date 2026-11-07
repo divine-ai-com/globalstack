@@ -310,3 +310,18 @@ normalizes the captured SKU fields, and returns the captured invalid-SKU error
 without mutating existing state. Replay tests use independent resource names and
 a second invalid SKU string. Wider plan configurations remain explicitly
 unsupported. No native application execution or full protocol parity is claimed.
+
+The [fresh attempt after the hosting fix](evidence/web-hosting-throttled-4cabc7d/)
+was blocked by Azure provider throttling. One plan succeeded; the other returned
+an App Service creation error 429 while ARM still reported the parent and nested
+operation as Running. The operator recorded the nested failure and canceled the
+owned deployment. Both plan IDs, group and deployment history were subsequently
+verified absent. The unchanged template was replayed locally, but this is not a
+successful fresh paired validation of the fix.
+
+The runner now inspects nested provider operations every 15 seconds and stops
+on this throttling response so ordinary cleanup can cancel outstanding work.
+Tests cover the actual retained nested response and ownership-checked teardown.
+The automatic path still needs live verification once Azure permits creation.
+The account constraint and its proof are tracked in [#36](https://github.com/divine-ai-com/globalstack/issues/36);
+the bounded emulator fix is tracked separately in [#35](https://github.com/divine-ai-com/globalstack/issues/35).

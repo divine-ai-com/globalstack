@@ -11,6 +11,7 @@ import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { azureCli, azureToken } from './azure-session.mjs';
 import { cleanupWeb, webArmClient, webScope } from './web-cleanup.mjs';
 import { httpExchange } from './http-exchange.mjs';
+import { throttledDeploymentOperation } from './deployment-progress.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url)), repo = resolve(here, '../..');
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit evidence directory is required');
@@ -89,6 +90,7 @@ try {
   try {
     const result = await request('PUT', `${scope.deployment}?api-version=2025-04-01`, body);
     assert.ok([200, 201, 202].includes(result.status), 'Azure rejected the hosting template');
+    let nextProviderInspection = Date.now();
     while (true) {
       assert.ok(Date.now() < manifest.deadline - 5 * 60000, 'Hosting deployment timeout');
       const current = await request('GET', `${scope.deployment}?api-version=2025-04-01`);
@@ -96,6 +98,12 @@ try {
       const state = current.body.properties?.provisioningState;
       assert.ok(!['Failed', 'Canceled'].includes(state), 'Azure hosting deployment failed');
       if (state === 'Succeeded') break;
+      if (Date.now() >= nextProviderInspection) {
+        nextProviderInspection = Date.now() + 15000;
+        const operations = await request('GET', `${scope.group}/providers/Microsoft.Resources/deployments/web-component/operations?api-version=2025-04-01`);
+        assert.ok([200, 404].includes(operations.status), 'Unable to inspect nested hosting progress');
+        assert.ok(!throttledDeploymentOperation(operations.body), 'Azure hosting creation is throttled; cancel this attempt and clean up');
+      }
       await pause();
     }
   } catch (error) {
