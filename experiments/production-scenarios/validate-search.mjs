@@ -125,4 +125,4 @@ try {
   record('run-end', { ok: report.statusCodeParityObserved === true && report.noResourcesCreated === true });
 }
 console.log(`Validation evidence: ${out}`);
-process.exitCode = report.error || !report.noResourcesCreated ? 1 : 0;
+process.exitCode = report.error || !report.noResourcesCreated || !report.validationTerminalsComplete ? 1 : 0;
