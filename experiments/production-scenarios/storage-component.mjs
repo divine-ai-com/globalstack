@@ -32,7 +32,7 @@ assert.equal(azureCli(config, ['resource', 'list', '--subscription', session.id]
 const runId = randomBytes(6).toString('hex');
 const manifest = { subscription: session.id, runId, group: `gs-storage-${runId}`, account: `gs${runId}`,
   config, parentPid: process.pid, deadline: Date.now() + 20 * 60000,
-  ...(process.env.STORAGE_PROBE_EVENTS === '1' ? { eventing: true, roleName: randomUUID() } : {}) };
+  ...(process.env.STORAGE_PROBE_EVENTS === '1' ? { eventing: true, roleName: randomUUID(), roleScope: 'account' } : {}) };
 const scope = storageScope(manifest);
 const token = azureToken(config);
 const replacements = [[token, '<redacted>'], [session.id, '<subscription>'], [session.tenantId, '<tenant>'], [manifest.group, '<group>'], [manifest.account, '<storage-account>']];
@@ -72,7 +72,7 @@ try {
   replacements.push([ip, '<runner-ip>']);
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: 'Storage comparison in westus2' });
   if (manifest.eventing) {
-    report.budget.limits = 'One Standard_LRS account, one Event Grid system topic/subscription, one queue-scoped sender role, less than 1 MiB, fewer than 500 HTTP requests and 100 event operations. No Event Grid namespace or throughput-unit reservation.';
+    report.budget.limits = 'One Standard_LRS account, one Event Grid system topic/subscription, one account-scoped queue sender role, less than 1 MiB, fewer than 500 HTTP requests and 100 event operations. No Event Grid namespace or throughput-unit reservation.';
     report.budget.eventGridRate = { usdPerMillionEventOperations: 0.6, region: 'westus2', verified: '2026-11-07', source: 'Azure Retail Prices API, Standard Event Operations' };
   }
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });

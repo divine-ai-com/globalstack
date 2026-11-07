@@ -92,3 +92,19 @@ test('eventing cleanup refuses a foreign resource or a changed role definition',
     assert.equal(mutations.length, 0);
   }
 });
+
+test('account-scoped sender capture restricts cleanup to its declared role', async () => {
+  const eventManifest = { ...manifest, eventing: true, roleName: '11111111-2222-4333-8444-555555555555', roleScope: 'account' };
+  const owned = storageScope(eventManifest);
+  assert.equal(owned.roleScope, owned.account);
+  assert.equal(owned.role, `${owned.account}/providers/Microsoft.Authorization/roleAssignments/${eventManifest.roleName}`);
+  const calls = [];
+  const request = storageArmClient(eventManifest, () => {}, async (url, options) => {
+    calls.push([url.pathname, options.method]); return { status: 404, json: async () => null };
+  });
+  assert.ok(Object.values(await cleanupStorage(eventManifest, request)).every(value => value === true));
+  await request('DELETE', owned.role);
+  await assert.rejects(request('DELETE', `${owned.queue}/providers/Microsoft.Authorization/roleAssignments/${eventManifest.roleName}`));
+  assert.throws(() => storageScope({ ...eventManifest, roleScope: 'subscription' }));
+  assert.ok(calls.some(([path, method]) => path === owned.role && method === 'DELETE'));
+});

@@ -15,8 +15,10 @@ export function storageScope(manifest) {
   assert.match(manifest.roleName, /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/);
   const topic = `${group}/providers/Microsoft.EventGrid/systemTopics/gs-events-${manifest.runId}`;
   const queue = `${account}/queueServices/default/queues/event-arrivals`;
+  assert.ok(manifest.roleScope === undefined || ['queue', 'account'].includes(manifest.roleScope), 'Unexpected sender role scope');
+  const roleScope = manifest.roleScope === 'account' ? account : queue;
   return { group, account, topic, queue, subscription: `${topic}/eventSubscriptions/blob-arrivals`,
-    role: `${queue}/providers/Microsoft.Authorization/roleAssignments/${manifest.roleName}`,
+    roleScope, role: `${roleScope}/providers/Microsoft.Authorization/roleAssignments/${manifest.roleName}`,
     deployment: `${group}/providers/Microsoft.Resources/deployments/blob-events` };
 }
 

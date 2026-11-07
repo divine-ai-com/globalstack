@@ -27,7 +27,7 @@ resource topic 'Microsoft.EventGrid/systemTopics@2025-02-15' = {
   }
 }
 resource sender 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: arrivals
+  scope: storage
   name: roleName
   properties: {
     principalId: topic.identity.principalId

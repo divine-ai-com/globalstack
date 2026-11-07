@@ -56,9 +56,9 @@ export async function deployEventTemplate({ request, scope, body, deadline, slee
       && typeof topic.body?.identity?.principalId === 'string'
       && topic.body.identity.principalId === role.body?.properties?.principalId
       && role.body.properties.roleDefinitionId?.toLowerCase().endsWith('/c6a89b2d-59bc-44d0-9896-0f6e12d7b80a')
-      && role.body.properties.scope?.toLowerCase() === scope.queue.toLowerCase();
+      && role.body.properties.scope?.toLowerCase() === (scope.roleScope ?? scope.queue).toLowerCase();
     if (!attempt.identityMatchesRole || Date.now() + 120000 >= deadline) return { complete: false, attempts };
-    attempt.retryReason = 'Role exists for the same principal at the queue scope. Retry the unchanged deployment after a bounded delay; propagation is not yet established.';
+    attempt.retryReason = 'Role exists for the same principal at the declared scope. Retry the unchanged deployment after a bounded delay; propagation is not yet established.';
     await sleep(120000);
   }
   return { complete: false, attempts };
