@@ -9,6 +9,7 @@ import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { localIdentity } from '../../packages/azure-control-plane/src/server-support.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
+import { validationPollPath } from './polling.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
@@ -52,6 +53,7 @@ try {
   server = createArmServer({ store: new ResourceStore() });
   await new Promise(done => server.listen(0, '127.0.0.1', done));
 
+  const pollLocations = new WeakMap();
   async function exchange(target, method, path, body, phase) {
     const origin = target === 'azure' ? 'https://management.azure.com' : `http://127.0.0.1:${server.address().port}`;
     const startedAt = new Date().toISOString();
@@ -62,6 +64,7 @@ try {
     let parsed; try { parsed = JSON.parse(text); } catch { parsed = text; }
     const entry = sanitize({ target, phase, method, path, startedAt, completedAt: new Date().toISOString(), request: body ?? null,
       status: response.status, headers: Object.fromEntries([...response.headers].filter(([name]) => !['set-cookie', 'www-authenticate'].includes(name))), body: parsed }, replacements);
+    if (response.status === 202) pollLocations.set(entry, response.headers.get('location') ?? response.headers.get('azure-asyncoperation'));
     record('http', { target, phase, method, status: entry.status, path: entry.path });
     record('output', { target, phase, text: JSON.stringify({ status: entry.status, headers: entry.headers, body: entry.body }, null, 2) + '\n' });
     return entry;
@@ -84,7 +87,20 @@ try {
       record('command-start', { target, phase, command: ['POST', sanitize(path, replacements), `body-sha256=${attempt.requestSha256}`] });
       const observed = await exchange(target, 'POST', path, body, phase);
       attempt.targets.push(observed);
-      record('command-end', { target, phase, exitCode: observed.status >= 400 ? 1 : 0 });
+      let current = observed;
+      const deadline = Date.now() + 120000;
+      observed.polls = [];
+      let pollPath = validationPollPath(pollLocations.get(current), subscription);
+      while (current.status === 202 && pollPath && Date.now() < deadline) {
+        const delay = Math.max(1000, Number(current.headers['retry-after'] ?? 2) * 1000);
+        if (!Number.isFinite(delay) || Date.now() + delay >= deadline) break;
+        await new Promise(done => setTimeout(done, delay));
+        current = await exchange(target, 'GET', pollPath, undefined, `${phase}.poll`);
+        observed.polls.push(current);
+        pollPath = validationPollPath(pollLocations.get(current), subscription) ?? pollPath;
+      }
+      observed.terminalObserved = current.status !== 202;
+      record('command-end', { target, phase, exitCode: current.status >= 400 || !observed.terminalObserved ? 1 : 0 });
     }
     const [azure, local] = attempt.targets;
     attempt.sameStatusAndErrorCode = azure.status === local.status && azure.body?.error?.code === local.body?.error?.code;
@@ -97,6 +113,7 @@ try {
   }
   report.noResourcesCreated = report.probes.every(probe => probe.status === 404);
   report.statusCodeParityObserved = report.attempts.every(attempt => attempt.sameStatusAndErrorCode);
+  report.validationTerminalsComplete = report.attempts.every(attempt => attempt.targets.every(target => target.terminalObserved));
 } catch (error) {
   report.error = sanitize(error.message, replacements);
   record('output', { target: 'azure', phase: 'harness-error', text: `[Harness failure] ${report.error}\n` });
