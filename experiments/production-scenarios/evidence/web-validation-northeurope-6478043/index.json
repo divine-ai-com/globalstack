@@ -16,6 +16,10 @@
     "result.json": {
       "sha256": "edb192b1cdd370c7627c20d99b84425702fa13109d514f58dc2e026f1a11cb8e",
       "bytes": 22673
+    },
+    "quota-projection.json": {
+      "sha256": "d064cbaa1cd75e4c600a3723aee2dcb05fb4f187e5397acfb7650cb0a53fe743",
+      "bytes": 1411
     }
   }
 }

@@ -41,3 +41,24 @@ test('retained live provider failure is classified without claiming a successful
   assert.deepEqual(report.cleanup, { groupAbsent: true, plansAbsent: true, deploymentAbsent: true });
   assert.ok(report.localCleanup.every(code => code === 404));
 });
+
+test('live provider-validation guard rejects the run before allocation or provisioning', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { createHash } = await import('node:crypto');
+  const base = new URL('./evidence/web-preflight-guard-af998e5/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', base), 'utf8'));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = JSON.parse(await readFile(new URL('result.json', base), 'utf8'));
+  assert.equal(report.cleanup.provisioningNotStarted, true);
+  assert.ok(report.preflightAbsence.every(code => code === 404));
+  assert.equal(report.budget.ledger, undefined);
+  assert.equal(report.exchanges.some(e => e.target === 'azure' && ['PUT', 'DELETE'].includes(e.method)), false);
+  const validation = report.exchanges.filter(e => e.phase === 'provider-validation');
+  assert.deepEqual(validation.map(e => e.status), [400, 200]);
+  assert.deepEqual(validation[0].request, validation[1].request);
+  assert.equal(report.observationsComplete, undefined);
+});

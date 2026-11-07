@@ -355,3 +355,11 @@ all resource and deployment IDs absent. The budget allocation remains retained.
 This interrupted attempt is not a completed deployment comparison. The runner
 now performs provider validation inside its own execution path, before allocating
 budget or starting provisioning, and refuses rejected or incomplete validation.
+
+The [live guard verification](evidence/web-preflight-guard-af998e5/) subsequently
+records Azure rejecting the same North Europe provider-validation request and
+GlobalStack accepting its bounded local shape. The runner makes no Azure PUT or
+DELETE request and reserves no additional budget. All four Azure resource/group/
+deployment absence checks return 404. This verifies the execution guard on an
+actual rejection; it does not complete either application or resolve Azure's
+account constraints.

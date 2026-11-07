@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-07T11:52:30.408Z",
+  "status": 200,
+  "scope": "Projection of the two requested SKU entries; other quota entries omitted.",
+  "request": "GET /subscriptions/<subscription>/providers/Microsoft.Web/locations/northeurope/providers/Microsoft.Quota/quotas?api-version=2023-02-01",
+  "value": [
+    {
+      "properties": {
+        "limit": {
+          "limitObjectType": "LimitValue",
+          "limitType": "Independent",
+          "value": 30
+        },
+        "name": {
+          "value": "P0v3",
+          "localizedValue": "P0v3 VMs"
+        },
+        "properties": {},
+        "unit": "Instances",
+        "isQuotaApplicable": true
+      },
+      "id": "/subscriptions/<subscription>/providers/Microsoft.Web/locations/northeurope/providers/Microsoft.Quota/quotas/P0v3",
+      "type": "Microsoft.Quota/Quotas",
+      "name": "P0v3"
+    },
+    {
+      "properties": {
+        "limit": {
+          "limitObjectType": "LimitValue",
+          "limitType": "Independent",
+          "value": 30
+        },
+        "name": {
+          "value": "EP1",
+          "localizedValue": "EP1 VMs"
+        },
+        "properties": {},
+        "unit": "Instances",
+        "isQuotaApplicable": true
+      },
+      "id": "/subscriptions/<subscription>/providers/Microsoft.Web/locations/northeurope/providers/Microsoft.Quota/quotas/EP1",
+      "type": "Microsoft.Quota/Quotas",
+      "name": "EP1"
+    }
+  ]
+}
