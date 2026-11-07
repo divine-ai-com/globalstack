@@ -1,0 +1,119 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "16951217415543409133"
+    }
+  },
+  "parameters": {
+    "accountName": {
+      "type": "string"
+    },
+    "topicName": {
+      "type": "string"
+    },
+    "roleName": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', parameters('accountName'), 'default', 'event-arrivals')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.EventGrid/systemTopics",
+      "apiVersion": "2025-02-15",
+      "name": "[parameters('topicName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "tags": {
+        "project": "globalstack-storage-component",
+        "run": "[parameters('runId')]"
+      },
+      "properties": {
+        "source": "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]",
+        "topicType": "Microsoft.Storage.StorageAccounts"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('accountName'), 'default', 'event-arrivals')]",
+      "name": "[parameters('roleName')]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.EventGrid/systemTopics', parameters('topicName')), '2025-02-15', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('accountName'), 'default', 'event-arrivals')]",
+        "[resourceId('Microsoft.EventGrid/systemTopics', parameters('topicName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+      "apiVersion": "2025-02-15",
+      "name": "[format('{0}/{1}', parameters('topicName'), 'blob-arrivals')]",
+      "properties": {
+        "eventDeliverySchema": "EventGridSchema",
+        "deliveryWithResourceIdentity": {
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "destination": {
+            "endpointType": "StorageQueue",
+            "properties": {
+              "resourceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]",
+              "queueName": "event-arrivals",
+              "queueMessageTimeToLiveInSeconds": 300
+            }
+          }
+        },
+        "filter": {
+          "includedEventTypes": [
+            "Microsoft.Storage.BlobCreated"
+          ],
+          "subjectBeginsWith": "/blobServices/default/containers/event-landing/blobs/",
+          "isSubjectCaseSensitive": true
+        },
+        "retryPolicy": {
+          "maxDeliveryAttempts": 3,
+          "eventTimeToLiveInMinutes": 5
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('accountName'), 'default', 'event-arrivals')]",
+        "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('accountName'), 'default', 'event-arrivals'), 'Microsoft.Authorization/roleAssignments', parameters('roleName'))]",
+        "[resourceId('Microsoft.EventGrid/systemTopics', parameters('topicName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "systemTopicId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.EventGrid/systemTopics', parameters('topicName'))]"
+    },
+    "eventSubscriptionId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.EventGrid/systemTopics/eventSubscriptions', parameters('topicName'), 'blob-arrivals')]"
+    },
+    "senderRoleId": {
+      "type": "string",
+      "value": "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('accountName'), 'default', 'event-arrivals'), 'Microsoft.Authorization/roleAssignments', parameters('roleName'))]"
+    }
+  }
+}

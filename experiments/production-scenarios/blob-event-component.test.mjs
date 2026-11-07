@@ -72,3 +72,24 @@ test('Azure Event Grid baseline retains authorization failure and the different 
   assert.equal(local.status, 501);
   assert.equal(local.body.error.code, 'GlobalStackUnsupportedResourceScope');
 });
+
+test('unchanged Azure retries retain authorization failures without claiming event delivery', async () => {
+  const base = new URL('./evidence/blob-events-92b05a7/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', base)));
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(name, base));
+    assert.equal(bytes.length, metadata.bytes);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+  }
+  const result = JSON.parse(await readFile(new URL('result.json', base)));
+  const targets = result.eventObservations.targets;
+  assert.equal(result.sourceDirty, false);
+  assert.equal(targets.azure.deployment.attempts.length, 3);
+  for (const attempt of targets.azure.deployment.attempts) {
+    assert.equal(attempt.terminalState, 'Failed');
+    assert.deepEqual(attempt.errorCodes, ['Managed Identity Authorization Error']);
+  }
+  assert.ok(targets.azure.deployment.attempts.slice(0, 2).every(attempt => attempt.identityMatchesRole));
+  assert.ok(Object.values(targets).every(target => !target.deliveryObserved));
+  assert.ok(Object.values(result.cleanup).every(value => value === true));
+});
