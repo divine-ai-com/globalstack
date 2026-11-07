@@ -101,7 +101,15 @@ try {
   };
   phase = 'local-storage-setup';
   await localArm('PUT', `${scope.group}?api-version=2025-04-01`, { location: 'westus2', tags });
-  await localArm('PUT', `${scope.account}?api-version=2023-05-01`, accountBody);
+  assert.ok([200, 201, 202].includes((await localArm('PUT', `${scope.account}?api-version=2023-05-01`, accountBody)).status));
+  let localReady = false;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const current = await localArm('GET', `${scope.account}?api-version=2023-05-01`);
+    assert.equal(current.status, 200);
+    if (current.body.properties?.provisioningState === 'Succeeded') { localReady = true; break; }
+    await pause(250);
+  }
+  assert.ok(localReady, 'Local Storage account did not finish provisioning');
   router.registerStorageAccount({ accountName: manifest.account, accountKey: localKey });
   for (const surface of ['blob', 'table', 'queue']) {
     const handler = router[`${surface}Handler`]();
@@ -136,7 +144,7 @@ try {
     const path = `${scope.account}/blobServices/default?api-version=2023-05-01`;
     const body = { properties: { isVersioningEnabled: true, deleteRetentionPolicy: { enabled: false }, containerDeleteRetentionPolicy: { enabled: false } } };
     assert.equal((await request('PUT', path, body)).status, 200, 'Azure did not enable versioning');
-    await localArm('PUT', path, body);
+    assert.equal((await localArm('PUT', path, body)).status, 200, 'Local Blob service configuration failed');
     report.versionObservations = {};
     for (const target of ['azure', 'local']) {
       try {
@@ -155,6 +163,7 @@ try {
     }
   }
   report.probesComplete = true;
+  if (report.versionObservations && !Object.values(report.versionObservations).every(item => item.complete)) process.exitCode = 1;
 } catch (error) {
   report.error = sanitize(String(error.message), replacements);
   emit('output', { target: 'runner', phase, text: report.error });
