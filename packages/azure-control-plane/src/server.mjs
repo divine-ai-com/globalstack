@@ -250,6 +250,7 @@ export function createArmRequestHandler({
   migrationRunner = null,
   metricStore = null,
   kubernetesRouter = null,
+  functionsRouter = null,
 } = {}) {
   void persist;
   const completedDeploymentDeletions = new Map();
@@ -1131,6 +1132,7 @@ export function createArmRequestHandler({
           if (!site) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webHostKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
+          if (functionsRouter?.hasNativeWorker(site.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           return sendJson(res, 200, {
             masterKey: deterministicHostKey(site.name, 'master'),
             functionKeys: {
@@ -1149,6 +1151,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
+          if (functionsRouter?.hasNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionKeysRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionKeysRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
@@ -1169,6 +1172,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
+          if (functionsRouter?.hasNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionSecretsRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionSecretsRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);

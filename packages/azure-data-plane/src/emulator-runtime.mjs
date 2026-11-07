@@ -138,14 +138,14 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [] }) {
   const storageRouter = createStorageDataPlaneRouter();
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
   const appConfigurationRouter = createAppConfigurationRouter();
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
-  const functionsRouter = createFunctionsRouter();
+  const functionsRouter = createFunctionsRouter({ nativeWorkers: nativeFunctionsWorkers });
   const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();
@@ -675,6 +675,7 @@ export function createEmulatorRuntime({ store }) {
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
+        resourceId: resource.id,
         defaultHostName: resource.properties?.defaultHostName,
       });
       return;

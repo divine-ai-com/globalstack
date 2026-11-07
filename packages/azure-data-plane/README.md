@@ -65,3 +65,40 @@ claims about the full Azure service. Sources:
 [fuzzy queries](https://learn.microsoft.com/en-us/azure/search/search-query-fuzzy),
 [vector ranking](https://learn.microsoft.com/en-us/azure/search/vector-search-ranking),
 and [Search REST parameters](https://learn.microsoft.com/en-us/rest/api/searchservice/documents/search-post?view=rest-searchservice-2024-07-01).
+
+## Native Functions worker binding
+
+The emulator can route a registered ARM Function App to an externally managed
+native Functions host. Set `GLOBALSTACK_FUNCTIONS_WORKERS_FILE` to an operator
+JSON file before starting `apps/emulator/server.mjs`:
+
+```json
+[
+  {
+    "appResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.Web/sites/example-worker",
+    "origin": "http://127.0.0.1:8080"
+  }
+]
+```
+
+Use the actual site ID and worker address. This is emulator configuration, not
+an application setting or an IaC branch. Origins must use loopback or private
+IP addresses and contain no credentials, path, query or fragment. The operator
+starts and configures the worker separately. ARM site creation enables routing;
+site deletion removes routing but does not own or terminate that worker.
+
+For a bound site, HTTP and Durable requests reach the native host with their
+body, application hostname and authentication headers. Host responses are
+returned directly, including authentication failures. Redirects are not followed.
+Requests are bounded to 12 MiB and 120 seconds. Unavailable workers return 502;
+timeouts return 504. These failures never fall back to the metadata simulation.
+SCM package deployment and ARM key management return 501 for bound sites because
+those native management paths are not implemented. Use native host-issued keys
+for this diagnostic path. Unbound sites retain the existing metadata simulation.
+
+This binding does not provide automatic container provisioning, package
+installation, app-setting synchronization, Azure managed identity, scaling,
+restart durability or full Azure Functions parity. The native host probe uses
+GlobalStack Storage and can exercise real Durable execution. Its intentionally
+missing downstream service settings produce a failed orchestration, not a
+completed document pipeline. See [issue #26](https://github.com/divine-ai-com/globalstack/issues/26).

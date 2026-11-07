@@ -109,6 +109,7 @@ flowchart TD
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
 - `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
+- `packages/azure-data-plane/src/native-functions-worker.mjs`
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
@@ -154,6 +155,7 @@ flowchart TD
 - `packages/conformance/src/iot-hub-router.test.mjs`
 - `packages/conformance/src/key-vault-router-sync.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
+- `packages/conformance/src/native-functions-worker.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`
 - `packages/conformance/src/search-query.test.mjs`

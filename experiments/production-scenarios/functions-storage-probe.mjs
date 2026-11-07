@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { mkdir, statfs, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { createStorageDataPlaneRouter } from '../../packages/azure-data-plane/src/storage-router.mjs';
+import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 
 const exec = promisify(execFile);
 const id = randomBytes(5).toString('hex'), name = `gs-functions-probe-${id}`;
@@ -21,7 +24,17 @@ const report = { scope: 'Local official Functions host against GlobalStack Stora
   sourceDirty: Boolean((await exec('git', ['status', '--porcelain'])).stdout.trim()),
   startedAt: new Date().toISOString(), configurationMode: 'host-storage-only', requests: [], workerHealthReady: false, durableWorkerStarted: false, hostLeaseAcquired: false, businessWorkflowCompleted: false, cleanup: false };
 const servers = [];
-let connection, systemKey;
+let connection, systemKey, nativeRuntime;
+function request(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    const req = httpRequest(url, { method: options.method ?? 'GET', headers: options.headers, signal: options.signal }, response => {
+      const chunks = []; response.on('data', chunk => chunks.push(chunk)); response.on('error', reject);
+      response.on('end', () => resolve(new Response([204, 304].includes(response.statusCode) ? null : Buffer.concat(chunks),
+        { status: response.statusCode, headers: response.headers })));
+    });
+    req.on('error', reject); req.end(options.body);
+  });
+}
 try {
   report.imageId = (await exec('docker', ['image', 'inspect', 'globalstack/document-functions:pilot', '--format', '{{.Id}}'])).stdout.trim();
   await exec('docker', ['network', 'create', '--internal', '--label', 'globalstack.experiment=functions-storage', name]);
@@ -52,10 +65,45 @@ try {
     report.imageId], { env: { ...process.env, AzureWebJobsStorage: connection } });
   const container = JSON.parse((await exec('docker', ['inspect', name])).stdout)[0];
   const address = container.NetworkSettings.Networks[name].IPAddress;
+  let workerEndpoint = `http://${address}`, workerHost;
+  let armEndpoint, siteId;
+  const arm = async (method, resourceId, body) => {
+    const response = await request(`${armEndpoint}${resourceId}?api-version=2023-12-01`, { method,
+      headers: { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' },
+      ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(10000) });
+    const text = await response.text();
+    report.nativeRouting.arm.push({ method, resourceId, status: response.status });
+    assert.ok([200, 201, 202, 204].includes(response.status), `Local ARM setup failed: ${response.status} ${text}`);
+  };
+  if (process.env.FUNCTIONS_PROBE_NATIVE_ROUTING === '1') {
+    const subscription = '00000000-0000-0000-0000-000000000000';
+    const group = `/subscriptions/${subscription}/resourceGroups/${name}`;
+    siteId = `${group}/providers/Microsoft.Web/sites/${name}`;
+    const planId = `${group}/providers/Microsoft.Web/serverfarms/${name}`;
+    const store = new ResourceStore();
+    nativeRuntime = createEmulatorRuntime({ store, nativeFunctionsWorkers: [{ appResourceId: siteId, origin: workerEndpoint }] });
+    const armServer = createArmServer({ store, onResourcePut: nativeRuntime.syncResource, onResourceDelete: nativeRuntime.unsyncResource,
+      functionsRouter: nativeRuntime.functionsRouter });
+    const proxy = createServer(nativeRuntime.functionsRouter.handler());
+    for (const server of [armServer, proxy]) { await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); servers.push(server); }
+    armEndpoint = `http://127.0.0.1:${armServer.address().port}`;
+    workerEndpoint = `http://127.0.0.1:${proxy.address().port}`;
+    workerHost = `${name}.azurewebsites.net`;
+    report.nativeRouting = { scope: 'Operator-bound native host; ARM manages routing only, not container provisioning or package deployment.', arm: [], requests: [] };
+    await arm('PUT', group, { location: 'westus2' });
+    await arm('PUT', planId, { location: 'westus2', kind: 'functionapp', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} });
+    await arm('PUT', siteId, { location: 'westus2', kind: 'functionapp,linux', properties: { serverFarmId: planId } });
+  }
+  const workerRequest = async (path, options = {}) => {
+    const response = await request(`${workerEndpoint}${path}`, { ...options,
+      headers: { ...options.headers, ...(workerHost ? { host: workerHost } : {}) } });
+    if (report.nativeRouting) report.nativeRouting.requests.push({ method: options.method ?? 'GET', path, status: response.status, at: new Date().toISOString() });
+    return response;
+  };
   const deadline = Date.now() + 90000;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`http://${address}/api/health`, { signal: AbortSignal.timeout(2000) });
+      const response = await workerRequest('/api/health', { signal: AbortSignal.timeout(2000) });
       if (response.status === 200 && (await response.json()).worker === 'ready') { report.workerHealthReady = true; break; }
     } catch {}
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -73,7 +121,12 @@ try {
     systemKey = entry.value;
     const instance = `probe-${id}`;
     const headers = { 'x-functions-key': systemKey, 'content-type': 'application/json' };
-    const response = await fetch(`http://${address}/runtime/webhooks/durabletask/orchestrators/documentWorkflow/${instance}`, {
+    if (report.nativeRouting) {
+      const unauthorized = await workerRequest(`/runtime/webhooks/durabletask/instances/${instance}`, { signal: AbortSignal.timeout(10000) });
+      report.nativeRouting.unauthorizedStatus = unauthorized.status; await unauthorized.arrayBuffer();
+      assert.equal(unauthorized.status, 401, 'Native host key checks must remain enforced');
+    }
+    const response = await workerRequest(`/runtime/webhooks/durabletask/orchestrators/documentWorkflow/${instance}`, {
       method: 'POST', headers, body: JSON.stringify({ correlationId: instance, tenant: 'diagnostic' }), signal: AbortSignal.timeout(20000),
     });
     report.orchestrationStart = { status: response.status };
@@ -82,7 +135,7 @@ try {
     report.orchestrationPolls = [];
     while (Date.now() < finish && response.status === 202) {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      const state = await fetch(`http://${address}/runtime/webhooks/durabletask/instances/${instance}?showHistory=true`, {
+      const state = await workerRequest(`/runtime/webhooks/durabletask/instances/${instance}?showHistory=true`, {
         headers, signal: AbortSignal.timeout(10000),
       });
       const body = await state.json();
@@ -90,6 +143,16 @@ try {
       if (['Failed', 'Completed', 'Terminated'].includes(body.runtimeStatus)) break;
     }
     report.expectedFailurePersisted = report.orchestrationPolls.at(-1)?.runtimeStatus === 'Failed';
+  }
+  if (report.nativeRouting) {
+    await exec('docker', ['stop', '--time', '10', name]);
+    const unavailable = await workerRequest('/api/health', { signal: AbortSignal.timeout(10000) });
+    report.nativeRouting.stoppedWorkerStatus = unavailable.status; await unavailable.arrayBuffer();
+    assert.equal(unavailable.status, 502, 'Stopped workers must not fall back to simulated success');
+    await arm('DELETE', siteId);
+    const removed = await workerRequest('/api/health', { signal: AbortSignal.timeout(10000) });
+    report.nativeRouting.deletedSiteStatus = removed.status; await removed.arrayBuffer();
+    assert.equal(removed.status, 404, 'Deleted ARM sites must no longer route to the worker');
   }
 
 } catch (error) {
@@ -106,12 +169,13 @@ try {
   } catch {}
   const removed = await exec('docker', ['rm', '-f', name]).then(() => true, () => false);
   for (const server of servers) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+  await nativeRuntime?.dispose();
   const networkRemoved = await exec('docker', ['network', 'rm', name]).then(() => true, () => false);
   report.cleanup = removed && networkRemoved;
   report.completedAt = new Date().toISOString();
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
 }
 const failures = [...new Set(report.requests.filter(item => item.status >= 400).map(item => `${item.surface} ${item.method} ${item.path} ${item.restype ?? ''} ${item.comp ?? ''} ${item.status}`))];
-console.log(JSON.stringify({ out, workerHealthReady: report.workerHealthReady, cleanup: report.cleanup, durableWorkerStarted: report.durableWorkerStarted, hostLeaseAcquired: report.hostLeaseAcquired, missingApplicationSettings: report.missingApplicationSettings, orchestrationStart: report.orchestrationStart, expectedFailurePersisted: report.expectedFailurePersisted, error: report.error, nonSuccessResponses: failures }, null, 2));
+console.log(JSON.stringify({ out, workerHealthReady: report.workerHealthReady, cleanup: report.cleanup, durableWorkerStarted: report.durableWorkerStarted, hostLeaseAcquired: report.hostLeaseAcquired, nativeRouting: report.nativeRouting, missingApplicationSettings: report.missingApplicationSettings, orchestrationStart: report.orchestrationStart, expectedFailurePersisted: report.expectedFailurePersisted, error: report.error, nonSuccessResponses: failures }, null, 2));
 
 if (report.error || !report.cleanup || !report.workerHealthReady || !report.durableWorkerStarted || process.env.FUNCTIONS_PROBE_ORCHESTRATION === '1' && !report.expectedFailurePersisted) process.exitCode = 1;

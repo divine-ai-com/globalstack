@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createAppConfigurationRouterServer } from '../../packages/azure-data-plane/src/app-configuration-router.mjs';
@@ -12,7 +13,9 @@ import { createSearchRouterServer } from '../../packages/azure-data-plane/src/se
 import { createApiManagementRouterServer } from '../../packages/azure-data-plane/src/api-management-router.mjs';
 
 const store = new ResourceStore();
-const runtime = createEmulatorRuntime({ store });
+const nativeFunctionsWorkers = process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE
+  ? JSON.parse(await readFile(process.env.GLOBALSTACK_FUNCTIONS_WORKERS_FILE, 'utf8')) : [];
+const runtime = createEmulatorRuntime({ store, nativeFunctionsWorkers });
 
 async function listen(server, port, host = process.env.GLOBALSTACK_HOST ?? '127.0.0.1') {
   await new Promise((resolve, reject) => {
@@ -32,6 +35,7 @@ const armServer = createArmServer({
   migrationRunner: runtime.migrationRunner,
   metricStore: runtime.metricStore,
   kubernetesRouter: runtime.kubernetesRouter,
+  functionsRouter: runtime.functionsRouter,
 });
 const blobServer = createBlobStorageServer(runtime.storageRouter);
 const queueServer = createQueueStorageServer(runtime.storageRouter);

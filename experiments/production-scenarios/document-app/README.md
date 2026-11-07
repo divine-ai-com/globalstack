@@ -126,3 +126,13 @@ bytes, metadata and pagination. The separate paired Storage component capture
 confirms 22 selected version contracts on Azure and GlobalStack. Neither test
 executes the complete document workflow. Full application update/delete/recovery
 testing and operator replay remain pending.
+
+
+The Functions storage probe also supports `FUNCTIONS_PROBE_NATIVE_ROUTING=1`.
+With `FUNCTIONS_PROBE_ORCHESTRATION=1`, it binds the native container to the shared
+Functions router, creates a local ARM plan/site, checks native key enforcement,
+executes the expected failed orchestration, stops the worker and deletes the
+site. The last two operations must return 502 and 404 through the facade.
+No Azure resources are created. This remains a storage-only failure diagnostic;
+the operator owns the container and supplies its settings. It does not exercise
+automatic deployment, Event Grid delivery or downstream document processing.
