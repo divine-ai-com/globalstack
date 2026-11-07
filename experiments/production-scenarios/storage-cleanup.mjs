@@ -28,6 +28,7 @@ export function storageArmClient(manifest, observe = () => {}, transport = fetch
     for (const id of [scope.topic, scope.queue, scope.subscription]) allowed.set(id, ['GET']);
     allowed.set(scope.role, ['GET', 'DELETE']);
     allowed.set(scope.deployment, ['GET', 'PUT']);
+    allowed.set(`${scope.deployment}/operations`, ['GET']);
   }
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');

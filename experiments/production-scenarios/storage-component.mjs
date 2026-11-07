@@ -47,7 +47,7 @@ const observe = (target, event) => {
   function identify(value) {
     if (!value || typeof value !== 'object') return;
     for (const [name, child] of Object.entries(value)) {
-      if (['principalId', 'clientId'].includes(name) && typeof child === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(child) && !replacements.some(([from]) => from === child)) {
+      if (['principalId', 'clientId', 'createdBy', 'updatedBy'].includes(name) && typeof child === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(child) && !replacements.some(([from]) => from === child)) {
         replacements.push([child, `<${target}-${name}-${replacements.length}>`]);
       } else identify(child);
     }

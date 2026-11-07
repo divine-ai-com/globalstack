@@ -17,6 +17,53 @@ export function queueEvents(body) {
   });
 }
 
+export async function deployEventTemplate({ request, scope, body, deadline, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) }) {
+  const attempts = [];
+  for (let number = 1; number <= 3; number++) {
+    assert.ok(Date.now() < deadline, 'Eventing deployment deadline exceeded before submission');
+    const attempt = { number, startedAt: new Date().toISOString() };
+    attempts.push(attempt);
+    const response = await request('PUT', `${scope.deployment}?api-version=2025-04-01`, body);
+    attempt.initialStatus = response.status;
+    if (![200, 201, 202].includes(response.status)) return { complete: false, attempts };
+    while (true) {
+      assert.ok(Date.now() < deadline, 'Eventing deployment deadline exceeded');
+      const current = await request('GET', `${scope.deployment}?api-version=2025-04-01`);
+      assert.equal(current.status, 200);
+      attempt.terminalState = current.body?.properties?.provisioningState;
+      if (['Succeeded', 'Failed', 'Canceled'].includes(attempt.terminalState)) break;
+      await sleep(3000);
+    }
+    attempt.completedAt = new Date().toISOString();
+    if (attempt.terminalState === 'Succeeded') return { complete: true, attempts };
+    const operations = await request('GET', `${scope.deployment}/operations?api-version=2025-04-01`);
+    assert.equal(operations.status, 200, 'Deployment operation evidence unavailable');
+    assert.ok(!operations.body?.nextLink, 'Incomplete deployment operation evidence');
+    const codes = [];
+    function inspect(value) {
+      if (!value || typeof value !== 'object') return;
+      for (const [name, child] of Object.entries(value)) {
+        if (name === 'code' && typeof child === 'string') codes.push(child);
+        else inspect(child);
+      }
+    }
+    inspect(operations.body);
+    attempt.errorCodes = [...new Set(codes)];
+    if (!codes.includes('Managed Identity Authorization Error') || codes.some(code => !['Managed Identity Authorization Error', 'DeploymentFailed', 'ResourceDeploymentFailure'].includes(code)) || number === 3) return { complete: false, attempts };
+    const topic = await request('GET', `${scope.topic}?api-version=2025-02-15`);
+    const role = await request('GET', `${scope.role}?api-version=2022-04-01`);
+    attempt.identityMatchesRole = topic.status === 200 && role.status === 200
+      && typeof topic.body?.identity?.principalId === 'string'
+      && topic.body.identity.principalId === role.body?.properties?.principalId
+      && role.body.properties.roleDefinitionId?.toLowerCase().endsWith('/c6a89b2d-59bc-44d0-9896-0f6e12d7b80a')
+      && role.body.properties.scope?.toLowerCase() === scope.queue.toLowerCase();
+    if (!attempt.identityMatchesRole || Date.now() + 120000 >= deadline) return { complete: false, attempts };
+    attempt.retryReason = 'Role exists for the same principal at the queue scope. Retry the unchanged deployment after a bounded delay; propagation is not yet established.';
+    await sleep(120000);
+  }
+  return { complete: false, attempts };
+}
+
 export async function runBlobEventComponent({ manifest, scope, out, arm, exchange, phase, emit, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) }) {
   const image = execFileSync('docker', ['image', 'inspect', 'globalstack/validation-runner:cli-pinned', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
   phase('event-compile');
@@ -36,20 +83,8 @@ export async function runBlobEventComponent({ manifest, scope, out, arm, exchang
     const request = arm[target];
     try {
       phase('event-deploy');
-      let response = await request('PUT', `${scope.deployment}?api-version=2025-04-01`, body);
-      result.initialStatus = response.status;
-      assert.ok([200, 201, 202].includes(response.status), 'Eventing deployment rejected');
-      const deadline = Math.min(Date.now() + 360000, manifest.deadline - 180000);
-      while (true) {
-        assert.ok(Date.now() < deadline, 'Eventing deployment deadline exceeded');
-        response = await request('GET', `${scope.deployment}?api-version=2025-04-01`);
-        assert.equal(response.status, 200);
-        const state = response.body?.properties?.provisioningState;
-        result.terminalState = state;
-        if (['Failed', 'Canceled'].includes(state)) throw new Error(`Eventing deployment ${state}`);
-        if (state === 'Succeeded') break;
-        await sleep(3000);
-      }
+      result.deployment = await deployEventTemplate({ request, scope, body, deadline: Math.min(Date.now() + 660000, manifest.deadline - 180000), sleep });
+      assert.ok(result.deployment.complete, 'Eventing deployment did not complete');
       result.deploymentComplete = true;
       phase('event-configuration');
       for (const [id, version] of [[scope.topic, '2025-02-15'], [scope.subscription, '2025-02-15'], [scope.role, '2022-04-01']]) {

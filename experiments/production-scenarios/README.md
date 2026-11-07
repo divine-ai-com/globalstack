@@ -195,6 +195,17 @@ and [Storage event schema](https://learn.microsoft.com/en-us/azure/event-grid/ev
 define the intended route. A Storage Queue destination does not replace the
 required real Functions destination in the complete document scenario.
 
+The [first paired eventing attempt](evidence/blob-events-c806558/) failed before
+upload: Azure returned a managed-identity delivery authorization error, while
+GlobalStack rejected the queue-scoped role assignment. Cleanup verified every
+owned cloud resource absent. The next runner retains deployment-operation
+errors and permits at most three unchanged submissions, with a two-minute delay
+only after this specific authorization error and verification that the topic
+identity has the expected sender role at the exact queue scope. It does not
+broaden permissions or classify propagation as established before a successful
+repeat. Azure documents [delayed role visibility](https://learn.microsoft.com/en-us/azure/role-based-access-control/troubleshooting#role-assignment-changes-are-not-being-detected);
+that is a hypothesis for this capture, not its measured cause.
+
 The first Storage capture still lacked Table batch transactions. Remaining
 limitations include bounded Table queries and Blob version operations, application identity/private
 networking, real application deployment, and durable recovery across emulator

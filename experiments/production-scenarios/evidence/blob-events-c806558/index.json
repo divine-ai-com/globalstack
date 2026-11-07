@@ -1,0 +1,41 @@
+{
+  "scope": "Failed Azure-first Event Grid component. Azure rejected managed-identity delivery authorization. GlobalStack rejected a resource-scoped role assignment. No event flow was exercised. All cloud resources verified absent.",
+  "postCaptureRedaction": "Actor GUIDs and one provider-internal identity in the supplemental error message were replaced in public text copies. Original recording metadata and video digest remain unchanged; its event digest refers to the original operator-held stream.",
+  "supplementalEvidence": "Deployment operations were read with Azure CLI during cleanup, outside the terminal recording.",
+  "originalPrivateFileDigests": {
+    "result.json": {
+      "sha256": "c93aa20e1136a6d833fa3d8e5fff62b9ae014e47dd22719dd049616c92b45cf6",
+      "bytes": 222006
+    },
+    "events.ndjson": {
+      "sha256": "bf58a3c248eb967bf4273514b0d2a0d1e8bceadc6dae204feadaf2578540aff6",
+      "bytes": 274082
+    },
+    "deployment-operations.json": {
+      "sha256": "77c79b46ec1ef3f7cf4bbce5650b2b04db60022f945da5a0dd9c471e34b64189",
+      "bytes": 6099
+    }
+  },
+  "files": {
+    "result.json": {
+      "sha256": "91a5177dfc9f7208a3d62e7faff3edc34534eace7cd6e64254a2092639230a1e",
+      "bytes": 221898
+    },
+    "events.ndjson": {
+      "sha256": "8d0fbe92a3c5b8bbf827098591cda79babb8f511d38caee05cd1718770c32aae",
+      "bytes": 273974
+    },
+    "recording.json": {
+      "sha256": "d6fc442aae2496e8c73ba83ac3faae750b5b34041852775a7e1c7e1257993bca",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "9f3fd90888a597ee378c4606cdda061014784a0a8e107f2cbee0530e58757339",
+      "bytes": 4468
+    },
+    "deployment-operations.json": {
+      "sha256": "a2f2910d6fb667552feb9a2340782b6fe527b648662b9e2c70658865703ea1c0",
+      "bytes": 6092
+    }
+  }
+}
