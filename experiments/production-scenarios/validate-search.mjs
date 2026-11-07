@@ -11,6 +11,9 @@ import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { validationPollPath } from './polling.mjs';
 
+const component = process.env.VALIDATION_COMPONENT ?? 'search';
+assert.ok(['search', 'web'].includes(component));
+const sourceNames = component === 'search' ? ['search-validation.bicep', 'search-service.bicep'] : ['web-validation.bicep', 'web-plans.bicep'];
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
 const out = resolve(process.env.PAIRED_RUN_DIR);
@@ -22,12 +25,12 @@ await mkdir(out, { recursive: true, mode: 0o700 });
 const space = await statfs(out);
 assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3);
 const hash = data => createHash('sha256').update(data).digest('hex');
-const source = Object.fromEntries(await Promise.all(['search-validation.bicep', 'search-service.bicep'].map(async name => [name, hash(await readFile(resolve(here, 'fixtures', name)))])));
+const source = Object.fromEntries(await Promise.all(sourceNames.map(async name => [name, hash(await readFile(resolve(here, 'fixtures', name)))])));
 const revision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
 const sourceDirty = !!execFileSync('git', ['status', '--porcelain'], { cwd: repo, encoding: 'utf8' }).trim();
 assert.equal(sourceDirty, false, 'Commit the validation harness before capturing a pair');
 const image = execFileSync('docker', ['image', 'inspect', 'globalstack/validation-runner:cli-pinned', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
-const record = createRecording(out, { platform: 'Scenario 1 Search foundation validation', revision, sourceDirty, source, image });
+const record = createRecording(out, { platform: `Scenario 1 ${component} foundation validation`, revision, sourceDirty, source, image });
 const cli = args => JSON.parse(execFileSync('docker', ['run', '--rm', '--user', `${process.getuid()}:${process.getgid()}`, '-e', 'HOME=/tmp', '-e', 'AZURE_CONFIG_DIR=/azure', '-e', 'AZURE_CORE_COLLECT_TELEMETRY=no', '-v', `${config}:/azure`, '--entrypoint', 'az', image, ...args, '-o', 'json', '--only-show-errors'], { encoding: 'utf8', timeout: 120000, stdio: ['ignore', 'pipe', 'pipe'] }));
 const account = cli(['account', 'show']);
 assert.equal(account.id, subscription); assert.equal(account.state, 'Enabled');
@@ -36,13 +39,13 @@ const runId = randomBytes(6).toString('hex');
 const group = `gs-prod-${runId}`, deployment = `gs-validation-${runId}`;
 const replacements = [[token, '<redacted>'], [subscription, '<subscription>'], [account.tenantId, '<tenant>'], [group, '<group>'], [deployment, '<deployment>']];
 const report = { schemaVersion: 1, revision, sourceDirty, source, image, startedAt: new Date().toISOString(),
-  scope: 'Bicep-compiled Search foundation ARM validation, not full scenario deployment or integration.',
+  scope: `Bicep-compiled ${component} foundation ARM validation, not full scenario deployment or integration.`,
   transport: 'Native Bicep compilation followed by direct ARM validation requests, not a native deployment CLI trace.',
   attempts: [], probes: [], portalEvidenceComplete: false, provisioningPerformed: false };
 let server;
 try {
-  record('command-start', { target: 'azure', phase: 'shared-compile', command: ['bicep', 'build', 'search-validation.bicep', '--stdout'] });
-  const compiled = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${here}/fixtures:/fixture:ro`, '--entrypoint', '/root/.azure/bin/bicep', image, 'build', '/fixture/search-validation.bicep', '--stdout'], { encoding: 'utf8', timeout: 60000 });
+  record('command-start', { target: 'azure', phase: 'shared-compile', command: ['bicep', 'build', sourceNames[0], '--stdout'] });
+  const compiled = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${here}/fixtures:/fixture:ro`, '--entrypoint', '/root/.azure/bin/bicep', image, 'build', `/fixture/${sourceNames[0]}`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
   const template = JSON.parse(compiled);
   await writeFile(resolve(out, 'compiled-template.json'), compiled);
   report.compiledSha256 = hash(compiled);
@@ -71,14 +74,15 @@ try {
   }
 
   // The two parameter sets preserve the source template; validation cannot create resources.
-  for (const [phase, serviceName, validationLevel] of [
+  const attempts = component === 'web' ? ['westus2', 'eastus2', 'canadacentral'].map(region => [`web-hosting-${region}`, `gs${runId}`, 'Provider', region]) : [
     ['missing-location-parameter', `gs${runId}`, 'Template'],
     ['invalid-search-name-template', 'Invalid_Search_Name', 'Template'],
     ['invalid-search-name-provider', 'Invalid_Search_Name', 'Provider'],
     ['corrected-search-name-provider', `gs${runId}`, 'Provider'],
-  ]) {
-    const body = { location: 'eastus2', properties: { mode: 'Incremental', validationLevel, template,
-      parameters: { groupName: { value: group }, serviceName: { value: serviceName }, location: { value: 'eastus2' } } } };
+  ];
+  for (const [phase, serviceName, validationLevel, region = 'eastus2'] of attempts) {
+    const body = { location: region, properties: { mode: 'Incremental', validationLevel, template,
+      parameters: { groupName: { value: group }, serviceName: { value: serviceName }, location: { value: region } } } };
     if (phase === 'missing-location-parameter') delete body.properties.parameters.location;
     const path = `/subscriptions/${subscription}/providers/Microsoft.Resources/deployments/${deployment}/validate?api-version=2025-04-01`;
     const attempt = { phase, validationLevel, requestSha256: hash(JSON.stringify(body)), targets: [] };

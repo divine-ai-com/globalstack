@@ -13,7 +13,7 @@ const validationOnly = args.includes('--validation-only');
 const searchComponent = args.includes('--search-component');
 const storageComponent = args.includes('--storage-component');
 assert.ok([validationOnly, searchComponent, storageComponent].filter(Boolean).length <= 1, 'Select only one scenario runner');
-const platform = validationOnly ? 'document-search-validation' : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
+const platform = validationOnly ? `document-${process.env.VALIDATION_COMPONENT ?? 'search'}-validation` : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
 assert.ok(validationOnly || searchComponent || storageComponent || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
 const modulePath = process.env.PAIRED_PLAYWRIGHT_MODULE;
 assert.ok(modulePath?.startsWith('/'), 'Absolute path to installed playwright-core/index.mjs required');
